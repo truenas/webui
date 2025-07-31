@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
   BaseNamespaceFormComponent,
@@ -14,9 +14,8 @@ import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-name
   ],
 })
 export class AddSubsystemNamespaceComponent {
-  constructor(
-    public slideInRef: SlideInRef<void, NamespaceChanges>,
-  ) {}
+  slideInRef = inject<SlideInRef<void, NamespaceChanges>>(SlideInRef);
+
 
   onSubmit(newNamespace: NamespaceChanges): void {
     this.slideInRef.close({

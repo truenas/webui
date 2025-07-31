@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -58,6 +56,13 @@ import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-ce
   ],
 })
 export class VmwareSnapshotListComponent implements OnInit {
+  protected translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  protected emptyService = inject(EmptyService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly searchableElements = vmwareSnapshotListElements;
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
 
@@ -90,15 +95,6 @@ export class VmwareSnapshotListComponent implements OnInit {
     uniqueRowTag: (row) => 'vmware-snapshot-' + row.hostname,
     ariaLabels: (row) => [row.hostname, this.translate.instant('VMware Snapshot')],
   });
-
-  constructor(
-    protected translate: TranslateService,
-    private slideIn: SlideIn,
-    protected emptyService: EmptyService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     const snapshots$ = this.api.call('vmware.query').pipe(

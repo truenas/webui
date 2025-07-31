@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -127,6 +127,12 @@ export const initialState: PoolManagerState = {
 @UntilDestroy()
 @Injectable()
 export class PoolManagerStore extends ComponentStore<PoolManagerState> {
+  private diskStore = inject(DiskStore);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private generateVdevs = inject(GenerateVdevsService);
+  private matDialog = inject(MatDialog);
+
   readonly startOver$ = new Subject<void>();
   readonly resetStep$ = new Subject<VDevType>();
   readonly isLoading$ = this.select((state) => state.isLoading);
@@ -224,13 +230,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     );
   }
 
-  constructor(
-    private diskStore: DiskStore,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private generateVdevs: GenerateVdevsService,
-    private matDialog: MatDialog,
-  ) {
+  constructor() {
     super(initialState);
   }
 

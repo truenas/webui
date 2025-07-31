@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { map, Observable, of } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -6,11 +6,10 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 
 @Injectable({ providedIn: 'root' })
 export class UnsavedChangesService {
-  constructor(
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private authService: AuthService,
-  ) {}
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private authService = inject(AuthService);
+
 
   showConfirmDialog(): Observable<boolean> {
     if (!this.authService.hasAuthToken) {

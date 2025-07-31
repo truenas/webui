@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component, OnInit, ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -65,6 +63,14 @@ export interface ContainerImageUi extends ContainerImage {
   ],
 })
 export class DockerImagesListComponent implements OnInit {
+  emptyService = inject(EmptyService);
+  formatter = inject(IxFormatterService);
+  private api = inject(ApiService);
+  private matDialog = inject(MatDialog);
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private fileSizePipe = inject(FileSizePipe);
+
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly searchableElements = dockerImagesListElements;
 
@@ -130,17 +136,6 @@ export class DockerImagesListComponent implements OnInit {
 
   get selectedImages(): ContainerImageUi[] {
     return this.containerImages.filter((image) => image.selected);
-  }
-
-  constructor(
-    public emptyService: EmptyService,
-    public formatter: IxFormatterService,
-    private api: ApiService,
-    private matDialog: MatDialog,
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    private fileSizePipe: FileSizePipe,
-  ) {
   }
 
   ngOnInit(): void {

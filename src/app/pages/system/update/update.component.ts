@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -68,6 +66,15 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class UpdateComponent implements OnInit {
+  private router = inject(Router);
+  private translate = inject(TranslateService);
+  private matDialog = inject(MatDialog);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private sysGenService = inject(SystemGeneralService);
+  private store$ = inject<Store<AppState>>(Store);
+
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly manualUpdateUrl = 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/#performing-a-manual-update';
@@ -134,17 +141,6 @@ export class UpdateComponent implements OnInit {
   protected isUpdateInProgress$ = this.store$.select(selectUpdateJob).pipe(
     map((jobs) => jobs.length > 0),
   );
-
-  constructor(
-    private router: Router,
-    private translate: TranslateService,
-    private matDialog: MatDialog,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private sysGenService: SystemGeneralService,
-    private store$: Store<AppState>,
-  ) {}
 
   ngOnInit(): void {
     this.loadUpdateInfo();

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -51,6 +49,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ImportPoolComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private router = inject(Router);
+  private snackbar = inject(SnackbarService);
+  private loader = inject(LoaderService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.PoolWrite];
 
   readonly helptext = helptextImport;
@@ -70,17 +78,7 @@ export class ImportPoolComponent implements OnInit {
     options: of<Option[]>([]),
   };
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private router: Router,
-    private snackbar: SnackbarService,
-    private loader: LoaderService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.formGroup.dirty);
     });

@@ -1,13 +1,5 @@
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
-import {
-  Component, ChangeDetectionStrategy,
-  AfterViewInit,
-  signal,
-  ChangeDetectorRef,
-  Inject,
-  input,
-  DOCUMENT,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, AfterViewInit, signal, ChangeDetectorRef, input, DOCUMENT, inject } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -30,18 +22,18 @@ import { FocusService } from 'app/services/focus.service';
   exportAs: 'masterDetailViewContext',
 })
 export class MasterDetailViewComponent<T> implements AfterViewInit {
+  private breakpointObserver = inject(BreakpointObserver);
+  private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
+  private focusService = inject(FocusService);
+  private document = inject<Document>(DOCUMENT);
+
   readonly selectedItem = input<T | null>(null);
   readonly showDetails = input<boolean | null>(true);
   readonly showMobileDetails = signal<boolean>(false);
   readonly isMobileView = signal<boolean>(false);
 
-  constructor(
-    private breakpointObserver: BreakpointObserver,
-    private cdr: ChangeDetectorRef,
-    private router: Router,
-    private focusService: FocusService,
-    @Inject(DOCUMENT) private document: Document,
-  ) {
+  constructor() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
       .subscribe(() => {

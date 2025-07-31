@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -67,6 +65,16 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class CronCardComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialog = inject(DialogService);
+  private taskService = inject(TaskService);
+  private matDialog = inject(MatDialog);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+  protected emptyService = inject(EmptyService);
+  private slideIn = inject(SlideIn);
+
   protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = cronCardElements;
 
@@ -127,18 +135,6 @@ export class CronCardComponent implements OnInit {
     uniqueRowTag: (row) => 'card-cron-' + row.command + '-' + row.user,
     ariaLabels: (row) => [row.command, this.translate.instant('Cron Job')],
   });
-
-  constructor(
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialog: DialogService,
-    private taskService: TaskService,
-    private matDialog: MatDialog,
-    private firstTimeWarning: FirstTimeWarningService,
-    protected emptyService: EmptyService,
-    private slideIn: SlideIn,
-  ) {}
 
   ngOnInit(): void {
     const cronjobs$ = this.api.call('cronjob.query').pipe(

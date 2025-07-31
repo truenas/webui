@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -56,6 +54,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AcmeDnsAuthenticatorListComponent implements OnInit {
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+  private dialog = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected readonly searchableElements = acmeDnsAuthenticatorListElements;
 
@@ -90,15 +95,6 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     uniqueRowTag: (row) => 'amce-dns-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('ACME DNS Authenticator')],
   });
-
-  constructor(
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-    private dialog: DialogService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     const authenticators$ = this.api.call('acme.dns.authenticator.query').pipe(

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogActions, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
@@ -26,11 +24,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class LogsDetailsDialog {
+  private fb = inject(FormBuilder);
+
   form = this.fb.group({
     tail_lines: [500, [Validators.required]],
   });
-
-  constructor(
-    private fb: FormBuilder,
-  ) {}
 }

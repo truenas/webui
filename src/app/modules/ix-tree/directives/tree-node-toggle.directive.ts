@@ -1,5 +1,5 @@
 import { CdkTreeNode, CdkTreeNodeToggle } from '@angular/cdk/tree';
-import { Directive, HostBinding } from '@angular/core';
+import { Directive, HostBinding, inject } from '@angular/core';
 import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
 
 @Directive({
@@ -14,13 +14,19 @@ import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
   inputs: ['recursive: treeNodeToggleRecursive'],
 })
 export class TreeNodeToggleDirective<T> extends CdkTreeNodeToggle<T> {
+  protected override _tree: Tree<T>;
+  protected override _treeNode: CdkTreeNode<T>;
+
   @HostBinding('class.ix-tree-node-toggle') get hostClass(): boolean { return true; }
 
-  constructor(
-    protected override _tree: Tree<T>,
-    protected override _treeNode: CdkTreeNode<T>,
-  ) {
+  constructor() {
+    const _tree = inject<Tree<T>>(Tree);
+    const _treeNode = inject<CdkTreeNode<T>>(CdkTreeNode);
+
     super(_tree, _treeNode);
+  
+    this._tree = _tree;
+    this._treeNode = _treeNode;
   }
 
   /**

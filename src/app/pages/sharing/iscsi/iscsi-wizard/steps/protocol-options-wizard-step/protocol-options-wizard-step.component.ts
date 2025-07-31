@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -34,6 +32,10 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class ProtocolOptionsWizardStepComponent implements OnInit {
+  private iscsiService = inject(IscsiService);
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+
   form = input.required<IscsiWizardComponent['form']['controls']['options']>();
   isFibreChannelMode = input(false);
 
@@ -64,12 +66,6 @@ export class ProtocolOptionsWizardStepComponent implements OnInit {
   get isNewPortal(): boolean {
     return this.form().controls.listen.enabled && this.form().value.portal === newOption;
   }
-
-  constructor(
-    private iscsiService: IscsiService,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-  ) {}
 
   ngOnInit(): void {
     this.form().controls.portal.valueChanges.pipe(untilDestroyed(this)).subscribe((portal) => {

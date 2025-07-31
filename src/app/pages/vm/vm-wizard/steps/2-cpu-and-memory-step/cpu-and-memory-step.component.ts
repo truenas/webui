@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -48,6 +46,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
+  formatter = inject(IxFormatterService);
+  private formBuilder = inject(FormBuilder);
+  private cpuValidator = inject(CpuValidatorService);
+  private validator = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+
   form = this.formBuilder.group({
     vcpus: [1, {
       validators: [Validators.required, Validators.min(1)],
@@ -82,17 +89,6 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
 
   readonly cpuModes$ = of(mapToOptions(vmCpuModeLabels, this.translate));
   readonly cpuModels$ = this.api.call('vm.cpu_model_choices').pipe(choicesToOptions());
-
-  constructor(
-    public formatter: IxFormatterService,
-    private formBuilder: FormBuilder,
-    private cpuValidator: CpuValidatorService,
-    private validator: IxValidatorsService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   get isCpuCustom(): boolean {
     return this.form.value.cpu_mode === VmCpuMode.Custom;

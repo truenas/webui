@@ -1,9 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component, input, output,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output, inject } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
@@ -27,6 +22,8 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   ],
 })
 export class IxListComponent implements AfterViewInit {
+  private cdr = inject(ChangeDetectorRef);
+
   readonly formArray = input<AbstractControl>();
   readonly label = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
@@ -42,10 +39,6 @@ export class IxListComponent implements AfterViewInit {
   readonly add = output<ChartSchemaNode[] | undefined>();
 
   isDisabled = false;
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngAfterViewInit(): void {
     if (!this.isEditMode() && Number(this.default()?.length) > 0) {

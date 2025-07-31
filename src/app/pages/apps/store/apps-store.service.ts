@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
@@ -36,6 +36,9 @@ const initialState: AppsState = {
 @UntilDestroy()
 @Injectable()
 export class AppsStore extends ComponentStore<AppsState> {
+  private errorHandler = inject(ErrorHandlerService);
+  private appsService = inject(ApplicationsService);
+
   readonly isLoading$ = this.select((state) => state.isLoading);
 
   readonly recommendedApps$ = this.select((state) => state.recommendedApps);
@@ -48,10 +51,7 @@ export class AppsStore extends ComponentStore<AppsState> {
 
   readonly availableApps$ = this.select((state) => state.availableApps);
 
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private appsService: ApplicationsService,
-  ) {
+  constructor() {
     super(initialState);
     this.initialize();
   }

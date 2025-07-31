@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -69,6 +67,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CertificateListComponent implements OnInit {
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+  private download = inject(DownloadService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+
   readonly certificateDeleted = output();
 
   protected readonly requiredRoles = [Role.CertificateWrite];
@@ -113,16 +119,6 @@ export class CertificateListComponent implements OnInit {
     uniqueRowTag: (row) => 'cert-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Certificate')],
   });
-
-  constructor(
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-    private download: DownloadService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     const certificates$ = this.api.call('certificate.query').pipe(

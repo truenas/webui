@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
@@ -45,6 +45,14 @@ type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>> & { js
   providedIn: 'root',
 })
 export class WebSocketHandlerService {
+  private wsStatus = inject(WebSocketStatusService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  protected window = inject<Window>(WINDOW);
+  private webSocket = inject(WEBSOCKET);
+  private debugService = inject(WebSocketDebugService);
+  private mockResponseService = inject(MockResponseService);
+
   private readonly wsConnection: WebSocketConnection;
   private connectionUrl: string;
 
@@ -101,15 +109,7 @@ export class WebSocketHandlerService {
     return this._responses$;
   }
 
-  constructor(
-    private wsStatus: WebSocketStatusService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    @Inject(WINDOW) protected window: Window,
-    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebSocket,
-    private debugService: WebSocketDebugService,
-    private mockResponseService: MockResponseService,
-  ) {
+  constructor() {
     // Initialize connection properties
     this.wsConnection = new WebSocketConnection(this.webSocket);
     this.connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/api/current';

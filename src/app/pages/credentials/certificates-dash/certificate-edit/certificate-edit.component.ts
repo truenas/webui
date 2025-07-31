@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import {
   FormBuilder, Validators, ReactiveFormsModule, FormGroup, FormControl,
 } from '@angular/forms';
@@ -57,6 +55,13 @@ import {
   ],
 })
 export class CertificateEditComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(FormErrorHandlerService);
+  private matDialog = inject(MatDialog);
+  slideInRef = inject<SlideInRef<Certificate, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.CertificateWrite];
 
   isLoading = false;
@@ -74,14 +79,7 @@ export class CertificateEditComponent implements OnInit {
 
   readonly helptext = helptextSystemCertificates;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
-    private matDialog: MatDialog,
-    public slideInRef: SlideInRef<Certificate, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
@@ -26,16 +26,16 @@ export interface NamespaceFormParams {
   ],
 })
 export class NamespaceFormComponent {
+  slideInRef = inject<SlideInRef<NamespaceFormParams, NamespaceChanges>>(SlideInRef);
+  private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+  private loader = inject(LoaderService);
+  private translate = inject(TranslateService);
+
   protected existingNamespace = signal<NvmeOfNamespace>(undefined);
   protected error = signal<unknown>(null);
 
-  constructor(
-    public slideInRef: SlideInRef<NamespaceFormParams, NamespaceChanges>,
-    private api: ApiService,
-    private snackbar: SnackbarService,
-    private loader: LoaderService,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     this.existingNamespace.set(this.slideInRef.getData().namespace);
   }
 

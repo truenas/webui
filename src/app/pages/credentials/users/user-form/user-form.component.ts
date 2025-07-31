@@ -1,7 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -105,6 +102,22 @@ export enum UserStigPasswordOption {
   ],
 })
 export class OldUserFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private validatorsService = inject(IxValidatorsService);
+  private filesystemService = inject(FilesystemService);
+  private snackbar = inject(SnackbarService);
+  private storageService = inject(StorageService);
+  private downloadService = inject(DownloadService);
+  private store$ = inject<Store<AppState>>(Store);
+  private dialog = inject(DialogService);
+  private matDialog = inject(MatDialog);
+  slideInRef = inject<SlideInRef<User | undefined, User>>(SlideInRef);
+
   protected isFormLoading = signal(false);
   subscriptions: Subscription[] = [];
   homeModeOldValue = '';
@@ -255,23 +268,7 @@ export class OldUserFormComponent implements OnInit {
     return '';
   }
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    private validatorsService: IxValidatorsService,
-    private filesystemService: FilesystemService,
-    private snackbar: SnackbarService,
-    private storageService: StorageService,
-    private downloadService: DownloadService,
-    private store$: Store<AppState>,
-    private dialog: DialogService,
-    private matDialog: MatDialog,
-    public slideInRef: SlideInRef<User | undefined, User>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

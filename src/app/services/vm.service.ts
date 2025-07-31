@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -27,6 +27,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
 export class VmService {
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private download = inject(DownloadService);
+  private matDialog = inject(MatDialog);
+  private window = inject<Window>(WINDOW);
+
   hasVirtualizationSupport$ = new BehaviorSubject<boolean>(true);
   refreshVmList$ = new Subject<void>();
   private checkMemory$ = new Subject<void>();
@@ -37,16 +46,7 @@ export class VmService {
     poweroff: 'vm.poweroff',
   } as const;
 
-  constructor(
-    private api: ApiService,
-    private loader: LoaderService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private download: DownloadService,
-    private matDialog: MatDialog,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.getVirtualizationDetails().pipe(take(1)).subscribe((details) => {
       this.hasVirtualizationSupport$.next(details.supported);
     });

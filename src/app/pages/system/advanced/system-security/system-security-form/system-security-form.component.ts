@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -63,6 +58,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class SystemSecurityFormComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private authService = inject(AuthService);
+  private errorHandler = inject(ErrorHandlerService);
+  private router = inject(Router);
+  slideInRef = inject<SlideInRef<SystemSecurityConfig, boolean>>(SlideInRef);
+
   protected readonly stigRequirements = stigPasswordRequirements;
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
@@ -102,17 +107,7 @@ export class SystemSecurityFormComponent implements OnInit {
   protected globalTwoFactorEnabled = signal<boolean>(false);
   protected stigValidationError = signal<string | null>(null);
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private authService: AuthService,
-    private errorHandler: ErrorHandlerService,
-    private router: Router,
-    public slideInRef: SlideInRef<SystemSecurityConfig, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

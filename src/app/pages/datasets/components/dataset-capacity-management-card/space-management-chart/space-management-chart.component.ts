@@ -1,7 +1,5 @@
 import { PercentPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -28,6 +26,8 @@ import { ThemeService } from 'app/modules/theme/theme.service';
   ],
 })
 export class SpaceManagementChartComponent {
+  private themeService = inject(ThemeService);
+
   readonly dataset = input.required<DatasetDetails>();
 
   protected swatchColors: SwatchColors = {};
@@ -64,10 +64,6 @@ export class SpaceManagementChartComponent {
 
     return this.makeDatasets(data);
   });
-
-  constructor(
-    private themeService: ThemeService,
-  ) {}
 
   private makeDatasets(data: DiskSpace[]): ChartDataset[] {
     const datasets: ChartDataset[] = [];

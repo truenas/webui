@@ -1,8 +1,5 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy, input, output,
-  computed,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, computed, inject } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -50,6 +47,10 @@ import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-dat
   ],
 })
 export class AuditListComponent {
+  private sanitizer = inject(DomSanitizer);
+  protected emptyService = inject(EmptyService);
+  private translate = inject(TranslateService);
+
   readonly dataProvider = input.required<AuditApiDataProvider>();
   readonly isMobileView = input.required<boolean>();
 
@@ -91,12 +92,6 @@ export class AuditListComponent {
     uniqueRowTag: (row) => `audit-${row.service}-${row.username}-${row.event}-${row.audit_id}`,
     ariaLabels: (row) => [row.service, row.username, row.event, this.translate.instant('Audit Entry')],
   });
-
-  constructor(
-    private sanitizer: DomSanitizer,
-    protected emptyService: EmptyService,
-    private translate: TranslateService,
-  ) { }
 
   getEventDataForLog(row: AuditEntry): string {
     return getLogImportantData(row, this.translate);

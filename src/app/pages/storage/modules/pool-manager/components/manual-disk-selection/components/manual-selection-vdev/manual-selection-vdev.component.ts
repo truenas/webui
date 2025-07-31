@@ -1,7 +1,5 @@
 import { NgClass, AsyncPipe, KeyValuePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -49,6 +47,11 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   ],
 })
 export class ManualSelectionVdevComponent implements OnChanges {
+  private cdr = inject(ChangeDetectorRef);
+  protected store$ = inject(ManualDiskSelectionStore);
+  private translate = inject(TranslateService);
+  protected dragToggleStore$ = inject(ManualDiskSelectionDragToggleStore);
+
   readonly vdev = input.required<ManualSelectionVdev>();
   readonly layout = input.required<CreateVdevLayout>();
   readonly editable = input(false);
@@ -73,13 +76,6 @@ export class ManualSelectionVdevComponent implements OnChanges {
       && (this.enclosuresDisks.size > 1
         || !!this.nonEnclosureDisks.length);
   }
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    protected store$: ManualDiskSelectionStore,
-    private translate: TranslateService,
-    protected dragToggleStore$: ManualDiskSelectionDragToggleStore,
-  ) { }
 
   ngOnChanges(): void {
     this.validateVdev();

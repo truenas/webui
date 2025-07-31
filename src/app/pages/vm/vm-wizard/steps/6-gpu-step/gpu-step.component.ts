@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -37,6 +35,14 @@ import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-valid
   ],
 })
 export class GpuStepComponent implements SummaryProvider, OnInit {
+  private formBuilder = inject(FormBuilder);
+  private gpuValidator = inject(IsolatedGpuValidatorService);
+  private translate = inject(TranslateService);
+  private gpuService = inject(GpuService);
+  private dialog = inject(DialogService);
+  private api = inject(ApiService);
+  private criticalGpuPrevention = inject(CriticalGpuPreventionService);
+
   form = this.formBuilder.nonNullable.group({
     hide_from_msr: [false],
     ensure_display_device: [true],
@@ -45,17 +51,7 @@ export class GpuStepComponent implements SummaryProvider, OnInit {
 
   readonly helptext = helptextVmWizard;
   readonly gpuOptions$ = this.gpuService.getGpuOptions();
-  criticalGpus = new Map<string, string>(); // Maps pci_slot to critical_reason
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private gpuValidator: IsolatedGpuValidatorService,
-    private translate: TranslateService,
-    private gpuService: GpuService,
-    private dialog: DialogService,
-    private api: ApiService,
-    private criticalGpuPrevention: CriticalGpuPreventionService,
-  ) {}
+  criticalGpus = new Map<string, string>();
 
   ngOnInit(): void {
     // Setup critical GPU prevention

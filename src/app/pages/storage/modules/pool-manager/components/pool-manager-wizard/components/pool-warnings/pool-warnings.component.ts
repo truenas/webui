@@ -1,7 +1,5 @@
 import { KeyValuePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -41,6 +39,12 @@ import { hasNonUniqueSerial, hasExportedPool } from 'app/pages/storage/modules/p
   ],
 })
 export class PoolWarningsComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private store = inject(PoolManagerStore);
+  private diskStore = inject(DiskStore);
+
   protected form = this.formBuilder.nonNullable.group({
     allowNonUniqueSerialDisks: [false],
     allowExportedPools: [[] as string[]],
@@ -59,14 +63,6 @@ export class PoolWarningsComponent implements OnInit {
     { label: this.translate.instant('Allow'), value: true },
     { label: this.translate.instant('Don\'t Allow'), value: false },
   ]);
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private store: PoolManagerStore,
-    private diskStore: DiskStore,
-  ) {}
 
   ngOnInit(): void {
     this.initUnsafeDisksWarnings();

@@ -1,14 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AbstractControl, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 
 @Injectable()
 export class PropertiesOverrideValidatorService {
-  constructor(
-    private validatorsService: IxValidatorsService,
-    private translate: TranslateService,
-  ) {}
+  private validatorsService = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+
 
   validate = this.validatorsService.customValidator(
     (control: AbstractControl) => this.validatePropertyOverride(control),

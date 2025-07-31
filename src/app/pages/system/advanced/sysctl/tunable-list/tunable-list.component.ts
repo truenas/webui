@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -59,6 +57,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class TunableListComponent implements OnInit {
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  private cdr = inject(ChangeDetectorRef);
+  protected emptyService = inject(EmptyService);
+  private snackbar = inject(SnackbarService);
+  private slideIn = inject(SlideIn);
+
   protected readonly requiredRoles = [Role.SystemTunableWrite];
   protected readonly searchableElements = tunableListElements;
 
@@ -105,17 +112,6 @@ export class TunableListComponent implements OnInit {
     uniqueRowTag: (row) => 'tunable-' + row.var + '-' + row.value,
     ariaLabels: (row) => [row.var, this.translate.instant('Tunable')],
   });
-
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
-    protected emptyService: EmptyService,
-    private snackbar: SnackbarService,
-    private slideIn: SlideIn,
-  ) {}
 
   ngOnInit(): void {
     const tunables$ = this.api.call('tunable.query').pipe(

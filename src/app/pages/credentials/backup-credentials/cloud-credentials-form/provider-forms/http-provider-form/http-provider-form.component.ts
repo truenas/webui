@@ -1,6 +1,4 @@
-import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -24,6 +22,10 @@ import {
   ],
 })
 export class HttpProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
+  formatter = inject(IxFormatterService);
+  private formBuilder = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+
   form = this.formBuilder.group({
     url: ['', Validators.required],
   });
@@ -33,13 +35,5 @@ export class HttpProviderFormComponent extends BaseProviderFormComponent impleme
       this.form.patchValue(values);
       this.cdr.detectChanges();
     });
-  }
-
-  constructor(
-    public formatter: IxFormatterService,
-    private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
-  ) {
-    super();
   }
 }

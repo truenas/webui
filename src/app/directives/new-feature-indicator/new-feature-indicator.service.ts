@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, Injectable, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store, select } from '@ngrx/store';
 import { NewFeatureIndicator } from 'app/directives/new-feature-indicator/new-feature-indicator.interface';
@@ -11,12 +11,12 @@ import { selectPreferencesState } from 'app/store/preferences/preferences.select
   providedIn: 'root',
 })
 export class NewFeatureIndicatorService {
+  private store$ = inject<Store<AppState>>(Store);
+
   onShown = new EventEmitter<NewFeatureIndicator>();
   private shownIndicatorKeys: string[] = [];
 
-  constructor(
-    private store$: Store<AppState>,
-  ) {
+  constructor() {
     this.store$.pipe(select(selectPreferencesState), untilDestroyed(this)).subscribe((prefs) => {
       this.shownIndicatorKeys = prefs?.preferences?.shownNewFeatureIndicatorKeys || [];
     });

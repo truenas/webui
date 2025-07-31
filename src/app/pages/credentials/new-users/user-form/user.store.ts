@@ -1,6 +1,4 @@
-import {
-  computed, Injectable, signal,
-} from '@angular/core';
+import { computed, Injectable, signal, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ComponentStore } from '@ngrx/component-store';
 import { merge } from 'lodash-es';
@@ -57,6 +55,9 @@ const initialState: UserFormState = {
 
 @Injectable()
 export class UserFormStore extends ComponentStore<UserFormState> {
+  private api = inject(ApiService);
+  private matDialog = inject(MatDialog);
+
   readonly isStigMode = computed(() => this.state().isStigMode);
   readonly homeModeOldValue = computed(() => this.state().setupDetails.homeModeOldValue);
 
@@ -78,10 +79,7 @@ export class UserFormStore extends ComponentStore<UserFormState> {
     );
   });
 
-  constructor(
-    private api: ApiService,
-    private matDialog: MatDialog,
-  ) {
+  constructor() {
     super(initialState);
   }
 

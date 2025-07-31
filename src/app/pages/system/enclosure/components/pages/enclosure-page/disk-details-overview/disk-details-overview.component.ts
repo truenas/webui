@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatMiniFabButton } from '@angular/material/button';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -31,17 +29,15 @@ import { DiskDetailsComponent } from './disks-overview-details/disk-details.comp
   ],
 })
 export class DiskDetailsOverviewComponent {
+  private store = inject(EnclosureStore);
+  private translate = inject(TranslateService);
+
   readonly selectedSlot = input.required<DashboardEnclosureSlot>();
 
   readonly diskName = computed(() => {
     return this.selectedSlot().dev
       || this.translate.instant('Slot: {slot}', { slot: this.selectedSlot().drive_bay_number });
   });
-
-  constructor(
-    private store: EnclosureStore,
-    private translate: TranslateService,
-  ) {}
 
   protected closeDetails(): void {
     this.store.selectSlot(null);

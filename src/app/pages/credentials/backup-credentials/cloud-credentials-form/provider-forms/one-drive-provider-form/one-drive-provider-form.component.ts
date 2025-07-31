@@ -1,7 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -38,6 +35,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class OneDriveProviderFormComponent extends BaseProviderFormComponent implements OnInit, AfterViewInit {
+  private errorHandler = inject(ErrorHandlerService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+
   @ViewChild(OauthProviderComponent, { static: true }) oauthComponent: OauthProviderComponent;
 
   form = this.formBuilder.group({
@@ -65,15 +67,6 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
   drives$ = of<Option[]>([]);
 
   private drives: CloudSyncOneDriveDrive[] = [];
-
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private formBuilder: NonNullableFormBuilder,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-  ) {
-    super();
-  }
 
   ngOnInit(): void {
     this.setupDriveSelect();

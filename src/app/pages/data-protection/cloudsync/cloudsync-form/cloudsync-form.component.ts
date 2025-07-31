@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -104,6 +102,21 @@ type FormValue = CloudSyncFormComponent['form']['value'];
   ],
 })
 export class CloudSyncFormComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  protected router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
+  protected matDialog = inject(MatDialog);
+  private filesystemService = inject(FilesystemService);
+  protected cloudCredentialService = inject(CloudCredentialService);
+  slideInRef = inject<SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask | false>>(SlideInRef);
+  private authService = inject(AuthService);
+
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -224,22 +237,7 @@ export class CloudSyncFormComponent implements OnInit {
 
   private editingTask: CloudSyncTaskUi | undefined;
 
-  constructor(
-    private translate: TranslateService,
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    protected router: Router,
-    private cdr: ChangeDetectorRef,
-    private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private dialogService: DialogService,
-    protected matDialog: MatDialog,
-    private filesystemService: FilesystemService,
-    protected cloudCredentialService: CloudCredentialService,
-    public slideInRef: SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask | false>,
-    private authService: AuthService,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

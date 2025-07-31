@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -40,6 +38,20 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ChangeBootFromDiskComponent {
+  data = inject<{
+    instance: VirtualizationInstance;
+    primaryBootDisk: VirtualizationDisk;
+    visibleDisks: VirtualizationDisk[];
+}>(MAT_DIALOG_DATA);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private dialogRef = inject<MatDialogRef<ChangeBootFromDiskComponent>>(MatDialogRef);
+  protected formatter = inject(IxFormatterService);
+
   protected readonly form = this.formBuilder.group({
     boot_from: [null as string | null, [Validators.required]],
   });
@@ -55,21 +67,7 @@ export class ChangeBootFromDiskComponent {
 
   protected readonly instancesHelptext = instancesHelptext;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {
-      instance: VirtualizationInstance;
-      primaryBootDisk: VirtualizationDisk;
-      visibleDisks: VirtualizationDisk[];
-    },
-    private formBuilder: NonNullableFormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private dialogRef: MatDialogRef<ChangeBootFromDiskComponent>,
-    protected formatter: IxFormatterService,
-  ) {
+  constructor() {
     if (this.data.primaryBootDisk?.source) {
       this.form.setValue({
         boot_from: this.data.primaryBootDisk.name,

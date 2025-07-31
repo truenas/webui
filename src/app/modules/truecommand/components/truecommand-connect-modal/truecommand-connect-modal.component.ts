@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -47,6 +45,15 @@ export type TruecommandSignupModalResult = boolean | { deregistered: boolean };
   ],
 })
 export class TruecommandConnectModalComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private data = inject<TruecommandSignupModalState>(MAT_DIALOG_DATA);
+  private dialogService = inject(DialogService);
+  private dialogRef = inject<MatDialogRef<TruecommandConnectModalComponent, TruecommandSignupModalResult>>(MatDialogRef);
+  private fb = inject(FormBuilder);
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+
   readonly helptext = helptextTopbar;
   protected readonly requiredRoles = [Role.TrueCommandWrite];
 
@@ -59,17 +66,6 @@ export class TruecommandConnectModalComponent implements OnInit {
   });
 
   get isConnected(): boolean { return this.data?.isConnected; }
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
-    @Inject(MAT_DIALOG_DATA) private data: TruecommandSignupModalState,
-    private dialogService: DialogService,
-    private dialogRef: MatDialogRef<TruecommandConnectModalComponent, TruecommandSignupModalResult>,
-    private fb: FormBuilder,
-    private loader: LoaderService,
-    private api: ApiService,
-  ) {}
 
   ngOnInit(): void {
     this.title = this.data.isConnected

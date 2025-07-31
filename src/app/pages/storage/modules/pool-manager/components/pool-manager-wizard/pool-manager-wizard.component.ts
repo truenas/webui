@@ -1,8 +1,6 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, output, ViewChild, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, output, ViewChild, viewChild, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -89,6 +87,19 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
   ],
 })
 export class PoolManagerWizardComponent implements OnInit, OnDestroy {
+  private store = inject(PoolManagerStore);
+  private systemStore$ = inject<Store<AppState>>(Store);
+  private matDialog = inject(MatDialog);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private router = inject(Router);
+  private snackbar = inject(SnackbarService);
+  private poolManagerValidation = inject(PoolManagerValidationService);
+  private addVdevsStore = inject(AddVdevsStore);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+
   @ViewChild('generalStep') generalStep: GeneralWizardStepComponent;
   @ViewChild('enclosureStep') enclosureStep: EnclosureWizardStepComponent;
 
@@ -120,21 +131,6 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   get isFormDirty(): boolean {
     return this.generalStep?.form?.dirty || this.enclosureStep?.form?.dirty;
   }
-
-  constructor(
-    private store: PoolManagerStore,
-    private systemStore$: Store<AppState>,
-    private matDialog: MatDialog,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private router: Router,
-    private snackbar: SnackbarService,
-    private poolManagerValidation: PoolManagerValidationService,
-    private addVdevsStore: AddVdevsStore,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     this.connectToStore();

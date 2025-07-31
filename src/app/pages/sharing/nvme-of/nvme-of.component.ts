@@ -1,7 +1,5 @@
 import { Location } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, effect, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -54,6 +52,11 @@ import { setSubsystemNameInUrl } from 'app/pages/sharing/nvme-of/utils/router-ut
   ],
 })
 export class NvmeOfComponent implements OnInit {
+  private nvmeOfStore = inject(NvmeOfStore);
+  private slideIn = inject(SlideIn);
+  private activatedRoute = inject(ActivatedRoute);
+  private location = inject(Location);
+
   protected readonly subsystems = this.nvmeOfStore.subsystems;
 
   protected dataProvider = new ArrayDataProvider<NvmeOfSubsystemDetails>();
@@ -64,12 +67,7 @@ export class NvmeOfComponent implements OnInit {
   protected readonly searchableElements = nvmeOfElements;
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
-  constructor(
-    private nvmeOfStore: NvmeOfStore,
-    private slideIn: SlideIn,
-    private activatedRoute: ActivatedRoute,
-    private location: Location,
-  ) {
+  constructor() {
     this.setupDataProvider();
   }
 

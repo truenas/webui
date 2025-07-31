@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -33,19 +33,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewVolumeDialog {
+  protected formatter = inject(IxFormatterService);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private dialogRef = inject<MatDialogRef<NewVolumeDialog, boolean>>(MatDialogRef);
+
   protected form = this.formBuilder.group({
     name: this.formBuilder.control('', Validators.required),
     size: this.formBuilder.control(GiB, [Validators.required, Validators.min(MiB)]),
   });
-
-  constructor(
-    protected formatter: IxFormatterService,
-    private api: ApiService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private formBuilder: NonNullableFormBuilder,
-    private dialogRef: MatDialogRef<NewVolumeDialog, boolean>,
-  ) {}
 
   protected onSubmit(): void {
     const values = this.form.getRawValue();

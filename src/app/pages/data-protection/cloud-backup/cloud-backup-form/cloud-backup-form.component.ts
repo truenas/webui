@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -74,6 +72,15 @@ type FormValue = CloudBackupFormComponent['form']['value'];
   ],
 })
 export class CloudBackupFormComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private filesystemService = inject(FilesystemService);
+  private cloudCredentialService = inject(CloudCredentialService);
+  slideInRef = inject<SlideInRef<CloudBackup | undefined, CloudBackup | false>>(SlideInRef);
+
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -140,16 +147,9 @@ export class CloudBackupFormComponent implements OnInit {
 
   readonly helptext = helptextCloudBackup;
 
-  constructor(
-    private translate: TranslateService,
-    private fb: FormBuilder,
-    private api: ApiService,
-    private errorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
-    private filesystemService: FilesystemService,
-    private cloudCredentialService: CloudCredentialService,
-    public slideInRef: SlideInRef<CloudBackup | undefined, CloudBackup | false>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

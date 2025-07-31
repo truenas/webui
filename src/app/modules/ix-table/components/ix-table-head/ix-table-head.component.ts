@@ -1,7 +1,5 @@
 import { NgClass, NgStyle } from '@angular/common';
-import {
-  AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, input,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -29,6 +27,8 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   ],
 })
 export class IxTableHeadComponent<T> implements AfterViewInit {
+  private cdr = inject(ChangeDetectorRef);
+
   readonly columns = input.required<Column<T, ColumnComponent<T>>[]>();
   readonly dataProvider = input.required<DataProvider<T>>();
 
@@ -37,10 +37,6 @@ export class IxTableHeadComponent<T> implements AfterViewInit {
   get displayedColumns(): Column<T, ColumnComponent<T>>[] {
     return this.columns()?.filter((column) => !column?.hidden);
   }
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngAfterViewInit(): void {
     this.dataProvider().currentPage$.pipe(untilDestroyed(this)).subscribe(() => {

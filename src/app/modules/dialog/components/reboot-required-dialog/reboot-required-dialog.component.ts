@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -35,6 +35,11 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
   ],
 })
 export class RebootRequiredDialog {
+  private store$ = inject<Store<AppState>>(Store);
+  private reboot = inject(RebootService);
+  private fb = inject(NonNullableFormBuilder);
+  private dialogRef = inject<MatDialogRef<RebootRequiredDialog>>(MatDialogRef);
+
   thisNodeRebootReasons = toSignal(this.store$.select(selectThisNodeRebootInfo).pipe(
     map((info) => info?.reboot_required_reasons || []),
   ));
@@ -53,13 +58,6 @@ export class RebootRequiredDialog {
   form = this.fb.group({
     confirm: [false, Validators.requiredTrue],
   });
-
-  constructor(
-    private store$: Store<AppState>,
-    private reboot: RebootService,
-    private fb: NonNullableFormBuilder,
-    private dialogRef: MatDialogRef<RebootRequiredDialog>,
-  ) {}
 
   rebootLocalNode(): void {
     this.reboot.restart();

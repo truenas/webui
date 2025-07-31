@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, signal, OnInit,
-  computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, OnInit, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -66,6 +63,13 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class FibreChannelPortsComponent implements OnInit {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+  private matDialog = inject(MatDialog);
+  protected emptyService = inject(EmptyService);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly searchableElements = fibreChannelPortsElements;
   protected searchQuery = signal<string>('');
   protected dataProvider = new ArrayDataProvider<FibreChannelPortRow>();
@@ -133,15 +137,6 @@ export class FibreChannelPortsComponent implements OnInit {
       ariaLabels: (row) => [row.name, this.translate.instant('Fibre Channel Port')],
     });
   });
-
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private store$: Store<AppState>,
-    private matDialog: MatDialog,
-    protected emptyService: EmptyService,
-    private errorHandler: ErrorHandlerService,
-  ) { }
 
   ngOnInit(): void {
     this.loadTable();

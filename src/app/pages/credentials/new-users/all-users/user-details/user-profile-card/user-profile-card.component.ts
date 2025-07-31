@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import {
   MatCard, MatCardContent, MatCardHeader,
   MatCardTitle,
@@ -25,11 +23,9 @@ import { User } from 'app/interfaces/user.interface';
   ],
 })
 export class UserProfileCardComponent {
-  user = input.required<User>();
+  private translate = inject(TranslateService);
 
-  constructor(
-    private translate: TranslateService,
-  ) {}
+  user = input.required<User>();
 
   protected type = computed(() => this.translate.instant(getUserType(this.user())));
 

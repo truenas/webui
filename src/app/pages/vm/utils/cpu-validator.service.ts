@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl, FormGroup, ValidationErrors,
 } from '@angular/forms';
@@ -17,13 +17,11 @@ import { ApiService } from 'app/modules/websocket/api.service';
  */
 @Injectable()
 export class CpuValidatorService {
-  private maximumCpus$: Observable<number>;
+  private validators = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
 
-  constructor(
-    private validators: IxValidatorsService,
-    private translate: TranslateService,
-    private api: ApiService,
-  ) {}
+  private maximumCpus$: Observable<number>;
 
   createValidator(): (control: AbstractControl) => Observable<ValidationErrors | null> {
     const maximumCpus$ = this.getMaxVcpus();

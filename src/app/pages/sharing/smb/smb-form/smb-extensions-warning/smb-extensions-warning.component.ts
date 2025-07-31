@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -24,14 +22,12 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class SmbExtensionsWarningComponent {
-  extensionsEnabled = output();
+  private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
 
-  constructor(
-    private api: ApiService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private loader: LoaderService,
-  ) {}
+  extensionsEnabled = output();
 
   protected enableExtensions(): void {
     this.api.call('smb.update', [{ aapl_extensions: true }]).pipe(

@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -88,6 +86,15 @@ import { VmService } from 'app/services/vm.service';
   ],
 })
 export class VmListComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private systemGeneralService = inject(SystemGeneralService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private vmService = inject(VmService);
+  private fileSizePipe = inject(FileSizePipe);
+  protected emptyService = inject(EmptyService);
+
   protected readonly requiredRoles = [Role.VmWrite];
   protected readonly searchableElements = vmListElements;
 
@@ -177,17 +184,6 @@ export class VmListComponent implements OnInit {
   get hiddenColumns(): Column<VirtualMachine, ColumnComponent<VirtualMachine>>[] {
     return this.columns.filter((column) => column?.hidden);
   }
-
-  constructor(
-    private slideIn: SlideIn,
-    private systemGeneralService: SystemGeneralService,
-    private translate: TranslateService,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private vmService: VmService,
-    private fileSizePipe: FileSizePipe,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     this.createDataProvider();

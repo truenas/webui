@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -37,6 +35,11 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   ],
 })
 export class EnclosureDashboardComponent {
+  private enclosureStore = inject(EnclosureStore);
+  private route = inject(ActivatedRoute);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+
   readonly isJbofLicensed$ = this.api.call('jbof.licensed');
 
   readonly selectedEnclosure = this.enclosureStore.selectedEnclosure;
@@ -48,12 +51,7 @@ export class EnclosureDashboardComponent {
     message: this.translate.instant('We’re unable to access the enclosure at the moment. Please ensure it’s connected properly and reload the page.'),
   };
 
-  constructor(
-    private enclosureStore: EnclosureStore,
-    private route: ActivatedRoute,
-    private api: ApiService,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     this.enclosureStore.initiate();
     this.enclosureStore.listenForDiskUpdates().pipe(untilDestroyed(this)).subscribe();
 

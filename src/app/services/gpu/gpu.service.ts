@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   combineLatest, Observable,
@@ -20,12 +20,10 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   providedIn: 'root',
 })
 export class GpuService {
-  private allGpus$: Observable<Device[]>;
+  private api = inject(ApiService);
+  private store$ = inject<Store<AppState>>(Store);
 
-  constructor(
-    private api: ApiService,
-    private store$: Store<AppState>,
-  ) {}
+  private allGpus$: Observable<Device[]>;
 
   /**
    * Loads all system gpus with caching.

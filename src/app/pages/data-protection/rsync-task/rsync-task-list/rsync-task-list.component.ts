@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -80,6 +78,19 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class RsyncTaskListComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private crontabExplanation = inject(CrontabExplanationPipe);
+  private taskService = inject(TaskService);
+  private snackbar = inject(SnackbarService);
+  protected emptyService = inject(EmptyService);
+  private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
+
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = rsyncTaskListElements;
   protected readonly emptyConfig = rsyncTaskEmptyConfig;
@@ -190,21 +201,6 @@ export class RsyncTaskListComponent implements OnInit {
     uniqueRowTag: (row) => 'rsync-task-' + row.path + '-' + row.remotehost,
     ariaLabels: (row) => [row.path, row.remotehost, this.translate.instant('Rsync Task')],
   });
-
-  constructor(
-    private translate: TranslateService,
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private crontabExplanation: CrontabExplanationPipe,
-    private taskService: TaskService,
-    private snackbar: SnackbarService,
-    protected emptyService: EmptyService,
-    private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute,
-  ) {}
 
   ngOnInit(): void {
     this.filterString = this.route.snapshot.paramMap.get('dataset') || '';

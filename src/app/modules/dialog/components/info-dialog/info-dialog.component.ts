@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
@@ -23,12 +23,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class InfoDialog {
+  dialogRef = inject<MatDialogRef<InfoDialog>>(MatDialogRef);
+
   title: string;
   info: string;
   icon = 'info';
   isHtml = false;
-
-  constructor(
-    public dialogRef: MatDialogRef<InfoDialog>,
-  ) {}
 }

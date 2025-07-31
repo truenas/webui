@@ -1,10 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component, input,
-  OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -38,6 +33,10 @@ import { parseDraidVdevName } from 'app/pages/storage/modules/pool-manager/utils
   ],
 })
 export class DataWizardStepComponent implements OnInit {
+  private store = inject(PoolManagerStore);
+  private addVdevsStore = inject(AddVdevsStore);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly isStepActive = input.required<boolean>();
   readonly stepWarning = input<string | null>();
 
@@ -48,12 +47,6 @@ export class DataWizardStepComponent implements OnInit {
   protected allowedLayouts = Object.values(CreateVdevLayout) as CreateVdevLayout[];
   readonly helptext = helptextPoolCreation;
   canChangeLayout = true;
-
-  constructor(
-    private store: PoolManagerStore,
-    private addVdevsStore: AddVdevsStore,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.addVdevsStore.pool$.pipe(

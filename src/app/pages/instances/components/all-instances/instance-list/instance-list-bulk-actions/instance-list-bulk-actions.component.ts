@@ -1,10 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  computed,
-  input,
-  output,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, input, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -44,6 +38,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 
 export class InstanceListBulkActionsComponent {
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private matDialog = inject(MatDialog);
+
   readonly checkedInstances = input.required<VirtualizationInstance[]>();
   readonly resetBulkSelection = output();
 
@@ -74,14 +74,6 @@ export class InstanceListBulkActionsComponent {
       (instance) => [VirtualizationStatus.Stopped].includes(instance.status),
     );
   });
-
-  constructor(
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
-  ) {}
 
   onBulkStart(): void {
     this.stoppedCheckedInstances().forEach((instance) => this.start(instance.id));

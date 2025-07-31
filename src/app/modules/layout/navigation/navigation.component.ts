@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component, input, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { MatNavList, MatListItem } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLinkActive, RouterLink } from '@angular/router';
@@ -32,6 +29,8 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
   ],
 })
 export class NavigationComponent {
+  private navService = inject(NavigationService);
+
   readonly isSidenavCollapsed = input(false);
 
   readonly menuToggled = output<[string, SubMenuItem[]]>();
@@ -41,10 +40,6 @@ export class NavigationComponent {
   isHighlighted: string;
 
   readonly MenuItemType = MenuItemType;
-
-  constructor(
-    private navService: NavigationService,
-  ) {}
 
   toggleMenu(state: string, sub: SubMenuItem[]): void {
     this.menuToggled.emit([state, sub]);

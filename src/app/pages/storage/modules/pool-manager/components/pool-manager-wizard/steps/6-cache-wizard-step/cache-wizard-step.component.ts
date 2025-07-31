@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateModule } from '@ngx-translate/core';
@@ -28,6 +26,8 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   ],
 })
 export class CacheWizardStepComponent {
+  private store = inject(PoolManagerStore);
+
   readonly isStepActive = input<boolean>(false);
   readonly stepWarning = input<string | null>();
 
@@ -38,10 +38,6 @@ export class CacheWizardStepComponent {
 
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Cache);
   protected allowedLayouts = [CreateVdevLayout.Stripe];
-
-  constructor(
-    private store: PoolManagerStore,
-  ) {}
 
   goToReviewStep(): void {
     this.goToLastStep.emit();

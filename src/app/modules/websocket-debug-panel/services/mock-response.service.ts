@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { environment } from 'environments/environment';
 import {
@@ -19,6 +19,8 @@ import { selectEnabledMockConfigs } from 'app/modules/websocket-debug-panel/stor
   providedIn: 'root',
 })
 export class MockResponseService implements OnDestroy {
+  private store$ = inject(Store);
+
   private readonly mockResponses$ = new Subject<IncomingMessage>();
   private jobIdCounter = 10000;
   private readonly mockedCallIds = new Set<string>();
@@ -29,10 +31,6 @@ export class MockResponseService implements OnDestroy {
   get responses$(): Observable<IncomingMessage> {
     return this.mockResponses$.asObservable();
   }
-
-  constructor(
-    private store$: Store,
-  ) {}
 
   ngOnDestroy(): void {
     // Clean up all subscriptions

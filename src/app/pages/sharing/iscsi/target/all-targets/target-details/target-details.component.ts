@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, effect, input,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { finalize, take } from 'rxjs';
@@ -31,6 +28,8 @@ import { IscsiConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/al
   ],
 })
 export class TargetDetailsComponent {
+  private api = inject(ApiService);
+
   readonly target = input.required<IscsiTarget>();
 
   targetPort = signal<FibreChannelPort | null>(null);
@@ -48,9 +47,7 @@ export class TargetDetailsComponent {
     IscsiTargetMode.Both,
   ].includes(this.target().mode));
 
-  constructor(
-    private api: ApiService,
-  ) {
+  constructor() {
     effect(() => {
       const targetId = this.target().id;
       this.targetPort.set(null);

@@ -54,6 +54,8 @@ enum UserType {
 })
 
 export class UsersSearchComponent implements OnInit {
+  private translate = inject(TranslateService);
+
   protected readonly advancedSearchPlaceholder = this.translate.instant('Username = "root" AND "Built in" = "Yes"');
 
   readonly dataProvider = input.required<UsersDataProvider>();
@@ -93,9 +95,7 @@ export class UsersSearchComponent implements OnInit {
 
   private lastProcessedQuery = signal<SearchQuery<User> | null>(null);
 
-  constructor(
-    private translate: TranslateService,
-  ) {
+  constructor() {
     this.updateBuiltinActiveState();
 
     effect(() => {

@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -73,6 +73,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class UserApiKeysComponent implements OnInit {
+  protected emptyService = inject(EmptyService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private dialog = inject(DialogService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private authService = inject(AuthService);
+  private slideIn = inject(SlideIn);
+  private route = inject(ActivatedRoute);
+
   protected searchQuery: SearchQuery<ApiKey>;
   protected searchProperties: SearchProperty<ApiKey>[] = [];
   protected readonly requiredRoles = [Role.ApiKeyWrite, Role.SharingAdmin, Role.ReadonlyAdmin];
@@ -157,18 +167,6 @@ export class UserApiKeysComponent implements OnInit {
   protected readonly usernameSuggestions$ = this.apiKeys$.pipe(
     map((keys) => uniq(keys.map((key) => ({ label: key.username, value: key.username })))),
   );
-
-  constructor(
-    protected emptyService: EmptyService,
-    private translate: TranslateService,
-    private api: ApiService,
-    private dialog: DialogService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private authService: AuthService,
-    private slideIn: SlideIn,
-    private route: ActivatedRoute,
-  ) { }
 
   ngOnInit(): void {
     this.dataProvider = new ApiDataProvider(this.api, 'api_key.query');

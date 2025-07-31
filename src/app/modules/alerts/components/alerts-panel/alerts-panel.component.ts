@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatRipple } from '@angular/material/core';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -54,6 +52,11 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class AlertsPanelComponent implements OnInit {
+  private store$ = inject<Store<AlertSlice>>(Store);
+  private router = inject(Router);
+  private systemService = inject(SystemGeneralService);
+  private cdr = inject(ChangeDetectorRef);
+
   protected readonly requiredRoles = [Role.AlertListWrite];
 
   error$ = this.store$.select(selectAlertState).pipe(map((state) => state.error));
@@ -62,13 +65,6 @@ export class AlertsPanelComponent implements OnInit {
   dismissedAlerts$ = this.store$.select(selectDismissedAlerts);
 
   isHaLicensed = false;
-
-  constructor(
-    private store$: Store<AlertSlice>,
-    private router: Router,
-    private systemService: SystemGeneralService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.checkHaStatus();

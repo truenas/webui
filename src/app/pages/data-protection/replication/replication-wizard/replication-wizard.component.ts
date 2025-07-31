@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -68,6 +64,17 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class ReplicationWizardComponent {
+  private api = inject(ApiService);
+  private replicationService = inject(ReplicationService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
+  private authService = inject(AuthService);
+  slideInRef = inject<SlideInRef<undefined, ReplicationTask | undefined>>(SlideInRef);
+
   protected whatAndWhere = viewChild.required(ReplicationWhatAndWhereComponent);
   protected when = viewChild.required(ReplicationWhenComponent);
 
@@ -83,18 +90,7 @@ export class ReplicationWizardComponent {
   createdSnapshotTasks: PeriodicSnapshotTask[] = [];
   createdReplication: ReplicationTask | undefined;
 
-  constructor(
-    private api: ApiService,
-    private replicationService: ReplicationService,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private loader: LoaderService,
-    private snackbar: SnackbarService,
-    private authService: AuthService,
-    public slideInRef: SlideInRef<undefined, ReplicationTask | undefined>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(this.whatAndWhere()?.form?.dirty || this.when()?.form?.dirty));
     });

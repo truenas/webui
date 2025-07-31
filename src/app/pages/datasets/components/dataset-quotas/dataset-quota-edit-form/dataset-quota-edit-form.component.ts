@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -50,6 +48,19 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class DatasetQuotaEditFormComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  formatter = inject(IxFormatterService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  protected dialogService = inject(DialogService);
+  slideInRef = inject<SlideInRef<{
+    quotaType: DatasetQuotaType;
+    datasetId: string;
+    id: number;
+}, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   protected isFormLoading = signal(false);
@@ -122,16 +133,9 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     obj_quota: new FormControl(null as number | null),
   });
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-    public formatter: IxFormatterService,
-    private errorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
-    protected dialogService: DialogService,
-    public slideInRef: SlideInRef<{ quotaType: DatasetQuotaType; datasetId: string; id: number }, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

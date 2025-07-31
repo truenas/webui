@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
@@ -37,6 +35,10 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
   ],
 })
 export class DataProtectionCardComponent {
+  private slideIn = inject(SlideIn);
+  private snackbarService = inject(SnackbarService);
+  private translate = inject(TranslateService);
+
   readonly dataset = input.required<DatasetDetails>();
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
@@ -71,12 +73,6 @@ export class DataProtectionCardComponent {
 
     return parts.join(', ');
   }
-
-  constructor(
-    private slideIn: SlideIn,
-    private snackbarService: SnackbarService,
-    private translate: TranslateService,
-  ) {}
 
   addSnapshot(): void {
     this.slideIn.open(SnapshotAddFormComponent, { data: this.dataset().id }).pipe(

@@ -1,7 +1,5 @@
 import { DatePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
@@ -73,6 +71,20 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider {
+  private formBuilder = inject(FormBuilder);
+  private replicationService = inject(ReplicationService);
+  private keychainCredentials = inject(KeychainCredentialService);
+  private datePipe = inject(DatePipe);
+  private translate = inject(TranslateService);
+  private authService = inject(AuthService);
+  private datasetService = inject(DatasetService);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorParser = inject(ErrorParserService);
+  private errorHandler = inject(ErrorHandlerService);
+  slideInRef = inject<SlideInRef<ReplicationTask, ReplicationTask>>(SlideInRef);
+
   readonly customRetentionVisibleChange = output<boolean>();
 
   protected sourceNodeProvider: TreeNodeProvider;
@@ -166,21 +178,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       : helptextReplicationWizard.nameSchemaOrRegexPull;
   }
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private replicationService: ReplicationService,
-    private keychainCredentials: KeychainCredentialService,
-    private datePipe: DatePipe,
-    private translate: TranslateService,
-    private authService: AuthService,
-    private datasetService: DatasetService,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorParser: ErrorParserService,
-    private errorHandler: ErrorHandlerService,
-    public slideInRef: SlideInRef<ReplicationTask, ReplicationTask>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

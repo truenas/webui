@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -79,6 +79,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ReplicationTaskCardComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  private matDialog = inject(MatDialog);
+  private download = inject(DownloadService);
+  protected emptyService = inject(EmptyService);
+
   dataProvider: AsyncDataProvider<ReplicationTask>;
   jobStates = new Map<number, JobState>();
   replicationTasks: ReplicationTask[] = [];
@@ -153,18 +163,6 @@ export class ReplicationTaskCardComponent implements OnInit {
     uniqueRowTag: (row) => 'replication-task-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Replication Task')],
   });
-
-  constructor(
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private snackbar: SnackbarService,
-    private matDialog: MatDialog,
-    private download: DownloadService,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const replicationTasks$ = this.api.call('replication.query', [[], {

@@ -1,4 +1,4 @@
-import { Inject, Injectable, DOCUMENT } from '@angular/core';
+import { Injectable, DOCUMENT, inject } from '@angular/core';
 import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { JobExceptionType } from 'app/enums/response-error-type.enum';
@@ -13,15 +13,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
 export class FormErrorHandlerService {
+  private errorHandler = inject(ErrorHandlerService);
+  private formService = inject(IxFormService);
+  private editableService = inject(EditableService);
+  private document = inject<Document>(DOCUMENT);
+
   private isFocusedOnError = false;
   private needToShowError = false;
-
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private formService: IxFormService,
-    private editableService: EditableService,
-    @Inject(DOCUMENT) private document: Document,
-  ) {}
 
   /**
    * @param error

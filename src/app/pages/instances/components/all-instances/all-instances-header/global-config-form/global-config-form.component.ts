@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -52,6 +50,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class GlobalConfigFormComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  slideInRef = inject<SlideInRef<VirtualizationGlobalConfig, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
   protected isLoading = signal(false);
   protected currentConfig = signal<VirtualizationGlobalConfig>(this.slideInRef.getData());
@@ -81,15 +87,7 @@ export class GlobalConfigFormComponent implements OnInit {
     return this.form.controls.bridge.value === this.autoBridge;
   }
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private snackbar: SnackbarService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    public slideInRef: SlideInRef<VirtualizationGlobalConfig, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

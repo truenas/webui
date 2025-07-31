@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, OnInit,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import {
@@ -55,6 +53,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class SnapshotRollbackDialog implements OnInit {
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private fb = inject(FormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private snapshotName = inject(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.SnapshotWrite];
 
   isLoading = true;
@@ -94,16 +100,6 @@ export class SnapshotRollbackDialog implements OnInit {
     label: helptextSnapshots.rollbackConfirm,
     required: true,
   };
-
-  constructor(
-    private api: ApiService,
-    private loader: LoaderService,
-    private fb: FormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) private snapshotName: string,
-  ) {}
 
   ngOnInit(): void {
     this.getSnapshotCreationInfo();

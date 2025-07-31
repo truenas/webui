@@ -1,7 +1,5 @@
 import { SlicePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { slice } from 'lodash-es';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
@@ -20,12 +18,10 @@ import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule
   ],
 })
 export class SchedulerDateExamplesComponent {
+  private localeService = inject(LocaleService);
+
   readonly cronPreview = input.required<CronSchedulePreview>();
   readonly startDate = input.required<Date>();
-
-  constructor(
-    private localeService: LocaleService,
-  ) { }
 
   protected readonly maxExamples = 25;
 

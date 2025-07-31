@@ -1,7 +1,5 @@
 import { NgClass } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -23,12 +21,10 @@ import { TopologyItemIconComponent } from 'app/pages/storage/modules/vdevs/compo
   imports: [TopologyItemIconComponent, NgClass],
 })
 export class TopologyItemNodeComponent {
+  protected translate = inject(TranslateService);
+
   readonly topologyItem = input.required<VDevItem>();
   readonly disk = input.required<Disk>();
-
-  constructor(
-    protected translate: TranslateService,
-  ) {}
 
   protected readonly name = computed(() => {
     if ((this.topologyItem() as TopologyDisk).disk) {

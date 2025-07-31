@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, output, inject } from '@angular/core';
 import {
   AbstractControl, FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -34,6 +32,11 @@ const critical = 95;
   ],
 })
 export class QuotasSectionComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  formatter = inject(IxFormatterService);
+  private validators = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+
   readonly formValidityChange = output<boolean>();
 
   readonly form = this.formBuilder.nonNullable.group({
@@ -58,13 +61,6 @@ export class QuotasSectionComponent implements OnInit {
   });
 
   readonly helptext = helptextDatasetForm;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    public formatter: IxFormatterService,
-    private validators: IxValidatorsService,
-    private translate: TranslateService,
-  ) {}
 
   ngOnInit(): void {
     this.setFormRelations();

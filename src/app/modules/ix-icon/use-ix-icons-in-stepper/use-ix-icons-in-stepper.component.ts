@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  TemplateRef,
-  viewChildren,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, TemplateRef, viewChildren, inject } from '@angular/core';
 import { MatStepper, MatStepperIcon, MatStepperIconContext } from '@angular/material/stepper';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
@@ -22,11 +16,9 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UseIxIconsInStepperComponent implements AfterViewInit {
-  readonly stepperIcons = viewChildren(MatStepperIcon);
+  private stepper = inject(MatStepper);
 
-  constructor(
-    private stepper: MatStepper,
-  ) {}
+  readonly stepperIcons = viewChildren(MatStepperIcon);
 
   ngAfterViewInit(): void {
     this.stepper._iconOverrides = this.getIconOverrides();

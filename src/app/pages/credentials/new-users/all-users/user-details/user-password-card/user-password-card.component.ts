@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
@@ -49,6 +47,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class UserPasswordCardComponent {
+  private authService = inject(AuthService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private matDialog = inject(MatDialog);
+  private errorHandler = inject(ErrorHandlerService);
+
   user = input.required<User>();
 
   protected readonly Role = Role;
@@ -56,16 +62,6 @@ export class UserPasswordCardComponent {
   loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
 
   protected readonly searchableElements = userPasswordCardElements;
-
-  constructor(
-    private authService: AuthService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private loader: LoaderService,
-    private api: ApiService,
-    private matDialog: MatDialog,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   protected generateOneTimePassword(): void {
     const { username } = this.user();

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -39,19 +37,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class LockDatasetDialog {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private dialogRef = inject<MatDialogRef<LockDatasetDialog>>(MatDialogRef);
+  private dialogService = inject(DialogService);
+  dataset = inject<Dataset>(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   forceCheckbox = new FormControl(false, { nonNullable: true });
-
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private dialogRef: MatDialogRef<LockDatasetDialog>,
-    private dialogService: DialogService,
-    @Inject(MAT_DIALOG_DATA) public dataset: Dataset,
-  ) { }
 
   onSubmit($event: SubmitEvent): void {
     $event.preventDefault();

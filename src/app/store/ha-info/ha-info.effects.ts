@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map, mergeMap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -13,6 +13,10 @@ import {
 
 @Injectable()
 export class HaInfoEffects {
+  private actions$ = inject(Actions);
+  private api = inject(ApiService);
+  private window = inject<Window>(WINDOW);
+
   loadFailoverLicensedStatus = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
@@ -52,10 +56,4 @@ export class HaInfoEffects {
       );
     }),
   ));
-
-  constructor(
-    private actions$: Actions,
-    private api: ApiService,
-    @Inject(WINDOW) private window: Window,
-  ) { }
 }

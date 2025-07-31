@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
@@ -36,6 +34,10 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
   ],
 })
 export class AddPortMenuComponent {
+  private slideIn = inject(SlideIn);
+  private matDialog = inject(MatDialog);
+  private nvmeOfStore = inject(NvmeOfStore);
+
   subsystemPorts = input.required<NvmeOfPort[]>();
   portSelected = output<NvmeOfPort>();
 
@@ -48,12 +50,6 @@ export class AddPortMenuComponent {
     const unusedPorts = this.allPorts().filter((port) => !usedPortIds.includes(port.id));
     return sortBy(unusedPorts, ['addr_trtype', 'addr_traddr', 'addr_trsvcid']);
   });
-
-  constructor(
-    private slideIn: SlideIn,
-    private matDialog: MatDialog,
-    private nvmeOfStore: NvmeOfStore,
-  ) {}
 
   protected openPortForm(): void {
     this.slideIn

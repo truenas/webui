@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -42,6 +39,15 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class LicenseComponent {
+  private fb = inject(FormBuilder);
+  private dialogService = inject(DialogService);
+  protected api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private window = inject<Window>(WINDOW);
+
   protected readonly requiredRoles = [Role.FullAdmin];
 
   isFormLoading = false;
@@ -56,16 +62,7 @@ export class LicenseComponent {
     label: helptext.updateLicense.licensePlaceholder,
   };
 
-  constructor(
-    private fb: FormBuilder,
-    private dialogService: DialogService,
-    protected api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

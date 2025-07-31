@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -36,6 +34,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   standalone: true,
 })
 export class ModalHeaderComponent {
+  private translate = inject(TranslateService);
+  private slideInRef = inject<SlideInRef<unknown, false>>(SlideInRef);
+  private authService = inject(AuthService);
+  private slideIn = inject(SlideIn);
+
   readonly title = input<string>('');
   readonly loading = input<boolean>();
   readonly disableClose = input(false);
@@ -54,13 +57,6 @@ export class ModalHeaderComponent {
     }
     return this.translate.instant('Close the form');
   });
-
-  constructor(
-    private translate: TranslateService,
-    private slideInRef: SlideInRef<unknown, false>,
-    private authService: AuthService,
-    private slideIn: SlideIn,
-  ) {}
 
   close(): void {
     this.slideInRef.close({ response: false });

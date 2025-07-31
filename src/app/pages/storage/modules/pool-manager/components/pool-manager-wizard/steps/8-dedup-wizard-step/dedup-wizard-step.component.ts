@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -30,6 +28,8 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   ],
 })
 export class DedupWizardStepComponent {
+  private store = inject(PoolManagerStore);
+
   readonly isStepActive = input<boolean>(false);
   readonly stepWarning = input<string | null>();
 
@@ -42,10 +42,6 @@ export class DedupWizardStepComponent {
 
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Dedup);
   protected allowedLayouts = [CreateVdevLayout.Mirror, CreateVdevLayout.Stripe];
-
-  constructor(
-    private store: PoolManagerStore,
-  ) {}
 
   goToReviewStep(): void {
     this.goToLastStep.emit();

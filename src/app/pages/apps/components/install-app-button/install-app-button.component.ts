@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, ViewContainerRef, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewContainerRef, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -34,23 +32,21 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   ],
 })
 export class InstallAppButtonComponent {
+  private dockerStore = inject(DockerStore);
+  private router = inject(Router);
+  private matDialog = inject(MatDialog);
+  private authService = inject(AuthService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private viewContainerRef = inject(ViewContainerRef);
+
   readonly app = input<AvailableApp>();
 
   protected readonly appInstallRole = [Role.AppsWrite];
   protected readonly selectPoolRole = [Role.DockerWrite];
 
   protected readonly selectedPool = toSignal(this.dockerStore.selectedPool$);
-
-  constructor(
-    private dockerStore: DockerStore,
-    private router: Router,
-    private matDialog: MatDialog,
-    private authService: AuthService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private api: ApiService,
-    private viewContainerRef: ViewContainerRef,
-  ) {}
 
   private showAgreementWarning(): Observable<unknown> {
     return this.authService.user$.pipe(

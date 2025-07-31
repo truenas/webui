@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -67,6 +65,18 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class ServiceNfsComponent implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private fb = inject(NonNullableFormBuilder);
+  private store$ = inject<Store<AppState>>(Store);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  private matDialog = inject(MatDialog);
+  private validatorsService = inject(IxValidatorsService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly isFormLoading = signal(false);
   protected readonly isAddSpnDisabled = signal(true);
   protected readonly hasNfsStatus = signal(false);
@@ -123,19 +133,7 @@ export class ServiceNfsComponent implements OnInit {
 
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private fb: NonNullableFormBuilder,
-    private store$: Store<AppState>,
-    private translate: TranslateService,
-    private dialogService: DialogService,
-    private snackbar: SnackbarService,
-    private matDialog: MatDialog,
-    private validatorsService: IxValidatorsService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

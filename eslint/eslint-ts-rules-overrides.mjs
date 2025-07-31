@@ -26,7 +26,6 @@ export const ruleOverrides = {
   "@typescript-eslint/no-empty-function": ["off"],
 
   "@angular-eslint/component-class-suffix": ["off"],
-  "@angular-eslint/prefer-inject": ["off"], // TODO: should be enabled
 
   "import/no-unresolved": ["off"],
   "import/named": ["off"],

@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -63,6 +61,16 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class InitiatorListComponent implements OnInit {
+  emptyService = inject(EmptyService);
+  private loader = inject(LoaderService);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private iscsiService = inject(IscsiService);
+  private router = inject(Router);
+
   protected readonly searchableElements = initiatorListElements;
 
   protected readonly requiredRoles = [
@@ -130,18 +138,6 @@ export class InitiatorListComponent implements OnInit {
     uniqueRowTag: (row) => `iscsi-initiator-${row.id}`,
     ariaLabels: (row) => [row.id.toString(), this.translate.instant('iSCSI Initiator')],
   });
-
-  constructor(
-    public emptyService: EmptyService,
-    private loader: LoaderService,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private iscsiService: IscsiService,
-    private router: Router,
-  ) {}
 
   ngOnInit(): void {
     const initiators$ = this.iscsiService.getInitiators().pipe(

@@ -31,16 +31,14 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SubsystemPortOrHostDeleteDialogComponent {
+  private dialogRef = inject<MatDialogRef<SubsystemPortOrHostDeleteDialogComponent>>(MatDialogRef);
+  private translate = inject(TranslateService);
+
   protected readonly data = inject<PortOrHostDeleteDialogData>(MAT_DIALOG_DATA);
   protected readonly requiredRoles: Role[] = [Role.SharingNvmeTargetWrite];
   protected readonly type = this.data.type === PortOrHostDeleteType.Host
     ? this.translate.instant('Host')
     : this.translate.instant('Port');
-
-  constructor(
-    private dialogRef: MatDialogRef<SubsystemPortOrHostDeleteDialogComponent>,
-    private translate: TranslateService,
-  ) {}
 
   protected delete(): void {
     this.dialogRef.close({

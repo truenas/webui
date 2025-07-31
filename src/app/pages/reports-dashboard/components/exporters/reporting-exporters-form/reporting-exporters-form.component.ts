@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import {
   UntypedFormGroup, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -64,6 +62,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ReportingExportersFormComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  slideInRef = inject<SlideInRef<ReportingExporter | undefined, boolean>>(SlideInRef);
+
   get isNew(): boolean {
     return !this.editingExporter;
   }
@@ -94,13 +98,7 @@ export class ReportingExportersFormComponent implements OnInit {
   protected reportingExporterList: ReportingExporterList[] = [];
   protected readonly requiredRoles = [Role.ReportingWrite];
 
-  constructor(
-    private translate: TranslateService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<ReportingExporter | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

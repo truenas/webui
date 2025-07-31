@@ -1,13 +1,6 @@
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  HostListener,
-  ViewContainerRef,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, ViewContainerRef, inject } from '@angular/core';
 import { MatInput } from '@angular/material/input';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -35,15 +28,13 @@ import { FocusService } from 'app/services/focus.service';
   ],
 })
 export class GlobalSearchTriggerComponent implements AfterViewInit {
-  protected overlayRef: OverlayRef | undefined;
+  private cdr = inject(ChangeDetectorRef);
+  private overlay = inject(Overlay);
+  private viewContainerRef = inject(ViewContainerRef);
+  private searchProvider = inject(UiSearchProvider);
+  private focusService = inject(FocusService);
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private overlay: Overlay,
-    private viewContainerRef: ViewContainerRef,
-    private searchProvider: UiSearchProvider,
-    private focusService: FocusService,
-  ) {}
+  protected overlayRef: OverlayRef | undefined;
 
   ngAfterViewInit(): void {
     this.prepareOverlay();

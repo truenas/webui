@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -34,6 +32,9 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   ],
 })
 export class IxCheckboxListComponent implements ControlValueAccessor {
+  controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly label = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
@@ -44,10 +45,7 @@ export class IxCheckboxListComponent implements ControlValueAccessor {
   isDisabled = false;
   value: BaseOptionValueType[];
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 

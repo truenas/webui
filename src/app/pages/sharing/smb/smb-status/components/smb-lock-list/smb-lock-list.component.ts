@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -52,6 +50,11 @@ import { SmbOpenFilesComponent } from 'app/pages/sharing/smb/smb-status/componen
   ],
 })
 export class SmbLockListComponent implements OnInit {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  protected emptyService = inject(EmptyService);
+
   filterString = '';
   dataProvider: AsyncDataProvider<SmbLockInfo>;
   locks: SmbLockInfo[] = [];
@@ -81,13 +84,6 @@ export class SmbLockListComponent implements OnInit {
     uniqueRowTag: (row) => `smb-lock-${row.filename}-${row.fileid.devid}-${row.fileid.extid}`,
     ariaLabels: (row) => [row.filename, this.translate.instant('SMB Lock')],
   });
-
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Locks]).pipe(

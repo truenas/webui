@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  ViewContainerRef,
-  viewChild, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewContainerRef, viewChild, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -67,6 +61,16 @@ export interface CloudCredentialFormInput {
   ],
 })
 export class CloudCredentialsFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  private snackbarService = inject(SnackbarService);
+  private cloudCredentialService = inject(CloudCredentialService);
+  slideInRef = inject<SlideInRef<CloudCredentialFormInput, CloudSyncCredential | null>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   commonForm = this.formBuilder.nonNullable.group({
@@ -87,17 +91,7 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: FormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private formErrorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    private snackbarService: SnackbarService,
-    private cloudCredentialService: CloudCredentialService,
-    public slideInRef: SlideInRef<CloudCredentialFormInput, CloudSyncCredential | null>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.commonForm.dirty || this.providerForm.form.dirty);
     });

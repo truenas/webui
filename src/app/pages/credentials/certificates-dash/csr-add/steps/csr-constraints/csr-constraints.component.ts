@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -57,6 +55,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CsrConstraintsComponent implements OnInit, SummaryProvider {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
+
   form = this.formBuilder.nonNullable.group({
     BasicConstraints: this.formBuilder.nonNullable.group({
       enabled: [false],
@@ -81,14 +85,6 @@ export class CsrConstraintsComponent implements OnInit, SummaryProvider {
   extendedKeyUsageOptions$ = of<Option[]>([]);
 
   private extendedKeyUsageOptions: Option[] = [];
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     this.updateUsagesValidator();

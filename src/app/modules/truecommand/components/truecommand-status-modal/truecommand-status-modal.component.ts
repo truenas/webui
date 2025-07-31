@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions,
@@ -35,17 +33,18 @@ import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-
   ],
 })
 export class TruecommandStatusModalComponent {
+  data = inject<{
+    parent: TruecommandButtonComponent;
+    data: TrueCommandConfig;
+}>(MAT_DIALOG_DATA);
+  private window = inject<Window>(WINDOW);
+  private dialogService = inject(DialogService);
+  private cdr = inject(ChangeDetectorRef);
+
   parent = this.data.parent;
   tc = this.data.data;
 
   readonly TrueCommandStatus = TrueCommandStatus;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { parent: TruecommandButtonComponent; data: TrueCommandConfig },
-    @Inject(WINDOW) private window: Window,
-    private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   goToTrueCommand(): void {
     this.dialogService.generalDialog({

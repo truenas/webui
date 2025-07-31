@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -78,6 +76,17 @@ import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-co
   ],
 })
 export class AccessCardComponent implements OnInit {
+  private store$ = inject<Store<AppState>>(Store);
+  private slideIn = inject(SlideIn);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+  private systemGeneralService = inject(SystemGeneralService);
+  protected emptyService = inject(EmptyService);
+
   protected readonly searchableElements = accessCardElements;
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
   readonly sessionTimeout$ = this.store$.pipe(
@@ -133,19 +142,6 @@ export class AccessCardComponent implements OnInit {
   get isEnterprise(): boolean {
     return this.systemGeneralService.isEnterprise;
   }
-
-  constructor(
-    private store$: Store<AppState>,
-    private slideIn: SlideIn,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private loader: LoaderService,
-    private api: ApiService,
-    private firstTimeWarning: FirstTimeWarningService,
-    private systemGeneralService: SystemGeneralService,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const sessions$ = this.api.call('auth.sessions', [[['internal', '=', false]]]).pipe(

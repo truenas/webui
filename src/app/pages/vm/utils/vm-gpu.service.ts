@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { differenceBy } from 'lodash-es';
 import {
   forkJoin, Observable, of, switchMap,
@@ -15,10 +15,9 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   providedIn: 'root',
 })
 export class VmGpuService {
-  constructor(
-    private gpuService: GpuService,
-    private api: ApiService,
-  ) {}
+  private gpuService = inject(GpuService);
+  private api = inject(ApiService);
+
 
   /**
    * Relationship is:

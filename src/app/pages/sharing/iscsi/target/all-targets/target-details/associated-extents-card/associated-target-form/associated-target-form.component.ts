@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -48,6 +45,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class AssociatedTargetFormComponent {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private loader = inject(LoaderService);
+  data = inject<AssociatedTargetDialogData>(MAT_DIALOG_DATA);
+  dialogRef = inject<MatDialogRef<AssociatedTargetFormComponent>>(MatDialogRef);
+
   form = this.formBuilder.group({
     lunid: [null as number | null, [
       Validators.min(0),
@@ -70,15 +74,6 @@ export class AssociatedTargetFormComponent {
     Role.SharingIscsiWrite,
     Role.SharingWrite,
   ];
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private errorHandler: FormErrorHandlerService,
-    private loader: LoaderService,
-    @Inject(MAT_DIALOG_DATA) public data: AssociatedTargetDialogData,
-    public dialogRef: MatDialogRef<AssociatedTargetFormComponent>,
-  ) {}
 
   onSubmit(): void {
     const values = {

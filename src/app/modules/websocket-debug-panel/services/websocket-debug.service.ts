@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
 import { IncomingMessage, RequestMessage } from 'app/interfaces/api-message.interface';
@@ -10,14 +10,12 @@ import * as WebSocketDebugActions from 'app/modules/websocket-debug-panel/store/
   providedIn: 'root',
 })
 export class WebSocketDebugService {
+  private store$ = inject(Store);
+
   // Cache to map request IDs to method names
   private requestMethodCache = new Map<string, string>();
   // Limit cache size to prevent memory leaks
   private readonly maxCacheSize = maxCacheSize;
-
-  constructor(
-    private store$: Store,
-  ) {}
 
   logOutgoingMessage(message: RequestMessage, isMocked = false): void {
     // Cache the method name for this request ID

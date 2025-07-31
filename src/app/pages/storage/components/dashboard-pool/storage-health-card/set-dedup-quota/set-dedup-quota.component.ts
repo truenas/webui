@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -51,6 +51,16 @@ export const quotaTypeLabels = new Map<QuotaType, string>([
   ],
 })
 export class SetDedupQuotaComponent {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private dialog = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogRef = inject<MatDialogRef<SetDedupQuotaComponent>>(MatDialogRef);
+  protected formatter = inject(IxFormatterService);
+  protected pool = inject<Pool>(MAT_DIALOG_DATA);
+
   protected form = this.formBuilder.group({
     quotaType: [null as QuotaType | null],
     quotaValue: [null as number | null, Validators.min(0)],
@@ -58,17 +68,7 @@ export class SetDedupQuotaComponent {
 
   protected quotaTypeOptions$ = of(mapToOptions(quotaTypeLabels, this.translate));
 
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private api: ApiService,
-    private dialog: DialogService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<SetDedupQuotaComponent>,
-    protected formatter: IxFormatterService,
-    @Inject(MAT_DIALOG_DATA) protected pool: Pool,
-  ) {
+  constructor() {
     let quotaType: QuotaType;
     switch (this.pool.dedup_table_quota) {
       case 'auto':

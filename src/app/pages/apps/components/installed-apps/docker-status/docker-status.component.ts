@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -25,11 +25,11 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   ],
 })
 export class DockerStatusComponent {
+  private store = inject(DockerStore);
+
   readonly DockerStatus = DockerStatus;
   readonly dockerStatusLabels = dockerStatusLabels;
 
   status$ = this.store.status$;
   statusDescription$ = this.store.statusDescription$;
-
-  constructor(private store: DockerStore) { }
 }

@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
@@ -30,6 +27,11 @@ import { cpuUsageRecentWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu
   ],
 })
 export class WidgetCpuUsageRecentComponent implements WidgetComponent {
+  private theme = inject(ThemeService);
+  private resources = inject(WidgetResourcesService);
+  private translate = inject(TranslateService);
+  private localeService = inject(LocaleService);
+
   size = input.required<SlotSize>();
 
   readonly name = cpuUsageRecentWidget.name;
@@ -55,13 +57,6 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
     const cachedStats = this.cachedCpuStats();
     return [...initialStats, ...cachedStats].slice(-60);
   });
-
-  constructor(
-    private theme: ThemeService,
-    private resources: WidgetResourcesService,
-    private translate: TranslateService,
-    private localeService: LocaleService,
-  ) {}
 
   chartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();

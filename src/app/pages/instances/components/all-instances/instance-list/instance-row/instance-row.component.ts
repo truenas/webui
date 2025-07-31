@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input, computed, output,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, output, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -50,6 +48,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class InstanceRowComponent {
+  private dialog = inject(DialogService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private matDialog = inject(MatDialog);
+  private snackbar = inject(SnackbarService);
+  private instancesStore = inject(VirtualizationInstancesStore);
+
   protected readonly requiredRoles = [Role.VirtInstanceWrite];
   readonly instance = input.required<VirtualizationInstance>();
   readonly metrics = input<VirtualizationInstanceMetrics | undefined>();
@@ -65,16 +71,6 @@ export class InstanceRowComponent {
   });
 
   readonly selectionChange = output();
-
-  constructor(
-    private dialog: DialogService,
-    private translate: TranslateService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
-    private snackbar: SnackbarService,
-    private instancesStore: VirtualizationInstancesStore,
-  ) {}
 
   start(): void {
     const instanceId = this.instance().id;

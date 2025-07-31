@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,10 +17,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class FullScreenDialog {
-  constructor(
-    public dialogRef: MatDialogRef<FullScreenDialog>,
-    @Inject(MAT_DIALOG_DATA) protected data: Partial<FullScreenDialogOptions>,
-  ) {}
+  dialogRef = inject<MatDialogRef<FullScreenDialog>>(MatDialogRef);
+  protected data = inject<Partial<FullScreenDialogOptions>>(MAT_DIALOG_DATA);
+
 
   close(): void {
     this.dialogRef.close();

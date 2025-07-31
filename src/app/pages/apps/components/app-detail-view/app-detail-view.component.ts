@@ -1,10 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-  signal,
-  computed,
-  effect,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, computed, effect, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -50,6 +45,12 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
   ],
 })
 export class AppDetailViewComponent implements OnInit {
+  private activatedRoute = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
+  private applicationsStore = inject(AppsStore);
+  private gallery = inject(Gallery);
+  private router = inject(Router);
+
   readonly app = signal<AvailableApp | null>(null);
   readonly appId = injectParams('appId');
   readonly train = injectParams('train');
@@ -62,13 +63,7 @@ export class AppDetailViewComponent implements OnInit {
     return app?.title || app?.name || this.translate.instant('...');
   });
 
-  constructor(
-    private activatedRoute: ActivatedRoute,
-    private translate: TranslateService,
-    private applicationsStore: AppsStore,
-    private gallery: Gallery,
-    private router: Router,
-  ) {
+  constructor() {
     effect(() => {
       if (this.appId() && this.train()) {
         this.loadAppInfo();

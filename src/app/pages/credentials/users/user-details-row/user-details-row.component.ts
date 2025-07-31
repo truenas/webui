@@ -1,9 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input,
-  output,
-  signal,
-  OnInit,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, signal, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -51,6 +46,19 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   ],
 })
 export class UserDetailsRowComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private matDialog = inject(MatDialog);
+  private yesNoPipe = inject(YesNoPipe);
+  private formatDateTime = inject(FormatDateTimePipe);
+  private urlOptions = inject(UrlOptionsService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+
   readonly user = input.required<User>();
   readonly delete = output<number>();
 
@@ -58,21 +66,6 @@ export class UserDetailsRowComponent implements OnInit {
   isStigMode = signal<boolean>(false);
 
   protected readonly Role = Role;
-
-  constructor(
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private matDialog: MatDialog,
-    private yesNoPipe: YesNoPipe,
-    private formatDateTime: FormatDateTimePipe,
-    private urlOptions: UrlOptionsService,
-    private authService: AuthService,
-    private router: Router,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-  ) {}
 
   ngOnInit(): void {
     this.api.call('system.security.config').pipe(untilDestroyed(this)).subscribe((config) => {

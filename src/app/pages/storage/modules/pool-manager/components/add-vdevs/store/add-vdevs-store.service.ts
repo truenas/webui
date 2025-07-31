@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
 import { cloneDeep } from 'lodash-es';
@@ -25,6 +25,10 @@ const initialState: AddVdevsState = {
 
 @Injectable()
 export class AddVdevsStore extends ComponentStore<AddVdevsState> {
+  private diskStore = inject(DiskStore);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly pool$ = this.select((state) => state.pool);
   readonly poolDisks$ = combineLatest([
@@ -36,11 +40,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
     }),
   );
 
-  constructor(
-    private diskStore: DiskStore,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-  ) {
+  constructor() {
     super(initialState);
   }
 

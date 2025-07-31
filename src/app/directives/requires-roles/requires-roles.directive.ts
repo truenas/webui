@@ -1,6 +1,4 @@
-import {
-  Directive, HostBinding, Input, TemplateRef, ViewContainerRef,
-} from '@angular/core';
+import { Directive, HostBinding, Input, TemplateRef, ViewContainerRef, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { isEqual } from 'lodash-es';
 import { take } from 'rxjs';
@@ -13,6 +11,10 @@ import { AuthService } from 'app/modules/auth/auth.service';
   selector: '[ixRequiresRoles]',
 })
 export class RequiresRolesDirective extends HasAccessDirective {
+  protected override templateRef: TemplateRef<HTMLElement>;
+  protected override viewContainerRef: ViewContainerRef;
+  private authService = inject(AuthService);
+
   private previousRoles: Role[] | null = null;
 
   // eslint-disable-next-line @angular-eslint/prefer-signals
@@ -48,11 +50,7 @@ export class RequiresRolesDirective extends HasAccessDirective {
     this.cssClassList = val.split(' ');
   }
 
-  constructor(
-    protected override templateRef: TemplateRef<HTMLElement>,
-    protected override viewContainerRef: ViewContainerRef,
-    private authService: AuthService,
-  ) {
-    super(templateRef, viewContainerRef);
+  constructor() {
+    super();
   }
 }

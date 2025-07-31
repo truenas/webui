@@ -1,9 +1,4 @@
-import {
-  AfterViewInit, Directive, effect, ElementRef, Host, inject, input,
-  OnDestroy,
-  Optional,
-  SkipSelf,
-} from '@angular/core';
+import { AfterViewInit, Directive, effect, ElementRef, inject, input, OnDestroy } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
@@ -17,6 +12,10 @@ export const ixControlLabelTag = 'ix-label';
   selector: '[ixRegisteredControl]',
 })
 export class RegisteredControlDirective implements AfterViewInit, OnDestroy {
+  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private formService = inject(IxFormService);
+  private parentFormSection = inject(IxFormSectionComponent, { optional: true, host: true, skipSelf: true });
+
   label = input<string>();
   formControlName = input<string | number>();
   formArrayName = input<string | number>();
@@ -42,12 +41,6 @@ export class RegisteredControlDirective implements AfterViewInit, OnDestroy {
       this.tryRegisterControl();
     }
   });
-
-  constructor(
-    private elementRef: ElementRef<HTMLElement>,
-    private formService: IxFormService,
-    @Optional() @Host() @SkipSelf() private parentFormSection: IxFormSectionComponent,
-  ) { }
 
   ngAfterViewInit(): void {
     if (this.control?.name && !this.controlRegistered) {

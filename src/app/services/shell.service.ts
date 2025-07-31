@@ -1,6 +1,4 @@
-import {
-  Injectable, EventEmitter, Inject,
-} from '@angular/core';
+import { Injectable, EventEmitter, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { environment } from 'environments/environment';
 import { tap } from 'rxjs';
@@ -14,6 +12,9 @@ import { TerminalConnectionData } from 'app/interfaces/terminal.interface';
 @UntilDestroy()
 @Injectable()
 export class ShellService {
+  private window = inject<Window>(WINDOW);
+  private webSocket = inject(WEBSOCKET);
+
   private encoder = new TextEncoder();
   private ws$: WebSocketSubject<unknown>;
   private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket/shell/';
@@ -24,11 +25,6 @@ export class ShellService {
 
   readonly shellOutput$ = this.shellOutput.asObservable();
   readonly shellConnected$ = this.shellConnected.asObservable();
-
-  constructor(
-    @Inject(WINDOW) private window: Window,
-    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebSocket,
-  ) {}
 
   connect(token: string, connectionData: TerminalConnectionData): void {
     this.disconnectIfSessionActive();

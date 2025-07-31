@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -45,6 +45,12 @@ const customReasonValue = 'CUSTOM_REASON_VALUE';
   ],
 })
 export class RebootOrShutdownDialog {
+  dialogRef = inject<MatDialogRef<RebootOrShutdownDialog>>(MatDialogRef);
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+  isShutdown = inject(MAT_DIALOG_DATA) ?? false;
+
   form = this.fb.group({
     confirm: [false, Validators.requiredTrue],
     reason: ['', Validators.required],
@@ -122,13 +128,7 @@ export class RebootOrShutdownDialog {
       : this.translate.instant('Restart');
   }
 
-  constructor(
-    public dialogRef: MatDialogRef<RebootOrShutdownDialog>,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    private store$: Store<AppState>,
-    @Inject(MAT_DIALOG_DATA) public isShutdown = false,
-  ) {
+  constructor() {
     this.form.controls.reason.valueChanges.pipe(untilDestroyed(this)).subscribe((reason) => {
       if (reason === customReasonValue) {
         this.form.controls.customReason.enable();

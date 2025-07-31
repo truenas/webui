@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -74,6 +72,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class StorageHealthCardComponent implements OnChanges {
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private matDialog = inject(MatDialog);
+  private store = inject(PoolsDashboardStore);
+  private slideIn = inject(SlideIn);
+
   readonly pool = input.required<Pool>();
 
   readonly scrub = computed(() => this.store.scrubForPool(this.pool()));
@@ -89,17 +96,6 @@ export class StorageHealthCardComponent implements OnChanges {
 
   readonly poolStatusLabels = poolStatusLabels;
   protected readonly Role = Role;
-
-  constructor(
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
-    private store: PoolsDashboardStore,
-    private slideIn: SlideIn,
-  ) { }
 
   protected readonly wasScanInitiated = computed(() => this.scan()?.state === PoolScanState.Scanning);
   protected readonly isScrub = computed(() => this.scan()?.function === PoolScanFunction.Scrub);

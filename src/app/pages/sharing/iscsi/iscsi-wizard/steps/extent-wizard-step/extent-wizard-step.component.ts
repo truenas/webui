@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -36,6 +34,11 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class ExtentWizardStepComponent implements OnInit {
+  private iscsiService = inject(IscsiService);
+  private filesystemService = inject(FilesystemService);
+  private translate = inject(TranslateService);
+  formatter = inject(IxFormatterService);
+
   readonly form = input.required<IscsiWizardComponent['form']['controls']['extent']>();
 
   readonly helptextSharingIscsi = helptextIscsi;
@@ -64,13 +67,6 @@ export class ExtentWizardStepComponent implements OnInit {
   get isNewZvol(): boolean {
     return this.form().enabled && this.form().value.disk === newOption;
   }
-
-  constructor(
-    private iscsiService: IscsiService,
-    private filesystemService: FilesystemService,
-    private translate: TranslateService,
-    public formatter: IxFormatterService,
-  ) {}
 
   ngOnInit(): void {
     this.form().controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {

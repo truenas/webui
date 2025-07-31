@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
@@ -28,10 +26,10 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class WidgetHelpComponent {
+  private store$ = inject<Store<AppState>>(Store);
+
   readonly size = input.required<SlotSize>();
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   readonly fullSize = computed(() => this.size() === SlotSize.Full);
   protected readonly helptext = helptextAbout;
-
-  constructor(private store$: Store<AppState>) {}
 }

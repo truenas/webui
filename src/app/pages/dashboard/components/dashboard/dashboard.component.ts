@@ -1,9 +1,7 @@
 import {
   CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray,
 } from '@angular/cdk/drag-drop';
-import {
-  ChangeDetectionStrategy, Component, HostListener, OnInit, computed, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnInit, computed, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -65,6 +63,14 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
   ],
 })
 export class DashboardComponent implements OnInit {
+  private dashboardStore = inject(DashboardStore);
+  private slideIn = inject(SlideIn);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
+  private store$ = inject<Store<AppState>>(Store);
+
   readonly searchableElements = dashboardElements;
   readonly isEditing = signal(false);
   readonly renderedGroups = signal<WidgetGroup[]>([]);
@@ -85,16 +91,6 @@ export class DashboardComponent implements OnInit {
     title: this.translate.instant('Your dashboard is currently empty!'),
     message: this.translate.instant('Start adding widgets to personalize it. Click on the "Configure" button to enter edit mode.'),
   };
-
-  constructor(
-    private dashboardStore: DashboardStore,
-    private slideIn: SlideIn,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private dialogService: DialogService,
-    private store$: Store<AppState>,
-  ) {}
 
   ngOnInit(): void {
     performance.mark('Dashboard Start');

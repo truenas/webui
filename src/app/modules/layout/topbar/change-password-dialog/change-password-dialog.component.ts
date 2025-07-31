@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialogClose, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
@@ -24,7 +24,5 @@ import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-pa
   ],
 })
 export class ChangePasswordDialog {
-  constructor(
-    public dialogRef: MatDialogRef<ChangePasswordDialog>,
-  ) {}
+  dialogRef = inject<MatDialogRef<ChangePasswordDialog>>(MatDialogRef);
 }

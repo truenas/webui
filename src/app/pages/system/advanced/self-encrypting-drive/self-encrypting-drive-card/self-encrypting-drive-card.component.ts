@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -48,6 +48,11 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   ],
 })
 export class SelfEncryptingDriveCardComponent {
+  private store$ = inject<Store<AppState>>(Store);
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = sedCardElements;
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
@@ -75,13 +80,6 @@ export class SelfEncryptingDriveCardComponent {
       bufferSize: 1,
     }),
   );
-
-  constructor(
-    private store$: Store<AppState>,
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private firstTimeWarning: FirstTimeWarningService,
-  ) {}
 
   onConfigure(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(

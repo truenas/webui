@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -90,6 +87,16 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   ],
 })
 export class IscsiWizardComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private iscsiService = inject(IscsiService);
+  private fcService = inject(FibreChannelService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private store$ = inject<Store<ServicesState>>(Store);
+  slideInRef = inject<SlideInRef<undefined, IscsiTarget>>(SlideInRef);
+
   isLoading = signal<boolean>(false);
   toStop = signal<boolean>(false);
   namesInUse = signal<string[]>([]);
@@ -247,17 +254,7 @@ export class IscsiWizardComponent implements OnInit {
     } as IscsiTargetExtentUpdate;
   }
 
-  constructor(
-    private fb: FormBuilder,
-    private iscsiService: IscsiService,
-    private fcService: FibreChannelService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private loader: LoaderService,
-    private store$: Store<ServicesState>,
-    public slideInRef: SlideInRef<undefined, IscsiTarget>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

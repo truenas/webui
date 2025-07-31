@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
@@ -36,6 +36,13 @@ import { UploadService } from 'app/services/upload.service';
   ],
 })
 export class UploadConfigDialog {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private router = inject(Router);
+  private translate = inject(TranslateService);
+  private upload = inject(UploadService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly requiredRoles = [Role.FullAdmin];
 
   form = this.formBuilder.group({
@@ -43,15 +50,6 @@ export class UploadConfigDialog {
   });
 
   readonly helptext = helptext;
-
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private router: Router,
-    private translate: TranslateService,
-    private upload: UploadService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   onSubmit(): void {
     this.dialogService

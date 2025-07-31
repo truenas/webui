@@ -1,4 +1,4 @@
-import { Inject, Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import {
   filter, map, merge, Observable, switchMap, tap,
@@ -13,13 +13,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   providedIn: 'root',
 })
 export class TruenasConnectService {
+  private window = inject<Window>(WINDOW);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+
   config = signal<TruenasConnectConfig | null>(null);
   config$ = toObservable(this.config);
-  constructor(
-    @Inject(WINDOW) private window: Window,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-  ) {
+  constructor() {
     this.getConfig();
   }
 

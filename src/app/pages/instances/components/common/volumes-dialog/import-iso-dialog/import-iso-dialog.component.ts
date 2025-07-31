@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import {
   FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -43,6 +41,17 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class IxImportIsoDialogComponent implements OnInit {
+  private fileSystem = inject(FilesystemService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private matDialogRef = inject<MatDialogRef<IxImportIsoDialogComponent>>(MatDialogRef);
+  private validatorsService = inject(IxValidatorsService);
+  private fb = inject(FormBuilder);
+  private loader = inject(LoaderService);
+  private options = inject<{
+    config: VirtualizationGlobalConfig;
+}>(MAT_DIALOG_DATA);
+
   protected form = this.fb.group({
     iso_location: ['', [
       Validators.required,
@@ -62,17 +71,6 @@ export class IxImportIsoDialogComponent implements OnInit {
     directoriesOnly: false,
     showHiddenFiles: true,
   });
-
-  constructor(
-    private fileSystem: FilesystemService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private matDialogRef: MatDialogRef<IxImportIsoDialogComponent>,
-    private validatorsService: IxValidatorsService,
-    private fb: FormBuilder,
-    private loader: LoaderService,
-    @Inject(MAT_DIALOG_DATA) private options: { config: VirtualizationGlobalConfig },
-  ) {}
 
   protected submit(): void {
     this.loader.open();

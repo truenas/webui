@@ -1,5 +1,5 @@
 import { HttpEventType, HttpProgressEvent, HttpResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
@@ -47,6 +47,15 @@ import { UploadService } from 'app/services/upload.service';
   ],
 })
 export class UploadIsoDialogComponent {
+  private formBuilder = inject(FormBuilder);
+  private filesystemService = inject(FilesystemService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private dialogRef = inject<MatDialogRef<UploadIsoDialogComponent, string | null>>(MatDialogRef);
+  private uploadService = inject(UploadService);
+  private loader = inject(LoaderService);
+  private dialogService = inject(DialogService);
+
   form = this.formBuilder.nonNullable.group({
     path: [mntPath],
     files: [[] as File[]],
@@ -55,17 +64,6 @@ export class UploadIsoDialogComponent {
   readonly directoryNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly helptext = helptextVmWizard;
   protected readonly requiredRoles = [Role.VmWrite];
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private filesystemService: FilesystemService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private dialogRef: MatDialogRef<UploadIsoDialogComponent, string | null>,
-    private uploadService: UploadService,
-    private loader: LoaderService,
-    private dialogService: DialogService,
-  ) {}
 
   onSubmit(): void {
     const { path, files } = this.form.getRawValue();

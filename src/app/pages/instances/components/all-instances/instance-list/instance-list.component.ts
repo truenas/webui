@@ -46,6 +46,11 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 })
 
 export class InstanceListComponent {
+  private router = inject(Router);
+  private instancesStore = inject(VirtualizationInstancesStore);
+  private searchDirectives = inject(UiSearchDirectivesService);
+  private layoutService = inject(LayoutService);
+
   readonly instanceId = injectParams('id');
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
@@ -89,12 +94,7 @@ export class InstanceListComponent {
     return containersEmptyConfig;
   });
 
-  constructor(
-    private router: Router,
-    private instancesStore: VirtualizationInstancesStore,
-    private searchDirectives: UiSearchDirectivesService,
-    private layoutService: LayoutService,
-  ) {
+  constructor() {
     toObservable(this.instanceId).pipe(
       distinctUntilChanged(),
       tap((instanceId) => {

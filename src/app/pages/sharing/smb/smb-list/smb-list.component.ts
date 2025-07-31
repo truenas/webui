@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -85,6 +83,17 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class SmbListComponent implements OnInit {
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private dialog = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
+  protected emptyService = inject(EmptyService);
+  private router = inject(Router);
+  private store$ = inject<Store<ServicesState>>(Store);
+
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   protected readonly searchableElements = smbListElements;
   protected readonly emptyConfig = smbCardEmptyConfig;
@@ -207,19 +216,6 @@ export class SmbListComponent implements OnInit {
     uniqueRowTag: (row) => 'smb-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('SMB Share')],
   });
-
-  constructor(
-    private loader: LoaderService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private dialog: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-    protected emptyService: EmptyService,
-    private router: Router,
-    private store$: Store<ServicesState>,
-  ) {}
 
   ngOnInit(): void {
     const shares$ = this.api.call('sharing.smb.query').pipe(

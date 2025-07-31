@@ -1,6 +1,4 @@
-import {
-  Component, OnInit, ChangeDetectionStrategy, Inject,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -39,6 +37,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ManageDiskSedDialog implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private dialogRef = inject<MatDialogRef<ManageDiskSedDialog>>(MatDialogRef);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private diskName = inject(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.DiskWrite];
 
   passwordControl = new FormControl('', {
@@ -49,16 +55,6 @@ export class ManageDiskSedDialog implements OnInit {
   disk: Disk | undefined = undefined;
 
   readonly helptext = helptextDisks;
-
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private dialogRef: MatDialogRef<ManageDiskSedDialog>,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    @Inject(MAT_DIALOG_DATA) private diskName: string,
-  ) { }
 
   ngOnInit(): void {
     this.loadDiskSedInfo();

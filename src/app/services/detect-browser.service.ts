@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { WINDOW } from 'app/helpers/window.helper';
 
 /**
@@ -8,9 +8,8 @@ import { WINDOW } from 'app/helpers/window.helper';
   providedIn: 'root',
 })
 export class DetectBrowserService {
-  constructor(
-    @Inject(WINDOW) private window: Window,
-  ) {}
+  private window = inject<Window>(WINDOW);
+
 
   isMacOs(): boolean {
     return this.window.navigator.userAgent.includes('Macintosh');

@@ -1,18 +1,7 @@
 import { Direction, Directionality } from '@angular/cdk/bidi';
 import { DataSource } from '@angular/cdk/collections';
 import { CdkTree, TreeControl } from '@angular/cdk/tree';
-import {
-  ChangeDetectorRef,
-  Component,
-  Input,
-  IterableDiffer,
-  IterableDiffers,
-  OnDestroy,
-  Optional,
-  OnInit,
-  ViewChild,
-  ViewContainerRef, ChangeDetectionStrategy,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, Input, IterableDiffer, IterableDiffers, OnDestroy, OnInit, ViewChild, ViewContainerRef, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 
@@ -22,6 +11,10 @@ import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-nod
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Tree<T, K = T> extends CdkTree<T, K> implements OnInit, OnDestroy {
+  protected differs: IterableDiffers;
+  protected changeDetectorRef: ChangeDetectorRef;
+  private directionality = inject(Directionality, { optional: true });
+
   dir: Direction = 'ltr';
   _dataSourceChanged = new Subject<void>();
   // Outlets within the tree's template where the dataNodes will be inserted.
@@ -42,12 +35,11 @@ export class Tree<T, K = T> extends CdkTree<T, K> implements OnInit, OnDestroy {
     super.dataSource = dataSource$;
   }
 
-  constructor(
-    protected differs: IterableDiffers,
-    protected changeDetectorRef: ChangeDetectorRef,
-    @Optional() private directionality?: Directionality,
-  ) {
-    super(differs, changeDetectorRef);
+  constructor() {
+    super();
+    
+    this.differs = inject(IterableDiffers);
+    this.changeDetectorRef = inject(ChangeDetectorRef);
   }
 
   override ngOnInit(): void {

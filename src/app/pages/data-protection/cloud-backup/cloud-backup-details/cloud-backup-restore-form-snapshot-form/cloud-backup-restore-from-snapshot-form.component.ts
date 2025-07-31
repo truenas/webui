@@ -1,9 +1,5 @@
 import { DatePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component,
-  OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -68,6 +64,19 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private fb = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private snackbar = inject(SnackbarService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private filesystemService = inject(FilesystemService);
+  private dialogService = inject(DialogService);
+  slideInRef = inject<SlideInRef<{
+    backup: CloudBackup;
+    snapshot: CloudBackupSnapshot;
+}, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   readonly mntPath = mntPath;
   readonly helptext = helptextTruecloudBackup;
@@ -123,18 +132,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     return this.form.controls.includeExclude.value === SnapshotIncludeExclude.IncludeFromSubFolder;
   }
 
-  constructor(
-    private translate: TranslateService,
-    private fb: NonNullableFormBuilder,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private snackbar: SnackbarService,
-    private errorHandler: FormErrorHandlerService,
-    private filesystemService: FilesystemService,
-    private dialogService: DialogService,
-
-    public slideInRef: SlideInRef<{ backup: CloudBackup; snapshot: CloudBackupSnapshot }, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

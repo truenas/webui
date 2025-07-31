@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -72,6 +70,18 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CloudBackupCardComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private loader = inject(LoaderService);
+  private router = inject(Router);
+  protected emptyService = inject(EmptyService);
+  private window = inject<Window>(WINDOW);
+
   cloudBackups: CloudBackup[] = [];
   dataProvider: AsyncDataProvider<CloudBackup>;
   protected readonly requiredRoles = [Role.CloudBackupWrite];
@@ -136,20 +146,6 @@ export class CloudBackupCardComponent implements OnInit {
     uniqueRowTag: (row) => 'cloud-backup-' + row.description,
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Backup')],
   });
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private loader: LoaderService,
-    private router: Router,
-    protected emptyService: EmptyService,
-    @Inject(WINDOW) private window: Window,
-  ) {}
 
   ngOnInit(): void {
     const cloudBackups$ = this.api.call('cloud_backup.query').pipe(

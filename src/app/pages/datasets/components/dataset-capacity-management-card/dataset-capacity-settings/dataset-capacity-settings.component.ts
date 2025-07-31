@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -49,6 +47,15 @@ import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dat
   ],
 })
 export class DatasetCapacitySettingsComponent implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  formatter = inject(IxFormatterService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private snackbarService = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private validators = inject(IxValidatorsService);
+  slideInRef = inject<SlideInRef<DatasetDetails | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   readonly isLoading = signal(false);
@@ -102,16 +109,9 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     quota_critical_inherit: 'quota_critical',
   } as const;
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: NonNullableFormBuilder,
-    public formatter: IxFormatterService,
-    private errorHandler: FormErrorHandlerService,
-    private snackbarService: SnackbarService,
-    private translate: TranslateService,
-    private validators: IxValidatorsService,
-    public slideInRef: SlideInRef<DatasetDetails | undefined, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

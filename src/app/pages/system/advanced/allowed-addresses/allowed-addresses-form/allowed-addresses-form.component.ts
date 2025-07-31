@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, OnInit, signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -56,6 +54,15 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
   ],
 })
 export class AllowedAddressesFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private store$ = inject<Store<AppState>>(Store);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
   protected readonly helptext = helptextSystemAdvanced;
 
@@ -68,16 +75,7 @@ export class AllowedAddressesFormComponent implements OnInit {
 
   protected isLockoutWarningShown = signal(false);
 
-  constructor(
-    private fb: FormBuilder,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private store$: Store<AppState>,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

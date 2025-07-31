@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { environment } from 'environments/environment';
@@ -42,6 +42,13 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
   providedIn: 'root',
 })
 export class AuthService implements OnDestroy {
+  private store$ = inject<Store<AppState>>(Store);
+  private api = inject(ApiService);
+  private tokenLastUsedService = inject(TokenLastUsedService);
+  private wsStatus = inject(WebSocketStatusService);
+  private errorHandler = inject(ErrorHandlerService);
+  private window = inject<Window>(WINDOW);
+
   @LocalStorage() private token: string | undefined | null;
   protected loggedInUser$ = new BehaviorSubject<LoggedInUser | null>(null);
 
@@ -106,14 +113,7 @@ export class AuthService implements OnDestroy {
 
   private readonly cachedGlobalTwoFactorConfig$ = new BehaviorSubject<GlobalTwoFactorConfig | null>(null);
 
-  constructor(
-    private store$: Store<AppState>,
-    private api: ApiService,
-    private tokenLastUsedService: TokenLastUsedService,
-    private wsStatus: WebSocketStatusService,
-    private errorHandler: ErrorHandlerService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.setupAuthenticationUpdate();
     this.setupWsConnectionUpdate();
     this.setupPeriodicTokenGeneration();

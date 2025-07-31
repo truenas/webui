@@ -1,11 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit, output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -75,6 +69,17 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   ],
 })
 export class InterfacesCardComponent implements OnInit {
+  private interfacesStore$ = inject(InterfacesStore);
+  private store$ = inject<Store<AppState>>(Store);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private networkService = inject(NetworkService);
+
   protected readonly searchableElements = interfacesCardElements.elements;
 
   readonly interfacesUpdated = output();
@@ -162,19 +167,6 @@ export class InterfacesCardComponent implements OnInit {
   });
 
   readonly helptext = helptextInterfaces;
-
-  constructor(
-    private interfacesStore$: InterfacesStore,
-    private store$: Store<AppState>,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private networkService: NetworkService,
-  ) {}
 
   private isPhysical(row: NetworkInterface): boolean {
     return row.type === NetworkInterfaceType.Physical;

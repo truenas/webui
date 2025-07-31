@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -44,6 +42,11 @@ import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validat
   ],
 })
 export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+  private smbValidationService = inject(SmbValidationService);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly existing = input<Dataset>();
   readonly parent = input<Dataset>();
 
@@ -77,13 +80,6 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   get canCreateNfs(): boolean {
     return this.form.value.share_type === DatasetPreset.Multiprotocol;
   }
-
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private translate: TranslateService,
-    private smbValidationService: SmbValidationService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnChanges(): void {
     const parent = this.parent();

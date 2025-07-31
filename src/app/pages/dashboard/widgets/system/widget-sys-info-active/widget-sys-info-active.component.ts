@@ -1,8 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy, input,
-  computed,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -58,6 +55,10 @@ import {
   ],
 })
 export class WidgetSysInfoActiveComponent {
+  private resources = inject(WidgetResourcesService);
+  private store$ = inject<Store<AppState>>(Store);
+  private localeService = inject(LocaleService);
+
   size = input.required<SlotSize>();
 
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
@@ -91,11 +92,7 @@ export class WidgetSysInfoActiveComponent {
 
   isLoaded = computed(() => this.systemInfo());
 
-  constructor(
-    private resources: WidgetResourcesService,
-    private store$: Store<AppState>,
-    private localeService: LocaleService,
-  ) {
+  constructor() {
     this.resources.refreshDashboardSystemInfo();
   }
 

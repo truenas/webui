@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -40,6 +38,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DeviceActionsMenuComponent {
+  private dialog = inject(DialogService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private devicesStore = inject(VirtualizationDevicesStore);
+  private instancesStore = inject(VirtualizationInstancesStore);
+  private loader = inject(LoaderService);
+
   readonly device = input.required<VirtualizationDevice>();
   readonly showEdit = input(true);
   readonly isDisabled = input(false);
@@ -62,17 +69,6 @@ export class DeviceActionsMenuComponent {
 
     return null;
   });
-
-  constructor(
-    private dialog: DialogService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private devicesStore: VirtualizationDevicesStore,
-    private instancesStore: VirtualizationInstancesStore,
-    private loader: LoaderService,
-  ) {}
 
   protected deletePressed(): void {
     this.dialog.confirm({

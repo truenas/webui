@@ -1,5 +1,5 @@
 import { ComponentType } from '@angular/cdk/portal';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {
   ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild,
@@ -19,11 +19,10 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   providedIn: 'root',
 })
 export class BlockingActionGuardService implements CanActivateChild {
-  constructor(
-    private authService: AuthService,
-    private wsStatus: WebSocketStatusService,
-    private matDialog: MatDialog,
-  ) { }
+  private authService = inject(AuthService);
+  private wsStatus = inject(WebSocketStatusService);
+  private matDialog = inject(MatDialog);
+
 
   canActivateChild(_: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.wsStatus.isAuthenticated$.pipe(

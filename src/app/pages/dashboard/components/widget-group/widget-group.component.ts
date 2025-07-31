@@ -31,6 +31,8 @@ type OutletParams = {
   imports: [NgComponentOutlet, AsyncPipe],
 })
 export class WidgetGroupComponent {
+  private translate = inject(TranslateService);
+
   group = input.required<WidgetGroup>();
 
   @HostBinding('class')
@@ -51,10 +53,6 @@ export class WidgetGroupComponent {
   });
 
   private environmentInjector = inject(EnvironmentInjector);
-
-  constructor(
-    private translate: TranslateService,
-  ) {}
 
   private getSlotComponent(index: number): OutletParams {
     const widget = (this.group().slots || [])[index];

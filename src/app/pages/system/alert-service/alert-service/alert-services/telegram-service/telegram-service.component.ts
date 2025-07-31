@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   AbstractControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
@@ -20,6 +20,10 @@ import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-servi
   ],
 })
 export class TelegramServiceComponent extends BaseAlertServiceForm {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private validatorsService = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+
   form = this.formBuilder.group({
     bot_token: ['', Validators.required],
     chat_ids: [[] as number[], [
@@ -30,14 +34,6 @@ export class TelegramServiceComponent extends BaseAlertServiceForm {
       ),
     ]],
   });
-
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private validatorsService: IxValidatorsService,
-    private translate: TranslateService,
-  ) {
-    super();
-  }
 
   override getSubmitAttributes(): TelegramServiceComponent['form']['value'] {
     return {

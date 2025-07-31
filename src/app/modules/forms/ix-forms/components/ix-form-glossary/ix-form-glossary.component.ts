@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import {
   FormBuilder, NgControl, ReactiveFormsModule,
 } from '@angular/forms';
@@ -40,6 +34,11 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   ],
 })
 export class IxFormGlossaryComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private formService = inject(IxFormService);
+  private cdr = inject(ChangeDetectorRef);
+  private navigateAndHighlight = inject(NavigateAndHighlightService);
+
   protected searchControl = this.formBuilder.control('');
   protected searchOptions = signal<Option[]>([]);
   protected iconMarker = iconMarker;
@@ -56,12 +55,7 @@ export class IxFormGlossaryComponent implements OnInit {
     Map<NgControl, boolean>
   >();
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private formService: IxFormService,
-    private cdr: ChangeDetectorRef,
-    private navigateAndHighlight: NavigateAndHighlightService,
-  ) {
+  constructor() {
     this.handleControlsUpdates();
     this.handleSectionUpdates();
   }

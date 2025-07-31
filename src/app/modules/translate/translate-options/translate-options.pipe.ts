@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -8,6 +8,8 @@ import { TranslatedString, translateOptions } from 'app/modules/translate/transl
   name: 'translateOptions',
 })
 export class TranslateOptionsPipe implements PipeTransform {
+  private translate = inject(TranslateService);
+
   transform<
     Value,
     OptionLike extends { label: string; value: Value },
@@ -18,8 +20,4 @@ export class TranslateOptionsPipe implements PipeTransform {
       map((options) => translateOptions(this.translate, options)),
     );
   }
-
-  constructor(
-    private translate: TranslateService,
-  ) {}
 }

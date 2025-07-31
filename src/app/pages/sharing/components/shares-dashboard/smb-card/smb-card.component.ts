@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -76,6 +74,15 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class SmbCardComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  protected emptyService = inject(EmptyService);
+  private router = inject(Router);
+  private store$ = inject<Store<ServicesState>>(Store);
+
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   protected readonly emptyConfig = smbCardEmptyConfig;
@@ -138,17 +145,6 @@ export class SmbCardComponent implements OnInit {
     uniqueRowTag: (row) => 'card-smb-share-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('SMB Share')],
   });
-
-  constructor(
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    protected emptyService: EmptyService,
-    private router: Router,
-    private store$: Store<ServicesState>,
-  ) {}
 
   ngOnInit(): void {
     const smbShares$ = this.api.call('sharing.smb.query').pipe(untilDestroyed(this));

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, Inject, input, OnDestroy, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnDestroy, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -24,6 +22,11 @@ import { OauthProviderData } from 'app/pages/credentials/backup-credentials/clou
   ],
 })
 export class OauthButtonComponent implements OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private window = inject<Window>(WINDOW);
+
   readonly oauthType = input<OauthButtonType>();
   readonly isLoggedIn = input(false);
   readonly disabled = input(false);
@@ -71,13 +74,6 @@ export class OauthButtonComponent implements OnDestroy {
 
     return '';
   });
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
-  ) {}
 
   ngOnDestroy(): void {
     this.window.removeEventListener('message', this.jiraAuthFn, false);

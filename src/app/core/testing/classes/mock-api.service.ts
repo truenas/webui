@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { when } from 'jest-when';
 import { Observable, Subject, of } from 'rxjs';
@@ -46,12 +46,12 @@ export class MockApiService extends ApiService {
   private subscribeStream$ = new Subject<ApiEventTyped>();
   private jobIdCounter = 1;
 
-  constructor(
-    wsHandler: WebSocketHandlerService,
-    wsStatus: WebSocketStatusService,
-    subscriptionManager: SubscriptionManagerService,
-    translate: TranslateService,
-  ) {
+  constructor() {
+    const wsHandler = inject(WebSocketHandlerService);
+    const wsStatus = inject(WebSocketStatusService);
+    const subscriptionManager = inject(SubscriptionManagerService);
+    const translate = inject(TranslateService);
+
     super(wsHandler, wsStatus, subscriptionManager, translate);
 
     this.call = jest.fn();

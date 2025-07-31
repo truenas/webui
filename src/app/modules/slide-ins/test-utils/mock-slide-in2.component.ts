@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 
 @Component({
@@ -7,5 +7,5 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MockSlideIn2Component {
-  constructor(public slideInRef: SlideInRef<unknown, unknown>) {}
+  slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef);
 }

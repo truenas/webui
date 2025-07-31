@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -32,12 +32,11 @@ import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.sel
 
 @Injectable()
 export class PoolManagerValidationService {
-  constructor(
-    protected store: PoolManagerStore,
-    protected systemStore$: Store<AppState>,
-    protected translate: TranslateService,
-    private addVdevsStore: AddVdevsStore,
-  ) {}
+  protected store = inject(PoolManagerStore);
+  protected systemStore$ = inject<Store<AppState>>(Store);
+  protected translate = inject(TranslateService);
+  private addVdevsStore = inject(AddVdevsStore);
+
 
   exportedPoolsWarning = this.translate.instant(helptextPoolCreation.exportedSelectedDisksWarning);
 

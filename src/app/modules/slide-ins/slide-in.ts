@@ -6,13 +6,7 @@ import {
 import {
   ComponentPortal,
 } from '@angular/cdk/portal';
-import {
-  ComponentRef,
-  computed,
-  Injectable,
-  Injector,
-  signal,
-} from '@angular/core';
+import { ComponentRef, computed, Injectable, Injector, signal, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
@@ -35,15 +29,13 @@ import { AppState } from 'app/store';
 // eslint-disable-next-line angular-file-naming/service-filename-suffix
 @Injectable({ providedIn: 'root' })
 export class SlideIn {
+  private cdkOverlay = inject(Overlay);
+  private injector = inject(Injector);
+  private unsavedChangesService = inject(UnsavedChangesService);
+  private store$ = inject<Store<AppState>>(Store);
+
   private slideInInstances = signal<SlideInInstance<unknown, unknown>[]>([]);
   readonly openSlideIns = computed(() => this.slideInInstances()?.length);
-
-  constructor(
-    private cdkOverlay: Overlay,
-    private injector: Injector,
-    private unsavedChangesService: UnsavedChangesService,
-    private store$: Store<AppState>,
-  ) {}
 
   // TODO: Refactor this -> https://github.com/truenas/webui/pull/12168#pullrequestreview-2949579034
   closeAll(): void {

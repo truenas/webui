@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -68,6 +66,14 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SnapshotTaskCardComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private taskService = inject(TaskService);
+  protected emptyService = inject(EmptyService);
+
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly uiSearchableElement = snapshotTaskCardElements;
   protected readonly emptyConfig = snapshotTaskEmptyConfig;
@@ -128,16 +134,6 @@ export class SnapshotTaskCardComponent implements OnInit {
     uniqueRowTag: (row) => 'snapshot-task-' + row.dataset + '-' + row.state.state,
     ariaLabels: (row) => [row.dataset, this.translate.instant('Snapshot Task')],
   });
-
-  constructor(
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private taskService: TaskService,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const snapshotTasks$ = this.api.call('pool.snapshottask.query').pipe(

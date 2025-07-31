@@ -1,12 +1,5 @@
 import { CdkObserveContent } from '@angular/cdk/observers';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component, computed, contentChildren,
-  ElementRef,
-  input, OnDestroy, OnInit, output,
-  signal, viewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChildren, ElementRef, input, OnDestroy, OnInit, output, signal, viewChild, inject } from '@angular/core';
 import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
@@ -46,6 +39,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
+  private translate = inject(TranslateService);
+  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private editableService = inject(EditableService);
+
   readonly emptyValue = input(this.translate.instant('Not Set'));
 
   /**
@@ -65,12 +62,6 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   private triggerValue = viewChild<ElementRef<HTMLElement>>('triggerValue');
   private ngControls = contentChildren(NgControl, { descendants: true });
   private controls = computed(() => this.ngControls().map((control) => control.control));
-
-  constructor(
-    private translate: TranslateService,
-    private elementRef: ElementRef<HTMLElement>,
-    private editableService: EditableService,
-  ) {}
 
   protected valueAsText = signal('');
 

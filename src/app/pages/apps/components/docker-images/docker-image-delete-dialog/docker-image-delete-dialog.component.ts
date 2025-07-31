@@ -1,7 +1,5 @@
 import { KeyValue, KeyValuePipe } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, TrackByFunction,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, TrackByFunction, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -43,6 +41,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DockerImageDeleteDialog {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogRef = inject<MatDialogRef<DockerImageDeleteDialog>>(MatDialogRef);
+  images = inject<ContainerImage[]>(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly forceCheckboxTooltip = T('Use force only if other methods fail as it can leave images in a undefined state. \
    You cannot delete Docker Images (even with force) when the image is in use in a running Docker container.');
@@ -70,14 +75,7 @@ export class DockerImageDeleteDialog {
 
   readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<ContainerImage>>> = (_, entry) => entry.key;
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<DockerImageDeleteDialog>,
-    @Inject(MAT_DIALOG_DATA) public images: ContainerImage[],
-  ) {
+  constructor() {
     this.images.forEach((image) => {
       this.bulkItems.set(image.id, { state: BulkListItemState.Initial, item: image });
     });

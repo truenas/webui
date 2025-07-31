@@ -1,7 +1,5 @@
 import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
@@ -38,6 +36,8 @@ import {
   ],
 })
 export class NewDevicesPreviewComponent {
+  private store = inject(PoolManagerStore);
+
   protected readonly vdevTypeLabels = vdevTypeLabels;
   protected topology$ = this.store.topology$.pipe(
     map((topology) => {
@@ -50,7 +50,4 @@ export class NewDevicesPreviewComponent {
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
 
   readonly vDevType = VDevType;
-  constructor(
-    private store: PoolManagerStore,
-  ) {}
 }

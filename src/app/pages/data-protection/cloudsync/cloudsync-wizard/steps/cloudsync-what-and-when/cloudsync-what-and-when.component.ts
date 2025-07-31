@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output, inject } from '@angular/core';
 import {
   Validators, FormBuilder, FormControl, ReactiveFormsModule,
 } from '@angular/forms';
@@ -81,6 +79,19 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
   ],
 })
 export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef);
+  private dialog = inject(DialogService);
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private filesystemService = inject(FilesystemService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
+  private cloudCredentialService = inject(CloudCredentialService);
+  private matDialog = inject(MatDialog);
+  private router = inject(Router);
+
   readonly credentialId = input<number>();
 
   readonly save = output();
@@ -159,21 +170,6 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       this.form.controls.storage_class,
     ];
   }
-
-  constructor(
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private slideInRef: SlideInRef<unknown, unknown>,
-    private dialog: DialogService,
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private filesystemService: FilesystemService,
-    private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    private cloudCredentialService: CloudCredentialService,
-    private matDialog: MatDialog,
-    private router: Router,
-  ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     const newCredentialId = changes?.credentialId?.currentValue;

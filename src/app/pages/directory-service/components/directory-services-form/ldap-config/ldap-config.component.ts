@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  output,
-  OnInit,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, output, OnInit, input, inject } from '@angular/core';
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -45,6 +39,8 @@ import { hasDeepNonNullValue } from 'app/pages/directory-service/components/dire
   ],
 })
 export class LdapConfigComponent implements OnInit {
+  private fb = inject(FormBuilder);
+
   readonly ldapConfig = input.required<LdapConfig | null>();
   readonly configurationChanged = output<LdapConfig>();
   readonly isValid = output<boolean>();
@@ -102,8 +98,6 @@ export class LdapConfigComponent implements OnInit {
     { label: LdapSchema.Rfc2307, value: LdapSchema.Rfc2307 },
     { label: LdapSchema.Rfc2307Bis, value: LdapSchema.Rfc2307Bis },
   ] as Option[]);
-
-  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.fillFormWithExistingConfig();

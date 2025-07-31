@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   combineLatest,
   from, mergeMap, Observable, of, switchMap, tap, toArray,
@@ -13,14 +13,12 @@ import { LicenseService } from 'app/services/license.service';
   providedIn: 'root',
 })
 export class NvmeOfService {
+  private api = inject(ApiService);
+  private license = inject(LicenseService);
+
   private maxConcurrentRequests = 15;
 
   private cachedRdmaEnabled: boolean | null = null;
-
-  constructor(
-    private api: ApiService,
-    private license: LicenseService,
-  ) {}
 
   getSupportedTransports(): Observable<NvmeOfTransportType[]> {
     return combineLatest([

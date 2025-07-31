@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -79,6 +79,16 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   ],
 })
 export class AddSubsystemComponent {
+  private formBuilder = inject(FormBuilder);
+  slideInRef = inject<SlideInRef<void, false | NvmeOfSubsystem>>(SlideInRef);
+  private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private nvmeOfService = inject(NvmeOfService);
+  private store$ = inject<Store<AppState>>(Store);
+  private matDialog = inject(MatDialog);
+
   protected isLoading = signal(false);
 
   protected form = this.formBuilder.group({
@@ -93,18 +103,6 @@ export class AddSubsystemComponent {
   });
 
   protected readonly helptext = helptextNvmeOf;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    public slideInRef: SlideInRef<void, false | NvmeOfSubsystem>,
-    private api: ApiService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private nvmeOfService: NvmeOfService,
-    private store$: Store<AppState>,
-    private matDialog: MatDialog,
-  ) {}
 
   protected onSubmit(): void {
     this.isLoading.set(true);

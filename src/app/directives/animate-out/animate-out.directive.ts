@@ -1,6 +1,4 @@
-import {
-  Directive, ElementRef, input, OnChanges, OnDestroy, output, Renderer2,
-} from '@angular/core';
+import { Directive, ElementRef, input, OnChanges, OnDestroy, output, Renderer2, inject } from '@angular/core';
 import { Timeout } from 'app/interfaces/timeout.interface';
 
 /**
@@ -21,6 +19,9 @@ import { Timeout } from 'app/interfaces/timeout.interface';
   standalone: true,
 })
 export class AnimateOutDirective implements OnChanges, OnDestroy {
+  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private renderer = inject(Renderer2);
+
   readonly animateOut = input(false);
   readonly animateOutClass = input('');
   readonly animateOutDuration = input(300); // Default timeout in ms
@@ -28,11 +29,6 @@ export class AnimateOutDirective implements OnChanges, OnDestroy {
 
   private timeoutId: Timeout | null = null;
   private animationEndListener: (() => void) | null = null;
-
-  constructor(
-    private elementRef: ElementRef<HTMLElement>,
-    private renderer: Renderer2,
-  ) {}
 
   ngOnChanges(): void {
     if (this.animateOut()) {

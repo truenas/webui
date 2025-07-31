@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -59,6 +59,10 @@ export interface SyslogConfig {
   ],
 })
 export class SyslogCardComponent {
+  private store$ = inject<Store<AppState>>(Store);
+  private slideIn = inject(SlideIn);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = syslogCardElements;
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
@@ -112,12 +116,6 @@ export class SyslogCardComponent {
   );
 
   readonly syslogLevelLabels = syslogLevelLabels;
-
-  constructor(
-    private store$: Store<AppState>,
-    private slideIn: SlideIn,
-    private firstTimeWarning: FirstTimeWarningService,
-  ) {}
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(

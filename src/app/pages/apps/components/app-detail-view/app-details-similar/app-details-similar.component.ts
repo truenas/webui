@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnChanges,
-  input, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnChanges, input, signal, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -26,6 +23,9 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
   ],
 })
 export class AppDetailsSimilarComponent implements OnChanges {
+  protected router = inject(Router);
+  private appService = inject(ApplicationsService);
+
   readonly app = input.required< AvailableApp>();
 
   protected isLoading = signal(false);
@@ -33,11 +33,6 @@ export class AppDetailsSimilarComponent implements OnChanges {
   protected loadingError = signal<unknown>(null);
 
   private readonly maxSimilarApps = 6;
-
-  constructor(
-    protected router: Router,
-    private appService: ApplicationsService,
-  ) { }
 
   ngOnChanges(): void {
     this.loadSimilarApps();

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
@@ -34,17 +32,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ExportDatasetKeyDialog implements OnInit {
-  key: string;
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogRef = inject<MatDialogRef<ExportDatasetKeyDialog>>(MatDialogRef);
+  private download = inject(DownloadService);
+  private cdr = inject(ChangeDetectorRef);
+  dataset = inject<Dataset>(MAT_DIALOG_DATA);
 
-  constructor(
-    private api: ApiService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<ExportDatasetKeyDialog>,
-    private download: DownloadService,
-    private cdr: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) public dataset: Dataset,
-  ) { }
+  key: string;
 
   ngOnInit(): void {
     this.loadKey();

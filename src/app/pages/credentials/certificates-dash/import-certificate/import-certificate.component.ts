@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -53,6 +51,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ImportCertificateComponent {
+  private api = inject(ApiService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+  private validators = inject(IxValidatorsService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  slideInRef = inject<SlideInRef<void, boolean>>(SlideInRef);
+
   protected form = this.formBuilder.group({
     name: ['', [
       Validators.required,
@@ -81,15 +87,7 @@ export class ImportCertificateComponent {
 
   isLoading = signal(false);
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: NonNullableFormBuilder,
-    private translate: TranslateService,
-    private validators: IxValidatorsService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<void, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(this.form?.dirty));
     });

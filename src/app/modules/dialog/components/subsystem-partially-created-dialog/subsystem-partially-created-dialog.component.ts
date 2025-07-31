@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent,
@@ -32,12 +28,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SubsystemPartiallyCreatedDialogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<SubsystemPartiallyCreatedDialogComponent>,
-    @Inject(MAT_DIALOG_DATA)
-    public data: {
-      subsystem: NvmeOfSubsystem;
-      relatedErrors: string[];
-    },
-  ) {}
+  dialogRef = inject<MatDialogRef<SubsystemPartiallyCreatedDialogComponent>>(MatDialogRef);
+  data = inject<{
+    subsystem: NvmeOfSubsystem;
+    relatedErrors: string[];
+}>(MAT_DIALOG_DATA);
 }

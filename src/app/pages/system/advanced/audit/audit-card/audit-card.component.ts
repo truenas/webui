@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -41,6 +41,11 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   ],
 })
 export class AuditCardComponent {
+  private slideIn = inject(SlideIn);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = auditCardElements;
   protected readonly requiredRoles = [Role.SystemAuditWrite];
@@ -53,13 +58,6 @@ export class AuditCardComponent {
       bufferSize: 1,
     }),
   );
-
-  constructor(
-    private slideIn: SlideIn,
-    private api: ApiService,
-    private translate: TranslateService,
-    private firstTimeWarning: FirstTimeWarningService,
-  ) {}
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(

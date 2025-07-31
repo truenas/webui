@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, ElementRef, HostBinding, input,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostBinding, input, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatDivider } from '@angular/material/divider';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,6 +18,9 @@ import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.servi
   ],
 })
 export class IxFormSectionComponent implements OnInit, OnDestroy {
+  elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private formService = inject(IxFormService);
+
   help = input<string>();
   label = input.required<string>();
 
@@ -29,11 +28,6 @@ export class IxFormSectionComponent implements OnInit, OnDestroy {
   get id(): string {
     return this.label();
   }
-
-  constructor(
-    public elementRef: ElementRef<HTMLElement>,
-    private formService: IxFormService,
-  ) {}
 
   ngOnInit(): void {
     this.formService.registerSectionControl(

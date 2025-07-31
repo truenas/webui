@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component, Inject, OnDestroy, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardActions } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -55,6 +52,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class TwoFactorComponent implements OnInit, OnDestroy {
+  authService = inject(AuthService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  protected matDialog = inject(MatDialog);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private window = inject<Window>(WINDOW);
+
   protected readonly searchableElements = twoFactorElements;
 
   userTwoFactorAuthConfigured = false;
@@ -84,16 +89,6 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     secret: helptext2fa.secret.tooltip,
     uri: helptext2fa.uri.tooltip,
   };
-
-  constructor(
-    public authService: AuthService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    protected matDialog: MatDialog,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    @Inject(WINDOW) private window: Window,
-  ) {}
 
   ngOnInit(): void {
     this.loadTwoFactorConfigs();

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, switchMap } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
@@ -19,11 +19,10 @@ interface CoreDownloadParams {
   providedIn: 'root',
 })
 export class DownloadService {
-  constructor(
-    protected http: HttpClient,
-    private api: ApiService,
-    private store$: Store<AppState>,
-  ) {}
+  protected http = inject(HttpClient);
+  private api = inject(ApiService);
+  private store$ = inject<Store<AppState>>(Store);
+
 
   coreDownload(params: CoreDownloadParams): Observable<Blob> {
     return this.api.call('core.download', [params.method, params.arguments, params.fileName]).pipe(

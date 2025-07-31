@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl, ValidationErrors,
 } from '@angular/forms';
@@ -16,13 +16,11 @@ import { ApiService } from 'app/modules/websocket/api.service';
   providedIn: 'root',
 })
 export class SmbValidationService {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+
   private nameExistsError = T('Share with this name already exists');
   private invalidCharactersError = T('Share name contains the following invalid characters');
-
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-  ) { }
 
   validate = (originalName?: string): (control: AbstractControl<string>) => Observable<ValidationErrors | null> => {
     return (control: AbstractControl<string>): Observable<ValidationErrors | null> => {

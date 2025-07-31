@@ -1,6 +1,4 @@
-import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -31,6 +29,9 @@ import {
   ],
 })
 export class StorjProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
+  private formBuilder = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+
   form = this.formBuilder.group({
     access_key_id: ['', Validators.required],
     secret_access_key: ['', Validators.required],
@@ -42,12 +43,5 @@ export class StorjProviderFormComponent extends BaseProviderFormComponent implem
       this.form.patchValue(values);
       this.cdr.detectChanges();
     });
-  }
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
-  ) {
-    super();
   }
 }

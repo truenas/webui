@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -67,6 +64,15 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class ExtentFormComponent implements OnInit {
+  protected iscsiService = inject(IscsiService);
+  protected formatter = inject(IxFormatterService);
+  private translate = inject(TranslateService);
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private api = inject(ApiService);
+  private filesystemService = inject(FilesystemService);
+  slideInRef = inject<SlideInRef<IscsiExtent | undefined, boolean>>(SlideInRef);
+
   get isNew(): boolean {
     return !this.editingExtent;
   }
@@ -136,16 +142,7 @@ export class ExtentFormComponent implements OnInit {
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
-  constructor(
-    protected iscsiService: IscsiService,
-    protected formatter: IxFormatterService,
-    private translate: TranslateService,
-    private formBuilder: FormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private api: ApiService,
-    private filesystemService: FilesystemService,
-    public slideInRef: SlideInRef<IscsiExtent | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

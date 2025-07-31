@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, Inject, OnInit, ChangeDetectorRef,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
@@ -50,6 +48,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class SnapshotBatchDeleteDialog implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private snapshots = inject<ZfsSnapshot[]>(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.SnapshotDelete];
 
   isJobCompleted = false;
@@ -65,14 +69,6 @@ export class SnapshotBatchDeleteDialog implements OnInit {
   get hasClones(): boolean {
     return this.snapshots.some((snapshot) => !!snapshot?.properties?.clones?.value);
   }
-
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) private snapshots: ZfsSnapshot[],
-  ) { }
 
   ngOnInit(): void {
     this.dialogData = this.prepareDialogData();

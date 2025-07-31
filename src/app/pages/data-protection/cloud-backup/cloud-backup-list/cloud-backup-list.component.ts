@@ -1,9 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input,
-  output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, output, signal, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -64,6 +60,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CloudBackupListComponent {
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private loader = inject(LoaderService);
+  protected emptyService = inject(EmptyService);
+
   readonly dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
   readonly cloudBackups = input<CloudBackup[]>([]);
   readonly isMobileView = input<boolean>(false);
@@ -126,17 +132,7 @@ export class CloudBackupListComponent {
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Backup')],
   });
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private loader: LoaderService,
-    protected emptyService: EmptyService,
-  ) {
+  constructor() {
     effect(() => {
       if (!this.cloudBackups().length) {
         this.dataProvider().expandedRow = null;

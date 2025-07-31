@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -33,6 +33,10 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   ],
 })
 export class CsrSubjectComponent implements SummaryProvider {
+  private formBuilder = inject(FormBuilder);
+  private systemGeneralService = inject(SystemGeneralService);
+  private translate = inject(TranslateService);
+
   form = this.formBuilder.nonNullable.group({
     country: ['US', Validators.required],
     state: ['', Validators.required],
@@ -48,12 +52,6 @@ export class CsrSubjectComponent implements SummaryProvider {
 
   readonly countries$ = this.systemGeneralService.getCertificateCountryChoices()
     .pipe(choicesToOptions());
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private systemGeneralService: SystemGeneralService,
-    private translate: TranslateService,
-  ) { }
 
   getSummary(): SummarySection {
     const values = this.form.value;

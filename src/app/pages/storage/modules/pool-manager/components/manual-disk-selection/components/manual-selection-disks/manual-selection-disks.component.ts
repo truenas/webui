@@ -1,8 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { NgClass, AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
 import { RouterLinkActive } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -74,6 +72,10 @@ const noEnclosureId = 'no-enclosure';
   ],
 })
 export class ManualSelectionDisksComponent implements OnInit {
+  private translate = inject(TranslateService);
+  protected store$ = inject(ManualDiskSelectionStore);
+  protected dragToggleStore$ = inject(ManualDiskDragToggleStore);
+
   readonly enclosures = input.required<Enclosure[]>();
 
   dataSource: NestedTreeDataSource<DiskOrGroup>;
@@ -82,12 +84,6 @@ export class ManualSelectionDisksComponent implements OnInit {
   });
 
   filtersUpdated = new BehaviorSubject<ManualDiskSelectionFilters>({});
-
-  constructor(
-    private translate: TranslateService,
-    protected store$: ManualDiskSelectionStore,
-    protected dragToggleStore$: ManualDiskDragToggleStore,
-  ) {}
 
   readonly isGroup = (_: number, node: DiskOrGroup): node is EnclosureGroup => 'group' in node;
 

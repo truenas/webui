@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -29,11 +29,11 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TruenasConnectButtonComponent {
+  private matDialog = inject(MatDialog);
+  tnc = inject(TruenasConnectService);
+
   readonly TruenasConnectStatus = TruenasConnectStatus;
   tooltips = helptextTopbar.tooltips;
-
-  constructor(private matDialog: MatDialog, public tnc: TruenasConnectService) {
-  }
 
   protected showStatus(): void {
     this.matDialog.open(TruenasConnectStatusModalComponent, {

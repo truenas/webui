@@ -1,8 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges, output, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, output, signal, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -55,6 +53,15 @@ import { subsystemDetailsCardElements } from 'app/pages/sharing/nvme-of/subsyste
   ],
 })
 export class SubsystemDetailsCardComponent implements OnChanges {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private nvmeOfStore = inject(NvmeOfStore);
+  private nvmeOfService = inject(NvmeOfService);
+  private clipboard = inject(Clipboard);
+  private auth = inject(AuthService);
+
   subsystem = input.required<NvmeOfSubsystemDetails>();
   readonly nameUpdated = output<string>();
 
@@ -68,17 +75,6 @@ export class SubsystemDetailsCardComponent implements OnChanges {
   protected hasRole$ = this.auth.hasRole(Role.SharingNvmeTargetWrite);
 
   protected readonly searchableElements = subsystemDetailsCardElements;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private formErrorHandler: FormErrorHandlerService,
-    private nvmeOfStore: NvmeOfStore,
-    private nvmeOfService: NvmeOfService,
-    private clipboard: Clipboard,
-    private auth: AuthService,
-  ) {}
 
   ngOnChanges(): void {
     this.form.patchValue({

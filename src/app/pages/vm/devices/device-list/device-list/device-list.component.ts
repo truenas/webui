@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -68,6 +66,14 @@ import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-
   ],
 })
 export class DeviceListComponent implements OnInit {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
+  protected emptyService = inject(EmptyService);
+  private matDialog = inject(MatDialog);
+  private route = inject(ActivatedRoute);
+
   protected readonly requiredRoles = [Role.VmDeviceWrite];
 
   dataProvider: AsyncDataProvider<VmDevice>;
@@ -97,16 +103,6 @@ export class DeviceListComponent implements OnInit {
   get vmId(): number {
     return Number(this.route.snapshot.params['pk']);
   }
-
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-    protected emptyService: EmptyService,
-    private matDialog: MatDialog,
-    private route: ActivatedRoute,
-  ) {}
 
   ngOnInit(): void {
     const devices$ = this.api.call('vm.device.query', [[['vm', '=', this.vmId]]]).pipe(

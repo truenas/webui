@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY, forkJoin, Observable } from 'rxjs';
 import {
@@ -18,10 +18,10 @@ const initialState: PermissionsCardState = {
 
 @Injectable()
 export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-  ) {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+
+  constructor() {
     super(initialState);
   }
 

@@ -1,6 +1,4 @@
-import {
-  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, model, OnInit, signal,
-} from '@angular/core';
+import { AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, model, OnInit, signal, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
 import { MatFormField } from '@angular/material/form-field';
@@ -28,6 +26,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
+  private cdr = inject(ChangeDetectorRef);
+
   readonly dataProvider = input.required<DataProvider<T>>();
   readonly pageSize = model(50);
   readonly pageSizeOptions = input([10, 20, 50, 100]);
@@ -47,10 +47,6 @@ export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
     const lastPage = this.currentPage() * this.pageSize();
     return lastPage < this.totalItems() ? lastPage : this.totalItems();
   });
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.dataProvider().setPagination({

@@ -128,7 +128,21 @@ bootstrapApplication(AppComponent, {
       deps: [Sentry.TraceService],
       multi: true,
     },
-    ApiService,
+    {
+      provide: ApiService,
+      deps: [WebSocketStatusService, WebSocketHandlerService, SubscriptionManagerService, TranslateService],
+      useFactory: (
+        wsStatus: WebSocketStatusService,
+        connection: WebSocketHandlerService,
+        subscriptionManager: SubscriptionManagerService,
+        translate: TranslateService,
+      ) => {
+        if (environment.mockConfig.enabled) {
+          return new MockEnclosureApiService();
+        }
+        return new ApiService();
+      },
+    },
     provideCharts(withDefaultRegisterables()),
     provideHttpClient(withInterceptorsFromDi()),
     provideRouter(

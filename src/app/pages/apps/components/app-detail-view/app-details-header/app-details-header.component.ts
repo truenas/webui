@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, Inject, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import createDOMPurify from 'dompurify';
 import type { DOMPurify as DOMPurifyType } from 'dompurify';
@@ -31,14 +29,14 @@ import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-
   ],
 })
 export class AppDetailsHeaderComponent {
+  private translate = inject(TranslateService);
+  private window = inject<Window>(WINDOW);
+
   readonly app = input<AvailableApp>();
   readonly isLoading = input<boolean>();
 
   private domPurify: DOMPurifyType;
-  constructor(
-    private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.domPurify = createDOMPurify(this.window.window);
   }
 

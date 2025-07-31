@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -44,6 +42,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DeviceDeleteModalComponent implements OnInit {
+  private loader = inject(LoaderService);
+  device = inject<VmDevice>(MAT_DIALOG_DATA);
+  private fb = inject(FormBuilder);
+  private dialogRef = inject<MatDialogRef<DeviceDeleteModalComponent>>(MatDialogRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private validatorsService = inject(IxValidatorsService);
+  private api = inject(ApiService);
+
   readonly VmDeviceType = VmDeviceType;
   protected readonly requiredRoles = [Role.VmDeviceWrite];
 
@@ -56,16 +63,7 @@ export class DeviceDeleteModalComponent implements OnInit {
     zvolConfirm: [''],
   });
 
-  constructor(
-    private loader: LoaderService,
-    @Inject(MAT_DIALOG_DATA) public device: VmDevice,
-    private fb: FormBuilder,
-    private dialogRef: MatDialogRef<DeviceDeleteModalComponent>,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private validatorsService: IxValidatorsService,
-    private api: ApiService,
-  ) {
+  constructor() {
     if (this.device.attributes.dtype !== VmDeviceType.Disk) {
       return;
     }

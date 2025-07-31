@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, Optional,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -38,20 +36,20 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class CreateStorjBucketDialog {
+  private formBuilder = inject(FormBuilder);
+  private dialogRef = inject<MatDialogRef<CreateStorjBucketDialog>>(MatDialogRef);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  data = inject<{
+    credentialsId: number;
+}>(MAT_DIALOG_DATA, { optional: true });
+  private formErrorHandler = inject(FormErrorHandlerService);
+
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   form = this.formBuilder.group({
     bucket: ['', Validators.required],
   });
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private dialogRef: MatDialogRef<CreateStorjBucketDialog>,
-    private api: ApiService,
-    private loader: LoaderService,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { credentialsId: number },
-    private formErrorHandler: FormErrorHandlerService,
-  ) {}
 
   onSubmit(): void {
     this.api.call('cloudsync.create_bucket', [this.data.credentialsId, this.form.controls.bucket.value])

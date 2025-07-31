@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import {
   Validators, ReactiveFormsModule, NonNullableFormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
@@ -70,6 +68,16 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class ManualUpdateFormComponent implements OnInit {
+  private dialogService = inject(DialogService);
+  protected router = inject(Router);
+  systemService = inject(SystemGeneralService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+  private upload = inject(UploadService);
+
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly searchableElements = systemManualUpdateFormElements;
 
@@ -90,18 +98,6 @@ export class ManualUpdateFormComponent implements OnInit {
   fileLocationOptions$: Observable<Option[]>;
 
   isHaLicensed = false;
-
-  constructor(
-    private dialogService: DialogService,
-    protected router: Router,
-    public systemService: SystemGeneralService,
-    private formBuilder: NonNullableFormBuilder,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private store$: Store<AppState>,
-    private upload: UploadService,
-  ) {}
 
   ngOnInit(): void {
     this.checkHaLicenseAndUpdateStatus();

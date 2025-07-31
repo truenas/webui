@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnDestroy, OnInit,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnDestroy, OnInit, viewChild, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAnchor } from '@angular/material/button';
@@ -54,6 +51,12 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class AuditComponent implements OnInit, OnDestroy {
+  private api = inject(ApiService);
+  protected emptyService = inject(EmptyService);
+  private cdr = inject(ChangeDetectorRef);
+  private store$ = inject<Store<AppState>>(Store);
+  private translate = inject(TranslateService);
+
   protected dataProvider: AuditApiDataProvider;
 
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
@@ -63,13 +66,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly searchableElements = auditElements;
 
-  constructor(
-    private api: ApiService,
-    protected emptyService: EmptyService,
-    private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     effect(() => {
       this.dataProvider.selectedControllerType = this.controllerType();
       this.dataProvider.isHaLicensed = Boolean(this.isHaLicensed());

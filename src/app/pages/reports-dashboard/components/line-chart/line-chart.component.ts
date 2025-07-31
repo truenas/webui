@@ -1,15 +1,4 @@
-import {
-  Component,
-  AfterViewInit,
-  OnDestroy,
-  OnChanges,
-  ElementRef,
-  ChangeDetectionStrategy,
-  output,
-  input,
-  viewChild,
-  Signal,
-} from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, OnChanges, ElementRef, ChangeDetectionStrategy, output, input, viewChild, Signal, inject } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { UUID } from 'angular2-uuid';
 import { toZonedTime } from 'date-fns-tz';
@@ -43,6 +32,10 @@ interface Conversion {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
+  themeService = inject(ThemeService);
+  private reportsService = inject(ReportsService);
+  private plotterService = inject(PlotterService);
+
   readonly chartId = input<string>();
   readonly chartColors = input<string[]>([]);
   readonly data = input<ReportingData>();
@@ -66,12 +59,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   controlUid = `chart_${UUID.UUID()}`;
 
   readonly zoomChange = output<number[]>();
-
-  constructor(
-    public themeService: ThemeService,
-    private reportsService: ReportsService,
-    private plotterService: PlotterService,
-  ) {}
 
   render(update?: boolean): void {
     this.renderGraph(update);

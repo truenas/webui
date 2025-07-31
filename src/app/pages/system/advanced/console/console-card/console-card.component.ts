@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -52,6 +52,10 @@ export interface ConsoleConfig {
   ],
 })
 export class ConsoleCardComponent {
+  private store$ = inject<Store<AppState>>(Store);
+  private slideIn = inject(SlideIn);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
   private consoleConfig: ConsoleConfig;
@@ -93,12 +97,6 @@ export class ConsoleCardComponent {
       bufferSize: 1,
     }),
   );
-
-  constructor(
-    private store$: Store<AppState>,
-    private slideIn: SlideIn,
-    private firstTimeWarning: FirstTimeWarningService,
-  ) {}
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(

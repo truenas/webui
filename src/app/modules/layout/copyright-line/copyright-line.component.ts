@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { getCopyrightHtml } from 'app/helpers/copyright-text.helper';
@@ -17,6 +14,8 @@ import { selectCopyrightHtml, selectIsEnterprise } from 'app/store/system-info/s
   imports: [TestDirective],
 })
 export class CopyrightLineComponent {
+  private store$ = inject<Store<AppState>>(Store);
+
   skipType = input(false);
 
   readonly copyrightHtml = toSignal(this.store$.select(selectCopyrightHtml));
@@ -26,6 +25,4 @@ export class CopyrightLineComponent {
   readonly targetHref = computed(() => {
     return this.isEnterprise() ? 'https://truenas.com/production' : 'https://truenas.com/testdrive';
   });
-
-  constructor(private store$: Store<AppState>) { }
 }

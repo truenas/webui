@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, signal, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
@@ -52,6 +50,16 @@ export type VirtualizationImageWithId = VirtualizationImage & {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectImageDialog implements OnInit {
+  private api = inject(ApiService);
+  private dialogRef = inject<MatDialogRef<SelectImageDialog>>(MatDialogRef);
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  protected data = inject<{
+    remote: VirtualizationRemote;
+    type: VirtualizationType;
+}>(MAT_DIALOG_DATA);
+
   protected readonly columns = ['label', 'os', 'release', 'archs', 'variant', 'actions'];
   protected filterForm = this.fb.group({
     os: [''],
@@ -71,14 +79,7 @@ export class SelectImageDialog implements OnInit {
     large: true,
   } as EmptyConfig);
 
-  constructor(
-    private api: ApiService,
-    private dialogRef: MatDialogRef<SelectImageDialog>,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    @Inject(MAT_DIALOG_DATA) protected data: { remote: VirtualizationRemote; type: VirtualizationType },
-  ) {
+  constructor() {
     this.filterForm.valueChanges.pipe(untilDestroyed(this)).subscribe(() => this.filterImages());
   }
 

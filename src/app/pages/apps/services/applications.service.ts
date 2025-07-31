@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, OperatorFunction, filter, map, pipe,
@@ -29,11 +29,10 @@ export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableA
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
-  ) {}
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private window = inject<Window>(WINDOW);
+
 
   checkIfAppIxVolumeExists(appName: string): Observable<boolean> {
     return this.api.call('app.ix_volume.exists', [appName]);

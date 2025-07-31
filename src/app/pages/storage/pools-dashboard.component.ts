@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component, computed,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, inject } from '@angular/core';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -50,6 +45,12 @@ import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-st
   ],
 })
 export class PoolsDashboardComponent implements OnInit {
+  protected router = inject(Router);
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
+  private store = inject(PoolsDashboardStore);
+  protected translate = inject(TranslateService);
+
   protected readonly requiredRoles = [Role.PoolWrite];
   readonly searchableElements = storageElements;
 
@@ -68,14 +69,6 @@ export class PoolsDashboardComponent implements OnInit {
   readonly isLoadingPoolDetails = this.store.isLoadingPoolDetails;
 
   readonly hasNoPools = computed(() => this.pools().length === 0);
-
-  constructor(
-    protected router: Router,
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-    private store: PoolsDashboardStore,
-    protected translate: TranslateService,
-  ) { }
 
   ngOnInit(): void {
     this.store.rootDatasets$

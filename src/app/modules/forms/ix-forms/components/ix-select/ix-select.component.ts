@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, input, model, OnChanges, OnInit, ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, model, OnChanges, OnInit, ViewChild, inject } from '@angular/core';
 import {
   ControlValueAccessor, NgControl, FormsModule, ReactiveFormsModule,
 } from '@angular/forms';
@@ -61,6 +58,9 @@ export type IxSelectValue = SelectOptionValueType;
   },
 })
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
+  controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly label = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
   readonly options = model<Observable<SelectOption[]>>();
@@ -119,10 +119,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     return this.isLoading || !this.options();
   }
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 

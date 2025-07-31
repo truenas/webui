@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -39,6 +37,12 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class ExportButtonComponent<T, M extends ApiJobMethod> {
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private download = inject(DownloadService);
+  private store$ = inject<Store<AppState>>(Store);
+
   readonly jobMethod = input.required<M>();
   readonly searchQuery = input<SearchQuery<T>>();
   readonly defaultFilters = input<QueryFilters<T>>();
@@ -54,14 +58,6 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   isLoading = false;
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
-
-  constructor(
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
-    private download: DownloadService,
-    private store$: Store<AppState>,
-  ) {}
 
   onExport(): void {
     this.isLoading = true;

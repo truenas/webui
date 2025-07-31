@@ -1,11 +1,5 @@
 import { KeyValue, KeyValuePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Inject,
-  signal,
-  TrackByFunction,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, TrackByFunction, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -64,6 +58,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AppBulkUpdateComponent {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private dialogRef = inject<MatDialogRef<AppBulkUpdateComponent>>(MatDialogRef);
+  private appService = inject(ApplicationsService);
+  private snackbar = inject(SnackbarService);
+  private errorHandler = inject(ErrorHandlerService);
+  private apps = inject<App[]>(MAT_DIALOG_DATA);
+
   readonly expandedItems = signal<string[]>([]);
 
   form = this.formBuilder.group<Record<string, string>>({});
@@ -76,16 +79,7 @@ export class AppBulkUpdateComponent {
   readonly imagePlaceholder = appImagePlaceholder;
   protected readonly requiredRoles = [Role.AppsWrite];
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-    private dialogRef: MatDialogRef<AppBulkUpdateComponent>,
-    private appService: ApplicationsService,
-    private snackbar: SnackbarService,
-    private errorHandler: ErrorHandlerService,
-    @Inject(MAT_DIALOG_DATA) private apps: App[],
-  ) {
+  constructor() {
     this.apps = this.apps.filter((app) => app.upgrade_available);
 
     this.setInitialValues();

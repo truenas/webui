@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, effect, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -28,6 +26,10 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
   ],
 })
 export class WidgetAppSettingsComponent implements WidgetSettingsComponent<WidgetAppSettings>, OnInit {
+  widgetSettingsRef = inject<WidgetSettingsRef<WidgetAppSettings>>(WidgetSettingsRef);
+  private fb = inject(FormBuilder);
+  private resources = inject(WidgetResourcesService);
+
   form = this.fb.nonNullable.group({
     appName: [null as string | null, [Validators.required]],
   });
@@ -40,11 +42,7 @@ export class WidgetAppSettingsComponent implements WidgetSettingsComponent<Widge
   private firstOption = toSignal(this.installedApps$.pipe(map((opts) => opts[0]?.value)));
 
   private readonly formFieldNames = ['appName'];
-  constructor(
-    public widgetSettingsRef: WidgetSettingsRef<WidgetAppSettings>,
-    private fb: FormBuilder,
-    private resources: WidgetResourcesService,
-  ) {
+  constructor() {
     effect(() => {
       const firstOption = this.firstOption();
       if (!this.widgetSettingsRef.getSettings()?.appName && firstOption) {

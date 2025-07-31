@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
@@ -80,6 +78,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class MapUserGroupIdsDialog implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  protected dialogRef = inject<MatDialogRef<MapUserGroupIdsDialog>>(MatDialogRef);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
+
   protected readonly columns = ['name', 'hostUidOrGid', 'instanceUidOrGid', 'actions'];
   protected readonly instancesHelptext = instancesHelptext;
 
@@ -104,15 +109,6 @@ export class MapUserGroupIdsDialog implements OnInit {
       value: ViewType.Groups,
     },
   ]);
-
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    protected dialogRef: MatDialogRef<MapUserGroupIdsDialog>,
-    private translate: TranslateService,
-    private loader: LoaderService,
-    private snackbar: SnackbarService,
-  ) {}
 
   ngOnInit(): void {
     this.loadMappings();

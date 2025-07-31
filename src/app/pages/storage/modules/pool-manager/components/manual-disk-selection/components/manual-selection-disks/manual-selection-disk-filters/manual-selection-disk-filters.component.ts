@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, output, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -32,6 +30,9 @@ export type ManualDiskSelectionFilters = ManualSelectionDiskFiltersComponent['fi
   ],
 })
 export class ManualSelectionDiskFiltersComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  store$ = inject(ManualDiskSelectionStore);
+
   readonly filtersUpdated = output<ManualDiskSelectionFilters>();
 
   protected filterForm = this.formBuilder.group({
@@ -53,11 +54,6 @@ export class ManualSelectionDiskFiltersComponent implements OnInit {
       return uniqueLabels.map((size: string) => ({ label: size, value: size }));
     }),
   );
-
-  constructor(
-    private formBuilder: FormBuilder,
-    public store$: ManualDiskSelectionStore,
-  ) {}
 
   ngOnInit(): void {
     this.filterForm.valueChanges

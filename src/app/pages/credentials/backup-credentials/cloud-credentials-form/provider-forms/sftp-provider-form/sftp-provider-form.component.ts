@@ -1,6 +1,4 @@
-import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -34,6 +32,11 @@ const newOption = 'NEW';
   ],
 })
 export class SftpProviderFormComponent extends BaseProviderFormComponent implements OnInit, AfterViewInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+
   form = this.formBuilder.group({
     host: ['', Validators.required],
     port: [null as number | null],
@@ -53,15 +56,6 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
   }
 
   override readonly helptext = helptext;
-
-  constructor(
-    private api: ApiService,
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-  ) {
-    super();
-  }
 
   ngOnInit(): void {
     this.loadPrivateKeys();

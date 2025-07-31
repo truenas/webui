@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CloudSyncBucket, CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
@@ -8,7 +8,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
   providedIn: 'root',
 })
 export class CloudCredentialService {
-  constructor(protected api: ApiService) {}
+  protected api = inject(ApiService);
+
 
   getProviders(): Observable<CloudSyncProvider[]> {
     return this.api.call('cloudsync.providers');

@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-  effect,
-  input,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, signal, inject } from '@angular/core';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
@@ -34,14 +29,14 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class IscsiConnectionsCardComponent {
+  private api = inject(ApiService);
+
   readonly target = input.required<IscsiTarget>();
 
   isLoading = signal<boolean>(false);
   sessions = signal<IscsiGlobalSession[] | null>(null);
 
-  constructor(
-    private api: ApiService,
-  ) {
+  constructor() {
     effect(() => {
       this.sessions.set(null);
       this.isLoading.set(true);

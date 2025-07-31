@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -42,17 +42,15 @@ import {
   ],
 })
 export class ManageConfigurationMenuComponent {
+  private dialogService = inject(DialogService);
+  private matDialog = inject(MatDialog);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private translate = inject(TranslateService);
+
   protected readonly Role = Role;
   protected isSysAdmin$ = this.authService.isSysAdmin$;
   protected readonly searchableElements = manageConfigurationElements;
-
-  constructor(
-    private dialogService: DialogService,
-    private matDialog: MatDialog,
-    private authService: AuthService,
-    private router: Router,
-    private translate: TranslateService,
-  ) {}
 
   onDownloadConfig(): void {
     this.matDialog.open(SaveConfigDialog);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
@@ -48,6 +48,10 @@ import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
   ],
 })
 export class OsStepComponent implements SummaryProvider {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+
   form = this.formBuilder.nonNullable.group({
     os: [null as VmOs | null],
     hyperv_enlightenments: [false],
@@ -80,11 +84,7 @@ export class OsStepComponent implements SummaryProvider {
   readonly bootloaderOptions$ = this.api.call('vm.bootloader_options').pipe(choicesToOptions());
   readonly bindOptions$ = this.api.call('vm.device.bind_choices').pipe(choicesToOptions());
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private api: ApiService,
-  ) {
+  constructor() {
     this.form.controls.enable_display.valueChanges.pipe(untilDestroyed(this)).subscribe((isEnabled) => {
       if (isEnabled) {
         this.form.controls.password.enable();

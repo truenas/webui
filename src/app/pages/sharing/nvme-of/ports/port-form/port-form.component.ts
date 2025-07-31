@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -49,6 +47,13 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
   ],
 })
 export class PortFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private nvmeOfService = inject(NvmeOfService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  slideInRef = inject<SlideInRef<NvmeOfPort | undefined, NvmeOfPort | null>>(SlideInRef);
+
   protected isLoading = signal(false);
 
   private existingPort = signal<NvmeOfPort | null>(null);
@@ -78,15 +83,6 @@ export class PortFormComponent implements OnInit {
     }),
     choicesToOptions(),
   );
-
-  constructor(
-    private api: ApiService,
-    private nvmeOfService: NvmeOfService,
-    private formBuilder: NonNullableFormBuilder,
-    private translate: TranslateService,
-    private formErrorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<NvmeOfPort | undefined, NvmeOfPort | null>,
-  ) {}
 
   get isTcp(): boolean {
     return this.form.value.addr_trtype === NvmeOfTransportType.Tcp;

@@ -1,5 +1,5 @@
 import { KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -53,6 +53,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AddDeviceMenuComponent {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private devicesStore = inject(VirtualizationDevicesStore);
+  private instancesStore = inject(VirtualizationInstancesStore);
+  private matDialog = inject(MatDialog);
+
   private readonly usbChoices = toSignal(this.api.call('virt.device.usb_choices'), { initialValue: {} });
   // TODO: Stop hardcoding params
   private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [VirtualizationGpuType.Physical]), { initialValue: {} });
@@ -96,17 +105,6 @@ export class AddDeviceMenuComponent {
   protected readonly isVm = computed(() => {
     return this.instancesStore.selectedInstance()?.type === VirtualizationType.Vm;
   });
-
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private devicesStore: VirtualizationDevicesStore,
-    private instancesStore: VirtualizationInstancesStore,
-    private matDialog: MatDialog,
-  ) {}
 
   protected addUsb(usb: AvailableUsb): void {
     this.addDevice({

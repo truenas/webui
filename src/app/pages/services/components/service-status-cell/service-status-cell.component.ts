@@ -1,10 +1,5 @@
 import { NgClass } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -45,6 +40,15 @@ import { ServicesService } from 'app/services/services.service';
 })
 @UntilDestroy()
 export class ServiceStatusCellComponent {
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private iscsiService = inject(IscsiService);
+  private snackbar = inject(SnackbarService);
+  private servicesService = inject(ServicesService);
+
   readonly service = input.required<Service>();
 
   protected readonly requiredRoles = computed(() => {
@@ -62,17 +66,6 @@ export class ServiceStatusCellComponent {
   protected status = computed(() => this.service().state);
 
   protected statusLabels = serviceStatusLabels;
-
-  constructor(
-    private api: ApiService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private iscsiService: IscsiService,
-    private snackbar: SnackbarService,
-    private servicesService: ServicesService,
-  ) {}
 
   protected startService(): void {
     this.api.job('service.control', [ServiceOperation.Start, this.service().service, { silent: false }]).pipe(

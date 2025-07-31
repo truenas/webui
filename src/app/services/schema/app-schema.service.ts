@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   Validators, AbstractControl, FormGroup, ValidatorFn,
 } from '@angular/forms';
@@ -72,10 +72,9 @@ interface ToggleFieldHiddenOrDisabledValue {
   providedIn: 'root',
 })
 export class AppSchemaService {
-  constructor(
-    protected filesystemService: FilesystemService,
-    private urlValidationService: UrlValidationService,
-  ) {}
+  protected filesystemService = inject(FilesystemService);
+  private urlValidationService = inject(UrlValidationService);
+
 
   transformNode(chartSchemaNode: ChartSchemaNode, isNew: boolean, isParentImmutable: boolean): DynamicFormSchemaNode[] {
     const schema = chartSchemaNode.schema;

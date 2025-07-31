@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
@@ -47,6 +45,14 @@ const defaultEncryptionStandard = 'AES-256-GCM';
   ],
 })
 export class GeneralWizardStepComponent implements OnInit, OnChanges {
+  private api = inject(ApiService);
+  private formBuilder = inject(FormBuilder);
+  private dialog = inject(DialogService);
+  private translate = inject(TranslateService);
+  private store = inject(PoolManagerStore);
+  private cdr = inject(ChangeDetectorRef);
+  private poolWizardNameValidationService = inject(PoolWizardNameValidationService);
+
   readonly isAddingVdevs = input(false);
   readonly pool = input<Pool | undefined>(undefined);
 
@@ -66,16 +72,6 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   readonly encryptionAlgorithmOptions$ = this.api
     .call('pool.dataset.encryption_algorithm_choices')
     .pipe(choicesToOptions());
-
-  constructor(
-    private api: ApiService,
-    private formBuilder: FormBuilder,
-    private dialog: DialogService,
-    private translate: TranslateService,
-    private store: PoolManagerStore,
-    private cdr: ChangeDetectorRef,
-    private poolWizardNameValidationService: PoolWizardNameValidationService,
-  ) { }
 
   ngOnChanges(): void {
     if (this.isAddingVdevs()) {

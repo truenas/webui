@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, signal, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -49,6 +47,18 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   ],
 })
 export class IsolatedGpusFormComponent implements OnInit {
+  protected api = inject(ApiService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private store$ = inject<Store<AppState>>(Store);
+  private gpuValidator = inject(IsolatedGpuValidatorService);
+  private gpuService = inject(GpuService);
+  private snackbar = inject(SnackbarService);
+  private dialog = inject(DialogService);
+  private criticalGpuPrevention = inject(CriticalGpuPreventionService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   protected isFormLoading = signal(false);
@@ -64,19 +74,7 @@ export class IsolatedGpusFormComponent implements OnInit {
 
   readonly options$ = this.gpuService.getGpuOptions();
 
-  constructor(
-    protected api: ApiService,
-    private errorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
-    private gpuValidator: IsolatedGpuValidatorService,
-    private gpuService: GpuService,
-    private snackbar: SnackbarService,
-    private dialog: DialogService,
-    private criticalGpuPrevention: CriticalGpuPreventionService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.formGroup.dirty);
     });

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
@@ -24,13 +22,11 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
   ],
 })
 export class CloudBackupScheduleComponent {
+  private translate = inject(TranslateService);
+
   readonly backup = input.required<CloudBackup>();
 
   protected readonly schedule = computed(() => {
     return this.backup().enabled ? scheduleToCrontab(this.backup().schedule) : this.translate.instant('Disabled');
   });
-
-  constructor(
-    private translate: TranslateService,
-  ) {}
 }

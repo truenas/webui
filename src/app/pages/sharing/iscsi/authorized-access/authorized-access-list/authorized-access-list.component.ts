@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -66,6 +64,16 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class AuthorizedAccessListComponent implements OnInit {
+  emptyService = inject(EmptyService);
+  private loader = inject(LoaderService);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private errorHandler = inject(ErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private iscsiService = inject(IscsiService);
+
   protected readonly searchableElements = authorizedAccessListElements;
 
   protected readonly requiredRoles = [
@@ -134,18 +142,6 @@ export class AuthorizedAccessListComponent implements OnInit {
     uniqueRowTag: (row) => 'iscsi-authorized-access-' + row.user + '-' + row.peeruser,
     ariaLabels: (row) => [row.user, this.translate.instant('Authorized Access')],
   });
-
-  constructor(
-    public emptyService: EmptyService,
-    private loader: LoaderService,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private iscsiService: IscsiService,
-  ) {}
 
   ngOnInit(): void {
     const authorizedAccess$ = this.iscsiService.getAuth().pipe(

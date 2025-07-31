@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatDialog, MatDialogClose, MatDialogContent, MatDialogTitle,
@@ -62,6 +60,16 @@ interface NvmeOfPortAndUsage extends NvmeOfPort {
   ],
 })
 export class ManagePortsDialog implements OnInit {
+  private nvmeOfStore = inject(NvmeOfStore);
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+  private slideIn = inject(SlideIn);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private matDialog = inject(MatDialog);
+  private snackbar = inject(SnackbarService);
+
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected columns = createTable<NvmeOfPortAndUsage>([
@@ -116,18 +124,6 @@ export class ManagePortsDialog implements OnInit {
       }),
     ),
   );
-
-  constructor(
-    private nvmeOfStore: NvmeOfStore,
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-    private slideIn: SlideIn,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private matDialog: MatDialog,
-    private snackbar: SnackbarService,
-  ) {}
 
   ngOnInit(): void {
     this.dataProvider.load();

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import { keyBy } from 'lodash-es';
@@ -34,6 +34,9 @@ const initialState: VDevsState = {
   providedIn: 'root',
 })
 export class VDevsStore extends ComponentStore<VDevsState> {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly error$ = this.select((state) => state.error);
   readonly nodes$ = this.select((state) => state.nodes);
@@ -123,10 +126,7 @@ export class VDevsStore extends ComponentStore<VDevsState> {
     };
   });
 
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     super(initialState);
   }
 

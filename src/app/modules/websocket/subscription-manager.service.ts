@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import {
   filter, Observable, share, tap, throwError, of, switchMap,
@@ -30,6 +30,9 @@ type SubscribeMessageId = string;
   providedIn: 'root',
 })
 export class SubscriptionManagerService {
+  private wsStatus = inject(WebSocketStatusService);
+  private wsHandler = inject(WebSocketHandlerService);
+
   private openSubscriptions = new Map<string, Observable<unknown>>();
 
   /**
@@ -39,10 +42,7 @@ export class SubscriptionManagerService {
   private pendingSubscriptions = new Map<SubscribeMessageId, Method>();
   private subscriptionsToClose = new Set<Method>();
 
-  constructor(
-    private wsStatus: WebSocketStatusService,
-    private wsHandler: WebSocketHandlerService,
-  ) {
+  constructor() {
     this.listenForSubscriptionsToBeEstablished();
   }
 

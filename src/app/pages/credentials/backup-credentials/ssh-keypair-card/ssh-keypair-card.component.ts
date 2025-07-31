@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -58,6 +58,15 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
   ],
 })
 export class SshKeypairCardComponent implements OnInit {
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+  private dialog = inject(DialogService);
+  private keychainCredentialService = inject(KeychainCredentialService);
+  private download = inject(DownloadService);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
   protected readonly searchableElements = sshKeypairsCardElements;
 
@@ -92,17 +101,6 @@ export class SshKeypairCardComponent implements OnInit {
     uniqueRowTag: (row) => 'ssh-keypair-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('SSH Key Pair')],
   });
-
-  constructor(
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-    private dialog: DialogService,
-    private keychainCredentialService: KeychainCredentialService,
-    private download: DownloadService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     const credentials$ = this.keychainCredentialService.getSshKeys().pipe(

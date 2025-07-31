@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -47,6 +45,10 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   ],
 })
 export class GlobalTwoFactorAuthCardComponent {
+  private api = inject(ApiService);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+  private slideIn = inject(SlideIn);
+
   readonly helpText = helptext2fa;
   protected readonly searchableElements = globalTwoFactorCardElements;
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
@@ -61,12 +63,6 @@ export class GlobalTwoFactorAuthCardComponent {
       bufferSize: 1,
     }),
   );
-
-  constructor(
-    private api: ApiService,
-    private firstTimeWarning: FirstTimeWarningService,
-    private slideIn: SlideIn,
-  ) { }
 
   onConfigurePressed(twoFactorAuthConfig: GlobalTwoFactorConfig): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(

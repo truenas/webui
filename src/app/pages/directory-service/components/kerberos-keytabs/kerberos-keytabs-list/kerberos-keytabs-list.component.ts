@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
@@ -61,6 +59,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class KerberosKeytabsListComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  protected dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  protected emptyService = inject(EmptyService);
+  private slideIn = inject(SlideIn);
+
   readonly paginator = input(true);
   readonly inCard = input(false);
 
@@ -115,15 +120,6 @@ export class KerberosKeytabsListComponent implements OnInit {
     uniqueRowTag: (row) => 'kerberos-keytab-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Kerberos Keytab')],
   });
-
-  constructor(
-    private translate: TranslateService,
-    private api: ApiService,
-    protected dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    protected emptyService: EmptyService,
-    private slideIn: SlideIn,
-  ) { }
 
   ngOnInit(): void {
     const keytabsRows$ = this.api.call('kerberos.keytab.query').pipe(

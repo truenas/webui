@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -89,6 +87,18 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ReplicationListComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private matDialog = inject(MatDialog);
+  private snackbar = inject(SnackbarService);
+  private download = inject(DownloadService);
+  private loader = inject(LoaderService);
+  protected emptyService = inject(EmptyService);
+
   replicationTasks: ReplicationTask[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<ReplicationTask>;
@@ -174,20 +184,6 @@ export class ReplicationListComponent implements OnInit {
   protected get hiddenColumns(): Column<ReplicationTask, ColumnComponent<ReplicationTask>>[] {
     return this.columns.filter((column) => column?.hidden);
   }
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
-    private snackbar: SnackbarService,
-    private download: DownloadService,
-    private loader: LoaderService,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const replicationTasks$ = this.api.call('replication.query', [[], {

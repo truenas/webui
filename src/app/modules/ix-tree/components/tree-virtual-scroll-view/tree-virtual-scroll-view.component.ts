@@ -5,20 +5,7 @@ import {
   CdkTree, CdkTreeNodeOutletContext,
 } from '@angular/cdk/tree';
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  HostBinding,
-  Input,
-  IterableDiffers,
-  OnChanges,
-  OnDestroy,
-  OnInit, output,
-  TrackByFunction,
-  viewChild,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, IterableDiffers, OnChanges, OnDestroy, OnInit, output, TrackByFunction, viewChild, input, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
@@ -67,6 +54,9 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
   ],
 })
 export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChanges, OnInit, OnDestroy {
+  protected override differs: IterableDiffers;
+  protected override changeDetectorRef: ChangeDetectorRef;
+
   readonly nodeOutlet = viewChild.required(TreeNodeOutletDirective);
   readonly virtualScrollViewport = viewChild.required(CdkVirtualScrollViewport);
   @HostBinding('class.ix-tree') get ixTreeClass(): boolean { return true; }
@@ -89,11 +79,9 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
     return this.virtualScrollViewport().measureScrollOffset('top') > this.ixItemSize() * 8;
   }
 
-  constructor(
-    protected override differs: IterableDiffers,
-    protected override changeDetectorRef: ChangeDetectorRef,
-  ) {
-    super(differs, changeDetectorRef);
+  constructor() {
+    super();
+
     this.listenForNodeChanges();
   }
 

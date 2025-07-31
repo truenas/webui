@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -77,6 +75,18 @@ import { AppState } from 'app/store';
   ],
 })
 export class CloudSyncTaskCardComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
+  private taskService = inject(TaskService);
+  private store$ = inject<Store<AppState>>(Store);
+  private snackbar = inject(SnackbarService);
+  private matDialog = inject(MatDialog);
+  protected emptyService = inject(EmptyService);
+
   protected readonly requiredRoles = [Role.CloudSyncWrite];
   protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
 
@@ -160,20 +170,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
     uniqueRowTag: (row) => 'card-cloudsync-task-' + row.description,
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
   });
-
-  constructor(
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-    private taskService: TaskService,
-    private store$: Store<AppState>,
-    private snackbar: SnackbarService,
-    private matDialog: MatDialog,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(

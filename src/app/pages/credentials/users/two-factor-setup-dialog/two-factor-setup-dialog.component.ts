@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialogClose } from '@angular/material/dialog';
@@ -26,9 +24,9 @@ import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.compone
   ],
 })
 export class TwoFactorSetupDialog {
+  private authService = inject(AuthService);
+
   protected canFinish = toSignal(
     this.authService.userTwoFactorConfig$.pipe(map((config) => config.secret_configured)),
   );
-
-  constructor(private authService: AuthService) {}
 }

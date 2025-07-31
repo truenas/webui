@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions,
@@ -49,17 +47,15 @@ import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.s
   ],
 })
 export class DiskInfoCardComponent {
+  private matDialog = inject(MatDialog);
+  private slideIn = inject(SlideIn);
+  private route = inject(ActivatedRoute);
+  private vDevsStore = inject(VDevsStore);
+
   readonly topologyDisk = input.required<TopologyDisk>();
   readonly disk = input<Disk>();
 
   protected readonly requiredRoles = [Role.PoolWrite];
-
-  constructor(
-    private matDialog: MatDialog,
-    private slideIn: SlideIn,
-    private route: ActivatedRoute,
-    private vDevsStore: VDevsStore,
-  ) {}
 
   protected isHdd = computed(() => {
     return this.disk()?.type === DiskType.Hdd;
