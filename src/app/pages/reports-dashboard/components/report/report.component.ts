@@ -7,7 +7,6 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
 import {
   add, Duration, isToday, sub,
 } from 'date-fns';
@@ -18,6 +17,7 @@ import {
 import {
   delay, distinctUntilChanged, filter, skipWhile, throttleTime,
 } from 'rxjs/operators';
+import { v4 as uuidv4 } from 'uuid';
 import { invalidDate } from 'app/constants/invalid-date';
 import { oneDayMillis, oneHourMillis } from 'app/constants/time.constant';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
@@ -96,7 +96,7 @@ export class ReportComponent implements OnInit, OnChanges {
   autoRefreshEnabled: boolean;
   isReady = false;
   data: ReportingData | undefined;
-  chartId = `chart-${UUID.UUID()}`;
+  chartId = `chart-${uuidv4()}`;
   chartColors: string[];
   legendData: LegendDataWithStackedTotalHtml = {} as LegendDataWithStackedTotalHtml;
   subtitle: string = this.translate.instant('% of all cores');

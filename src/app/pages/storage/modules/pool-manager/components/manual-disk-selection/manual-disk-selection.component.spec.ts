@@ -3,9 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { UUID } from 'angular2-uuid';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -132,7 +132,7 @@ describe('ManualDiskSelectionComponent', () => {
       it('returns new vdevs when there was change in vdevs', async () => {
         storeVdevs$.next([
           {
-            uuid: UUID.UUID(),
+            uuid: uuidv4(),
             disks: [{ devname: 'sda' }],
           },
         ] as ManualSelectionVdev[]);

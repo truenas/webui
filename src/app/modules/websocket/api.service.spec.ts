@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { UUID } from 'angular2-uuid';
 import {
   BehaviorSubject,
   firstValueFrom, of,
 } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 import { JobState } from 'app/enums/job-state.enum';
 import {
   IncomingMessage,
@@ -67,7 +67,7 @@ describe('ApiService', () => {
   describe('call', () => {
     it('should make a WS call and get a response', async () => {
       const uuid = 'fakeUUID';
-      jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
+      jest.spyOn({ v4: uuidv4 }, 'v4').mockReturnValue(uuid);
       const someResult = {};
       responses$.next({
         jsonrpc: '2.0',
@@ -84,7 +84,7 @@ describe('ApiService', () => {
     it('should handle WS call errors', async () => {
       jest.spyOn(console, 'error').mockImplementation();
       const uuid = 'fakeUUID';
-      jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
+      jest.spyOn({ v4: uuidv4 }, 'v4').mockReturnValue(uuid);
 
       const someError = {
         message: 'Test Error',
@@ -107,7 +107,7 @@ describe('ApiService', () => {
     it('should call and subscribe to updates', async () => {
       const pools = [{ name: 'pool1' }, { name: 'pool2' }] as Pool[];
       const uuid = 'fakeUUID';
-      jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
+      jest.spyOn({ v4: uuidv4 }, 'v4').mockReturnValue(uuid);
       responses$.next({
         jsonrpc: '2.0',
         id: uuid,
@@ -130,7 +130,7 @@ describe('ApiService', () => {
     });
     it('should schedule a call to start a job and return call id', async () => {
       const uuid = 'fakeUUID10';
-      jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
+      jest.spyOn({ v4: uuidv4 }, 'v4').mockReturnValue(uuid);
       const updatedJobUpdate = {
         ...jobUpdate,
         message_ids: [uuid],
@@ -154,7 +154,7 @@ describe('ApiService', () => {
     it('should subscribe to job updates by observing job from the store', async () => {
       const fakeUuid5 = 'fakeUUID5';
       const mockJobId5 = 5;
-      jest.spyOn(UUID, 'UUID').mockReturnValue(fakeUuid5);
+      jest.spyOn({ v4: uuidv4 }, 'v4').mockReturnValue(fakeUuid5);
       const updatedJobUpdate = {
         ...jobUpdate,
         id: mockJobId5,
@@ -176,7 +176,7 @@ describe('ApiService', () => {
     it('should throw on a failed job', async () => {
       const mockJobId4 = 1237;
       const fakeUuid6 = 'fakeUUID6';
-      jest.spyOn(UUID, 'UUID').mockReturnValue(fakeUuid6);
+      jest.spyOn({ v4: uuidv4 }, 'v4').mockReturnValue(fakeUuid6);
       const failedJobUpdate = {
         id: mockJobId4,
         method: 'boot.attach',

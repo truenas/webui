@@ -1,8 +1,8 @@
 import { Component, AfterViewInit, OnDestroy, OnChanges, ElementRef, ChangeDetectionStrategy, output, input, viewChild, Signal, inject } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
-import { UUID } from 'angular2-uuid';
 import { toZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
+import { v4 as uuidv4 } from 'uuid';
 import { Gb, kb, Mb } from 'app/constants/bits.constant';
 import {
   GiB, KiB, MiB, TiB,
@@ -56,7 +56,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   theme: Theme;
   timeFormat = '%H:%M';
-  controlUid = `chart_${UUID.UUID()}`;
+  controlUid = `chart_${uuidv4()}`;
 
   readonly zoomChange = output<number[]>();
 

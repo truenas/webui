@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as Sentry from '@sentry/angular';
-import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { BehaviorSubject, combineLatest } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 import { AppState } from 'app/store';
 import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -13,7 +13,7 @@ import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/sys
 export class SentryConfigurationService {
   private store$ = inject<Store<AppState>>(Store);
 
-  sessionId$ = new BehaviorSubject<string>(UUID.UUID());
+  sessionId$ = new BehaviorSubject<string>(uuidv4());
 
   init(): void {
     if (!environment.production) {

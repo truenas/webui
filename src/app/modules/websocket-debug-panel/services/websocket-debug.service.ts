@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { UUID } from 'angular2-uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { IncomingMessage, RequestMessage } from 'app/interfaces/api-message.interface';
 import { cacheCleanupIntervalMs, maxCacheSize } from 'app/modules/websocket-debug-panel/constants';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
@@ -24,7 +24,7 @@ export class WebSocketDebugService {
     }
 
     const debugMessage: WebSocketDebugMessage = {
-      id: UUID.UUID(),
+      id: uuidv4(),
       timestamp: new Date().toISOString(),
       direction: 'out',
       message,
@@ -49,7 +49,7 @@ export class WebSocketDebugService {
     }
 
     const debugMessage: WebSocketDebugMessage = {
-      id: UUID.UUID(),
+      id: uuidv4(),
       timestamp: new Date().toISOString(),
       direction: 'in',
       message,

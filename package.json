@@ -120,6 +120,7 @@
     "@types/mime-types": "~2.1.1",
     "@types/node": "^22.14.0",
     "@types/svg-sprite": "~0.0.39",
+    "@types/uuid": "~10.0.0",
     "@types/vinyl": "~2.0.12",
     "@types/ws": "~8.18.1",
     "@uiw/codemirror-theme-material": "~4.23.6",
@@ -129,7 +130,6 @@
     "angular-dual-listbox": "~7.0.0",
     "angular-eslint": "~20.0.0",
     "angular-resize-event": "^3.2.0",
-    "angular2-uuid": "~1.1.1",
     "chart.js": "~4.4.4",
     "chartjs-adapter-date-fns": "~3.0.0",
     "cheerio": "~1.0.0",
@@ -211,6 +211,7 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "~8.38.0",
     "utility-types": "~3.11.0",
+    "uuid": "~11.1.0",
     "vinyl": "~3.0.0",
     "zone.js": "~0.15.0"
   },

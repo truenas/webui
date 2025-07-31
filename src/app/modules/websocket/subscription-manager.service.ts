@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { UUID } from 'angular2-uuid';
 import {
   filter, Observable, share, tap, throwError, of, switchMap,
 } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 import { JsonRpcErrorCode } from 'app/enums/api.enum';
 import { isCollectionUpdateMessage, isSuccessfulResponse, isNotifyUnsubscribedMessage } from 'app/helpers/api.helper';
 import {
@@ -101,7 +101,7 @@ export class SubscriptionManagerService {
       this.subscriptionsToClose.delete(method);
     }
 
-    const id = UUID.UUID();
+    const id = uuidv4();
     this.wsHandler.scheduleCall({
       id,
       method: 'core.subscribe',
@@ -154,7 +154,7 @@ export class SubscriptionManagerService {
     const isAuthenticated = this.wsStatus.isAuthenticated;
     if (isAuthenticated) {
       this.wsHandler.scheduleCall({
-        id: UUID.UUID(),
+        id: uuidv4(),
         method: 'core.unsubscribe',
         params: [backendSubscriptionId],
       });

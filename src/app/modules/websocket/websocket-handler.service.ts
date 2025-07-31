@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
   BehaviorSubject,
@@ -21,6 +20,7 @@ import {
   catchError,
   throwError,
 } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 import { makeRequestMessage } from 'app/helpers/api.helper';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -335,7 +335,7 @@ export class WebSocketHandlerService {
     this.scheduleCall({
       method: 'core.set_options',
       params: [{ legacy_jobs: false }],
-      id: UUID.UUID(),
+      id: uuidv4(),
     });
   }
 

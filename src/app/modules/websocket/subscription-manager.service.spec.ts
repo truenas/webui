@@ -1,8 +1,8 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { UUID } from 'angular2-uuid';
 import {
   of, Subject,
 } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
@@ -46,7 +46,7 @@ describe('SubscriptionManagerService', () => {
   });
 
   it('returns relevant websocket messages that are part of the subscribed collection after connection has been established', () => {
-    jest.spyOn(UUID, 'UUID').mockReturnValue('1');
+    jest.spyOn({ v4: uuidv4 }, 'v4').mockReturnValue('1');
 
     const messages: unknown[] = [];
     spectator.service.subscribe('disk.query').subscribe((message) => messages.push(message));
@@ -77,7 +77,7 @@ describe('SubscriptionManagerService', () => {
   });
 
   it('does not establish new websocket connections if one connection is already open', () => {
-    jest.spyOn(UUID, 'UUID').mockReturnValue('1');
+    jest.spyOn({ v4: uuidv4 }, 'v4').mockReturnValue('1');
 
     const messages1: unknown[] = [];
     spectator.service.subscribe('disk.query').subscribe((message) => messages1.push(message));
@@ -107,7 +107,7 @@ describe('SubscriptionManagerService', () => {
   });
 
   it('sends unsubscribe message when all consumers unsubscribe', () => {
-    jest.spyOn(UUID, 'UUID').mockReturnValue('1');
+    jest.spyOn({ v4: uuidv4 }, 'v4').mockReturnValue('1');
 
     const subscription1 = spectator.service.subscribe('disk.query').subscribe();
     const subscription2 = spectator.service.subscribe('disk.query').subscribe();
@@ -135,7 +135,7 @@ describe('SubscriptionManagerService', () => {
 
   it(`waits for subscription to be established before unsubscribing
     if consumer unsubscribes before backend subscription has been established`, () => {
-    jest.spyOn(UUID, 'UUID').mockReturnValue('1');
+    jest.spyOn({ v4: uuidv4 }, 'v4').mockReturnValue('1');
 
     const subscription = spectator.service.subscribe('disk.query').subscribe();
 
@@ -160,7 +160,7 @@ describe('SubscriptionManagerService', () => {
 
   it(`does not send unsubscribe message if new consumer subscribed to an endpoint after all other consumers
     unsubscribed, but before backend subscription has a chance to be closed`, () => {
-    jest.spyOn(UUID, 'UUID').mockReturnValue('1');
+    jest.spyOn({ v4: uuidv4 }, 'v4').mockReturnValue('1');
 
     const subscription1 = spectator.service.subscribe('disk.query').subscribe();
     subscription1.unsubscribe();
@@ -181,7 +181,7 @@ describe('SubscriptionManagerService', () => {
 
   // eslint-disable-next-line jest/no-done-callback
   it('should throw ApiCallError when receiving notify_unsubscribed with error', (done) => {
-    jest.spyOn(UUID, 'UUID').mockReturnValue('1');
+    jest.spyOn({ v4: uuidv4 }, 'v4').mockReturnValue('1');
 
     spectator.service.subscribe('virt.instance.metrics').subscribe({
       next: () => {},

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
-import { UUID } from 'angular2-uuid';
 import { cloneDeep } from 'lodash-es';
+import { v4 as uuidv4 } from 'uuid';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
@@ -106,7 +106,7 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
         {
           disks: [],
           // TODO: Get rid of UUIDs?
-          uuid: UUID.UUID(),
+          uuid: uuidv4(),
         },
       ],
     };
