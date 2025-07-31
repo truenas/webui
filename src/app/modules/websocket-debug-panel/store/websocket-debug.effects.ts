@@ -84,8 +84,4 @@ export class WebSocketDebugEffects {
     }),
   ), { dispatch: false });
 
-  constructor(
-    private actions$: Actions,
-    private store$: Store,
-  ) {}
 }
