@@ -142,22 +142,26 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
       tempAgg: DiskTemperatureAgg;
     },
   ): Observable<StorageDashboardDisk[]> {
-    for (const disk of disks) {
-      disk.alerts = [];
-    }
+    const processedDisks = disks.map((disk) => ({
+      ...disk,
+      alerts: [] as Alert[],
+      tempAggregates: disk.tempAggregates,
+    }));
+
     for (const alert of alerts) {
       const alertArgs = (alert.args) as { device: string; message: string };
       const alertDevice = alertArgs.device.split('/').reverse()[0];
-      const alertDisk = disks.find((disk) => disk.name === alertDevice);
+      const alertDisk = processedDisks.find((disk) => disk.name === alertDevice);
       alertDisk?.alerts?.push(alert);
     }
+
     const disksWithTempData = Object.keys(tempAgg);
     for (const diskWithTempData of disksWithTempData) {
-      const dashboardDisk = disks.find((disk) => disk.devname === diskWithTempData);
+      const dashboardDisk = processedDisks.find((disk) => disk.devname === diskWithTempData);
       if (dashboardDisk) {
         dashboardDisk.tempAggregates = { ...tempAgg[diskWithTempData] };
       }
     }
-    return of(disks);
+    return of(processedDisks);
   }
 }
