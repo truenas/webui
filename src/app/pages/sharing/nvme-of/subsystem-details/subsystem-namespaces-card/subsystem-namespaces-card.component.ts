@@ -73,22 +73,6 @@ export class SubsystemNamespacesCardComponent {
       });
   }
 
-  protected onEditNamespace(namespace: NvmeOfNamespace): void {
-    this.slideIn.open(NamespaceFormComponent, {
-      data: {
-        namespace,
-        subsystemId: this.subsystem().id,
-      },
-    })
-      .pipe(
-        filter((response) => Boolean(response.response)),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.nvmeOfStore.initialize();
-      });
-  }
-
   protected onDeleteNamespace(namespace: NvmeOfNamespace): void {
     this.matDialog.open(DeleteNamespaceDialogComponent, { data: namespace })
       .afterClosed()
