@@ -7,7 +7,7 @@ import iconConfig from 'app/../assets/icons/sprite-config.json';
 @Injectable({ providedIn: 'root' })
 export class IxIconRegistry extends MatIconRegistry {
   constructor() {
-    const httpClient = inject(HttpClient, { optional: true });
+    const httpClient = inject(HttpClient);
     const sanitizer = inject(DomSanitizer);
     const document = inject<Document>(DOCUMENT, { optional: true });
     const errorHandler = inject(ErrorHandler);

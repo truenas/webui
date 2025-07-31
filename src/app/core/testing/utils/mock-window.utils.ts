@@ -1,5 +1,5 @@
 import { ValueProvider } from '@angular/core';
-import { merge } from 'lodash-es';
+import { cloneDeep, mergeWith } from 'lodash-es';
 import { DeepPartial } from 'utility-types';
 import { WINDOW } from 'app/helpers/window.helper';
 
@@ -8,12 +8,54 @@ export function mockWindow(overrides: DeepPartial<Window> = {}): ValueProvider {
     location: {
       protocol: 'http:',
       href: 'http://truenas.com',
+      hostname: 'truenas.com',
+      port: '',
+      pathname: '/',
+      replace: jest.fn(),
     },
     open: jest.fn(),
+    localStorage: {
+      setItem: jest.fn(),
+      getItem: jest.fn(),
+      removeItem: jest.fn(),
+      clear: jest.fn(),
+    },
+    sessionStorage: {
+      setItem: jest.fn(),
+      getItem: jest.fn(),
+      removeItem: jest.fn(),
+      clear: jest.fn(),
+    },
   } as DeepPartial<Window>;
+
+  // Deep clone the base to avoid mutations
+  const result = cloneDeep(baseWindow);
+  
+  // Manually handle deep merge to ensure all properties are preserved
+  const deepMerge = (target: any, source: any): any => {
+    Object.keys(source).forEach((key) => {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && !(source[key] instanceof Function)) {
+        if (!target[key]) {
+          target[key] = {};
+        }
+        deepMerge(target[key], source[key]);
+      } else {
+        target[key] = source[key];
+      }
+    });
+    return target;
+  };
+
+  deepMerge(result, overrides);
+  
+  // Special handling for location to ensure toString works properly
+  if (overrides.location && typeof overrides.location.toString === 'function') {
+    const originalToString = overrides.location.toString;
+    result.location.toString = originalToString;
+  }
 
   return {
     provide: WINDOW,
-    useValue: merge(baseWindow, overrides),
+    useValue: result,
   };
 }

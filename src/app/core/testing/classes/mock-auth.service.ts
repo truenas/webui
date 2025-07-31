@@ -1,11 +1,18 @@
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { AuthService } from 'app/modules/auth/auth.service';
 
 @Injectable()
-export class MockAuthService extends AuthService {
+export class MockAuthService {
+  loggedInUser$ = new BehaviorSubject<LoggedInUser | null>(null);
+  refreshUser = jest.fn(() => of(undefined));
+  clearAuthToken = jest.fn();
+  login = jest.fn();
+  logout = jest.fn();
+  hasRole = jest.fn(() => of(true));
+  isAuthenticated$ = of(true);
+  user$ = this.loggedInUser$.asObservable();
   setUser(user: LoggedInUser): void {
     this.loggedInUser$.next(user);
   }
@@ -21,11 +28,5 @@ export class MockAuthService extends AuthService {
         },
       },
     } as LoggedInUser);
-  }
-
-  override refreshUser = jest.fn(() => of(undefined));
-
-  override clearAuthToken(): void {
-    // Mock implementation to avoid ngx-webstorage issues in tests
   }
 }
