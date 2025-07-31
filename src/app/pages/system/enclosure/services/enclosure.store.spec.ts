@@ -85,8 +85,10 @@ describe('EnclosureStore', () => {
       spectator.service.listenForDiskUpdates().subscribe();
 
       spectator.inject(MockApiService).emitSubscribeEvent({
+        id: 'test-id-1',
         msg: CollectionChangeType.Changed,
         collection: 'disk.query',
+        fields: null,
       });
 
       tick(1 * 1000);

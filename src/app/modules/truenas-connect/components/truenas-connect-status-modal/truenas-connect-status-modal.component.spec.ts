@@ -8,9 +8,10 @@ import {
   createComponentFactory,
   mockProvider,
 } from '@ngneat/spectator/jest';
-import { of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { TncStatus, TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
@@ -175,9 +176,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     spectator.detectChanges();
 
     const dialogService = spectator.inject(DialogService);
-    const confirmSpy = jest.spyOn(dialogService, 'confirm').mockImplementation((_) => {
-      return of(true) as ReturnType<typeof dialogService.confirm>;
-    });
+    (dialogService as { confirm: jest.Mock }).confirm = jest.fn(() => of(true));
+    const confirmSpy = dialogService.confirm as jest.Mock;
     const disableSpy = jest.spyOn(spectator.inject(TruenasConnectService), 'disableService');
     const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
     expect(disableBtn).toBeTruthy();
@@ -198,9 +198,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     const service = spectator.inject(TruenasConnectService);
     const disableSpy = jest.spyOn(service, 'disableService').mockReturnValue(throwError(() => new Error('Disable failed')));
     const dialogService = spectator.inject(DialogService);
-    const confirmSpy = jest.spyOn(dialogService, 'confirm').mockImplementation((_) => {
-      return of(true) as ReturnType<typeof dialogService.confirm>;
-    });
+    (dialogService as { confirm: jest.Mock }).confirm = jest.fn(() => of(true));
+    const confirmSpy = dialogService.confirm as jest.Mock;
     const errorSpy = jest.spyOn(dialogService, 'error');
 
     const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
@@ -221,9 +220,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     const service = spectator.inject(TruenasConnectService);
     const disableSpy = jest.spyOn(service, 'disableService');
     const dialogService = spectator.inject(DialogService);
-    const confirmSpy = jest.spyOn(dialogService, 'confirm').mockImplementation((_) => {
-      return of(false) as ReturnType<typeof dialogService.confirm>;
-    });
+    (dialogService as { confirm: jest.Mock }).confirm = jest.fn(() => of(false));
+    const confirmSpy = dialogService.confirm as jest.Mock;
 
     const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
     spectator.click(disableBtn);

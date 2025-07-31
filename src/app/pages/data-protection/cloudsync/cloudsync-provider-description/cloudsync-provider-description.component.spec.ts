@@ -28,6 +28,7 @@ describe('CloudSyncProviderDescriptionComponent', () => {
     expect(name).toHaveText('Storj');
 
     const description = spectator.query('.body');
-    expect(description).not.toContain('<a href');
+    expect(description.innerHTML).toContain('Storj is an S3 compatible');
+    expect(description.innerHTML).toContain('<a href="https://truenas.com/storj" target="_blank">TrueNAS and Storj</a>');
   });
 });
