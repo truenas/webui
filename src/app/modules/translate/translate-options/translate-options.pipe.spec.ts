@@ -1,3 +1,4 @@
+import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of } from 'rxjs';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
@@ -6,9 +7,19 @@ describe('TranslateOptionsPipe', () => {
   let pipe: TranslateOptionsPipe;
 
   beforeEach(() => {
-    pipe = new TranslateOptionsPipe({
-      instant: jest.fn((key: string) => `Translated ${key}`),
-    } as unknown as TranslateService);
+    TestBed.configureTestingModule({
+      providers: [
+        TranslateOptionsPipe,
+        {
+          provide: TranslateService,
+          useValue: {
+            instant: jest.fn((key: string) => `Translated ${key}`),
+          },
+        },
+      ],
+    });
+    
+    pipe = TestBed.inject(TranslateOptionsPipe);
   });
 
   it('should transform options by calling translateOptions helper', async () => {

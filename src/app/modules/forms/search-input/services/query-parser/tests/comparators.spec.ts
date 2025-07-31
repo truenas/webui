@@ -1,10 +1,25 @@
+import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { QueryParserService } from 'app/modules/forms/search-input/services/query-parser/query-parser.service';
 
 describe('QueryParserService - comparators', () => {
-  const service = new QueryParserService({
-    instant: (key: string) => key,
-  } as TranslateService);
+  let service: QueryParserService<unknown>;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        QueryParserService,
+        {
+          provide: TranslateService,
+          useValue: {
+            instant: (key: string) => key,
+          },
+        },
+      ],
+    });
+    
+    service = TestBed.inject(QueryParserService);
+  });
 
   it('supports =', () => {
     const equals = service.parseQuery('Age = 19');

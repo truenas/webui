@@ -1,11 +1,26 @@
+import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { QueryParserService } from 'app/modules/forms/search-input/services/query-parser/query-parser.service';
 import { QuerySyntaxError } from 'app/modules/forms/search-input/services/query-parser/query-parsing-result.interface';
 
 describe('QueryParserService - values', () => {
-  const service = new QueryParserService({
-    instant: (key: string) => key,
-  } as TranslateService);
+  let service: QueryParserService<unknown>;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        QueryParserService,
+        {
+          provide: TranslateService,
+          useValue: {
+            instant: (key: string) => key,
+          },
+        },
+      ],
+    });
+    
+    service = TestBed.inject(QueryParserService);
+  });
 
   it('supports integers', () => {
     const integer = service.parseQuery('Age = 19');

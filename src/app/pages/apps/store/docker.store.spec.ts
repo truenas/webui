@@ -1,10 +1,13 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { TranslateService } from '@ngx-translate/core';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { DockerConfig } from 'app/interfaces/docker-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('DockerStore', () => {
   let spectator: SpectatorService<DockerStore>;
@@ -22,6 +25,24 @@ describe('DockerStore', () => {
           description: 'Docker is running',
         }),
       ]),
+      {
+        provide: ErrorHandlerService,
+        useValue: {
+          withErrorHandler: () => (source$: any) => source$,
+        },
+      },
+      {
+        provide: DialogService,
+        useValue: {
+          jobDialog: jest.fn(),
+        },
+      },
+      {
+        provide: TranslateService,
+        useValue: {
+          instant: jest.fn((key: string) => key),
+        },
+      },
     ],
   });
 
@@ -59,7 +80,6 @@ describe('DockerStore', () => {
       } as DockerConfig;
 
       const mockedApi = spectator.inject(MockApiService);
-      jest.resetAllMocks();
       mockedApi.mockCall('docker.config', newDockerConfig);
 
       spectator.service.reloadDockerConfig().subscribe();

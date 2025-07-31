@@ -1,11 +1,24 @@
+import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { QueryParserService } from 'app/modules/forms/search-input/services/query-parser/query-parser.service';
 import { QuerySyntaxError } from 'app/modules/forms/search-input/services/query-parser/query-parsing-result.interface';
 
 describe('QueryParserService - property names', () => {
-  const service = new QueryParserService({
-    instant: (key: string) => key,
-  } as TranslateService);
+  let spectator: SpectatorService<QueryParserService<unknown>>;
+  let service: QueryParserService<unknown>;
+  const createService = createServiceFactory<QueryParserService<unknown>>({
+    service: QueryParserService,
+    providers: [
+      mockProvider(TranslateService, {
+        instant: (key: string) => key,
+      }),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createService();
+    service = spectator.service;
+  });
 
   describe('supports unquoted property names', () => {
     it('basic case', () => {

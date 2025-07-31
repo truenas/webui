@@ -1,5 +1,6 @@
 import { FormArray, FormControl, UntypedFormGroup } from '@angular/forms';
 import { FormGroup } from '@ngneat/reactive-forms';
+import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { Observable } from 'rxjs';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { ChartFormValue, ChartSchemaNode } from 'app/interfaces/app.interface';
@@ -347,10 +348,23 @@ const beforeHidden = [{
 
 const afterHidden = [[]] as DynamicFormSchemaIpaddr[][];
 
-const dynamicForm = new FormGroup<Record<string, UntypedFormGroup>>({});
-
 describe('AppSchemaService', () => {
-  const service = new AppSchemaService({} as FilesystemService, {} as UrlValidationService);
+  let spectator: SpectatorService<AppSchemaService>;
+  let service: AppSchemaService;
+  let dynamicForm: FormGroup<Record<string, UntypedFormGroup>>;
+  const createService = createServiceFactory({
+    service: AppSchemaService,
+    providers: [
+      mockProvider(FilesystemService),
+      mockProvider(UrlValidationService),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createService();
+    service = spectator.service;
+    dynamicForm = new FormGroup<Record<string, UntypedFormGroup>>({});
+  });
   describe('transformNode()', () => {
     beforeIntString.forEach((item, idx) => {
       it('converts schema with "int" and "string" type', () => {
@@ -408,13 +422,15 @@ describe('AppSchemaService', () => {
     });
   });
   describe('addFormControls()', () => {
-    beforeIntString.forEach((item) => {
-      service.getNewFormControlChangesSubscription({
-        chartSchemaNode: item,
-        formGroup: dynamicForm,
-        config: {} as HierarchicalObjectMap<ChartFormValue>,
-        isNew: true,
-        isParentImmutable: false,
+    beforeEach(() => {
+      beforeIntString.forEach((item) => {
+        service.getNewFormControlChangesSubscription({
+          chartSchemaNode: item,
+          formGroup: dynamicForm,
+          config: {} as HierarchicalObjectMap<ChartFormValue>,
+          isNew: true,
+          isParentImmutable: false,
+        });
       });
     });
 
@@ -437,13 +453,15 @@ describe('AppSchemaService', () => {
       expect(dynamicForm.controls.variable_boolean.value).toBe(false);
     });
 
-    beforeUri.forEach((item) => {
-      service.getNewFormControlChangesSubscription({
-        chartSchemaNode: item,
-        formGroup: dynamicForm,
-        config: {} as HierarchicalObjectMap<ChartFormValue>,
-        isNew: true,
-        isParentImmutable: false,
+    beforeEach(() => {
+      beforeUri.forEach((item) => {
+        service.getNewFormControlChangesSubscription({
+          chartSchemaNode: item,
+          formGroup: dynamicForm,
+          config: {} as HierarchicalObjectMap<ChartFormValue>,
+          isNew: true,
+          isParentImmutable: false,
+        });
       });
     });
 
@@ -451,13 +469,15 @@ describe('AppSchemaService', () => {
       expect(dynamicForm.controls.variable_uri.value).toBe('https://google.com');
     });
 
-    beforeCron.forEach((item) => {
-      service.getNewFormControlChangesSubscription({
-        chartSchemaNode: item,
-        formGroup: dynamicForm,
-        config: {} as HierarchicalObjectMap<ChartFormValue>,
-        isNew: true,
-        isParentImmutable: false,
+    beforeEach(() => {
+      beforeCron.forEach((item) => {
+        service.getNewFormControlChangesSubscription({
+          chartSchemaNode: item,
+          formGroup: dynamicForm,
+          config: {} as HierarchicalObjectMap<ChartFormValue>,
+          isNew: true,
+          isParentImmutable: false,
+        });
       });
     });
 
@@ -465,13 +485,15 @@ describe('AppSchemaService', () => {
       expect(dynamicForm.controls.variable_cron.value).toBe('* * * * *');
     });
 
-    beforeBoolean.forEach((item) => {
-      service.getNewFormControlChangesSubscription({
-        chartSchemaNode: item,
-        formGroup: dynamicForm,
-        config: {} as HierarchicalObjectMap<ChartFormValue>,
-        isNew: true,
-        isParentImmutable: false,
+    beforeEach(() => {
+      beforeBoolean.forEach((item) => {
+        service.getNewFormControlChangesSubscription({
+          chartSchemaNode: item,
+          formGroup: dynamicForm,
+          config: {} as HierarchicalObjectMap<ChartFormValue>,
+          isNew: true,
+          isParentImmutable: false,
+        });
       });
     });
 
@@ -480,13 +502,15 @@ describe('AppSchemaService', () => {
       expect(dynamicForm.controls.variable_subquestion_boolean.value).toBe(true);
     });
 
-    beforeList.forEach((item) => {
-      service.getNewFormControlChangesSubscription({
-        chartSchemaNode: item,
-        formGroup: dynamicForm,
-        config: {} as HierarchicalObjectMap<ChartFormValue>,
-        isNew: true,
-        isParentImmutable: false,
+    beforeEach(() => {
+      beforeList.forEach((item) => {
+        service.getNewFormControlChangesSubscription({
+          chartSchemaNode: item,
+          formGroup: dynamicForm,
+          config: {} as HierarchicalObjectMap<ChartFormValue>,
+          isNew: true,
+          isParentImmutable: false,
+        });
       });
     });
 
@@ -494,13 +518,15 @@ describe('AppSchemaService', () => {
       expect(dynamicForm.controls.variable_list.value).toEqual([]);
     });
 
-    beforeHidden.forEach((item) => {
-      service.getNewFormControlChangesSubscription({
-        chartSchemaNode: item,
-        formGroup: dynamicForm,
-        config: {} as HierarchicalObjectMap<ChartFormValue>,
-        isNew: true,
-        isParentImmutable: false,
+    beforeEach(() => {
+      beforeHidden.forEach((item) => {
+        service.getNewFormControlChangesSubscription({
+          chartSchemaNode: item,
+          formGroup: dynamicForm,
+          config: {} as HierarchicalObjectMap<ChartFormValue>,
+          isNew: true,
+          isParentImmutable: false,
+        });
       });
     });
 
