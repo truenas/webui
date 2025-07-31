@@ -85,10 +85,10 @@ describe('SubsystemNamespacesCardComponent', () => {
       expect(namespaceRows).toHaveLength(2);
 
       const firstNamespace = namespaceRows[0];
-      expect(firstNamespace).toHaveText('File\n—\n/mnt/dozer/testfile');
+      expect(firstNamespace).toHaveText('File — /mnt/dozer/testfile');
 
       const secondNamespace = namespaceRows[1];
-      expect(secondNamespace).toHaveText('Zvol\n—\n/dev/zvol/testpool/testzvol');
+      expect(secondNamespace).toHaveText('Zvol — /dev/zvol/testpool/testzvol');
     });
 
     it('opens delete namespace dialog when delete button is pressed', async () => {
