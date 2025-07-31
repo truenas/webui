@@ -19,5 +19,5 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./mobile-back-button.component.scss'],
 })
 export class MobileBackButtonComponent {
-  readonly close = output();
+  readonly closed = output();
 }

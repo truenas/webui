@@ -38,6 +38,7 @@ export class SearchInput1Component implements OnInit, OnChanges {
   readonly value = input('');
   readonly maxLength = input(524288);
 
+  // eslint-disable-next-line @angular-eslint/no-output-native
   readonly search = output<string>();
 
   private input: Signal<ElementRef<HTMLInputElement>> = viewChild.required('ixSearchInput', { read: ElementRef });

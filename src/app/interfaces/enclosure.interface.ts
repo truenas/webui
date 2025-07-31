@@ -55,9 +55,7 @@ export interface EnclosureSlotMetadata {
   slot: number;
 }
 
-export type EnclosureElements = {
-  [key in EnclosureElementType]?: Record<number, EnclosureElement>;
-} & {
+export type EnclosureElements = Partial<Record<EnclosureElementType, Record<number, EnclosureElement>>> & {
   [EnclosureElementType.ArrayDeviceSlot]: Record<number, EnclosureSlot>;
 };
 

@@ -18,14 +18,14 @@ describe('MobileBackButtonComponent', () => {
     expect(button).toHaveAttribute('aria-label', 'Back');
   });
 
-  it('should emit onClose when the button is clicked', () => {
-    const onCloseSpy = jest.spyOn(spectator.component.close, 'emit');
+  it('should emit closed when the button is clicked', () => {
+    const onCloseSpy = jest.spyOn(spectator.component.closed, 'emit');
     spectator.click('#mobile-back-button');
     expect(onCloseSpy).toHaveBeenCalled();
   });
 
-  it('should emit onClose when the Enter key is pressed', () => {
-    const onCloseSpy = jest.spyOn(spectator.component.close, 'emit');
+  it('should emit closed when the Enter key is pressed', () => {
+    const onCloseSpy = jest.spyOn(spectator.component.closed, 'emit');
     spectator.dispatchKeyboardEvent('#mobile-back-button', 'keydown', 'Enter');
     expect(onCloseSpy).toHaveBeenCalled();
   });

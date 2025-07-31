@@ -177,7 +177,7 @@ export class IxFormatterService {
     const unitsRe = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
 
     unitStr = unitStr.toUpperCase();
-    if (unitStr.match(unitsRe)) {
+    if (unitsRe.exec(unitStr)) {
       // always return IEC units
       // could take a parameter to return short or human units
       if (unitStr.toLowerCase() === 'b' || unitStr.toLowerCase() === 'bytes') {

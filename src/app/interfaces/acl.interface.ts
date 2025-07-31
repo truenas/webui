@@ -71,9 +71,7 @@ export interface AclFlags {
   sticky: boolean;
 }
 
-export type AdvancedNfsPermissions = {
-  [key in NfsAdvancedPermission]: boolean;
-};
+export type AdvancedNfsPermissions = Record<NfsAdvancedPermission, boolean>;
 
 export interface BasicNfsPermissions {
   BASIC: NfsBasicPermission;
@@ -85,9 +83,7 @@ export function areNfsPermissionsBasic(
   return 'BASIC' in permissions;
 }
 
-export type AdvancedNfsFlags = {
-  [key in NfsAdvancedFlag]: boolean;
-};
+export type AdvancedNfsFlags = Record<NfsAdvancedFlag, boolean>;
 
 export interface BasicNfsFlags {
   BASIC: NfsBasicFlag;

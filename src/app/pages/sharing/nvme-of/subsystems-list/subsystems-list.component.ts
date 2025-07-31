@@ -59,6 +59,7 @@ export class SubsystemsListComponent {
   readonly toggleShowMobileDetails = output<boolean>();
   readonly subsystemSelected = output<NvmeOfSubsystemDetails>();
   readonly dataProvider = input.required<ArrayDataProvider<NvmeOfSubsystemDetails>>();
+  // eslint-disable-next-line @angular-eslint/no-output-native
   readonly search = output<string>();
   protected readonly emptyConfig = nvmeOfEmptyConfig;
   protected readonly EmptyType = EmptyType;

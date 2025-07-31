@@ -27,8 +27,8 @@ function getEnvironment(): { remote: string; port: number } {
   const envPath = join(process.cwd(), 'src/environments/environment.ts');
   const envContent = readFileSync(envPath, 'utf8');
 
-  const remoteMatch = envContent.match(/remote:\s*'([^']+)'/);
-  const portMatch = envContent.match(/port:\s*(\d+)/);
+  const remoteMatch = /remote:\s*'([^']+)'/.exec(envContent);
+  const portMatch = /port:\s*(\d+)/.exec(envContent);
 
   return {
     remote: remoteMatch?.[1] || 'localhost',
@@ -75,7 +75,7 @@ async function waitForWebSocketMessage(ws: WebSocket, expectedId: string): Promi
         if (response.error) {
           reject(new Error(`WebSocket error: ${response.error.message}`));
         }
-      } catch (error) {
+      } catch {
         reject(new Error('Failed to parse WebSocket response'));
       }
     };

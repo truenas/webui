@@ -24,7 +24,7 @@ export function buildNormalizedFileSize(
 
 export function convertStringDiskSizeToBytes(input: string): number | null {
   const sizeRegex = /^(\d+(\.\d+)?)([KMGTP](?:i)?(?:B)?)?$/i;
-  const match = input.replace(/\s+/g, '').match(sizeRegex);
+  const match = sizeRegex.exec(input.replace(/\s+/g, ''));
 
   if (!match) {
     return null;

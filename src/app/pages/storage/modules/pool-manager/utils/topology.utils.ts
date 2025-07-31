@@ -134,7 +134,7 @@ export function parseDraidVdevName(
   vdevName: string,
 ): { layout: CreateVdevLayout; dataDisks: number; spareDisks: number } {
   const regex = /draid(\d+):(\d+)d:(\d+)c:(\d+)s-(\d+)/;
-  const match = vdevName.match(regex);
+  const match = regex.exec(vdevName);
 
   if (!match) {
     throw new Error('Invalid dRAID vdev name');

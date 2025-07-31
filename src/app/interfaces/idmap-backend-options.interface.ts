@@ -1,8 +1,6 @@
 import { IdmapBackend } from 'app/enums/idmap.enum';
 
-export type IdmapBackendOptions = {
-  [key in IdmapBackend]: IdmapBackendOption;
-};
+export type IdmapBackendOptions = Record<IdmapBackend, IdmapBackendOption>;
 
 export interface IdmapBackendOption {
   description: string;

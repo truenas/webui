@@ -22,7 +22,7 @@ export function enableSentry(): void {
         try {
           const url = new URL(event.request.url);
           event.request.url = url.pathname + url.search;
-        } catch (error: unknown) {
+        } catch {
           // In case of invalid URL, delete it
           delete event.request.url;
         }
@@ -35,7 +35,7 @@ export function enableSentry(): void {
             try {
               const url = new URL(breadcrumb.data.url as string);
               breadcrumb.data.url = url.pathname + url.search;
-            } catch (error: unknown) {
+            } catch {
               delete breadcrumb.data.url;
             }
           }

@@ -176,9 +176,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     spectator.detectChanges();
 
     const dialogService = spectator.inject(DialogService);
-    const confirmSpy = jest.spyOn(dialogService, 'confirm').mockImplementation((_) => {
-      return of(true) as ReturnType<typeof dialogService.confirm>;
-    });
+    (dialogService as { confirm: jest.Mock }).confirm = jest.fn(() => of(true));
+    const confirmSpy = dialogService.confirm as jest.Mock;
     const disableSpy = jest.spyOn(spectator.inject(TruenasConnectService), 'disableService');
     const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
     expect(disableBtn).toBeTruthy();
@@ -199,9 +198,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     const service = spectator.inject(TruenasConnectService);
     const disableSpy = jest.spyOn(service, 'disableService').mockReturnValue(throwError(() => new Error('Disable failed')));
     const dialogService = spectator.inject(DialogService);
-    const confirmSpy = jest.spyOn(dialogService, 'confirm').mockImplementation((_) => {
-      return of(true) as ReturnType<typeof dialogService.confirm>;
-    });
+    (dialogService as { confirm: jest.Mock }).confirm = jest.fn(() => of(true));
+    const confirmSpy = dialogService.confirm as jest.Mock;
     const errorSpy = jest.spyOn(dialogService, 'error');
 
     const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
@@ -222,9 +220,8 @@ describe('TruenasConnectStatusModalComponent', () => {
     const service = spectator.inject(TruenasConnectService);
     const disableSpy = jest.spyOn(service, 'disableService');
     const dialogService = spectator.inject(DialogService);
-    const confirmSpy = jest.spyOn(dialogService, 'confirm').mockImplementation((_) => {
-      return of(false) as ReturnType<typeof dialogService.confirm>;
-    });
+    (dialogService as { confirm: jest.Mock }).confirm = jest.fn(() => of(false));
+    const confirmSpy = dialogService.confirm as jest.Mock;
 
     const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
     spectator.click(disableBtn);

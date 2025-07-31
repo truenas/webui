@@ -27,7 +27,7 @@ export interface LdapCredentialMutualTls {
   credential_type: DirectoryServiceCredentialType.LdapMtls;
   client_certificate: string;
 }
-export const credentialTypeLabels: { [key in DirectoryServiceCredentialType]: string } = {
+export const credentialTypeLabels: Record<DirectoryServiceCredentialType, string> = {
   [DirectoryServiceCredentialType.KerberosPrincipal]: T('Kerberos Principal'),
   [DirectoryServiceCredentialType.KerberosUser]: T('Kerberos User'),
   [DirectoryServiceCredentialType.LdapPlain]: T('LDAP Plain'),

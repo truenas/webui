@@ -171,7 +171,7 @@ export class SigninStore extends ComponentStore<SigninState> {
         const url = new URL(redirectUrl, this.window.location.origin);
         url.searchParams.delete(tokenParam);
         return url.pathname + url.search;
-      } catch (error) {
+      } catch {
         console.error('Invalid redirect URL:', redirectUrl);
       }
     }

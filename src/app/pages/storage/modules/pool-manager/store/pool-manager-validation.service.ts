@@ -214,10 +214,10 @@ export class PoolManagerValidationService {
     return this.poolCreationErrors$;
   }
 
-  getTopLevelWarningsForEachStep(): Observable<Partial<{ [key in PoolCreationWizardStep]: string | null }>> {
+  getTopLevelWarningsForEachStep(): Observable<Partial<Record<PoolCreationWizardStep, string | null>>> {
     return this.poolCreationErrors$.pipe(
       map((errors) => {
-        const result: Partial<{ [key in PoolCreationWizardStep]: string | null }> = {};
+        const result: Partial<Record<PoolCreationWizardStep, string | null>> = {};
 
         Object.values(PoolCreationWizardStep).forEach((step: PoolCreationWizardStep) => {
           result[step] = this.filterWarningsTypeByStep(errors, step)?.[0]?.text || null;
@@ -228,10 +228,10 @@ export class PoolManagerValidationService {
     );
   }
 
-  getTopLevelErrorsForEachStep(): Observable<Partial<{ [key in PoolCreationWizardStep]: string | null }>> {
+  getTopLevelErrorsForEachStep(): Observable<Partial<Record<PoolCreationWizardStep, string | null>>> {
     return this.poolCreationErrors$.pipe(
       map((errors) => {
-        const result: Partial<{ [key in PoolCreationWizardStep]: string | null }> = {};
+        const result: Partial<Record<PoolCreationWizardStep, string | null>> = {};
 
         Object.values(PoolCreationWizardStep).forEach((step: PoolCreationWizardStep) => {
           result[step] = this.filterErrorsTypeByStep(errors, step)?.[0]?.text || null;

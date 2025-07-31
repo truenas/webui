@@ -116,9 +116,7 @@ export class AlertConfigFormComponent implements OnInit {
                 level: cls.level,
                 policy: AlertPolicy.Immediately,
               }));
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               this.form.controls[cls.id].controls.level.defaultValue = cls.level;
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               this.form.controls[cls.id].controls.policy.defaultValue = AlertPolicy.Immediately;
             });
           });

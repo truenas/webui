@@ -351,7 +351,7 @@ export class InterfaceFormComponent implements OnInit {
   private getUsedNumbersForPrefix(interfaces: NetworkInterface[], prefix: string): Set<number> {
     return new Set(
       interfaces
-        .map((item) => item.name.match(new RegExp(`^${prefix}(\\d+)$`)))
+        .map((item) => new RegExp(`^${prefix}(\\d+)$`).exec(item.name))
         .filter(Boolean)
         .map((match) => Number(match[1])),
     );
