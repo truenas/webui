@@ -1,5 +1,6 @@
 import {
   createServiceFactory,
+  mockProvider,
   SpectatorService,
 } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -8,9 +9,11 @@ import {
   TruenasConnectStatus,
   TruenasConnectStatusReason,
 } from 'app/enums/truenas-connect-status.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('TruenasConnectService', () => {
   let spectator: SpectatorService<TruenasConnectService>;
@@ -53,6 +56,9 @@ describe('TruenasConnectService', () => {
       mockWindow({
         open: jest.fn(),
       }),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: jest.fn().mockReturnValue((source: unknown) => source),
+      }),
     ],
   });
 
@@ -61,50 +67,60 @@ describe('TruenasConnectService', () => {
   });
 
   it('should disable a tnc service', () => {
+    const errorHandler = spectator.inject(ErrorHandlerService);
+    spectator.service.config.set(config);
     spectator.service.disableService().subscribe();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'tn_connect.update',
-      [
-        {
-          ips: [''],
-          enabled: false,
-          tnc_base_url: config.tnc_base_url,
-          account_service_base_url: config.account_service_base_url,
-          leca_service_base_url: config.leca_service_base_url,
-          heartbeat_url: config.heartbeat_url,
-        },
-      ],
+      [{ enabled: false }],
     );
+    expect(errorHandler.withErrorHandler).toHaveBeenCalled();
+  });
+
+  it('should throw error when config is null in disableService', () => {
+    spectator.service.config.set(null);
+    expect(() => spectator.service.disableService()).toThrow('Truenas Connect config is not available');
   });
 
   it('should enable a tnc service', () => {
+    const errorHandler = spectator.inject(ErrorHandlerService);
+    spectator.service.config.set(config);
     spectator.service.enableService().subscribe();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'tn_connect.update',
-      [
-        {
-          ips: [''],
-          enabled: true,
-          tnc_base_url: config.tnc_base_url,
-          account_service_base_url: config.account_service_base_url,
-          leca_service_base_url: config.leca_service_base_url,
-          heartbeat_url: config.heartbeat_url,
-        },
-      ],
+      [{ enabled: true }],
     );
+    expect(errorHandler.withErrorHandler).toHaveBeenCalled();
+  });
+
+  it('should throw error when config is null in enableService', () => {
+    spectator.service.config.set(null);
+    expect(() => spectator.service.enableService()).toThrow('Truenas Connect config is not available');
   });
 
   it('should generate claim_token', () => {
+    const errorHandler = spectator.inject(ErrorHandlerService);
     spectator.service.generateToken().subscribe();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'tn_connect.generate_claim_token',
     );
+    expect(errorHandler.withErrorHandler).toHaveBeenCalled();
   });
 
   it('should connect to TNC', () => {
+    const windowMock = spectator.inject(WINDOW) as unknown as jest.Mocked<Window>;
+    const errorHandler = spectator.inject(ErrorHandlerService);
     spectator.service.connect().subscribe();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'tn_connect.get_registration_uri',
     );
+    expect(windowMock.open).toHaveBeenCalledWith(url);
+    expect(errorHandler.withErrorHandler).toHaveBeenCalled();
+  });
+
+  it('should test getConfig method', () => {
+    expect(spectator.service.config()).toEqual(config);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('tn_connect.config');
+    expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('tn_connect.config');
   });
 });
