@@ -35,7 +35,6 @@ import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.compon
     TranslateModule,
     MatCardContent,
     IxIconComponent,
-    TranslateModule,
     RouterLink,
     TestDirective,
     RequiresRolesDirective,

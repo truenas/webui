@@ -44,6 +44,7 @@ export const extraRules = {
     preferQuerySignals: false,
     preferReadonlySignalProperties: false,
   }],
+  "@angular-eslint/no-duplicates-in-metadata-arrays": "error",
 
   // Angular file naming
   "angular-file-naming/component-filename-suffix": "error",
@@ -390,4 +391,8 @@ export const extraRules = {
   // Unicorn
   "unicorn/filename-case": ["error", {case: "kebabCase"}],
   "unicorn/prefer-array-find": ["error"],
+  "unicorn/no-useless-spread": ["error"],
+
+  // SonarJS - additional rules
+  "sonarjs/no-duplicate-string": ["error", {"threshold": 5}],
 };
