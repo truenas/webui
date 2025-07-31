@@ -31,7 +31,6 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
     TranslateModule,
     TestDirective,
     TestOverrideDirective,
-    TestDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },

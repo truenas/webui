@@ -17,6 +17,7 @@ describe('TruenasConnectService', () => {
   const config: TruenasConnectConfig = {
     id: 1,
     ips: [''],
+    interfaces_ips: [],
     enabled: true,
     tnc_base_url: 'https://tnc-test.ixsystems.com',
     account_service_base_url: 'https://account-service-test.ixsystems.com',

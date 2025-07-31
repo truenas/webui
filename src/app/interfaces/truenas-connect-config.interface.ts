@@ -14,6 +14,7 @@ export interface TruenasConnectConfig extends TruenasConnectUpdate {
   status: TruenasConnectStatus;
   status_reason: string;
   certificate: number;
+  interfaces_ips: string[];
 }
 
 export interface TruenasConnectUpdate {

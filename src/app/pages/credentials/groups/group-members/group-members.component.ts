@@ -37,7 +37,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatCardTitle,
     ReadOnlyComponent,
     MatCardContent,
-    DualListBoxComponent,
     MatCardActions,
     RequiresRolesDirective,
     MatButton,

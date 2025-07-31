@@ -22,6 +22,12 @@ interface ContentSection {
   tabs?: TabSection[];
 }
 
+// Regex patterns for highlighting
+const highlightPatterns = {
+  warning: /(?<!=)===([^=]+?)===(?!=)/g,
+  error: /(?<!=)==([^=]+?)==(?!=)/g,
+} as const;
+
 @Component({
   selector: 'ix-dynamic-markdown',
   templateUrl: './dynamic-markdown.component.html',
@@ -65,6 +71,9 @@ export class DynamicMarkdownComponent {
         return value != null ? String(value) : '';
       },
     );
+
+    // Process highlight syntax and convert to warnings
+    processed = this.processHighlightSyntax(processed);
 
     return processed;
   }
@@ -194,5 +203,29 @@ export class DynamicMarkdownComponent {
     }
 
     return tabs;
+  }
+
+  private processHighlightSyntax(content: string): string {
+    let processed = content;
+
+    // Process warning highlights (===text===)
+    processed = processed.replace(
+      highlightPatterns.warning,
+      (match, text: string) => {
+        const trimmedText = text.trim();
+        return `<span class="highlight-warning" role="note" aria-label="Warning: ${trimmedText}">${trimmedText}</span>`;
+      },
+    );
+
+    // Process error highlights (==text==)
+    processed = processed.replace(
+      highlightPatterns.error,
+      (match, text: string) => {
+        const trimmedText = text.trim();
+        return `<span class="highlight-error" role="alert" aria-label="Error: ${trimmedText}">${trimmedText}</span>`;
+      },
+    );
+
+    return processed;
   }
 }
