@@ -7,10 +7,27 @@
   <mat-card-content>
     @for (group of targetGroups(); track $index) {
       <div class="group">
-        {{ 'Portal Group ID' | translate }}: {{ group.portalLabel ?? '-' }} |
-        {{ 'Initiator Group ID' | translate }}: {{ group.initiatorLabel ?? '-' }} |
-        {{ 'Authentication Method' | translate }}: {{ group.authmethod ?? '-' }} |
-        {{ 'Authentication Group Number' | translate }}: {{ group.auth ?? '-' }}
+        <div class="group-header">
+          <h4 class="group-title">{{ 'Group' | translate }} {{ $index + 1 }}</h4>
+        </div>
+        <div class="group-content">
+          <div class="attribute-row">
+            <span class="attribute-label">{{ 'Portal Group ID' | translate }}:</span>
+            <span class="attribute-value">{{ group.portalLabel ?? '-' }}</span>
+          </div>
+          <div class="attribute-row">
+            <span class="attribute-label">{{ 'Initiator Group ID' | translate }}:</span>
+            <span class="attribute-value">{{ group.initiatorLabel ?? '-' }}</span>
+          </div>
+          <div class="attribute-row">
+            <span class="attribute-label">{{ 'Authentication Method' | translate }}:</span>
+            <span class="attribute-value">{{ group.authmethod ?? '-' }}</span>
+          </div>
+          <div class="attribute-row">
+            <span class="attribute-label">{{ 'Authentication Group Number' | translate }}:</span>
+            <span class="attribute-value">{{ group.auth ?? '-' }}</span>
+          </div>
+        </div>
       </div>
     } @empty {
       <p>{{ 'No groups.' | translate }}</p>
