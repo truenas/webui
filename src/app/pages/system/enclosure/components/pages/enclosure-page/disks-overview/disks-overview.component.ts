@@ -40,7 +40,7 @@ export class DisksOverviewComponent {
   });
 
   readonly expanders = computed(() => {
-    return [...Object.values(this.selectedEnclosure()?.elements?.[EnclosureElementType.SasExpander] || {})];
+    return Object.values(this.selectedEnclosure()?.elements?.[EnclosureElementType.SasExpander] || {});
   });
 
   readonly unhealthyPoolsInfo = computed(() => {

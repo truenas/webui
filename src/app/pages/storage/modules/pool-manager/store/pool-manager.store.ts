@@ -196,7 +196,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       case VDevType.Special:
         return this.select((state) => [state.topology[VDevType.Data].layout]);
       default:
-        return of([...Object.values(CreateVdevLayout)]);
+        return of(Object.values(CreateVdevLayout));
     }
   }
 
