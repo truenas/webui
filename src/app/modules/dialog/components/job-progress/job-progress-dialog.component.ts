@@ -64,7 +64,6 @@ export interface JobProgressDialogConfig<Result> {
     TranslateModule,
     DecimalPipe,
     TestDirective,
-    TestDirective,
   ],
 })
 export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
