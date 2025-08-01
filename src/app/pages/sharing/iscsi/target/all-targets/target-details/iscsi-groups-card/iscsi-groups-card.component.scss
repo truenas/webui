@@ -1,11 +1,9 @@
 .group {
-  margin-bottom: 16px;
-  padding-bottom: 16px;
+  margin-bottom: 14px;
 
   &:last-of-type {
     border-bottom: none;
     margin-bottom: 0;
-    padding-bottom: 0;
   }
 }
 
@@ -14,23 +12,19 @@
 }
 
 .group-title {
-  background-color: var(--bg2);
-  border-left: 2px solid var(--primary);
-  color: var(--primary);
+  border-bottom: 1px solid var(--lines);
+  color: var(--fg1);
   font-size: 14px;
   font-weight: 600;
   margin: 0;
-  padding: 8px 12px;
-}
-
-.group-content {
-  padding-left: 4px;
+  padding-bottom: 10px;
 }
 
 .attribute-row {
   align-items: flex-start;
   display: flex;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 4px;
 
   &:last-child {
     margin-bottom: 0;
@@ -40,13 +34,12 @@
 .attribute-label {
   color: var(--fg2);
   flex-shrink: 0;
-  font-weight: 500;
-  margin-right: 12px;
-  min-width: 180px;
+  font-weight: bold;
 }
 
 .attribute-value {
   color: var(--fg1);
   flex: 1;
+  font-weight: normal;
   word-break: break-word;
 }
