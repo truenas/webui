@@ -80,7 +80,7 @@ export const extraRules = {
   "@stylistic/ts/object-curly-newline": ["error", {
     ObjectExpression: {minProperties: 4, multiline: true, consistent: true},
     ObjectPattern: {minProperties: 4, multiline: true, consistent: true},
-    ImportDeclaration: {minProperties: 4, multiline: true, consistent: true},
+    // ImportDeclaration: {minProperties: 4, multiline: true, consistent: true}, -- Should be enabled
     ExportDeclaration: {minProperties: 4, multiline: true, consistent: true},
   }],
   "@stylistic/ts/object-property-newline": ["error", {

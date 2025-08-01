@@ -63,53 +63,53 @@ export function mockApi(
     {
       provide: TranslateService,
       useValue: (() => {
-        const mockInstant = (key: string, params?: Record<string, unknown>) => {
+        const mockInstant = (key: string, params?: Record<string, unknown>): string => {
           // Handle ICU plural syntax - can be embedded in larger strings
           let result = key;
-          
-          
+
+
           // Match plural expressions - need to handle nested braces carefully
           // This matches { n, plural, ... } with any content including nested {}
           const pluralRegex = /\{\s*(\w+)\s*,\s*plural\s*,\s*((?:[^{}]|\{[^}]*\})+)\s*\}/g;
-          
+
           result = result.replace(pluralRegex, (match, paramName, pluralRules) => {
             if (!params || params[paramName] === undefined) {
               return match;
             }
-            
+
             const paramValue = Number(params[paramName]);
-            
+
             // Parse plural rules - handle spaces more flexibly
             const rules = pluralRules.match(/(?:=\d+\s*\{[^}]+\}|\w+\s*\{[^}]+\})/g) || [];
-            
+
             for (const rule of rules) {
-              const exactMatch = rule.match(/=(\d+)\s*\{([^}]+)\}/);
+              const exactMatch = rule.match(/[=](\d+)\s*\{([^}]+)\}/);
               if (exactMatch && Number(exactMatch[1]) === paramValue) {
                 return exactMatch[2].replace(/#/g, String(paramValue));
               }
-              
+
               const oneMatch = rule.match(/one\s*\{([^}]+)\}/);
               if (oneMatch && paramValue === 1) {
                 return oneMatch[1].replace(/#/g, String(paramValue));
               }
-              
+
               const otherMatch = rule.match(/other\s*\{([^}]+)\}/);
               if (otherMatch && (paramValue === 0 || paramValue > 1)) {
                 return otherMatch[1].replace(/#/g, String(paramValue));
               }
             }
-            
+
             return match;
           });
-          
-          
+
+
           // Handle simple parameter interpolation
           if (params && result.includes('{')) {
             Object.entries(params).forEach(([paramKey, paramValue]) => {
               result = result.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), String(paramValue));
             });
           }
-          
+
           return result;
         };
 

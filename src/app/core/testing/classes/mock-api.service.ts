@@ -15,7 +15,6 @@ import {
 import {
   ApiJobMethod,
   ApiJobParams,
-  ApiJobResponse,
 } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiEventTyped } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -66,7 +65,7 @@ export class MockApiService {
     });
     this.job = jest.fn((method: ApiJobMethod, params?: unknown) => {
       if (this.mockJobs.has(method)) {
-        const getJobResponse = () => {
+        const getJobResponse = (): Job => {
           const response = this.mockJobs.get(method);
           if (response instanceof Function) {
             return response(params as ApiJobParams<ApiJobMethod>);
@@ -101,7 +100,7 @@ export class MockApiService {
 
   mockCall<K extends ApiCallMethod>(method: K, response: CallResponseOrFactory<K>): void {
     this.mockCalls.set(method, response as CallResponseOrFactory<ApiCallMethod>);
-    
+
     // Still use jest-when for callAndSubscribe if needed
     const mockedImplementation = (_: K, params: ApiCallParams<K>): Observable<unknown> => {
       let preparedResponse = response;
