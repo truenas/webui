@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input, OnInit, signal,
+  ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal,
 } from '@angular/core';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -31,6 +31,9 @@ export class IscsiGroupsCardComponent implements OnInit {
   protected readonly portals = signal<Option[]>([]);
   protected readonly initiators = signal<Option[]>([]);
 
+  private readonly iscsiService = inject(IscsiService);
+  private readonly translate = inject(TranslateService);
+
   private readonly portalMap = computed(() => {
     return new Map(this.portals().map((portal) => [portal.value, portal.label]));
   });
@@ -51,11 +54,6 @@ export class IscsiGroupsCardComponent implements OnInit {
       auth: group.auth ?? '-',
     }));
   });
-
-  constructor(
-    private iscsiService: IscsiService,
-    private translate: TranslateService,
-  ) {}
 
   ngOnInit(): void {
     this.loadPortals();

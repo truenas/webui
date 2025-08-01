@@ -62,7 +62,8 @@ export class SlideIn {
         const containerPortal = new ComponentPortal(SlideInContainerComponent);
         const containerRef = cdkOverlayRef.attach(containerPortal);
 
-        const close$ = this.getCloseSubject<SlideInResponse<R>>(cdkOverlayRef, containerRef, slideInId);
+        const closeSubject$ = this.getCloseSubject<SlideInResponse<R>>(cdkOverlayRef, containerRef, slideInId);
+        const close$ = closeSubject$ as Subject<SlideInResponse<R>>;
 
         const slideInInstance: SlideInInstance<D, R> = {
           slideInId,

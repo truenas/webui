@@ -32,6 +32,7 @@ import {
   ApiEventTyped,
   ErrorResponse,
   IncomingMessage,
+  JsonRpcError,
   SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -127,7 +128,7 @@ export class ApiService {
       switchMap((apiEvent) => {
         const erroredEvent = apiEvent as unknown as IncomingMessage;
         if (isErrorResponse(erroredEvent)) {
-          return throwError(() => new ApiCallError(erroredEvent.error));
+          return throwError(() => new ApiCallError(erroredEvent.error as JsonRpcError));
         }
         return of(apiEvent);
       }),
@@ -184,7 +185,7 @@ export class ApiService {
           return EMPTY;
         }
 
-        return throwError(() => new ApiCallError(message.error));
+        return throwError(() => new ApiCallError(message.error as JsonRpcError));
       }
 
       performance.mark(`${method} - ${uuid} - end`);
