@@ -36,8 +36,8 @@ describe('CopyrightLineComponent', () => {
     store$.refreshState();
     spectator.detectChanges();
 
-    expect(spectator.fixture.nativeElement).toHaveText(`TrueNAS®  © ${buildYear} iXsystems, Inc. dba  TrueNAS`);
-    expect(spectator.fixture.nativeElement).toHaveText('iXsystems, Inc');
+    expect(spectator.fixture.nativeElement).toHaveText(`TrueNAS®  © ${buildYear} TrueNAS Systems, Inc.  TrueNAS`);
+    expect(spectator.fixture.nativeElement).toHaveText('TrueNAS Systems, Inc');
     expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/testdrive');
   });
 
@@ -46,8 +46,8 @@ describe('CopyrightLineComponent', () => {
     store$.refreshState();
     spectator.detectChanges();
 
-    expect(spectator.fixture.nativeElement).toHaveText(`TrueNAS® Community Edition  © ${buildYear} iXsystems, Inc. dba  TrueNAS`);
-    expect(spectator.fixture.nativeElement).toHaveText('iXsystems, Inc');
+    expect(spectator.fixture.nativeElement).toHaveText(`TrueNAS® Community Edition  © ${buildYear} TrueNAS Systems, Inc.  TrueNAS`);
+    expect(spectator.fixture.nativeElement).toHaveText('TrueNAS Systems, Inc');
     expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/testdrive');
   });
 
@@ -56,8 +56,8 @@ describe('CopyrightLineComponent', () => {
     store$.refreshState();
     spectator.detectChanges();
 
-    expect(spectator.fixture.nativeElement).toHaveText(`TrueNAS® Enterprise  © ${buildYear} iXsystems, Inc. dba  TrueNAS`);
-    expect(spectator.fixture.nativeElement).toHaveText('iXsystems, Inc');
+    expect(spectator.fixture.nativeElement).toHaveText(`TrueNAS® Enterprise  © ${buildYear} TrueNAS Systems, Inc.  TrueNAS`);
+    expect(spectator.fixture.nativeElement).toHaveText('TrueNAS Systems, Inc');
     expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/production');
   });
 });

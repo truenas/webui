@@ -74,7 +74,7 @@ describe('ProactiveComponent', () => {
       Name: 'Zepp Karlsen',
       Email: 'test-user@test-user.com',
       Title: 'Cannot connect',
-      'Enable iXsystems Proactive Support': true,
+      'Enable TrueNAS Proactive Support': true,
       'Phone Number': '+888888888',
       'Secondary Email': 'test-user@test-user.com',
       'Secondary Name': 'Zepp Karlsen',

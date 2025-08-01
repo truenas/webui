@@ -14,12 +14,6 @@ export const environment: WebUiEnvironment = {
     mockJobDefaultDelay: 1000,
     persistMockConfigs: true,
   },
-  debugPanel: {
-    enabled: false,
-    defaultMessageLimit: 100,
-    mockJobDefaultDelay: 1000,
-    persistMockConfigs: true,
-  },
 };
 
 // Production

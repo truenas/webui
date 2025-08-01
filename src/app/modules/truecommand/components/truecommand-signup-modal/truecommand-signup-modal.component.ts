@@ -40,7 +40,7 @@ export class TruecommandSignupModalComponent {
   ) { }
 
   onSignup(): void {
-    this.window.open('https://portal.ixsystems.com');
+    this.window.open('https://portal.truenas.com');
     this.dialogRef.close(false);
   }
 }

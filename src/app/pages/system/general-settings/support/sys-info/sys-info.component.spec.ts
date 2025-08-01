@@ -12,7 +12,7 @@ describe('SysInfoComponent', () => {
     system_serial: 'ffbb355c',
   };
   const licenseInfo = {
-    customer_name: 'iXsystems Inc.',
+    customer_name: 'TrueNAS',
     features: ['DEDUP', 'FIBRECHANNEL', 'VM'],
     model: 'M60',
     contract_type: 'GOLD',
