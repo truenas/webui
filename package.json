@@ -182,6 +182,7 @@
     "marked": "^12.0.2",
     "markuplint": "~2.9.0",
     "markuplint-angular-parser": "~1.1.3",
+    "messageformat-parser": "~4.1.3",
     "mime-types": "~2.1.35",
     "ng-gallery": "~11.0.0",
     "ng-lazyload-image": "~9.1.3",
