@@ -1,5 +1,5 @@
 import { KeyValuePipe } from '@angular/common';
-import { Component, OnChanges, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, input, viewChild, DOCUMENT, inject } from '@angular/core';
+import { Component, OnChanges, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, input, viewChild, DOCUMENT, inject, effect } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -84,9 +84,24 @@ export class ReportComponent implements OnInit, OnChanges {
   private localeService = inject(LocaleService);
   private document = inject<Document>(DOCUMENT);
 
+  private initialFetchTriggered = false;
+
   readonly localControls = input(true);
   readonly report = input.required<Report>();
   readonly identifier = input<string>();
+
+  constructor() {
+    // Effect to trigger initial data fetch when report becomes available
+    effect(() => {
+      const report = this.report();
+      if (report && !this.initialFetchTriggered && this.currentStartDate !== undefined) {
+        this.initialFetchTriggered = true;
+        const rrdOptions = { start: this.currentStartDate, end: this.currentEndDate, step: '10' };
+        const identifier = report.identifiers ? report.identifiers[0] : undefined;
+        this.fetchReport$.next({ rrdOptions, identifier, report });
+      }
+    });
+  }
 
   private readonly lineChart = viewChild(LineChartComponent);
 
@@ -157,7 +172,33 @@ export class ReportComponent implements OnInit, OnChanges {
     return this.chartId === this.legendData.chartId;
   }
 
-  constructor() {
+
+  private initAutoRefresh(): void {
+    this.autoRefreshTimer = timer(2000, refreshInterval).pipe(
+      filter(() => this.autoRefreshEnabled),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      const rrdOptions = this.convertTimeSpan(this.currentZoomLevel);
+      this.currentStartDate = rrdOptions.start;
+      this.currentEndDate = rrdOptions.end;
+
+      const identifier = this.report().identifiers ? this.report().identifiers[0] : undefined;
+      this.fetchReport$.next({ rrdOptions, identifier, report: this.report() });
+    });
+  }
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    const wasReportChanged = changes?.report?.firstChange
+      || (changes.report.previousValue && !this.isReady)
+      || (changes.report.previousValue.title !== changes.report.currentValue.title);
+
+    if (wasReportChanged) {
+      this.updateReport$.next(changes);
+    }
+  }
+
+  ngOnInit(): void {
+    // Initialize subscriptions
     this.reportsService.legendEventEmitterObs$.pipe(untilDestroyed(this)).subscribe({
       next: (data: LegendDataWithStackedTotalHtml) => {
         const clone = { ...data };
@@ -222,33 +263,8 @@ export class ReportComponent implements OnInit, OnChanges {
     ).subscribe((changes) => {
       this.applyChanges(changes);
     });
-  }
 
-  private initAutoRefresh(): void {
-    this.autoRefreshTimer = timer(2000, refreshInterval).pipe(
-      filter(() => this.autoRefreshEnabled),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      const rrdOptions = this.convertTimeSpan(this.currentZoomLevel);
-      this.currentStartDate = rrdOptions.start;
-      this.currentEndDate = rrdOptions.end;
-
-      const identifier = this.report().identifiers ? this.report().identifiers[0] : undefined;
-      this.fetchReport$.next({ rrdOptions, identifier, report: this.report() });
-    });
-  }
-
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    const wasReportChanged = changes?.report?.firstChange
-      || (changes.report.previousValue && !this.isReady)
-      || (changes.report.previousValue.title !== changes.report.currentValue.title);
-
-    if (wasReportChanged) {
-      this.updateReport$.next(changes);
-    }
-  }
-
-  ngOnInit(): void {
+    // Initialize time range
     const { start, end } = this.convertTimeSpan(this.currentZoomLevel);
     this.currentStartDate = start;
     this.currentEndDate = end;

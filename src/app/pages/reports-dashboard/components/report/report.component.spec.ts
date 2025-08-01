@@ -6,7 +6,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
-import { LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
+import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -55,14 +55,30 @@ describe('ReportComponent', () => {
   it('shows legend values only for the target report', () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     jest.spyOn(require('uuid'), 'v4').mockReturnValue('uuid-selected-report');
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        report: {
+          name: 'cpu',
+          title: 'CPU Usage',
+          vertical_label: '%',
+        } as Report,
+      },
+    });
     expect(spectator.component.shouldShowLegendValue).toBeTruthy();
   });
 
   it('hides legend values for other reports', () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     jest.spyOn(require('uuid'), 'v4').mockReturnValue('uuid-another-report');
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        report: {
+          name: 'cpu',
+          title: 'CPU Usage',
+          vertical_label: '%',
+        } as Report,
+      },
+    });
     expect(spectator.component.shouldShowLegendValue).toBeFalsy();
   });
 });

@@ -52,17 +52,33 @@ export class ReportsService {
       'reporting.netdata_get_data',
       [[queryData.params], queryData.timeFrame],
     ).pipe(
-      map((reportingData) => reportingData[0]),
+      map((reportingData: ReportingData[]) => reportingData[0]),
       map((reportingData) => {
-        if (queryData.truncate) {
-          reportingData.data = this.truncateData(reportingData.data as number[][]);
+        // Deep clone the object to avoid modifying read-only properties
+        const clonedData = {
+          ...reportingData,
+          aggregations: reportingData.aggregations
+            ? {
+                min: Array.isArray(reportingData.aggregations.min)
+                  ? [...reportingData.aggregations.min]
+                  : reportingData.aggregations.min,
+                mean: Array.isArray(reportingData.aggregations.mean)
+                  ? [...reportingData.aggregations.mean]
+                  : reportingData.aggregations.mean,
+                max: Array.isArray(reportingData.aggregations.max)
+                  ? [...reportingData.aggregations.max]
+                  : reportingData.aggregations.max,
+              }
+            : undefined,
+        };
+        if (queryData.truncate && clonedData.data) {
+          clonedData.data = this.truncateData(clonedData.data as number[][]);
         }
-
-        return reportingData;
+        return clonedData;
       }),
       map((reportingData) => optimizeLegend(reportingData)),
       map((reportingData) => convertAggregations(reportingData, queryData.report.vertical_label || '')),
-    );
+    ) as Observable<ReportingData>;
   }
 
   truncateData(data: number[][]): number[][] {
