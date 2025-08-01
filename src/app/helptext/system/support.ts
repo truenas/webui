@@ -3,8 +3,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export const helptextSystemSupport = {
   proactive: {
     title: T('Proactive Support'),
-    instructions: T('Silver / Gold Coverage Customers can enable iXsystems Proactive Support. This \
- automatically emails iXsystems when certain conditions occur on this TrueNAS system. The iX Support \
+    instructions: T('Silver / Gold Coverage Customers can enable TrueNAS Proactive Support. This \
+ automatically emails TrueNAS when certain conditions occur on this TrueNAS system. The TrueNAS Support \
  Team will promptly communicate with the Contacts saved below to quickly resolve any issue that may \
  have occurred on the system.'),
     primaryContact: T('Primary Contact'),
@@ -48,7 +48,7 @@ export const helptextSystemSupport = {
   },
 
   cc: {
-    tooltip: T('Email addresses to receive copies of iXsystems Support \
+    tooltip: T('Email addresses to receive copies of TrueNAS Support \
   messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. \
   Separate entries by pressing <code>Enter</code>.'),
     err: T('Email addresses must be entered in the format \

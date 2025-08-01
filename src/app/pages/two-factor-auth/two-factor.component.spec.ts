@@ -46,7 +46,7 @@ describe('TwoFactorComponent', () => {
           },
         } as LoggedInUser),
         userTwoFactorConfig$: of({
-          provisioning_uri: 'somepath://here/iXsystems:first-test?secret=KYC123',
+          provisioning_uri: 'somepath://here/TrueNAS:first-test?secret=KYC123',
           interval: 30,
           otp_digits: 6,
           secret_configured: true,
@@ -68,7 +68,7 @@ describe('TwoFactorComponent', () => {
 
     const qrViewer = spectator.query(QrViewerComponent);
     expect(qrViewer).toBeTruthy();
-    expect(qrViewer).toHaveProperty('qrInfo', 'somepath://here/iXsystems:first-test?secret=KYC123');
+    expect(qrViewer).toHaveProperty('qrInfo', 'somepath://here/TrueNAS:first-test?secret=KYC123');
   });
 
   it('displays the secret from provisioning URI in the component', () => {
