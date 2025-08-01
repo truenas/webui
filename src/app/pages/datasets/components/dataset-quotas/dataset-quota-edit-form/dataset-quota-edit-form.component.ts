@@ -59,7 +59,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     quotaType: DatasetQuotaType;
     datasetId: string;
     id: number;
-}, boolean>>(SlideInRef);
+  }, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 

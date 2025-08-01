@@ -45,7 +45,8 @@ export class DockerRegistryFormComponent implements OnInit {
   slideInRef = inject<SlideInRef<{
     isLoggedInToDockerHub?: boolean;
     registry?: DockerRegistry;
-} | undefined, boolean>>(SlideInRef);
+  } | undefined, boolean>>(SlideInRef);
+
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);
   private urlValidationService = inject(UrlValidationService);

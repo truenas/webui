@@ -49,7 +49,10 @@ export class TruecommandConnectModalComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private data = inject<TruecommandSignupModalState>(MAT_DIALOG_DATA);
   private dialogService = inject(DialogService);
-  private dialogRef = inject<MatDialogRef<TruecommandConnectModalComponent, TruecommandSignupModalResult>>(MatDialogRef);
+  private dialogRef = inject<
+    MatDialogRef<TruecommandConnectModalComponent, TruecommandSignupModalResult>
+  >(MatDialogRef);
+
   private fb = inject(FormBuilder);
   private loader = inject(LoaderService);
   private api = inject(ApiService);

@@ -36,7 +36,8 @@ export class TruecommandStatusModalComponent {
   data = inject<{
     parent: TruecommandButtonComponent;
     data: TrueCommandConfig;
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
+
   private window = inject<Window>(WINDOW);
   private dialogService = inject(DialogService);
   private cdr = inject(ChangeDetectorRef);

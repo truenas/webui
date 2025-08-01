@@ -42,7 +42,8 @@ export class CreateStorjBucketDialog {
   private loader = inject(LoaderService);
   data = inject<{
     credentialsId: number;
-}>(MAT_DIALOG_DATA, { optional: true });
+  }>(MAT_DIALOG_DATA, { optional: true });
+
   private formErrorHandler = inject(FormErrorHandlerService);
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];

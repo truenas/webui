@@ -21,7 +21,6 @@ import {
   catchError,
   throwError,
 } from 'rxjs';
-import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
 import { makeRequestMessage } from 'app/helpers/api.helper';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';

@@ -1,5 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DockerStatus } from 'app/enums/docker-status.enum';
@@ -28,7 +29,7 @@ describe('DockerStore', () => {
       {
         provide: ErrorHandlerService,
         useValue: {
-          withErrorHandler: () => (source$: any) => source$,
+          withErrorHandler: <T>() => (source$: Observable<T>) => source$,
         },
       },
       {

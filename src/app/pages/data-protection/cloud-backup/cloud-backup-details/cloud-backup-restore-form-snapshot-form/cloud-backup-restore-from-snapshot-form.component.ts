@@ -75,7 +75,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   slideInRef = inject<SlideInRef<{
     backup: CloudBackup;
     snapshot: CloudBackupSnapshot;
-}, boolean>>(SlideInRef);
+  }, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   readonly mntPath = mntPath;

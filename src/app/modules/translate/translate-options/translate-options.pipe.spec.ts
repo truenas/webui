@@ -18,7 +18,7 @@ describe('TranslateOptionsPipe', () => {
         },
       ],
     });
-    
+
     pipe = TestBed.inject(TranslateOptionsPipe);
   });
 

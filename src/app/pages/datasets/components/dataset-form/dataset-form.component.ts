@@ -74,7 +74,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   slideInRef = inject<SlideInRef<{
     datasetId: string;
     isNew?: boolean;
-}, Dataset>>(SlideInRef);
+  }, Dataset>>(SlideInRef);
 
   private nameAndOptionsSection = viewChild.required(NameAndOptionsSectionComponent);
   private encryptionSection = viewChild(EncryptionSectionComponent);

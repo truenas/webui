@@ -91,7 +91,7 @@ export class ZvolFormComponent implements OnInit {
   slideInRef = inject<SlideInRef<{
     isNew: boolean;
     parentOrZvolId: string;
-}, Dataset>>(SlideInRef);
+  }, Dataset>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 

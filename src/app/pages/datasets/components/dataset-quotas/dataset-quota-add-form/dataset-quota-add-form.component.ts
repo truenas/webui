@@ -60,7 +60,7 @@ export class DatasetQuotaAddFormComponent {
   slideInRef = inject<SlideInRef<{
     quotaType: DatasetQuotaType;
     datasetId: string;
-}, boolean>>(SlideInRef);
+  }, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
