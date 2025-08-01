@@ -1,12 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  forwardRef,
-  input,
-  OnInit, signal, viewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, forwardRef, input, OnInit, signal, viewChild, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -55,6 +47,10 @@ import { hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils
   ],
 })
 export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+
   /**
    * Optional function to filter disks in addition to default select's behaviour.
    */
@@ -100,12 +96,6 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
   protected disksProvider = new SimpleAsyncComboboxProvider(this.shownOptions$);
 
   private readonly combobox = viewChild.required(IxComboboxComponent);
-
-  constructor(
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private api: ApiService,
-  ) {}
 
   ngOnInit(): void {
     this.loadDisks();

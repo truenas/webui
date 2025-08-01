@@ -1,6 +1,4 @@
-import {
-  AfterViewInit, ComponentRef, Directive, input, OnChanges, ViewContainerRef,
-} from '@angular/core';
+import { AfterViewInit, ComponentRef, Directive, input, OnChanges, ViewContainerRef, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -11,13 +9,12 @@ import { IxTableEmptyRowComponent } from 'app/modules/ix-table/components/ix-emp
   selector: '[ix-table-empty]',
 })
 export class IxTableEmptyDirective implements AfterViewInit, OnChanges {
+  private viewContainerRef = inject(ViewContainerRef);
+
   readonly showEmptyRow = input<boolean>(false, { alias: 'ix-table-empty' });
   readonly emptyConfig = input<EmptyConfig>();
 
   componentRef: ComponentRef<IxTableEmptyRowComponent> | null = null;
-  constructor(
-    private viewContainerRef: ViewContainerRef,
-  ) { }
 
   ngAfterViewInit(): void {
     this.toggleEmptyComponent();

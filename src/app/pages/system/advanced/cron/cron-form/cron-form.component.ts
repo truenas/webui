@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -52,6 +50,14 @@ import { UserService } from 'app/services/user.service';
   ],
 })
 export class CronFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private userService = inject(UserService);
+  slideInRef = inject<SlideInRef<Cronjob | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SystemCronWrite];
 
   get isNew(): boolean {
@@ -88,15 +94,7 @@ export class CronFormComponent implements OnInit {
 
   private editingCron: Cronjob | undefined;
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-    private errorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
-    private userService: UserService,
-    public slideInRef: SlideInRef<Cronjob | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
@@ -50,6 +48,13 @@ export const maxFileSizeBytes = 5 * MiB;
   ],
 })
 export class FileReviewComponent {
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private imageValidator = inject(ImageValidatorService);
+  private feedbackService = inject(FeedbackService);
+  private systemGeneralService = inject(SystemGeneralService);
+  private translate = inject(TranslateService);
+
   readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
   readonly isLoading = input<boolean>();
 
@@ -83,15 +88,6 @@ export class FileReviewComponent {
 
     return `${baseText}\n\n${extra}` as TranslatedString;
   }
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private imageValidator: ImageValidatorService,
-    private feedbackService: FeedbackService,
-    private systemGeneralService: SystemGeneralService,
-    private translate: TranslateService,
-  ) {}
 
   onSubmit(): void {
     this.isLoadingChange.emit(true);

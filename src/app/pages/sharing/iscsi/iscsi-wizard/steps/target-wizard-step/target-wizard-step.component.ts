@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -28,6 +28,11 @@ import { LicenseService } from 'app/services/license.service';
   ],
 })
 export class TargetWizardStepComponent {
+  private iscsiService = inject(IscsiService);
+  private translate = inject(TranslateService);
+  private license = inject(LicenseService);
+  formatter = inject(IxFormatterService);
+
   form = input.required<IscsiWizardComponent['form']['controls']['target']>();
 
   readonly helptextSharingIscsi = helptextIscsi;
@@ -50,11 +55,4 @@ export class TargetWizardStepComponent {
   get isNewTarget(): boolean {
     return this.form().enabled && this.form().value.target === newOption;
   }
-
-  constructor(
-    private iscsiService: IscsiService,
-    private translate: TranslateService,
-    private license: LicenseService,
-    public formatter: IxFormatterService,
-  ) {}
 }

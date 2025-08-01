@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
@@ -19,9 +19,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class HeaderBadgeComponent {
-  readonly customBadgeTitle = input<string>();
+  private matDialog = inject(MatDialog);
 
-  constructor(private matDialog: MatDialog) {}
+  readonly customBadgeTitle = input<string>();
 
   leaveFeedbackPressed(): void {
     this.matDialog.open(FeedbackDialog);

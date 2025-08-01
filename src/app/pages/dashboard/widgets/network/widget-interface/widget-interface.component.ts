@@ -1,8 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input,
-  computed,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, signal, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -61,6 +57,10 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
   ],
 })
 export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
+  private resources = inject(WidgetResourcesService);
+  private translate = inject(TranslateService);
+  private theme = inject(ThemeService);
+
   size = input.required<SlotSize>();
   settings = input.required<WidgetInterfaceIpSettings>();
 
@@ -169,12 +169,6 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
       ],
     };
   });
-
-  constructor(
-    private resources: WidgetResourcesService,
-    private translate: TranslateService,
-    private theme: ThemeService,
-  ) {}
 
   getIpAddress(nic: BaseNetworkInterface): string {
     let ip = '–';

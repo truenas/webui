@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, Inject,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -64,6 +60,21 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   ],
 })
 export class GuiFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private sysGeneralService = inject(SystemGeneralService);
+  private themeService = inject(ThemeService);
+  private api = inject(ApiService);
+  private wsManager = inject(WebSocketHandlerService);
+  private wsStatus = inject(WebSocketStatusService);
+  private dialog = inject(DialogService);
+  private loader = inject(LoaderService);
+  private translate = inject(TranslateService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
+  private store$ = inject<Store<AppState>>(Store);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private window = inject<Window>(WINDOW);
+
   protected isFormLoading = signal(true);
   configData: SystemGeneralConfig;
   protected isStigMode = signal(false);
@@ -99,22 +110,7 @@ export class GuiFormComponent implements OnInit {
     return this.translate.instant(helptext.usageCollection.tooltip);
   });
 
-  constructor(
-    private fb: FormBuilder,
-    private sysGeneralService: SystemGeneralService,
-    private themeService: ThemeService,
-    private api: ApiService,
-    private wsManager: WebSocketHandlerService,
-    private wsStatus: WebSocketStatusService,
-    private dialog: DialogService,
-    private loader: LoaderService,
-    private translate: TranslateService,
-    private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    private store$: Store<AppState>,
-    public slideInRef: SlideInRef<undefined, boolean>,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.formGroup.dirty);
     });

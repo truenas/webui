@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -67,6 +65,16 @@ export interface StorageSettingsData {
   ],
 })
 export class StorageSettingsFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+  private snackbar = inject(SnackbarService);
+  private taskService = inject(TaskService);
+  private auth = inject(AuthService);
+  slideInRef = inject<SlideInRef<StorageSettingsData, boolean>>(SlideInRef);
+
   protected readonly rolesToEditPool = [Role.DatasetWrite];
   protected readonly rolesToEditPriorityResilver = [Role.PoolWrite];
 
@@ -102,17 +110,7 @@ export class StorageSettingsFormComponent implements OnInit {
     map((service) => service?.state === ServiceStatus.Running),
   );
 
-  constructor(
-    private api: ApiService,
-    private formErrorHandler: FormErrorHandlerService,
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private store$: Store<AppState>,
-    private snackbar: SnackbarService,
-    private taskService: TaskService,
-    private auth: AuthService,
-    public slideInRef: SlideInRef<StorageSettingsData, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => of(this.form.dirty));
   }
 

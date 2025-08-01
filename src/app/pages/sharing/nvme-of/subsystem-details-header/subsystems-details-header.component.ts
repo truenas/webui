@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -33,18 +31,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubsystemsDetailsHeaderComponent {
+  private matDialog = inject(MatDialog);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+
   subsystem = input.required<NvmeOfSubsystemDetails>();
 
   subsystemRemoved = output();
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
-
-  constructor(
-    private matDialog: MatDialog,
-    private api: ApiService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-  ) { }
 
   deleteSubsystem(): void {
     this.matDialog.open(

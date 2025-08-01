@@ -1,7 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, signal, inject } from '@angular/core';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -44,6 +41,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class NtpServersFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(FormErrorHandlerService);
+  slideInRef = inject<SlideInRef<NtpServer | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
 
   protected isFormLoading = signal(false);
@@ -77,14 +81,7 @@ export class NtpServersFormComponent implements OnInit {
     return this.isNew ? this.translate.instant('Add NTP Server') : this.translate.instant('Edit NTP Server');
   }
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private errorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<NtpServer | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.formGroup.dirty);
     });

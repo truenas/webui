@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import {
   FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -72,6 +70,15 @@ interface InstanceDiskFormOptions {
   ],
 })
 export class InstanceDiskFormComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private matDialog = inject(MatDialog);
+  private filesystem = inject(FilesystemService);
+  slideInRef = inject<SlideInRef<InstanceDiskFormOptions, boolean>>(SlideInRef);
+
   private existingDisk = signal<VirtualizationDisk | null>(null);
 
   protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
@@ -101,16 +108,7 @@ export class InstanceDiskFormComponent implements OnInit {
     return this.instance.type === VirtualizationType.Vm;
   }
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private matDialog: MatDialog,
-    private filesystem: FilesystemService,
-    public slideInRef: SlideInRef<InstanceDiskFormOptions, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

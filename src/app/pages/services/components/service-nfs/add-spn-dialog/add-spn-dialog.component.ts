@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
@@ -34,22 +32,20 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AddSpnDialog {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private dialogRef = inject<MatDialogRef<CloudSyncRestoreDialog>>(MatDialogRef);
+  private snackbar = inject(SnackbarService);
+  private loader = inject(LoaderService);
+
   protected readonly requiredRoles = [Role.SharingNfsWrite];
 
   readonly form = this.formBuilder.nonNullable.group({
     username: ['', Validators.required],
     password: ['', Validators.required],
   });
-
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private dialogRef: MatDialogRef<CloudSyncRestoreDialog>,
-    private snackbar: SnackbarService,
-    private loader: LoaderService,
-  ) { }
 
   onSubmit(): void {
     const value = this.form.getRawValue();

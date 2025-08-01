@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
@@ -26,23 +24,25 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   imports: [RouterOutlet, WebSocketDebugPanelComponent],
 })
 export class AppComponent implements OnInit {
+  title = inject(Title);
+  private router = inject(Router);
+  private wsStatus = inject(WebSocketStatusService);
+  private detectBrowser = inject(DetectBrowserService);
+  private layoutService = inject(LayoutService);
+  private authService = inject(AuthService);
+  private dialog = inject(DialogService);
+  private snackbar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
+  private window = inject<Window>(WINDOW);
+  private slideIn = inject(SlideIn);
+  private pingService = inject(PingService);
+
   isAuthenticated = false;
   debugPanelEnabled = environment.debugPanel?.enabled || false;
 
-  constructor(
-    public title: Title,
-    private router: Router,
-    private wsStatus: WebSocketStatusService,
-    private detectBrowser: DetectBrowserService,
-    private layoutService: LayoutService,
-    private authService: AuthService,
-    private dialog: DialogService,
-    private snackbar: MatSnackBar,
-    private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
-    private slideIn: SlideIn,
-    private pingService: PingService,
-  ) {
+  constructor() {
+    const window = this.window;
+
     // Ensure PingService is instantiated so it can listen for WebSocket connections
     // and automatically set up ping when connection is established
     this.pingService.initializePingService();

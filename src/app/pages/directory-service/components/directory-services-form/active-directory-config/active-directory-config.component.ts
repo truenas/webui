@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  output,
-  OnInit,
-  signal,
-  effect,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, output, OnInit, signal, effect, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
@@ -41,6 +33,8 @@ import { TrustedDomainsConfigComponent } from 'app/pages/directory-service/compo
   ],
 })
 export class ActiveDirectoryConfigComponent implements OnInit {
+  private fb = inject(FormBuilder);
+
   readonly activeDirectoryConfig = input.required<ActiveDirectoryConfig | null>();
   readonly isValid = output<boolean>();
 
@@ -72,9 +66,7 @@ export class ActiveDirectoryConfigComponent implements OnInit {
 
   protected readonly useDefaultIdmap = signal(true);
 
-  constructor(
-    private fb: FormBuilder,
-  ) {
+  constructor() {
     effect(() => {
       if (this.useDefaultIdmap()) {
         this.primaryDomainIdmap.set(null);

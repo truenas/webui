@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -57,23 +55,21 @@ import { FailedJobError } from 'app/services/errors/error.classes';
   ],
 })
 export class JobsPanelComponent {
+  private router = inject(Router);
+  private store$ = inject<Store<JobSlice>>(Store);
+  private dialogRef = inject<MatDialogRef<JobsPanelComponent>>(MatDialogRef);
+  private translate = inject(TranslateService);
+  private dialog = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private errorParser = inject(ErrorParserService);
+  private snackbar = inject(SnackbarService);
+
   isLoading$ = this.store$.select(selectJobState).pipe(map((state) => state.isLoading));
   error$ = this.store$.select(selectJobState).pipe(map((state) => state.error));
   runningJobsCount$ = this.store$.select(selectRunningJobsCount);
   waitingJobsCount$ = this.store$.select(selectWaitingJobsCount);
   failedJobsCount$ = this.store$.select(selectFailedJobsCount);
   availableJobs$ = this.store$.select(selectJobsPanelSlice);
-
-  constructor(
-    private router: Router,
-    private store$: Store<JobSlice>,
-    private dialogRef: MatDialogRef<JobsPanelComponent>,
-    private translate: TranslateService,
-    private dialog: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private errorParser: ErrorParserService,
-    private snackbar: SnackbarService,
-  ) {}
 
   onAbort(job: Job): void {
     this.dialog

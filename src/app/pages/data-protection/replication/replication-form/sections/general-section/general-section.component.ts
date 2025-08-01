@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -29,6 +27,9 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
   ],
 })
 export class GeneralSectionComponent implements OnChanges {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+
   readonly replication = input<ReplicationTask>();
 
   form = this.formBuilder.nonNullable.group({
@@ -59,11 +60,6 @@ export class GeneralSectionComponent implements OnChanges {
   ]);
 
   readonly helptext = helptextReplication;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-  ) {}
 
   get isLocal(): boolean {
     return this.form.controls.transport.value === TransportMode.Local;

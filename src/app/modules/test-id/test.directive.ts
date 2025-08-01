@@ -1,6 +1,4 @@
-import {
-  Directive, ElementRef, HostBinding, input, Optional,
-} from '@angular/core';
+import { Directive, ElementRef, HostBinding, input, inject } from '@angular/core';
 import { kebabCase } from 'lodash-es';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 
@@ -23,14 +21,12 @@ type SupportedTestId = number | string | null | undefined | (string | number | n
   selector: '[ixTest]',
 })
 export class TestDirective {
+  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private overrideDirective = inject(TestOverrideDirective, { optional: true });
+
   readonly description = input.required<SupportedTestId>({
     alias: 'ixTest',
   });
-
-  constructor(
-    private elementRef: ElementRef<HTMLElement>,
-    @Optional() private overrideDirective: TestOverrideDirective,
-  ) {}
 
   get normalizedDescription(): string[] {
     const description = this.overrideDirective?.overrideDescription() ?? this.description();

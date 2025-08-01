@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AsyncValidatorFn, FormControl, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -15,9 +15,8 @@ import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-
   providedIn: 'root',
 })
 export class ImageValidatorService {
-  constructor(
-    private translate: TranslateService,
-  ) { }
+  private translate = inject(TranslateService);
+
 
   getImagesValidator(fileSizeLimitBytes: number): AsyncValidatorFn {
     return (control: FormControl<File[]>): Observable<ValidationErrors | null> => {

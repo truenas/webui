@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import {
@@ -12,14 +12,14 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   providedIn: 'root',
 })
 export class PingService {
+  private wsHandler = inject(WebSocketHandlerService);
+  private wsStatus = inject(WebSocketStatusService);
+
   private readonly pingTimeoutMillis = 20 * 1000;
   private pingSubscription: Subscription | null = null;
   private isInitialized = false;
 
-  constructor(
-    private wsHandler: WebSocketHandlerService,
-    private wsStatus: WebSocketStatusService,
-  ) {
+  constructor() {
     // Auto-initialize service on first instantiation
     this.initializePingService();
   }

@@ -1,6 +1,4 @@
-import {
-  Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, viewChild,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, viewChild, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NgModel, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -70,6 +68,22 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   ],
 })
 export class NetworkComponent implements OnInit {
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private dialogService = inject(DialogService);
+  private loader = inject(LoaderService);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private snackbar = inject(SnackbarService);
+  private store$ = inject<Store<AppState>>(Store);
+  private errorHandler = inject(ErrorHandlerService);
+  private interfacesStore = inject(InterfacesStore);
+  private actions$ = inject(Actions);
+  private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
+  private networkService = inject(NetworkService);
+  private window = inject<Window>(WINDOW);
+
   protected readonly searchableElements = networkElements;
 
   readonly checkinTimeoutField = viewChild<NgModel>('checkinTimeoutField');
@@ -92,23 +106,7 @@ export class NetworkComponent implements OnInit {
     return this.checkinTimeoutField()?.invalid || false;
   }
 
-  constructor(
-    private api: ApiService,
-    private router: Router,
-    private dialogService: DialogService,
-    private loader: LoaderService,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private snackbar: SnackbarService,
-    private store$: Store<AppState>,
-    private errorHandler: ErrorHandlerService,
-    private interfacesStore: InterfacesStore,
-    private actions$: Actions,
-    private authService: AuthService,
-    private cdr: ChangeDetectorRef,
-    private networkService: NetworkService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.navigation = this.router.getCurrentNavigation();
   }
 

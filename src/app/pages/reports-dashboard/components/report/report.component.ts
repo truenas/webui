@@ -1,15 +1,5 @@
 import { KeyValuePipe } from '@angular/common';
-import {
-  Component,
-  OnChanges,
-  OnInit,
-  Inject,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  input,
-  viewChild,
-  DOCUMENT,
-} from '@angular/core';
+import { Component, OnChanges, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, input, viewChild, DOCUMENT, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -85,6 +75,15 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   ],
 })
 export class ReportComponent implements OnInit, OnChanges {
+  translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+  private formatDateTimePipe = inject(FormatDateTimePipe);
+  private themeService = inject(ThemeService);
+  private reportsService = inject(ReportsService);
+  private cdr = inject(ChangeDetectorRef);
+  private localeService = inject(LocaleService);
+  private document = inject<Document>(DOCUMENT);
+
   readonly localControls = input(true);
   readonly report = input.required<Report>();
   readonly identifier = input<string>();
@@ -158,16 +157,7 @@ export class ReportComponent implements OnInit, OnChanges {
     return this.chartId === this.legendData.chartId;
   }
 
-  constructor(
-    public translate: TranslateService,
-    private store$: Store<AppState>,
-    private formatDateTimePipe: FormatDateTimePipe,
-    private themeService: ThemeService,
-    private reportsService: ReportsService,
-    private cdr: ChangeDetectorRef,
-    private localeService: LocaleService,
-    @Inject(DOCUMENT) private document: Document,
-  ) {
+  constructor() {
     this.reportsService.legendEventEmitterObs$.pipe(untilDestroyed(this)).subscribe({
       next: (data: LegendDataWithStackedTotalHtml) => {
         const clone = { ...data };

@@ -1,7 +1,5 @@
 import { KeyValuePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
@@ -48,6 +46,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class InstanceGeneralInfoComponent {
+  protected formatter = inject(IxFormatterService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private router = inject(Router);
+  private slideIn = inject(SlideIn);
+  private instancesStore = inject(VirtualizationInstancesStore);
+
   instance = input.required<VirtualizationInstance>();
 
   protected readonly Role = Role;
@@ -57,17 +64,6 @@ export class InstanceGeneralInfoComponent {
   });
 
   protected readonly isVm = computed(() => this.instance().type === VirtualizationType.Vm);
-
-  constructor(
-    protected formatter: IxFormatterService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private router: Router,
-    private slideIn: SlideIn,
-    private instancesStore: VirtualizationInstancesStore,
-  ) {}
 
   editInstance(): void {
     this.slideIn.open(InstanceEditFormComponent, { data: this.instance() })

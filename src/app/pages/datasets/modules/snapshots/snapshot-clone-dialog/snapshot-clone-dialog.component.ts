@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import {
@@ -41,6 +39,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class SnapshotCloneDialog implements OnInit {
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private fb = inject(FormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private snapshotName = inject<string>(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.SnapshotWrite];
 
   wasDatasetCloned = false;
@@ -52,15 +57,6 @@ export class SnapshotCloneDialog implements OnInit {
   readonly tooltips = {
     dataset_dst: helptextSnapshots.cloneNameTooltip,
   };
-
-  constructor(
-    private api: ApiService,
-    private loader: LoaderService,
-    private fb: FormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) private snapshotName: string,
-  ) {}
 
   get datasetName(): string {
     return this.form.getRawValue().dataset_dst;

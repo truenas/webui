@@ -45,16 +45,16 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   providedIn: 'root',
 })
 export class ApiService {
+  protected wsHandler = inject(WebSocketHandlerService);
+  protected wsStatus = inject(WebSocketStatusService);
+  protected subscriptionManager = inject(SubscriptionManagerService);
+  protected translate = inject(TranslateService);
+
   readonly clearSubscriptions$ = new Subject<void>();
 
   private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
 
-  constructor(
-    protected wsHandler: WebSocketHandlerService,
-    protected wsStatus: WebSocketStatusService,
-    protected subscriptionManager: SubscriptionManagerService,
-    protected translate: TranslateService,
-  ) {
+  constructor() {
     this.wsStatus.isConnected$?.subscribe((isConnected) => {
       if (!isConnected) {
         this.clearSubscriptions();

@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -77,6 +75,16 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class NfsListComponent implements OnInit {
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private dialog = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
+  private store$ = inject<Store<AppState>>(Store);
+  protected emptyService = inject(EmptyService);
+
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly searchableElements = nfsListElements;
   protected readonly emptyConfig = nfsCardEmptyConfig;
@@ -168,18 +176,6 @@ export class NfsListComponent implements OnInit {
     uniqueRowTag: (row) => 'nfs-share-' + row.path + '-' + row.comment,
     ariaLabels: (row) => [row.path, this.translate.instant('NFS Share')],
   });
-
-  constructor(
-    private loader: LoaderService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private dialog: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const shares$ = this.api.call('sharing.nfs.query').pipe(

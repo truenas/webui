@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import {
   AbstractControl, FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -62,6 +60,15 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
   ],
 })
 export class SnapshotAddFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private authService = inject(AuthService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private validatorsService = inject(IxValidatorsService);
+  private datasetStore = inject(DatasetTreeStore);
+  slideInRef = inject<SlideInRef<string | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SnapshotWrite];
 
   protected isFormLoading = signal(true);
@@ -90,16 +97,9 @@ export class SnapshotAddFormComponent implements OnInit {
 
   readonly helptext = helptextSnapshots;
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-    private authService: AuthService,
-    private errorHandler: FormErrorHandlerService,
-    private validatorsService: IxValidatorsService,
-    private datasetStore: DatasetTreeStore,
-    public slideInRef: SlideInRef<string | undefined, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -35,6 +33,10 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class EncryptionSectionComponent implements OnChanges, OnInit {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+
   readonly parent = input<Dataset>();
   readonly advancedMode = input<boolean>();
 
@@ -75,12 +77,6 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   ]);
 
   algorithmOptions$ = this.api.call('pool.dataset.encryption_algorithm_choices').pipe(choicesToOptions());
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private api: ApiService,
-  ) {}
 
   get hasEncryption(): boolean {
     return this.form.controls.encryption.value;

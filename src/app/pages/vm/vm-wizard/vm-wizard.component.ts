@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import {
@@ -79,6 +77,17 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   ],
 })
 export class VmWizardComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private gpuService = inject(GpuService);
+  private vmGpuService = inject(VmGpuService);
+  private snackbar = inject(SnackbarService);
+  private errorParser = inject(ErrorParserService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly osStep = viewChild.required(OsStepComponent);
   // TODO: Should be protected, but used in the test.
   readonly cpuAndMemoryStep = viewChild.required(CpuAndMemoryStepComponent);
@@ -116,18 +125,7 @@ export class VmWizardComponent implements OnInit {
   isLoading = false;
   summary: SummarySection[];
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private gpuService: GpuService,
-    private vmGpuService: VmGpuService,
-    private snackbar: SnackbarService,
-    private errorParser: ErrorParserService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(
         this.osStep()?.form?.dirty

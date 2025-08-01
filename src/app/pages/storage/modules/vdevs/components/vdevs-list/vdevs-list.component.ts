@@ -1,13 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  input,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, input, output, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import {
   ActivatedRoute, Router, RouterLink, RouterLinkActive,
@@ -65,6 +58,12 @@ import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.s
   ],
 })
 export class VDevsListComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  protected vDevsStore = inject(VDevsStore);
+  private layoutService = inject(LayoutService);
+
   poolId = input.required<number>();
   isMobileView = input<boolean>();
   showMobileDetails = output<boolean>();
@@ -85,14 +84,6 @@ export class VDevsListComponent implements OnInit {
   };
 
   protected readonly isVdevGroup = (_: number, node: VDevNestedDataNode): boolean => isVdevGroup(node);
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute,
-    private router: Router,
-    protected vDevsStore: VDevsStore,
-    private layoutService: LayoutService,
-  ) { }
 
   ngOnInit(): void {
     this.vDevsStore.loadNodes(this.poolId());

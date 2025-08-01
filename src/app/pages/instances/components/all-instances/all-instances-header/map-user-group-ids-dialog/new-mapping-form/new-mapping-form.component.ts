@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  OnChanges,
-  OnInit,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output, inject } from '@angular/core';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -51,6 +43,14 @@ import { UserService } from 'app/services/user.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewMappingFormComponent implements OnChanges, OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private userService = inject(UserService);
+
   readonly type = input.required<ViewType>();
   readonly mappingAdded = output();
 
@@ -65,16 +65,6 @@ export class NewMappingFormComponent implements OnChanges, OnInit {
 
   protected readonly userProvider = new UserComboboxProvider(this.userService, { valueField: 'id' });
   protected readonly groupProvider = new GroupComboboxProvider(this.userService, { valueField: 'id' });
-
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private formBuilder: NonNullableFormBuilder,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private userService: UserService,
-  ) {}
 
   protected readonly isUserType = computed(() => this.type() === ViewType.Users);
 

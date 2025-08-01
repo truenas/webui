@@ -1,15 +1,11 @@
 import { AsyncPipe, DOCUMENT } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, HostListener, OnDestroy, Renderer2, Inject,
-  ChangeDetectorRef, NgZone,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, HostListener, OnDestroy, Renderer2, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { EnclosureMockService } from 'app/services/enclosure-mock.service';
 import { EnclosureMockTabComponent } from './components/enclosure-mock-tab/enclosure-mock-tab.component';
 import { MockConfigurationsTabComponent } from './components/mock-configurations-tab/mock-configurations-tab.component';
 import { WebSocketTabComponent } from './components/websocket-tab/websocket-tab.component';
@@ -39,6 +35,12 @@ import { safeGetItem } from './utils/local-storage-utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
+  private store$ = inject(Store);
+  private renderer = inject(Renderer2);
+  private document = inject<Document>(DOCUMENT);
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
+
   readonly isPanelOpen$ = this.store$.select(selectIsPanelOpen);
   readonly activeTab$ = this.store$.select(selectActiveTab);
   readonly hasActiveMocks$ = this.store$.select(selectHasActiveMocks);
@@ -59,15 +61,6 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
 
   protected panelWidth = 550;
   private isPanelOpen = false;
-
-  constructor(
-    private store$: Store,
-    private renderer: Renderer2,
-    @Inject(DOCUMENT) private document: Document,
-    private cdr: ChangeDetectorRef,
-    private ngZone: NgZone,
-    private enclosureMockService: EnclosureMockService,
-  ) {}
 
   ngOnInit(): void {
     // Load saved mock configs and restore panel state

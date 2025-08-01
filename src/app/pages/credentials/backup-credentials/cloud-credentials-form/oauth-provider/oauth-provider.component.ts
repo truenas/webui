@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, output, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, signal, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
@@ -32,6 +30,8 @@ export interface OauthProviderData {
   ],
 })
 export class OauthProviderComponent {
+  private formBuilder = inject(NonNullableFormBuilder);
+
   readonly oauthUrl = input<string>();
   readonly authenticated = output<Record<string, unknown>>();
 
@@ -47,8 +47,6 @@ export class OauthProviderComponent {
   get hasOauthAuthorization(): boolean {
     return Boolean(this.form.value.client_id && this.form.value.client_secret);
   }
-
-  constructor(private formBuilder: NonNullableFormBuilder) { }
 
   onLoggedIn(result: unknown): void {
     this.form.patchValue(result as OauthProviderData);

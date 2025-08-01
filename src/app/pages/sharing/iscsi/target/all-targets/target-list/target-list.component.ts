@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, OnInit,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, OnInit, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -62,6 +59,11 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/
   ],
 })
 export class TargetListComponent implements OnInit {
+  emptyService = inject(EmptyService);
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
   readonly dataProvider = input.required<AsyncDataProvider<IscsiTarget>>();
@@ -102,12 +104,7 @@ export class TargetListComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('Target')],
   });
 
-  constructor(
-    public emptyService: EmptyService,
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     effect(() => {
       if (this.targets()?.some((target) => target.mode !== IscsiTargetMode.Iscsi)) {
         this.columns = this.columns.map((column) => {

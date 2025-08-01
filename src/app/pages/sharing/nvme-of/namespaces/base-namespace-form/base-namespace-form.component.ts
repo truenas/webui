@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -74,6 +72,12 @@ const typeOptions: Option[] = [
   ],
 })
 export class BaseNamespaceFormComponent implements OnInit, OnChanges {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+  private filesystemService = inject(FilesystemService);
+  protected formatter = inject(IxFormatterService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+
   namespace = input<NvmeOfNamespace>();
   error = input<unknown>(null);
 
@@ -101,13 +105,7 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
 
   protected typeOptions$ = of(translateOptions(this.translate, typeOptions));
 
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private translate: TranslateService,
-    private filesystemService: FilesystemService,
-    protected formatter: IxFormatterService,
-    private formErrorHandler: FormErrorHandlerService,
-  ) {
+  constructor() {
     this.clearPathOnTypeChanges();
   }
 

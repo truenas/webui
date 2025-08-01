@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs/operators';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
@@ -17,10 +17,10 @@ const initialState: InterfacesState = {
 
 @Injectable()
 export class InterfacesStore extends ComponentStore<InterfacesState> {
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-  ) {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+
+  constructor() {
     super(initialState);
   }
 

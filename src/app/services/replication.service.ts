@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -12,10 +12,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable()
 export class ReplicationService {
-  constructor(
-    protected api: ApiService,
-    private authService: AuthService,
-  ) { }
+  protected api = inject(ApiService);
+  private authService = inject(AuthService);
+
 
   getTreeNodeProvider(providerOptions: {
     transport: TransportMode;

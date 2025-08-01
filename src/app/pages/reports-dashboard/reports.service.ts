@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   map, Observable, shareReplay, BehaviorSubject, Subject,
 } from 'rxjs';
@@ -15,6 +15,8 @@ import { convertAggregations, optimizeLegend } from 'app/pages/reports-dashboard
   providedIn: 'root',
 })
 export class ReportsService {
+  private api = inject(ApiService);
+
   private reportingGraphs$ = new BehaviorSubject<ReportingGraph[]>([]);
   private diskMetrics$ = new BehaviorSubject<Option[]>([]);
   private hasUps = false;
@@ -23,9 +25,7 @@ export class ReportsService {
   private legendEventEmitter$ = new Subject<LegendDataWithStackedTotalHtml>();
   readonly legendEventEmitterObs$ = this.legendEventEmitter$.asObservable();
 
-  constructor(
-    private api: ApiService,
-  ) {
+  constructor() {
     this.api.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
       this.hasUps = reportingGraphs.some((graph) => graph.name.startsWith(ReportingGraphName.Ups));
       this.reportingGraphs$.next(reportingGraphs);

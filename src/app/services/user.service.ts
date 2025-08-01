@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { combineLatest, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
@@ -10,14 +10,14 @@ import { ApiService } from 'app/modules/websocket/api.service';
 // TODO: Clean up this service.
 @Injectable({ providedIn: 'root' })
 export class UserService {
+  protected api = inject(ApiService);
+
   static readonly namePattern = /^[a-zA-Z0-9_][a-zA-Z0-9_.-]*[$]?$/;
   protected uncachedUserQuery = 'user.get_user_obj' as const;
   protected uncachedGroupQuery = 'group.get_group_obj' as const;
   protected userQuery = 'user.query' as const;
   protected groupQuery = 'group.query' as const;
   protected queryOptions = { limit: 50 };
-
-  constructor(protected api: ApiService) {}
 
   private groupQueryDsCacheByName(name: string): Observable<Group[]> {
     if (!name?.length) {

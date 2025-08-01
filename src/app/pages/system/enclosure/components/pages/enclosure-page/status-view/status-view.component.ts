@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureSideComponent } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-side.component';
@@ -22,15 +20,13 @@ import { StatusesLegendComponent } from './statuses-legend/statuses-legend.compo
   ],
 })
 export class StatusViewComponent {
+  private store = inject(EnclosureStore);
+
   readonly enclosure = this.store.selectedEnclosure;
   readonly selectedSlot = this.store.selectedSlot;
   readonly selectedEnclosureSlots = this.store.selectedEnclosureSlots;
   readonly selectedSide = this.store.selectedSide;
   readonly hasMoreThanOneSide = this.store.hasMoreThanOneSide;
-
-  constructor(
-    private store: EnclosureStore,
-  ) {}
 
   protected onSlotSelected(slot: DashboardEnclosureSlot): void {
     this.store.selectSlot(slot.drive_bay_number);

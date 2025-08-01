@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { map, mergeMap } from 'rxjs/operators';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -7,6 +7,9 @@ import { rebootInfoLoaded } from 'app/store/reboot-info/reboot-info.actions';
 
 @Injectable()
 export class RebootInfoEffects {
+  private actions$ = inject(Actions);
+  private api = inject(ApiService);
+
   loadRebootInfo = createEffect(() => this.actions$.pipe(
     ofType(failoverLicensedStatusLoaded),
     mergeMap(({ isHaLicensed }) => {
@@ -46,9 +49,4 @@ export class RebootInfoEffects {
       );
     }),
   ));
-
-  constructor(
-    private actions$: Actions,
-    private api: ApiService,
-  ) { }
 }

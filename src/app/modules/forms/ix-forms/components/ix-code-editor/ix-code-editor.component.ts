@@ -1,14 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  input,
-  OnChanges,
-  OnInit, Signal, viewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnChanges, OnInit, Signal, viewChild, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatHint } from '@angular/material/form-field';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
@@ -51,6 +42,9 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   ],
 })
 export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, ControlValueAccessor {
+  protected controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly label = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
@@ -77,10 +71,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
     return this.isDisabled$.asObservable();
   }
 
-  constructor(
-    protected controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 

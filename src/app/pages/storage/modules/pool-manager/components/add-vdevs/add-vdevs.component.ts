@@ -1,7 +1,5 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, tap } from 'rxjs';
@@ -49,16 +47,14 @@ import { poolTopologyToStoreTopology } from 'app/pages/storage/modules/pool-mana
   ],
 })
 export class AddVdevsComponent implements OnInit {
+  private addVdevsStore = inject(AddVdevsStore);
+  private activatedRoute = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
+
   protected hasConfigurationPreview = true;
   protected existingPool: Pool | null = null;
   protected poolDisks: DetailsDisk[] = [];
   protected topology: PoolManagerTopology | null = null;
-
-  constructor(
-    private addVdevsStore: AddVdevsStore,
-    private activatedRoute: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-  ) { }
 
   ngOnInit(): void {
     this.addVdevsStore.initialize();

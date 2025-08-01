@@ -1,8 +1,4 @@
-import {
-  AfterViewInit,
-  Directive, input,
-  ViewContainerRef,
-} from '@angular/core';
+import { AfterViewInit, Directive, input, ViewContainerRef, inject } from '@angular/core';
 import { IxHeaderCellTextComponent } from 'app/modules/ix-table/components/ix-table-head/head-cells/ix-header-cell-text/ix-header-cell-text.component';
 import { Column, ColumnComponent, ColumnKeys } from 'app/modules/ix-table/interfaces/column-component.class';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
@@ -11,10 +7,10 @@ import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.inte
   selector: '[ix-header-cell]',
 })
 export class IxTableHeaderCellDirective<T> implements AfterViewInit {
+  private viewContainer = inject(ViewContainerRef);
+
   readonly dataProvider = input<DataProvider<T>>();
   readonly column = input.required<Column<T, ColumnComponent<T>>>();
-
-  constructor(private viewContainer: ViewContainerRef) {}
 
   ngAfterViewInit(): void {
     this.createComponent();

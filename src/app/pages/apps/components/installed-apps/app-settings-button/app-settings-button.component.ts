@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, ViewContainerRef,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewContainerRef, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -49,21 +47,19 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   ],
 })
 export class AppSettingsButtonComponent {
+  private ixSlideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private matDialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  protected dockerStore = inject(DockerStore);
+  protected appsStore = inject(AppsStore);
+  private viewContainerRef = inject(ViewContainerRef);
+
   readonly searchableElements = appSettingsButtonElements;
   protected readonly updateDockerRoles = [Role.DockerWrite];
 
   protected readonly helptext = helptextApps;
-
-  constructor(
-    private ixSlideIn: SlideIn,
-    private dialogService: DialogService,
-    private matDialog: MatDialog,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    protected dockerStore: DockerStore,
-    protected appsStore: AppsStore,
-    private viewContainerRef: ViewContainerRef,
-  ) { }
 
   onChoosePool(): void {
     this.matDialog

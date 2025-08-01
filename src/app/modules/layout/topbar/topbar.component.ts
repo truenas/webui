@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -75,6 +73,15 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
   ],
 })
 export class TopbarComponent implements OnInit {
+  private router = inject(Router);
+  private systemGeneralService = inject(SystemGeneralService);
+  private matDialog = inject(MatDialog);
+  private store$ = inject<Store<AlertSlice>>(Store);
+  private appStore$ = inject<Store<AppState>>(Store);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private tnc = inject(TruenasConnectService);
+
   updateIsDone: Subscription;
 
   updateDialog: MatDialogRef<UpdateDialog>;
@@ -107,16 +114,7 @@ export class TopbarComponent implements OnInit {
     ].join(' ');
   });
 
-  constructor(
-    private router: Router,
-    private systemGeneralService: SystemGeneralService,
-    private matDialog: MatDialog,
-    private store$: Store<AlertSlice>,
-    private appStore$: Store<AppState>,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private tnc: TruenasConnectService,
-  ) {
+  constructor() {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateNotificationSent = true;
       this.cdr.markForCheck();

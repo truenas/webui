@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -36,6 +36,10 @@ import { SnapshotTaskCardComponent } from './snapshot-task/snapshot-task-card/sn
   ],
 })
 export class DataProtectionDashboardComponent {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private router = inject(Router);
+
   protected readonly searchableElements = dataProtectionDashboardElements;
   protected readonly requiredRoles = [Role.PoolWrite];
 
@@ -48,10 +52,4 @@ export class DataProtectionDashboardComponent {
   };
 
   readonly pools = toSignal(this.api.call('pool.query'), { initialValue: null });
-
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private router: Router,
-  ) {}
 }

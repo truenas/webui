@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, Inject, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialog, MatDialogContent, MatDialogRef, MatDialogTitle,
@@ -79,6 +77,16 @@ export interface VolumesDialogOptions {
   ],
 })
 export class VolumesDialog implements OnInit {
+  private api = inject(ApiService);
+  private matDialog = inject(MatDialog);
+  private dialog = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+  protected dialogRef = inject<MatDialogRef<VolumesDialog, VirtualizationVolume | null>>(MatDialogRef);
+
   private options = signal<VolumesDialogOptions>({ selectionMode: false, config: null });
 
   protected requiredRoles = [Role.VirtImageWrite];
@@ -149,18 +157,9 @@ export class VolumesDialog implements OnInit {
     this.api.call('virt.volume.query'),
   );
 
-  constructor(
-    private api: ApiService,
-    private matDialog: MatDialog,
-    private dialog: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-    protected dialogRef: MatDialogRef<VolumesDialog, VirtualizationVolume | null>,
-    @Inject(MAT_DIALOG_DATA) options: VolumesDialogOptions,
-  ) {
+  constructor() {
+    const options = inject<VolumesDialogOptions>(MAT_DIALOG_DATA);
+
     this.options.set(options || { selectionMode: false, config: null });
   }
 

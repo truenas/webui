@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, effect, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -32,6 +30,9 @@ import { defaultRole, UserFormStore } from 'app/pages/credentials/new-users/user
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAccessSectionComponent {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private userFormStore = inject(UserFormStore);
+
   editingUser = input<User>();
   protected sshAccess = this.userFormStore.sshAccess;
 
@@ -49,10 +50,7 @@ export class AllowedAccessSectionComponent {
     role: [null as Role | null],
   });
 
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private userFormStore: UserFormStore,
-  ) {
+  constructor() {
     this.setFieldRelations();
     this.updateStoreOnChanges();
   }

@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -64,6 +61,18 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class IpmiFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private redirect = inject(RedirectService);
+  private fb = inject(FormBuilder);
+  private validatorsService = inject(IxValidatorsService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private systemGeneralService = inject(SystemGeneralService);
+  private store$ = inject<Store<AppState>>(Store);
+  slideInRef = inject<SlideInRef<number, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.IpmiWrite];
 
   remoteControllerData: Ipmi;
@@ -98,19 +107,7 @@ export class IpmiFormComponent implements OnInit {
 
   vlanEnabled = toSignal(this.form.controls.vlan_id_enable.valueChanges);
 
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private redirect: RedirectService,
-    private fb: FormBuilder,
-    private validatorsService: IxValidatorsService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
-    private systemGeneralService: SystemGeneralService,
-    private store$: Store<AppState>,
-    public slideInRef: SlideInRef<number, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

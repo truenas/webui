@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -50,6 +48,14 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   ],
 })
 export class ConsoleFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private store$ = inject<Store<AppState>>(Store);
+  slideInRef = inject<SlideInRef<ConsoleConfig, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   protected isFormLoading = signal(false);
@@ -84,15 +90,7 @@ export class ConsoleFormComponent implements OnInit {
 
   private consoleConfig: ConsoleConfig;
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private formErrorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private store$: Store<AppState>,
-    public slideInRef: SlideInRef<ConsoleConfig, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

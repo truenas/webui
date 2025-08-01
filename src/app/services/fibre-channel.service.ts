@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
@@ -7,9 +7,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class FibreChannelService {
-  constructor(
-    private api: ApiService,
-  ) {}
+  private api = inject(ApiService);
+
 
   loadTargetPort(targetId: number): Observable<FibreChannelPort | undefined> {
     return this.api.call('fcport.query', [[['target.id', '=', targetId]]]).pipe(

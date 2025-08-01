@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -19,6 +19,11 @@ export const collapsedMenuClass = 'collapsed-menu';
   providedIn: 'root',
 })
 export class SidenavService {
+  private router = inject(Router);
+  private breakpointObserver = inject(BreakpointObserver);
+  private store$ = inject<Store<AppState>>(Store);
+  private actions$ = inject(Actions);
+
   sidenav: MatSidenav;
   isOpen = true;
   // TODO: How is this different from isMenuCollapsed?
@@ -59,12 +64,7 @@ export class SidenavService {
     }
   }
 
-  constructor(
-    private router: Router,
-    private breakpointObserver: BreakpointObserver,
-    private store$: Store<AppState>,
-    private actions$: Actions,
-  ) {
+  constructor() {
     this.listenForScreenSizeChanges();
     this.listenForRouteChanges();
     this.listenForSidenavIndicatorPressed();

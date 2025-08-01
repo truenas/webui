@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -41,6 +39,9 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   ],
 })
 export class NormalSelectionComponent implements OnInit, OnChanges {
+  private formBuilder = inject(NonNullableFormBuilder);
+  protected store = inject(PoolManagerStore);
+
   readonly type = input.required<VDevType>();
   readonly layout = input.required<CreateVdevLayout>();
   readonly isStepActive = input<boolean>();
@@ -55,11 +56,6 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   protected numberOptions$ = of<SelectOption[]>([]);
 
   private selectedDisks: DetailsDisk[] = [];
-
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    protected store: PoolManagerStore,
-  ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (hasDeepChanges(changes, 'inventory') || hasDeepChanges(changes, 'layout')) {

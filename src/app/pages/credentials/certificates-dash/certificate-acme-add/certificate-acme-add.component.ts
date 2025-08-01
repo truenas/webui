@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-  OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -57,6 +54,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CertificateAcmeAddComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private validatorsService = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  slideInRef = inject<SlideInRef<Certificate, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.CertificateWrite];
 
   form = this.formBuilder.nonNullable.group({
@@ -84,17 +91,7 @@ export class CertificateAcmeAddComponent implements OnInit {
 
   readonly helptext = helptextSystemCertificates;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private validatorsService: IxValidatorsService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private formErrorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<Certificate, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

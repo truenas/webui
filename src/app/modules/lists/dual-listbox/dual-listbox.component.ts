@@ -1,7 +1,5 @@
 import { NgClass, NgStyle } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy, input, IterableDiffers,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, IterableDiffers, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -30,16 +28,17 @@ import { DetectBrowserService } from 'app/services/detect-browser.service';
   ],
 })
 export class DualListBoxComponent extends DualListComponent {
+  private detectBrowser = inject(DetectBrowserService);
+
   sourceName = input.required<string>();
   targetName = input.required<string>();
   listItemIcon = input<MarkedIcon | null>(null);
 
   protected isMacOs = this.detectBrowser.isMacOs();
 
-  constructor(
-    private detectBrowser: DetectBrowserService,
-    differs: IterableDiffers,
-  ) {
+  constructor() {
+    const differs = inject(IterableDiffers);
+
     super(differs);
   }
 

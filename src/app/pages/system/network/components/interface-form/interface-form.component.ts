@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -102,6 +100,24 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   ],
 })
 export class InterfaceFormComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private networkService = inject(NetworkService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private validatorsService = inject(IxValidatorsService);
+  private interfaceFormValidator = inject(InterfaceNameValidatorService);
+  private matDialog = inject(MatDialog);
+  private systemGeneralService = inject(SystemGeneralService);
+  private store$ = inject<Store<AppState>>(Store);
+  slideInRef = inject<SlideInRef<{
+    interfaces?: NetworkInterface[];
+    interface?: NetworkInterface;
+  }, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected existingInterface: NetworkInterface | undefined;
 
@@ -184,22 +200,9 @@ export class InterfaceFormComponent implements OnInit {
 
   readonly helptext = helptextInterfacesForm;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private translate: TranslateService,
-    private networkService: NetworkService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
-    private validatorsService: IxValidatorsService,
-    private interfaceFormValidator: InterfaceNameValidatorService,
-    private matDialog: MatDialog,
-    private systemGeneralService: SystemGeneralService,
-    private store$: Store<AppState>,
-    public slideInRef: SlideInRef<{ interfaces?: NetworkInterface[]; interface?: NetworkInterface }, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

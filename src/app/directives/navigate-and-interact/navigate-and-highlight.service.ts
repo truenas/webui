@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription, timer } from 'rxjs';
@@ -9,14 +9,12 @@ import { WINDOW } from 'app/helpers/window.helper';
   providedIn: 'root',
 })
 export class NavigateAndHighlightService {
+  private router = inject(Router);
+  private window = inject<Window>(WINDOW);
+
   private prevHighlightDiv: HTMLDivElement | null = null;
   private prevSubscription: Subscription | null = null;
   private clickOutsideListener: ((event: MouseEvent) => void) | null = null;
-
-  constructor(
-    private router: Router,
-    @Inject(WINDOW) private window: Window,
-  ) {}
 
   navigateAndHighlight(route: string[], hash?: string): void {
     this.router.navigate(route, { fragment: hash }).then(() => {

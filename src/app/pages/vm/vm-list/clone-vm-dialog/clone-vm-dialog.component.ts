@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -40,16 +38,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CloneVmDialogComponent {
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  vm = inject<VirtualMachine>(MAT_DIALOG_DATA);
+  private dialogRef = inject<MatDialogRef<CloneVmDialogComponent>>(MatDialogRef);
+
   nameControl = new FormControl('');
   protected readonly requiredRoles = [Role.VmWrite];
-
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private loader: LoaderService,
-    @Inject(MAT_DIALOG_DATA) public vm: VirtualMachine,
-    private dialogRef: MatDialogRef<CloneVmDialogComponent>,
-  ) { }
 
   onClone(): void {
     const params = [this.vm.id] as VmCloneParams;

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, Inject, input, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   Validators, FormsModule, ReactiveFormsModule, NonNullableFormBuilder,
@@ -44,6 +42,14 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
   ],
 })
 export class SigninFormComponent implements OnInit {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private signinStore = inject(SigninStore);
+  private translate = inject(TranslateService);
+  private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
+  private window = inject<Window>(WINDOW);
+
   disabled = input.required<boolean>();
 
   hasTwoFactor = false;
@@ -62,15 +68,7 @@ export class SigninFormComponent implements OnInit {
   protected isLoading = toSignal(this.signinStore.isLoading$);
   readonly isFormDisabled = computed(() => this.disabled() || this.isLoading());
 
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private signinStore: SigninStore,
-    private translate: TranslateService,
-    private authService: AuthService,
-    private cdr: ChangeDetectorRef,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     effect(() => {
       if (this.isFormDisabled()) {
         this.form.disable();

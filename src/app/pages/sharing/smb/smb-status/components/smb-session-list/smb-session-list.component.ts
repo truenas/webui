@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -47,6 +45,11 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class SmbSessionListComponent implements OnInit {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  protected emptyService = inject(EmptyService);
+
   filterString = '';
   dataProvider: AsyncDataProvider<SmbSession>;
   sessions: SmbSession[] = [];
@@ -74,13 +77,6 @@ export class SmbSessionListComponent implements OnInit {
     uniqueRowTag: (row) => 'smb-session-' + row.session_id,
     ariaLabels: (row) => [row.hostname, this.translate.instant('SMB Session')],
   });
-
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Sessions]).pipe(

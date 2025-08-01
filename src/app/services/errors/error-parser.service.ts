@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { isObject } from 'lodash-es';
 import { apiErrorNames } from 'app/enums/api.enum';
@@ -21,9 +21,8 @@ import { FailedJobError } from 'app/services/errors/error.classes';
   providedIn: 'root',
 })
 export class ErrorParserService {
-  constructor(
-    private translate: TranslateService,
-  ) {}
+  private translate = inject(TranslateService);
+
 
   getFirstErrorMessage(error: unknown): string | undefined {
     const parsedError = this.parseError(error);

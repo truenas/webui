@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -40,18 +40,16 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   ],
 })
 export class CustomAppButtonComponent {
+  private dockerStore = inject(DockerStore);
+  private router = inject(Router);
+  private slideIn = inject(SlideIn);
+
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly searchableElements = customAppButtonElements;
 
   customAppDisabled$ = this.dockerStore.selectedPool$.pipe(
     map((pool) => !pool),
   );
-
-  constructor(
-    private dockerStore: DockerStore,
-    private router: Router,
-    private slideIn: SlideIn,
-  ) { }
 
   openAppWizardCreation(): void {
     this.router.navigate(['/apps', 'available', customAppTrain, customApp, 'install']);

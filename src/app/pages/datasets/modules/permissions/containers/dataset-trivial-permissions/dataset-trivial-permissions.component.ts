@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -63,6 +61,19 @@ import { UserService } from 'app/services/user.service';
   ],
 })
 export class DatasetTrivialPermissionsComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private storageService = inject(StorageService);
+  private translate = inject(TranslateService);
+  private dialog = inject(DialogService);
+  private userService = inject(UserService);
+  private validatorService = inject(IxValidatorsService);
+  private snackbar = inject(SnackbarService);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   form = this.formBuilder.group({
@@ -102,21 +113,6 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   };
 
   readonly isRecursive$ = this.form.select((values) => values.recursive);
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private storageService: StorageService,
-    private translate: TranslateService,
-    private dialog: DialogService,
-    private userService: UserService,
-    private validatorService: IxValidatorsService,
-    private snackbar: SnackbarService,
-  ) {}
 
   get canSetAcl(): boolean {
     return this.aclType !== AclType.Off;

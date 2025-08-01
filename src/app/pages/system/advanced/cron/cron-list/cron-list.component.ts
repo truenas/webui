@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -66,6 +64,16 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class CronListComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private taskService = inject(TaskService);
+  private dialog = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private slideIn = inject(SlideIn);
+  private matDialog = inject(MatDialog);
+  protected emptyService = inject(EmptyService);
+
   protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = cronElements;
 
@@ -125,18 +133,6 @@ export class CronListComponent implements OnInit {
   protected get hiddenColumns(): Column<CronjobRow, ColumnComponent<CronjobRow>>[] {
     return this.columns.filter((column) => column?.hidden);
   }
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private translate: TranslateService,
-    private taskService: TaskService,
-    private dialog: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private slideIn: SlideIn,
-    private matDialog: MatDialog,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const cronjobs$ = this.api.call('cronjob.query').pipe(

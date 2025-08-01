@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -48,18 +46,16 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   ],
 })
 export class FailoverCardComponent implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private slideIn = inject(SlideIn);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+
   protected readonly searchableElements = failoverCardElements;
   protected readonly requiredRoles = [Role.FailoverWrite];
 
   protected isLoading = signal(false);
   protected config = signal<FailoverConfig | null>(null);
-
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private slideIn: SlideIn,
-    private firstTimeWarning: FirstTimeWarningService,
-  ) {}
 
   ngOnInit(): void {
     this.loadConfig();

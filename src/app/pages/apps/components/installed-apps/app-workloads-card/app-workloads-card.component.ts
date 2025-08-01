@@ -1,7 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input, computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, computed, inject } from '@angular/core';
 import { MatIconAnchor, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -51,6 +49,8 @@ import {
   ],
 })
 export class AppWorkloadsCardComponent {
+  private matDialog = inject(MatDialog);
+
   readonly app = input.required<App>();
 
   readonly AppState = AppState;
@@ -58,10 +58,6 @@ export class AppWorkloadsCardComponent {
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly appContainerStateLabels = appContainerStateLabels;
   protected readonly helptext = helptextApps;
-
-  constructor(
-    private matDialog: MatDialog,
-  ) {}
 
   protected readonly hostPorts = computed(() => {
     const hostPorts: { hostIp: string; hostPort: string; containerPort: string; protocol: string }[] = [];

@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -51,6 +45,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ProactiveComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private dialogService = inject(DialogService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SupportWrite];
 
   protected isLoading = signal(false);
@@ -70,17 +74,7 @@ export class ProactiveComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
-    private formErrorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

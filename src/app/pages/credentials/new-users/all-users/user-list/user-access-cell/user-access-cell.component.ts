@@ -1,7 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input,
-  computed,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { roleNames } from 'app/enums/role.enum';
@@ -16,6 +13,8 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   imports: [IxIconComponent, MatTooltip, TranslateModule],
 })
 export class UserAccessCellComponent {
+  private translate = inject(TranslateService);
+
   readonly user = input.required<User>();
 
   protected readonly roles = computed<string>(() => {
@@ -23,6 +22,4 @@ export class UserAccessCellComponent {
       .map((role) => this.translate.instant(roleNames.get(role) || role))
       .join(', ');
   });
-
-  constructor(private translate: TranslateService) {}
 }

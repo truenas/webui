@@ -1,11 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy,
-  output,
-  input, OnInit,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, output, input, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -91,6 +86,24 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
 })
 
 export class InstalledAppsListComponent implements OnInit {
+  private api = inject(ApiService);
+  private appService = inject(ApplicationsService);
+  private cdr = inject(ChangeDetectorRef);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private installedAppsStore = inject(InstalledAppsStore);
+  private dockerStore = inject(DockerStore);
+  private errorHandler = inject(ErrorHandlerService);
+  private store$ = inject<Store<WebuiAppState>>(Store);
+  private location = inject(Location);
+  private appsStats = inject(AppsStatsService);
+  private loader = inject(LoaderService);
+  private layoutService = inject(LayoutService);
+
   readonly appId = injectParams('appId');
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
@@ -164,25 +177,7 @@ export class InstalledAppsListComponent implements OnInit {
     );
   }
 
-  constructor(
-    private api: ApiService,
-    private appService: ApplicationsService,
-    private cdr: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private matDialog: MatDialog,
-    private dialogService: DialogService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private installedAppsStore: InstalledAppsStore,
-    private dockerStore: DockerStore,
-    private errorHandler: ErrorHandlerService,
-    private store$: Store<WebuiAppState>,
-    private location: Location,
-    private appsStats: AppsStatsService,
-    private loader: LoaderService,
-    private layoutService: LayoutService,
-  ) {
+  constructor() {
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationStart || event instanceof NavigationEnd),

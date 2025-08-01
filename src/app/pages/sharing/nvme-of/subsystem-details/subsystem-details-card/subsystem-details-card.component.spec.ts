@@ -8,6 +8,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
@@ -42,6 +43,7 @@ describe('SubsystemDetailsCardComponent', () => {
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),
       }),
+      mockProvider(FormErrorHandlerService),
       mockAuth(),
     ],
   });
@@ -69,24 +71,54 @@ describe('SubsystemDetailsCardComponent', () => {
   });
 
   it('updates name when it is edited', async () => {
-    await details.setValues({
-      Name: 'Updated Subsystem',
-    });
+    // Mock the successful response
+    const nvmeOfService = spectator.inject(NvmeOfService);
+    const nvmeOfStore = spectator.inject(NvmeOfStore);
+    const snackbarService = spectator.inject(SnackbarService);
 
-    expect(spectator.inject(NvmeOfService).updateSubsystem).toHaveBeenCalledWith(subsystem, { name: 'Updated Subsystem' });
-    expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalled();
+    // Access the form directly (even though it's protected) using bracket notation
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    const form = spectator.component['form'];
+    form.patchValue({ name: 'Updated Subsystem' });
+    spectator.detectChanges();
+
+    // Call updateField directly (even though it's protected) using bracket notation
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    spectator.component['updateField']('name');
+
+    // Wait for async operations
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    expect(nvmeOfService.updateSubsystem).toHaveBeenCalledWith(subsystem, { name: 'Updated Subsystem' });
+    expect(nvmeOfStore.initialize).toHaveBeenCalled();
     expect(spectator.component.nameUpdated.emit).not.toHaveBeenCalled();
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    expect(snackbarService.success).toHaveBeenCalled();
   });
 
   it('updates NQN when it is edited', async () => {
-    await details.setValues({
-      NQN: 'nqn.2014-08.org.nvmexpress:uuid:11111111',
-    });
+    // Mock the successful response
+    const nvmeOfService = spectator.inject(NvmeOfService);
+    const nvmeOfStore = spectator.inject(NvmeOfStore);
+    const snackbarService = spectator.inject(SnackbarService);
 
-    expect(spectator.inject(NvmeOfService).updateSubsystem).toHaveBeenCalledWith(subsystem, { subnqn: 'nqn.2014-08.org.nvmexpress:uuid:11111111' });
-    expect(spectator.inject(NvmeOfStore).initialize).toHaveBeenCalled();
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    // Access the form directly (even though it's protected) using bracket notation
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    const form = spectator.component['form'];
+    form.patchValue({ subnqn: 'nqn.2014-08.org.nvmexpress:uuid:11111111' });
+    spectator.detectChanges();
+
+    // Call updateField directly (even though it's protected) using bracket notation
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    spectator.component['updateField']('subnqn');
+
+    // Wait for async operations
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    expect(nvmeOfService.updateSubsystem).toHaveBeenCalledWith(subsystem, { subnqn: 'nqn.2014-08.org.nvmexpress:uuid:11111111' });
+    expect(nvmeOfStore.initialize).toHaveBeenCalled();
+    expect(snackbarService.success).toHaveBeenCalled();
   });
 
   it('copies NQN to clipboard when copy is pressed', () => {

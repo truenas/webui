@@ -1,7 +1,5 @@
 import { CdkTreeNode, CdkTreeNodeOutletContext } from '@angular/cdk/tree';
-import {
-  Directive, OnChanges, EmbeddedViewRef, ViewContainerRef, input,
-} from '@angular/core';
+import { Directive, OnChanges, EmbeddedViewRef, ViewContainerRef, input, inject } from '@angular/core';
 import { IxSimpleChange, IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { TreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual-node-data.interface';
 
@@ -9,10 +7,10 @@ import { TreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual
   selector: '[ixTreeVirtualScrollNodeOutlet]',
 })
 export class TreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
+  private _viewContainerRef = inject(ViewContainerRef);
+
   private _viewRef: EmbeddedViewRef<unknown> | null = null;
   readonly data = input.required<TreeVirtualNodeData<T>>();
-
-  constructor(private _viewContainerRef: ViewContainerRef) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     const recreateView = this.shouldRecreateView(changes);

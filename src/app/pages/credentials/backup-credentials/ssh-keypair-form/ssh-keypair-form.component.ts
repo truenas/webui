@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -60,6 +58,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class SshKeypairFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private loader = inject(LoaderService);
+  private download = inject(DownloadService);
+  slideInRef = inject<SlideInRef<KeychainSshKeyPair | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
 
   get isNew(): boolean {
@@ -87,18 +96,7 @@ export class SshKeypairFormComponent implements OnInit {
   readonly canDownloadPublicKey$ = this.form.value$.pipe(map((value) => value.name && value.public_key));
   readonly canDownloadPrivateKey$ = this.form.value$.pipe(map((value) => value.name && value.private_key));
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private loader: LoaderService,
-    private download: DownloadService,
-    public slideInRef: SlideInRef<KeychainSshKeyPair | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

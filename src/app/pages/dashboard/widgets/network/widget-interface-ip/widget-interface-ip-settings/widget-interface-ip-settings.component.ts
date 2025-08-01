@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, effect, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -30,6 +28,10 @@ import {
   ],
 })
 export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsComponent<WidgetInterfaceIpSettings>, OnInit {
+  widgetSettingsRef = inject<WidgetSettingsRef<WidgetInterfaceIpSettings>>(WidgetSettingsRef);
+  private fb = inject(FormBuilder);
+  private resources = inject(WidgetResourcesService);
+
   form = this.fb.nonNullable.group({
     interface: [null as string | null, [Validators.required]],
   });
@@ -44,11 +46,7 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
   private firstOption = toSignal(this.networkInterfaceOptions$.pipe(map((opts) => opts[0]?.value)));
 
   private readonly formFieldNames = ['interface'];
-  constructor(
-    public widgetSettingsRef: WidgetSettingsRef<WidgetInterfaceIpSettings>,
-    private fb: FormBuilder,
-    private resources: WidgetResourcesService,
-  ) {
+  constructor() {
     effect(() => {
       const firstOption = this.firstOption();
       if (!this.widgetSettingsRef.getSettings()?.interface && firstOption) {

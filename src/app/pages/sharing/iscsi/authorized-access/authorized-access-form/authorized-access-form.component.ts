@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -51,6 +49,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class AuthorizedAccessFormComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private api = inject(ApiService);
+  private validatorService = inject(IxValidatorsService);
+  slideInRef = inject<SlideInRef<IscsiAuthAccess | undefined, boolean>>(SlideInRef);
+
   get isNew(): boolean {
     return !this.editingAccess;
   }
@@ -131,14 +136,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  constructor(
-    private translate: TranslateService,
-    private formBuilder: NonNullableFormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private api: ApiService,
-    private validatorService: IxValidatorsService,
-    public slideInRef: SlideInRef<IscsiAuthAccess | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

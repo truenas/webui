@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -43,6 +41,11 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class WidgetMemoryComponent {
+  private store$ = inject<Store<AppState>>(Store);
+  private resources = inject(WidgetResourcesService);
+  private theme = inject(ThemeService);
+  private translate = inject(TranslateService);
+
   size = input.required<SlotSize>();
 
   protected ecc$ = this.store$.pipe(waitForSystemInfo, map((sysInfo) => sysInfo.ecc_memory));
@@ -117,13 +120,6 @@ export class WidgetMemoryComponent {
       animation: false,
     };
   });
-
-  constructor(
-    private store$: Store<AppState>,
-    private resources: WidgetResourcesService,
-    private theme: ThemeService,
-    private translate: TranslateService,
-  ) {}
 
   protected formatUnit(bytes: number): string {
     return (bytes / GiB).toFixed(1);

@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input, OnDestroy, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnDestroy, OnInit, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { LayoutService } from 'app/modules/layout/layout.service';
@@ -31,6 +29,9 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   ],
 })
 export class PageHeaderComponent implements OnInit, OnDestroy {
+  private pageTitleService = inject(PageTitleService);
+  private layoutService = inject(LayoutService);
+
   readonly pageTitle = input<string>();
   readonly customBadgeTitle = input<string>();
   readonly tooltip = input<string>();
@@ -53,11 +54,6 @@ export class PageHeaderComponent implements OnInit, OnDestroy {
       return this.pageTitle();
     }),
   );
-
-  constructor(
-    private pageTitleService: PageTitleService,
-    private layoutService: LayoutService,
-  ) {}
 
   ngOnInit(): void {
     if (!this.default()) {

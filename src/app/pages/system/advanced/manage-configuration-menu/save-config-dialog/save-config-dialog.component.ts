@@ -1,7 +1,5 @@
 import { DatePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, Inject, Optional,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -54,6 +52,14 @@ export interface SaveConfigDialogMessages {
   ],
 })
 export class SaveConfigDialog {
+  private store$ = inject<Store<AppState>>(Store);
+  private download = inject(DownloadService);
+  private loader = inject(LoaderService);
+  private datePipe = inject(DatePipe);
+  private dialogRef = inject<MatDialogRef<SaveConfigDialog>>(MatDialogRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+
   protected readonly requiredRoles = [Role.FullAdmin];
 
   exportSeedCheckbox = new FormControl(true);
@@ -68,16 +74,9 @@ export class SaveConfigDialog {
     cancelButton: this.translate.instant('Cancel'),
   };
 
-  constructor(
-    private store$: Store<AppState>,
-    private download: DownloadService,
-    private loader: LoaderService,
-    private datePipe: DatePipe,
-    private dialogRef: MatDialogRef<SaveConfigDialog>,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    @Optional() @Inject(MAT_DIALOG_DATA) messageOverrides: Partial<SaveConfigDialogMessages> = {},
-  ) {
+  constructor() {
+    const messageOverrides = inject<Partial<SaveConfigDialogMessages>>(MAT_DIALOG_DATA, { optional: true }) ?? {};
+
     this.helptext = {
       ...this.defaultMessages,
       ...messageOverrides,

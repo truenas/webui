@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
@@ -24,6 +24,14 @@ import {
 @UntilDestroy()
 @Injectable()
 export class NetworkInterfacesEffects {
+  private actions$ = inject(Actions);
+  private router = inject(Router);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  private authService = inject(AuthService);
+
   loadCheckinStatus$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, networkInterfacesChanged),
     filterAsync(() => this.authService.hasRole([Role.NetworkInterfaceWrite])),
@@ -64,14 +72,4 @@ export class NetworkInterfacesEffects {
       );
     }),
   ), { dispatch: false });
-
-  constructor(
-    private actions$: Actions,
-    private router: Router,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private dialogService: DialogService,
-    private authService: AuthService,
-  ) { }
 }

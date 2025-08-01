@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -61,6 +59,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CloudCredentialsCardComponent implements OnInit {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+  private slideIn = inject(SlideIn);
+  private dialog = inject(DialogService);
+  private cloudCredentialService = inject(CloudCredentialService);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly requiredRoles = [Role.CloudSyncWrite];
   protected readonly searchableElements = cloudCredentialsCardElements;
 
@@ -99,16 +105,6 @@ export class CloudCredentialsCardComponent implements OnInit {
     uniqueRowTag: (row) => 'cloud-cred-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Cloud Credential')],
   });
-
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-    private slideIn: SlideIn,
-    private dialog: DialogService,
-    private cloudCredentialService: CloudCredentialService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     const credentials$ = this.api.call('cloudsync.credentials.query').pipe(

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
@@ -9,6 +9,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService {
+  protected api = inject(ApiService);
+
   macRegex = /\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i;
 
   ipv4Regex = /^((25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})\.){3}(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})$/;
@@ -24,8 +26,6 @@ export class NetworkService {
   ipv4OrIpv6CidrOptional = new RegExp('(' + this.ipv6CidrOptionalRegex.source + ')|(' + this.ipv4CidrOptionalRegex.source + ')');
 
   hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/;
-
-  constructor(protected api: ApiService) {}
 
   getVlanParentInterfaceChoices(): Observable<Choices> {
     return this.api.call('interface.vlan_parent_interface_choices');

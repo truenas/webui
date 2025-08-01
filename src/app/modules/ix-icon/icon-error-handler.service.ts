@@ -1,4 +1,4 @@
-import { ErrorHandler, Injectable } from '@angular/core';
+import { ErrorHandler, Injectable, inject } from '@angular/core';
 import { environment } from 'environments/environment';
 
 /**
@@ -8,9 +8,8 @@ import { environment } from 'environments/environment';
   providedIn: 'root',
 })
 export class IconErrorHandlerService {
-  constructor(
-    private normalErrorHandler: ErrorHandler,
-  ) {}
+  private normalErrorHandler = inject(ErrorHandler);
+
 
   handleError(error: unknown): void {
     if (error instanceof Error && error.message.includes('Error retrieving icon') && !environment.production) {

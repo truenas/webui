@@ -45,6 +45,7 @@ export const extraRules = {
     preferReadonlySignalProperties: false,
   }],
   "@angular-eslint/no-duplicates-in-metadata-arrays": "error",
+  "@angular-eslint/prefer-inject": "error",
 
   // Angular file naming
   "angular-file-naming/component-filename-suffix": "error",
@@ -80,7 +81,7 @@ export const extraRules = {
   "@stylistic/ts/object-curly-newline": ["error", {
     ObjectExpression: {minProperties: 4, multiline: true, consistent: true},
     ObjectPattern: {minProperties: 4, multiline: true, consistent: true},
-    ImportDeclaration: {minProperties: 4, multiline: true, consistent: true},
+    // ImportDeclaration: {minProperties: 4, multiline: true, consistent: true}, -- Should be enabled
     ExportDeclaration: {minProperties: 4, multiline: true, consistent: true},
   }],
   "@stylistic/ts/object-property-newline": ["error", {

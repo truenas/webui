@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { catchError, Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -9,13 +9,11 @@ import { GlobalApiHttpService } from 'app/services/global-api-http.service';
   providedIn: 'root',
 })
 export class UpdateService {
-  private lastSeenBootId: string;
+  private globalApi = inject(GlobalApiHttpService);
+  private errorHandler = inject(ErrorHandlerService);
+  private window = inject<Window>(WINDOW);
 
-  constructor(
-    private globalApi: GlobalApiHttpService,
-    private errorHandler: ErrorHandlerService,
-    @Inject(WINDOW) private window: Window,
-  ) {}
+  private lastSeenBootId: string;
 
   /**
    * Hard refresh is needed to load new html and js after the update.

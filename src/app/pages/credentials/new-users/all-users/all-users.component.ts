@@ -1,9 +1,5 @@
 import { Location } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-  viewChild, OnDestroy,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, viewChild, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -45,6 +41,11 @@ import { setUsernameInUrl } from 'app/pages/credentials/new-users/router-utils';
   ],
 })
 export class AllUsersComponent implements OnInit, OnDestroy {
+  private api = inject(ApiService);
+  private activatedRoute = inject(ActivatedRoute);
+  private location = inject(Location);
+  private cdr = inject(ChangeDetectorRef);
+
   private readonly defaultParams = [
     [['OR', [['builtin', '=', false], ['username', '=', 'root']]]],
   ] as QueryParams<User>;
@@ -53,13 +54,6 @@ export class AllUsersComponent implements OnInit, OnDestroy {
 
   protected readonly searchableElements = allUsersElements;
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
-
-  constructor(
-    private api: ApiService,
-    private activatedRoute: ActivatedRoute,
-    private location: Location,
-    private cdr: ChangeDetectorRef,
-  ) { }
 
   ngOnInit(): void {
     this.setupDataProvider();

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
@@ -36,22 +36,20 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class LeaveDomainDialog {
+  private errorHandler = inject(ErrorHandlerService);
+  private formBuilder = inject(FormBuilder);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private dialogRef = inject<MatDialogRef<LeaveDomainDialog>>(MatDialogRef);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+
   form = this.formBuilder.group({
     username: ['', Validators.required],
     password: ['', Validators.required],
   });
 
   protected readonly Role = Role;
-
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private formBuilder: FormBuilder,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private dialogRef: MatDialogRef<LeaveDomainDialog>,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-  ) {}
 
   onSubmit(): void {
     const formValue = this.form.value;

@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  computed,
-  effect,
-  input,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -79,6 +73,16 @@ import { StorageService } from 'app/services/storage.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdditionalDetailsSectionComponent implements OnInit {
+  private storageService = inject(StorageService);
+  private filesystemService = inject(FilesystemService);
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private userFormStore = inject(UserFormStore);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private sudoCommandsValidator = inject(SudoCommandsValidatorService);
+
   editingUser = input<User>();
   protected username = computed(() => this.userFormStore?.userConfig().username ?? '');
   protected sshAccess = this.userFormStore.sshAccess;
@@ -154,17 +158,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   shellOptions$: Observable<Option[]>;
 
-  constructor(
-    private storageService: StorageService,
-    private filesystemService: FilesystemService,
-    private fb: FormBuilder,
-    private api: ApiService,
-    private userFormStore: UserFormStore,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private sudoCommandsValidator: SudoCommandsValidatorService,
-  ) {
+  constructor() {
     this.form.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe({

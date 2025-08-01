@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, ElementRef, OnInit, Signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, Signal, viewChild, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-messages.store';
@@ -16,14 +14,12 @@ import { ConsolePanelDialog } from 'app/modules/layout/console-footer/console-pa
   imports: [AsyncPipe],
 })
 export class ConsoleFooterComponent implements OnInit {
+  private matDialog = inject(MatDialog);
+  private messagesStore = inject(ConsoleMessagesStore);
+
   private readonly messageContainer: Signal<ElementRef<HTMLElement>> = viewChild.required('messageContainer', { read: ElementRef });
 
   lastThreeLogLines$ = this.messagesStore.lastThreeLogLines$;
-
-  constructor(
-    private matDialog: MatDialog,
-    private messagesStore: ConsoleMessagesStore,
-  ) { }
 
   ngOnInit(): void {
     this.messagesStore.subscribeToMessageUpdates();

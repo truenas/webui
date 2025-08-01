@@ -51,6 +51,7 @@ describe('BootenvStatsDialogComponent', () => {
         mockCall('boot.get_state', poolInstance),
         mockCall('boot.set_scrub_interval'),
       ]),
+      mockAuth(),
       provideMockStore({
         selectors: [
           {
@@ -59,7 +60,6 @@ describe('BootenvStatsDialogComponent', () => {
           },
         ],
       }),
-      mockAuth(),
     ],
     declarations: [
       FakeFormatDateTimePipe,

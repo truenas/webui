@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -32,6 +30,10 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   ],
 })
 export class LogWizardStepComponent implements OnInit {
+  private store = inject(PoolManagerStore);
+  private addVdevsStore = inject(AddVdevsStore);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly isStepActive = input<boolean>(false);
   readonly stepWarning = input<string | null>();
 
@@ -44,11 +46,6 @@ export class LogWizardStepComponent implements OnInit {
 
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Log);
   protected allowedLayouts = [CreateVdevLayout.Mirror, CreateVdevLayout.Stripe];
-  constructor(
-    private store: PoolManagerStore,
-    private addVdevsStore: AddVdevsStore,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.addVdevsStore.pool$.pipe(

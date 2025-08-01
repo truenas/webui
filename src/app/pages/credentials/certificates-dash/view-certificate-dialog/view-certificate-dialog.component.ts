@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogActions,
@@ -26,11 +26,10 @@ import { DownloadService } from 'app/services/download.service';
   ],
 })
 export class ViewCertificateDialog {
-  constructor(
-    private download: DownloadService,
-    public dialogRef: MatDialogRef<ViewCertificateDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: ViewCertificateDialogData,
-  ) {}
+  private download = inject(DownloadService);
+  dialogRef = inject<MatDialogRef<ViewCertificateDialog>>(MatDialogRef);
+  data = inject<ViewCertificateDialogData>(MAT_DIALOG_DATA);
+
 
   onDownloadPressed(): void {
     const fileName = `${this.data.name}.${this.data.extension}`;

@@ -1,7 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input,
-  computed,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { ViewChartAreaComponent } from 'app/modules/charts/view-chart-area/view-chart-area.component';
@@ -16,6 +13,8 @@ import { fullSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/ne
   imports: [ViewChartAreaComponent],
 })
 export class NetworkChartComponent {
+  private localeService = inject(LocaleService);
+
   data = input<ChartData<'line'>>();
   aspectRatio = input<number>(fullSizeNetworkWidgetAspectRatio);
   showLegend = input<boolean>(true);
@@ -90,6 +89,4 @@ export class NetworkChartComponent {
       },
     };
   });
-
-  constructor(private localeService: LocaleService) { }
 }

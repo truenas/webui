@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, effect, OnInit, signal,
-  WritableSignal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, OnInit, signal, WritableSignal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormArray,
@@ -122,6 +119,20 @@ interface NicDeviceOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstanceWizardComponent implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private matDialog = inject(MatDialog);
+  private router = inject(Router);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
+  protected formatter = inject(IxFormatterService);
+  protected configStore = inject(VirtualizationConfigStore);
+  private authService = inject(AuthService);
+  private filesystem = inject(FilesystemService);
+  private unsavedChangesService = inject(UnsavedChangesService);
+
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
@@ -211,21 +222,7 @@ export class InstanceWizardComponent implements OnInit {
     return this.configStore.config()?.v6_network || this.translate.instant('N/A');
   });
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: NonNullableFormBuilder,
-    private matDialog: MatDialog,
-    private router: Router,
-    private formErrorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private dialogService: DialogService,
-    protected formatter: IxFormatterService,
-    protected configStore: VirtualizationConfigStore,
-    private authService: AuthService,
-    private filesystem: FilesystemService,
-    private unsavedChangesService: UnsavedChangesService,
-  ) {
+  constructor() {
     this.configStore.initialize();
 
     effect(() => {

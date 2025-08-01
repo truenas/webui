@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
@@ -41,6 +39,9 @@ import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.compon
   ],
 })
 export class UsageCardComponent {
+  private slideIn = inject(SlideIn);
+  private datasetStore = inject(DatasetTreeStore);
+
   readonly dataset = input.required<DatasetDetails>();
   readonly systemDataset = input.required<string>();
   readonly hasChildrenWithShares = input<boolean>(false);
@@ -93,11 +94,6 @@ export class UsageCardComponent {
       && !this.dataset().nfs_shares?.length
       && !this.dataset().iscsi_shares?.length;
   });
-
-  constructor(
-    private slideIn: SlideIn,
-    private datasetStore: DatasetTreeStore,
-  ) {}
 
   createSmbShare(): void {
     this.slideIn.open(SmbFormComponent, {

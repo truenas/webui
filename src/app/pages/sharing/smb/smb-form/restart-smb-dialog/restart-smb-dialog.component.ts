@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogContent, MatDialogActions, MatDialogClose,
@@ -32,13 +32,12 @@ interface RestartDialogData {
   ],
 })
 export class RestartSmbDialog {
+  private translate = inject(TranslateService);
+  data = inject<RestartDialogData>(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
   readonly helptext = helptextSharingSmb;
-  constructor(
-    private translate: TranslateService,
-    @Inject(MAT_DIALOG_DATA) public data: RestartDialogData,
-  ) {}
 
   get homeShareMessage(): string {
     return this.data.isNew

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MAT_DIALOG_DATA,
@@ -43,8 +41,6 @@ export interface GeneralDialogConfig {
   ],
 })
 export class GeneralDialog {
-  constructor(
-    protected dialogRef: MatDialogRef<GeneralDialog>,
-    @Inject(MAT_DIALOG_DATA) public conf: GeneralDialogConfig,
-  ) { }
+  protected dialogRef = inject<MatDialogRef<GeneralDialog>>(MatDialogRef);
+  conf = inject<GeneralDialogConfig>(MAT_DIALOG_DATA);
 }

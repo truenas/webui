@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -65,6 +63,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ReportingExporterListComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  protected emptyService = inject(EmptyService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly requiredRoles = [Role.ReportingWrite];
   protected readonly searchableElements = reportingExportersElements;
 
@@ -144,17 +151,6 @@ export class ReportingExporterListComponent implements OnInit {
       }
     }),
   );
-
-  constructor(
-    private translate: TranslateService,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    protected emptyService: EmptyService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     this.getExporters();

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { combineLatest, shareReplay } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -18,6 +18,9 @@ import {
   providedIn: 'root',
 })
 export class LicenseService {
+  private store$ = inject<Store<AppState>>(Store);
+  private api = inject(ApiService);
+
   hasFailover$ = this.store$.select(selectIsHaLicensed);
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
   hasFibreChannel$ = combineLatest([
@@ -65,9 +68,4 @@ export class LicenseService {
   ]).pipe(map((
     [isEnterprise, licenseFeatures]: [boolean, LicenseFeature[]],
   ) => !isEnterprise || licenseFeatures.includes(LicenseFeature.Jails)));
-
-  constructor(
-    private store$: Store<AppState>,
-    private api: ApiService,
-  ) {}
 }

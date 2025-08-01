@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -46,6 +44,9 @@ const maxDisksInDraidGroup = 255;
   ],
 })
 export class DraidSelectionComponent implements OnInit, OnChanges {
+  private formBuilder = inject(FormBuilder);
+  private store = inject(PoolManagerStore);
+
   readonly type = input.required<VDevType>();
   readonly layout = input.required<CreateVdevLayout.Draid1 | CreateVdevLayout.Draid2 | CreateVdevLayout.Draid3>();
   readonly inventory = input<DetailsDisk[]>();
@@ -72,11 +73,6 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
   private selectedDisks: DetailsDisk[] = [];
 
   readonly helptext = helptextPoolCreation;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private store: PoolManagerStore,
-  ) {}
 
   get parityDevices(): number {
     return parityDisksPerGroup[this.layout()];

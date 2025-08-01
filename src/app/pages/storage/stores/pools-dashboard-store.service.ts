@@ -1,4 +1,4 @@
-import { computed, Injectable } from '@angular/core';
+import { computed, Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { groupBy, keyBy, sortBy } from 'lodash-es';
 import {
@@ -34,6 +34,9 @@ const initialState: PoolsDashboardState = {
 
 @Injectable()
 export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+
   readonly pools = computed(() => this.state().pools);
   readonly arePoolsLoading = computed(() => this.state().arePoolsLoading);
   readonly isLoadingPoolDetails = computed(() => this.state().isLoadingPoolDetails);
@@ -49,10 +52,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     return this.state().scrubs.find((scrub) => scrub.pool === pool.id);
   }
 
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-  ) {
+  constructor() {
     super(initialState);
   }
 

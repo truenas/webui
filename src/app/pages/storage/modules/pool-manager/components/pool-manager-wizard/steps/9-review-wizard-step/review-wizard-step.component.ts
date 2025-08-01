@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, input, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -50,6 +47,13 @@ import {
   ],
 })
 export class ReviewWizardStepComponent implements OnInit {
+  private matDialog = inject(MatDialog);
+  private store = inject(PoolManagerStore);
+  private cdr = inject(ChangeDetectorRef);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private poolManagerValidation = inject(PoolManagerValidationService);
+
   readonly isAddingVdevs = input<boolean>();
 
   readonly vDevType = VDevType;
@@ -65,15 +69,6 @@ export class ReviewWizardStepComponent implements OnInit {
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
 
   protected readonly Role = Role;
-
-  constructor(
-    private matDialog: MatDialog,
-    private store: PoolManagerStore,
-    private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private poolManagerValidation: PoolManagerValidationService,
-  ) {}
 
   get showStartOver(): boolean {
     return Boolean(this.state.name || this.state.encryption || this.nonEmptyTopologyCategories?.length);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -35,6 +35,11 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class InstallationMediaStepComponent implements SummaryProvider {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private filesystemService = inject(FilesystemService);
+  private matDialog = inject(MatDialog);
+
   form = this.formBuilder.nonNullable.group({
     iso_path: [''],
   });
@@ -42,13 +47,6 @@ export class InstallationMediaStepComponent implements SummaryProvider {
   readonly helptext = helptextVmWizard;
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
   protected readonly requiredRoles = [Role.VmWrite];
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private filesystemService: FilesystemService,
-    private matDialog: MatDialog,
-  ) {}
 
   onUploadIsoClicked(): void {
     this.matDialog.open(UploadIsoDialogComponent)

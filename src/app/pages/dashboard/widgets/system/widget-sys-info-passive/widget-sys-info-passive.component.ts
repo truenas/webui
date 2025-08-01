@@ -1,7 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, effect, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -62,6 +60,13 @@ import {
   ],
 })
 export class WidgetSysInfoPassiveComponent {
+  private resources = inject(WidgetResourcesService);
+  private dialog = inject(DialogService);
+  private store$ = inject<Store<AppState>>(Store);
+  private router = inject(Router);
+  private localeService = inject(LocaleService);
+  private translate = inject(TranslateService);
+
   size = input.required<SlotSize>();
 
   protected readonly requiredRoles = [Role.FailoverWrite];
@@ -100,14 +105,7 @@ export class WidgetSysInfoPassiveComponent {
 
   isLoaded = computed(() => this.systemInfo());
 
-  constructor(
-    private resources: WidgetResourcesService,
-    private dialog: DialogService,
-    private store$: Store<AppState>,
-    private router: Router,
-    private localeService: LocaleService,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     effect(() => {
       if (!this.systemInfo() && this.canFailover()) {
         this.resources.refreshDashboardSystemInfo();

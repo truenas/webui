@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, ElementRef, OnInit, Signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, Signal, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -26,13 +24,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class ConsolePanelDialog implements OnInit {
+  private messagesStore = inject(ConsoleMessagesStore);
+
   private readonly messageContainer: Signal<ElementRef<HTMLElement>> = viewChild.required('messageContainer', { read: ElementRef });
 
   lines$ = this.messagesStore.lines$;
-
-  constructor(
-    private messagesStore: ConsoleMessagesStore,
-  ) {}
 
   get isScrolledToBottom(): boolean {
     const delta = 3;

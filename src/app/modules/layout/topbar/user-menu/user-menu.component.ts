@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
@@ -44,6 +42,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class UserMenuComponent {
+  private matDialog = inject(MatDialog);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   protected readonly tooltips = helptextTopbar.tooltips;
   protected searchableElements = userMenuElements;
   protected readonly AccountAttribute = AccountAttribute;
@@ -52,12 +54,6 @@ export class UserMenuComponent {
   protected isTwoFactorEnabledGlobally$ = this.authService.getGlobalTwoFactorConfig().pipe(
     map((config) => config.enabled),
   );
-
-  constructor(
-    private matDialog: MatDialog,
-    private authService: AuthService,
-    private router: Router,
-  ) { }
 
   openChangePasswordDialog(): void {
     this.matDialog.open(ChangePasswordDialog);

@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component, OnInit, ChangeDetectionStrategy,
-  Inject,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -48,6 +45,13 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   providers: [SigninStore],
 })
 export class SigninComponent implements OnInit {
+  private wsStatus = inject(WebSocketStatusService);
+  private signinStore = inject(SigninStore);
+  private dialog = inject(DialogService);
+  private authService = inject(AuthService);
+  private tokenLastUsedService = inject(TokenLastUsedService);
+  private window = inject<Window>(WINDOW);
+
   protected hasAuthToken = this.authService.hasAuthToken;
   protected isTokenWithinTimeline$ = this.tokenLastUsedService.isTokenWithinTimeline$;
 
@@ -69,14 +73,7 @@ export class SigninComponent implements OnInit {
     }),
   );
 
-  constructor(
-    private wsStatus: WebSocketStatusService,
-    private signinStore: SigninStore,
-    private dialog: DialogService,
-    private authService: AuthService,
-    private tokenLastUsedService: TokenLastUsedService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.wsStatus.isFailoverRestart$
       .pipe(
         filter(Boolean),

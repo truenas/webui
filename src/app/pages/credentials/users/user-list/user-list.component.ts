@@ -1,10 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component,
-  OnInit,
-  ChangeDetectorRef,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
@@ -69,6 +64,13 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   ],
 })
 export class OldUserListComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
+  private store$ = inject<Store<AppState>>(Store);
+  private translate = inject(TranslateService);
+  private emptyService = inject(EmptyService);
+  private router = inject(Router);
+
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly searchableElements = userListElements;
 
@@ -128,15 +130,6 @@ export class OldUserListComponent implements OnInit {
   protected get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
-
-  constructor(
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
-    private translate: TranslateService,
-    private emptyService: EmptyService,
-    private router: Router,
-  ) { }
 
   ngOnInit(): void {
     this.store$.dispatch(userPageEntered());

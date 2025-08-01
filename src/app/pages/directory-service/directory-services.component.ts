@@ -1,8 +1,6 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { NgTemplateOutlet } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -76,6 +74,16 @@ interface DataCard {
   ],
 })
 export class DirectoryServicesComponent implements OnInit {
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private dialog = inject(DialogService);
+  private matDialog = inject(MatDialog);
+  private loader = inject(LoaderService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = directoryServicesElements;
 
@@ -99,19 +107,6 @@ export class DirectoryServicesComponent implements OnInit {
     large: true,
     icon: iconMarker('mdi-account-box'),
   };
-
-  constructor(
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private dialog: DialogService,
-    private matDialog: MatDialog,
-    private loader: LoaderService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-  ) {
-  }
 
   ngOnInit(): void {
     this.refreshCards();

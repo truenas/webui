@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, signal, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,13 +20,11 @@ import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validat
   ],
 })
 export class SmbUsersWarningComponent implements OnInit {
-  protected hasSmbUsers = signal(true);
+  private router = inject(Router);
+  private smbValidationService = inject(SmbValidationService);
+  private slideInRef = inject<SlideInRef<unknown, boolean>>(SlideInRef);
 
-  constructor(
-    private router: Router,
-    private smbValidationService: SmbValidationService,
-    private slideInRef: SlideInRef<unknown, boolean>,
-  ) {}
+  protected hasSmbUsers = signal(true);
 
   ngOnInit(): void {
     this.checkForSmbUsersWarning();

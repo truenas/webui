@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, viewChild, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -74,6 +72,20 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class ReplicationFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private errorParser = inject(ErrorParserService);
+  private translate = inject(TranslateService);
+  formatter = inject(IxFormatterService);
+  private cdr = inject(ChangeDetectorRef);
+  private dialog = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  private datasetService = inject(DatasetService);
+  private replicationService = inject(ReplicationService);
+  private keychainCredentials = inject(KeychainCredentialService);
+  private authService = inject(AuthService);
+  slideInRef = inject<SlideInRef<ReplicationTask | undefined, ReplicationTask | false>>(SlideInRef);
+
   protected readonly generalSection = viewChild.required(GeneralSectionComponent);
   protected readonly transportSection = viewChild.required(TransportSectionComponent);
   protected readonly sourceSection = viewChild.required(SourceSectionComponent);
@@ -94,21 +106,7 @@ export class ReplicationFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private errorParser: ErrorParserService,
-    private translate: TranslateService,
-    public formatter: IxFormatterService,
-    private cdr: ChangeDetectorRef,
-    private dialog: DialogService,
-    private snackbar: SnackbarService,
-    private datasetService: DatasetService,
-    private replicationService: ReplicationService,
-    private keychainCredentials: KeychainCredentialService,
-    private authService: AuthService,
-    public slideInRef: SlideInRef<ReplicationTask | undefined, ReplicationTask | false>,
-  ) {
+  constructor() {
     this.existingReplication = this.slideInRef.getData();
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(

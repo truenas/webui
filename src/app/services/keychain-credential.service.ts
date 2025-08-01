@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainSshCredentials, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
@@ -8,7 +8,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
   providedIn: 'root',
 })
 export class KeychainCredentialService {
-  constructor(protected api: ApiService) { }
+  protected api = inject(ApiService);
+
 
   getSshKeys(): Observable<KeychainSshKeyPair[]> {
     return this.api.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]]) as Observable<KeychainSshKeyPair[]>;

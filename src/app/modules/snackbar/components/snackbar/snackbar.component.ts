@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 import { TranslateModule } from '@ngx-translate/core';
@@ -19,9 +19,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SnackbarComponent {
-  constructor(
-    @Inject(MAT_SNACK_BAR_DATA) public config: SnackbarConfig,
-  ) {}
+  config = inject<SnackbarConfig>(MAT_SNACK_BAR_DATA);
+
 
   get iconColor(): string {
     return this.config.iconCssColor || 'var(--primary)';

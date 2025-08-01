@@ -1,7 +1,5 @@
 import { Location } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnDestroy, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -32,21 +30,19 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   ],
 })
 export class ConfigResetComponent implements OnInit, OnDestroy {
-  private connectedSubscription: Timeout;
+  private wsManager = inject(WebSocketHandlerService);
+  private wsStatus = inject(WebSocketStatusService);
+  protected router = inject(Router);
+  protected loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  translate = inject(TranslateService);
+  protected dialogService = inject(DialogService);
+  protected matDialog = inject(MatDialog);
+  private location = inject(Location);
+  private api = inject(ApiService);
+  private authService = inject(AuthService);
 
-  constructor(
-    private wsManager: WebSocketHandlerService,
-    private wsStatus: WebSocketStatusService,
-    protected router: Router,
-    protected loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    public translate: TranslateService,
-    protected dialogService: DialogService,
-    protected matDialog: MatDialog,
-    private location: Location,
-    private api: ApiService,
-    private authService: AuthService,
-  ) {}
+  private connectedSubscription: Timeout;
 
   isWsConnected(): void {
     // TODO: isConnected$ doesn't work correctly.

@@ -1,12 +1,12 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { WINDOW } from 'app/helpers/window.helper';
 
 @Injectable({ providedIn: 'root' })
 export class IxFormatterService {
+  private window = inject<Window>(WINDOW);
+
   readonly protocol = this.window?.location?.protocol || 'http:';
   readonly iecUnits: readonly string[] = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
-
-  constructor(@Inject(WINDOW) private window: Window) {}
 
   /**
    * Formats any memory size in bytes to human readable string, e.g., '2147483648' to '2 GiB'

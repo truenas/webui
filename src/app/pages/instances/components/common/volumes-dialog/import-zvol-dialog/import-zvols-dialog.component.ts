@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogClose, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
@@ -37,6 +37,15 @@ import { FilesystemService } from 'app/services/filesystem.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportZvolsDialog {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private filesystem = inject(FilesystemService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogRef = inject<MatDialogRef<ImportZvolsDialog, boolean>>(MatDialogRef);
+  private snackbar = inject(SnackbarService);
+
   protected form = this.formBuilder.group({
     zvols: [[] as string[], Validators.required],
     clone: [false],
@@ -62,17 +71,6 @@ export class ImportZvolsDialog {
   ]);
 
   protected helptext = instancesHelptext;
-
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private filesystem: FilesystemService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<ImportZvolsDialog, boolean>,
-    private snackbar: SnackbarService,
-  ) {}
 
   protected onSubmit(): void {
     const toImport = this.form.getRawValue().zvols.map((zvol) => {

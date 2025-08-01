@@ -1,7 +1,4 @@
-import {
-  Directive, ElementRef, Renderer2, OnInit,
-  OnDestroy, input,
-} from '@angular/core';
+import { Directive, ElementRef, Renderer2, OnInit, OnDestroy, input, inject } from '@angular/core';
 import { Timeout } from 'app/interfaces/timeout.interface';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
@@ -12,6 +9,10 @@ import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui
   selector: '[ixUiSearch]',
 })
 export class UiSearchDirective implements OnInit, OnDestroy {
+  private renderer = inject(Renderer2);
+  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private searchDirectives = inject(UiSearchDirectivesService);
+
   readonly config = input.required<UiSearchableElement>({
     alias: 'ixUiSearch',
   });
@@ -37,12 +38,6 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   }
 
   private highlightTimeout: Timeout | null = null;
-
-  constructor(
-    private renderer: Renderer2,
-    private elementRef: ElementRef<HTMLElement>,
-    private searchDirectives: UiSearchDirectivesService,
-  ) {}
 
   ngOnInit(): void {
     if (this.id) {

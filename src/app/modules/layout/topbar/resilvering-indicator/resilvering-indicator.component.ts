@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -30,6 +30,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class ResilveringIndicatorComponent {
+  private matDialog = inject(MatDialog);
+  private api = inject(ApiService);
+
   protected isResilvering$ = this.api.subscribe('zfs.pool.scan').pipe(
     map((event) => {
       const scan = event.fields.scan;
@@ -38,11 +41,6 @@ export class ResilveringIndicatorComponent {
   );
 
   protected readonly tooltips = helptextTopbar.tooltips;
-
-  constructor(
-    private matDialog: MatDialog,
-    private api: ApiService,
-  ) {}
 
   showDetails(): void {
     this.matDialog.open(ResilverProgressDialog);

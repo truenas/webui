@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -43,6 +41,15 @@ export interface ExtendDialogParams {
   ],
 })
 export class ExtendDialog {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private dialogRef = inject<MatDialogRef<ExtendDialog>>(MatDialogRef);
+  data = inject<ExtendDialogParams>(MAT_DIALOG_DATA);
+
   form = this.formBuilder.group({
     newDisk: ['', Validators.required],
   });
@@ -50,17 +57,6 @@ export class ExtendDialog {
   readonly helptext = helptextVolumeStatus;
 
   unusedDisks: DetailsDisk[] = [];
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private dialogRef: MatDialogRef<ExtendDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: ExtendDialogParams,
-  ) {}
 
   onSubmit(event: SubmitEvent): void {
     event.preventDefault();

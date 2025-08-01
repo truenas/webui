@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -40,6 +40,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AddNicMenuComponent {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private devicesStore = inject(VirtualizationDevicesStore);
+  private instancesStore = inject(VirtualizationInstancesStore);
+  private matDialog = inject(MatDialog);
+
   private readonly bridgedChoices = toSignal(this.getNicChoices(VirtualizationNicType.Bridged), { initialValue: {} });
   private readonly macVlanChoices = toSignal(this.getNicChoices(VirtualizationNicType.Macvlan), { initialValue: {} });
 
@@ -72,17 +81,6 @@ export class AddNicMenuComponent {
   protected readonly hasNicsToAdd = computed(() => {
     return this.availableBridgedNics().length > 0 || Object.keys(this.availableMacVlanNics()).length > 0;
   });
-
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private devicesStore: VirtualizationDevicesStore,
-    private instancesStore: VirtualizationInstancesStore,
-    private matDialog: MatDialog,
-  ) {}
 
   protected addBridgedNic(nic: string): void {
     this.addDevice({

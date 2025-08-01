@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, of } from 'rxjs';
 import {
@@ -15,6 +15,9 @@ import {
 
 @Injectable()
 export class SystemInfoEffects {
+  private actions$ = inject(Actions);
+  private api = inject(ApiService);
+
   loadSystemInfo = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, systemInfoUpdated),
     mergeMap(() => {
@@ -55,9 +58,4 @@ export class SystemInfoEffects {
       );
     }),
   ));
-
-  constructor(
-    private actions$: Actions,
-    private api: ApiService,
-  ) { }
 }

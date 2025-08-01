@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component, computed, effect, input, signal, Signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, signal, Signal, viewChild, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -53,6 +49,11 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   ],
 })
 export class IxExplorerComponent implements ControlValueAccessor {
+  controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private errorParser = inject(ErrorParserService);
+
   readonly label = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
   readonly readonly = input<boolean>(false);
@@ -113,12 +114,7 @@ export class IxExplorerComponent implements ControlValueAccessor {
     };
   });
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private errorParser: ErrorParserService,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
     effect(() => {
       const nodeProvider = this.nodeProvider();

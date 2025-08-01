@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -52,6 +50,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DeleteDatasetDialog implements OnInit {
+  private loader = inject(LoaderService);
+  private fb = inject(FormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialog = inject(DialogService);
+  private dialogRef = inject<MatDialogRef<DeleteDatasetDialog>>(MatDialogRef);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private validators = inject(IxValidatorsService);
+  dataset = inject<VolumesListDataset>(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.DatasetDelete];
 
   attachments: DatasetAttachment[] = [];
@@ -70,19 +79,6 @@ export class DeleteDatasetDialog implements OnInit {
   get isZvol(): boolean {
     return this.dataset.type === DatasetType.Volume;
   }
-
-  constructor(
-    private loader: LoaderService,
-    private fb: FormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialog: DialogService,
-    private dialogRef: MatDialogRef<DeleteDatasetDialog>,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private validators: IxValidatorsService,
-    @Inject(MAT_DIALOG_DATA) public dataset: VolumesListDataset,
-  ) {}
 
   ngOnInit(): void {
     this.setDeleteMessage();

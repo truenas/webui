@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,11 +7,10 @@ import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class CriticalGpuPreventionService {
-  constructor(
-    private api: ApiService,
-    private dialog: DialogService,
-    private translate: TranslateService,
-  ) {}
+  private api = inject(ApiService);
+  private dialog = inject(DialogService);
+  private translate = inject(TranslateService);
+
 
   setupCriticalGpuPrevention(
     control: AbstractControl<string[]>,

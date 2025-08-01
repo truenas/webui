@@ -1,9 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input,
-  computed,
-  signal,
-  effect,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, signal, effect, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -28,6 +23,9 @@ import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/commo
   ],
 })
 export class AppNetworkInfoComponent {
+  private theme = inject(ThemeService);
+  private translate = inject(TranslateService);
+
   stats = input.required<LoadingState<AppStats>>();
   aspectRatio = input<number>(3);
 
@@ -80,10 +78,7 @@ export class AppNetworkInfoComponent {
     };
   });
 
-  constructor(
-    private theme: ThemeService,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     effect(() => {
       const networkStats = this.stats()?.value?.networks;
       const incomingTraffic = networkStats?.reduce((sum, stats) => sum + this.bytesToBits(stats.rx_bytes), 0);

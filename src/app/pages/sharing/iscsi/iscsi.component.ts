@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-  computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
@@ -44,6 +41,11 @@ import { LicenseService } from 'app/services/license.service';
   ],
 })
 export class IscsiComponent {
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private iscsiService = inject(IscsiService);
+  private license = inject(LicenseService);
+
   protected readonly searchableElements = iscsiElements;
   protected readonly requiredRoles = [Role.SharingIscsiWrite];
 
@@ -84,13 +86,6 @@ export class IscsiComponent {
 
     return links;
   });
-
-  constructor(
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private iscsiService: IscsiService,
-    private license: LicenseService,
-  ) {}
 
   protected openWizard(): void {
     this.slideIn.open(IscsiWizardComponent)

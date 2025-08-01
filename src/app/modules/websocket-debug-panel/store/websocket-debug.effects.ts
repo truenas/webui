@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import {
@@ -14,6 +14,9 @@ import { selectMockConfigs, selectIsPanelOpen, selectEnclosureMockConfig } from 
 
 @Injectable()
 export class WebSocketDebugEffects {
+  private actions$ = inject(Actions);
+  private store$ = inject(Store);
+
   loadMockConfigs$ = createEffect(() => this.actions$.pipe(
     ofType(WebSocketDebugActions.loadMockConfigs),
     switchMap(() => {
@@ -80,9 +83,4 @@ export class WebSocketDebugEffects {
       safeSetItem(storageKeys.ENCLOSURE_MOCK_CONFIG, config);
     }),
   ), { dispatch: false });
-
-  constructor(
-    private actions$: Actions,
-    private store$: Store,
-  ) {}
 }

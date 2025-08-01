@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
@@ -8,10 +8,9 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 
 @Injectable()
 export class InterfaceNameValidatorService {
-  constructor(
-    private translate: TranslateService,
-    private validatorsService: IxValidatorsService,
-  ) {}
+  private translate = inject(TranslateService);
+  private validatorsService = inject(IxValidatorsService);
+
 
   validate: ValidatorFn = (control: AbstractControl<string>): ValidationErrors | null => {
     if (!control.parent) {

@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input, signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, signal, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { DateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
@@ -50,6 +48,9 @@ type OnTouchedFn = () => void;
   ],
 })
 export class IxDatepickerComponent implements ControlValueAccessor {
+  protected controlDirective = inject(NgControl);
+  private locale = inject(LocaleService);
+
   readonly label = input<TranslatedString>();
   readonly placeholder = input<TranslatedString>('');
   readonly hint = input<TranslatedString>();
@@ -70,10 +71,7 @@ export class IxDatepickerComponent implements ControlValueAccessor {
   private onChange: OnChangeFn = () => {};
   private onTouched: OnTouchedFn = () => {};
 
-  constructor(
-    protected controlDirective: NgControl,
-    private locale: LocaleService,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 

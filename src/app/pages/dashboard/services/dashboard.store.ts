@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
@@ -46,15 +46,15 @@ export const initialState: DashboardState = {
 @UntilDestroy()
 @Injectable()
 export class DashboardStore extends ComponentStore<DashboardState> {
+  private authService = inject(AuthService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private store$ = inject<Store<AppState>>(Store);
+
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly groups$ = this.select((state) => state.groups);
 
-  constructor(
-    private authService: AuthService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private store$: Store<AppState>,
-  ) {
+  constructor() {
     super(initialState);
   }
 

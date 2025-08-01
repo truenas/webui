@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, signal, inject } from '@angular/core';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -49,6 +46,14 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class AssociatedExtentsCardComponent {
+  private matDialog = inject(MatDialog);
+  private iscsiService = inject(IscsiService);
+  private loader = inject(LoaderService);
+  private cdr = inject(ChangeDetectorRef);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+
   readonly target = input.required<IscsiTarget>();
 
   readonly isLoadingExtents = signal<boolean>(false);
@@ -76,15 +81,7 @@ export class AssociatedExtentsCardComponent {
     Role.SharingWrite,
   ];
 
-  constructor(
-    private matDialog: MatDialog,
-    private iscsiService: IscsiService,
-    private loader: LoaderService,
-    private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-  ) {
+  constructor() {
     effect(() => {
       if (this.target()) {
         this.getTargetExtents();

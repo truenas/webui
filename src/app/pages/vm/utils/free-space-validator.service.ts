@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { FormGroup, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
@@ -18,14 +18,12 @@ import { ApiService } from 'app/modules/websocket/api.service';
  */
 @Injectable({ providedIn: 'root' })
 export class FreeSpaceValidatorService {
+  private api = inject(ApiService);
+  private validators = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+
   private freeSpaceInPath$: Observable<number>;
   private previousPath: string;
-
-  constructor(
-    private api: ApiService,
-    private validators: IxValidatorsService,
-    private translate: TranslateService,
-  ) {}
 
   validate = (form: FormGroup): Observable<ValidationErrors | null> => {
     const { datastore, volsize } = form.value as { datastore: string; volsize: number };

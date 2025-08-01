@@ -1,10 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy, Component, computed, ElementRef, HostBinding, input, OnChanges,
-  signal,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, HostBinding, input, OnChanges, signal, ViewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -56,6 +51,10 @@ enum AlertLevelColor {
   ],
 })
 export class AlertComponent implements OnChanges, AfterViewInit {
+  private store$ = inject<Store<AppState>>(Store);
+  private translate = inject(TranslateService);
+  protected alertLink = inject(AlertLinkService);
+
   readonly alert = input.required<Alert>();
   readonly isHaLicensed = input<boolean>();
 
@@ -76,12 +75,6 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   get isDismissed(): boolean {
     return this.alert().dismissed;
   }
-
-  constructor(
-    private store$: Store<AppState>,
-    private translate: TranslateService,
-    protected alertLink: AlertLinkService,
-  ) {}
 
   readonly levelLabel = computed(() => {
     const levelLabel = alertLevelLabels.get(this.alert().level) || this.alert().level;

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -47,6 +45,15 @@ export interface StartServiceDialogResult {
   ],
 })
 export class StartServiceDialog implements OnInit {
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private dialogRef = inject<MatDialogRef<StartServiceDialog, StartServiceDialogResult>>(MatDialogRef);
+  private store$ = inject<Store<ServicesState>>(Store);
+  private errorHandler = inject(ErrorHandlerService);
+  serviceName = inject<ServiceName>(MAT_DIALOG_DATA);
+
   startAutomaticallyControl = new FormControl(true, { nonNullable: true });
   protected isLoading = false;
   private service: Service;
@@ -58,17 +65,6 @@ export class StartServiceDialog implements OnInit {
   get isDisabled(): boolean {
     return !this.service.enable;
   }
-
-  constructor(
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private dialogRef: MatDialogRef<StartServiceDialog, StartServiceDialogResult>,
-    private store$: Store<ServicesState>,
-    private errorHandler: ErrorHandlerService,
-    @Inject(MAT_DIALOG_DATA) public serviceName: ServiceName,
-  ) {}
 
   ngOnInit(): void {
     this.getService();

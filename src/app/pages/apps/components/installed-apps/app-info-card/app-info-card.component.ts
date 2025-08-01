@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, effect, Inject, input, output,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal, WritableSignal, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
@@ -75,6 +71,19 @@ import { RedirectService } from 'app/services/redirect.service';
   ],
 })
 export class AppInfoCardComponent {
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private redirect = inject(RedirectService);
+  private errorHandler = inject(ErrorHandlerService);
+  private appService = inject(ApplicationsService);
+  private matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private router = inject(Router);
+  private installedAppsStore = inject(InstalledAppsStore);
+  private slideIn = inject(SlideIn);
+  private window = inject<Window>(WINDOW);
+
   readonly app = input.required<App>();
   readonly startApp = output();
   readonly stopApp = output();
@@ -119,21 +128,6 @@ export class AppInfoCardComponent {
 
     return `${this.app().name} (${this.app().metadata.name})`;
   });
-
-  constructor(
-    private api: ApiService,
-    private loader: LoaderService,
-    private redirect: RedirectService,
-    private errorHandler: ErrorHandlerService,
-    private appService: ApplicationsService,
-    private matDialog: MatDialog,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private router: Router,
-    private installedAppsStore: InstalledAppsStore,
-    private slideIn: SlideIn,
-    @Inject(WINDOW) private window: Window,
-  ) {}
 
   openPortalLink(app: App, name = 'web_portal'): void {
     const portalUrl = new URL(app.portals[name]);

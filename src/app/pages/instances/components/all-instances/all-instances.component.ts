@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -37,17 +35,17 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   ],
 })
 export class AllInstancesComponent implements OnInit {
+  private configStore = inject(VirtualizationConfigStore);
+  private instancesStore = inject(VirtualizationInstancesStore);
+  private router = inject(Router);
+  private dialogService = inject(DialogService);
+  private window = inject<Window>(WINDOW);
+
   readonly selectedInstance = this.instancesStore.selectedInstance;
 
   protected readonly searchableElements = allInstancesElements;
 
-  constructor(
-    private configStore: VirtualizationConfigStore,
-    private instancesStore: VirtualizationInstancesStore,
-    private router: Router,
-    private dialogService: DialogService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
       .subscribe(() => {

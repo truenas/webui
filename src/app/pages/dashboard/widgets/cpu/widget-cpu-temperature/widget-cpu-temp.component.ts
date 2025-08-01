@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -23,6 +21,9 @@ import { cpuTempWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-temper
   ],
 })
 export class WidgetCpuTempComponent implements WidgetComponent {
+  private translate = inject(TranslateService);
+  private resources = inject(WidgetResourcesService);
+
   size = input.required<SlotSize>();
 
   readonly name = cpuTempWidget.name;
@@ -35,9 +36,4 @@ export class WidgetCpuTempComponent implements WidgetComponent {
     }),
     toLoadingState(),
   );
-
-  constructor(
-    private translate: TranslateService,
-    private resources: WidgetResourcesService,
-  ) {}
 }

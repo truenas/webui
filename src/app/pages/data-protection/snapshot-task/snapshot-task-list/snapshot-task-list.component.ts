@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -78,6 +76,16 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SnapshotTaskListComponent implements OnInit {
+  protected emptyService = inject(EmptyService);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private taskService = inject(TaskService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private slideIn = inject(SlideIn);
+  private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
+
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = snapshotTaskListElements;
 
@@ -169,17 +177,7 @@ export class SnapshotTaskListComponent implements OnInit {
     return this.columns.filter((column) => column?.hidden);
   }
 
-  constructor(
-    protected emptyService: EmptyService,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private taskService: TaskService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private slideIn: SlideIn,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
   }
 

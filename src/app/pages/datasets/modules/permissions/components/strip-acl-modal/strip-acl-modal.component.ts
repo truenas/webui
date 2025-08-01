@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -40,18 +38,16 @@ export interface StripAclModalData {
   ],
 })
 export class StripAclModalComponent {
+  private api = inject(ApiService);
+  private dialog = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogRef = inject<MatDialogRef<StripAclModalComponent>>(MatDialogRef);
+  private translate = inject(TranslateService);
+  data = inject<StripAclModalData>(MAT_DIALOG_DATA);
+
   traverseCheckbox = new FormControl(false);
 
   readonly helptext = helptextAcl;
-
-  constructor(
-    private api: ApiService,
-    private dialog: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<StripAclModalComponent>,
-    private translate: TranslateService,
-    @Inject(MAT_DIALOG_DATA) public data: StripAclModalData,
-  ) { }
 
   onStrip(): void {
     const job$ = this.api.job('filesystem.setacl', [{

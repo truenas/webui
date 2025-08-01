@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   BehaviorSubject,
@@ -16,6 +16,9 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
   providedIn: 'root',
 })
 export class TokenLastUsedService {
+  private wsHandler = inject(WebSocketHandlerService);
+  private window = inject<Window>(WINDOW);
+
   private tokenLastUsed$ = new BehaviorSubject<string | null>(this.window.localStorage.getItem('tokenLastUsed'));
 
   /**
@@ -35,12 +38,6 @@ export class TokenLastUsedService {
         return currentTime - tokenLastUsedTime <= tokenRecentUsageLifetime;
       }),
     );
-  }
-
-  constructor(
-    private wsHandler: WebSocketHandlerService,
-    @Inject(WINDOW) private window: Window,
-  ) {
   }
 
   setupTokenLastUsedValue(user$: Observable<LoggedInUser | null>): void {

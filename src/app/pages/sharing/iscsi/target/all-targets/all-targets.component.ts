@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -41,6 +37,10 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class AllTargetsComponent implements OnInit {
+  private iscsiService = inject(IscsiService);
+  private matDialog = inject(MatDialog);
+  private slideIn = inject(SlideIn);
+
   protected dataProvider: AsyncDataProvider<IscsiTarget>;
   targets = signal<IscsiTarget[] | null>(null);
 
@@ -49,12 +49,6 @@ export class AllTargetsComponent implements OnInit {
     Role.SharingIscsiWrite,
     Role.SharingWrite,
   ];
-
-  constructor(
-    private iscsiService: IscsiService,
-    private matDialog: MatDialog,
-    private slideIn: SlideIn,
-  ) {}
 
   ngOnInit(): void {
     const targets$ = this.iscsiService.getTargets().pipe(

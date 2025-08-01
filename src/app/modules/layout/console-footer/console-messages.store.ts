@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { filter, map } from 'rxjs';
@@ -17,6 +17,8 @@ export const initialConsoleMessagesState: ConsoleMessagesState = {
   providedIn: 'root',
 })
 export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> implements OnDestroy {
+  private api = inject(ApiService);
+
   lines$ = this.select((state) => state.lines.join('\n'));
   lastThreeLogLines$ = this.select((state) => state.lines.slice(-3).join('\n'));
 
@@ -32,9 +34,7 @@ export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> i
     return { ...state, lines };
   });
 
-  constructor(
-    private api: ApiService,
-  ) {
+  constructor() {
     super(initialConsoleMessagesState);
   }
 

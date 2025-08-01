@@ -1,3 +1,5 @@
+import { TestBed } from '@angular/core/testing';
+import { mockProvider } from '@ngneat/spectator/jest';
 import { GiB, TiB } from 'app/constants/bytes.constant';
 import { VDevType, TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -7,9 +9,17 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { StorageService } from 'app/services/storage.service';
 
 describe('StorageService', () => {
-  const storageService = new StorageService(
-    {} as ApiService,
-  );
+  let storageService: StorageService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        StorageService,
+        mockProvider(ApiService),
+      ],
+    });
+    storageService = TestBed.inject(StorageService);
+  });
 
   describe('getRedundancyLevel', () => {
     it('return width minus one with mirrors', () => {
@@ -979,6 +989,8 @@ describe('StorageService', () => {
   });
 
   describe('can check VDEV capacities', () => {
+    let dataVdevCapacities: Set<number>;
+    let dedupVdevCapacities: Set<number>;
     const dataVdevsDiskSize = 2;
     const topology = {
       data: [
@@ -1167,8 +1179,10 @@ describe('StorageService', () => {
       ],
     } as PoolTopology;
 
-    const dataVdevCapacities: Set<number> = storageService.getVdevCapacities(topology.data);
-    const dedupVdevCapacities: Set<number> = storageService.getVdevCapacities(topology.dedup);
+    beforeEach(() => {
+      dataVdevCapacities = storageService.getVdevCapacities(topology.data);
+      dedupVdevCapacities = storageService.getVdevCapacities(topology.dedup);
+    });
 
     it('detects VDEV capacity for category', () => {
       const capacities: number[] = Array.from(dataVdevCapacities);
@@ -1198,6 +1212,9 @@ describe('StorageService', () => {
   });
 
   describe('can check VDEV disk capacities in category', () => {
+    let dataDiskSizes: Set<number>[];
+    let specialDiskSizes: Set<number>[];
+    let dedupDiskSizes: Set<number>[];
     const configuredDiskSize = 4;
     const generatedDiskSizeInBytes: number = (configuredDiskSize + 1) * TiB;
 
@@ -1871,20 +1888,22 @@ describe('StorageService', () => {
       },
     ] as Disk[];
 
-    const dataDiskSizes = storageService.getVdevDiskCapacities(
-      mockTopology.data,
-      mockDisks,
-    );
+    beforeEach(() => {
+      dataDiskSizes = storageService.getVdevDiskCapacities(
+        mockTopology.data,
+        mockDisks,
+      );
 
-    const specialDiskSizes = storageService.getVdevDiskCapacities(
-      mockTopology.special,
-      mockDisks,
-    );
+      specialDiskSizes = storageService.getVdevDiskCapacities(
+        mockTopology.special,
+        mockDisks,
+      );
 
-    const dedupDiskSizes = storageService.getVdevDiskCapacities(
-      mockTopology.dedup,
-      mockDisks,
-    );
+      dedupDiskSizes = storageService.getVdevDiskCapacities(
+        mockTopology.dedup,
+        mockDisks,
+      );
+    });
 
     it('checks for disk capacity', () => {
       expect(dataDiskSizes[0].has(generatedDiskSizeInBytes)).toBe(true);
@@ -1911,6 +1930,8 @@ describe('StorageService', () => {
   });
 
   describe('detects mixed VDEV types', () => {
+    let dataLayouts: Set<string>;
+    let specialLayouts: Set<string>;
     const mockTopology = {
       data: [
         {
@@ -2118,8 +2139,10 @@ describe('StorageService', () => {
       dedup: [],
     } as PoolTopology;
 
-    const dataLayouts = storageService.getVdevTypes(mockTopology.data);
-    const specialLayouts = storageService.getVdevTypes(mockTopology.special);
+    beforeEach(() => {
+      dataLayouts = storageService.getVdevTypes(mockTopology.data);
+      specialLayouts = storageService.getVdevTypes(mockTopology.special);
+    });
 
     it('can detect VDEV layouts', () => {
       expect(dataLayouts.size).toBe(2);

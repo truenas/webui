@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
@@ -29,17 +29,17 @@ const initialState: InstalledAppsState = {
 @UntilDestroy()
 @Injectable()
 export class InstalledAppsStore extends ComponentStore<InstalledAppsState> implements OnDestroy {
+  private appsService = inject(ApplicationsService);
+  private appsStore = inject(AppsStore);
+  private appsStats = inject(AppsStatsService);
+  private dockerStore = inject(DockerStore);
+  private errorHandler = inject(ErrorHandlerService);
+
   readonly installedApps$ = this.select((state) => state.installedApps);
   readonly isLoading$ = this.select((state) => state.isLoading);
   private installedAppsSubscription: Subscription;
 
-  constructor(
-    private appsService: ApplicationsService,
-    private appsStore: AppsStore,
-    private appsStats: AppsStatsService,
-    private dockerStore: DockerStore,
-    private errorHandler: ErrorHandlerService,
-  ) {
+  constructor() {
     super(initialState);
     this.initialize();
     this.getStats();

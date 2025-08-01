@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -43,6 +40,12 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class KerberosRealmsFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  slideInRef = inject<SlideInRef<KerberosRealm | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected editingRealm: KerberosRealm | undefined;
 
@@ -74,13 +77,9 @@ export class KerberosRealmsFormComponent implements OnInit {
       : this.translate.instant('Edit Kerberos Realm');
   }
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: FormErrorHandlerService,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    public slideInRef: SlideInRef<KerberosRealm | undefined, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

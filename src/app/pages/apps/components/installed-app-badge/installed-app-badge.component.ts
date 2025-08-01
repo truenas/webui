@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,12 +21,10 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
   ],
 })
 export class InstalledAppBadgeComponent {
-  readonly app = input.required<AvailableApp>();
+  private installedAppsStore = inject(InstalledAppsStore);
+  private router = inject(Router);
 
-  constructor(
-    private installedAppsStore: InstalledAppsStore,
-    private router: Router,
-  ) {}
+  readonly app = input.required<AvailableApp>();
 
   navigateToAllInstalledPage(event?: Event): void {
     event?.preventDefault();

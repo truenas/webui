@@ -1,7 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, AfterViewInit, ChangeDetectorRef, ViewChild, ElementRef,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, AfterViewInit, ChangeDetectorRef, ViewChild, ElementRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -39,6 +37,9 @@ interface FormattedWebSocketDebugMessage extends WebSocketDebugMessage {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MessageListComponent implements AfterViewInit {
+  private store$ = inject(Store);
+  private cdr = inject(ChangeDetectorRef);
+
   @ViewChild('messageViewport', { read: ElementRef }) protected messageViewport?: ElementRef<HTMLDivElement>;
   messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
   autoScroll = true;
@@ -54,11 +55,6 @@ export class MessageListComponent implements AfterViewInit {
     }))),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
-
-  constructor(
-    private store$: Store,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngAfterViewInit(): void {
     // Subscribe to messages for both empty state check and auto-scroll

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -40,6 +40,21 @@ const tokenParam = 'token' as const;
 @UntilDestroy()
 @Injectable()
 export class SigninStore extends ComponentStore<SigninState> {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private tokenLastUsedService = inject(TokenLastUsedService);
+  private systemGeneralService = inject(SystemGeneralService);
+  private router = inject(Router);
+  private snackbar = inject(MatSnackBar);
+  private errorHandler = inject(ErrorHandlerService);
+  private authService = inject(AuthService);
+  private updateService = inject(UpdateService);
+  private actions$ = inject(Actions);
+  private wsStatus = inject(WebSocketStatusService);
+  private activatedRoute = inject(ActivatedRoute);
+  private failoverValidation = inject(FailoverValidationService);
+  private window = inject<Window>(WINDOW);
+
   loginBanner$ = this.select((state) => state.loginBanner);
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
   isLoading$ = this.select((state) => state.isLoading);
@@ -65,22 +80,7 @@ export class SigninStore extends ComponentStore<SigninState> {
       : this.translate.instant('Wrong username or password. Please try again.');
   }
 
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private tokenLastUsedService: TokenLastUsedService,
-    private systemGeneralService: SystemGeneralService,
-    private router: Router,
-    private snackbar: MatSnackBar,
-    private errorHandler: ErrorHandlerService,
-    private authService: AuthService,
-    private updateService: UpdateService,
-    private actions$: Actions,
-    private wsStatus: WebSocketStatusService,
-    private activatedRoute: ActivatedRoute,
-    private failoverValidation: FailoverValidationService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     super(initialState);
   }
 

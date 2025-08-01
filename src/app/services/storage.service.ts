@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
@@ -11,11 +11,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
-  protected diskResource = 'disk.query' as const;
+  protected api = inject(ApiService);
 
-  constructor(
-    protected api: ApiService,
-  ) {}
+  protected diskResource = 'disk.query' as const;
 
   filesystemStat(path: string): Observable<FileSystemStat> {
     return this.api.call('filesystem.stat', [path]);

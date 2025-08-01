@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnChanges, OnInit, input, computed, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnChanges, OnInit, input, computed, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -58,6 +56,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class PermissionsCardComponent implements OnInit, OnChanges {
+  private store = inject(PermissionsCardStore);
+  private errorHandler = inject(ErrorHandlerService);
+  private router = inject(Router);
+  private translate = inject(TranslateService);
+
   readonly dataset = input.required<DatasetDetails>();
 
   protected readonly requiredRoles = [Role.DatasetWrite];
@@ -89,13 +92,6 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   };
 
   readonly AclType = AclType;
-
-  constructor(
-    private store: PermissionsCardStore,
-    private errorHandler: ErrorHandlerService,
-    private router: Router,
-    private translate: TranslateService,
-  ) {}
 
   redirectToEditPermissions(): void {
     if (this.acl()?.trivial) {

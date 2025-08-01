@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -52,6 +52,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class NtpServersCardComponent implements OnInit {
+  protected emptyService = inject(EmptyService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialog = inject(DialogService);
+  private slideIn = inject(SlideIn);
+
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
   protected readonly searchableElements = ntpServersElements;
 
@@ -102,15 +109,6 @@ export class NtpServersCardComponent implements OnInit {
     uniqueRowTag: (row) => `ntp-server-${row.address}-${row.minpoll}-${row.maxpoll}`,
     ariaLabels: (row) => [row.address, this.translate.instant('NTP Server')],
   });
-
-  constructor(
-    protected emptyService: EmptyService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialog: DialogService,
-    private slideIn: SlideIn,
-  ) {}
 
   ngOnInit(): void {
     const ntpServers$ = this.api.call('system.ntpserver.query').pipe(untilDestroyed(this));

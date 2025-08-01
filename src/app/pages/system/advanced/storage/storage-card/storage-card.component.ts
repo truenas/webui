@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -48,6 +46,12 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   ],
 })
 export class StorageCardComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+
   protected isLoading = signal(false);
   protected systemDatasetPool = signal<string | null>(null);
   protected resilverConfig = signal<ResilverConfig | null>(null);
@@ -63,14 +67,6 @@ export class StorageCardComponent implements OnInit {
 
   protected readonly searchableElements = storageCardElements;
   protected readonly requiredRoles = [Role.DatasetWrite, Role.PoolWrite];
-
-  constructor(
-    private slideIn: SlideIn,
-    private firstTimeWarning: FirstTimeWarningService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private api: ApiService,
-  ) {}
 
   ngOnInit(): void {
     this.loadConfig();

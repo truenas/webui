@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -33,6 +31,12 @@ import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/st
   ],
 })
 export class AclEditorSaveControlsComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private store = inject(DatasetAclEditorStore);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+
   readonly canBeSaved = input(false);
   readonly ownerValues = input.required<{
     owner: string;
@@ -49,14 +53,6 @@ export class AclEditorSaveControlsComponent implements OnInit {
 
   protected readonly helptext = helptextAcl;
   protected readonly Role = Role;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private store: DatasetAclEditorStore,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private api: ApiService,
-  ) {}
 
   ngOnInit(): void {
     this.setRecursiveCheckboxWarning();

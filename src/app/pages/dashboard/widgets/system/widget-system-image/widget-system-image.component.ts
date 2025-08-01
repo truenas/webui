@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
@@ -30,6 +28,9 @@ import { selectHasEnclosureSupport, selectIsEnterprise, selectIsIxHardware } fro
   ],
 })
 export class WidgetSystemImageComponent implements WidgetComponent {
+  private resources = inject(WidgetResourcesService);
+  private store$ = inject<Store<AppState>>(Store);
+
   size = input.required<SlotSize>();
   readonly name = systemImageWidget.name;
 
@@ -42,9 +43,4 @@ export class WidgetSystemImageComponent implements WidgetComponent {
     filter((state) => !state.isLoading),
     map((state) => state.value),
   ));
-
-  constructor(
-    private resources: WidgetResourcesService,
-    private store$: Store<AppState>,
-  ) {}
 }

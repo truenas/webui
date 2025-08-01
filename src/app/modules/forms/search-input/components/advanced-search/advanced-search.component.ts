@@ -1,11 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef, input,
-  OnInit, output, signal, Signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnInit, output, signal, Signal, viewChild, inject } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { MatCalendar } from '@angular/material/datepicker';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -48,6 +42,11 @@ const setDiagnostics = StateEffect.define<Diagnostic[] | null>();
   ],
 })
 export class AdvancedSearchComponent<T> implements OnInit {
+  private queryParser = inject<QueryParserService<T>>(QueryParserService);
+  private queryToApi = inject<QueryToApiService<T>>(QueryToApiService);
+  private advancedSearchAutocomplete = inject<AdvancedSearchAutocompleteService<T>>(AdvancedSearchAutocompleteService);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly query = input<QueryFilters<T>>([]);
   readonly filterPresets = input<FilterPreset<T>[]>([]);
   readonly properties = input<SearchProperty<T>[]>([]);
@@ -71,13 +70,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
   }
 
   readonly selectedPresetLabels = signal<Set<string>>(new Set());
-
-  constructor(
-    private queryParser: QueryParserService<T>,
-    private queryToApi: QueryToApiService<T>,
-    private advancedSearchAutocomplete: AdvancedSearchAutocompleteService<T>,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.initEditor();

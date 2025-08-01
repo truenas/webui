@@ -32,13 +32,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SubsystemDeleteDialogComponent {
+  private dialogRef = inject<MatDialogRef<SubsystemDeleteDialogComponent>>(MatDialogRef);
+
   protected readonly subsystem = inject<NvmeOfSubsystem>(MAT_DIALOG_DATA);
   protected readonly force = new FormControl(false as boolean);
   protected readonly requiredRoles: Role[] = [Role.SharingNvmeTargetWrite];
-
-  constructor(
-    private dialogRef: MatDialogRef<SubsystemDeleteDialogComponent>,
-  ) {}
 
   protected delete(): void {
     this.dialogRef.close({ confirmed: true, force: this.force.value });

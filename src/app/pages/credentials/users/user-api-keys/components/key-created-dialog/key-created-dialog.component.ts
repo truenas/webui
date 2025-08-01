@@ -32,14 +32,12 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class KeyCreatedDialog {
+  private clipboard = inject(Clipboard);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+
   key = signal(inject<string>(MAT_DIALOG_DATA));
   apiKeyControl = new FormControl<string>(this.key());
-
-  constructor(
-    private clipboard: Clipboard,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-  ) {}
 
   onCopyPressed(): void {
     const copied = this.clipboard.copy(this.key());

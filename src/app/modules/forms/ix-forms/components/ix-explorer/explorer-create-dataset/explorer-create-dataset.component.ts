@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  computed,
-  signal, AfterViewInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, computed, signal, AfterViewInit, inject } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -35,6 +29,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class ExplorerCreateDatasetComponent implements AfterViewInit {
+  private explorer = inject(IxExplorerComponent);
+  private matDialog = inject(MatDialog);
+  private ngControl = inject(NgControl);
+
   readonly datasetProperties = input<Omit<DatasetCreate, 'name'>>({});
 
   protected readonly requiredRoles = [Role.DatasetWrite];
@@ -45,12 +43,6 @@ export class ExplorerCreateDatasetComponent implements AfterViewInit {
   });
 
   protected explorerValue = signal<string | string[]>('');
-
-  constructor(
-    private explorer: IxExplorerComponent,
-    private matDialog: MatDialog,
-    private ngControl: NgControl,
-  ) {}
 
   ngAfterViewInit(): void {
     // TODO: Unclear why this is needed, but control in `ngControl` is empty for some reason in constructor.

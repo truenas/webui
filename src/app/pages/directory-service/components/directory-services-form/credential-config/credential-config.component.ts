@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  output,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, OnInit, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
@@ -46,6 +40,10 @@ import { DirectoryServiceValidationService } from 'app/pages/directory-service/c
   ],
 })
 export class CredentialConfigComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private validationService = inject(DirectoryServiceValidationService);
+
   protected form = this.fb.group({
     credential_type: [null as DirectoryServiceCredentialType, Validators.required],
     principal: [null as string],
@@ -84,14 +82,6 @@ export class CredentialConfigComponent implements OnInit {
   ).pipe(
     map((choices) => choices.map((choice) => ({ label: choice, value: choice } as Option))),
   );
-
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private validationService: DirectoryServiceValidationService,
-  ) {
-
-  }
 
   ngOnInit(): void {
     this.initializeFormWithExistingData();

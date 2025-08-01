@@ -1,6 +1,4 @@
-import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,6 +21,9 @@ import {
   ],
 })
 export class BackblazeB2ProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
+  private formBuilder = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+
   form = this.formBuilder.group({
     account: ['', Validators.required],
     key: ['', Validators.required],
@@ -33,12 +34,5 @@ export class BackblazeB2ProviderFormComponent extends BaseProviderFormComponent 
       this.form.patchValue(values);
       this.cdr.detectChanges();
     });
-  }
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
-  ) {
-    super();
   }
 }

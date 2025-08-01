@@ -1,7 +1,4 @@
-import {
-  Component,
-  HostBinding, ChangeDetectionStrategy, input, computed,
-} from '@angular/core';
+import { Component, HostBinding, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
@@ -26,6 +23,8 @@ const gapRotation = 45 * 5;
   ],
 })
 export class GaugeChartComponent {
+  themeService = inject(ThemeService);
+
   label = input('');
   value = input.required<number>();
 
@@ -64,8 +63,6 @@ export class GaugeChartComponent {
     },
     rotation: gapRotation,
   };
-
-  constructor(public themeService: ThemeService) {}
 
   chartData = computed(() => {
     return [

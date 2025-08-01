@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -28,14 +26,12 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   ],
 })
 export class EnclosureHeaderComponent {
+  private enclosureStore = inject(EnclosureStore);
+  private matDialog = inject(MatDialog);
+
   readonly title = input.required<string>();
 
   protected readonly requiredRoles = [Role.EnclosureWrite];
-
-  constructor(
-    private enclosureStore: EnclosureStore,
-    private matDialog: MatDialog,
-  ) {}
 
   onEditLabel(): void {
     const enclosure = this.enclosureStore.selectedEnclosure();

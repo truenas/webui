@@ -1,7 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, OnInit, inject } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -48,6 +46,8 @@ interface DiskState {
   ],
 })
 export class DiskHealthCardComponent implements OnInit, OnChanges {
+  translate = inject(TranslateService);
+
   readonly poolState = input.required<Pool>();
   readonly disks = input<StorageDashboardDisk[]>([]);
 
@@ -70,10 +70,6 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     alerts: 0,
     unit: TemperatureUnit.Celsius,
   };
-
-  constructor(
-    public translate: TranslateService,
-  ) { }
 
   ngOnChanges(): void {
     this.ngOnInit();

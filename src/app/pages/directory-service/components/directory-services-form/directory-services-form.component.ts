@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  computed,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, inject } from '@angular/core';
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -75,6 +68,15 @@ import { DirectoryServiceValidationService } from './services/directory-service-
   ],
 })
 export class DirectoryServicesFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private validationService = inject(DirectoryServiceValidationService);
+  slideInRef = inject<SlideInRef<DirectoryServicesConfig | undefined, boolean>>(SlideInRef);
+
   protected readonly previousConfig = signal<DirectoryServicesConfig | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
@@ -119,16 +121,7 @@ export class DirectoryServicesFormComponent implements OnInit {
     { label: 'IPA', value: DirectoryServiceType.Ipa },
   ]);
 
-  constructor(
-    private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private formErrorHandler: FormErrorHandlerService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private validationService: DirectoryServiceValidationService,
-    public slideInRef: SlideInRef<DirectoryServicesConfig | undefined, boolean>,
-  ) {
+  constructor() {
     const data = this.slideInRef.getData();
     if (data) {
       this.previousConfig.set(data);

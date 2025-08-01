@@ -1,8 +1,5 @@
 import { NgStyle } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, ElementRef, HostListener, input, OnDestroy, OnInit, Signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, input, OnDestroy, OnInit, Signal, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -41,6 +38,14 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   ],
 })
 export class TerminalComponent implements OnInit, OnDestroy {
+  private api = inject(ApiService);
+  private shellService = inject(ShellService);
+  private matDialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+  private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly conf = input.required<TerminalConfiguration>();
 
   private readonly container: Signal<ElementRef<HTMLElement>> = viewChild.required('terminal', { read: ElementRef });
@@ -66,16 +71,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
   private fitAddon: FitAddon;
   private attachAddon: XtermAttachAddon;
   private token: string;
-
-  constructor(
-    private api: ApiService,
-    private shellService: ShellService,
-    private matDialog: MatDialog,
-    private translate: TranslateService,
-    private store$: Store<AppState>,
-    private authService: AuthService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     if (this.conf().preInit) {

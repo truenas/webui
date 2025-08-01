@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, Inject, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatDialogTitle, MatDialogContent, MatDialogActions,
@@ -43,6 +41,11 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TruenasConnectStatusModalComponent implements OnInit {
+  private window = inject<Window>(WINDOW);
+  protected tnc = inject(TruenasConnectService);
+  private dialog = inject(DialogService);
+  private translate = inject(TranslateService);
+
   readonly TruenasConnectStatus = TruenasConnectStatus;
   readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
   readonly TncStatus = TncStatus;
@@ -75,13 +78,6 @@ export class TruenasConnectStatusModalComponent implements OnInit {
         return TncStatus.Disabled;
     }
   });
-
-  constructor(
-    @Inject(WINDOW) private window: Window,
-    protected tnc: TruenasConnectService,
-    private dialog: DialogService,
-    private translate: TranslateService,
-  ) { }
 
   ngOnInit(): void {
     this.enableServiceIfDisabled();

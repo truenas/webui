@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { parseISO, startOfDay } from 'date-fns';
 import { ParamsBuilder, ParamsBuilderGroup } from 'app/helpers/params-builder/params-builder.class';
@@ -14,10 +14,10 @@ import { PropertyType, SearchProperty } from 'app/modules/forms/search-input/typ
   providedIn: 'root',
 })
 export class QueryToApiService<T> {
+  private translate = inject(TranslateService);
+
   private builder: ParamsBuilder<T>;
   private searchProperties: SearchProperty<T>[];
-
-  constructor(private translate: TranslateService) {}
 
   buildFilters(query: QueryParsingResult, properties: SearchProperty<T>[]): QueryFilters<T> {
     this.searchProperties = properties;

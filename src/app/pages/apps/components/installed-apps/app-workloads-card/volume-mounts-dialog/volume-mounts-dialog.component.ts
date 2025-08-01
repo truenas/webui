@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogClose, MatDialogContent, MatDialogTitle,
@@ -27,7 +27,5 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class VolumeMountsDialog {
-  constructor(
-    @Inject(MAT_DIALOG_DATA) protected containerDetails: AppContainerDetails,
-  ) {}
+  protected containerDetails = inject<AppContainerDetails>(MAT_DIALOG_DATA);
 }

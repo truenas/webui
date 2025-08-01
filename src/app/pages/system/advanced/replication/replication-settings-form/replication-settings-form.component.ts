@@ -1,7 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -42,6 +39,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ReplicationSettingsFormComponent implements OnInit {
+  private errorHandler = inject(ErrorHandlerService);
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  slideInRef = inject<SlideInRef<ReplicationConfig, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.ReplicationTaskConfigWrite];
 
   protected isFormLoading = signal(false);
@@ -55,15 +60,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
 
   private replicationConfig: ReplicationConfig;
 
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private fb: FormBuilder,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    public slideInRef: SlideInRef<ReplicationConfig, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

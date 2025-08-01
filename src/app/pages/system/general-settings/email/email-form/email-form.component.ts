@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import {
   FormControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
@@ -62,6 +60,17 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   ],
 })
 export class EmailFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private validatorService = inject(IxValidatorsService);
+  private snackbar = inject(SnackbarService);
+  private systemGeneralService = inject(SystemGeneralService);
+  slideInRef = inject<SlideInRef<MailConfig | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.AlertWrite];
 
   sendMethodControl = new FormControl(MailSendMethod.Smtp, { nonNullable: true });
@@ -133,18 +142,7 @@ export class EmailFormComponent implements OnInit {
     }
   }
 
-  constructor(
-    private api: ApiService,
-    private dialogService: DialogService,
-    private formErrorHandler: FormErrorHandlerService,
-    private formBuilder: NonNullableFormBuilder,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private validatorService: IxValidatorsService,
-    private snackbar: SnackbarService,
-    private systemGeneralService: SystemGeneralService,
-    public slideInRef: SlideInRef<MailConfig | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

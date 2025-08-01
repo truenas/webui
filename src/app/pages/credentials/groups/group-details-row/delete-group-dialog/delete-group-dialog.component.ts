@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -41,21 +39,19 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DeleteGroupDialog {
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private dialogRef = inject<MatDialogRef<DeleteGroupDialog>>(MatDialogRef);
+  group = inject<Group>(MAT_DIALOG_DATA);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly requiredRoles = [Role.AccountWrite];
 
   deleteUsersCheckbox = new FormControl(false, { nonNullable: true });
 
   readonly deleteMessage = T('Are you sure you want to delete group <b>"{name}"</b>?');
-
-  constructor(
-    private loader: LoaderService,
-    private api: ApiService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private dialogRef: MatDialogRef<DeleteGroupDialog>,
-    @Inject(MAT_DIALOG_DATA) public group: Group,
-    private errorHandler: ErrorHandlerService,
-  ) { }
 
   get deleteUsersMessage(): string {
     return this.translate.instant(

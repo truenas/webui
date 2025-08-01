@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -31,17 +29,15 @@ import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/a
   ],
 })
 export class AppDeleteDialog {
+  private formBuilder = inject(FormBuilder);
+  private dialogRef = inject<MatDialogRef<AppDeleteDialog, AppDeleteDialogOutputData>>(MatDialogRef);
+  protected data = inject<AppDeleteDialogInputData>(MAT_DIALOG_DATA);
+
   form = this.formBuilder.nonNullable.group({
     removeVolumes: [false],
     removeImages: [true],
     forceRemoveVolumes: [false],
   });
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private dialogRef: MatDialogRef<AppDeleteDialog, AppDeleteDialogOutputData>,
-    @Inject(MAT_DIALOG_DATA) protected data: AppDeleteDialogInputData,
-  ) { }
 
   onSubmit(): void {
     this.dialogRef.close(this.form.getRawValue());

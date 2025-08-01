@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 
@@ -14,9 +14,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
   imports: [PageHeaderComponent, AsyncPipe],
 })
 export class DefaultPageHeaderComponent {
-  readonly hasCustomPageHeader$ = this.layoutService.hasCustomPageHeader$;
+  private layoutService = inject(LayoutService);
 
-  constructor(
-    private layoutService: LayoutService,
-  ) {}
+  readonly hasCustomPageHeader$ = this.layoutService.hasCustomPageHeader$;
 }

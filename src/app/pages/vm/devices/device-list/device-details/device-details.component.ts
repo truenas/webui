@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
@@ -27,12 +27,14 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class DeviceDetailsComponent {
+  private translate = inject(TranslateService);
+  protected device = inject<VmDevice>(MAT_DIALOG_DATA);
+
   attributes: [string, unknown][] = [];
 
-  constructor(
-    private translate: TranslateService,
-    @Inject(MAT_DIALOG_DATA) protected device: VmDevice,
-  ) {
+  constructor() {
+    const device = this.device;
+
     this.attributes = Object.entries(device.attributes).filter(([key]) => key !== 'dtype');
   }
 

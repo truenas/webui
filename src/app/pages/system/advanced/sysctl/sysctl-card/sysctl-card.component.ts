@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -59,6 +59,15 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   ],
 })
 export class SysctlCardComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialog = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+  protected emptyService = inject(EmptyService);
+  private slideIn = inject(SlideIn);
+
   protected readonly requiredRoles = [Role.SystemTunableWrite];
   protected readonly searchableElements = sysctlCardElements;
 
@@ -100,17 +109,6 @@ export class SysctlCardComponent implements OnInit {
     uniqueRowTag: (row) => 'sysctl-' + row.var + '-' + row.value,
     ariaLabels: (row) => [row.var, this.translate.instant('Sysctl')],
   });
-
-  constructor(
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialog: DialogService,
-    private snackbar: SnackbarService,
-    private firstTimeWarning: FirstTimeWarningService,
-    protected emptyService: EmptyService,
-    private slideIn: SlideIn,
-  ) {}
 
   ngOnInit(): void {
     const tunables$ = this.api.call('tunable.query').pipe(untilDestroyed(this));

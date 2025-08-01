@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -48,17 +46,15 @@ import { DeleteNamespaceDialogComponent } from './delete-namespace-dialog/delete
   ],
 })
 export class SubsystemNamespacesCardComponent {
+  private slideIn = inject(SlideIn);
+  private nvmeOfStore = inject(NvmeOfStore);
+  private matDialog = inject(MatDialog);
+
   subsystem = input.required<NvmeOfSubsystemDetails>();
 
   protected readonly helptext = helptextNvmeOf;
 
   protected readonly searchableElements = subsystemNamespacesCardElements;
-
-  constructor(
-    private slideIn: SlideIn,
-    private nvmeOfStore: NvmeOfStore,
-    private matDialog: MatDialog,
-  ) {}
 
   protected onAddNamespace(): void {
     this.slideIn.open(NamespaceFormComponent, {

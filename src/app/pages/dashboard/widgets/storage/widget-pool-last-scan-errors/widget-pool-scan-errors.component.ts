@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
@@ -29,6 +27,9 @@ import { poolLastScanErrorsWidget } from 'app/pages/dashboard/widgets/storage/wi
   ],
 })
 export class WidgetPoolLastScanErrorsComponent implements WidgetComponent {
+  private resources = inject(WidgetResourcesService);
+  private cdr = inject(ChangeDetectorRef);
+
   size = input.required<SlotSize>();
   settings = input.required<WidgetPoolSettings>();
   poolExists = true;
@@ -45,9 +46,4 @@ export class WidgetPoolLastScanErrorsComponent implements WidgetComponent {
   ));
 
   readonly name = poolLastScanErrorsWidget.name;
-
-  constructor(
-    private resources: WidgetResourcesService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 }

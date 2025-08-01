@@ -1,8 +1,5 @@
 import { KeyValuePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogContent } from '@angular/material/dialog';
@@ -55,6 +52,13 @@ type Version = Omit<AppUpgradeSummary, 'upgrade_version' | 'image_update_availab
   ],
 })
 export class AppUpdateDialog {
+  dialogRef = inject<MatDialogRef<AppUpdateDialog>>(MatDialogRef);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private appService = inject(ApplicationsService);
+  dialogService = inject(DialogService);
+  data = inject<AppUpdateDialogConfig>(MAT_DIALOG_DATA);
+
   dialogConfig: AppUpdateDialogConfig;
   imagePlaceholder = appImagePlaceholder;
   helptext = helptextApps;
@@ -64,14 +68,9 @@ export class AppUpdateDialog {
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
-  constructor(
-    public dialogRef: MatDialogRef<AppUpdateDialog>,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private appService: ApplicationsService,
-    public dialogService: DialogService,
-    @Inject(MAT_DIALOG_DATA) public data: AppUpdateDialogConfig,
-  ) {
+  constructor() {
+    const data = this.data;
+
     this.dialogConfig = data;
 
     this.versionOptions.set(this.dialogConfig.upgradeSummary.latest_version, {

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, Inject, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -47,6 +45,16 @@ export interface RaidzExtendDialogParams {
   ],
 })
 export class RaidzExtendDialog {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private dialogRef = inject<MatDialogRef<RaidzExtendDialog>>(MatDialogRef);
+  private vDevsStore = inject(VDevsStore);
+  private dialogService = inject(DialogService);
+  data = inject<RaidzExtendDialogParams>(MAT_DIALOG_DATA);
+
   form = this.formBuilder.group({
     newDisk: ['', Validators.required],
   });
@@ -58,17 +66,7 @@ export class RaidzExtendDialog {
     return (disk: DetailsDisk) => disk.size >= this.minimumSize();
   });
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private dialogRef: MatDialogRef<RaidzExtendDialog>,
-    private vDevsStore: VDevsStore,
-    private dialogService: DialogService,
-    @Inject(MAT_DIALOG_DATA) public data: RaidzExtendDialogParams,
-  ) {
+  constructor() {
     this.setFilterMinimumSizeFn();
   }
 

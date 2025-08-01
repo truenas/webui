@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, effect, input, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, OnInit, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -32,6 +30,10 @@ import { UserStigPasswordOption } from 'app/pages/credentials/users/user-form/us
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthSectionComponent implements OnInit {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private userStore = inject(UserFormStore);
+  private translate = inject(TranslateService);
+
   editingUser = input<User>();
   protected sshAccess = this.userStore.sshAccess;
   protected smbAccess = this.userStore.smbAccess;
@@ -66,11 +68,7 @@ export class AuthSectionComponent implements OnInit {
     },
   ]);
 
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private userStore: UserFormStore,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     this.form.valueChanges.pipe(
       untilDestroyed(this),
     ).subscribe({

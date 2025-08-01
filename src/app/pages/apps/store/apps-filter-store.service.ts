@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
@@ -37,6 +37,11 @@ const initialState: AppsFilterState = {
 @UntilDestroy()
 @Injectable()
 export class AppsFilterStore extends ComponentStore<AppsFilterState> {
+  private appsStore = inject(AppsStore);
+  private appsService = inject(ApplicationsService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+
   readonly appsPerCategory = 6;
 
   readonly filteredApps$ = this.select((state) => state.filteredApps);
@@ -127,12 +132,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
   readonly searchQuery$ = this.select((state) => state.searchQuery);
   readonly filterValues$ = this.select((state) => state.filter);
 
-  constructor(
-    private appsStore: AppsStore,
-    private appsService: ApplicationsService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-  ) {
+  constructor() {
     super(initialState);
   }
 

@@ -1,7 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
@@ -34,6 +32,10 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class ResilverProgressDialog implements OnInit {
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+
   tooltip: string;
   hideCancel = false;
   final = false;
@@ -46,12 +48,6 @@ export class ResilverProgressDialog implements OnInit {
   diskName: string;
 
   readonly PoolScanState = PoolScanState;
-
-  constructor(
-    private translate: TranslateService,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.api.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((event) => {

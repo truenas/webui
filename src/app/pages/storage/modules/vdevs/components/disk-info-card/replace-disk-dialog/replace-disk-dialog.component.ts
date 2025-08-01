@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -46,6 +44,15 @@ export interface ReplaceDiskDialogData {
   ],
 })
 export class ReplaceDiskDialog {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private dialogRef = inject<MatDialogRef<ReplaceDiskDialog>>(MatDialogRef);
+  private snackbar = inject(SnackbarService);
+  data = inject<ReplaceDiskDialogData>(MAT_DIALOG_DATA);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+
   form = this.formBuilder.nonNullable.group({
     replacement: ['', Validators.required],
     preserve_settings: [true],
@@ -56,17 +63,6 @@ export class ReplaceDiskDialog {
   readonly helptext = helptextVolumeStatus;
 
   protected readonly Role = Role;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-    private dialogRef: MatDialogRef<ReplaceDiskDialog>,
-    private snackbar: SnackbarService,
-    @Inject(MAT_DIALOG_DATA) public data: ReplaceDiskDialogData,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   onSubmit(): void {
     const values = this.form.getRawValue();

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -26,15 +24,13 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class CopyButtonComponent {
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+
   readonly text = input.required<string>();
   readonly jsonText = input<unknown>();
 
   readonly isValidJson = computed(() => typeof this.jsonText() === 'object');
-
-  constructor(
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-  ) {}
 
   private showSuccessMessage(): void {
     this.snackbar.success(this.translate.instant('Copied to clipboard'));

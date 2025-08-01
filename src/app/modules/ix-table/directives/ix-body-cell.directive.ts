@@ -1,11 +1,4 @@
-import {
-  AfterViewInit, ChangeDetectorRef,
-  ComponentRef,
-  Directive,
-  OnChanges,
-  ViewContainerRef,
-  input,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, ComponentRef, Directive, OnChanges, ViewContainerRef, input, inject } from '@angular/core';
 import { IxCellTextComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { Column, ColumnComponent, ColumnKeys } from 'app/modules/ix-table/interfaces/column-component.class';
 
@@ -13,15 +6,13 @@ import { Column, ColumnComponent, ColumnKeys } from 'app/modules/ix-table/interf
   selector: '[ix-body-cell]',
 })
 export class IxTableBodyCellDirective<T> implements AfterViewInit, OnChanges {
+  private viewContainer = inject(ViewContainerRef);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly row = input.required<T>();
   readonly column = input.required<Column<T, ColumnComponent<T>>>();
 
   private componentRef: ComponentRef<ColumnComponent<T>>;
-
-  constructor(
-    private viewContainer: ViewContainerRef,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngAfterViewInit(): void {
     this.createComponent();

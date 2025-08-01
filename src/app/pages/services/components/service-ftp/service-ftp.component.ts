@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -70,6 +67,17 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   ],
 })
 export class ServiceFtpComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
+  private systemGeneralService = inject(SystemGeneralService);
+  private filesystemService = inject(FilesystemService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  iecFormatter = inject(IxFormatterService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SharingFtpWrite];
 
   protected isFormLoading = signal(false);
@@ -128,18 +136,7 @@ export class ServiceFtpComponent implements OnInit {
   readonly isAnonymousLoginAllowed$ = this.form.select((values) => values.onlyanonymous);
   readonly isTlsEnabled$ = this.form.select((values) => values.tls);
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    private systemGeneralService: SystemGeneralService,
-    private filesystemService: FilesystemService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    public iecFormatter: IxFormatterService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

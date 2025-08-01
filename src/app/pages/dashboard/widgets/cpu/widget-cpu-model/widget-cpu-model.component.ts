@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -21,13 +19,11 @@ import { cpuModelWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-model
   ],
 })
 export class WidgetCpuModelComponent implements WidgetComponent {
+  private resources = inject(WidgetResourcesService);
+
   size = input.required<SlotSize>();
 
   readonly name = cpuModelWidget.name;
 
   cpuModel$ = this.resources.cpuModel$;
-
-  constructor(
-    private resources: WidgetResourcesService,
-  ) {}
 }

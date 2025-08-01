@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -60,6 +60,12 @@ import { staticRoutesCardElements } from 'app/pages/system/network/components/st
   ],
 })
 export class StaticRoutesCardComponent implements OnInit {
+  private matDialog = inject(MatDialog);
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+
   protected readonly searchableElements = staticRoutesCardElements.elements;
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
@@ -93,14 +99,6 @@ export class StaticRoutesCardComponent implements OnInit {
     uniqueRowTag: (row) => 'static-route-' + row.destination + '-' + row.gateway,
     ariaLabels: (row) => [row.description, this.translate.instant('Static Route')],
   });
-
-  constructor(
-    private matDialog: MatDialog,
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const staticRoutes$ = this.api.call('staticroute.query').pipe(

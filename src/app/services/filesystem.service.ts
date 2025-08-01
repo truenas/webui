@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import uniqBy from 'lodash-es/uniqBy';
 import {
   catchError, forkJoin, map, Observable, of, throwError,
@@ -26,9 +26,8 @@ export interface ProviderOptions {
 
 @Injectable({ providedIn: 'root' })
 export class FilesystemService {
-  constructor(
-    private api: ApiService,
-  ) {}
+  private api = inject(ApiService);
+
 
   getTopLevelDatasetsNodes(): Observable<ExplorerNodeData[]> {
     return this.getTreeNodeProvider({

@@ -1,6 +1,4 @@
-import {
-  AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -98,6 +96,28 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class SmbFormComponent implements OnInit, AfterViewInit {
+  formatter = inject(IxFormatterService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
+  private datasetService = inject(DatasetService);
+  private translate = inject(TranslateService);
+  private router = inject(Router);
+  private userService = inject(UserService);
+  protected loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private filesystemService = inject(FilesystemService);
+  private snackbar = inject(SnackbarService);
+  private validatorsService = inject(IxValidatorsService);
+  private store$ = inject<Store<ServicesState>>(Store);
+  private smbValidationService = inject(SmbValidationService);
+  slideInRef = inject<SlideInRef<{
+    existingSmbShare?: SmbShare;
+    defaultSmbShare?: SmbShare;
+  } | undefined, boolean>>(SlideInRef);
+
   private existingSmbShare: SmbShare | undefined;
   private defaultSmbShare: SmbShare | undefined;
 
@@ -261,26 +281,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     ]],
   });
 
-  constructor(
-    public formatter: IxFormatterService,
-    private formBuilder: NonNullableFormBuilder,
-    private api: ApiService,
-    private matDialog: MatDialog,
-    private dialogService: DialogService,
-    private datasetService: DatasetService,
-    private translate: TranslateService,
-    private router: Router,
-    private userService: UserService,
-    protected loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private filesystemService: FilesystemService,
-    private snackbar: SnackbarService,
-    private validatorsService: IxValidatorsService,
-    private store$: Store<ServicesState>,
-    private smbValidationService: SmbValidationService,
-    public slideInRef: SlideInRef<{ existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare } | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

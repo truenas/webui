@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import cronstrue from 'cronstrue/i18n';
 import { format, parse } from 'date-fns';
@@ -11,11 +11,10 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
   name: 'scheduleDescription',
 })
 export class ScheduleDescriptionPipe implements PipeTransform {
-  constructor(
-    private localeService: LocaleService,
-    private language: LanguageService,
-    private translate: TranslateService,
-  ) {}
+  private localeService = inject(LocaleService);
+  private language = inject(LanguageService);
+  private translate = inject(TranslateService);
+
 
   transform(schedule: Schedule): string {
     try {

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
@@ -31,13 +29,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class TruecommandSignupModalComponent {
+  private dialogRef = inject<MatDialogRef<TruecommandSignupModalComponent>>(MatDialogRef);
+  private window = inject<Window>(WINDOW);
+
   readonly helptext = helptextTopbar;
   protected readonly requiredRoles = [Role.TrueCommandWrite];
-
-  constructor(
-    private dialogRef: MatDialogRef<TruecommandSignupModalComponent>,
-    @Inject(WINDOW) private window: Window,
-  ) { }
 
   onSignup(): void {
     this.window.open('https://portal.ixsystems.com');

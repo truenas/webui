@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TinyColor } from '@ctrl/tinycolor';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -30,6 +27,10 @@ import { cpuTemperatureRecentWidget } from 'app/pages/dashboard/widgets/cpu/widg
   ],
 })
 export class WidgetCpuTempRecentComponent implements WidgetComponent {
+  private resources = inject(WidgetResourcesService);
+  private translate = inject(TranslateService);
+  private localeService = inject(LocaleService);
+
   size = input.required<SlotSize>();
 
   readonly name = cpuTemperatureRecentWidget.name;
@@ -55,12 +56,6 @@ export class WidgetCpuTempRecentComponent implements WidgetComponent {
     const cachedStats = this.cachedTemperatureStats();
     return [...initialStats, ...cachedStats].slice(-60);
   });
-
-  constructor(
-    private resources: WidgetResourcesService,
-    private translate: TranslateService,
-    private localeService: LocaleService,
-  ) {}
 
   chartData = computed<ChartData<'line'>>(() => {
     const startDate = Date.now() - oneMinuteMillis;

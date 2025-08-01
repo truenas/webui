@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle';
@@ -82,6 +80,16 @@ interface BootEnvironmentUi extends BootEnvironment {
   ],
 })
 export class BootEnvironmentListComponent implements OnInit {
+  private api = inject(ApiService);
+  private matDialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private loader = inject(LoaderService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  protected emptyService = inject(EmptyService);
+
   protected readonly requiredRoles = [Role.BootEnvWrite];
   protected readonly searchableElements = bootListElements;
   protected dataProvider: AsyncDataProvider<BootEnvironmentUi>;
@@ -193,18 +201,6 @@ export class BootEnvironmentListComponent implements OnInit {
   protected get selectionHasItems(): boolean {
     return this.selectedBootenvs.some((bootenv) => !bootenv.active && !bootenv.activated);
   }
-
-  constructor(
-    private api: ApiService,
-    private matDialog: MatDialog,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private loader: LoaderService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const request$ = this.api.call('boot.environment.query').pipe(

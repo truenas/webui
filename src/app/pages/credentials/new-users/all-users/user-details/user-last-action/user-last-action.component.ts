@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input, OnChanges, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnChanges, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -32,6 +30,10 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   ],
 })
 export class UserLastActionComponent implements OnChanges {
+  private api = inject(ApiService);
+  private urlOptions = inject(UrlOptionsService);
+  private errorHandler = inject(ErrorHandlerService);
+
   username = input.required<string>();
 
   protected isLoading = signal(true);
@@ -47,12 +49,6 @@ export class UserLastActionComponent implements OnChanges {
   });
 
   protected readonly eventLabels = auditEventLabels;
-
-  constructor(
-    private api: ApiService,
-    private urlOptions: UrlOptionsService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnChanges(): void {
     this.isLoading.set(true);

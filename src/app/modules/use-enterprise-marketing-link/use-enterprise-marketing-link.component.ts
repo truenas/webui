@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, computed,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
 import { hashMessage } from 'app/helpers/hash-message';
@@ -17,6 +15,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class UseEnterpriseMarketingLinkComponent {
+  private translate = inject(TranslateService);
+
   messages = [
     this.translate.instant('More Performance, More Protection'),
     this.translate.instant('Boost Performance & Support'),
@@ -27,10 +27,6 @@ export class UseEnterpriseMarketingLinkComponent {
 
   currentMessage = computed(() => this.getTodaysMessage());
   currentMessageHref = computed(() => `${exploreNasEnterpriseLink}?m=${hashMessage(this.currentMessage())}`);
-
-  constructor(
-    private translate: TranslateService,
-  ) {}
 
   getTodaysMessage(): string {
     const today = new Date().toDateString();

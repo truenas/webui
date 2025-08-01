@@ -1,7 +1,5 @@
 import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
@@ -40,6 +38,9 @@ import {
   ],
 })
 export class ConfigurationPreviewComponent {
+  private store = inject(PoolManagerStore);
+  private translate = inject(TranslateService);
+
   protected readonly vdevTypeLabels = vdevTypeLabels;
   readonly vDevType = VDevType;
 
@@ -61,11 +62,6 @@ export class ConfigurationPreviewComponent {
 
   protected totalCapacity$ = this.store.totalUsableCapacity$;
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
-
-  constructor(
-    private store: PoolManagerStore,
-    private translate: TranslateService,
-  ) {}
 
   get unknownProp(): string {
     return this.translate.instant('None');

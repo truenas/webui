@@ -1,4 +1,4 @@
-import { Injectable, Pipe, PipeTransform } from '@angular/core';
+import { Injectable, Pipe, PipeTransform, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
@@ -8,9 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
   providedIn: 'root',
 })
 export class YesNoPipe implements PipeTransform {
-  constructor(
-    private translate: TranslateService,
-  ) {}
+  private translate = inject(TranslateService);
+
 
   transform(value: unknown): string {
     return value ? this.translate.instant('Yes') : this.translate.instant('No');

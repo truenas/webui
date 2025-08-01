@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, ElementRef, Inject, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions,
@@ -26,12 +24,10 @@ import {
   ],
 })
 export class RedirectDialog {
-  readonly el = viewChild.required<ElementRef<HTMLInputElement>>('el');
+  dialogRef = inject<MatDialogRef<RedirectDialog>>(MatDialogRef);
+  data = inject<RedirectDialogData>(MAT_DIALOG_DATA);
 
-  constructor(
-    public dialogRef: MatDialogRef<RedirectDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: RedirectDialogData,
-  ) {}
+  readonly el = viewChild.required<ElementRef<HTMLInputElement>>('el');
 
   copyToClipboard(): void {
     this.el().nativeElement.focus();

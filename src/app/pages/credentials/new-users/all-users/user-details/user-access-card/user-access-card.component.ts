@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
@@ -57,6 +54,17 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   ],
 })
 export class UserAccessCardComponent {
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private slideIn = inject(SlideIn);
+  private downloadService = inject(DownloadService);
+  private urlOptions = inject(UrlOptionsService);
+  private authService = inject(AuthService);
+
   user = input.required<User>();
   reloadUsers = output();
 
@@ -99,19 +107,6 @@ export class UserAccessCardComponent {
     const user = this.user();
     return !user.locked && (!user.builtin || user.username === 'root');
   });
-
-  constructor(
-    private translate: TranslateService,
-    private api: ApiService,
-    private loader: LoaderService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private slideIn: SlideIn,
-    private downloadService: DownloadService,
-    private urlOptions: UrlOptionsService,
-    private authService: AuthService,
-  ) {}
 
   protected get auditLink(): string {
     return this.urlOptions.buildUrl('/system/audit', {

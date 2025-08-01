@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input, computed,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -37,6 +35,13 @@ import { VmService } from 'app/services/vm.service';
   ],
 })
 export class VirtualMachineDetailsRowComponent {
+  private loader = inject(LoaderService);
+  private slideIn = inject(SlideIn);
+  private matDialog = inject(MatDialog);
+  private router = inject(Router);
+  private errorHandler = inject(ErrorHandlerService);
+  private vmService = inject(VmService);
+
   readonly vm = input.required<VirtualMachine>();
 
   protected readonly requiredReadRoles = [Role.VmRead];
@@ -45,15 +50,6 @@ export class VirtualMachineDetailsRowComponent {
   readonly isRunning = computed(() => this.vm().status.state === VmState.Running);
 
   readonly showDisplayButton = computed(() => this.isRunning() && this.vm().display_available);
-
-  constructor(
-    private loader: LoaderService,
-    private slideIn: SlideIn,
-    private matDialog: MatDialog,
-    private router: Router,
-    private errorHandler: ErrorHandlerService,
-    private vmService: VmService,
-  ) {}
 
   protected doStart(): void {
     this.vmService.doStart(this.vm());

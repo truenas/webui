@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-  computed,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TinyColor } from '@ctrl/tinycolor';
 import { ChartData, ChartOptions } from 'chart.js';
@@ -21,6 +17,9 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
   imports: [NgxSkeletonLoaderModule, BaseChartDirective],
 })
 export class CpuCoreBarComponent {
+  private resources = inject(WidgetResourcesService);
+  private theme = inject(ThemeService);
+
   hideTemperature = input<boolean>(false);
   hideUsage = input<boolean>(false);
 
@@ -109,11 +108,6 @@ export class CpuCoreBarComponent {
       },
     };
   });
-
-  constructor(
-    private resources: WidgetResourcesService,
-    private theme: ThemeService,
-  ) {}
 
   protected parseCpuData(cpuData: AllCpusUpdate): GaugeData[] {
     const usageColumn: GaugeData = ['Usage'];

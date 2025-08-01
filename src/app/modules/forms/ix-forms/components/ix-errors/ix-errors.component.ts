@@ -1,7 +1,5 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, inject } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { MatError } from '@angular/material/form-field';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -32,6 +30,10 @@ export const ixManualValidateError = 'ixManualValidateError';
   ],
 })
 export class IxErrorsComponent implements OnChanges {
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private liveAnnouncer = inject(LiveAnnouncer);
+
   readonly control = input.required<AbstractControl>();
   readonly label = input<string>();
 
@@ -74,12 +76,6 @@ export class IxErrorsComponent implements OnChanges {
     cron: () => this.translate.instant('Invalid cron expression'),
     ip2: () => this.translate.instant('Invalid IP address'),
   };
-
-  constructor(
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private liveAnnouncer: LiveAnnouncer,
-  ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('control' in changes && this.control()) {

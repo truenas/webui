@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -67,6 +67,14 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class NfsCardComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private store$ = inject<Store<ServicesState>>(Store);
+  protected emptyService = inject(EmptyService);
+
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   service$ = this.store$.select(selectService(ServiceName.Nfs));
@@ -108,16 +116,6 @@ export class NfsCardComponent implements OnInit {
     uniqueRowTag: (row) => 'card-nfs-share-' + row.path + '-' + row.comment,
     ariaLabels: (row) => [row.path, this.translate.instant('NFS Share')],
   });
-
-  constructor(
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private store$: Store<ServicesState>,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const nfsShares$ = this.api.call('sharing.nfs.query').pipe(untilDestroyed(this));

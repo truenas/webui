@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -41,6 +41,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DiskWipeDialog {
+  private formBuilder = inject(FormBuilder);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogRef = inject<MatDialogRef<DiskWipeDialog>>(MatDialogRef);
+  data = inject<{
+    diskName: string;
+    exportedPool: string;
+  }>(MAT_DIALOG_DATA);
+
   form = this.formBuilder.nonNullable.group({
     wipe_method: [DiskWipeMethod.Quick, [Validators.required]],
   });
@@ -63,16 +74,6 @@ export class DiskWipeDialog {
   ]);
 
   protected readonly Role = Role;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogRef: MatDialogRef<DiskWipeDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: { diskName: string; exportedPool: string },
-  ) { }
 
   get title(): TranslatedString {
     return this.translate.instant('Wipe Disk {name}', { name: this.data.diskName });
