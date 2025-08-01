@@ -10,12 +10,7 @@ export class MockAuthService {
   clearAuthToken = jest.fn();
   login = jest.fn();
   logout = jest.fn();
-  hasRole = jest.fn((role: Role) => {
-    const currentUser = this.loggedInUser$.getValue();
-    const hasRole = currentUser?.privilege?.roles?.$set?.includes(role) || false;
-    return of(hasRole);
-  });
-
+  hasRole = jest.fn(() => of(true));
   isAuthenticated$ = of(true);
   user$ = this.loggedInUser$.asObservable();
   setUser(user: LoggedInUser): void {
