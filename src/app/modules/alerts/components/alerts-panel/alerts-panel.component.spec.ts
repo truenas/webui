@@ -158,6 +158,7 @@ describe('AlertsPanelComponent', () => {
 
     const websocketMock = spectator.inject(MockApiService);
     websocketMock.emitSubscribeEvent({
+      id: 'test-id-1',
       msg: CollectionChangeType.Added,
       collection: 'alert.list',
       fields: {
@@ -177,6 +178,7 @@ describe('AlertsPanelComponent', () => {
 
     const websocketMock = spectator.inject(MockApiService);
     websocketMock.emitSubscribeEvent({
+      id: 'test-id-2',
       msg: CollectionChangeType.Changed,
       collection: 'alert.list',
       fields: {

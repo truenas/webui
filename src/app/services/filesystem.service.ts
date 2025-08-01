@@ -116,7 +116,7 @@ export class FilesystemService {
       this.api.call('filesystem.listdir', [searchNode.data.path, [], this.queryOptions]).pipe(
         catchError((error: unknown) => {
           const apiError = extractApiErrorDetails(error);
-          if (apiError?.reason.match(/\[ENOENT] Directory \/dev\/zvol.* does not exist/)) {
+          if (/\[ENOENT] Directory \/dev\/zvol.* does not exist/.exec(apiError?.reason)) {
             return of([]);
           }
 

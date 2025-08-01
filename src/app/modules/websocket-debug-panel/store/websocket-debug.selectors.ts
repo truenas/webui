@@ -57,3 +57,29 @@ export const selectMockedMessages = createSelector(
   selectMessages,
   (messages) => messages.filter((msg) => msg.isMocked),
 );
+
+// Enclosure Mock Selectors
+export const selectEnclosureMockConfig = createSelector(
+  selectWebSocketDebugState,
+  (state) => state.enclosureMock,
+);
+
+export const selectIsEnclosureMockEnabled = createSelector(
+  selectEnclosureMockConfig,
+  (config) => config.enabled,
+);
+
+export const selectEnclosureControllerModel = createSelector(
+  selectEnclosureMockConfig,
+  (config) => config.controllerModel,
+);
+
+export const selectEnclosureExpansionModels = createSelector(
+  selectEnclosureMockConfig,
+  (config) => config.expansionModels,
+);
+
+export const selectEnclosureScenario = createSelector(
+  selectEnclosureMockConfig,
+  (config) => config.scenario,
+);

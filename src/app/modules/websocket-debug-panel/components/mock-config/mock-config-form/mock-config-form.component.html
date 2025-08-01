@@ -16,14 +16,13 @@
         [hint]="'Regex pattern to match against message content' | translate"
       ></ix-input>
       
-      <ix-textarea
+      <ix-code-editor
         ixTest="response-data-textarea"
         formControlName="responseResult"
+        [language]="CodeEditorLanguage.Json"
         [label]="'Response Data' | translate"
-        [placeholder]="'{ &quot;result&quot;: &quot;success&quot; }' | translate"
         [hint]="'JSON format expected' | translate"
-        [rows]="8"
-      ></ix-textarea>
+      ></ix-code-editor>
 
       <ix-input
         ixTest="response-delay-input"

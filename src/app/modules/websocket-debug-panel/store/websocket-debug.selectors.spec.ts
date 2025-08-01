@@ -1,3 +1,5 @@
+import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 import { WebSocketDebugState } from './websocket-debug.reducer';
@@ -62,6 +64,12 @@ describe('WebSocketDebug Selectors', () => {
     isPanelOpen: true,
     activeTab: 'websocket',
     messageLimit: 200,
+    enclosureMock: {
+      enabled: false,
+      controllerModel: null,
+      expansionModels: [],
+      scenario: MockEnclosureScenario.FillSomeSlots,
+    },
   };
 
   const rootState = {
@@ -305,6 +313,156 @@ describe('WebSocketDebug Selectors', () => {
       // Results should be different
       expect(result1).not.toBe(result2);
       expect(result2).toHaveLength(3);
+    });
+  });
+
+  describe('enclosure mock selectors', () => {
+    describe('selectEnclosureMockConfig', () => {
+      it('should select enclosure mock config', () => {
+        const result = fromSelectors.selectEnclosureMockConfig(rootState);
+        expect(result).toEqual({
+          enabled: false,
+          controllerModel: null,
+          expansionModels: [],
+          scenario: MockEnclosureScenario.FillSomeSlots,
+        });
+      });
+
+      it('should return updated config when changed', () => {
+        const updatedState = {
+          webSocketDebug: {
+            ...initialState,
+            enclosureMock: {
+              enabled: true,
+              controllerModel: EnclosureModel.M40,
+              expansionModels: [EnclosureModel.Es24F],
+              scenario: MockEnclosureScenario.FillAllSlots,
+            },
+          },
+        };
+        const result = fromSelectors.selectEnclosureMockConfig(updatedState);
+        expect(result).toEqual({
+          enabled: true,
+          controllerModel: EnclosureModel.M40,
+          expansionModels: [EnclosureModel.Es24F],
+          scenario: MockEnclosureScenario.FillAllSlots,
+        });
+      });
+    });
+
+    describe('selectIsEnclosureMockEnabled', () => {
+      it('should select enclosure mock enabled state', () => {
+        const result = fromSelectors.selectIsEnclosureMockEnabled(rootState);
+        expect(result).toBe(false);
+      });
+
+      it('should return true when enclosure mock is enabled', () => {
+        const enabledState = {
+          webSocketDebug: {
+            ...initialState,
+            enclosureMock: {
+              ...initialState.enclosureMock,
+              enabled: true,
+            },
+          },
+        };
+        const result = fromSelectors.selectIsEnclosureMockEnabled(enabledState);
+        expect(result).toBe(true);
+      });
+    });
+
+    describe('selectEnclosureControllerModel', () => {
+      it('should select controller model', () => {
+        const result = fromSelectors.selectEnclosureControllerModel(rootState);
+        expect(result).toBeNull();
+      });
+
+      it('should return controller model when set', () => {
+        const withControllerState = {
+          webSocketDebug: {
+            ...initialState,
+            enclosureMock: {
+              ...initialState.enclosureMock,
+              controllerModel: EnclosureModel.M50,
+            },
+          },
+        };
+        const result = fromSelectors.selectEnclosureControllerModel(withControllerState);
+        expect(result).toBe(EnclosureModel.M50);
+      });
+    });
+
+    describe('selectEnclosureExpansionModels', () => {
+      it('should select expansion models', () => {
+        const result = fromSelectors.selectEnclosureExpansionModels(rootState);
+        expect(result).toEqual([]);
+      });
+
+      it('should return expansion models when set', () => {
+        const withExpansionsState = {
+          webSocketDebug: {
+            ...initialState,
+            enclosureMock: {
+              ...initialState.enclosureMock,
+              expansionModels: [EnclosureModel.Es24F, EnclosureModel.Es60],
+            },
+          },
+        };
+        const result = fromSelectors.selectEnclosureExpansionModels(withExpansionsState);
+        expect(result).toEqual([EnclosureModel.Es24F, EnclosureModel.Es60]);
+      });
+    });
+
+    describe('selectEnclosureScenario', () => {
+      it('should select enclosure scenario', () => {
+        const result = fromSelectors.selectEnclosureScenario(rootState);
+        expect(result).toBe(MockEnclosureScenario.FillSomeSlots);
+      });
+
+      it('should return updated scenario when changed', () => {
+        const differentScenarioState = {
+          webSocketDebug: {
+            ...initialState,
+            enclosureMock: {
+              ...initialState.enclosureMock,
+              scenario: MockEnclosureScenario.AllSlotsEmpty,
+            },
+          },
+        };
+        const result = fromSelectors.selectEnclosureScenario(differentScenarioState);
+        expect(result).toBe(MockEnclosureScenario.AllSlotsEmpty);
+      });
+    });
+
+    describe('enclosure mock selector memoization', () => {
+      it('should memoize enclosure mock selectors', () => {
+        const result1 = fromSelectors.selectEnclosureMockConfig(rootState);
+        const result2 = fromSelectors.selectEnclosureMockConfig(rootState);
+        expect(result1).toBe(result2);
+
+        const enabled1 = fromSelectors.selectIsEnclosureMockEnabled(rootState);
+        const enabled2 = fromSelectors.selectIsEnclosureMockEnabled(rootState);
+        expect(enabled1).toBe(enabled2);
+      });
+
+      it('should recompute when enclosure mock state changes', () => {
+        const result1 = fromSelectors.selectIsEnclosureMockEnabled(rootState);
+
+        const updatedState = {
+          webSocketDebug: {
+            ...initialState,
+            enclosureMock: {
+              ...initialState.enclosureMock,
+              enabled: true,
+            },
+          },
+        };
+
+        const result2 = fromSelectors.selectIsEnclosureMockEnabled(updatedState);
+        expect(result1).not.toBe(result2);
+        expect(result1).toBe(false);
+        expect(result2).toBe(true);
+      });
     });
   });
 });

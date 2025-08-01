@@ -1,0 +1,66 @@
+.enclosure-mock-tab {
+  height: 100%;
+  overflow-y: auto;
+  padding: 16px;
+
+  .enclosure-mock-form {
+    max-width: 600px;
+
+    .enable-section {
+      background-color: var(--bg2);
+      border-radius: 8px;
+      margin-bottom: 24px;
+      padding: 16px;
+
+      .enable-checkbox {
+        font-weight: 500;
+      }
+    }
+
+
+    .actions {
+      border-top: 1px solid var(--lines);
+      margin-top: 24px;
+      padding-top: 16px;
+    }
+
+    .preview-section {
+      background-color: var(--bg1);
+      border: 1px solid var(--lines);
+      border-radius: 8px;
+      margin-top: 24px;
+      padding: 16px;
+
+      h3 {
+        color: var(--fg1);
+        font-size: 14px;
+        font-weight: 500;
+        margin: 0 0 12px;
+      }
+
+    }
+  }
+}
+
+// Separate classes to reduce nesting depth
+.preview-content {
+  .preview-item {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.preview-label {
+  color: var(--fg2);
+  font-weight: 500;
+  min-width: 140px;
+}
+
+.preview-value {
+  color: var(--fg1);
+}

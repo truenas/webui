@@ -9,12 +9,16 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { EnclosureMockService } from 'app/services/enclosure-mock.service';
+import { EnclosureMockTabComponent } from './components/enclosure-mock-tab/enclosure-mock-tab.component';
 import { MockConfigurationsTabComponent } from './components/mock-configurations-tab/mock-configurations-tab.component';
 import { WebSocketTabComponent } from './components/websocket-tab/websocket-tab.component';
+import { storageKeys } from './constants';
 import * as WebSocketDebugActions from './store/websocket-debug.actions';
 import {
   selectIsPanelOpen, selectActiveTab, selectHasActiveMocks,
 } from './store/websocket-debug.selectors';
+import { safeGetItem } from './utils/local-storage-utils';
 
 @UntilDestroy()
 @Component({
@@ -27,6 +31,7 @@ import {
     IxIconComponent,
     WebSocketTabComponent,
     MockConfigurationsTabComponent,
+    EnclosureMockTabComponent,
   ],
   providers: [],
   templateUrl: './websocket-debug-panel.component.html',
@@ -45,6 +50,9 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
       if (tab === 'mock-configurations') {
         return 1;
       }
+      if (tab === 'enclosure-mock') {
+        return 2;
+      }
       return 0;
     }),
   );
@@ -58,25 +66,25 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     @Inject(DOCUMENT) private document: Document,
     private cdr: ChangeDetectorRef,
     private ngZone: NgZone,
+    private enclosureMockService: EnclosureMockService,
   ) {}
 
   ngOnInit(): void {
     // Load saved mock configs and restore panel state
     this.store$.dispatch(WebSocketDebugActions.loadMockConfigs());
+    this.store$.dispatch(WebSocketDebugActions.loadEnclosureMockConfig());
+
+    // Ensure EnclosureMockService starts listening after configs are loaded
+    // The service is injected in constructor, so it's already created
 
     // Restore panel state from localStorage asynchronously
     this.ngZone.runOutsideAngular(() => {
       Promise.resolve().then(() => {
-        try {
-          const savedState = localStorage.getItem('websocket-debug-panel-open');
-          if (savedState) {
-            const isOpen = JSON.parse(savedState) as boolean;
-            this.ngZone.run(() => {
-              this.store$.dispatch(WebSocketDebugActions.setPanelOpen({ isOpen }));
-            });
-          }
-        } catch (error) {
-          console.error('Failed to restore panel state:', error);
+        const isOpen = safeGetItem<boolean>(storageKeys.PANEL_OPEN, false);
+        if (isOpen) {
+          this.ngZone.run(() => {
+            this.store$.dispatch(WebSocketDebugActions.setPanelOpen({ isOpen }));
+          });
         }
       });
     });
@@ -122,7 +130,12 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   }
 
   onTabChange(index: number): void {
-    const tab = index === 0 ? 'websocket' : 'mock-configurations';
+    let tab: 'websocket' | 'mock-configurations' | 'enclosure-mock' = 'websocket';
+    if (index === 1) {
+      tab = 'mock-configurations';
+    } else if (index === 2) {
+      tab = 'enclosure-mock';
+    }
     this.store$.dispatch(WebSocketDebugActions.setActiveTab({ tab }));
   }
 

@@ -39,7 +39,7 @@ function validateFilePath(filePath: string): string | null {
     }
 
     return relativePath;
-  } catch (error) {
+  } catch {
     console.warn(`Warning: Invalid file path: ${filePath}`);
     return null;
   }

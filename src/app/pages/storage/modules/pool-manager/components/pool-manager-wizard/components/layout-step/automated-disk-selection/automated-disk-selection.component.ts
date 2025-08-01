@@ -118,7 +118,6 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   private updateLayoutOptionsFromLimitedLayouts(limitLayouts: CreateVdevLayout[]): void {
     const allowedLayouts = vdevLayoutOptions.filter((option) => limitLayouts.includes(option.value));
     this.vdevLayoutOptions$ = of(allowedLayouts);
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
     const cannotChangeLayout = this.canChangeLayout() === false;
     if (cannotChangeLayout && limitLayouts.length) {
       setValueIfNotSame(this.layoutControl, limitLayouts[0]);

@@ -7,8 +7,9 @@ import {
 import { MatButton } from '@angular/material/button';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
+import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { JobEventBuilderComponent } from 'app/modules/websocket-debug-panel/components/mock-config/job-event-builder/job-event-builder.component';
 import {
   MockConfig, MockEvent,
@@ -23,7 +24,7 @@ import { updateMockConfig } from 'app/modules/websocket-debug-panel/store/websoc
     MatButton,
     TranslateModule,
     IxInputComponent,
-    IxTextareaComponent,
+    IxCodeEditorComponent,
     JobEventBuilderComponent,
   ],
   templateUrl: './mock-config-form.component.html',
@@ -37,6 +38,8 @@ export class MockConfigFormComponent implements OnInit {
 
   private readonly fb = inject(FormBuilder);
   private readonly store = inject(Store);
+
+  protected readonly CodeEditorLanguage = CodeEditorLanguage;
 
   protected readonly form = this.fb.group({
     methodName: ['', Validators.required],

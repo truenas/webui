@@ -1,4 +1,6 @@
 import { createAction, props } from '@ngrx/store';
+import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
 
@@ -82,4 +84,39 @@ export const exportMockConfigs = createAction(
 export const toggleMessageExpansion = createAction(
   `${actionPrefix} Toggle Message Expansion`,
   props<{ messageId: string }>(),
+);
+
+// Enclosure Mock Actions
+export const setEnclosureMockConfig = createAction(
+  `${actionPrefix} Set Enclosure Mock Config`,
+  props<{ config: {
+    enabled: boolean;
+    controllerModel: EnclosureModel | null;
+    expansionModels: EnclosureModel[];
+    scenario: MockEnclosureScenario;
+  }; }>(),
+);
+
+export const toggleEnclosureMock = createAction(
+  `${actionPrefix} Toggle Enclosure Mock`,
+  props<{ enabled: boolean }>(),
+);
+
+export const updateEnclosureScenario = createAction(
+  `${actionPrefix} Update Enclosure Scenario`,
+  props<{ scenario: MockEnclosureScenario }>(),
+);
+
+export const loadEnclosureMockConfig = createAction(
+  `${actionPrefix} Load Enclosure Mock Config`,
+);
+
+export const enclosureMockConfigLoaded = createAction(
+  `${actionPrefix} Enclosure Mock Config Loaded`,
+  props<{ config: {
+    enabled: boolean;
+    controllerModel: EnclosureModel | null;
+    expansionModels: EnclosureModel[];
+    scenario: MockEnclosureScenario;
+  } | null; }>(),
 );

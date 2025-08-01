@@ -1,0 +1,69 @@
+<div class="enclosure-mock-tab">
+  <form class="enclosure-mock-form" [formGroup]="form">
+    <div class="enable-section">
+      <mat-checkbox formControlName="enabled" class="enable-checkbox" ixTest="enable-enclosure-mocking">
+        {{ 'Enable Enclosure Mocking' | translate }}
+      </mat-checkbox>
+    </div>
+
+    <ix-fieldset [title]="'Configuration' | translate">
+      <ix-select
+        formControlName="controllerModel"
+        [label]="'Controller Model' | translate"
+        [options]="controllerOptions"
+        [required]="true"
+        [tooltip]="'Select the controller enclosure model' | translate"
+      ></ix-select>
+
+      <ix-select
+        formControlName="expansionModels"
+        [label]="'Expansion Shelves' | translate"
+        [options]="expansionOptions"
+        [multiple]="true"
+        [tooltip]="'Select expansion shelf models to attach' | translate"
+      ></ix-select>
+
+      <ix-radio-group
+        formControlName="scenario"
+        [label]="'Mocking Scenario' | translate"
+        [options]="scenarioOptions"
+        [tooltip]="'Select the scenario for populating enclosure slots' | translate"
+      ></ix-radio-group>
+    </ix-fieldset>
+
+    <div class="actions">
+      <button
+        mat-button
+        color="primary"
+        type="button"
+        ixTest="apply-enclosure-mock"
+        [disabled]="form.invalid && form.value.enabled"
+        (click)="onApply()"
+      >
+        {{ 'Apply' | translate }}
+      </button>
+    </div>
+
+    @if (form.value.enabled && form.value.controllerModel) {
+      <div class="preview-section">
+        <h3>{{ 'Configuration Preview' | translate }}</h3>
+        <div class="preview-content">
+          <div class="preview-item">
+            <span class="preview-label">{{ 'Controller:' | translate }}</span>
+            <span class="preview-value">{{ form.value.controllerModel }}</span>
+          </div>
+          @if (form.value.expansionModels?.length) {
+            <div class="preview-item">
+              <span class="preview-label">{{ 'Expansion Shelves:' | translate }}</span>
+              <span class="preview-value">{{ form.value.expansionModels.join(', ') }}</span>
+            </div>
+          }
+          <div class="preview-item">
+            <span class="preview-label">{{ 'Scenario:' | translate }}</span>
+            <span class="preview-value">{{ getScenarioLabel(form.value.scenario) | translate }}</span>
+          </div>
+        </div>
+      </div>
+    }
+  </form>
+</div>

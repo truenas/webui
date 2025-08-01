@@ -217,5 +217,5 @@ export enum DiskSpaceKey {
   UsedByDataset = 'usedbydataset',
   UsedByChildren = 'usedbychildren',
 }
-export type DiskSpace = { [key in DiskSpaceKey]?: number };
-export type SwatchColors = { [key in DiskSpaceKey]?: { backgroundColor: string } };
+export type DiskSpace = Partial<Record<DiskSpaceKey, number>>;
+export type SwatchColors = Partial<Record<DiskSpaceKey, { backgroundColor: string }>>;

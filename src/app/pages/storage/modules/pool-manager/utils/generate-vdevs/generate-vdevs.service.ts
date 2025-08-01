@@ -12,9 +12,7 @@ import {
   topologyCategoryToDisks,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
-export type GeneratedVdevs = {
-  [type in VDevType]: DetailsDisk[][];
-};
+export type GeneratedVdevs = Record<VDevType, DetailsDisk[][]>;
 
 export type TypeAndCategory = [VDevType, PoolManagerTopologyCategory];
 

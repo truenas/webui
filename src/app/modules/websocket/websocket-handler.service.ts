@@ -58,7 +58,7 @@ export class WebSocketHandlerService {
   }
 
   private readonly hasRestrictedError$ = new BehaviorSubject(false);
-  set isAccessRestricted$(value: boolean) {
+  set isAccessRestricted(value: boolean) {
     this.hasRestrictedError$.next(value);
   }
 
@@ -316,7 +316,7 @@ export class WebSocketHandlerService {
 
     // TODO: Extract code in some constant.
     if (event.code === 1008) {
-      this.isAccessRestricted$ = true;
+      this.isAccessRestricted = true;
     } else {
       this.initiateReconnect();
     }

@@ -1,6 +1,5 @@
 import { Command } from 'commander';
 import figlet from 'figlet';
-import { mockEnclosureCommand } from './commands/mock-enclosure.command';
 import { remoteCommand } from './commands/remote.command';
 import { resetCommand } from './commands/reset.command';
 import { checkEnvironment } from './utils/check-environment';
@@ -30,16 +29,6 @@ program
   .name('reset')
   .description('Reset config to default')
   .action(() => resetCommand());
-
-program
-  .command('mock-enclosure')
-  .name('mock-enclosure')
-  .alias('me')
-  .description('Configure enclosure mocking functionality')
-  .action(async () => {
-    await checkEnvironment();
-    await mockEnclosureCommand();
-  });
 
 program
   .command('remote')

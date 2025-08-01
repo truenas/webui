@@ -44,6 +44,7 @@ export const extraRules = {
     preferQuerySignals: false,
     preferReadonlySignalProperties: false,
   }],
+  "@angular-eslint/no-duplicates-in-metadata-arrays": "error",
 
   // Angular file naming
   "angular-file-naming/component-filename-suffix": "error",
@@ -269,7 +270,7 @@ export const extraRules = {
   "@typescript-eslint/ban-ts-comment": "error",
   "@typescript-eslint/explicit-function-return-type": ["error", {allowExpressions: true}],
   "@typescript-eslint/consistent-type-assertions": ["error"],
-  "@typescript-eslint/no-unnecessary-boolean-literal-compare": ["error"],
+  "@typescript-eslint/no-unnecessary-boolean-literal-compare": ["off"], // Requires strictNullChecks which is not enabled
   "@typescript-eslint/prefer-includes": ["error"],
   "@typescript-eslint/prefer-for-of": ["error"],
   "@typescript-eslint/prefer-as-const": ["error"],
@@ -330,7 +331,10 @@ export const extraRules = {
       format: ["strictCamelCase"]
     },
   ],
-  "@typescript-eslint/switch-exhaustiveness-check": "error",
+  "@typescript-eslint/switch-exhaustiveness-check": ["error", {
+    allowDefaultCaseForExhaustiveSwitch: true,
+    considerDefaultExhaustiveForUnions: true,
+  }],
   "@typescript-eslint/only-throw-error": ["error"],
   "@typescript-eslint/no-confusing-void-expression": ["error", {
     ignoreArrowShorthand: true,
@@ -390,4 +394,5 @@ export const extraRules = {
   // Unicorn
   "unicorn/filename-case": ["error", {case: "kebabCase"}],
   "unicorn/prefer-array-find": ["error"],
+  "unicorn/no-useless-spread": ["error"],
 };

@@ -16,12 +16,14 @@ export const storageKeys = {
   PANEL_OPEN: 'websocket-debug-panel-open',
   ACTIVE_TAB: 'websocket-debug-active-tab',
   MESSAGE_LIMIT: 'websocket-debug-message-limit',
+  ENCLOSURE_MOCK_CONFIG: 'websocket-debug-enclosure-mock-config',
 } as const;
 
 // Tab identifiers
 export const tabs = {
   WEBSOCKET: 'websocket',
-  MOCK_CONFIG: 'mock-config',
+  MOCK_CONFIG: 'mock-configurations',
+  ENCLOSURE_MOCK: 'enclosure-mock',
 } as const;
 
 // Export file naming

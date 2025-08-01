@@ -90,7 +90,7 @@ describe('IpaConfigComponent', () => {
     expect(nullConfigSpectator.component).toBeTruthy();
 
     // Form should initialize with appropriate default values
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect((nullConfigSpectator.component as any).form.value.use_default_smb_domain).toBe(true);
   });
 

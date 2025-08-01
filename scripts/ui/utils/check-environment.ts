@@ -6,7 +6,7 @@ import {
 } from './save-environment';
 
 function parseEnvironmentVersion(contents: string): string {
-  const match = contents.match(/environmentVersion:\s*'([\d.]+)'/);
+  const match = /environmentVersion:\s*'([\d.]+)'/.exec(contents);
   return match ? match[1] : '';
 }
 

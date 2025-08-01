@@ -63,7 +63,7 @@ describe('WidgetCpuTempRecentComponent', () => {
       datasets: [
         {
           label: 'Usage',
-          data: expect.objectContaining([
+          data: expect.arrayContaining([
             expect.objectContaining({ x: expect.any(Number), y: expect.any(Number) }),
           ]),
           pointBackgroundColor: '#c006c7d9',
