@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { JsonRpcErrorCode } from 'app/enums/api.enum';
 import { isCollectionUpdateMessage, isSuccessfulResponse, isNotifyUnsubscribedMessage } from 'app/helpers/api.helper';
 import {
-  ApiEventMethod, ApiEventTyped,
+  ApiEventMethod, ApiEventTyped, JsonRpcError,
 } from 'app/interfaces/api-message.interface';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
@@ -74,7 +74,7 @@ export class SubscriptionManagerService {
                 code: JsonRpcErrorCode.CallError,
                 message: message.params.error?.reason || '',
                 data: message.params.error,
-              }));
+              } as JsonRpcError));
             }
             subscriber.complete();
             return of(null);

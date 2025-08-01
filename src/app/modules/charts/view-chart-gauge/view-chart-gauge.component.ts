@@ -36,7 +36,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
   chartClass = 'view-chart-gauge';
   private _data: GaugeData;
   private arc: d3.Arc<unknown, d3.DefaultArcObject>;
-  chartId = uuidv4();
+  chartId: string = uuidv4();
   private doublePi = 2 * Math.PI;
   units = '%'; // default unit type
   diameter = 120; // default diameter
@@ -79,7 +79,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
 
     const width = this.config().diameter;
     const height = this.config().diameter;
-    const svg = d3.select('#gauge-' + this.chartId).append('svg')
+    const svg = d3.select(`#gauge-${this.chartId}`).append('svg')
       .attr('width', width)
       .attr('height', height);
 
@@ -152,11 +152,11 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
   update(value: GaugeDataItem): void {
     if (!document.hidden) {
       d3.transition()
-        .select('#gauge-' + this.chartId + ' path.value')
+        .select(`#gauge-${this.chartId} path.value`)
         .duration(750)
         .attrTween('d', this.load(this.percentToAngle(Number(value))));
 
-      d3.select('#gauge-' + this.chartId + ' text#text-value')
+      d3.select(`#gauge-${this.chartId} text#text-value`)
         .text(String(value) + this.config().units);
     }
   }
@@ -178,8 +178,8 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
   }
 
   private updateSubtitle(): void {
-    d3.select('#gauge-' + this.chartId + ' #text-value');
-    d3.select('#gauge-' + this.chartId + ' #text-subtitle')
+    d3.select(`#gauge-${this.chartId} #text-value`);
+    d3.select(`#gauge-${this.chartId} #text-subtitle`)
       .text(this.subtitle);
   }
 }
