@@ -1,8 +1,5 @@
 import { PercentPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnInit, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { formatDuration } from 'date-fns';
@@ -37,6 +34,11 @@ const maxPct = 80;
   ],
 })
 export class PoolUsageGaugeComponent implements OnInit {
+  private resources = inject(WidgetResourcesService);
+  private translate = inject(TranslateService);
+  private storageService = inject(StorageService);
+  private themeService = inject(ThemeService);
+
   readonly pool = input<Pool>();
   readonly size = input<number>(150);
 
@@ -86,13 +88,6 @@ export class PoolUsageGaugeComponent implements OnInit {
     const seconds = secondsToDuration((scan.end_time.$date - scan.start_time.$date) / 1000);
     return formatDuration(seconds);
   });
-
-  constructor(
-    private resources: WidgetResourcesService,
-    private translate: TranslateService,
-    private storageService: StorageService,
-    private themeService: ThemeService,
-  ) {}
 
   ngOnInit(): void {
     this.chartBlankColor = this.themeService.currentTheme().bg2;

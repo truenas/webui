@@ -29,7 +29,7 @@ describe('ServiceSmbComponent', () => {
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createRoutingFactory({
@@ -79,9 +79,7 @@ describe('ServiceSmbComponent', () => {
           ] as User[],
         ),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
       mockProvider(Router),
       mockProvider(DialogService),

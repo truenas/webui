@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   combineLatest, Observable,
@@ -10,7 +10,7 @@ import {
 } from 'rxjs/operators';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { Device } from 'app/interfaces/device.interface';
-import { Option } from 'app/interfaces/option.interface';
+import { SelectOption } from 'app/interfaces/option.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -20,12 +20,10 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   providedIn: 'root',
 })
 export class GpuService {
-  private allGpus$: Observable<Device[]>;
+  private api = inject(ApiService);
+  private store$ = inject<Store<AppState>>(Store);
 
-  constructor(
-    private api: ApiService,
-    private store$: Store<AppState>,
-  ) {}
+  private allGpus$: Observable<Device[]>;
 
   /**
    * Loads all system gpus with caching.
@@ -43,11 +41,15 @@ export class GpuService {
     return this.allGpus$;
   }
 
-  getGpuOptions(): Observable<Option[]> {
+  getGpuOptions(): Observable<SelectOption[]> {
     return this.api.call('system.advanced.get_gpu_pci_choices').pipe(
       map((choices) => {
         return Object.entries(choices).map(
-          ([value, label]) => ({ value: label, label: value }),
+          ([label, choice]): SelectOption => ({
+            value: choice.pci_slot,
+            label: choice.uses_system_critical_devices ? `${label} (System Critical)` : label,
+            disabled: false,
+          }),
         );
       }),
     );

@@ -13,7 +13,7 @@ export function getLanguageFiles(dir: string = translationDir): Promise<string[]
       }
 
       files.forEach((file) => {
-        if (!file.match(/\.json$/)) {
+        if (!/\.json$/.exec(file)) {
           return;
         }
 

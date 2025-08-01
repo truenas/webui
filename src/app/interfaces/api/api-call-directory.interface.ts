@@ -1,8 +1,8 @@
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
-import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { OnOff } from 'app/enums/on-off.enum';
@@ -19,7 +19,6 @@ import {
   AclTemplateCreateParams,
   AclTemplateCreateResponse,
 } from 'app/interfaces/acl.interface';
-import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { AdvancedConfig, AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import {
@@ -74,6 +73,7 @@ import {
   ContainerImage, DeleteContainerImageParams,
 } from 'app/interfaces/container-image.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
+import { CoreOptions } from 'app/interfaces/core-options.interface';
 import {
   CountManualSnapshotsParams,
   EligibleManualSnapshotsCount,
@@ -86,7 +86,10 @@ import {
   Dataset, DatasetCreate, DatasetDetails, DatasetUpdate, ExtraDatasetQueryOptions,
 } from 'app/interfaces/dataset.interface';
 import { Device } from 'app/interfaces/device.interface';
-import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
+import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
+import { DirectoryServicesLeaveParams, DirectoryServicesLeaveResponse } from 'app/interfaces/directoryservices-leave.interface';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
+import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/interfaces/directoryservices-update.interface';
 import {
   Disk, DiskDetailsResponse,
   DiskTemperatureAgg,
@@ -99,6 +102,7 @@ import {
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
+import { DockerConfig, DockerStatusData } from 'app/interfaces/docker-config.interface';
 import { DockerRegistry, DockerRegistryPayload } from 'app/interfaces/docker-registry.interface';
 import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interface';
 import {
@@ -119,11 +123,10 @@ import {
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
+import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
 import {
   CreateGroup, DeleteGroupParams, Group, UpdateGroup,
 } from 'app/interfaces/group.interface';
-import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
-import { Idmap, IdmapUpdate } from 'app/interfaces/idmap.interface';
 import {
   CreateInitShutdownScript,
   InitShutdownScript,
@@ -230,7 +233,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import {
-  SmbPresets, SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
+  SmbShare, SmbSharesec, SmbSharesecAce,
 } from 'app/interfaces/smb-share.interface';
 import { SmbStatus } from 'app/interfaces/smb-status.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
@@ -245,9 +248,9 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import {
-  SystemUpdate,
-  SystemUpdateChange,
-  SystemUpdateTrains,
+  UpdateConfig,
+  UpdateProfileChoices,
+  UpdateStatus,
 } from 'app/interfaces/system-update.interface';
 import {
   TrueCommandConfig, TrueCommandUpdateResponse,
@@ -261,20 +264,27 @@ import {
   DeleteUserParams, SetPasswordParams, User, UserUpdate,
 } from 'app/interfaces/user.interface';
 import {
-  VirtualizationInstance,
+  VirtualizationDetails,
+  VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
+  VmDisplayWebUriParams, VmPortWizardResult,
+} from 'app/interfaces/virtual-machine.interface';
+import {
   VirtualizationDevice,
+
+  VirtualizationGlobalConfig, VirtualizationImage,
   VirtualizationImageParams,
-  VirtualizationImage,
-  AvailableGpus,
-  AvailableUsb,
-  VirtualizationGlobalConfig,
+  VirtualizationInstance,
   VirtualizationNetwork,
-  VirtualizationVolume,
+  AvailableUsb,
+  AvailableGpus, VirtualizationVolume,
   VirtualizationVolumeUpdate,
   VirtualizationPciChoices,
   CreateVirtualizationVolume,
   VirtualizationImportIsoParams,
 } from 'app/interfaces/virtualization.interface';
+import {
+  VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
+} from 'app/interfaces/vm-device.interface';
 import {
   MatchDatastoresWithDatasets,
   MatchDatastoresWithDatasetsParams,
@@ -304,10 +314,6 @@ export interface ApiCallDirectory {
   'acme.dns.authenticator.delete': { params: [id: number]; response: boolean };
   'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
   'acme.dns.authenticator.update': { params: [number, UpdateDnsAuthenticator]; response: DnsAuthenticator };
-
-  // Active Directory
-  'activedirectory.config': { params: void; response: ActiveDirectoryConfig };
-  'activedirectory.nss_info_choices': { params: void; response: string[] };
 
   // Alert
   'alert.dismiss': { params: string[]; response: void };
@@ -373,6 +379,7 @@ export interface ApiCallDirectory {
   'auth.terminate_session': { params: [id: string]; response: void };
   'auth.twofactor.config': { params: void; response: GlobalTwoFactorConfig };
   'auth.twofactor.update': { params: [GlobalTwoFactorConfigUpdate]; response: GlobalTwoFactorConfig };
+  'auth.mechanism_choices': { params: void; response: AuthMechanism[] };
 
   // Boot
   'boot.detach': { params: [disk: string]; response: void };
@@ -435,6 +442,7 @@ export interface ApiCallDirectory {
   'core.resize_shell': { params: ResizeShellRequest; response: void };
   'core.subscribe': { params: [name: ApiEventMethod]; response: void };
   'core.unsubscribe': { params: [id: string]; response: void };
+  'core.set_options': { params: CoreOptions; response: CoreOptions };
 
   // Cronjob
   'cronjob.create': { params: [CronjobUpdate]; response: Cronjob };
@@ -447,7 +455,16 @@ export interface ApiCallDirectory {
   'device.get_info': { params: [{ type: DeviceType }]; response: Device[] };
 
   // Directory Services
-  'directoryservices.get_state': { params: void; response: DirectoryServicesState };
+  'directoryservices.status': { params: void; response: DirectoryServicesStatus };
+  'directoryservices.config': { params: void; response: DirectoryServicesConfig };
+  'directoryservices.update': { params: DirectoryServicesUpdate; response: DirectoryServicesUpdateResponse };
+  'directoryservices.leave': { params: [DirectoryServicesLeaveParams]; response: DirectoryServicesLeaveResponse };
+  'directoryservices.certificate_choices': { params: void; response: Choices };
+
+  // LDAP
+  'ldap.config': { params: void; response: LdapConfig };
+  'ldap.ssl_choices': { params: void; response: string[] };
+  'ldap.schema_choices': { params: void; response: string[] };
 
   // Disk
   'disk.details': { params: [params: DiskDetailsParams]; response: DiskDetailsResponse };
@@ -512,13 +529,6 @@ export interface ApiCallDirectory {
   'group.query': { params: QueryParams<Group>; response: Group[] };
   'group.update': { params: [number, UpdateGroup]; response: number };
 
-  // Idmap
-  'idmap.backend_options': { params: void; response: IdmapBackendOptions };
-  'idmap.create': { params: [IdmapUpdate]; response: Idmap };
-  'idmap.delete': { params: [id: number]; response: boolean };
-  'idmap.query': { params: QueryParams<Idmap>; response: Idmap[] };
-  'idmap.update': { params: [id: number, update: IdmapUpdate]; response: Idmap };
-
   // Initshutdownscript
   'initshutdownscript.create': { params: [CreateInitShutdownScript]; response: InitShutdownScript };
   'initshutdownscript.delete': { params: [id: number]; response: boolean };
@@ -533,6 +543,7 @@ export interface ApiCallDirectory {
   'interface.commit': { params: [{ checkin_timeout: number }]; response: void };
   'interface.create': { params: [NetworkInterfaceCreate]; response: NetworkInterface };
   'interface.default_route_will_be_removed': { params: void; response: boolean };
+  'interface.network_config_to_be_removed': { params: void; response: { ipv4gateway?: string; nameserver1?: string; nameserver2?: string; nameserver3?: string } };
   'interface.delete': { params: [id: string]; response: string };
   'interface.has_pending_changes': { params: void; response: boolean };
   'interface.lacpdu_rate_choices': { params: void; response: Choices };
@@ -541,6 +552,7 @@ export interface ApiCallDirectory {
   'interface.query': { params: QueryParams<NetworkInterface>; response: NetworkInterface[] };
   'interface.rollback': { params: void; response: void };
   'interface.save_default_route': { params: string[]; response: void };
+  'interface.save_network_config': { params: [{ ipv4gateway: string; nameserver1?: string; nameserver2?: string; nameserver3?: string }]; response: void };
   'interface.services_restarted_on_sync': { params: void; response: ServiceRestartedOnNetworkSync[] };
   'interface.update': { params: [id: string, update: NetworkInterfaceUpdate]; response: NetworkInterface };
   'interface.vlan_parent_interface_choices': { params: void; response: Choices };
@@ -625,11 +637,6 @@ export interface ApiCallDirectory {
   'docker.status': { params: void; response: DockerStatusData };
   'docker.nvidia_present': { params: void; response: boolean };
 
-  // LDAP
-  'ldap.config': { params: void; response: LdapConfig };
-  'ldap.schema_choices': { params: void; response: string[] };
-  'ldap.ssl_choices': { params: void; response: string[] };
-
   // Mail
   'mail.config': { params: void; response: MailConfig };
   'mail.local_administrator_email': { params: void; response: string | null };
@@ -655,7 +662,7 @@ export interface ApiCallDirectory {
   'nvmet.global.rdma_enabled': { params: void; response: boolean };
   'nvmet.global.ana_enabled': { params: void; response: boolean };
 
-  'nvmet.subsys.query': { params: QueryParams<NvmeOfSubsystem>; response: NvmeOfSubsystem[] };
+  'nvmet.subsys.query': { params: QueryParams<NvmeOfSubsystem, { extra: { verbose: boolean } }>; response: NvmeOfSubsystem[] };
   'nvmet.subsys.create': { params: [CreateNvmeOfSubsystem]; response: NvmeOfSubsystem };
   'nvmet.subsys.update': { params: [id: number, update: UpdateNvmeOfSubsystem]; response: NvmeOfSubsystem };
   'nvmet.subsys.delete': { params: [id: number, { force: boolean }?]; response: void };
@@ -672,14 +679,16 @@ export interface ApiCallDirectory {
   'nvmet.host.query': { params: QueryParams<NvmeOfHost>; response: NvmeOfHost[] };
   'nvmet.host.create': { params: [CreateNvmeOfHost]; response: NvmeOfHost };
   'nvmet.host.update': { params: [id: number, update: UpdateNvmeOfHost]; response: NvmeOfHost };
-  'nvmet.host.delete': { params: [id: number]; response: void };
+  'nvmet.host.delete': { params: [id: number, { force: boolean }?]; response: void };
   'nvmet.host.generate_key': { params: GenerateNvmeHostParams; response: string };
+  'nvmet.host.dhchap_dhgroup_choices': { params: void; response: string[] };
+  'nvmet.host.dhchap_hash_choices': { params: void; response: string[] };
 
   'nvmet.host_subsys.query': { params: QueryParams<SubsystemHostAssociation>; response: SubsystemHostAssociation[] };
   'nvmet.host_subsys.create': { params: [AssociateSubsystemHost]; response: void };
   'nvmet.host_subsys.delete': { params: [id: number]; response: void };
 
-  'nvmet.namespace.query': { params: QueryParams<NvmeOfNamespace>; response: NvmeOfNamespace };
+  'nvmet.namespace.query': { params: QueryParams<NvmeOfNamespace>; response: NvmeOfNamespace[] };
   'nvmet.namespace.create': { params: [CreateNvmeOfNamespace]; response: NvmeOfNamespace };
   'nvmet.namespace.update': { params: [id: number, update: UpdateNvmeOfNamespace]; response: NvmeOfNamespace };
   'nvmet.namespace.delete': { params: DeleteNamespaceParams; response: void };
@@ -701,7 +710,7 @@ export interface ApiCallDirectory {
   'pool.dataset.processes': { params: [datasetId: string]; response: Process[] };
   'pool.dataset.promote': { params: [id: string]; response: void };
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
-  'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: DatasetRecordSize };
+  'pool.dataset.recommended_zvol_blocksize': { params: [pool: string]; response: DatasetRecordSize };
   'pool.dataset.recordsize_choices': { params: void; response: string[] };
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
   'pool.dataset.update': { params: [id: string, update: DatasetUpdate]; response: Dataset };
@@ -764,12 +773,6 @@ export interface ApiCallDirectory {
 
   // Service
   'service.query': { params: QueryParams<Service>; response: Service[] };
-  'service.restart': { params: [ServiceName]; response: boolean };
-  'service.start': { params: [ServiceName, { silent: boolean }]; response: boolean };
-  'service.stop': {
-    params: [ServiceName, { silent: boolean }];
-    response: boolean; // False indicates that service has been stopped.
-  };
   'service.update': { params: [number | ServiceName, Partial<Service>]; response: number };
 
   // Sharing
@@ -777,14 +780,13 @@ export interface ApiCallDirectory {
   'sharing.nfs.delete': { params: [id: number]; response: boolean };
   'sharing.nfs.query': { params: QueryParams<NfsShare>; response: NfsShare[] };
   'sharing.nfs.update': { params: [id: number, update: NfsShareUpdate]; response: NfsShare };
-  'sharing.smb.create': { params: [SmbShareUpdate]; response: SmbShare };
+  'sharing.smb.create': { params: [Partial<SmbShare>]; response: SmbShare };
   'sharing.smb.delete': { params: [id: number]; response: boolean };
   'sharing.smb.getacl': { params: [{ share_name: string }]; response: SmbSharesec };
-  'sharing.smb.presets': { params: void; response: SmbPresets };
   'sharing.smb.query': { params: QueryParams<SmbShare>; response: SmbShare[] };
   'sharing.smb.setacl': { params: [{ share_name: string; share_acl: SmbSharesecAce[] }]; response: SmbSharesec };
   'sharing.smb.share_precheck': { params: [{ name: string }]; response: null | { reason: string } };
-  'sharing.smb.update': { params: [id: number, update: SmbShareUpdate]; response: SmbShare };
+  'sharing.smb.update': { params: [id: number, update: Partial<SmbShare>]; response: SmbShare };
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };
@@ -875,12 +877,10 @@ export interface ApiCallDirectory {
   'tunable.tunable_type_choices': { params: void; response: Choices };
 
   // Update
-  'update.check_available': { params: void; response: SystemUpdate };
-  'update.get_auto_download': { params: void; response: boolean };
-  'update.get_pending': { params: void; response: SystemUpdateChange[] };
-  'update.get_trains': { params: void; response: SystemUpdateTrains };
-  'update.set_auto_download': { params: [boolean]; response: void };
-  'update.set_train': { params: [train: string]; response: void };
+  'update.status': { params: void; response: UpdateStatus };
+  'update.profile_choices': { params: void; response: UpdateProfileChoices };
+  'update.config': { params: void; response: UpdateConfig };
+  'update.update': { params: [Partial<UpdateConfig>]; response: UpdateConfig };
 
   // UPS
   'ups.config': { params: void; response: UpsConfig };
@@ -930,7 +930,35 @@ export interface ApiCallDirectory {
   'virt.volume.delete': { params: [id: string]; response: true };
   'virt.volume.import_iso': { params: [VirtualizationImportIsoParams]; response: VirtualizationVolume };
 
-  'system.advanced.get_gpu_pci_choices': { params: void; response: Choices };
+  // VM
+  'vm.bootloader_options': { params: void; response: Choices };
+  'vm.clone': { params: VmCloneParams; response: boolean };
+  'vm.cpu_model_choices': { params: void; response: Choices };
+  'vm.create': { params: [VirtualMachineUpdate]; response: VirtualMachine };
+  'vm.delete': { params: VmDeleteParams; response: boolean };
+  'vm.device.bind_choices': { params: void; response: Choices };
+  'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
+  'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
+  'vm.device.disk_choices': { params: void; response: Choices };
+  'system.advanced.get_gpu_pci_choices': { params: void; response: GpuPciChoices };
+  'vm.device.nic_attach_choices': { params: void; response: Choices };
+  'vm.device.passthrough_device_choices': { params: void; response: Record<string, VmPassthroughDeviceChoice> };
+  'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
+  'vm.device.update': { params: [id: number, update: VmDeviceUpdate]; response: VmDevice };
+  'vm.device.usb_controller_choices': { params: void; response: Choices };
+  'vm.device.usb_passthrough_choices': { params: void; response: Record<string, VmUsbPassthroughDeviceChoice> };
+  'vm.get_available_memory': { params: void; response: number };
+  'vm.get_display_devices': { params: [id: number]; response: VmDisplayDevice[] };
+  'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: VmDisplayWebUri };
+  'vm.maximum_supported_vcpus': { params: void; response: number };
+  'vm.port_wizard': { params: void; response: VmPortWizardResult };
+  'vm.poweroff': { params: [id: number]; response: void };
+  'vm.query': { params: QueryParams<VirtualMachine>; response: VirtualMachine[] };
+  'vm.random_mac': { params: void; response: string };
+  'vm.resolution_choices': { params: void; response: Choices };
+  'vm.start': { params: [id: number, params?: { overcommit?: boolean }]; response: void };
+  'vm.update': { params: [id: number, update: VirtualMachineUpdate]; response: VirtualMachine };
+  'vm.virtualization_details': { params: void; response: VirtualizationDetails };
 
   // Vmware
   'vmware.create': { params: [VmwareSnapshotUpdate]; response: VmwareSnapshot };

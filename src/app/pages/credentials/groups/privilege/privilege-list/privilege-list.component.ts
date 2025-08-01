@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -64,6 +64,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class PrivilegeListComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  protected emptyService = inject(EmptyService);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly requiredRoles = [Role.PrivilegeWrite];
 
   protected dataProvider: ApiDataProvider<'privilege.query'>;
@@ -140,15 +147,6 @@ export class PrivilegeListComponent implements OnInit {
       value: `"${this.translate.instant(roleNames.get(key) || key)}"`,
     }))),
   );
-
-  constructor(
-    private slideIn: SlideIn,
-    private api: ApiService,
-    private translate: TranslateService,
-    private dialogService: DialogService,
-    protected emptyService: EmptyService,
-    private errorHandler: ErrorHandlerService,
-  ) { }
 
   ngOnInit(): void {
     this.dataProvider = new ApiDataProvider(this.api, 'privilege.query');

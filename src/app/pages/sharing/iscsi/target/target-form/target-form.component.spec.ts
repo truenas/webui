@@ -56,7 +56,7 @@ describe('TargetFormComponent', () => {
   const slideInRef: SlideInRef<IscsiTarget | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -79,9 +79,7 @@ describe('TargetFormComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(FibreChannelService, {
         loadTargetPort: jest.fn(() => of(null)),

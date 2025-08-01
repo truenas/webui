@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component, Inject, OnDestroy, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardActions } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,7 +9,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  Observable, forkJoin, of, EMPTY,
+  Observable, of, EMPTY,
+  combineLatest,
 } from 'rxjs';
 import {
   catchError,
@@ -54,6 +52,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class TwoFactorComponent implements OnInit, OnDestroy {
+  authService = inject(AuthService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  protected matDialog = inject(MatDialog);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private window = inject<Window>(WINDOW);
+
   protected readonly searchableElements = twoFactorElements;
 
   userTwoFactorAuthConfigured = false;
@@ -62,7 +68,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   globalTwoFactorEnabled: boolean;
   showQrCodeWarning = false;
 
-  get global2FaMsg(): string {
+  protected get global2FaMsg(): string {
     if (!this.globalTwoFactorEnabled) {
       return this.translate.instant(helptext2fa.globallyDisabled);
     }
@@ -75,24 +81,14 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   readonly helptext = helptext2fa;
 
   readonly labels = {
-    secret: helptext2fa.secret.placeholder,
-    uri: helptext2fa.uri.placeholder,
+    secret: helptext2fa.secret.label,
+    uri: helptext2fa.uri.label,
   };
 
   readonly tooltips = {
     secret: helptext2fa.secret.tooltip,
     uri: helptext2fa.uri.tooltip,
   };
-
-  constructor(
-    public authService: AuthService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    protected matDialog: MatDialog,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    @Inject(WINDOW) private window: Window,
-  ) {}
 
   ngOnInit(): void {
     this.loadTwoFactorConfigs();
@@ -104,13 +100,13 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     this.window.localStorage.setItem('showQr2FaWarning', 'false');
   }
 
-  loadTwoFactorConfigs(): void {
+  private loadTwoFactorConfigs(): void {
     this.isDataLoading.set(true);
-    forkJoin([
+    combineLatest([
       this.authService.userTwoFactorConfig$.pipe(take(1)),
       this.authService.getGlobalTwoFactorConfig(),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(take(1), untilDestroyed(this))
       .subscribe({
         next: ([userConfig, globalConfig]) => {
           this.isDataLoading.set(false);
@@ -120,7 +116,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       });
   }
 
-  renewSecretOrEnable2Fa(): void {
+  protected renewSecretOrEnable2Fa(): void {
     this.getConfirmation().pipe(
       filter(Boolean),
       switchMap(() => this.renewSecretForUser()),
@@ -130,7 +126,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  getProvisioningUriSecret(uri: string): string | null {
+  protected getProvisioningUriSecret(uri: string): string | null {
     const url = new URL(uri);
     const params = new URLSearchParams(url.search);
 

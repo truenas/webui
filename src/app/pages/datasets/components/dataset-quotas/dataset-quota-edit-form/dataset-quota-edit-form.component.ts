@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -50,6 +48,19 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class DatasetQuotaEditFormComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  formatter = inject(IxFormatterService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  protected dialogService = inject(DialogService);
+  slideInRef = inject<SlideInRef<{
+    quotaType: DatasetQuotaType;
+    datasetId: string;
+    id: number;
+  }, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   protected isFormLoading = signal(false);
@@ -77,19 +88,19 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private getUserDataQuotaLabel(): string {
-    return this.translate.instant(helptextQuotas.users.dataQuota.placeholder)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
+    return this.translate.instant(helptextQuotas.users.dataQuota.label)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
   }
 
   private getGroupDataQuotaLabel(): string {
-    return this.translate.instant(helptextQuotas.groups.dataQuota.placeholder)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
+    return this.translate.instant(helptextQuotas.groups.dataQuota.label)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
   }
 
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.objQuota.placeholder
-      : helptextQuotas.groups.objectQuota.placeholder;
+      ? helptextQuotas.users.objQuota.label
+      : helptextQuotas.groups.objectQuota.label;
   }
 
   get dataQuotaTooltip(): string {
@@ -100,13 +111,13 @@ export class DatasetQuotaEditFormComponent implements OnInit {
 
   private getUserDataQuotaTooltip(): string {
     return this.translate.instant(helptextQuotas.users.dataQuota.tooltip)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionTooltip)
       + this.translate.instant(' bytes.');
   }
 
   private getGroupDataQuotaTooltip(): string {
     return this.translate.instant(helptextQuotas.groups.dataQuota.tooltip)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionTooltip)
       + this.translate.instant(' bytes.');
   }
 
@@ -122,16 +133,9 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     obj_quota: new FormControl(null as number | null),
   });
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-    public formatter: IxFormatterService,
-    private errorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
-    protected dialogService: DialogService,
-    public slideInRef: SlideInRef<{ quotaType: DatasetQuotaType; datasetId: string; id: number }, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -145,7 +149,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     this.setupEditQuotaForm();
   }
 
-  setupEditQuotaForm(): void {
+  private setupEditQuotaForm(): void {
     this.updateForm();
   }
 
@@ -170,12 +174,12 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     ).subscribe();
   }
 
-  getQuota(id: number): Observable<DatasetQuota[]> {
+  private getQuota(id: number): Observable<DatasetQuota[]> {
     const params = [['id', '=', id] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
     return this.api.call('pool.dataset.get_quota', [this.datasetId, this.quotaType, params]);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value;
     const payload: SetDatasetQuota[] = [];
     payload.push({
@@ -211,7 +215,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
       next: () => {
         this.snackbar.success(this.translate.instant('Quotas updated'));
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

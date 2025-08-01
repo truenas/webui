@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
 import { enclosureDiskStatusLabels } from 'app/enums/enclosure-slot-status.enum';
@@ -14,6 +12,8 @@ import { getDiskStatusColor } from 'app/pages/system/enclosure/utils/disk-status
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatusesLegendComponent {
+  private translate = inject(TranslateService);
+
   readonly slots = input.required<DashboardEnclosureSlot[]>();
 
   protected readonly legend = computed(() => {
@@ -31,8 +31,4 @@ export class StatusesLegendComponent {
         ];
       });
   });
-
-  constructor(
-    private translate: TranslateService,
-  ) {}
 }

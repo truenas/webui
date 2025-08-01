@@ -1,24 +1,26 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import {
   Component, ChangeDetectionStrategy,
-  signal, computed, inject,
+  computed, inject,
   output,
   input,
+  signal,
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
 import { distinctUntilChanged, tap } from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { containersEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceListBulkActionsComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-list-bulk-actions/instance-list-bulk-actions.component';
@@ -44,6 +46,11 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 })
 
 export class InstanceListComponent {
+  private router = inject(Router);
+  private instancesStore = inject(VirtualizationInstancesStore);
+  private searchDirectives = inject(UiSearchDirectivesService);
+  private layoutService = inject(LayoutService);
+
   readonly instanceId = injectParams('id');
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
@@ -52,8 +59,10 @@ export class InstanceListComponent {
   protected readonly window = inject<Window>(WINDOW);
   protected readonly selection = new SelectionModel<string>(true, []);
 
-  protected readonly instances = this.store.instances;
-  protected readonly isLoading = this.store.isLoading;
+  protected readonly instances = this.instancesStore.instances;
+  protected readonly isLoading = this.instancesStore.isLoading;
+
+  protected readonly metrics = this.instancesStore.metrics;
 
   protected readonly selectedInstance = this.instancesStore.selectedInstance;
   get isAllSelected(): boolean {
@@ -80,28 +89,12 @@ export class InstanceListComponent {
 
   protected readonly emptyConfig = computed<EmptyConfig>(() => {
     if (this.searchQuery()?.length && !this.filteredInstances()?.length) {
-      return {
-        type: EmptyType.NoSearchResults,
-        title: this.translate.instant('No Search Results.'),
-        message: this.translate.instant('No matching results found'),
-        large: false,
-      };
+      return noSearchResultsConfig;
     }
-    return {
-      type: EmptyType.NoPageData,
-      title: this.translate.instant('No instances'),
-      message: this.translate.instant('Instances you create will automatically appear here.'),
-      large: true,
-    };
+    return containersEmptyConfig;
   });
 
-  constructor(
-    private store: VirtualizationInstancesStore,
-    private router: Router,
-    private translate: TranslateService,
-    private instancesStore: VirtualizationInstancesStore,
-    private searchDirectives: UiSearchDirectivesService,
-  ) {
+  constructor() {
     toObservable(this.instanceId).pipe(
       distinctUntilChanged(),
       tap((instanceId) => {
@@ -121,14 +114,14 @@ export class InstanceListComponent {
 
   toggleAllChecked(checked: boolean): void {
     if (checked) {
-      this.instances().forEach((instance) => this.selection.select(instance.id));
+      this.filteredInstances().forEach((instance) => this.selection.select(instance.id));
     } else {
       this.selection.clear();
     }
   }
 
   navigateToDetails(instance: VirtualizationInstance): void {
-    this.router.navigate(['/instances', 'view', instance.id]);
+    this.layoutService.navigatePreservingScroll(this.router, ['/containers', 'view', instance.id]);
 
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(true);

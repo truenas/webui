@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -51,6 +49,13 @@ interface InstanceProxyFormOptions {
   ],
 })
 export class InstanceProxyFormComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  slideInRef = inject<SlideInRef<InstanceProxyFormOptions, boolean>>(SlideInRef);
+
   private existingProxy = signal<VirtualizationProxy | null>(null);
 
   protected readonly isLoading = signal(false);
@@ -68,14 +73,7 @@ export class InstanceProxyFormComponent implements OnInit {
 
   protected readonly protocolOptions$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<InstanceProxyFormOptions, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -100,7 +98,6 @@ export class InstanceProxyFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Proxy saved'));
           this.slideInRef.close({
             response: true,
-            error: false,
           });
           this.isLoading.set(false);
         },

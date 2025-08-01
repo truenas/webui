@@ -1,18 +1,17 @@
-import { computed, Injectable } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { computed, Injectable, inject } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { isEqual } from 'lodash-es';
 import {
-  of, Subject, switchMap, tap,
+  of, Subject, switchMap, tap, EMPTY,
 } from 'rxjs';
 import {
-  catchError, takeUntil,
+  catchError, takeUntil, filter, map, startWith, distinctUntilChanged,
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEventTyped } from 'app/interfaces/api-message.interface';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { VirtualizationInstance, VirtualizationMetrics } from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -21,6 +20,7 @@ export interface VirtualizationInstancesState {
   instances: VirtualizationInstance[] | undefined;
   selectedInstanceId: string | null;
   selectedInstance: VirtualizationInstance | undefined;
+  metrics: VirtualizationMetrics;
 }
 
 const initialState: VirtualizationInstancesState = {
@@ -28,27 +28,30 @@ const initialState: VirtualizationInstancesState = {
   instances: undefined,
   selectedInstanceId: null,
   selectedInstance: undefined,
+  metrics: {},
 };
 
 @UntilDestroy()
 @Injectable()
 export class VirtualizationInstancesStore extends ComponentStore<VirtualizationInstancesState> {
-  readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
-  readonly isLoading = computed(() => this.stateAsSignal().isLoading);
-  readonly selectedInstance = computed(() => this.stateAsSignal().selectedInstance);
-  readonly selectedInstanceId = computed(() => this.stateAsSignal().selectedInstanceId);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private router = inject(Router);
+
+  readonly isLoading = computed(() => this.state().isLoading);
+  readonly selectedInstance = computed(() => this.state().selectedInstance);
+  readonly selectedInstanceId = computed(() => this.state().selectedInstanceId);
   readonly instances = computed(() => {
-    return this.stateAsSignal().instances?.filter((instance) => !!instance) ?? [];
+    return this.state().instances?.filter((instance) => !!instance) ?? [];
   });
+
+  readonly metrics = computed(() => this.state().metrics);
 
   private readonly destroySubscription$ = new Subject<void>();
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private router: Router,
-  ) {
+  constructor() {
     super(initialState);
+    this.listenForMetrics();
   }
 
   readonly initialize = this.effect((trigger$) => {
@@ -65,9 +68,9 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
               if (updatedSelectedInstance) {
                 this.patchState({ selectedInstance: updatedSelectedInstance });
               } else if (instances.length) {
-                this.router.navigate(['/instances', 'view', instances[0].id]);
+                this.router.navigate(['/containers', 'view', instances[0].id]);
               } else {
-                this.router.navigate(['/instances']);
+                this.router.navigate(['/containers']);
               }
             }
           }),
@@ -147,4 +150,26 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
   resetInstance(): void {
     this.patchState({ selectedInstance: null });
   }
+
+  private readonly listenForMetrics = this.effect((trigger$) => {
+    return trigger$.pipe(
+      switchMap(() => this.router.events.pipe(
+        startWith(null),
+        filter((event): event is NavigationEnd | null => !event || event instanceof NavigationEnd),
+        map((event) => (event ? event.urlAfterRedirects : this.router.url)),
+        map((url) => url.includes('/containers/view')),
+        distinctUntilChanged(),
+        switchMap((shouldSubscribe) => {
+          if (!shouldSubscribe) {
+            return EMPTY;
+          }
+          return this.api.subscribe('virt.instance.metrics').pipe(
+            map((event) => event.fields),
+          );
+        }),
+        tap((metrics) => this.patchState({ metrics })),
+        catchError(() => EMPTY),
+      )),
+    );
+  });
 }

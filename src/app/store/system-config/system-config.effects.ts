@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, forkJoin, tap } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
@@ -15,6 +15,11 @@ import {
 
 @Injectable()
 export class SystemConfigEffects {
+  private actions$ = inject(Actions);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private window = inject<Window>(WINDOW);
+
   loadConfig$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, generalConfigUpdated, advancedConfigUpdated),
     mergeMap(() => {
@@ -44,11 +49,4 @@ export class SystemConfigEffects {
       waitForConsent$.next(generalConfig.usage_collection);
     }),
   ), { dispatch: false });
-
-  constructor(
-    private actions$: Actions,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    @Inject(WINDOW) private window: Window,
-  ) {}
 }

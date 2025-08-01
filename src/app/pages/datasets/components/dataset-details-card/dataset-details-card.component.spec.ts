@@ -8,7 +8,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DatasetType } from 'app/enums/dataset.enum';
+import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
@@ -27,12 +28,28 @@ const dataset = {
   pool: 'pool',
   type: DatasetType.Filesystem,
   sync: { value: 'STANDARD' },
-  compression: { source: ZfsPropertySource.Inherited, value: 'LZ4' },
+  compression: {
+    source: ZfsPropertySource.Inherited,
+    value: 'LZ4',
+  },
   compressratio: { value: '3.81x' },
-  atime: true,
+  atime: {
+    parsed: true,
+    rawvalue: 'on',
+    value: OnOff.On,
+    source: ZfsPropertySource.Local,
+  },
   deduplication: { value: 'OFF' },
-  casesensitive: false,
-  comments: { value: 'Test comment', source: ZfsPropertySource.Local },
+  casesensitivity: {
+    parsed: 'insensitive',
+    rawvalue: 'insensitive',
+    value: DatasetCaseSensitivity.Insensitive,
+    source: ZfsPropertySource.Local,
+  },
+  comments: {
+    value: 'Test comment',
+    source: ZfsPropertySource.Local,
+  },
 } as DatasetDetails;
 
 const zvol = {
@@ -145,7 +162,6 @@ describe('DatasetDetailsCardComponent', () => {
         'Sync:': 'STANDARD',
         'Compression:': 'Inherit (3.81x (LZ4))',
         'ZFS Deduplication:': 'OFF',
-        'Case Sensitivity:': 'OFF',
         'Path:': 'pool/child',
         'Comments:': 'Test comment',
       });
@@ -158,7 +174,7 @@ describe('DatasetDetailsCardComponent', () => {
       await editZvolButton.click();
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
         ZvolFormComponent,
-        { data: { isNew: false, parentId: 'pool/child' } },
+        { data: { isNew: false, parentOrZvolId: 'pool/child' } },
       );
     });
   });

@@ -52,8 +52,7 @@ span.code {
 
 /* MENUS */
 .mat-mdc-menu-item {
-  height: 36px !important;
-  line-height: 36px !important;
+  min-height: 36px !important;
 }
 
 .mat-mdc-menu-item.sticky-bottom,
@@ -207,10 +206,16 @@ textarea.mat-input-element::placeholder {
   }
 }
 
-.mat-mdc-checkbox {
+mat-checkbox {
   margin-left: -10px;
   margin-right: 8px;
+  max-width: 93%;
   opacity: 0.75;
+
+  label {
+    line-height: normal;
+    max-width: 90%;
+  }
 }
 
 ix-tooltip button {
@@ -246,8 +251,15 @@ ix-tooltip button {
 .mat-mdc-button,
 .mat-button,
 .mat-flat-button {
+  --mat-button-text-label-text-weight: 700;
+  --mdc-outlined-button-label-text-weight: 700;
+  --mdc-filled-button-label-text-weight: 700;
+  --mdc-text-button-container-color: var(--btn-default-bg);
+  --mdc-outlined-button-container-color: var(--btn-default-bg);
+  --mdc-filled-button-container-color: var(--btn-default-bg);
+  background-color: var(--btn-default-bg);
   border-radius: 0 !important;
-  font-weight: 400 !important;
+  font-weight: var(--mat-button-text-label-text-weight) !important;
 
   &:focus-visible {
     outline: 1.5px solid var(--alt-fg2) !important;
@@ -718,11 +730,6 @@ body {
     border-bottom: solid 1px var(--lines);
   }
 
-  .mat-mdc-menu-item {
-    height: inherit !important;
-    min-height: inherit;
-  }
-
   .mdc-linear-progress__buffer-bar {
     background-color: var(--primary);
     opacity: 0.5;
@@ -873,6 +880,7 @@ mat-list-item {
     flex-wrap: wrap;
     max-width: fill-available;
     white-space: pre-wrap;
+    word-break: break-all;
     word-wrap: break-word;
   }
 }
@@ -893,5 +901,28 @@ mat-tab-nav-panel {
     &:not(button) {
       display: block;
     }
+  }
+}
+
+.slide-in-wrapper .mat-mdc-card {
+  border: none;
+  box-shadow: none;
+  margin: 0;
+}
+
+.custom-slide-in-backdrop {
+  background: rgba(0, 0, 0, 0.75);
+  top: 48px !important;
+}
+
+.custom-slide-in-nobackdrop {
+  top: 48px !important;
+}
+
+// When debug panel is open, adjust the backdrop
+body:has(ix-websocket-debug-panel .websocket-debug-panel.open) {
+  .custom-slide-in-backdrop,
+  .custom-slide-in-nobackdrop {
+    right: var(--debug-panel-width, 550px) !important; // Use dynamic debug panel width
   }
 }

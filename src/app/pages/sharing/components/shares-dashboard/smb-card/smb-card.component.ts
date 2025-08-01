@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -12,12 +10,14 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   map, filter, switchMap, BehaviorSubject, of,
 } from 'rxjs';
+import { smbCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
-import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
+import { LegacySmbShareOptions, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -70,11 +70,22 @@ import { selectService } from 'app/store/services/services.selectors';
     TranslateModule,
     AsyncPipe,
     RouterLink,
+    EmptyComponent,
   ],
 })
 export class SmbCardComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  protected emptyService = inject(EmptyService);
+  private router = inject(Router);
+  private store$ = inject<Store<ServicesState>>(Store);
+
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
+  protected readonly emptyConfig = smbCardEmptyConfig;
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
@@ -87,7 +98,7 @@ export class SmbCardComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Path'),
-      propertyName: 'path_local',
+      propertyName: 'path',
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -106,23 +117,21 @@ export class SmbCardComponent implements OnInit {
     actionsWithMenuColumn({
       actions: [
         {
+          iconName: iconMarker('edit'),
+          tooltip: this.translate.instant('Edit'),
+          disabled: (row) => this.loadingMap$.pipe(map((ids) => Boolean(ids.get(row.id)))),
+          onClick: (row) => this.openForm(row),
+        },
+        {
           iconName: iconMarker('share'),
           tooltip: this.translate.instant('Edit Share ACL'),
           onClick: (row) => this.doShareAclEdit(row),
-          requiredRoles: this.requiredRoles,
         },
         {
           iconName: iconMarker('security'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
           disabled: (row) => of(isRootShare(row.path)),
           onClick: (row) => this.doFilesystemAclEdit(row),
-          requiredRoles: this.requiredRoles,
-        },
-        {
-          iconName: iconMarker('edit'),
-          tooltip: this.translate.instant('Edit'),
-          disabled: (row) => this.loadingMap$.pipe(map((ids) => Boolean(ids.get(row.id)))),
-          onClick: (row) => this.openForm(row),
         },
         {
           iconName: iconMarker('mdi-delete'),
@@ -137,17 +146,6 @@ export class SmbCardComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('SMB Share')],
   });
 
-  constructor(
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    protected emptyService: EmptyService,
-    private router: Router,
-    private store$: Store<ServicesState>,
-  ) {}
-
   ngOnInit(): void {
     const smbShares$ = this.api.call('sharing.smb.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
@@ -155,7 +153,7 @@ export class SmbCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  openForm(row?: SmbShare): void {
+  protected openForm(row?: SmbShare): void {
     this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: row } }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -164,9 +162,8 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  doDelete(smb: SmbShare): void {
+  protected doDelete(smb: SmbShare): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Are you sure you want to delete SMB Share <b>"{name}"</b>?', { name: smb.name }),
       buttonText: this.translate.instant('Delete'),
       buttonColor: 'warn',
@@ -184,12 +181,12 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  doShareAclEdit(row: SmbShare): void {
+  private doShareAclEdit(row: SmbShare): void {
     if (row.locked) {
       this.showLockedPathDialog(row.path);
     } else {
       // A home share has a name (homes) set; row.name works for other shares
-      const searchName = row.home ? 'homes' : row.name;
+      const searchName = (row.options as LegacySmbShareOptions)?.home ? 'homes' : row.name;
       this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
         .pipe(untilDestroyed(this))
         .subscribe({
@@ -208,13 +205,13 @@ export class SmbCardComponent implements OnInit {
     }
   }
 
-  doFilesystemAclEdit(row: SmbShare): void {
+  private doFilesystemAclEdit(row: SmbShare): void {
     if (row.locked) {
       this.showLockedPathDialog(row.path);
     } else {
       this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
         queryParams: {
-          path: row.path_local,
+          path: row.path,
         },
       });
     }
@@ -244,7 +241,7 @@ export class SmbCardComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
+  protected setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 0,
       direction: SortDirection.Asc,

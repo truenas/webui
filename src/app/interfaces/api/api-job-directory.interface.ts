@@ -1,7 +1,5 @@
-import { DockerConfig, DockerConfigUpdate } from 'app/enums/docker-config.interface';
+import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { SetAcl } from 'app/interfaces/acl.interface';
-import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
-import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import {
   App,
   AppCreate, AppDeleteParams, AppRollbackParams, AppStartQueryParams,
@@ -21,14 +19,16 @@ import {
   DatasetEncryptionSummaryQueryParams,
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
+import { DirectoryServicesLeaveParams } from 'app/interfaces/directoryservices-leave.interface';
+import { DirectoryServicesUpdate, DirectoryServicesUpdateResponse } from 'app/interfaces/directoryservices-update.interface';
 import { DiskWipeParams } from 'app/interfaces/disk.interface';
+import { DockerConfig, DockerConfigUpdate } from 'app/interfaces/docker-config.interface';
 import { ExportParams } from 'app/interfaces/export-params.interface';
 import { FailoverUpgradeParams } from 'app/interfaces/failover.interface';
 import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
-import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
 import { PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
@@ -43,11 +43,13 @@ import {
   UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { RebootParams } from 'app/interfaces/reboot.interface';
+import { ServiceControlOptions } from 'app/interfaces/service.interface';
 import { ShutdownParams } from 'app/interfaces/shutdown.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
+import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
 import {
   CreateVirtualizationInstance, ImportZvolParams,
   UpdateVirtualizationInstance,
@@ -59,10 +61,6 @@ import {
 import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 export interface ApiJobDirectory {
-  // Active Directory
-  'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: ActiveDirectoryConfig };
-  'activedirectory.leave': { params: [LeaveActiveDirectory]; response: void };
-
   // Audit
   'audit.export': { params: [ExportParams<AuditEntry>]; response: string };
 
@@ -111,11 +109,14 @@ export interface ApiJobDirectory {
 
   // Directory Services
   'directoryservices.cache_refresh': { params: void; response: void };
+  'directoryservices.leave': { params: [DirectoryServicesLeaveParams]; response: void };
+  'directoryservices.update': { params: [DirectoryServicesUpdate]; response: DirectoryServicesUpdateResponse };
 
   // Disk
   'disk.wipe': { params: DiskWipeParams; response: void };
 
   // Failover
+  'failover.events.vrrp_master': { params: void; response: void };
   'failover.reboot.other_node': { params: void; response: void };
   'failover.upgrade': { params: [FailoverUpgradeParams]; response: boolean };
 
@@ -123,9 +124,6 @@ export interface ApiJobDirectory {
   'filesystem.put': { params: FilesystemPutParams; response: boolean };
   'filesystem.setacl': { params: [SetAcl]; response: void };
   'filesystem.setperm': { params: [FilesystemSetPermParams]; response: void };
-
-  // idmap
-  'idmap.clear_idmap_cache': { params: void; response: void };
 
   // IPMI
   'ipmi.sel.clear': { params: void; response: void };
@@ -136,9 +134,6 @@ export interface ApiJobDirectory {
 
   // Docker
   'docker.update': { params: [DockerConfigUpdate]; response: DockerConfig };
-
-  // LDAP
-  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfig };
 
   // Mail
   'mail.send': { params: [SendMailParams, MailConfigUpdate]; response: boolean };
@@ -170,6 +165,12 @@ export interface ApiJobDirectory {
   // Rsync
   'rsynctask.run': { params: [id: number]; response: null };
 
+  // Service
+  'service.control': {
+    params: [operation: ServiceOperation, service: ServiceName, options?: ServiceControlOptions];
+    response: boolean;
+  };
+
   // Support
   'support.attach_ticket': { params: AttachTicketParams; response: Job };
   'support.new_ticket': { params: [CreateNewTicket]; response: NewTicketResponse };
@@ -194,9 +195,8 @@ export interface ApiJobDirectory {
   'tunable.update': { params: [id: number, update: TunableUpdate]; response: Tunable };
 
   // Update
-  'update.download': { params: void; response: boolean };
   'update.file': { params: [{ resume: boolean }?]; response: void };
-  'update.update': { params: [UpdateParams]; response: void };
+  'update.run': { params: [UpdateParams]; response: void };
 
   // Virt
   'virt.global.update': { params: [VirtualizationGlobalConfigUpdate]; response: VirtualizationGlobalConfig };
@@ -211,6 +211,10 @@ export interface ApiJobDirectory {
     params: [instanceId: string, update: UpdateVirtualizationInstance];
     response: VirtualizationInstance;
   };
+
+  // VM
+  'vm.restart': { params: [id: number]; response: void };
+  'vm.stop': { params: VmStopParams; response: void };
 }
 
 export type ApiJobMethod = keyof ApiJobDirectory;

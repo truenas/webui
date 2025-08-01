@@ -3,6 +3,7 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { MiddlewareAuditEntry } from 'app/interfaces/audit/middleware-audit-entry.interface';
 import { SmbAuditEntry } from 'app/interfaces/audit/smb-audit-entry.interface';
 import { SudoAuditEntry } from 'app/interfaces/audit/sudo-audit-entry.interface';
+import { SystemAuditEntry } from 'app/interfaces/audit/system-audit-entry.interface';
 import { ApiQueryParams } from 'app/modules/ix-table/classes/api-data-provider/query-params';
 
 export interface AuditQueryParams extends ApiQueryParams<AuditEntry> {
@@ -29,7 +30,7 @@ export interface AuditConfig {
   quota_fill_critical: number;
 }
 
-export type AuditEntry = SmbAuditEntry | MiddlewareAuditEntry | SudoAuditEntry;
+export type AuditEntry = SmbAuditEntry | MiddlewareAuditEntry | SudoAuditEntry | SystemAuditEntry;
 
 export interface AuditVersions {
   major: number;

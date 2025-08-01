@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -11,6 +9,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
+import { cloudBackupTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -19,6 +18,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -66,13 +66,27 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxTableBodyComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class CloudBackupCardComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private loader = inject(LoaderService);
+  private router = inject(Router);
+  protected emptyService = inject(EmptyService);
+  private window = inject<Window>(WINDOW);
+
   cloudBackups: CloudBackup[] = [];
   dataProvider: AsyncDataProvider<CloudBackup>;
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = replicationListElements;
+  protected readonly emptyConfig = cloudBackupTaskEmptyConfig;
   updatedCount = signal(0);
 
   columns = createTable<CloudBackup>([
@@ -133,20 +147,6 @@ export class CloudBackupCardComponent implements OnInit {
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Backup')],
   });
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private loader: LoaderService,
-    private router: Router,
-    protected emptyService: EmptyService,
-    @Inject(WINDOW) private window: Window,
-  ) {}
-
   ngOnInit(): void {
     const cloudBackups$ = this.api.call('cloud_backup.query').pipe(
       tap((cloudBackups) => this.cloudBackups = cloudBackups),
@@ -163,11 +163,11 @@ export class CloudBackupCardComponent implements OnInit {
     });
   }
 
-  getCloudBackups(): void {
+  private getCloudBackups(): void {
     this.dataProvider.load();
   }
 
-  runNow(row: CloudBackup): void {
+  protected runNow(row: CloudBackup): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
       message: this.translate.instant('Run «{name}» Cloud Backup now?', { name: row.description }),
@@ -192,7 +192,7 @@ export class CloudBackupCardComponent implements OnInit {
     });
   }
 
-  openForm(row?: CloudBackup): void {
+  protected openForm(row?: CloudBackup): void {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
       .pipe(
         filter((response) => !!response.response),
@@ -204,7 +204,7 @@ export class CloudBackupCardComponent implements OnInit {
       });
   }
 
-  doDelete(row: CloudBackup): void {
+  protected doDelete(row: CloudBackup): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Cloud Backup <b>"{name}"</b>?', {

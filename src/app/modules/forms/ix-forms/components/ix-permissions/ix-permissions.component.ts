@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { TranslateModule } from '@ngx-translate/core';
@@ -32,6 +30,9 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   ],
 })
 export class IxPermissionsComponent implements ControlValueAccessor {
+  controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly label = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
   readonly required = input(false);
@@ -57,10 +58,7 @@ export class IxPermissionsComponent implements ControlValueAccessor {
 
   private formatRe = /^[0-7][0-7][0-7]$/;
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 
@@ -68,7 +66,7 @@ export class IxPermissionsComponent implements ControlValueAccessor {
     this.setPermissionsAndUpdateValue(value);
   }
 
-  setPermissionsAndUpdateValue(value = '000'): void {
+  private setPermissionsAndUpdateValue(value = '000'): void {
     if (value && this.formatRe.test(value)) {
       this.value = value;
     } else {

@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, Injectable, inject } from '@angular/core';
 import { sortBy } from 'lodash-es';
 import {
   Subject, Observable,
@@ -15,6 +15,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class SystemGeneralService {
+  protected api = inject(ApiService);
+
   private productType: ProductType;
   protected certificateList = 'certificate.query' as const;
 
@@ -40,7 +42,7 @@ export class SystemGeneralService {
 
   loadProductType(): Observable<void> {
     return this.getProductType$.pipe(
-      map((productType) => {
+      map((productType): void => {
         this.productType = productType;
         return undefined;
       }),
@@ -61,10 +63,6 @@ export class SystemGeneralService {
     map((productType) => productType === ProductType.Enterprise),
     shareReplay({ refCount: true, bufferSize: 1 }),
   );
-
-  constructor(
-    protected api: ApiService,
-  ) {}
 
   getCertificates(): Observable<Certificate[]> {
     return this.api.call(this.certificateList);

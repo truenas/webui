@@ -4,8 +4,8 @@
   id="mobile-back-button"
   ixTest="disk-details-back"
   [attr.aria-label]="'Back' | translate"
-  (click)="close.emit()"
-  (keydown.enter)="close.emit()"
+  (click)="closed.emit()"
+  (keydown.enter)="closed.emit()"
 >
   <ix-icon name="mdi-chevron-left"></ix-icon>
 </button>

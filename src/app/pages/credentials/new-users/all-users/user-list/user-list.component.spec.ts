@@ -3,7 +3,6 @@ import { createRoutingFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -21,7 +20,6 @@ describe('UserListComponent', () => {
       MockComponent(IxTableComponent),
       MockComponent(UsersSearchComponent),
       EmptyComponent,
-      SearchInput1Component,
       FakeProgressBarComponent,
     ],
     providers: [
@@ -45,19 +43,17 @@ describe('UserListComponent', () => {
   describe('Rendering users', () => {
     it('should show a list of users', async () => {
       expect(await table.getCellTexts()).toEqual([
-        ['Username', 'UID', 'Built in', 'Full Name', 'Roles'],
+        ['Username', 'Full Name', 'Type', 'Access'],
         [
           mockUsers[0].username,
-          mockUsers[0].uid.toString(),
-          mockUsers[0].builtin ? 'Yes' : 'No',
           mockUsers[0].full_name,
+          'Local',
           'Full Admin',
         ],
         [
           mockUsers[1].username,
-          mockUsers[1].uid.toString(),
-          mockUsers[1].builtin ? 'Yes' : 'No',
           mockUsers[1].full_name,
+          'Built-In',
           'Full Admin',
         ],
       ]);

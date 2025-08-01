@@ -1,12 +1,11 @@
-import { Inject, Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import {
   filter, map, merge, Observable, switchMap, tap,
 } from 'rxjs';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
-import { LoaderService } from 'app/modules/loader/loader.service';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -14,14 +13,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   providedIn: 'root',
 })
 export class TruenasConnectService {
+  private window = inject<Window>(WINDOW);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+
   config = signal<TruenasConnectConfig | null>(null);
   config$ = toObservable(this.config);
-  constructor(
-    @Inject(WINDOW) private window: Window,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-  ) {
+  constructor() {
     this.getConfig();
   }
 
@@ -42,38 +40,18 @@ export class TruenasConnectService {
     if (!this.config()) {
       throw new Error('Truenas Connect config is not available');
     }
-
-    const payload = {
-      ips: this.config().ips,
-      enabled: false,
-      tnc_base_url: this.config().tnc_base_url,
-      account_service_base_url: this.config().account_service_base_url,
-      leca_service_base_url: this.config().leca_service_base_url,
-      heartbeat_url: this.config().heartbeat_url,
-    };
-    return this.api.call('tn_connect.update', [payload])
+    return this.api.call('tn_connect.update', [{ enabled: false }])
       .pipe(
-        this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
       );
   }
 
-  enableService(config?: TruenasConnectUpdate): Observable<TruenasConnectConfig> {
-    const payload = {
-      ips: this.config().ips,
-      enabled: true,
-      tnc_base_url: this.config().tnc_base_url,
-      account_service_base_url: this.config().account_service_base_url,
-      leca_service_base_url: this.config().leca_service_base_url,
-      heartbeat_url: this.config().heartbeat_url,
-      ...(config || {}),
-    };
-    return this.api.call('tn_connect.update', [{
-      ...payload,
-      enabled: true,
-    }])
+  enableService(): Observable<TruenasConnectConfig> {
+    if (!this.config()) {
+      throw new Error('Truenas Connect config is not available');
+    }
+    return this.api.call('tn_connect.update', [{ enabled: true }])
       .pipe(
-        this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
       );
   }
@@ -89,7 +67,6 @@ export class TruenasConnectService {
             filter((config: TruenasConnectConfig) => config.status === TruenasConnectStatus.Configured),
           );
         }),
-        this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
       );
   }
@@ -97,7 +74,6 @@ export class TruenasConnectService {
   generateToken(): Observable<string> {
     return this.api.call('tn_connect.generate_claim_token')
       .pipe(
-        this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
       );
   }

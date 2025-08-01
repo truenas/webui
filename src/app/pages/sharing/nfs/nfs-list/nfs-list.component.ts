@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -11,12 +9,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
+import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -70,11 +71,24 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TranslateModule,
     AsyncPipe,
     RouterLink,
+    EmptyComponent,
   ],
 })
 export class NfsListComponent implements OnInit {
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private dialog = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
+  private store$ = inject<Store<AppState>>(Store);
+  protected emptyService = inject(EmptyService);
+
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly searchableElements = nfsListElements;
+  protected readonly emptyConfig = nfsCardEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   filterString = '';
   dataProvider: AsyncDataProvider<NfsShare>;
@@ -163,18 +177,6 @@ export class NfsListComponent implements OnInit {
     ariaLabels: (row) => [row.path, this.translate.instant('NFS Share')],
   });
 
-  constructor(
-    private loader: LoaderService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private dialog: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
-    protected emptyService: EmptyService,
-  ) {}
-
   ngOnInit(): void {
     const shares$ = this.api.call('sharing.nfs.query').pipe(
       tap((shares) => this.nfsShares = shares),
@@ -188,7 +190,7 @@ export class NfsListComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 0,
       direction: SortDirection.Asc,
@@ -196,7 +198,7 @@ export class NfsListComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(NfsFormComponent).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -207,7 +209,7 @@ export class NfsListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({
       query,
@@ -216,7 +218,7 @@ export class NfsListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();

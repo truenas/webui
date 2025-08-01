@@ -1,7 +1,5 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   Router, NavigationSkipped,
@@ -48,6 +46,10 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
   ],
 })
 export class AvailableAppsComponent implements OnInit {
+  protected router = inject(Router);
+  protected applicationsStore = inject(AppsStore);
+  protected appsFilterStore = inject(AppsFilterStore);
+
   protected readonly searchableElements = availableAppsElements;
 
   showViewMoreButton$: Observable<boolean> = this.appsFilterStore.filterValues$.pipe(
@@ -68,12 +70,6 @@ export class AvailableAppsComponent implements OnInit {
   isLoading$ = this.applicationsStore.isLoading$;
   isFiltering$ = this.appsFilterStore.isFiltering$;
 
-  constructor(
-    protected router: Router,
-    protected applicationsStore: AppsStore,
-    protected appsFilterStore: AppsFilterStore,
-  ) { }
-
   ngOnInit(): void {
     // For clicking the breadcrumbs link to this page
     this.router.events.pipe(
@@ -86,7 +82,7 @@ export class AvailableAppsComponent implements OnInit {
     });
   }
 
-  trackByAppId(_: number, app: AvailableApp): string {
+  protected trackByAppId(_: number, app: AvailableApp): string {
     return `${app.train}-${app.name}`;
   }
 }

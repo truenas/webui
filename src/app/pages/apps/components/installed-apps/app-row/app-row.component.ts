@@ -67,12 +67,12 @@ export class AppRowComponent {
     return [AppState.Deploying].includes(this.app().state);
   });
 
-  readonly incomingTraffic = computed(() => {
-    return this.stats().networks.reduce((sum, stats) => sum + stats.rx_bytes, 0);
+  readonly incomingTrafficBits = computed(() => {
+    return this.stats().networks.reduce((sum, stats) => sum + this.bytesToBits(stats.rx_bytes), 0);
   });
 
-  readonly outgoingTraffic = computed(() => {
-    return this.stats().networks.reduce((sum, stats) => sum + stats.tx_bytes, 0);
+  readonly outgoingTrafficBits = computed(() => {
+    return this.stats().networks.reduce((sum, stats) => sum + this.bytesToBits(stats.tx_bytes), 0);
   });
 
   toggleAppChecked(): void {
@@ -85,6 +85,13 @@ export class AppRowComponent {
 
   stop(): void {
     this.stopApp.emit();
+  }
+
+  private bytesToBits(bytes: number): number {
+    if (bytes == null) {
+      return 0;
+    }
+    return bytes * 8;
   }
 
   restart(): void {

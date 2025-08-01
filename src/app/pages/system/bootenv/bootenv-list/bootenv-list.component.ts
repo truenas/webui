@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle';
@@ -82,6 +80,16 @@ interface BootEnvironmentUi extends BootEnvironment {
   ],
 })
 export class BootEnvironmentListComponent implements OnInit {
+  private api = inject(ApiService);
+  private matDialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private loader = inject(LoaderService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  protected emptyService = inject(EmptyService);
+
   protected readonly requiredRoles = [Role.BootEnvWrite];
   protected readonly searchableElements = bootListElements;
   protected dataProvider: AsyncDataProvider<BootEnvironmentUi>;
@@ -186,25 +194,13 @@ export class BootEnvironmentListComponent implements OnInit {
     ariaLabels: (row) => [row.id, this.translate.instant('Boot Environment')],
   });
 
-  get selectedBootenvs(): BootEnvironmentUi[] {
+  protected get selectedBootenvs(): BootEnvironmentUi[] {
     return this.bootenvs.filter((bootenv) => bootenv.selected);
   }
 
-  get selectionHasItems(): boolean {
+  protected get selectionHasItems(): boolean {
     return this.selectedBootenvs.some((bootenv) => !bootenv.active && !bootenv.activated);
   }
-
-  constructor(
-    private api: ApiService,
-    private matDialog: MatDialog,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private loader: LoaderService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const request$ = this.api.call('boot.environment.query').pipe(
@@ -224,25 +220,25 @@ export class BootEnvironmentListComponent implements OnInit {
     });
   }
 
-  handleSlideInClosed(slideInRef$: Observable<SlideInResponse<boolean>>): void {
+  protected handleSlideInClosed(slideInRef$: Observable<SlideInResponse<boolean>>): void {
     slideInRef$.pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.refresh());
   }
 
-  openBootenvStats(): void {
+  protected openBootenvStats(): void {
     this.matDialog.open(BootenvStatsDialog);
   }
 
-  doClone(bootenv: BootEnvironment): void {
+  protected doClone(bootenv: BootEnvironment): void {
     const slideInRef$ = this.slideIn.open(BootEnvironmentFormComponent, {
       data: bootenv.id,
     });
     this.handleSlideInClosed(slideInRef$);
   }
 
-  doScrub(): void {
+  protected doScrub(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Scrub'),
       message: this.translate.instant('Start the scrub now?'),
@@ -261,7 +257,7 @@ export class BootEnvironmentListComponent implements OnInit {
     });
   }
 
-  doDelete(bootenvs: BootEnvironmentUi[]): void {
+  protected doDelete(bootenvs: BootEnvironmentUi[]): void {
     bootenvs.forEach((bootenv) => delete bootenv.selected);
     const data = bootenvs.filter((bootenv) => !bootenv.active && !bootenv.activated);
     this.matDialog.open(BootPoolDeleteDialog, { data })
@@ -270,7 +266,7 @@ export class BootEnvironmentListComponent implements OnInit {
       .subscribe(() => this.refresh());
   }
 
-  doActivate(bootenv: BootEnvironmentUi): void {
+  private doActivate(bootenv: BootEnvironmentUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Activate'),
       message: this.translate.instant('Activate this Boot Environment?'),
@@ -287,7 +283,7 @@ export class BootEnvironmentListComponent implements OnInit {
     ).subscribe(() => this.refresh());
   }
 
-  toggleKeep(bootenv: BootEnvironmentUi): void {
+  private toggleKeep(bootenv: BootEnvironmentUi): void {
     if (!bootenv.keep) {
       this.dialogService.confirm({
         title: this.translate.instant('Keep'),

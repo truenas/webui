@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component, input, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -46,6 +43,12 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class FileTicketComponent {
+  private formBuilder = inject(FormBuilder);
+  private feedbackService = inject(FeedbackService);
+  private imageValidator = inject(ImageValidatorService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private api = inject(ApiService);
+
   readonly type = input.required<FeedbackType.Bug | FeedbackType.Suggestion>();
   readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
   readonly isLoading = input.required<boolean>();
@@ -63,25 +66,19 @@ export class FileTicketComponent {
 
   protected OauthButtonType = OauthButtonType;
   protected readonly oauthUrl = 'https://support-proxy.ixsystems.com/oauth/initiate?origin=';
-  protected readonly messagePlaceholder = helptext.bug.message.placeholder;
+  protected readonly messagePlaceholder = helptext.bug.message.label;
   protected readonly acceptedFiles = ticketAcceptedFiles;
 
   protected readonly tooltips = {
     title: helptext.title.placeholder,
-    attach_debug: helptext.attach_debug.tooltip,
+    attach_debug: helptext.attachDebug.tooltip,
   };
 
   private get ticketType(): TicketType {
     return this.type() === FeedbackType.Bug ? TicketType.Bug : TicketType.Suggestion;
   }
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private feedbackService: FeedbackService,
-    private imageValidator: ImageValidatorService,
-    private formErrorHandler: FormErrorHandlerService,
-    private api: ApiService,
-  ) {
+  constructor() {
     this.getSystemFileSizeLimit();
   }
 

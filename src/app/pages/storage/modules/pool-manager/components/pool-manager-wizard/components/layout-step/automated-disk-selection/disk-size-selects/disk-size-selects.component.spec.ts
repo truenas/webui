@@ -18,7 +18,6 @@ describe('DiskSizeSelectsComponent', () => {
   let spectator: Spectator<DiskSizeSelectsComponent>;
   let loader: HarnessLoader;
   let diskSizeSelect: IxSelectHarness;
-  let minimumCheckbox: IxCheckboxHarness;
   const startOver$ = new Subject<void>();
   const resetStep$ = new Subject<void>();
 
@@ -52,7 +51,6 @@ describe('DiskSizeSelectsComponent', () => {
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     diskSizeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Disk Size' }));
-    minimumCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Treat Disk Size as Minimum' }));
 
     jest.spyOn(spectator.component.disksSelected, 'emit');
   });
@@ -86,19 +84,32 @@ describe('DiskSizeSelectsComponent', () => {
     });
   });
 
-  describe('treat disk size as minimum', () => {
-    it('shows Treat disk size as minimum checkbox', () => {
-      expect(minimumCheckbox).toBeTruthy();
+  describe('Treat Disk Size as Minimum', () => {
+    it('does not show Treat Disk Size as Minimum until disk size is selected', async () => {
+      const minimumCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Treat Disk Size as Minimum' }));
+      expect(minimumCheckbox).toBeNull();
+    });
+
+    it('does not show Treat Disk Size as Minimum unless users selects a disk when larger disks are available', async () => {
+      await diskSizeSelect.setValue('20 GiB (HDD)');
+
+      const minimumCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Treat Disk Size as Minimum' }));
+      expect(minimumCheckbox).toBeNull();
+
+      await diskSizeSelect.setValue('10 GiB (HDD)');
+      expect(await loader.getHarness(IxCheckboxHarness.with({ label: 'Treat Disk Size as Minimum' }))).toBeTruthy();
     });
 
     it('updates value in store when Treat as minimum is changed', async () => {
-      await diskSizeSelect.setValue('20 GiB (HDD)');
+      await diskSizeSelect.setValue('10 GiB (HDD)');
+
+      const minimumCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Treat Disk Size as Minimum' }));
       await minimumCheckbox.setValue(true);
 
       expect(spectator.inject(PoolManagerStore).setTopologyCategoryDiskSizes).toHaveBeenLastCalledWith(
         VDevType.Spare,
         {
-          diskSize: 20 * GiB,
+          diskSize: 10 * GiB,
           diskType: DiskType.Hdd,
           treatDiskSizeAsMinimum: true,
         },
@@ -107,6 +118,7 @@ describe('DiskSizeSelectsComponent', () => {
 
     it('emits (disksSelected) when checkbox is ticked', async () => {
       await diskSizeSelect.setValue('10 GiB (HDD)');
+      const minimumCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Treat Disk Size as Minimum' }));
       await minimumCheckbox.setValue(true);
       const expectedDisks = inventoryDisks.filter(
         (disk) => disk.type === DiskType.Hdd && disk.size >= 10 * GiB,
@@ -134,11 +146,14 @@ describe('DiskSizeSelectsComponent', () => {
 
   it('resets to default values when store emits a reset event', async () => {
     await diskSizeSelect.setValue('10 GiB (HDD)');
+    let minimumCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Treat Disk Size as Minimum' }));
     await minimumCheckbox.setValue(true);
 
     startOver$.next();
 
     expect(await diskSizeSelect.getValue()).toBe('');
-    expect(await minimumCheckbox.getValue()).toBe(false);
+
+    minimumCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Treat Disk Size as Minimum' }));
+    expect(minimumCheckbox).toBeNull();
   });
 });

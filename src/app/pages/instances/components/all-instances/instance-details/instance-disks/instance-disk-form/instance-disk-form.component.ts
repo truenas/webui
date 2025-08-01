@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import {
   FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -10,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, Observable, of } from 'rxjs';
+import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import {
   DiskIoBus,
   diskIoBusLabels,
@@ -24,6 +23,9 @@ import {
   VirtualizationVolume,
 } from 'app/interfaces/virtualization.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -64,9 +66,19 @@ interface InstanceDiskFormOptions {
     MatButton,
     IxSelectComponent,
     TestDirective,
+    ExplorerCreateDatasetComponent,
   ],
 })
 export class InstanceDiskFormComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private matDialog = inject(MatDialog);
+  private filesystem = inject(FilesystemService);
+  slideInRef = inject<SlideInRef<InstanceDiskFormOptions, boolean>>(SlideInRef);
+
   private existingDisk = signal<VirtualizationDisk | null>(null);
 
   protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
@@ -79,6 +91,8 @@ export class InstanceDiskFormComponent implements OnInit {
     destination: ['', Validators.required],
     io_bus: [DiskIoBus.Nvme, Validators.required],
   });
+
+  protected readonly slashRootNode = [slashRootNode];
 
   protected isNew = computed(() => !this.existingDisk());
 
@@ -94,16 +108,7 @@ export class InstanceDiskFormComponent implements OnInit {
     return this.instance.type === VirtualizationType.Vm;
   }
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private matDialog: MatDialog,
-    private filesystem: FilesystemService,
-    public slideInRef: SlideInRef<InstanceDiskFormOptions, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -151,7 +156,6 @@ export class InstanceDiskFormComponent implements OnInit {
         complete: () => {
           this.snackbar.success(this.translate.instant('Disk saved'));
           this.slideInRef.close({
-            error: false,
             response: true,
           });
           this.isLoading.set(false);

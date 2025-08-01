@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import {
@@ -72,6 +70,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CsrAddComponent {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly identifierAndType = viewChild.required(CsrIdentifierAndTypeComponent);
 
   // Adding new
@@ -87,13 +91,7 @@ export class CsrAddComponent {
   protected isLoading = signal(false);
   summary: SummarySection[];
 
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(this.identifierAndType()?.form?.dirty));
     });
@@ -103,7 +101,7 @@ export class CsrAddComponent {
     return this.identifierAndType()?.form?.value.create_type === CertificateCreateType.ImportCsr;
   }
 
-  getNewCsrSteps(): [
+  private getNewCsrSteps(): [
     CsrIdentifierAndTypeComponent,
     CsrOptionsComponent?,
     CsrSubjectComponent?,
@@ -112,7 +110,7 @@ export class CsrAddComponent {
     return [this.identifierAndType(), this.options(), this.subject(), this.constraints()];
   }
 
-  getImportCsrSteps(): [
+  private getImportCsrSteps(): [
     CsrIdentifierAndTypeComponent,
     CsrImportComponent?,
   ] {
@@ -153,7 +151,7 @@ export class CsrAddComponent {
         complete: () => {
           this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Certificate signing request created'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

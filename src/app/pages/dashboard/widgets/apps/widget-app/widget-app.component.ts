@@ -1,10 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy, input,
-  computed,
-  effect,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, effect, ChangeDetectorRef, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -44,6 +39,9 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
   ],
 })
 export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
+  private resources = inject(WidgetResourcesService);
+  private cdr = inject(ChangeDetectorRef);
+
   size = input.required<SlotSize>();
   settings = input.required<WidgetAppSettings>();
 
@@ -56,9 +54,4 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
     this.stats$ = this.resources.getAppStats(this.appName());
     this.cdr.markForCheck();
   });
-
-  constructor(
-    private resources: WidgetResourcesService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 }

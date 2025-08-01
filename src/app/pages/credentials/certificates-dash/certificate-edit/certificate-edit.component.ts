@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import {
   FormBuilder, Validators, ReactiveFormsModule, FormGroup, FormControl,
 } from '@angular/forms';
@@ -57,6 +55,13 @@ import {
   ],
 })
 export class CertificateEditComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(FormErrorHandlerService);
+  private matDialog = inject(MatDialog);
+  slideInRef = inject<SlideInRef<Certificate, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.CertificateWrite];
 
   isLoading = false;
@@ -74,14 +79,7 @@ export class CertificateEditComponent implements OnInit {
 
   readonly helptext = helptextSystemCertificates;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
-    private matDialog: MatDialog,
-    public slideInRef: SlideInRef<Certificate, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -97,12 +95,12 @@ export class CertificateEditComponent implements OnInit {
     this.setRenewDaysForEditIfAvailable();
   }
 
-  setCertificate(): void {
+  private setCertificate(): void {
     this.form.patchValue(this.certificate);
     this.cdr.markForCheck();
   }
 
-  setRenewDaysForEditIfAvailable(): void {
+  private setRenewDaysForEditIfAvailable(): void {
     if (this.certificate?.acme) {
       this.form.addControl('renew_days', new FormControl(this.certificate?.renew_days || null));
     }
@@ -129,10 +127,7 @@ export class CertificateEditComponent implements OnInit {
   }
 
   onCreateAcmePressed(): void {
-    this.slideInRef.swap?.(
-      CertificateAcmeAddComponent,
-      { data: this.certificate },
-    );
+    this.slideInRef.swap?.(CertificateAcmeAddComponent);
   }
 
   onSubmit(): void {
@@ -150,7 +145,7 @@ export class CertificateEditComponent implements OnInit {
         complete: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading = false;

@@ -23,6 +23,7 @@ $violet: #c17ecc;
 $blue: #0d5788;
 $cyan: #00d0d6;
 $green: #1f9642;
+$grey: #989898;
 
 // Generated txt colors
 $yellow-txt: #333;
@@ -37,7 +38,7 @@ $primary-txt: #fff;
 $accent-txt: #333;
 
 $primary: $blue;
-$accent: $yellow;
+$accent: $grey;
 $warn: $red;
 
 $md-primary: (
@@ -74,20 +75,20 @@ $md-primary: (
 );
 
 $md-accent: (
-  50 : #fff8e1,
-  100 : #ffecb5,
-  200 : #ffe083,
-  300 : #ffd451,
-  400 : #ffca2c,
-  500 : #ffc107,
-  600 : #ffbb06,
-  700 : #ffb305,
-  800 : #ffab04,
-  900 : #ff9e02,
-  A100 : #fff,
-  A200 : #fffaf2,
-  A400 : #ffe4bf,
-  A700 : #ffd9a6,
+  50 : #f5f5f5,
+  100 : #e0e0e0,
+  200 : #c2c2c2,
+  300 : #a3a3a3,
+  400 : #8c8c8c,
+  500 : $grey,
+  600 : #7a7a7a,
+  700 : #6b6b6b,
+  800 : #5c5c5c,
+  900 : #404040,
+  A100 : #e0e0e0,
+  A200 : #c2c2c2,
+  A400 : #8c8c8c,
+  A700 : #6b6b6b,
   contrast: (
     50 : #000,
     100 : #000,
@@ -95,14 +96,14 @@ $md-accent: (
     300 : #000,
     400 : #000,
     500 : #000,
-    600 : #000,
-    700 : #000,
-    800 : #000,
-    900 : #000,
+    600 : #fff,
+    700 : #fff,
+    800 : #fff,
+    900 : #fff,
     A100 : #000,
     A200 : #000,
     A400 : #000,
-    A700 : #000,
+    A700 : #fff,
   )
 );
 

@@ -1,19 +1,8 @@
-import {
-  Component,
-  AfterViewInit,
-  OnDestroy,
-  OnChanges,
-  ElementRef,
-  ChangeDetectionStrategy,
-  output,
-  input,
-  viewChild,
-  Signal,
-} from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, OnChanges, ElementRef, ChangeDetectionStrategy, output, input, viewChild, Signal, inject } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
-import { UUID } from 'angular2-uuid';
-import { utcToZonedTime } from 'date-fns-tz';
+import { toZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
+import { v4 as uuidv4 } from 'uuid';
 import { Gb, kb, Mb } from 'app/constants/bits.constant';
 import {
   GiB, KiB, MiB, TiB,
@@ -43,6 +32,10 @@ interface Conversion {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
+  themeService = inject(ThemeService);
+  private reportsService = inject(ReportsService);
+  private plotterService = inject(PlotterService);
+
   readonly chartId = input<string>();
   readonly chartColors = input<string[]>([]);
   readonly data = input<ReportingData>();
@@ -63,21 +56,15 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   theme: Theme;
   timeFormat = '%H:%M';
-  controlUid = `chart_${UUID.UUID()}`;
+  controlUid = `chart_${uuidv4()}`;
 
   readonly zoomChange = output<number[]>();
-
-  constructor(
-    public themeService: ThemeService,
-    private reportsService: ReportsService,
-    private plotterService: PlotterService,
-  ) {}
 
   render(update?: boolean): void {
     this.renderGraph(update);
   }
 
-  renderGraph(update?: boolean): void {
+  private renderGraph(update?: boolean): void {
     if (!this.data()?.legend?.length) {
       return;
     }
@@ -121,12 +108,12 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   // TODO: Line chart should be dumber and should not care about timezones.
-  protected makeTimeAxis(rd: ReportingData): dygraphs.DataArray {
+  private makeTimeAxis(rd: ReportingData): dygraphs.DataArray {
     const rowData = rd.data as number[][];
 
     const newRows = rowData.map((row, index) => {
       // replace unix timestamp in first column with date
-      const convertedDate = utcToZonedTime(row[0] * 1000, this.timezone());
+      const convertedDate = toZonedTime(row[0] * 1000, this.timezone());
 
       if (index === 0) {
         this.lastMinDate = convertedDate.getTime();
@@ -144,7 +131,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     ] as dygraphs.DataArray;
   }
 
-  inferUnits(label: string): string {
+  private inferUnits(label: string): string {
     // Figures out from the label what the unit is
     let units = label;
     switch (true) {
@@ -178,7 +165,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     return units;
   }
 
-  formatAxisName(): string {
+  private formatAxisName(): string {
     if (this.report().name === ReportingGraphName.NetworkInterface) {
       return this.yLabelPrefix + '/s';
     }
@@ -198,7 +185,13 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
   }
 
-  formatLabelValue(value: number, units: string, fixed?: number, prefixRules?: boolean, axis = false): Conversion {
+  private formatLabelValue(
+    value: number,
+    units: string,
+    fixed?: number,
+    prefixRules?: boolean,
+    axis = false,
+  ): Conversion {
     const day = 60 * 60 * 24;
     if (!fixed) {
       fixed = -1;
@@ -248,7 +241,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
   }
 
-  convertByKilo(value: number): Conversion {
+  private convertByKilo(value: number): Conversion {
     if (typeof value !== 'number') {
       return value;
     }
@@ -267,7 +260,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     return { value: newValue, suffix };
   }
 
-  limitDecimals(numero: number): string | number {
+  private limitDecimals(numero: number): string | number {
     if (numero < 1024) {
       return Number(numero.toString().slice(0, 4));
     }
@@ -384,7 +377,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.zoomChange.emit([startDate, endDate]);
   };
 
-  getValueForAxis(value: number, prefix: string | undefined): number {
+  private getValueForAxis(value: number, prefix: string | undefined): number {
     if (prefix === 'Tebi') return value / 1000 ** 4;
     if (prefix === 'Gibi') return value / 1000 ** 3;
     if (prefix === 'Mebi') return value / 1000 ** 2;
@@ -392,7 +385,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     return value;
   }
 
-  convertKmgt(value: number, units: string, fixed?: number, prefixRules?: boolean): Conversion {
+  private convertKmgt(value: number, units: string, fixed?: number, prefixRules?: boolean): Conversion {
     let prefix = '';
     let newValue: number = value;
     let shortName = '';

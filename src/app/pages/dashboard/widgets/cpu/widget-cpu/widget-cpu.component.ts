@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -46,6 +44,10 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class WidgetCpuComponent {
+  private store$ = inject<Store<AppState>>(Store);
+  private resources = inject(WidgetResourcesService);
+  private translate = inject(TranslateService);
+
   size = input.required<SlotSize>();
   protected readonly name = cpuWidget.name;
 
@@ -100,12 +102,6 @@ export class WidgetCpuComponent {
     return this.translate.instant('N/A');
   });
 
-  constructor(
-    private store$: Store<AppState>,
-    private resources: WidgetResourcesService,
-    private translate: TranslateService,
-  ) {}
-
   protected parseCpuData(cpuData: AllCpusUpdate): GaugeData[] {
     const usageColumn: GaugeData = ['Usage'];
     const tempColumn: GaugeData = ['Temperature'];
@@ -124,7 +120,7 @@ export class WidgetCpuComponent {
     return columns;
   }
 
-  protected getCpuParams(): CpuParams {
+  private getCpuParams(): CpuParams {
     const data = this.parseCpuData(this.cpuData());
     const usage = data[0].slice(1) as number[];
     const temps = data[1].slice(1) as number[];

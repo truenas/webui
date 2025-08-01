@@ -14,13 +14,14 @@ export interface TruenasConnectConfig extends TruenasConnectUpdate {
   status: TruenasConnectStatus;
   status_reason: string;
   certificate: number;
-}
-
-export interface TruenasConnectUpdate {
-  enabled: boolean;
+  interfaces_ips: string[];
   ips: string[];
   tnc_base_url: string;
   account_service_base_url: string;
   leca_service_base_url: string;
   heartbeat_url: string;
+}
+
+export interface TruenasConnectUpdate {
+  enabled: boolean;
 }

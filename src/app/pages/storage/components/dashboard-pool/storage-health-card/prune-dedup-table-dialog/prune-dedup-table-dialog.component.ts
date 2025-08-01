@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -53,22 +53,20 @@ export const pruneByLabels = new Map<PruneBy, string>([
   ],
 })
 export class PruneDedupTableDialog {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private dialog = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogRef = inject<MatDialogRef<PruneDedupTableDialog>>(MatDialogRef);
+  protected pool = inject<Pool>(MAT_DIALOG_DATA);
+
   protected form = this.formBuilder.group({
     pruneBy: [PruneBy.Percentage],
     percentage: [null as number | null, [Validators.min(1), Validators.max(100)]],
     days: [null as number | null],
   });
-
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private api: ApiService,
-    private dialog: DialogService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<PruneDedupTableDialog>,
-    @Inject(MAT_DIALOG_DATA) protected pool: Pool,
-  ) {}
 
   protected readonly pruneByOptions$ = of(mapToOptions(pruneByLabels, this.translate));
 
@@ -100,7 +98,7 @@ export class PruneDedupTableDialog {
       });
   }
 
-  formatSliderAsPercentage(value: number): string {
+  protected formatSliderAsPercentage(value: number): string {
     return `${value}%`;
   }
 }

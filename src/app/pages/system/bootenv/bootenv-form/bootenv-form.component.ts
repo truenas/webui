@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -46,6 +41,11 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class BootEnvironmentFormComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(FormErrorHandlerService);
+  slideInRef = inject<SlideInRef<string, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.BootEnvWrite];
   protected formGroup = this.formBuilder.group({
     source: ['', [Validators.required]],
@@ -60,12 +60,7 @@ export class BootEnvironmentFormComponent implements OnInit {
     source: helptextSystemBootenv.cloneSourceTooltip,
   };
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private errorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<string, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.formGroup.dirty);
     });
@@ -77,7 +72,7 @@ export class BootEnvironmentFormComponent implements OnInit {
     this.formGroup.controls.source.disable();
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
     const cloneParams: BootenvCloneParams = [{
       id: String(this.currentName),
@@ -87,7 +82,7 @@ export class BootEnvironmentFormComponent implements OnInit {
     this.api.call('boot.environment.clone', cloneParams).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

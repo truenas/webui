@@ -1,0 +1,60 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Associated Hosts' | translate }}</h3>
+
+    <ix-add-host-menu
+      [hosts]="subsystem().hosts"
+      [showAllowAnyHost]="!subsystem().allow_any_host"
+      [ixUiSearch]="searchableElements.elements.addHost"
+      (hostSelected)="hostAdded($event)"
+      (allowAllHostsSelected)="allowAllHostsSelected()"
+    ></ix-add-host-menu>
+  </mat-card-header>
+  <mat-card-content>
+    @if (subsystem().allow_any_host && !subsystem().hosts.length) {
+      {{ 'All hosts are allowed.' | translate }}
+    } @else if (!subsystem().hosts?.length) {
+      <div class="no-hosts-warning">
+        <ix-icon
+          name="mdi-alert"
+          class="icon"
+        ></ix-icon>
+
+        <div>
+          {{ helptext.noHostsWarning | translate }}
+        </div>
+      </div>
+    } @else {
+      <ul class="host-list">
+        @for (host of subsystem().hosts; track host.id) {
+          <li>
+            <span class="host">
+              <span class="host-description">
+                {{ host.hostnqn }}
+
+                @if (host.dhchap_key) {
+                  <ix-icon
+                    name="mdi-key"
+                    class="key-icon"
+                    [matTooltip]="helptext.hasHostAuthentication | translate"
+                  ></ix-icon>
+                }
+              </span>
+
+              <span class="host-actions">
+                <button
+                  mat-icon-button
+                  [ixTest]="['remove-host-association', host.hostnqn]"
+                  [matTooltip]="'Remove host from the subsystem' | translate"
+                  (click)="removeAssociation(host)"
+                >
+                  <ix-icon class="icon" name="mdi-link-variant-off"></ix-icon>
+                </button>
+              </span>
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  </mat-card-content>
+</mat-card>

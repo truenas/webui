@@ -1,8 +1,5 @@
 import { NgTemplateOutlet, AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -53,6 +50,11 @@ import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/n
   ],
 })
 export class NfsSessionListComponent implements OnInit {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  protected emptyService = inject(EmptyService);
+
   protected readonly activeNfsType = signal<NfsType>(NfsType.Nfs3);
   protected readonly searchableElements = nfsSessionListElements;
 
@@ -150,13 +152,6 @@ export class NfsSessionListComponent implements OnInit {
   );
 
   nfs4DataProvider = new AsyncDataProvider<Nfs4Session['info']>(this.nfs4ProviderRequest$);
-
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     this.loadData();

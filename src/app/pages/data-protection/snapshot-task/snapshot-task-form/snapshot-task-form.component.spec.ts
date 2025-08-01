@@ -49,7 +49,7 @@ describe('SnapshotTaskComponent', () => {
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   let spectator: Spectator<SnapshotTaskFormComponent>;
@@ -70,9 +70,7 @@ describe('SnapshotTaskComponent', () => {
         mockCall('pool.snapshottask.update'),
       ]),
       mockProvider(DialogService),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(StorageService, {
         getDatasetNameOptions: jest.fn(() => of([
           { label: 'test', value: 'test' },

@@ -9,6 +9,9 @@ import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AclType } from 'app/enums/acl-type.enum';
+import { OnOff } from 'app/enums/on-off.enum';
+import { YesNo } from 'app/enums/yes-no.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Acl, NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
@@ -40,7 +43,19 @@ describe('PermissionsCardComponent', () => {
     id: 'testpool/dataset',
     name: 'testpool/dataset',
     mountpoint: '/mnt/testpool/dataset',
+    mounted: {
+      parsed: true,
+      rawvalue: 'yes',
+      value: YesNo.Yes,
+      source: ZfsPropertySource.Local,
+    },
     pool: 'testpool',
+    readonly: {
+      parsed: false,
+      rawvalue: 'off',
+      value: OnOff.Off,
+      source: ZfsPropertySource.Local,
+    },
   } as DatasetDetails;
 
   let spectator: Spectator<PermissionsCardComponent>;
@@ -125,6 +140,37 @@ describe('PermissionsCardComponent', () => {
     expect(spectator.fixture.nativeElement).toHaveText('Dataset is locked');
   });
 
+  it('does not load permissions for unmounted datasets', () => {
+    jest.resetAllMocks();
+
+    spectator.setInput('dataset', {
+      ...dataset,
+      mounted: {
+        parsed: false,
+        rawvalue: 'no',
+        value: YesNo.No,
+        source: ZfsPropertySource.Local,
+      },
+    });
+
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('filesystem.getacl', expect.anything());
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('filesystem.stat', expect.anything());
+    expect(spectator.fixture.nativeElement).toHaveText('Dataset is not mounted');
+  });
+
+  it('does not load permissions for datasets without mountpoint', () => {
+    jest.resetAllMocks();
+
+    spectator.setInput('dataset', {
+      ...dataset,
+      mountpoint: null,
+    });
+
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('filesystem.getacl', expect.anything());
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('filesystem.stat', expect.anything());
+    expect(spectator.fixture.nativeElement).toHaveText('Dataset has no mountpoint');
+  });
+
   it('shows nfs permissions when acltype is NFS', fakeAsync(() => {
     const acl = {
       trivial: false,
@@ -176,7 +222,12 @@ describe('PermissionsCardComponent', () => {
     it('does not show edit button when dataset is readonly', async () => {
       spectator.setInput('dataset', {
         ...dataset,
-        readonly: true,
+        readonly: {
+          parsed: true,
+          rawvalue: 'on',
+          value: OnOff.On,
+          source: ZfsPropertySource.Local,
+        },
       } as DatasetDetails);
 
       const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));

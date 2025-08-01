@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  OnInit, signal,
-  viewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal, viewChild, inject } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -69,6 +63,19 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   ],
 })
 export class DatasetFormComponent implements OnInit, AfterViewInit {
+  private api = inject(ApiService);
+  private dialog = inject(DialogService);
+  private datasetFormService = inject(DatasetFormService);
+  private router = inject(Router);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+  slideInRef = inject<SlideInRef<{
+    datasetId: string;
+    isNew?: boolean;
+  }, Dataset>>(SlideInRef);
+
   private nameAndOptionsSection = viewChild.required(NameAndOptionsSectionComponent);
   private encryptionSection = viewChild(EncryptionSectionComponent);
   private quotasSection = viewChild(QuotasSectionComponent);
@@ -130,17 +137,9 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     ];
   }
 
-  constructor(
-    private api: ApiService,
-    private dialog: DialogService,
-    private datasetFormService: DatasetFormService,
-    private router: Router,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private store$: Store<AppState>,
-    public slideInRef: SlideInRef<{ datasetId: string; isNew?: boolean }, Dataset>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(
         this.form.dirty
@@ -170,11 +169,16 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       });
   }
 
-  setForNew(): void {
+  private setForNew(): void {
     this.isLoading.set(true);
 
     this.datasetFormService.checkAndWarnForLengthAndDepth(this.slideInData.datasetId).pipe(
-      filter(Boolean),
+      filter((isValidLengthAndDepth) => {
+        if (!isValidLengthAndDepth) {
+          this.slideInRef.close(undefined);
+        }
+        return isValidLengthAndDepth;
+      }),
       switchMap(() => this.datasetFormService.loadDataset(this.slideInData.datasetId)),
       untilDestroyed(this),
     ).subscribe({
@@ -214,15 +218,15 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     });
   }
 
-  toggleAdvancedMode(): void {
+  protected toggleAdvancedMode(): void {
     this.isAdvancedMode = !this.isAdvancedMode;
   }
 
-  onSwitchToAdvanced(): void {
+  protected onSwitchToAdvanced(): void {
     this.isAdvancedMode = true;
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     const payload = this.preparePayload();
@@ -249,7 +253,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
         }
         this.isLoading.set(false);
-        this.slideInRef.close({ response: createdDataset, error: null });
+        this.slideInRef.close({ response: createdDataset });
         if (shouldGoToEditor) {
           this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
             queryParams: { path: createdDataset.mountpoint },

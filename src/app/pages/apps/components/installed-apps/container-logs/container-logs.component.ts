@@ -1,11 +1,8 @@
-import { Location } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, ElementRef, OnInit, signal, Signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, signal, Signal, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -39,26 +36,26 @@ import { ShellService } from 'app/services/shell.service';
   ],
 })
 export class ContainerLogsComponent implements OnInit {
+  private api = inject(ApiService);
+  protected aroute = inject(ActivatedRoute);
+  protected loader = inject(LoaderService);
+  protected download = inject(DownloadService);
+  private errorHandler = inject(ErrorHandlerService);
+  private matDialog = inject(MatDialog);
+  private router = inject(Router);
+
   private logContainer: Signal<ElementRef<HTMLElement>> = viewChild.required('logContainer', { read: ElementRef });
 
-  fontSize = 14;
-  appName: string;
-  containerId: string;
+  protected fontSize = signal(14);
   protected isLoading = signal(false);
-  defaultTailLines = 500;
 
+  protected train: string;
+  protected appName: string;
+  protected containerId: string;
+  protected logs = signal<AppContainerLog[]>([]);
+
+  private defaultTailLines = 500;
   private logsChangedListener: Subscription;
-  logs: AppContainerLog[] = [];
-
-  constructor(
-    private api: ApiService,
-    protected aroute: ActivatedRoute,
-    protected loader: LoaderService,
-    protected download: DownloadService,
-    private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
-    private location: Location,
-  ) {}
 
   ngOnInit(): void {
     if (!this.aroute.parent) {
@@ -69,6 +66,7 @@ export class ContainerLogsComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(([params, parentParams]) => {
       this.appName = parentParams.appId as string;
+      this.train = parentParams.train as string;
       this.containerId = params.containerId as string;
 
       this.reconnect();
@@ -84,11 +82,11 @@ export class ContainerLogsComponent implements OnInit {
     this.logsChangedListener = this.matDialog.open(LogsDetailsDialog, { width: '400px' }).afterClosed().pipe(
       tap((value: LogsDetailsDialog['form']['value'] | boolean) => {
         if (typeof value === 'boolean' && !value) {
-          this.location.back();
+          this.router.navigate(['/apps/installed/', this.train, this.appName]);
           return;
         }
 
-        this.logs = [];
+        this.logs.set([]);
         this.isLoading.set(true);
       }),
       switchMap((details: LogsDetailsDialog['form']['value']) => {
@@ -105,7 +103,7 @@ export class ContainerLogsComponent implements OnInit {
         this.isLoading.set(false);
 
         if (log && log.msg !== 'nosub') {
-          this.logs.push(log);
+          this.logs.set([...this.logs(), log]);
           this.scrollToBottom();
         }
       },
@@ -119,12 +117,12 @@ export class ContainerLogsComponent implements OnInit {
   scrollToBottom(): void {
     try {
       this.logContainer().nativeElement.scrollTop = this.logContainer().nativeElement.scrollHeight;
-    } catch (_: unknown) {
+    } catch {
       // Ignore error
     }
   }
 
   onFontSizeChanged(newSize: number): void {
-    this.fontSize = newSize;
+    this.fontSize.set(newSize);
   }
 }

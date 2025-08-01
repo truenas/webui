@@ -1,7 +1,5 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -77,6 +75,14 @@ export interface BootPoolActionEvent {
   ],
 })
 export class BootStatusListComponent implements OnInit {
+  private router = inject(Router);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private matDialog = inject(MatDialog);
+  private loader = inject(LoaderService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+
   protected readonly searchableElements = bootEnvStatusElements;
 
   protected isLoading = signal(false);
@@ -97,21 +103,11 @@ export class BootStatusListComponent implements OnInit {
     return this.poolInstance.topology.data[0].type === TopologyItemType.Disk;
   }
 
-  constructor(
-    private router: Router,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
-    private loader: LoaderService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-  ) {}
-
   ngOnInit(): void {
     this.loadPoolInstance();
   }
 
-  loadPoolInstance(): void {
+  private loadPoolInstance(): void {
     this.api.call('boot.get_state').pipe(
       tap(() => this.isLoading.set(true)),
       untilDestroyed(this),

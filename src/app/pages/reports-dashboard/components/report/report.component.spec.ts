@@ -1,7 +1,6 @@
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { UUID } from 'angular2-uuid';
-import { format } from 'date-fns-tz';
+import { format } from 'date-fns';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -54,13 +53,15 @@ describe('ReportComponent', () => {
   });
 
   it('shows legend values only for the target report', () => {
-    jest.spyOn(UUID, 'UUID').mockReturnValue('uuid-selected-report');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    jest.spyOn(require('uuid'), 'v4').mockReturnValue('uuid-selected-report');
     spectator = createComponent();
     expect(spectator.component.shouldShowLegendValue).toBeTruthy();
   });
 
   it('hides legend values for other reports', () => {
-    jest.spyOn(UUID, 'UUID').mockReturnValue('uuid-another-report');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    jest.spyOn(require('uuid'), 'v4').mockReturnValue('uuid-another-report');
     spectator = createComponent();
     expect(spectator.component.shouldShowLegendValue).toBeFalsy();
   });

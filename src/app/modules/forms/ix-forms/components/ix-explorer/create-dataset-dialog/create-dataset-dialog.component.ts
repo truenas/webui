@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, OnInit,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
 import { Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -48,6 +46,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CreateDatasetDialog implements OnInit {
+  private fb = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogRef = inject<MatDialogRef<CreateDatasetDialog>>(MatDialogRef);
+  private data = inject<{
+    parentId: string;
+    dataset: DatasetCreate;
+  }>(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   isLoading$ = new BehaviorSubject(false);
@@ -59,15 +67,6 @@ export class CreateDatasetDialog implements OnInit {
   });
 
   parent: Dataset;
-
-  constructor(
-    private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<CreateDatasetDialog>,
-    @Inject(MAT_DIALOG_DATA) private data: { parentId: string; dataset: DatasetCreate },
-  ) {}
 
   ngOnInit(): void {
     this.loadParentDataset();
@@ -96,7 +95,7 @@ export class CreateDatasetDialog implements OnInit {
       });
   }
 
-  loadParentDataset(): void {
+  private loadParentDataset(): void {
     this.isLoading$.next(true);
     const normalizedParentId = this.data.parentId.replace(/\/$/, '');
     this.api.call('pool.dataset.query', [[['id', '=', normalizedParentId]]]).pipe(

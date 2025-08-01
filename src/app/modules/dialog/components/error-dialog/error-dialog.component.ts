@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, signal, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MAT_DIALOG_DATA,
@@ -36,15 +34,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ErrorDialog {
-  protected isStackTraceOpen = signal(false);
+  protected dialogRef = inject<MatDialogRef<ErrorDialog>>(MatDialogRef);
+  private api = inject(ApiService);
+  private download = inject(DownloadService);
+  private errorHandler = inject(ErrorHandlerService);
+  protected error = inject<ErrorReport>(MAT_DIALOG_DATA);
 
-  constructor(
-    protected dialogRef: MatDialogRef<ErrorDialog>,
-    private api: ApiService,
-    private download: DownloadService,
-    private errorHandler: ErrorHandlerService,
-    @Inject(MAT_DIALOG_DATA) protected error: ErrorReport,
-  ) {}
+  protected isStackTraceOpen = signal(false);
 
   protected toggleStackTrace(): void {
     this.isStackTraceOpen.set(!this.isStackTraceOpen());

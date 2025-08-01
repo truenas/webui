@@ -1,0 +1,10 @@
+:host {
+  align-items: baseline;
+  display: flex;
+  justify-content: space-between;
+
+  .detail-actions {
+    display: flex;
+    gap: 8px;
+  }
+}

@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -43,6 +40,15 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class DeleteTargetDialog implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(FormBuilder);
+  private dialogRef = inject<MatDialogRef<DeleteTargetDialog>>(MatDialogRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private iscsiService = inject(IscsiService);
+  private translate = inject(TranslateService);
+  target = inject<IscsiTarget>(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.SharingIscsiTargetWrite];
 
   readonly targetExtents = signal<IscsiTargetExtent[]>([]);
@@ -52,17 +58,6 @@ export class DeleteTargetDialog implements OnInit {
     delete_extents: [false],
     force: [false],
   });
-
-  constructor(
-    private api: ApiService,
-    private formBuilder: FormBuilder,
-    private dialogRef: MatDialogRef<DeleteTargetDialog>,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private iscsiService: IscsiService,
-    private translate: TranslateService,
-    @Inject(MAT_DIALOG_DATA) public target: IscsiTarget,
-  ) { }
 
   ngOnInit(): void {
     this.getTargetExtents();

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { isEqual } from 'lodash';
@@ -17,6 +17,7 @@ import {
   preferencesLoaded, preferredColumnsUpdated,
   shownNewIndicatorKeysUpdated,
   themeNotFound,
+  terminalFontSizeUpdated,
   updateRebootAfterManualUpdate,
 } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -27,6 +28,11 @@ import {
 
 @Injectable()
 export class PreferencesEffects {
+  private actions$ = inject(Actions);
+  private api = inject(ApiService);
+  private store$ = inject<Store<AppState>>(Store);
+  private authService = inject(AuthService);
+
   loadPreferences$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
@@ -68,6 +74,7 @@ export class PreferencesEffects {
       builtinGroupsToggled,
       localizationFormSubmitted,
       lifetimeTokenUpdated,
+      terminalFontSizeUpdated,
       guiFormSubmitted,
       updateRebootAfterManualUpdate,
       autoRefreshReportsToggled,
@@ -78,11 +85,4 @@ export class PreferencesEffects {
       return this.api.call('auth.set_attribute', ['preferences', newPrefs]);
     }),
   ), { dispatch: false });
-
-  constructor(
-    private actions$: Actions,
-    private api: ApiService,
-    private store$: Store<AppState>,
-    private authService: AuthService,
-  ) {}
 }

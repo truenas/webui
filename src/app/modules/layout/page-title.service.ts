@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
@@ -10,13 +10,13 @@ import { RoutePartsService } from 'app/services/route-parts/route-parts.service'
   providedIn: 'root',
 })
 export class PageTitleService {
+  private router = inject(Router);
+  private routePartsService = inject(RoutePartsService);
+
   title$ = new BehaviorSubject('');
   hasNewIndicator$ = new BehaviorSubject(false);
 
-  constructor(
-    private router: Router,
-    private routePartsService: RoutePartsService,
-  ) {
+  constructor() {
     this.observeRouteChanges();
   }
 

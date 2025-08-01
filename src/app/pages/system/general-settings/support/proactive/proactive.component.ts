@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -51,6 +45,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ProactiveComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private dialogService = inject(DialogService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SupportWrite];
 
   protected isLoading = signal(false);
@@ -70,17 +74,7 @@ export class ProactiveComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
-    private formErrorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -90,7 +84,7 @@ export class ProactiveComponent implements OnInit {
     this.loadConfig();
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value as SupportConfigUpdate;
     this.isLoading.set(true);
 
@@ -99,10 +93,10 @@ export class ProactiveComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
 
           this.snackbar.success(
-            this.translate.instant(helptext.proactive.dialog_message),
+            this.translate.instant(helptext.proactive.dialogMessage),
           );
         },
         error: (error: unknown) => {
@@ -142,16 +136,16 @@ export class ProactiveComponent implements OnInit {
       });
   }
 
-  supportUnavailable(): void {
+  private supportUnavailable(): void {
     this.isFormDisabled = true;
     this.form.disable();
     this.dialogService.warn(
-      helptext.proactive.dialog_unavailable_title,
-      helptext.proactive.dialog_unavailable_warning,
+      helptext.proactive.dialogUnavailableTitle,
+      helptext.proactive.dialogUnavailableWarning,
     );
   }
 
-  patchFormValues(config: Partial<SupportConfig>, isEnabled: boolean): void {
+  private patchFormValues(config: Partial<SupportConfig>, isEnabled: boolean): void {
     const updateValues: Partial<SupportConfig> = {};
 
     Object.keys(config).forEach((key: keyof SupportConfig) => {

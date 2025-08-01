@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -48,6 +44,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CustomAppFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private appService = inject(ApplicationsService);
+  slideInRef = inject<SlideInRef<App | undefined, boolean>>(SlideInRef);
+  private router = inject(Router);
+
   protected requiredRoles = [Role.AppsWrite];
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
   protected form = this.fb.group({
@@ -55,7 +60,7 @@ export class CustomAppFormComponent implements OnInit {
     custom_compose_config_string: ['\n\n', Validators.required],
   });
 
-  get isNew(): boolean {
+  protected get isNew(): boolean {
     return !this.existingApp;
   }
 
@@ -64,16 +69,7 @@ export class CustomAppFormComponent implements OnInit {
   protected isLoading = signal(false);
   protected forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
 
-  constructor(
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private appService: ApplicationsService,
-    public slideInRef: SlideInRef<App | undefined, boolean>,
-    private router: Router,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -102,7 +98,7 @@ export class CustomAppFormComponent implements OnInit {
     });
   }
 
-  protected addForbiddenAppNamesValidator(): void {
+  private addForbiddenAppNamesValidator(): void {
     this.form.controls.release_name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenAppNames$));
     this.form.controls.release_name.updateValueAndValidity();
   }
@@ -140,7 +136,7 @@ export class CustomAppFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
         if (this.existingApp) {
           this.router.navigate(['/apps', 'installed', this.existingApp.metadata.train, this.existingApp.name]);
         } else {

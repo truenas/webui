@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, OperatorFunction, filter, map, pipe,
@@ -11,7 +11,7 @@ import {
   App, AppStartQueryParams, AppUpgradeParams,
 } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
-import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
+import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -29,11 +29,10 @@ export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableA
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
-  ) {}
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private window = inject<Window>(WINDOW);
+
 
   checkIfAppIxVolumeExists(appName: string): Observable<boolean> {
     return this.api.call('app.ix_volume.exists', [appName]);
@@ -155,7 +154,9 @@ export class ApplicationsService {
       );
     }
 
-    const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
+    const secondOption = filters.sort && filters.sort !== AppsFiltersSort.PopularityRank
+      ? { order_by: [filters.sort] }
+      : {};
 
     return this.api.call(endPoint, [firstOption, secondOption]).pipe(filterIgnoredApps());
   }

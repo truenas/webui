@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -23,6 +20,9 @@ import { IscsiExtent, IscsiExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -60,9 +60,19 @@ import { IscsiService } from 'app/services/iscsi.service';
     TestDirective,
     TranslateModule,
     TranslateOptionsPipe,
+    ExplorerCreateDatasetComponent,
   ],
 })
 export class ExtentFormComponent implements OnInit {
+  protected iscsiService = inject(IscsiService);
+  protected formatter = inject(IxFormatterService);
+  private translate = inject(TranslateService);
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private api = inject(ApiService);
+  private filesystemService = inject(FilesystemService);
+  slideInRef = inject<SlideInRef<IscsiExtent | undefined, boolean>>(SlideInRef);
+
   get isNew(): boolean {
     return !this.editingExtent;
   }
@@ -90,6 +100,7 @@ export class ExtentFormComponent implements OnInit {
     path: [mntPath],
     filesize: new FormControl(null as number | null),
     serial: [''],
+    product_id: [''],
     blocksize: [512],
     pblocksize: [false],
     avail_threshold: new FormControl(null as number | null, [Validators.min(1), Validators.max(99)]),
@@ -131,16 +142,7 @@ export class ExtentFormComponent implements OnInit {
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
-  constructor(
-    protected iscsiService: IscsiService,
-    protected formatter: IxFormatterService,
-    private translate: TranslateService,
-    private formBuilder: FormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private api: ApiService,
-    private filesystemService: FilesystemService,
-    public slideInRef: SlideInRef<IscsiExtent | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -166,7 +168,7 @@ export class ExtentFormComponent implements OnInit {
     }
   }
 
-  setExtentForEdit(extent: IscsiExtent): void {
+  private setExtentForEdit(extent: IscsiExtent): void {
     this.form.patchValue(extent);
 
     if (extent.type === IscsiExtentType.Disk) {
@@ -174,7 +176,7 @@ export class ExtentFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = {
       ...this.form.value,
     } as IscsiExtentUpdate;
@@ -185,6 +187,10 @@ export class ExtentFormComponent implements OnInit {
 
     if (values.type === IscsiExtentType.File && Number(values.filesize) !== 0) {
       values.filesize = Number(values.filesize) + (values.blocksize - Number(values.filesize) % values.blocksize);
+    }
+
+    if (values.product_id === '') {
+      values.product_id = null;
     }
 
     this.isLoading.set(true);
@@ -201,7 +207,7 @@ export class ExtentFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

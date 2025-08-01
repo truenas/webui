@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -13,14 +11,14 @@ import {
 } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
 import { Role } from 'app/enums/role.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
-import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -67,10 +65,22 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class ServiceNfsComponent implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private fb = inject(NonNullableFormBuilder);
+  private store$ = inject<Store<AppState>>(Store);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  private matDialog = inject(MatDialog);
+  private validatorsService = inject(IxValidatorsService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly isFormLoading = signal(false);
   protected readonly isAddSpnDisabled = signal(true);
   protected readonly hasNfsStatus = signal(false);
-  protected activeDirectoryState = signal<DirectoryServiceState | null>(null);
+  protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
 
   protected form = this.fb.group({
     allow_nonroot: [false],
@@ -123,19 +133,7 @@ export class ServiceNfsComponent implements OnInit {
 
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private fb: NonNullableFormBuilder,
-    private store$: Store<AppState>,
-    private translate: TranslateService,
-    private dialogService: DialogService,
-    private snackbar: SnackbarService,
-    private matDialog: MatDialog,
-    private validatorsService: IxValidatorsService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -174,7 +172,7 @@ export class ServiceNfsComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);
@@ -202,7 +200,7 @@ export class ServiceNfsComponent implements OnInit {
       this.api.call('rdma.capable_protocols'),
       this.store$.select(selectIsEnterprise).pipe(take(1)),
     ]).pipe(
-      map(([capableProtocols, isEnterprise]) => {
+      map(([capableProtocols, isEnterprise]): void => {
         const hasRdmaSupport = capableProtocols.includes(RdmaProtocolName.Nfs) && isEnterprise;
         if (hasRdmaSupport) {
           this.form.controls.rdma.enable();
@@ -215,10 +213,14 @@ export class ServiceNfsComponent implements OnInit {
     );
   }
 
-  private loadActiveDirectoryState(): Observable<DirectoryServicesState> {
-    return this.api.call('directoryservices.get_state').pipe(
-      tap(({ activedirectory }) => {
-        this.activeDirectoryState.set(activedirectory);
+  private loadActiveDirectoryState(): Observable<DirectoryServicesStatus> {
+    return this.api.call('directoryservices.status').pipe(
+      tap((dsStatus) => {
+        if (dsStatus.type === DirectoryServiceType.ActiveDirectory) {
+          this.activeDirectoryState.set(dsStatus.status);
+        } else {
+          this.activeDirectoryState.set(DirectoryServiceStatus.Disabled);
+        }
       }),
     );
   }
@@ -245,7 +247,7 @@ export class ServiceNfsComponent implements OnInit {
   get isAddSpnVisible(): boolean {
     return !this.hasNfsStatus()
       && this.form.getRawValue().v4_krb
-      && this.activeDirectoryState() === DirectoryServiceState.Healthy;
+      && this.activeDirectoryState() === DirectoryServiceStatus.Healthy;
   }
 
   addSpn(): void {

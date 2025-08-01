@@ -1,0 +1,54 @@
+<div class="mock-config-form">
+  <div class="form-content">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <ix-input
+        ixTest="method-name-input"
+        formControlName="methodName"
+        [label]="'Method Name' | translate"
+        [placeholder]="'e.g., pool.create' | translate"
+        [required]="true"
+      ></ix-input>
+      <ix-input
+        ixTest="message-pattern-input"
+        formControlName="messagePattern"
+        [label]="'Message Pattern (Optional)' | translate"
+        [placeholder]="'e.g., &quot;name&quot;:&quot;tank&quot;' | translate"
+        [hint]="'Regex pattern to match against message content' | translate"
+      ></ix-input>
+      
+      <ix-code-editor
+        ixTest="response-data-textarea"
+        formControlName="responseResult"
+        [language]="CodeEditorLanguage.Json"
+        [label]="'Response Data' | translate"
+        [hint]="'JSON format expected' | translate"
+      ></ix-code-editor>
+
+      <ix-input
+        ixTest="response-delay-input"
+        formControlName="responseDelay"
+        type="number"
+        [label]="'Response Delay (ms)' | translate"
+        [placeholder]="'0' | translate"
+        [hint]="'Delay in milliseconds before returning the response' | translate"
+      ></ix-input>
+
+      <div class="events-section">
+        <label>{{ 'Events (Optional)' | translate }}</label>
+        <ix-job-event-builder
+          [events]="form.value.events"
+          (eventsChange)="onEventsChange($event)">
+        </ix-job-event-builder>
+      </div>
+    </form>
+  </div>
+
+  <div class="form-actions">
+    <button mat-button ixTest="cancel-button" type="button" (click)="onCancel()">
+      {{ 'Cancel' | translate }}
+    </button>
+    <button mat-button ixTest="submit-button" color="primary" type="button" [disabled]="form.invalid" (click)="onSubmit()">
+      {{ isEditMode ? ('Update' | translate) : ('Create' | translate) }}
+    </button>
+  </div>
+</div>

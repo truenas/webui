@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -57,6 +55,11 @@ import {
   ],
 })
 export class EditNfsAceComponent implements OnChanges, OnInit {
+  private formBuilder = inject(FormBuilder);
+  private store = inject(DatasetAclEditorStore);
+  private userService = inject(UserService);
+  private translate = inject(TranslateService);
+
   readonly ace = input.required<NfsAclItem>();
 
   form = this.formBuilder.nonNullable.group({
@@ -96,13 +99,6 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
 
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly groupProvider = new GroupComboboxProvider(this.userService);
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private store: DatasetAclEditorStore,
-    private userService: UserService,
-    private translate: TranslateService,
-  ) {}
 
   get isUserTag(): boolean {
     return this.form.value.tag === NfsAclTag.User;

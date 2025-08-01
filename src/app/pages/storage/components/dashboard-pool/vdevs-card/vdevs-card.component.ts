@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component, computed, input, OnChanges, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -62,6 +59,10 @@ export type EmptyDiskObject = Record<
   ],
 })
 export class VDevsCardComponent implements OnInit, OnChanges {
+  router = inject(Router);
+  translate = inject(TranslateService);
+  storageService = inject(StorageService);
+
   readonly poolState = input.required<Pool>();
   readonly disks = input<StorageDashboardDisk[]>([]);
 
@@ -116,12 +117,6 @@ export class VDevsCardComponent implements OnInit, OnChanges {
   get isDraidLayoutDataVdevs(): boolean {
     return /\bDRAID\b/.test(this.topologyState.data);
   }
-
-  constructor(
-    public router: Router,
-    public translate: TranslateService,
-    public storageService: StorageService,
-  ) {}
 
   ngOnChanges(): void {
     this.parseTopology(this.poolState().topology);
@@ -235,7 +230,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
   });
 
   // TODO: Unclear why this conversion is needed.
-  dashboardDiskToDisk(dashDisk: StorageDashboardDisk): Disk {
+  private dashboardDiskToDisk(dashDisk: StorageDashboardDisk): Disk {
     const output: EmptyDiskObject | Disk = {};
     const keys: string[] = Object.keys(dashDisk);
     keys.forEach((key: keyof StorageDashboardDisk) => {

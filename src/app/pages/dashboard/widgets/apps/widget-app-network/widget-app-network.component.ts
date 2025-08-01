@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy, computed, input,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, input, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
@@ -33,6 +31,8 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
   ],
 })
 export class WidgetAppNetworkComponent implements WidgetComponent<WidgetAppSettings> {
+  private resources = inject(WidgetResourcesService);
+
   size = input.required<SlotSize>();
   settings = input.required<WidgetAppSettings>();
 
@@ -40,6 +40,4 @@ export class WidgetAppNetworkComponent implements WidgetComponent<WidgetAppSetti
   app = computed(() => this.resources.getApp(this.appName()));
   job = computed(() => this.resources.getAppStatusUpdates(this.appName()));
   stats = computed(() => this.resources.getAppStats(this.appName()));
-
-  constructor(private resources: WidgetResourcesService) {}
 }

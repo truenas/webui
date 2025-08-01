@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl, ValidationErrors,
 } from '@angular/forms';
@@ -14,11 +14,10 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   providedIn: 'root',
 })
 export class TargetNameValidationService {
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private errorParser: ErrorParserService,
-  ) { }
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private errorParser = inject(ErrorParserService);
+
 
   private errors = [
     this.translate.instant('Target with this name already exists'),

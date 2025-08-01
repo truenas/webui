@@ -10,7 +10,6 @@ import {
 import { MatIconRegistry } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   withPreloading,
   provideRouter,
@@ -23,7 +22,7 @@ import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
 import { provideStore } from '@ngrx/store';
 import {
-  TranslateService, TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
+  TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
 import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
@@ -37,16 +36,13 @@ import { enableSentry } from 'sentry';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { defaultLanguage } from 'app/constants/languages.constant';
-import { MockEnclosureApiService } from 'app/core/testing/mock-enclosure/mock-enclosure-api.service';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/modules/language/translations/icu-translations-loader';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { provideWebSocketDebugState } from 'app/modules/websocket-debug-panel/providers/websocket-debug.providers';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 
@@ -97,6 +93,7 @@ bootstrapApplication(AppComponent, {
       },
     }),
     provideEffects(rootEffects),
+    ...(environment.debugPanel?.enabled ? [provideWebSocketDebugState()] : []),
     provideRouterStore({
       serializer: CustomRouterStateSerializer,
     }),
@@ -131,24 +128,9 @@ bootstrapApplication(AppComponent, {
       deps: [Sentry.TraceService],
       multi: true,
     },
-    {
-      provide: ApiService,
-      deps: [WebSocketStatusService, WebSocketHandlerService, SubscriptionManagerService, TranslateService],
-      useFactory: (
-        wsStatus: WebSocketStatusService,
-        connection: WebSocketHandlerService,
-        subscriptionManager: SubscriptionManagerService,
-        translate: TranslateService,
-      ) => {
-        if (environment.mockConfig.enabled) {
-          return new MockEnclosureApiService(connection, wsStatus, subscriptionManager, translate);
-        }
-        return new ApiService(connection, wsStatus, subscriptionManager, translate);
-      },
-    },
+    ApiService,
     provideCharts(withDefaultRegisterables()),
     provideHttpClient(withInterceptorsFromDi()),
-    provideAnimations(),
     provideRouter(
       rootRoutes,
       withPreloading(PreloadAllModules),

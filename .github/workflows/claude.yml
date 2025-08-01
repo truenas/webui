@@ -1,0 +1,68 @@
+name: Claude Review
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - master
+    paths-ignore:
+      - 'src/assets/i18n/**'
+      - 'tests/**'
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    if: |
+      !github.event.pull_request.draft &&
+      !contains(github.event.pull_request.labels.*.name, 'skip-claude')
+    permissions:
+      contents: read
+      pull-requests: read
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Automatic PR Review
+        uses: anthropics/claude-code-action@v0.0.33
+        with:
+          anthropic_api_key: ${{ secrets.CLAUDE_API_KEY }}
+          use_sticky_comment: true
+          timeout_minutes: "20"
+          direct_prompt: |
+            Please review this pull request and provide comprehensive feedback.
+
+            Focus on:
+            - Code quality and best practices
+            - Maintainability, good architecture design and patterns
+            - Adherence to project conventions
+            - Potential bugs or issues
+            - Performance considerations
+            - Security implications
+
+            Do not provide:
+            - summary of what PR does
+            - list of steps you took to review
+            - numeric rating or score
+
+            When describing positive aspects of the PR, just mention them briefly in one - three sentences.
+
+            Ignore small nit-picky issues like formatting or style unless they significantly impact readability.
+
+            Provide constructive feedback with specific suggestions for improvement.
+            Use inline comments to highlight specific areas of concern.
+
+            Some common pitfalls to watch for:
+            - Fixing issue in a specific place without considering other places or overall architecture.
+            - Leaving in unused code.
+            - Forgetting to take into account i18n or accessibility.
+            - Writing tests that interact with methods that should be private or protected.
+
+            Sometimes PRs may contain changes to `src/assets/i18n/**`.
+            Reordering of strings and addition/removal of keys corresponding to code changes are expected and normal.
+
+            Use enthusiastic and positive tone, you can use some emojis.
+
+            Keep review brief and focused:
+            - do not repeat yourself
+            - keep overall assessment concise (one sentence)

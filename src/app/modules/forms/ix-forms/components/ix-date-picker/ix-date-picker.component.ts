@@ -1,13 +1,11 @@
-import {
-  Component, ChangeDetectionStrategy, input, signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, signal, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { DateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatHint, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateAdapter } from 'app/modules/dates/services/ix-date-adapter';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -50,6 +48,9 @@ type OnTouchedFn = () => void;
   ],
 })
 export class IxDatepickerComponent implements ControlValueAccessor {
+  protected controlDirective = inject(NgControl);
+  private locale = inject(LocaleService);
+
   readonly label = input<TranslatedString>();
   readonly placeholder = input<TranslatedString>('');
   readonly hint = input<TranslatedString>();
@@ -70,10 +71,7 @@ export class IxDatepickerComponent implements ControlValueAccessor {
   private onChange: OnChangeFn = () => {};
   private onTouched: OnTouchedFn = () => {};
 
-  constructor(
-    protected controlDirective: NgControl,
-    private locale: LocaleService,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 
@@ -86,7 +84,7 @@ export class IxDatepickerComponent implements ControlValueAccessor {
   }
 
   writeValue(value: Date): void {
-    const dateInMachineTimezone = utcToZonedTime(value, this.locale.timezone);
+    const dateInMachineTimezone = toZonedTime(value, this.locale.timezone);
     this.value.set(dateInMachineTimezone);
   }
 
@@ -96,7 +94,7 @@ export class IxDatepickerComponent implements ControlValueAccessor {
 
   onDateChanged(event: MatDatepickerInputEvent<Date>): void {
     this.value.set(event.value);
-    const dateInUtc = zonedTimeToUtc(event.value, this.locale.timezone);
+    const dateInUtc = fromZonedTime(event.value, this.locale.timezone);
     this.onChange(dateInUtc);
   }
 

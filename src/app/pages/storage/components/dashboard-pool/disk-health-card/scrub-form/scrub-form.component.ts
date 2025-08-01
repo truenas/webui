@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -54,6 +52,13 @@ export interface ScrubFormParams {
   ],
 })
 export class ScrubFormComponent {
+  private translate = inject(TranslateService);
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+  private errorHandler = inject(FormErrorHandlerService);
+  slideInRef = inject<SlideInRef<ScrubFormParams, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.PoolScrubWrite];
 
   protected isLoading = signal(false);
@@ -78,14 +83,7 @@ export class ScrubFormComponent {
 
   protected readonly helptextScrubForm = helptextScrubForm;
 
-  constructor(
-    private translate: TranslateService,
-    private fb: FormBuilder,
-    private api: ApiService,
-    private snackbar: SnackbarService,
-    private errorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<ScrubFormParams, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -104,7 +102,7 @@ export class ScrubFormComponent {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = {
       ...this.form.value,
       pool: this.poolId,
@@ -130,7 +128,7 @@ export class ScrubFormComponent {
           this.snackbar.success(this.translate.instant('Scrub settings updated'));
         }
         this.isLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

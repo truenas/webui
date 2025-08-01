@@ -44,21 +44,38 @@ describe('IsolatedGpuPcisFormComponent', () => {
       mockApi([
         mockCall('system.advanced.update_gpu_pci_ids'),
         mockCall('system.advanced.get_gpu_pci_choices', {
-          'Fake HD Graphics [0000:00:01.0]': '0000:00:01.0',
-          'Intel Corporation HD Graphics 510 [0000:00:02.0]': '0000:00:02.0',
+          'Fake HD Graphics [0000:00:01.0]': {
+            pci_slot: '0000:00:01.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+          'Intel Corporation HD Graphics 510 [0000:00:02.0]': {
+            pci_slot: '0000:00:02.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+          'Critical GPU [0000:00:03.0]': {
+            pci_slot: '0000:00:03.0',
+            uses_system_critical_devices: true,
+            critical_reason: 'Critical devices found: 0000:00:01.0, 0000:00:00.0',
+          },
         }),
       ]),
       mockProvider(SystemGeneralService),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
-        components$: of([]),
+        open: jest.fn(() => of({ response: true })),
       }),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(GpuService, {
         getGpuOptions: () => of([
-          { label: 'Fake HD Graphics', value: '0000:00:01.0' },
-          { label: 'Intel Corporation HD Graphics 510', value: '0000:00:02.0' },
+          { label: 'Fake HD Graphics [0000:00:01.0]', value: '0000:00:01.0', disabled: false },
+          { label: 'Intel Corporation HD Graphics 510 [0000:00:02.0]', value: '0000:00:02.0', disabled: false },
+          {
+            label: 'Critical GPU [0000:00:03.0] (System Critical)',
+            value: '0000:00:03.0',
+            disabled: false,
+          },
         ]),
       }),
       mockProvider(IsolatedGpuValidatorService, {

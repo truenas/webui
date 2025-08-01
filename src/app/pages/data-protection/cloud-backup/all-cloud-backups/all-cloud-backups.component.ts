@@ -1,7 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, signal, OnInit,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -40,18 +37,18 @@ import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/
   ],
 })
 export class AllCloudBackupsComponent implements OnInit {
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
+
   dataProvider: AsyncDataProvider<CloudBackup>;
   protected readonly cloudBackups = signal<CloudBackup[]>([]);
   protected readonly searchableElements = cloudBackupListElements;
   protected readonly requiredRoles = [Role.CloudBackupWrite];
 
-  constructor(
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-    private router: Router,
-  ) {
+  constructor() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
       .subscribe(() => {
@@ -69,7 +66,7 @@ export class AllCloudBackupsComponent implements OnInit {
     ).subscribe();
   }
 
-  openForm(row?: CloudBackup): void {
+  protected openForm(row?: CloudBackup): void {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
       .pipe(
         filter((response) => !!response.response),

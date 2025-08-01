@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -26,7 +25,7 @@ describe('ExtentFormComponent', () => {
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const existingExtent = {
@@ -39,6 +38,7 @@ describe('ExtentFormComponent', () => {
     path: '/mnt/opt',
     filesize: 512 * KiB,
     serial: 'serial_number',
+    product_id: 'test_product',
     blocksize: 1024,
     pblocksize: true,
     avail_threshold: 50,
@@ -55,9 +55,7 @@ describe('ExtentFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(StorageService),
       mockProvider(DialogService),
       mockApi([
@@ -92,6 +90,7 @@ describe('ExtentFormComponent', () => {
         'LUN RPM': 'SSD',
         'Logical Block Size': '512',
         Name: '',
+        'Product ID': '',
         'Read-only': false,
         'Xen initiator compat mode': false,
       });
@@ -125,6 +124,7 @@ describe('ExtentFormComponent', () => {
         name: 'new_name',
         path: 'key_device_2',
         pblocksize: true,
+        product_id: null,
         ro: true,
         rpm: '5400',
         serial: '',
@@ -159,6 +159,7 @@ describe('ExtentFormComponent', () => {
         'Logical Block Size': '1024',
         Name: 'test_name',
         'Path to the Extent': '/mnt/opt',
+        'Product ID': 'test_product',
         'Read-only': true,
         Serial: 'serial_number',
         'Xen initiator compat mode': true,
@@ -188,6 +189,7 @@ describe('ExtentFormComponent', () => {
           name: 'test_name',
           path: '/mnt/opt',
           pblocksize: true,
+          product_id: 'test_product',
           ro: true,
           rpm: '5400',
           serial: 'serial_number',
@@ -196,6 +198,26 @@ describe('ExtentFormComponent', () => {
         },
       ]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+
+    it('sends product_id as null when field is empty', async () => {
+      await form.fillForm({
+        Name: 'test_name',
+        Description: 'test_comment',
+        Filesize: '2049 KiB',
+        'Logical Block Size': '512',
+        'Product ID': '',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.update', [
+        123,
+        expect.objectContaining({
+          product_id: null,
+        }),
+      ]);
     });
   });
 });

@@ -1,7 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, signal, inject } from '@angular/core';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -44,6 +41,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class NtpServersFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(FormErrorHandlerService);
+  slideInRef = inject<SlideInRef<NtpServer | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
 
   protected isFormLoading = signal(false);
@@ -77,14 +81,7 @@ export class NtpServersFormComponent implements OnInit {
     return this.isNew ? this.translate.instant('Add NTP Server') : this.translate.instant('Edit NTP Server');
   }
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private errorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<NtpServer | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.formGroup.dirty);
     });
@@ -100,7 +97,7 @@ export class NtpServersFormComponent implements OnInit {
   /**
    * @param server Skip argument to add new server.
    */
-  setupForm(server: NtpServer): void {
+  protected setupForm(server: NtpServer): void {
     this.formGroup.patchValue({
       address: server.address,
       burst: server.burst,
@@ -111,7 +108,7 @@ export class NtpServersFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.formGroup.getRawValue();
     const body: CreateNtpServer = {
       address: values.address,
@@ -134,7 +131,7 @@ export class NtpServersFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

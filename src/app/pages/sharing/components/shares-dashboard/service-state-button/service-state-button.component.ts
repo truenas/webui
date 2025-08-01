@@ -36,9 +36,9 @@ export class ServiceStateButtonComponent {
   readonly statusClass = computed(() => {
     switch (this.service()?.state) {
       case ServiceStatus.Running:
-        return 'fn-theme-primary';
+        return 'fn-theme-green';
       case ServiceStatus.Stopped:
-        return 'fn-theme-red';
+        return 'fn-theme-grey';
       default:
         return 'fn-theme-orange';
     }

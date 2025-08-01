@@ -41,9 +41,9 @@ describe('ServiceStateButtonComponent', () => {
     spectator.setInput('service', { id: 1, service: ServiceName.Nfs, state: ServiceStatus.Stopped } as Service);
     const stoppedButton = await loader.getHarness(MatButtonHarness.with({ text: 'STOPPED' }));
     expect(stoppedButton).toExist();
-    expect((await (await stoppedButton.host()).getAttribute('class'))?.split(' ').includes('fn-theme-red')).toBe(true);
+    expect((await (await stoppedButton.host()).getAttribute('class'))?.split(' ').includes('fn-theme-grey')).toBe(true);
 
     spectator.setInput('count', 0);
-    expect((await (await stoppedButton.host()).getAttribute('class'))?.split(' ').includes('fn-theme-red')).toBe(true);
+    expect((await (await stoppedButton.host()).getAttribute('class'))?.split(' ').includes('fn-theme-grey')).toBe(true);
   });
 });

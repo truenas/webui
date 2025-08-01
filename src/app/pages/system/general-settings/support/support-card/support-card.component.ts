@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -77,6 +74,16 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class SupportCardComponent implements OnInit {
+  protected api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private matDialog = inject(MatDialog);
+  private slideIn = inject(SlideIn);
+  private store$ = inject<Store<AppState>>(Store);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly Role = Role;
   protected readonly searchableElements = supportCardElements;
@@ -94,18 +101,6 @@ export class SupportCardComponent implements OnInit {
   get licenseButtonText(): string {
     return this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
   }
-
-  constructor(
-    protected api: ApiService,
-    private loader: LoaderService,
-    private matDialog: MatDialog,
-    private slideIn: SlideIn,
-    private store$: Store<AppState>,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
@@ -131,7 +126,7 @@ export class SupportCardComponent implements OnInit {
     this.productImageSrc.set(productImageUrl);
   }
 
-  parseLicenseInfo(licenseInfo: LicenseInfoInSupport): void {
+  private parseLicenseInfo(licenseInfo: LicenseInfoInSupport): void {
     if (licenseInfo.features.length === 0) {
       licenseInfo.featuresString = 'NONE';
     } else {
@@ -150,7 +145,7 @@ export class SupportCardComponent implements OnInit {
     licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
   }
 
-  daysTillExpiration(now: Date, then: Date): number {
+  private daysTillExpiration(now: Date, then: Date): number {
     return Math.round((then.getTime() - now.getTime()) / oneDayMillis);
   }
 
@@ -166,7 +161,7 @@ export class SupportCardComponent implements OnInit {
     this.slideIn.open(ProactiveComponent, { wide: true });
   }
 
-  updateProductionStatus(newStatus: boolean): void {
+  private updateProductionStatus(newStatus: boolean): void {
     let request$: Observable<boolean | SetProductionStatusDialogResult>;
     if (newStatus) {
       request$ = this.matDialog.open(SetProductionStatusDialog).afterClosed().pipe(
@@ -193,7 +188,7 @@ export class SupportCardComponent implements OnInit {
           tap({
             complete: () => {
               this.snackbar.success(
-                this.translate.instant(helptext.is_production_dialog.message),
+                this.translate.instant(helptext.isProductionDialog.message),
               );
             },
           }),

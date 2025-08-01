@@ -1,6 +1,4 @@
-import {
-  Directive, Renderer2, ElementRef, OnChanges, input,
-} from '@angular/core';
+import { Directive, Renderer2, ElementRef, OnChanges, input, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { take, timer } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -10,12 +8,10 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
   selector: '[disableFocusableElements]',
 })
 export class DisableFocusableElementsDirective implements OnChanges {
-  readonly disableFocusableElements = input.required<boolean>();
+  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private renderer = inject(Renderer2);
 
-  constructor(
-    private elementRef: ElementRef<HTMLElement>,
-    private renderer: Renderer2,
-  ) {}
+  readonly disableFocusableElements = input.required<boolean>();
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.disableFocusableElements) {

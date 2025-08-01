@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, Inject, input, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   Validators, FormsModule, ReactiveFormsModule, NonNullableFormBuilder,
@@ -12,10 +10,12 @@ import { isEqual } from 'lodash-es';
 import {
   distinctUntilChanged, firstValueFrom,
 } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
-import { AutofocusDirective } from 'app/directives/autofocus/autofocus.directive';
+import {
+  filter, take,
+} from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { LoginExResponse, LoginRedirectResponse } from 'app/interfaces/auth.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -30,6 +30,7 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
   templateUrl: './signin-form.component.html',
   styleUrls: ['./signin-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,
@@ -37,11 +38,18 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
     MatButton,
     TranslateModule,
     IxInputComponent,
-    AutofocusDirective,
     TestDirective,
   ],
 })
 export class SigninFormComponent implements OnInit {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private signinStore = inject(SigninStore);
+  private translate = inject(TranslateService);
+  private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
+  private window = inject<Window>(WINDOW);
+
   disabled = input.required<boolean>();
 
   hasTwoFactor = false;
@@ -60,15 +68,7 @@ export class SigninFormComponent implements OnInit {
   protected isLoading = toSignal(this.signinStore.isLoading$);
   readonly isFormDisabled = computed(() => this.disabled() || this.isLoading());
 
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private signinStore: SigninStore,
-    private translate: TranslateService,
-    private authService: AuthService,
-    private cdr: ChangeDetectorRef,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     effect(() => {
       if (this.isFormDisabled()) {
         this.form.disable();
@@ -106,7 +106,7 @@ export class SigninFormComponent implements OnInit {
     });
   }
 
-  async login(): Promise<void> {
+  protected async login(): Promise<void> {
     if (await firstValueFrom(this.signinStore.isLoading$)) {
       return;
     }
@@ -118,12 +118,12 @@ export class SigninFormComponent implements OnInit {
     this.authService.login(formValues.username, formValues.password).pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: (loginResult) => {
-        this.signinStore.setLoadingState(false);
+      next: ({ loginResult, loginResponse }) => {
         if (loginResult === LoginResult.Success) {
           this.signinStore.handleSuccessfulLogin();
         } else {
-          this.handleFailedLogin(loginResult);
+          this.signinStore.setLoadingState(false);
+          this.handleFailedLogin(loginResult, loginResponse);
           this.cdr.markForCheck();
         }
       },
@@ -134,36 +134,45 @@ export class SigninFormComponent implements OnInit {
     });
   }
 
-  private handleFailedLogin(loginResult: LoginResult): void {
+  protected handleFailedLogin(loginResult: LoginResult, loginResponse: LoginExResponse): void {
     this.isLastLoginAttemptFailed = true;
 
     if (loginResult === LoginResult.NoOtp) {
       this.hasTwoFactor = true;
+      this.form.controls.password.setValue('');
       return;
     }
 
-    if (loginResult === LoginResult.NoAccess) {
-      this.lastLoginError = this.translate.instant('User is lacking permissions to access WebUI.');
-    } else {
-      this.lastLoginError = this.translate.instant('Wrong username or password. Please try again.');
+    if (loginResult === LoginResult.Redirect) {
+      const links = (loginResponse as LoginRedirectResponse).urls.map((url) => {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+      }).join(', ');
+
+      this.lastLoginError = this.translate.instant(
+        'Logging in at the current URL is not possible.<br>To login, please navigate to: {links}',
+        { links },
+      );
+      this.cdr.markForCheck();
+      this.signinStore.showSnackbar(this.translate.instant('Logging in at the current URL is not possible.'));
+
+      return;
     }
 
-    this.cdr.markForCheck();
-    this.signinStore.showSnackbar(this.lastLoginError);
+    const errorMessage = this.signinStore.getLoginErrorMessage(loginResult);
+    this.handleError(errorMessage);
   }
 
-  private handleFailedOtpLogin(loginResult: LoginResult): void {
-    this.lastLoginError = loginResult === LoginResult.NoAccess
-      ? this.translate.instant('User is lacking permissions to access WebUI.')
-      : this.translate.instant('Incorrect or expired OTP. Please try again.');
-    this.signinStore.showSnackbar(this.lastLoginError);
+  protected handleFailedOtpLogin(loginResult: LoginResult): void {
+    const errorMessage = this.signinStore.getLoginErrorMessage(loginResult, true);
+
     this.form.patchValue({ otp: '' });
     this.form.controls.otp.updateValueAndValidity();
     this.isLastOtpAttemptFailed = true;
-    this.cdr.markForCheck();
+
+    this.handleError(errorMessage);
   }
 
-  private clearForm(): void {
+  protected clearForm(): void {
     this.form.patchValue({ password: '', otp: '' });
     this.form.controls.password.setErrors(null);
     this.form.controls.otp.setErrors(null);
@@ -180,7 +189,7 @@ export class SigninFormComponent implements OnInit {
     this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: (loginResult) => {
+      next: ({ loginResult }) => {
         if (loginResult === LoginResult.Success) {
           this.signinStore.handleSuccessfulLogin();
         } else {
@@ -197,4 +206,12 @@ export class SigninFormComponent implements OnInit {
   }
 
   protected readonly iconMarker = iconMarker;
+
+  protected handleError(errorMessage: string): void {
+    this.signinStore.setLoadingState(false);
+    this.lastLoginError = errorMessage;
+    this.isLastLoginAttemptFailed = true;
+    this.cdr.markForCheck();
+    this.signinStore.showSnackbar(errorMessage);
+  }
 }

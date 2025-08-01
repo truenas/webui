@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component, OnInit, ChangeDetectionStrategy, signal,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -59,6 +57,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class JbofListComponent implements OnInit {
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private emptyService = inject(EmptyService);
+  private loader = inject(LoaderService);
+
   protected readonly requiredRoles = [Role.JbofWrite];
   protected readonly searchableElements = jbofListElements;
 
@@ -100,19 +106,9 @@ export class JbofListComponent implements OnInit {
     ariaLabels: (row) => [row.mgmt_username, this.translate.instant('JBOF')],
   });
 
-  get emptyConfigService(): EmptyService {
+  protected get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
-
-  constructor(
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private emptyService: EmptyService,
-    private loader: LoaderService,
-  ) { }
 
   ngOnInit(): void {
     const request$ = this.api.call('jbof.query').pipe(
@@ -126,14 +122,14 @@ export class JbofListComponent implements OnInit {
     });
   }
 
-  openForm(jbof?: Jbof): void {
+  protected openForm(jbof?: Jbof): void {
     this.slideIn.open(JbofFormComponent, { data: jbof }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getJbofs());
   }
 
-  doDelete(jbof: Jbof): void {
+  protected doDelete(jbof: Jbof): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Are you sure you want to delete this item?'),
@@ -158,7 +154,7 @@ export class JbofListComponent implements OnInit {
     });
   }
 
-  getJbofs(): void {
+  private getJbofs(): void {
     this.dataProvider.load();
     this.updateAvailableJbof();
   }
@@ -172,7 +168,7 @@ export class JbofListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['mgmt_username', 'description'] });
   }

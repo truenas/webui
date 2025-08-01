@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -59,6 +56,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DockerRegistriesListComponent implements OnInit {
+  protected emptyService = inject(EmptyService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly searchableElements = dockerRegistriesListElements;
 
@@ -98,17 +104,6 @@ export class DockerRegistriesListComponent implements OnInit {
     uniqueRowTag: (row) => `docker-registry-${row.uri}-${row.name}`,
     ariaLabels: (row) => [row.name, this.translate.instant('Docker Registry')],
   });
-
-  constructor(
-    protected emptyService: EmptyService,
-    private translate: TranslateService,
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.dataProvider = new AsyncDataProvider(

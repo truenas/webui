@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   filter,
   forkJoin, map, Observable, switchMap, tap,
 } from 'rxjs';
-import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
 import { DockerStatus } from 'app/enums/docker-status.enum';
+import { DockerConfig, DockerStatusData } from 'app/interfaces/docker-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -32,6 +32,11 @@ const initialState: DockerConfigState = {
 
 @Injectable()
 export class DockerStore extends ComponentStore<DockerConfigState> {
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly dockerConfig$ = this.select((state) => state.dockerConfig);
   readonly selectedPool$ = this.select((state) => state.dockerConfig?.pool || null);
@@ -42,12 +47,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   readonly status$ = this.select((state) => state.statusData.status);
   readonly statusDescription$ = this.select((state) => state.statusData.description);
 
-  constructor(
-    private api: ApiService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-  ) {
+  constructor() {
     super(initialState);
   }
 
@@ -79,10 +79,18 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
     return this.api.call('docker.status');
   }
 
-  setDockerPool(poolName: string | null): Observable<Job<DockerConfig>> {
+  setDockerPool(poolName: string | null, migrateApps?: boolean): Observable<Job<DockerConfig>> {
+    const payload = {
+      pool: poolName,
+    } as DockerConfig;
+
+    if (migrateApps) {
+      payload.migrate_applications = migrateApps;
+    }
+
     return this.dialogService.jobDialog(
-      this.api.job('docker.update', [{ pool: poolName }]),
-      { title: this.translate.instant('Configuring...') },
+      this.api.job('docker.update', [payload]),
+      { title: this.translate.instant('Configuring apps') },
     )
       .afterClosed()
       .pipe(this.errorHandler.withErrorHandler());

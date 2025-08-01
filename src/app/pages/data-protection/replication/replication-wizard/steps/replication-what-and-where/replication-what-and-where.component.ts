@@ -1,7 +1,5 @@
 import { DatePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
@@ -11,6 +9,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   debounceTime, map, merge, Observable, of, switchMap,
 } from 'rxjs';
+import { emptyRootNode, datasetsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -23,6 +22,7 @@ import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/in
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
@@ -71,10 +71,27 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider {
+  private formBuilder = inject(FormBuilder);
+  private replicationService = inject(ReplicationService);
+  private keychainCredentials = inject(KeychainCredentialService);
+  private datePipe = inject(DatePipe);
+  private translate = inject(TranslateService);
+  private authService = inject(AuthService);
+  private datasetService = inject(DatasetService);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorParser = inject(ErrorParserService);
+  private errorHandler = inject(ErrorHandlerService);
+  slideInRef = inject<SlideInRef<ReplicationTask, ReplicationTask>>(SlideInRef);
+
   readonly customRetentionVisibleChange = output<boolean>();
 
-  sourceNodeProvider: TreeNodeProvider;
-  targetNodeProvider: TreeNodeProvider;
+  protected sourceNodeProvider: TreeNodeProvider;
+  protected targetNodeProvider: TreeNodeProvider;
+
+  protected targetDatasetsRootNodes: ExplorerNodeData[] = [];
+  protected sourceDatasetsRootNodes: ExplorerNodeData[] = [];
 
   readonly helptext = helptextReplicationWizard;
   readonly mntPath = mntPath;
@@ -161,21 +178,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       : helptextReplicationWizard.nameSchemaOrRegexPull;
   }
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private replicationService: ReplicationService,
-    private keychainCredentials: KeychainCredentialService,
-    private datePipe: DatePipe,
-    private translate: TranslateService,
-    private authService: AuthService,
-    private datasetService: DatasetService,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorParser: ErrorParserService,
-    private errorHandler: ErrorHandlerService,
-    public slideInRef: SlideInRef<unknown, unknown>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -334,7 +337,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       });
   }
 
-  loadReplicationTask(task: ReplicationTask): void {
+  private loadReplicationTask(task: ReplicationTask): void {
     if (!task) {
       return;
     }
@@ -365,7 +368,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     });
   }
 
-  clearReplicationTask(): void {
+  private clearReplicationTask(): void {
     this.form.patchValue({
       source_datasets_from: null,
       ssh_credentials_source: null,
@@ -394,10 +397,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   openAdvanced(): void {
-    this.slideInRef.swap?.(
-      ReplicationFormComponent,
-      { wide: true },
-    );
+    this.slideInRef.swap?.(ReplicationFormComponent, { wide: true });
   }
 
   getSnapshots(): void {
@@ -460,7 +460,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     }
   }
 
-  checkCustomVisible(): void {
+  private checkCustomVisible(): void {
     const hideCustomRetention = this.form.value.schema_or_regex === SnapshotNamingOption.NameRegex
       && (this.form.value.custom_snapshots || this.form.value.source_datasets_from === DatasetSource.Remote);
 
@@ -637,6 +637,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     this.sourceNodeProvider = !this.isRemoteSource ? localProvider : remoteProvider;
     this.targetNodeProvider = this.isRemoteTarget ? remoteProvider : localProvider;
+    this.targetDatasetsRootNodes = this.isRemoteTarget ? [emptyRootNode] : [datasetsRootNode];
+    this.sourceDatasetsRootNodes = this.isRemoteSource ? [emptyRootNode] : [datasetsRootNode];
+
     this.cdr.markForCheck();
   }
 }

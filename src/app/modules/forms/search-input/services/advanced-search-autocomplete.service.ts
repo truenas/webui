@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CompletionContext, CompletionResult, startCompletion } from '@codemirror/autocomplete';
 import { EditorView } from '@codemirror/view';
 import { TranslateService } from '@ngx-translate/core';
@@ -40,6 +40,9 @@ const regexMap = {
   providedIn: 'root',
 })
 export class AdvancedSearchAutocompleteService<T> {
+  private queryParser = inject<QueryParserService<T>>(QueryParserService);
+  private translate = inject(TranslateService);
+
   private properties: SearchProperty<T>[] = [];
   private editorView: EditorView;
   private queryContext: QueryContext;
@@ -60,14 +63,9 @@ export class AdvancedSearchAutocompleteService<T> {
     in: this.translate.instant('{comparator} (In)', { comparator: 'IN' }),
     nin: this.translate.instant('{comparator} (Not In)', { comparator: 'NIN' }),
     $: this.translate.instant('{comparator} (Ends With)', { comparator: '$' }),
-  } as { [key in QueryComparator]: string };
+  } as Record<QueryComparator, string>;
 
   showDatePicker$ = new BehaviorSubject(false);
-
-  constructor(
-    private queryParser: QueryParserService<T>,
-    private translate: TranslateService,
-  ) {}
 
   setProperties(properties: SearchProperty<T>[]): void {
     this.properties = properties;

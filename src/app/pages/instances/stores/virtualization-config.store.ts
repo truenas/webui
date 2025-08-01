@@ -1,5 +1,4 @@
-import { computed, Injectable } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { computed, Injectable, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
@@ -23,17 +22,16 @@ const initialState: VirtualizationConfigState = {
 @UntilDestroy()
 @Injectable()
 export class VirtualizationConfigStore extends ComponentStore<VirtualizationConfigState> {
-  readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
-  readonly isLoading = computed(() => this.stateAsSignal().isLoading);
-  readonly config = computed(() => this.stateAsSignal().config);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+
+  readonly isLoading = computed(() => this.state().isLoading);
+  readonly config = computed(() => this.state().config);
   readonly virtualizationState = computed(() => this.config()?.state);
 
   private configSubscription: Subscription;
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-  ) {
+  constructor() {
     super(initialState);
   }
 

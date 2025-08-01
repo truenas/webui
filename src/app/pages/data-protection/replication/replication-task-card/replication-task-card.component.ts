@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,6 +10,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   catchError, EMPTY, filter, of, switchMap, tap,
 } from 'rxjs';
+import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -17,6 +18,7 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -73,13 +75,25 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxTableBodyComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class ReplicationTaskCardComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  private matDialog = inject(MatDialog);
+  private download = inject(DownloadService);
+  protected emptyService = inject(EmptyService);
+
   dataProvider: AsyncDataProvider<ReplicationTask>;
   jobStates = new Map<number, JobState>();
   replicationTasks: ReplicationTask[] = [];
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  protected readonly emptyConfig = replicationTaskEmptyConfig;
 
   columns = createTable<ReplicationTask>([
     textColumn({
@@ -150,18 +164,6 @@ export class ReplicationTaskCardComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('Replication Task')],
   });
 
-  constructor(
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private snackbar: SnackbarService,
-    private matDialog: MatDialog,
-    private download: DownloadService,
-    protected emptyService: EmptyService,
-  ) {}
-
   ngOnInit(): void {
     const replicationTasks$ = this.api.call('replication.query', [[], {
       extra: { check_dataset_encryption_keys: true },
@@ -177,7 +179,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  doDelete(replicationTask: ReplicationTask): void {
+  protected doDelete(replicationTask: ReplicationTask): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
@@ -199,20 +201,20 @@ export class ReplicationTaskCardComponent implements OnInit {
     });
   }
 
-  addReplicationTask(): void {
+  protected addReplicationTask(): void {
     this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
-      filter((response) => !!response.response),
+      filter((response) => !!response),
       untilDestroyed(this),
     ).subscribe(() => this.getReplicationTasks());
   }
 
-  editReplicationTask(row: ReplicationTask): void {
+  private editReplicationTask(row: ReplicationTask): void {
     this.slideIn.open(ReplicationFormComponent, { wide: true, data: row })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getReplicationTasks());
   }
 
-  runNow(row: ReplicationTask): void {
+  protected runNow(row: ReplicationTask): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
       message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
@@ -241,14 +243,14 @@ export class ReplicationTaskCardComponent implements OnInit {
     });
   }
 
-  restore(row: ReplicationTask): void {
+  protected restore(row: ReplicationTask): void {
     const dialog = this.matDialog.open(ReplicationRestoreDialog, {
       data: row.id,
     });
     dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getReplicationTasks());
   }
 
-  downloadKeys(row: ReplicationTask): void {
+  protected downloadKeys(row: ReplicationTask): void {
     this.download.coreDownload({
       method: 'pool.dataset.export_keys_for_replication',
       mimeType: 'application/json',

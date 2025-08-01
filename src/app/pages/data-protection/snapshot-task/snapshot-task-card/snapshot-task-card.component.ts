@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -9,11 +7,13 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs';
+import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -62,11 +62,21 @@ import { TaskService } from 'app/services/task.service';
     UiSearchDirective,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class SnapshotTaskCardComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private taskService = inject(TaskService);
+  protected emptyService = inject(EmptyService);
+
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly uiSearchableElement = snapshotTaskCardElements;
+  protected readonly emptyConfig = snapshotTaskEmptyConfig;
 
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
 
@@ -125,16 +135,6 @@ export class SnapshotTaskCardComponent implements OnInit {
     ariaLabels: (row) => [row.dataset, this.translate.instant('Snapshot Task')],
   });
 
-  constructor(
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private taskService: TaskService,
-    protected emptyService: EmptyService,
-  ) {}
-
   ngOnInit(): void {
     const snapshotTasks$ = this.api.call('pool.snapshottask.query').pipe(
       map((snapshotTasks) => snapshotTasks as PeriodicSnapshotTaskUi[]),
@@ -144,11 +144,11 @@ export class SnapshotTaskCardComponent implements OnInit {
     this.getSnapshotTasks();
   }
 
-  getSnapshotTasks(): void {
+  protected getSnapshotTasks(): void {
     this.dataProvider.load();
   }
 
-  doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
+  protected doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Periodic Snapshot Task <b>"{value}"</b>?', {
@@ -170,7 +170,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     });
   }
 
-  openForm(row?: PeriodicSnapshotTaskUi): void {
+  protected openForm(row?: PeriodicSnapshotTaskUi): void {
     this.slideIn.open(SnapshotTaskFormComponent, { data: row, wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -179,7 +179,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     });
   }
 
-  private onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
+  protected onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
     this.api
       .call('pool.snapshottask.update', [snapshotTask.id, { enabled: !snapshotTask.enabled } as PeriodicSnapshotTaskUi])
       .pipe(untilDestroyed(this))

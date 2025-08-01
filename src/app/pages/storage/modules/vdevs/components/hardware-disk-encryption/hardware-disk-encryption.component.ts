@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -40,6 +38,10 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class HardwareDiskEncryptionComponent {
+  private store$ = inject<Store<AppState>>(Store);
+  private matDialog = inject(MatDialog);
+  private api = inject(ApiService);
+
   readonly topologyDisk = input.required<TopologyDisk>();
 
   protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
@@ -61,12 +63,6 @@ export class HardwareDiskEncryptionComponent {
       }),
     ),
   );
-
-  constructor(
-    private store$: Store<AppState>,
-    private matDialog: MatDialog,
-    private api: ApiService,
-  ) {}
 
   onManageSedPassword(): void {
     this.matDialog.open(ManageDiskSedDialog, {

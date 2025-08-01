@@ -95,7 +95,7 @@
           @if (form.controls.folder_destination.enabled) {
             <ix-explorer
               formControlName="folder_destination"
-              root="/"
+              [rootNodes]="slashRootNode"
               [readonly]="!hasRequiredRoles()"
               [label]="helptext.folderLabel | translate"
               [tooltip]="helptext.folderTooltip | translate"
@@ -105,7 +105,7 @@
           @if (form.controls.folder_source.enabled) {
             <ix-explorer
               formControlName="folder_source"
-              root="/"
+              [rootNodes]="slashRootNode"
               [readonly]="!hasRequiredRoles()"
               [label]="helptext.folderLabel | translate"
               [tooltip]="helptext.folderTooltip | translate"
@@ -200,6 +200,14 @@
               [tooltip]="helptext.encryptionTooltip | translate"
               [options]="encryptionOptions$"
             ></ix-select>
+          }
+          @if (form.controls.chunk_size.enabled) {
+            <ix-input
+              formControlName="chunk_size"
+              type="number"
+              [label]="helptext.chunkSizeLabel | translate"
+              [tooltip]="helptext.chunkSizeTooltip | translate"
+            ></ix-input>
           }
           <div class="advanced-title">
             {{ helptext.advancedRemoteOptionsTitle | translate }}

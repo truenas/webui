@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -90,6 +87,16 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   ],
 })
 export class IscsiWizardComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private iscsiService = inject(IscsiService);
+  private fcService = inject(FibreChannelService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private store$ = inject<Store<ServicesState>>(Store);
+  slideInRef = inject<SlideInRef<undefined, IscsiTarget>>(SlideInRef);
+
   isLoading = signal<boolean>(false);
   toStop = signal<boolean>(false);
   namesInUse = signal<string[]>([]);
@@ -119,6 +126,7 @@ export class IscsiWizardComponent implements OnInit {
       dataset: ['', [Validators.required]],
       volsize: new FormControl(null as number | null, [Validators.required]),
       usefor: [IscsiExtentUsefor.Vmware, [Validators.required]],
+      product_id: [''],
     }),
     options: this.fb.group({
       portal: new FormControl(null as typeof newOption | number | null, [Validators.required]),
@@ -185,6 +193,7 @@ export class IscsiWizardComponent implements OnInit {
       insecure_tpc: true,
       xen: value.usefor === IscsiExtentUsefor.Xen,
       rpm: IscsiExtentRpm.Ssd,
+      product_id: value.product_id === '' ? null : value.product_id,
     } as IscsiExtentUpdate;
 
     if (extentPayload.type === IscsiExtentType.File) {
@@ -245,17 +254,7 @@ export class IscsiWizardComponent implements OnInit {
     } as IscsiTargetExtentUpdate;
   }
 
-  constructor(
-    private fb: FormBuilder,
-    private iscsiService: IscsiService,
-    private fcService: FibreChannelService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private loader: LoaderService,
-    private store$: Store<ServicesState>,
-    public slideInRef: SlideInRef<undefined, IscsiTarget>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -299,31 +298,35 @@ export class IscsiWizardComponent implements OnInit {
     });
   }
 
-  createZvol(payload: DatasetCreate): Promise<Dataset> {
+  private createZvol(payload: DatasetCreate): Promise<Dataset> {
     return lastValueFrom(this.api.call('pool.dataset.create', [payload]));
   }
 
-  createExtent(payload: IscsiExtentUpdate): Promise<IscsiExtent> {
+  private createExtent(payload: IscsiExtentUpdate): Promise<IscsiExtent> {
     return lastValueFrom(this.api.call('iscsi.extent.create', [payload]));
   }
 
-  createPortal(payload: IscsiPortalUpdate): Promise<IscsiPortal> {
+  private createPortal(payload: IscsiPortalUpdate): Promise<IscsiPortal> {
     return lastValueFrom(this.api.call('iscsi.portal.create', [payload]));
   }
 
-  createInitiator(payload: IscsiInitiatorGroupUpdate): Promise<IscsiInitiatorGroup> {
+  private createInitiator(payload: IscsiInitiatorGroupUpdate): Promise<IscsiInitiatorGroup> {
     return lastValueFrom(this.api.call('iscsi.initiator.create', [payload]));
   }
 
-  createTarget(payload: IscsiTargetUpdate): Promise<IscsiTarget> {
+  private createTarget(payload: IscsiTargetUpdate): Promise<IscsiTarget> {
     return lastValueFrom(this.api.call('iscsi.target.create', [payload]));
   }
 
-  createTargetFiberChannel(targetId: number, port: string, hostId: number): Promise<FibreChannelPort | null | true> {
+  private createTargetFiberChannel(
+    targetId: number,
+    port: string,
+    hostId: number,
+  ): Promise<FibreChannelPort | null | true> {
     return lastValueFrom(this.fcService.linkFiberChannelToTarget(targetId, port, hostId));
   }
 
-  createTargetExtent(payload: IscsiTargetExtentUpdate): Promise<IscsiTargetExtent> {
+  private createTargetExtent(payload: IscsiTargetExtentUpdate): Promise<IscsiTargetExtent> {
     return lastValueFrom(this.api.call('iscsi.targetextent.create', [payload]));
   }
 
@@ -465,6 +468,6 @@ export class IscsiWizardComponent implements OnInit {
     this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
     this.isLoading.set(false);
-    this.slideInRef.close({ response: this.createdTarget, error: null });
+    this.slideInRef.close({ response: this.createdTarget });
   }
 }

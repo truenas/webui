@@ -33,6 +33,15 @@ export const selectJob = (id: number): MemoizedSelector<object, Job | undefined>
   (jobs) => jobs.find((job) => job.id === id),
 );
 
+export function selectJobWithCallId(
+  uuid: string,
+): MemoizedSelector<object, Job | undefined> {
+  return createSelector(
+    selectJobs,
+    (jobs) => jobs.find((job) => job.message_ids.includes(uuid)) || undefined,
+  );
+}
+
 export const selectIsJobPanelOpen = createSelector(
   selectJobState,
   (state) => state.isPanelOpen,
@@ -75,14 +84,15 @@ export const selectJobsPanelSlice = createSelector(
   (runningJobs, waitingJobs, failedJobs) => [...runningJobs, ...waitingJobs, ...failedJobs],
 );
 
+// TODO: Fix selector to return single item or rename selector.
 export const selectUpdateJob = createSelector(
   selectRunningJobs,
-  (jobs: Job[]) => jobs.filter((job) => job.method === 'update.update' || job.method === 'failover.upgrade'),
+  (jobs: Job[]) => jobs.filter((job) => job.method === 'update.run' || job.method === 'failover.upgrade'),
 );
 
 export const selectUpdateJobForActiveNode = createSelector(
   selectRunningJobs,
-  (jobs: Job[]) => jobs.find((job) => job.method === 'update.update'),
+  (jobs: Job[]) => jobs.find((job) => job.method === 'update.run'),
 );
 
 export const selectUpdateJobForPassiveNode = createSelector(

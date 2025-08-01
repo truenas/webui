@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -58,6 +56,15 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SnapshotTaskFormComponent implements OnInit {
+  private fb = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private taskService = inject(TaskService);
+  private snackbar = inject(SnackbarService);
+  protected storageService = inject(StorageService);
+  slideInRef = inject<SlideInRef<PeriodicSnapshotTask | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
 
   get isNew(): boolean {
@@ -117,16 +124,9 @@ export class SnapshotTaskFormComponent implements OnInit {
     Object.values(LifetimeUnit).map((lifetime) => ({ label: lifetime, value: lifetime })),
   );
 
-  constructor(
-    private fb: NonNullableFormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-    private errorHandler: FormErrorHandlerService,
-    private taskService: TaskService,
-    private snackbar: SnackbarService,
-    protected storageService: StorageService,
-    public slideInRef: SlideInRef<PeriodicSnapshotTask | undefined, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -139,11 +139,11 @@ export class SnapshotTaskFormComponent implements OnInit {
     }
   }
 
-  get isTimeMode(): boolean {
+  protected get isTimeMode(): boolean {
     return this.form.value.schedule === CronPresetValue.Hourly as string;
   }
 
-  setTaskForEdit(task: PeriodicSnapshotTask): void {
+  protected setTaskForEdit(task: PeriodicSnapshotTask): void {
     this.form.patchValue({
       ...task,
       begin: task.schedule.begin,
@@ -152,7 +152,7 @@ export class SnapshotTaskFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value;
 
     const params = {
@@ -187,7 +187,7 @@ export class SnapshotTaskFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

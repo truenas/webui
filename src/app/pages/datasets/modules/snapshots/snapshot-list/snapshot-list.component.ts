@@ -1,10 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  OnInit,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -93,6 +88,15 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
   ],
 })
 export class SnapshotListComponent implements OnInit {
+  protected emptyService = inject(EmptyService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private matDialog = inject(MatDialog);
+  private store$ = inject<Store<AppState>>(Store);
+  private slideIn = inject(SlideIn);
+  private route = inject(ActivatedRoute);
+
   protected readonly requiredRoles = [Role.SnapshotDelete];
   filterString = '';
   dataProvider = new ArrayDataProvider<ZfsSnapshotUi>();
@@ -191,16 +195,7 @@ export class SnapshotListComponent implements OnInit {
     return this.selectedSnapshots.some((snapshot) => snapshot.selected);
   }
 
-  constructor(
-    protected emptyService: EmptyService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private matDialog: MatDialog,
-    private store$: Store<AppState>,
-    private slideIn: SlideIn,
-    private route: ActivatedRoute,
-  ) {
+  constructor() {
     this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
@@ -212,13 +207,13 @@ export class SnapshotListComponent implements OnInit {
     this.listenForShowExtraColumnsChange();
   }
 
-  listenForShowExtraColumnsChange(): void {
+  private listenForShowExtraColumnsChange(): void {
     this.showExtraColumnsControl.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe(() => this.toggleExtraColumns());
   }
 
-  updateColumnVisibility(): void {
+  private updateColumnVisibility(): void {
     this.columns = this.columns.map((column) => {
       if (column.hasOwnProperty('hidden')) {
         column.hidden = !this.showExtraColumnsControl.value;
@@ -257,7 +252,7 @@ export class SnapshotListComponent implements OnInit {
     });
   }
 
-  getConfirmOptions(): ConfirmOptions {
+  private getConfirmOptions(): ConfirmOptions {
     if (!this.showExtraColumnsControl.value) {
       return {
         title: this.translate.instant(helptextSnapshots.extraColumns.hide),
@@ -275,7 +270,7 @@ export class SnapshotListComponent implements OnInit {
     };
   }
 
-  toggleExtraColumns(): void {
+  private toggleExtraColumns(): void {
     this.dialogService.confirm(this.getConfirmOptions())
       .pipe(take(1), untilDestroyed(this))
       .subscribe((confirmed) => {
@@ -305,7 +300,23 @@ export class SnapshotListComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setFilter({ list: this.snapshots, query, columnKeys: ['name'] });
+
+    const datasetParam = this.route.snapshot.paramMap.get('dataset');
+
+    if (datasetParam && query === datasetParam) {
+      this.dataProvider.setFilter({
+        list: this.snapshots,
+        query,
+        columnKeys: ['dataset'],
+        exact: true,
+      });
+
+      if (this.dataProvider.totalRows === 0) {
+        this.dataProvider.setFilter({ list: this.snapshots, query, columnKeys: ['name'] });
+      }
+    } else {
+      this.dataProvider.setFilter({ list: this.snapshots, query, columnKeys: ['name'] });
+    }
   }
 
   private setDefaultSort(): void {

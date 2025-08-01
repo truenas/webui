@@ -42,7 +42,7 @@ describe('CronFormComponent', () => {
   const getData = jest.fn(() => existingCronJob);
   const componentRef: SlideInRef<Cronjob | undefined, unknown> = {
     close: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
     requireConfirmationWhen: jest.fn(),
   };
 
@@ -69,8 +69,7 @@ describe('CronFormComponent', () => {
         ],
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
-        components$: of([]),
+        open: jest.fn(() => of({ response: true })),
       }),
       mockProvider(UserService, {
         userQueryDsCache: () => of([

@@ -1,13 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  input,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, input, output, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import {
   ActivatedRoute, Router, RouterLink, RouterLinkActive,
@@ -29,6 +22,7 @@ import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-nod
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -64,6 +58,12 @@ import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.s
   ],
 })
 export class VDevsListComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  protected vDevsStore = inject(VDevsStore);
+  private layoutService = inject(LayoutService);
+
   poolId = input.required<number>();
   isMobileView = input<boolean>();
   showMobileDetails = output<boolean>();
@@ -84,13 +84,6 @@ export class VDevsListComponent implements OnInit {
   };
 
   protected readonly isVdevGroup = (_: number, node: VDevNestedDataNode): boolean => isVdevGroup(node);
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute,
-    private router: Router,
-    protected vDevsStore: VDevsStore,
-  ) { }
 
   ngOnInit(): void {
     this.vDevsStore.loadNodes(this.poolId());
@@ -192,7 +185,8 @@ export class VDevsListComponent implements OnInit {
 
   protected viewDetails(poolId: number, guid: string): void {
     this.showDetails.emit({ poolId, guid });
-    this.router.navigate(['/storage', poolId, 'vdevs', guid]);
+
+    this.layoutService.navigatePreservingScroll(this.router, ['/storage', poolId, 'vdevs', guid]);
 
     if (this.isMobileView()) {
       this.showMobileDetails.emit(true);

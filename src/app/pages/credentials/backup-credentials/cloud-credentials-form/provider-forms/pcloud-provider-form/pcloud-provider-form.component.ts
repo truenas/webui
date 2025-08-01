@@ -1,7 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy, Component, viewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, viewChild, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -28,6 +25,8 @@ import {
   ],
 })
 export class PcloudProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
+  private formBuilder = inject(FormBuilder);
+
   private readonly oauthComponent = viewChild.required(OauthProviderComponent);
 
   form = this.formBuilder.nonNullable.group({
@@ -40,12 +39,6 @@ export class PcloudProviderFormComponent extends BaseProviderFormComponent imple
       this.form.patchValue(values);
       this.oauthComponent().form.patchValue(values);
     });
-  }
-
-  constructor(
-    private formBuilder: FormBuilder,
-  ) {
-    super();
   }
 
   onOauthAuthenticated(attributes: Record<string, unknown>): void {

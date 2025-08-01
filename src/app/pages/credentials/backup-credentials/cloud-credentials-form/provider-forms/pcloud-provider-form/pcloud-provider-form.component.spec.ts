@@ -38,16 +38,12 @@ describe('PcloudProviderFormComponent', () => {
 
   it('show existing provider attributes when they are set as form values', async () => {
     spectator.component.getFormSetter$().next({
-      client_id: 'clientid',
-      client_secret: 'secret',
       token: 'token',
       hostname: 'truenas.com',
     });
 
     const values = await form.getValues();
     expect(values).toEqual({
-      'OAuth Client ID': 'clientid',
-      'OAuth Client Secret': 'secret',
       'Access Token': 'token',
       Hostname: 'truenas.com',
     });
@@ -55,16 +51,14 @@ describe('PcloudProviderFormComponent', () => {
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
     await form.fillForm({
-      'OAuth Client ID': 'newclientid',
-      'OAuth Client Secret': 'newsecret',
       'Access Token': 'newtoken',
       Hostname: 'new.truenas.com',
     });
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toEqual({
-      client_id: 'newclientid',
-      client_secret: 'newsecret',
+      client_id: '',
+      client_secret: '',
       hostname: 'new.truenas.com',
       token: 'newtoken',
     });

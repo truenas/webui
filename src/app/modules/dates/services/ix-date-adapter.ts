@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { NativeDateAdapter } from '@angular/material/core';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -12,12 +12,9 @@ import { LocaleService } from 'app/modules/language/locale.service';
 // eslint-disable-next-line angular-file-naming/service-filename-suffix
 @Injectable()
 export class IxDateAdapter extends NativeDateAdapter {
-  constructor(
-    private localeService: LocaleService,
-    private formatDateTime: FormatDateTimePipe,
-  ) {
-    super();
-  }
+  private localeService = inject(LocaleService);
+  private formatDateTime = inject(FormatDateTimePipe);
+
 
   override format(date: Date, format: { year: string; month: string; day?: string }): string {
     if (!('day' in format)) {

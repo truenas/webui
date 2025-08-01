@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
@@ -48,14 +46,15 @@ import {
   ],
 })
 export class InspectVdevsDialog implements OnInit {
+  protected data = inject<{
+    topology: PoolManagerTopology;
+    enclosures: Enclosure[];
+  }>(MAT_DIALOG_DATA);
+
   protected presentTypes: VDevType[] = [];
   protected selectedType: VDevType;
   protected vdevs: ManualSelectionVdev[] = [];
   protected layout: CreateVdevLayout;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) protected data: { topology: PoolManagerTopology; enclosures: Enclosure[] },
-  ) {}
 
   getTypeLabel(type: VDevType): string {
     return vdevTypeLabels.get(type) || type;

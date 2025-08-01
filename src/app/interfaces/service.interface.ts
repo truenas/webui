@@ -12,3 +12,18 @@ export interface Service {
 export interface ServiceRow extends Service {
   name: string;
 }
+
+export interface ServiceControlOptions {
+  /**
+   * Defaults to `true`.
+   */
+  ha_propagate?: boolean;
+
+  /**
+   * Return false instead of an error if the operation fails.
+   * Defaults to `true`.
+   */
+  silent?: boolean;
+
+  timeout?: number | null;
+}

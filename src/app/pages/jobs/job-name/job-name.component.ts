@@ -1,7 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy, input, computed,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -36,17 +34,15 @@ import { AppState } from 'app/store';
   ],
 })
 export class JobNameComponent {
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+
   readonly job = input.required<Job>();
 
   protected isRunning = computed(() => this.job().state === JobState.Running);
 
   protected readonly JobState = JobState;
-
-  constructor(
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private store$: Store<AppState>,
-  ) {}
 
   onAborted(): void {
     const job = this.job();

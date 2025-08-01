@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -50,6 +48,13 @@ import { IpmiFormComponent } from 'app/pages/system/network/components/ipmi-card
   ],
 })
 export class IpmiCardComponent implements OnInit {
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private matDialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+  private window = inject<Window>(WINDOW);
+
   protected readonly searchableElements = ipmiCardElements.elements;
   protected dataProvider: AsyncDataProvider<Ipmi>;
   columns = createTable<Ipmi>([
@@ -78,22 +83,13 @@ export class IpmiCardComponent implements OnInit {
 
   protected readonly hasIpmi$ = this.api.call('ipmi.is_loaded');
 
-  constructor(
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private matDialog: MatDialog,
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-    @Inject(WINDOW) private window: Window,
-  ) { }
-
   ngOnInit(): void {
     const ipmi$ = this.api.call('ipmi.lan.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<Ipmi>(ipmi$);
     this.loadIpmiEntries();
   }
 
-  canOpen(ipmi: Ipmi): boolean {
+  private canOpen(ipmi: Ipmi): boolean {
     return ipmi.ip_address !== '0.0.0.0';
   }
 
@@ -105,7 +101,7 @@ export class IpmiCardComponent implements OnInit {
       ).subscribe(() => this.loadIpmiEntries());
   }
 
-  onOpen(ipmi: Ipmi): void {
+  private onOpen(ipmi: Ipmi): void {
     this.window.open(`https://${ipmi.ip_address}`);
   }
 

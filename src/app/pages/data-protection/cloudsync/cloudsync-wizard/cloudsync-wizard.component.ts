@@ -1,9 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef,
-  Signal,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef, Signal, viewChild, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatStepperModule } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -45,6 +41,13 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
   ],
 })
 export class CloudSyncWizardComponent {
+  slideInRef = inject<SlideInRef<undefined, CloudSyncTask | false>>(SlideInRef);
+  private api = inject(ApiService);
+  private snackbarService = inject(SnackbarService);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+
   readonly whatAndWhen: Signal<CloudSyncWhatAndWhenComponent>
     = viewChild(forwardRef(() => CloudSyncWhatAndWhenComponent));
 
@@ -58,20 +61,13 @@ export class CloudSyncWizardComponent {
   mergedLoading$: Observable<boolean> = merge(this.isLoading$, this.isProviderLoading$);
   existingCredential: CloudSyncCredential | undefined;
 
-  constructor(
-    public slideInRef: SlideInRef<undefined, CloudSyncTask | false>,
-    private api: ApiService,
-    private snackbarService: SnackbarService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => of(
       Boolean(this.whatAndWhen()?.form?.dirty || this.cloudSyncProvider()?.isDirty()),
     ));
   }
 
-  createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {
+  private createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {
     return this.api.call('cloudsync.create', [payload]);
   }
 
@@ -100,7 +96,7 @@ export class CloudSyncWizardComponent {
       next: (response) => {
         this.snackbarService.success(this.translate.instant('Task created'));
         this.isLoading$.next(false);
-        this.slideInRef.close({ response, error: null });
+        this.slideInRef.close({ response });
 
         this.cdr.markForCheck();
       },
@@ -111,7 +107,7 @@ export class CloudSyncWizardComponent {
     });
   }
 
-  updateDescriptionValue(): void {
+  private updateDescriptionValue(): void {
     const provider = this.existingCredential.provider.type;
 
     const whatAndWhen = this.whatAndWhen();

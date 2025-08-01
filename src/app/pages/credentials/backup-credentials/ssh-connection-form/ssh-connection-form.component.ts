@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -74,6 +72,19 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
   ],
 })
 export class SshConnectionFormComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
+  private keychainCredentialService = inject(KeychainCredentialService);
+  private loader = inject(LoaderService);
+  private validatorsService = inject(IxValidatorsService);
+  formatter = inject(IxFormatterService);
+  private dialogService = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  slideInRef = inject<SlideInRef<KeychainSshCredentials | undefined, KeychainCredential | null>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
 
   form = this.formBuilder.group({
@@ -159,20 +170,7 @@ export class SshConnectionFormComponent implements OnInit {
 
   private existingConnection: KeychainSshCredentials | undefined;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private api: ApiService,
-    private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    private keychainCredentialService: KeychainCredentialService,
-    private loader: LoaderService,
-    private validatorsService: IxValidatorsService,
-    public formatter: IxFormatterService,
-    private dialogService: DialogService,
-    private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<KeychainSshCredentials | undefined, KeychainCredential | null>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -220,7 +218,7 @@ export class SshConnectionFormComponent implements OnInit {
       });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     const request$: Observable<KeychainCredential> = this.isNew
@@ -233,7 +231,7 @@ export class SshConnectionFormComponent implements OnInit {
       next: (newCredential) => {
         this.isLoading.set(false);
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
-        this.slideInRef.close({ response: newCredential, error: null });
+        this.slideInRef.close({ response: newCredential });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

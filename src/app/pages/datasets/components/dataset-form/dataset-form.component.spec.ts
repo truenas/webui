@@ -103,9 +103,7 @@ describe('DatasetFormComponent', () => {
         mockCall('pool.dataset.update', { id: 'saved-id' } as Dataset),
         mockCall('filesystem.stat', { acl: true } as FileSystemStat),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

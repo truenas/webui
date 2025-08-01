@@ -1,13 +1,34 @@
 .edit-trigger {
   all: unset;
   background-color: var(--alt-bg1);
-  color: var(--fg1);
+  color: var(--primary-txt);
   column-gap: 2px;
   cursor: pointer;
   display: inline-flex;
   font-size: 13px;
   padding: 0 5px;
   vertical-align: top;
+  word-break: break-word;
+
+  &.readonly {
+    background-color: transparent;
+    cursor: default;
+    padding: 0 1px;
+    pointer-events: none;
+
+    .edit-trigger-icon {
+      display: none;
+    }
+  }
+
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+
+    .edit-trigger-icon {
+      opacity: 0.2;
+    }
+  }
 
   &.edit-trigger-empty {
     font-style: italic;

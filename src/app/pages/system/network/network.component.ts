@@ -1,6 +1,5 @@
-import {
-  Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, viewChild,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, viewChild, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { NgModel, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
@@ -12,11 +11,10 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  combineLatest, firstValueFrom, lastValueFrom, Observable, switchMap,
+  firstValueFrom, lastValueFrom, Observable, switchMap,
 } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
@@ -37,9 +35,8 @@ import { StaticRoutesCardComponent } from 'app/pages/system/network/components/s
 import { networkElements } from 'app/pages/system/network/network.elements';
 import { InterfacesStore } from 'app/pages/system/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
+import { NetworkService } from 'app/services/network.service';
 import { AppState } from 'app/store';
-import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
@@ -71,11 +68,27 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   ],
 })
 export class NetworkComponent implements OnInit {
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private dialogService = inject(DialogService);
+  private loader = inject(LoaderService);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private snackbar = inject(SnackbarService);
+  private store$ = inject<Store<AppState>>(Store);
+  private errorHandler = inject(ErrorHandlerService);
+  private interfacesStore = inject(InterfacesStore);
+  private actions$ = inject(Actions);
+  private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
+  private networkService = inject(NetworkService);
+  private window = inject<Window>(WINDOW);
+
   protected readonly searchableElements = networkElements;
 
   readonly checkinTimeoutField = viewChild<NgModel>('checkinTimeoutField');
 
-  isHaEnabled = false;
+  protected readonly isHaEnabled = toSignal(this.networkService.getIsHaEnabled());
   hasPendingChanges = false;
   checkinWaiting = false;
   checkinTimeout = 60;
@@ -89,27 +102,11 @@ export class NetworkComponent implements OnInit {
   private navigation: Navigation | null;
   helptext = helptextInterfaces;
 
-  get isCheckinTimeoutFieldInvalid(): boolean {
+  protected get isCheckinTimeoutFieldInvalid(): boolean {
     return this.checkinTimeoutField()?.invalid || false;
   }
 
-  constructor(
-    private api: ApiService,
-    private router: Router,
-    private dialogService: DialogService,
-    private loader: LoaderService,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private snackbar: SnackbarService,
-    private store$: Store<AppState>,
-    private errorHandler: ErrorHandlerService,
-    private systemGeneralService: SystemGeneralService,
-    private interfacesStore: InterfacesStore,
-    private actions$: Actions,
-    private authService: AuthService,
-    private cdr: ChangeDetectorRef,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.navigation = this.router.getCurrentNavigation();
   }
 
@@ -131,14 +128,10 @@ export class NetworkComponent implements OnInit {
         this.cdr.markForCheck();
       });
 
-    if (this.systemGeneralService.getProductType() === ProductType.Enterprise) {
-      this.listenForHaStatus();
-    }
-
     this.openInterfaceForEditFromRoute();
   }
 
-  handleSlideInClosed(slideInRef$: Observable<SlideInResponse<boolean>>): void {
+  protected handleSlideInClosed(slideInRef$: Observable<SlideInResponse<boolean>>): void {
     slideInRef$.pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -148,7 +141,7 @@ export class NetworkComponent implements OnInit {
     });
   }
 
-  async loadCheckinStatus(): Promise<void> {
+  private async loadCheckinStatus(): Promise<void> {
     if (!await firstValueFrom(this.authService.hasRole(Role.NetworkInterfaceWrite))) {
       return;
     }
@@ -158,7 +151,7 @@ export class NetworkComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  async loadCheckinStatusAfterChange(): Promise<void> {
+  protected async loadCheckinStatusAfterChange(): Promise<void> {
     if (!await firstValueFrom(this.authService.hasRole(Role.NetworkInterfaceWrite))) {
       return;
     }
@@ -177,16 +170,6 @@ export class NetworkComponent implements OnInit {
     this.hasPendingChanges = hasPendingChanges;
     this.handleWaitingCheckIn(checkinWaitingSeconds);
     this.cdr.markForCheck();
-  }
-
-  private listenForHaStatus(): void {
-    combineLatest([
-      this.store$.select(selectIsHaLicensed),
-      this.store$.select(selectHaStatus).pipe(filter(Boolean)),
-    ]).pipe(untilDestroyed(this)).subscribe(([isHa, { hasHa }]) => {
-      this.isHaEnabled = isHa && hasHa;
-      this.cdr.markForCheck();
-    });
   }
 
   private getCheckInWaitingSeconds(): Promise<number | null> {
@@ -242,7 +225,7 @@ export class NetworkComponent implements OnInit {
     }
   }
 
-  commitPendingChanges(): void {
+  protected commitPendingChanges(): void {
     this.api
       .call('interface.services_restarted_on_sync')
       .pipe(
@@ -303,7 +286,7 @@ export class NetworkComponent implements OnInit {
       });
   }
 
-  checkInNow(): void {
+  protected checkInNow(): void {
     if (this.affectedServices.length > 0) {
       this.dialogService
         .confirm({
@@ -334,7 +317,7 @@ export class NetworkComponent implements OnInit {
     }
   }
 
-  finishCheckin(): void {
+  private finishCheckin(): void {
     this.api
       .call('interface.checkin')
       .pipe(
@@ -356,7 +339,7 @@ export class NetworkComponent implements OnInit {
       });
   }
 
-  rollbackPendingChanges(): void {
+  protected rollbackPendingChanges(): void {
     this.dialogService
       .confirm({
         title: this.translate.instant(helptextInterfaces.revertChangesTitle),
@@ -390,7 +373,7 @@ export class NetworkComponent implements OnInit {
       });
   }
 
-  goToHa(): void {
+  protected goToHa(): void {
     this.router.navigate(['/', 'system', 'failover']);
   }
 

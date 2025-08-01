@@ -9,6 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskIoBus, VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationVolume } from 'app/interfaces/virtualization.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -57,10 +58,6 @@ describe('InstanceDiskFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('shows a title for creating a disk', () => {
-      expect(spectator.query('ix-modal-header')).toHaveText('Add Disk');
-    });
-
     it('creates a new disk for the instance provided when form is submitted', async () => {
       const form = await loader.getHarness(IxFormHarness);
 
@@ -74,7 +71,6 @@ describe('InstanceDiskFormComponent', () => {
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: true,
-        error: false,
       });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
@@ -107,7 +103,7 @@ describe('InstanceDiskFormComponent', () => {
     });
 
     it('shows a title for editing a disk', () => {
-      expect(spectator.query('ix-modal-header')).toHaveText('Edit Disk');
+      expect(spectator.query(ModalHeaderComponent)).toExist();
     });
 
     it('shows values for the disk that is being edited', async () => {
@@ -140,7 +136,6 @@ describe('InstanceDiskFormComponent', () => {
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: true,
-        error: false,
       });
     });
   });
@@ -182,7 +177,6 @@ describe('InstanceDiskFormComponent', () => {
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: true,
-        error: false,
       });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {

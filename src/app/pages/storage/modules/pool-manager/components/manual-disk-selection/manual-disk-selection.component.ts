@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogClose } from '@angular/material/dialog';
@@ -63,6 +61,11 @@ export interface ManualDiskSelectionParams {
   ],
 })
 export class ManualDiskSelectionComponent implements OnInit {
+  protected data = inject<ManualDiskSelectionParams>(MAT_DIALOG_DATA);
+  private dialogRef = inject<MatDialogRef<ManualDiskSelectionComponent>>(MatDialogRef);
+  private manualDiskSelectionStore = inject(ManualDiskSelectionStore);
+  private cdr = inject(ChangeDetectorRef);
+
   protected readonly requiredRoles = [Role.DiskWrite];
 
   isSaveDisabled$ = combineLatest([
@@ -87,13 +90,6 @@ export class ManualDiskSelectionComponent implements OnInit {
 
   protected currentVdevs: ManualSelectionVdev[];
   private oldVdevs: DetailsDisk[][] = [];
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) protected data: ManualDiskSelectionParams,
-    private dialogRef: MatDialogRef<ManualDiskSelectionComponent>,
-    private manualDiskSelectionStore: ManualDiskSelectionStore,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.dialogRef.addPanelClass('manual-disk-selection-ref');

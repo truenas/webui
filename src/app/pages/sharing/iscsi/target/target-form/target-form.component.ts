@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -71,6 +69,17 @@ import { LicenseService } from 'app/services/license.service';
   ],
 })
 export class TargetFormComponent implements OnInit {
+  protected iscsiService = inject(IscsiService);
+  private translate = inject(TranslateService);
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private fcService = inject(FibreChannelService);
+  private license = inject(LicenseService);
+  private targetNameValidationService = inject(TargetNameValidationService);
+  slideInRef = inject<SlideInRef<IscsiTarget | undefined, IscsiTarget>>(SlideInRef);
+
   get isNew(): boolean {
     return !this.editingTarget;
   }
@@ -157,18 +166,9 @@ export class TargetFormComponent implements OnInit {
     host_id: new FormControl(null as number | null, [Validators.required]),
   });
 
-  constructor(
-    protected iscsiService: IscsiService,
-    private translate: TranslateService,
-    private formBuilder: FormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private fcService: FibreChannelService,
-    private license: LicenseService,
-    private targetNameValidationService: TargetNameValidationService,
-    public slideInRef: SlideInRef<IscsiTarget | undefined, IscsiTarget>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -190,7 +190,7 @@ export class TargetFormComponent implements OnInit {
     }
   }
 
-  setTargetForEdit(target: IscsiTarget): void {
+  private setTargetForEdit(target: IscsiTarget): void {
     Object.values(target.groups).forEach(() => this.addGroup());
     Object.values(target.auth_networks).forEach(() => this.addNetwork());
 
@@ -199,7 +199,7 @@ export class TargetFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.getRawValue();
 
     this.isLoading.set(true);
@@ -226,7 +226,7 @@ export class TargetFormComponent implements OnInit {
     ).subscribe({
       next: (response) => {
         this.isLoading.set(false);
-        this.slideInRef.close({ response, error: null });
+        this.slideInRef.close({ response });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);
@@ -235,7 +235,7 @@ export class TargetFormComponent implements OnInit {
     });
   }
 
-  addGroup(): void {
+  protected addGroup(): void {
     this.form.controls.groups.push(
       this.formBuilder.group({
         portal: new FormControl(null as number | null, Validators.required),
@@ -246,17 +246,17 @@ export class TargetFormComponent implements OnInit {
     );
   }
 
-  deleteGroup(index: number): void {
+  protected deleteGroup(index: number): void {
     this.form.controls.groups.removeAt(index);
   }
 
-  addNetwork(): void {
+  protected addNetwork(): void {
     this.form.controls.auth_networks.push(
       this.formBuilder.control(''),
     );
   }
 
-  deleteNetwork(index: number): void {
+  protected deleteNetwork(index: number): void {
     this.form.controls.auth_networks.removeAt(index);
   }
 

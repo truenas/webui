@@ -1,0 +1,70 @@
+<form class="ix-form-container" [formGroup]="form">
+  <ix-fieldset [title]="'IPA Configuration' | translate">
+    <ix-input
+      formControlName="target_server"
+      [label]="'Target Server' | translate"
+      [required]="true"
+    ></ix-input>
+
+    <ix-input
+      formControlName="hostname"
+      [label]="'TrueNAS Hostname' | translate"
+      [required]="true"
+    ></ix-input>
+
+    <ix-input
+      formControlName="domain"
+      [label]="'Domain' | translate"
+      [required]="true"
+    ></ix-input>
+
+    <ix-input
+      formControlName="basedn"
+      [label]="'Base DN' | translate"
+      [required]="true"
+    ></ix-input>
+
+    <ix-checkbox
+      formControlName="validate_certificates"
+      [label]="'Validate Certificates' | translate"
+    ></ix-checkbox>
+  </ix-fieldset>
+
+  <ix-fieldset [title]="'SMB Domain Configuration' | translate">
+    <ix-checkbox
+      formControlName="use_default_smb_domain"
+      [label]="'Use Default SMB Domain Configuration' | translate"
+    ></ix-checkbox>
+
+    @if (!useDefaultSmbDomain()) {
+      <ix-input
+        formControlName="smb_domain_name"
+        [label]="'Name' | translate"
+      ></ix-input>
+      
+      <ix-input
+        formControlName="smb_domain_domain_name"
+        [label]="'Domain Name' | translate"
+      ></ix-input>
+      
+      <ix-input
+        formControlName="smb_domain_range_low"
+        [type]="'number'"
+        [label]="'Range Low' | translate"
+        [required]="true"
+      ></ix-input>
+
+      <ix-input
+        formControlName="smb_domain_range_high"
+        [type]="'number'"
+        [label]="'Range High' | translate"
+        [required]="true"
+      ></ix-input>
+
+      <ix-input
+        formControlName="smb_domain_domain_sid"
+        [label]="'Domain SID' | translate"
+      ></ix-input>
+    }
+  </ix-fieldset>
+</form>

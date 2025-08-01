@@ -84,8 +84,11 @@
                 [label]="helptext.extent.pathLabel | translate"
                 [tooltip]="helptext.extent.pathTooltip | translate"
                 [required]="true"
-                [canCreateDataset]="isNew"
-              ></ix-explorer>
+              >
+                @if (isNew) {
+                  <ix-explorer-create-dataset></ix-explorer-create-dataset>
+                }
+              </ix-explorer>
 
               <ix-input
                 formControlName="filesize"
@@ -106,6 +109,13 @@
                 [placeholder]="helptext.extent.serialLabel | translate"
               ></ix-input>
             }
+
+            <ix-input
+              formControlName="product_id"
+              [label]="helptext.extent.productIdLabel | translate"
+              [tooltip]="helptext.extent.productIdTooltip | translate"
+              [placeholder]="helptext.extent.productIdPlaceholder | translate"
+            ></ix-input>
 
             <ix-select
               formControlName="blocksize"

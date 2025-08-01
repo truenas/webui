@@ -68,7 +68,7 @@ describe('AllInstancesHeaderComponent', () => {
       expect(selectPoolButton).toExist();
     });
 
-    it('shows status, Settings button and disabled Create New Instance for Initializing state', async () => {
+    it('shows status, Settings button and disabled Create New Container for Initializing state', async () => {
       storeMock.virtualizationState.set(VirtualizationGlobalState.Initializing);
       spectator.detectChanges();
 
@@ -78,11 +78,11 @@ describe('AllInstancesHeaderComponent', () => {
       const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configuration' }));
       expect(configurationButton).toExist();
 
-      const createNewInstanceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create New Instance' }));
-      expect(await createNewInstanceButton.isDisabled()).toBe(true);
+      const createNewButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create New Container' }));
+      expect(await createNewButton.isDisabled()).toBe(true);
     });
 
-    it('shows status, Configuration and Create New Instance for Initialized state', async () => {
+    it('shows status, Configuration and Create New Container for Initialized state', async () => {
       storeMock.virtualizationState.set(VirtualizationGlobalState.Initialized);
       spectator.detectChanges();
 
@@ -92,9 +92,9 @@ describe('AllInstancesHeaderComponent', () => {
       const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configuration' }));
       expect(configurationButton).toExist();
 
-      const createNewInstanceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create New Instance' }));
-      expect(createNewInstanceButton).not.toBeDisabled();
-      expect(await (await createNewInstanceButton.host()).getAttribute('href')).toBe('/instances/new');
+      const createNewButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create New Container' }));
+      expect(createNewButton).not.toBeDisabled();
+      expect(await (await createNewButton.host()).getAttribute('href')).toBe('/containers/new');
     });
 
     it('shows status, Configuration and Go To Dataset for Locked state', async () => {

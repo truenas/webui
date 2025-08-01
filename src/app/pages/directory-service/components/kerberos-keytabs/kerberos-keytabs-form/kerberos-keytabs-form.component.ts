@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -44,6 +42,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class KerberosKeytabsFormComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private api = inject(ApiService);
+  slideInRef = inject<SlideInRef<KerberosKeytab | undefined, boolean>>(SlideInRef);
+  private fileValidator = inject(FileValidatorService);
+
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected editingKerberosKeytab: KerberosKeytab | undefined;
 
@@ -69,14 +74,9 @@ export class KerberosKeytabsFormComponent implements OnInit {
 
   readonly helptext = helptextKerberosKeytabs;
 
-  constructor(
-    private translate: TranslateService,
-    private formBuilder: FormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private api: ApiService,
-    public slideInRef: SlideInRef<KerberosKeytab | undefined, boolean>,
-    private fileValidator: FileValidatorService,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -91,7 +91,7 @@ export class KerberosKeytabsFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.getRawValue();
 
     const fReader: FileReader = new FileReader();
@@ -119,7 +119,7 @@ export class KerberosKeytabsFormComponent implements OnInit {
       request$.pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

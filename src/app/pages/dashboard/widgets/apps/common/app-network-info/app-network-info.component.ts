@@ -1,9 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input,
-  computed,
-  signal,
-  effect,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, signal, effect, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -28,6 +23,9 @@ import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/commo
   ],
 })
 export class AppNetworkInfoComponent {
+  private theme = inject(ThemeService);
+  private translate = inject(TranslateService);
+
   stats = input.required<LoadingState<AppStats>>();
   aspectRatio = input<number>(3);
 
@@ -41,12 +39,12 @@ export class AppNetworkInfoComponent {
     return [...this.initialNetworkStats, ...cachedStats].slice(-60);
   });
 
-  readonly incomingTraffic = computed(() => {
-    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.rx_bytes, 0) || 0;
+  readonly incomingTrafficBits = computed(() => {
+    return (this.stats()?.value?.networks?.reduce((sum, stats) => sum + this.bytesToBits(stats.rx_bytes), 0) || 0);
   });
 
-  readonly outgoingTraffic = computed(() => {
-    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.tx_bytes, 0) || 0;
+  readonly outgoingTrafficBits = computed(() => {
+    return (this.stats()?.value?.networks?.reduce((sum, stats) => sum + this.bytesToBits(stats.tx_bytes), 0) || 0);
   });
 
   protected networkChartData = computed<ChartData<'line'>>(() => {
@@ -80,19 +78,23 @@ export class AppNetworkInfoComponent {
     };
   });
 
-  constructor(
-    private theme: ThemeService,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     effect(() => {
       const networkStats = this.stats()?.value?.networks;
-      const incomingTraffic = networkStats?.reduce((sum, stats) => sum + stats.rx_bytes, 0);
-      const outgoingTraffic = networkStats?.reduce((sum, stats) => sum + stats.tx_bytes, 0);
+      const incomingTraffic = networkStats?.reduce((sum, stats) => sum + this.bytesToBits(stats.rx_bytes), 0);
+      const outgoingTraffic = networkStats?.reduce((sum, stats) => sum + this.bytesToBits(stats.tx_bytes), 0);
       if (networkStats && incomingTraffic && outgoingTraffic) {
         this.cachedNetworkStats.update((cachedStats) => {
           return [...cachedStats, [incomingTraffic, outgoingTraffic]].slice(-60);
         });
       }
     });
+  }
+
+  private bytesToBits(bytes: number): number {
+    if (bytes == null) {
+      return 0;
+    }
+    return bytes * 8;
   }
 }

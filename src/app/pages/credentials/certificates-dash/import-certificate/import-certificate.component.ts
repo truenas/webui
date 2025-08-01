@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -53,6 +51,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ImportCertificateComponent {
+  private api = inject(ApiService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+  private validators = inject(IxValidatorsService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  slideInRef = inject<SlideInRef<void, boolean>>(SlideInRef);
+
   protected form = this.formBuilder.group({
     name: ['', [
       Validators.required,
@@ -81,15 +87,7 @@ export class ImportCertificateComponent {
 
   isLoading = signal(false);
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: NonNullableFormBuilder,
-    private translate: TranslateService,
-    private validators: IxValidatorsService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<void, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(this.form?.dirty));
     });
@@ -106,7 +104,7 @@ export class ImportCertificateComponent {
         complete: () => {
           this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Certificate has been created.'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);
@@ -120,6 +118,7 @@ export class ImportCertificateComponent {
       ...omit(this.form.getRawValue(), ['passphrase2']),
       create_type: CertificateCreateType.Import,
       passphrase: this.form.controls.passphrase.value || null,
+      privatekey: this.form.controls.privatekey.value || undefined,
     };
   }
 }

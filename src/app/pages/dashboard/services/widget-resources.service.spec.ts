@@ -10,7 +10,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { App } from 'app/interfaces/app.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { SystemUpdateChange } from 'app/interfaces/system-update.interface';
+import { UpdateStatus } from 'app/interfaces/system-update.interface';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -51,9 +51,11 @@ describe('WidgetResourcesService', () => {
         mockCall('cloudsync.query'),
         mockCall('webui.main.dashboard.sys_info'),
         mockCall('interface.query'),
-        mockCall('update.get_pending', [
-          {} as SystemUpdateChange,
-        ]),
+        mockCall('update.status', {
+          status: {
+            new_version: {},
+          },
+        } as UpdateStatus),
         mockCall('reporting.netdata_get_data', [interfaceEth0]),
       ]),
       mockProvider(Store, {

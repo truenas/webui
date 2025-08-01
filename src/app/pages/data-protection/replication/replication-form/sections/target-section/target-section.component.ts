@@ -1,11 +1,10 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { EncryptionKeyFormat, encryptionKeyFormatNames } from 'app/enums/encryption-key-format.enum';
 import { LifetimeUnit, lifetimeUnitNames } from 'app/enums/lifetime-unit.enum';
@@ -40,6 +39,10 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class TargetSectionComponent implements OnInit, OnChanges {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private replicationService = inject(ReplicationService);
+
   readonly replication = input<ReplicationTask>();
   readonly allowsCustomRetentionPolicy = input(false);
   readonly nodeProvider = input<TreeNodeProvider>();
@@ -61,6 +64,8 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
   });
 
+  protected readonly emptyRootNode = [emptyRootNode];
+
   retentionPolicies$: Observable<Option[]>;
 
   readonly readonlyModes$ = of(mapToOptions(readonlyModeNames, this.translate));
@@ -72,12 +77,6 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   protected readonly helptext = helptextReplication;
 
   private allRetentionPolicies$ = of(mapToOptions(retentionPolicyNames, this.translate));
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private replicationService: ReplicationService,
-  ) {}
 
   get hasEncryption(): boolean {
     return Boolean(this.form.value.encryption);

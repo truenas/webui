@@ -1,7 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, computed,
-  input,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -22,6 +19,9 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class TruenasLogoComponent {
+  private store$ = inject<Store<AppState>>(Store);
+  private themeService = inject(ThemeService);
+
   readonly color = input<'primary' | 'white'>('primary');
   readonly fullSize = input(false);
   readonly hideText = input(false);
@@ -59,9 +59,4 @@ export class TruenasLogoComponent {
       ? iconMarker('ix-truenas-logo-ce')
       : iconMarker('ix-truenas-logo-ce-color');
   });
-
-  constructor(
-    private store$: Store<AppState>,
-    private themeService: ThemeService,
-  ) {}
 }

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map } from 'rxjs';
@@ -28,6 +26,9 @@ import { systemUptimeWidget } from 'app/pages/dashboard/widgets/system/widget-sy
   ],
 })
 export class WidgetSystemUptimeComponent implements WidgetComponent {
+  private resources = inject(WidgetResourcesService);
+  private localeService = inject(LocaleService);
+
   size = input.required<SlotSize>();
   readonly name = systemUptimeWidget.name;
 
@@ -55,9 +56,4 @@ export class WidgetSystemUptimeComponent implements WidgetComponent {
     const [, timeValue] = this.localeService.getDateAndTime();
     return `${timeValue.split(':')[0]}:${timeValue.split(':')[1]}`;
   });
-
-  constructor(
-    private resources: WidgetResourcesService,
-    private localeService: LocaleService,
-  ) {}
 }

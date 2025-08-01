@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component, OnInit,
-  Type,
-  ViewContainerRef,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, Type, ViewContainerRef, viewChild, inject } from '@angular/core';
 import {
   Validators, ReactiveFormsModule, FormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
@@ -89,6 +82,15 @@ import {
   ],
 })
 export class AlertServiceComponent implements OnInit {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
+  slideInRef = inject<SlideInRef<AlertService | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.AlertWrite];
 
   commonForm = this.formBuilder.group({
@@ -112,16 +114,7 @@ export class AlertServiceComponent implements OnInit {
 
   private alertServiceForm: BaseAlertServiceForm;
 
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private errorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
-    private dialogService: DialogService,
-    public slideInRef: SlideInRef<AlertService | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(this.commonForm.dirty || this.alertServiceForm?.form.dirty));
     });
@@ -145,8 +138,11 @@ export class AlertServiceComponent implements OnInit {
     }
   }
 
-  setAlertServiceForEdit(alertService: AlertService): void {
-    this.commonForm.patchValue(alertService);
+  private setAlertServiceForEdit(alertService: AlertService): void {
+    this.commonForm.patchValue({
+      ...alertService,
+      type: alertService.attributes.type,
+    });
 
     setTimeout(() => {
       this.alertServiceForm.setValues(alertService.attributes);
@@ -199,7 +195,7 @@ export class AlertServiceComponent implements OnInit {
           this.isLoading = false;
           this.cdr.detectChanges();
           this.snackbar.success(this.translate.instant('Alert service saved'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading = false;
@@ -210,9 +206,14 @@ export class AlertServiceComponent implements OnInit {
   }
 
   private generatePayload(): AlertServiceEdit {
+    const { type, ...rest } = this.commonForm.value;
+
     return {
-      ...this.commonForm.value,
-      attributes: this.alertServiceForm.getSubmitAttributes(),
+      ...rest,
+      attributes: {
+        type,
+        ...this.alertServiceForm.getSubmitAttributes(),
+      },
     };
   }
 

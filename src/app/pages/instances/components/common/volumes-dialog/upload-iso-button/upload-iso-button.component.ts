@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, output, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -30,19 +28,17 @@ import { UploadService } from 'app/services/upload.service';
   ],
 })
 export class UploadIsoButtonComponent implements OnInit {
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private uploadService = inject(UploadService);
+  private snackbar = inject(SnackbarService);
+  private api = inject(ApiService);
+
   readonly uploaded = output();
 
   protected readonly imageFileControl = new FormControl<File[]>([], { nonNullable: true });
   protected readonly requiredRoles = [Role.VirtImageWrite];
-
-  constructor(
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private uploadService: UploadService,
-    private snackbar: SnackbarService,
-    private api: ApiService,
-  ) {}
 
   ngOnInit(): void {
     this.imageFileControl.valueChanges

@@ -1,6 +1,4 @@
-import {
-  ComponentRef, Directive, HostBinding, Input, TemplateRef, ViewContainerRef,
-} from '@angular/core';
+import { ComponentRef, Directive, HostBinding, Input, TemplateRef, ViewContainerRef, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { MissingAccessWrapperComponent } from 'app/directives/has-access/missing-access-wrapper.component';
 
@@ -9,6 +7,9 @@ import { MissingAccessWrapperComponent } from 'app/directives/has-access/missing
   selector: '[ixHasAccess]',
 })
 export class HasAccessDirective {
+  protected templateRef = inject<TemplateRef<HTMLElement>>(TemplateRef);
+  protected viewContainerRef = inject(ViewContainerRef);
+
   private wrapperContainer: ComponentRef<MissingAccessWrapperComponent>;
   private previousAccess: boolean | null = null;
 
@@ -42,9 +43,4 @@ export class HasAccessDirective {
   set elementClass(val: string) {
     this.cssClassList = val.split(' ');
   }
-
-  constructor(
-    protected templateRef: TemplateRef<HTMLElement>,
-    protected viewContainerRef: ViewContainerRef,
-  ) { }
 }

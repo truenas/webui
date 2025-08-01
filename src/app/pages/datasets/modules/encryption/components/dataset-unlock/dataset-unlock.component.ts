@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import {
   FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -66,6 +66,17 @@ interface DatasetFormGroup {
   ],
 })
 export class DatasetUnlockComponent implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private aroute = inject(ActivatedRoute);
+  private authService = inject(AuthService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private matDialog = inject(MatDialog);
+  private router = inject(Router);
+  private translate = inject(TranslateService);
+  private upload = inject(UploadService);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   pk: string;
@@ -96,19 +107,6 @@ export class DatasetUnlockComponent implements OnInit {
     return this.form.controls.use_file.value;
   }
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: NonNullableFormBuilder,
-    private aroute: ActivatedRoute,
-    private authService: AuthService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
-    private router: Router,
-    private translate: TranslateService,
-    private upload: UploadService,
-  ) {}
-
   ngOnInit(): void {
     this.pk = this.aroute.snapshot.params['datasetId'] as string;
     this.getEncryptionSummary();
@@ -131,7 +129,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
   }
 
-  getEncryptionSummary(): void {
+  private getEncryptionSummary(): void {
     this.dialogService.jobDialog(
       this.api.job('pool.dataset.encryption_summary', [this.pk]),
       {
@@ -217,7 +215,7 @@ export class DatasetUnlockComponent implements OnInit {
       });
   }
 
-  onSave(): void {
+  protected onSave(): void {
     const values = this.form.getRawValue();
     const datasets: DatasetEncryptionSummaryQueryParamsDataset[] = [];
 
@@ -260,7 +258,7 @@ export class DatasetUnlockComponent implements OnInit {
       });
   }
 
-  openUnlockDialog(payload: DatasetUnlockParams, unlockResult: DatasetUnlockResult): void {
+  private openUnlockDialog(payload: DatasetUnlockParams, unlockResult: DatasetUnlockResult): void {
     const errors: { name: string; unlock_error: string }[] = [];
     let skipped: { name: string }[] = [];
     const unlock: { name: string }[] = [];
@@ -291,7 +289,7 @@ export class DatasetUnlockComponent implements OnInit {
     }
   }
 
-  openSummaryDialog(payload: DatasetUnlockParams, encryptionSummary: DatasetEncryptionSummary[]): void {
+  private openSummaryDialog(payload: DatasetUnlockParams, encryptionSummary: DatasetEncryptionSummary[]): void {
     const errors: DatasetEncryptionSummary[] = [];
     const unlock: DatasetEncryptionSummary[] = [];
     if (encryptionSummary) {

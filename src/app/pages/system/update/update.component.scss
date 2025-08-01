@@ -1,41 +1,297 @@
+@import 'scss-imports/variables';
 
-#upgrades-card {
-  max-height: 180px;
+.update-container {
+  color: var(--fg2);
+  display: grid;
+  gap: 5%;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 100px;
+
+  ::ng-deep > * {
+    display: block;
+  }
+
+  @media(max-width: $breakpoint-sm) {
+    gap: 32px;
+    grid-template-columns: 1fr;
+  }
+
+  .up-to-date-icon {
+    bottom: 2px;
+    color: var(--green);
+    position: relative;
+  }
+
+  .error-color {
+    color: var(--red);
+  }
+
+  ix-icon {
+    width: 18px;
+  }
+
+  a {
+    color: var(--primary);
+    margin: 10px 0 0;
+    text-decoration: underline;
+  }
+
+  h2,
+  h3 {
+    border-bottom: 1px solid var(--lines);
+    padding-bottom: 10px;
+  }
+
+  h3 {
+    margin-top: 40px;
+  }
+
+  .train-warning {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    padding: 0;
+
+    a {
+      margin: 0;
+    }
+  }
+
+  .update-available {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: space-between;
+    padding: 16px 0 0;
+
+    .label {
+      margin-right: 0;
+    }
+
+    .profile-mismatch {
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    h4 {
+      align-items: flex-start;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .versions {
+      display: grid;
+      flex-wrap: wrap;
+      gap: 16px;
+
+      ngx-skeleton-loader {
+        height: 18px;
+        margin-left: 10px;
+        width: 100px;
+      }
+    }
+
+    .current-version-number {
+      font-weight: 600;
+    }
+  }
+
+  .update-summary {
+    h4 {
+      margin-top: 15px;
+    }
+
+    .changelog {
+      margin-top: 3px;
+    }
+  }
+
+
+  .other-options {
+    margin-top: 40px;
+
+    .manual-update {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-top: 15px;
+
+      h4 {
+        margin-bottom: 6px;
+        margin-top: 3px;
+      }
+    }
+  }
+
+  .hint {
+    color: var(--alt-fg1);
+    margin-top: 15px;
+  }
+
+  .release-notes-section {
+    margin-top: 40px;
+
+    h3 {
+      border-bottom: 1px solid var(--lines);
+      padding-bottom: 10px;
+    }
+
+    .release-notes-content {
+      max-height: 40vh;
+      overflow-y: auto;
+      padding: 16px 0;
+    }
+  }
 }
 
-#upgrades-card-scrollbox {
-  max-height: 170px;
-  overflow-y: auto;
-}
+// Markdown styles for release notes
+.release-notes-content ::ng-deep markdown {
+  color: var(--fg2);
+  font-size: 13px;
+  line-height: 1.5;
 
-.release-notes-link {
-  display: block;
-  margin: 3px;
-  text-decoration: underline;
-}
+  h1 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    margin-top: 16px;
+  }
 
-#changelog-card {
-  height: 230px;
-  padding-right: 40px !important;
-}
+  h2 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    margin-top: 14px;
+  }
 
-#changelog-title {
-  font-weight: 700;
-  margin: 10px 25px;
-  padding-top: 15px;
-}
+  h3 {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    margin-top: 12px;
+  }
 
-#changelog-scrollbox {
-  height: 140px;
-  overflow-y: auto;
-}
+  h4,
+  h5,
+  h6 {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    margin-top: 10px;
+  }
 
-mat-card {
-  margin: 0 auto 15px;
-  max-width: 960px;
-  padding: 20px !important;
-}
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--fg1);
 
-.upgrades-table {
-  width: 100%;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  p {
+    margin-bottom: 10px;
+    margin-top: 0;
+  }
+
+  ul,
+  ol {
+    margin-bottom: 10px;
+    margin-top: 0;
+    padding-left: 20px;
+
+    li {
+      margin-bottom: 4px;
+    }
+  }
+
+  code {
+    background-color: var(--bg2);
+    border: 1px solid var(--lines);
+    border-radius: 2px;
+    color: var(--fg1);
+    font-family: monospace;
+    font-size: 12px;
+    padding: 1px 4px;
+  }
+
+  pre {
+    background-color: var(--bg2);
+    border: 1px solid var(--lines);
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.4;
+    margin: 10px 0;
+    overflow-x: auto;
+    padding: 10px;
+
+    code {
+      background-color: transparent;
+      border: none;
+      padding: 0;
+    }
+  }
+
+  a {
+    color: var(--primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  blockquote {
+    border-left: 2px solid var(--lines);
+    color: var(--fg2);
+    font-style: italic;
+    margin: 10px 0;
+    padding-left: 12px;
+  }
+
+  strong,
+  b {
+    font-weight: 600;
+  }
+
+  em,
+  i {
+    font-style: italic;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--lines);
+    margin: 16px 0;
+  }
+
+  table {
+    border-collapse: collapse;
+    font-size: 12px;
+    margin: 10px 0;
+    width: 100%;
+
+    th,
+    td {
+      border: 1px solid var(--lines);
+      padding: 6px 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: var(--bg2);
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: var(--hover);
+    }
+  }
 }

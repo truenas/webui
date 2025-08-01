@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   FormBuilder, Validators, FormsModule, ReactiveFormsModule,
 } from '@angular/forms';
@@ -37,6 +35,13 @@ const adminUsername = 'truenas_admin';
   ],
 })
 export class SetAdminPasswordFormComponent {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private authService = inject(AuthService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  private signinStore = inject(SigninStore);
+
   isLoading$ = this.signinStore.isLoading$;
 
   form = this.formBuilder.nonNullable.group({
@@ -55,16 +60,7 @@ export class SetAdminPasswordFormComponent {
     ],
   });
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private authService: AuthService,
-    private errorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    private signinStore: SigninStore,
-  ) { }
-
-  onSubmit(): void {
+  protected onSubmit(): void {
     const { username, password } = this.form.getRawValue();
     this.signinStore.setLoadingState(true);
 
@@ -74,7 +70,7 @@ export class SetAdminPasswordFormComponent {
       switchMap(() => this.authService.login(username, password)),
       untilDestroyed(this),
     ).subscribe({
-      next: (loginResult) => {
+      next: ({ loginResult }) => {
         this.signinStore.setLoadingState(false);
 
         if (loginResult === LoginResult.Success) {

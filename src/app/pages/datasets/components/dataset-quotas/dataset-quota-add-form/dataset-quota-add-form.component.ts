@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, signal, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -50,6 +48,20 @@ import { UserService } from 'app/services/user.service';
   ],
 })
 export class DatasetQuotaAddFormComponent {
+  private authService = inject(AuthService);
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  formatter = inject(IxFormatterService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(FormErrorHandlerService);
+  private userService = inject(UserService);
+  slideInRef = inject<SlideInRef<{
+    quotaType: DatasetQuotaType;
+    datasetId: string;
+  }, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   protected isLoading = signal(false);
@@ -64,18 +76,18 @@ export class DatasetQuotaAddFormComponent {
 
   get dataQuotaLabel(): string {
     if (this.quotaType === DatasetQuotaType.User) {
-      return this.translate.instant(helptextQuotas.users.dataQuota.placeholder)
-        + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
+      return this.translate.instant(helptextQuotas.users.dataQuota.label)
+        + this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
     }
 
-    return this.translate.instant(helptextQuotas.groups.dataQuota.placeholder)
-      + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
+    return this.translate.instant(helptextQuotas.groups.dataQuota.label)
+      + this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
   }
 
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.objQuota.placeholder
-      : helptextQuotas.groups.objectQuota.placeholder;
+      ? helptextQuotas.users.objQuota.label
+      : helptextQuotas.groups.objectQuota.label;
   }
 
   get dataQuotaTooltip(): string {
@@ -125,18 +137,9 @@ export class DatasetQuotaAddFormComponent {
 
   private datasetId: string;
 
-  constructor(
-    private authService: AuthService,
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    public formatter: IxFormatterService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
-    private userService: UserService,
-    public slideInRef: SlideInRef<{ quotaType: DatasetQuotaType; datasetId: string }, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -145,7 +148,7 @@ export class DatasetQuotaAddFormComponent {
     this.datasetId = slideInRef.getData().datasetId;
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
 
     const quotas = this.getQuotas();
@@ -155,7 +158,7 @@ export class DatasetQuotaAddFormComponent {
         next: () => {
           this.snackbar.success(this.translate.instant('Quotas added'));
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

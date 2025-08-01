@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest } from 'rxjs';
-import { map, share } from 'rxjs/operators';
+import { combineLatest, shareReplay } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
@@ -9,6 +9,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectHasEnclosureSupport,
   selectIsEnterprise,
+  selectLicenseFeatures,
   selectSystemInfo,
   waitForSystemInfo,
 } from 'app/store/system-info/system-info.selectors';
@@ -17,6 +18,9 @@ import {
   providedIn: 'root',
 })
 export class LicenseService {
+  private store$ = inject<Store<AppState>>(Store);
+  private api = inject(ApiService);
+
   hasFailover$ = this.store$.select(selectIsHaLicensed);
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
   hasFibreChannel$ = combineLatest([
@@ -27,7 +31,7 @@ export class LicenseService {
     this.api.call('fc.capable'),
   ]).pipe(
     map(([hasFibreChannel, isFcCapable]) => hasFibreChannel && isFcCapable),
-    share(),
+    shareReplay({ bufferSize: 1, refCount: false }),
   );
 
   hasVms$ = combineLatest([
@@ -56,10 +60,12 @@ export class LicenseService {
     }),
   );
 
-  hasKmip$ = this.store$.select(selectIsEnterprise);
+  readonly hasKmip$ = this.store$.select(selectIsEnterprise);
 
-  constructor(
-    private store$: Store<AppState>,
-    private api: ApiService,
-  ) {}
+  readonly shouldShowContainers$ = combineLatest([
+    this.store$.select(selectIsEnterprise),
+    this.store$.select(selectLicenseFeatures),
+  ]).pipe(map((
+    [isEnterprise, licenseFeatures]: [boolean, LicenseFeature[]],
+  ) => !isEnterprise || licenseFeatures.includes(LicenseFeature.Jails)));
 }

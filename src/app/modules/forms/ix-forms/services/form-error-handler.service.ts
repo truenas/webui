@@ -1,5 +1,4 @@
-import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, DOCUMENT, inject } from '@angular/core';
 import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { JobExceptionType } from 'app/enums/response-error-type.enum';
@@ -14,15 +13,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
 export class FormErrorHandlerService {
+  private errorHandler = inject(ErrorHandlerService);
+  private formService = inject(IxFormService);
+  private editableService = inject(EditableService);
+  private document = inject<Document>(DOCUMENT);
+
   private isFocusedOnError = false;
   private needToShowError = false;
-
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private formService: IxFormService,
-    private editableService: EditableService,
-    @Inject(DOCUMENT) private document: Document,
-  ) {}
 
   /**
    * @param error
@@ -84,16 +81,17 @@ export class FormErrorHandlerService {
       const errorMessage = extraItem[1];
 
       const control = this.getFormField(formGroup, field, fieldsMap);
+      const mappedFieldName = fieldsMap[field] ?? field; // Get the mapped field name
       const controlsNames = this.formService.getControlNames();
 
-      if (triggerAnchor && control && !controlsNames.includes(field)) {
+      if (triggerAnchor && control && !controlsNames.includes(mappedFieldName)) {
         const triggerAnchorRef = this.document.getElementById(triggerAnchor);
         if (triggerAnchorRef) {
           triggerAnchorRef.click();
           setTimeout(() => {
             this.showValidationError({
               control,
-              field,
+              field: mappedFieldName, // Use mapped field name
               errorMessage,
             });
           });
@@ -102,7 +100,9 @@ export class FormErrorHandlerService {
       }
 
       this.showValidationError({
-        control, field, errorMessage,
+        control,
+        field: mappedFieldName, // Use mapped field name
+        errorMessage,
       });
     }
 

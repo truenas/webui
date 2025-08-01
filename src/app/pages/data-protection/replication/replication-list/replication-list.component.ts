@@ -1,20 +1,21 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
+import { replicationTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -82,15 +83,30 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class ReplicationListComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private matDialog = inject(MatDialog);
+  private snackbar = inject(SnackbarService);
+  private download = inject(DownloadService);
+  private loader = inject(LoaderService);
+  protected emptyService = inject(EmptyService);
+
   replicationTasks: ReplicationTask[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<ReplicationTask>;
   readonly jobState = JobState;
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
   protected readonly searchableElements = replicationListElements;
+  protected readonly emptyConfig = replicationTaskEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   columns = createTable<ReplicationTask>([
     textColumn({
@@ -165,23 +181,9 @@ export class ReplicationListComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('Replication Task')],
   });
 
-  get hiddenColumns(): Column<ReplicationTask, ColumnComponent<ReplicationTask>>[] {
+  protected get hiddenColumns(): Column<ReplicationTask, ColumnComponent<ReplicationTask>>[] {
     return this.columns.filter((column) => column?.hidden);
   }
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
-    private snackbar: SnackbarService,
-    private download: DownloadService,
-    private loader: LoaderService,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const replicationTasks$ = this.api.call('replication.query', [[], {
@@ -196,7 +198,7 @@ export class ReplicationListComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
+  protected setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,
@@ -204,13 +206,12 @@ export class ReplicationListComponent implements OnInit {
     });
   }
 
-  getReplicationTasks(): void {
+  protected getReplicationTasks(): void {
     this.dataProvider.load();
   }
 
-  runNow(row: ReplicationTask): void {
+  protected runNow(row: ReplicationTask): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Run Now'),
       message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
       hideCheckbox: true,
     }).pipe(
@@ -237,7 +238,7 @@ export class ReplicationListComponent implements OnInit {
     });
   }
 
-  restore(row: ReplicationTask): void {
+  protected restore(row: ReplicationTask): void {
     const dialog = this.matDialog.open(ReplicationRestoreDialog, {
       data: row.id,
     });
@@ -246,29 +247,29 @@ export class ReplicationListComponent implements OnInit {
       .subscribe(() => this.getReplicationTasks());
   }
 
-  openForm(row?: ReplicationTask): void {
+  protected openForm(row?: ReplicationTask): void {
     if (row) {
-      this.slideIn.open(ReplicationFormComponent, { data: row, wide: true })
-        .pipe(
-          filter((response) => !!response.response),
-          untilDestroyed(this),
-        ).subscribe({
-          next: () => {
-            this.getReplicationTasks();
-          },
-        });
+      this.slideIn.open(
+        ReplicationFormComponent,
+        { data: row, wide: true },
+      ).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe({
+        next: () => {
+          this.getReplicationTasks();
+        },
+      });
     } else {
-      this.slideIn.open(ReplicationWizardComponent, { wide: true })
-        .pipe(
-          filter((response) => !!response.response),
-          untilDestroyed(this),
-        ).subscribe(() => this.getReplicationTasks());
+      this.slideIn.open(ReplicationWizardComponent).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe(() => this.getReplicationTasks());
     }
   }
 
-  doDelete(row: ReplicationTask): void {
+  protected doDelete(row: ReplicationTask): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
         name: row.name,
       }),
@@ -288,18 +289,18 @@ export class ReplicationListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
   }
 
-  downloadKeys(row: ReplicationTask): void {
+  protected downloadKeys(row: ReplicationTask): void {
     const fileName = `${row.name}_encryption_keys.json`;
     this.download.coreDownload({
       fileName,

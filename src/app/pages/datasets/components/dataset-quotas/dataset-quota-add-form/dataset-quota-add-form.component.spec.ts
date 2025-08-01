@@ -24,7 +24,7 @@ describe('DatasetQuotaAddFormComponent', () => {
   const slideInRef: SlideInRef<{ quotaType: DatasetQuotaType; datasetId: string } | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -43,9 +43,7 @@ describe('DatasetQuotaAddFormComponent', () => {
         ]),
         groupQueryDsCache: () => of(),
       }),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),

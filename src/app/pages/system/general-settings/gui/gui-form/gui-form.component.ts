@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, computed, Inject,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -27,7 +22,6 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -66,6 +60,21 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   ],
 })
 export class GuiFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private sysGeneralService = inject(SystemGeneralService);
+  private themeService = inject(ThemeService);
+  private api = inject(ApiService);
+  private wsManager = inject(WebSocketHandlerService);
+  private wsStatus = inject(WebSocketStatusService);
+  private dialog = inject(DialogService);
+  private loader = inject(LoaderService);
+  private translate = inject(TranslateService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
+  private store$ = inject<Store<AppState>>(Store);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private window = inject<Window>(WINDOW);
+
   protected isFormLoading = signal(true);
   configData: SystemGeneralConfig;
   protected isStigMode = signal(false);
@@ -73,8 +82,8 @@ export class GuiFormComponent implements OnInit {
   formGroup = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
     ui_certificate: ['', [Validators.required]],
-    ui_address: [[] as string[], [ipValidator('ipv4')]],
-    ui_v6address: [[] as string[], [ipValidator('ipv6')]],
+    ui_address: [[] as string[]],
+    ui_v6address: [[] as string[]],
     ui_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsport: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
@@ -101,23 +110,7 @@ export class GuiFormComponent implements OnInit {
     return this.translate.instant(helptext.usageCollection.tooltip);
   });
 
-  constructor(
-    private fb: FormBuilder,
-    private sysGeneralService: SystemGeneralService,
-    private themeService: ThemeService,
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private wsManager: WebSocketHandlerService,
-    private wsStatus: WebSocketStatusService,
-    private dialog: DialogService,
-    private loader: LoaderService,
-    private translate: TranslateService,
-    private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    private store$: Store<AppState>,
-    public slideInRef: SlideInRef<undefined, boolean>,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.formGroup.dirty);
     });
@@ -140,7 +133,7 @@ export class GuiFormComponent implements OnInit {
     });
   }
 
-  replaceHrefWhenWsConnected(href: string): void {
+  private replaceHrefWhenWsConnected(href: string): void {
     this.wsStatus.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
       if (isConnected) {
         this.loader.close();
@@ -149,7 +142,7 @@ export class GuiFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.formGroup.getRawValue();
     const params = {
       ...values,
@@ -195,7 +188,7 @@ export class GuiFormComponent implements OnInit {
     });
   }
 
-  getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {
+  private getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {
     const uiCertificateChanged = current.ui_certificate?.id !== next.ui_certificate;
     const httpPortChanged = current.ui_port !== next.ui_port;
     const httpsPortChanged = current.ui_httpsport !== next.ui_httpsport;
@@ -215,7 +208,7 @@ export class GuiFormComponent implements OnInit {
     ].includes(true);
   }
 
-  handleServiceRestart(changed: SystemGeneralConfigUpdate): void {
+  protected handleServiceRestart(changed: SystemGeneralConfigUpdate): void {
     const current: SystemGeneralConfig = { ...this.configData };
     const httpPortChanged = current.ui_port !== changed.ui_port;
     const httpsPortChanged = current.ui_httpsport !== changed.ui_httpsport;
@@ -228,7 +221,7 @@ export class GuiFormComponent implements OnInit {
         title: this.translate.instant(helptext.restartTitle),
         message: this.translate.instant(helptext.restartMessage),
       }).pipe(
-        tap(() => this.slideInRef.close({ response: true, error: null })),
+        tap(() => this.slideInRef.close({ response: true })),
         filter(Boolean),
         untilDestroyed(this),
       ).subscribe(() => {
@@ -262,7 +255,7 @@ export class GuiFormComponent implements OnInit {
         });
       });
     } else {
-      this.slideInRef.close({ response: true, error: null });
+      this.slideInRef.close({ response: true });
     }
   }
 

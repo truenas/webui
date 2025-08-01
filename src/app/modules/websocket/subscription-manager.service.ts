@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
-import { UUID } from 'angular2-uuid';
+import { Injectable, inject } from '@angular/core';
 import {
   filter, Observable, share, tap, throwError, of, switchMap,
 } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 import { JsonRpcErrorCode } from 'app/enums/api.enum';
 import { isCollectionUpdateMessage, isSuccessfulResponse, isNotifyUnsubscribedMessage } from 'app/helpers/api.helper';
 import {
-  ApiEventMethod, ApiEventTyped,
+  ApiEventMethod, ApiEventTyped, JsonRpcError,
 } from 'app/interfaces/api-message.interface';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
@@ -30,6 +30,9 @@ type SubscribeMessageId = string;
   providedIn: 'root',
 })
 export class SubscriptionManagerService {
+  private wsStatus = inject(WebSocketStatusService);
+  private wsHandler = inject(WebSocketHandlerService);
+
   private openSubscriptions = new Map<string, Observable<unknown>>();
 
   /**
@@ -39,10 +42,7 @@ export class SubscriptionManagerService {
   private pendingSubscriptions = new Map<SubscribeMessageId, Method>();
   private subscriptionsToClose = new Set<Method>();
 
-  constructor(
-    private wsStatus: WebSocketStatusService,
-    private wsHandler: WebSocketHandlerService,
-  ) {
+  constructor() {
     this.listenForSubscriptionsToBeEstablished();
   }
 
@@ -74,7 +74,7 @@ export class SubscriptionManagerService {
                 code: JsonRpcErrorCode.CallError,
                 message: message.params.error?.reason || '',
                 data: message.params.error,
-              }));
+              } as JsonRpcError));
             }
             subscriber.complete();
             return of(null);
@@ -101,7 +101,7 @@ export class SubscriptionManagerService {
       this.subscriptionsToClose.delete(method);
     }
 
-    const id = UUID.UUID();
+    const id = uuidv4();
     this.wsHandler.scheduleCall({
       id,
       method: 'core.subscribe',
@@ -154,7 +154,7 @@ export class SubscriptionManagerService {
     const isAuthenticated = this.wsStatus.isAuthenticated;
     if (isAuthenticated) {
       this.wsHandler.scheduleCall({
-        id: UUID.UUID(),
+        id: uuidv4(),
         method: 'core.unsubscribe',
         params: [backendSubscriptionId],
       });

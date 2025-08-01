@@ -1,7 +1,5 @@
 import { PercentPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -51,6 +49,11 @@ import {
   ],
 })
 export class WidgetStorageComponent {
+  private resources = inject(WidgetResourcesService);
+  private translate = inject(TranslateService);
+  private formatDateTimePipe = inject(FormatDateTimePipe);
+  private percentPipe = inject(PercentPipe);
+
   size = input.required<SlotSize>();
 
   protected realtimeUpdates = toSignal(this.resources.realtimeUpdates$);
@@ -85,13 +88,6 @@ export class WidgetStorageComponent {
   protected readonly requiredRoles = [Role.PoolWrite];
 
   private pools = toSignal(this.resources.pools$);
-
-  constructor(
-    private resources: WidgetResourcesService,
-    private translate: TranslateService,
-    private formatDateTimePipe: FormatDateTimePipe,
-    private percentPipe: PercentPipe,
-  ) {}
 
   get isTwoTilesInRow(): boolean {
     return Number(this.pools()?.length) > 2;

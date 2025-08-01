@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  input,
-  OnChanges,
-  OnInit, Signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnChanges, OnInit, Signal, viewChild, inject } from '@angular/core';
 import {
   ControlValueAccessor,
   NgControl,
@@ -62,6 +54,10 @@ type InputValue = string | number | null;
   ],
 })
 export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges {
+  controlDirective = inject(NgControl);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly label = input<TranslatedString>();
   readonly placeholder = input<TranslatedString>('');
   readonly prefixIcon = input<MarkedIcon>();
@@ -92,11 +88,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   onChange: (value: InputValue) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
-  constructor(
-    public controlDirective: NgControl,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 

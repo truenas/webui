@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -69,6 +67,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CertificateSigningRequestsListComponent implements OnInit {
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+  private download = inject(DownloadService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+
   protected certificateCreated = output();
 
   protected readonly requiredRoles = [Role.CertificateWrite];
@@ -115,17 +122,6 @@ export class CertificateSigningRequestsListComponent implements OnInit {
     uniqueRowTag: (row) => 'csr-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('CSR')],
   });
-
-  constructor(
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-    private download: DownloadService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-  ) {}
 
   ngOnInit(): void {
     const certificates$ = this.api.call('certificate.query').pipe(
@@ -232,7 +228,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       .subscribe();
   }
 
-  doCreateAcmeCert(csr: Certificate): void {
+  private doCreateAcmeCert(csr: Certificate): void {
     this.slideIn.open(CertificateAcmeAddComponent, { data: csr }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),

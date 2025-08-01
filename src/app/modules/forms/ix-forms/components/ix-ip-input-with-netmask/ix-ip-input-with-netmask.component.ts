@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
 import { MatInput } from '@angular/material/input';
@@ -35,6 +33,10 @@ import { NetworkService } from 'app/services/network.service';
   ],
 })
 export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
+  private network = inject(NetworkService);
+  controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly label = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
@@ -49,11 +51,7 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
 
   netmaskOptions = this.network.getV4Netmasks();
 
-  constructor(
-    private network: NetworkService,
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 

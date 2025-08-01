@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import {
   Validators, ReactiveFormsModule, NonNullableFormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
@@ -70,6 +68,16 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class ManualUpdateFormComponent implements OnInit {
+  private dialogService = inject(DialogService);
+  protected router = inject(Router);
+  systemService = inject(SystemGeneralService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+  private upload = inject(UploadService);
+
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly searchableElements = systemManualUpdateFormElements;
 
@@ -91,18 +99,6 @@ export class ManualUpdateFormComponent implements OnInit {
 
   isHaLicensed = false;
 
-  constructor(
-    private dialogService: DialogService,
-    protected router: Router,
-    public systemService: SystemGeneralService,
-    private formBuilder: NonNullableFormBuilder,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private store$: Store<AppState>,
-    private upload: UploadService,
-  ) {}
-
   ngOnInit(): void {
     this.checkHaLicenseAndUpdateStatus();
     this.getVersionNoFromSysInfo();
@@ -110,7 +106,7 @@ export class ManualUpdateFormComponent implements OnInit {
     this.getUserPrefs();
   }
 
-  getUserPrefs(): void {
+  private getUserPrefs(): void {
     this.store$.pipe(waitForPreferences).pipe(
       tap((userPrefs) => {
         if (userPrefs.rebootAfterManualUpdate === undefined) {
@@ -122,13 +118,13 @@ export class ManualUpdateFormComponent implements OnInit {
     ).subscribe(noop);
   }
 
-  getVersionNoFromSysInfo(): void {
+  private getVersionNoFromSysInfo(): void {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.currentVersion = sysInfo.version;
     });
   }
 
-  setPoolOptions(): void {
+  private setPoolOptions(): void {
     this.api.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
       if (!pools) {
         return;
@@ -144,7 +140,7 @@ export class ManualUpdateFormComponent implements OnInit {
     });
   }
 
-  checkHaLicenseAndUpdateStatus(): void {
+  private checkHaLicenseAndUpdateStatus(): void {
     if (this.systemService.isEnterprise) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
@@ -157,7 +153,7 @@ export class ManualUpdateFormComponent implements OnInit {
     }
   }
 
-  checkForUpdateRunning(): void {
+  private checkForUpdateRunning(): void {
     this.api.call('core.get_jobs', [[['method', '=', 'failover.upgrade'], ['state', '=', JobState.Running]]])
       .pipe(untilDestroyed(this)).subscribe({
         next: (jobs) => {
@@ -206,7 +202,7 @@ export class ManualUpdateFormComponent implements OnInit {
     this.setupAndOpenUpdateJobDialog(value.updateFile, value.filelocation);
   }
 
-  setupAndOpenUpdateJobDialog(files: FileList, fileLocation: string): void {
+  private setupAndOpenUpdateJobDialog(files: FileList, fileLocation: string): void {
     if (!files.length) {
       return;
     }
@@ -224,7 +220,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
     const job$ = this.upload.uploadAsJob(params);
     this.dialogService
-      .jobDialog(job$, { title: this.translate.instant(helptext.manual_update_action) })
+      .jobDialog(job$, { title: this.translate.instant(helptext.manualUpdateAction) })
       .afterClosed()
       .pipe(
         finalize(() => {
@@ -244,7 +240,7 @@ export class ManualUpdateFormComponent implements OnInit {
     } else {
       this.dialogService.confirm({
         title: this.translate.instant('Restart'),
-        message: this.translate.instant(helptext.rebootAfterManualUpdate.manual_reboot_msg),
+        message: this.translate.instant(helptext.rebootAfterManualUpdate.manualRebootMessage),
       }).pipe(
         filter(Boolean),
         untilDestroyed(this),
@@ -257,15 +253,15 @@ export class ManualUpdateFormComponent implements OnInit {
     this.systemService.updateDone(); // Send 'finished' signal to topbar
     this.router.navigate(['/']);
     this.dialogService.confirm({
-      title: this.translate.instant(helptext.ha_update.complete_title),
-      message: this.translate.instant(helptext.ha_update.complete_msg),
+      title: this.translate.instant(helptext.haUpdate.completeTitle),
+      message: this.translate.instant(helptext.haUpdate.completeMessage),
       hideCheckbox: true,
-      buttonText: this.translate.instant(helptext.ha_update.complete_action),
+      buttonText: this.translate.instant(helptext.haUpdate.completeAction),
       hideCancel: true,
     }).pipe(untilDestroyed(this)).subscribe();
   }
 
-  handleUpdateSuccess(): void {
+  private handleUpdateSuccess(): void {
     if (this.isHaLicensed) {
       this.finishHaUpdate();
     } else {
@@ -298,7 +294,7 @@ export class ManualUpdateFormComponent implements OnInit {
       : this.api.job('update.file', [{ resume: true }]);
 
     this.dialogService
-      .jobDialog(job$, { title: this.translate.instant(helptext.manual_update_action) })
+      .jobDialog(job$, { title: this.translate.instant(helptext.manualUpdateAction) })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe({

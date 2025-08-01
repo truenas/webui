@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -42,30 +39,30 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class LicenseComponent {
+  private fb = inject(FormBuilder);
+  private dialogService = inject(DialogService);
+  protected api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private window = inject<Window>(WINDOW);
+
   protected readonly requiredRoles = [Role.FullAdmin];
 
   isFormLoading = false;
 
-  title = helptext.update_license.license_placeholder;
+  title = helptext.updateLicense.licensePlaceholder;
   form = this.fb.nonNullable.group({
     license: ['', Validators.required],
   });
 
   license = {
     fcName: 'license',
-    label: helptext.update_license.license_placeholder,
+    label: helptext.updateLicense.licensePlaceholder,
   };
 
-  constructor(
-    private fb: FormBuilder,
-    private dialogService: DialogService,
-    protected api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -78,14 +75,14 @@ export class LicenseComponent {
     this.api.call('system.license_update', [license]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
         this.cdr.markForCheck();
         this.dialogService
           .confirm({
-            title: this.translate.instant(helptext.update_license.reload_dialog_title),
-            message: this.translate.instant(helptext.update_license.reload_dialog_message),
+            title: this.translate.instant(helptext.updateLicense.reloadDialogTitle),
+            message: this.translate.instant(helptext.updateLicense.reloadDialogMessage),
             hideCheckbox: true,
-            buttonText: this.translate.instant(helptext.update_license.reload_dialog_action),
+            buttonText: this.translate.instant(helptext.updateLicense.reloadDialogAction),
             hideCancel: true,
             disableClose: true,
           })

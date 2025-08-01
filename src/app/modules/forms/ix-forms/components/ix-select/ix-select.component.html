@@ -3,6 +3,7 @@
     <ix-label
       [label]="label()"
       [tooltip]="tooltip()"
+      [required]="required()"
       [ixTestOverride]="controlDirective.name || ''"
     ></ix-label>
   }
@@ -14,6 +15,7 @@
       [disabled]="disabledState"
       [multiple]="multiple()"
       [ixTest]="controlDirective.name"
+      [canSelectNullableOptions]="true"
       [aria-label]="label() || ''"
       [(ngModel)]="value"
       (blur)="onTouch()"
@@ -51,7 +53,7 @@
             [value]="emptyValue()"
             [ixTest]="[controlDirective.name, 'select']"
           >
-            --
+            {{ emptyLabel() }}
           </mat-option>
         }
         @for (option of opts; track option.label) {
@@ -76,7 +78,7 @@
                 class="option-tooltip"
                 [header]="option.label | translate"
                 [message]="option.tooltip | translate"
-                (click)="onOptionTooltipClicked($event)"
+                (click)="$event.stopPropagation()"
               ></ix-tooltip>
             }
           </mat-option>

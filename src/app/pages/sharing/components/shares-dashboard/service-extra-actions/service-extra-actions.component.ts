@@ -1,16 +1,15 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AuditService } from 'app/enums/audit.enum';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Service } from 'app/interfaces/service.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -23,6 +22,9 @@ import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/s
 import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
+import {
+  NvmeOfConfigurationComponent,
+} from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
@@ -43,6 +45,15 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   ],
 })
 export class ServiceExtraActionsComponent {
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private slideIn = inject(SlideIn);
+  private urlOptions = inject(UrlOptionsService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
+
   readonly service = input.required<Service>();
   readonly requiredRoles = input<Role[]>([]);
   readonly configServiceLabel = this.translate.instant('Config Service');
@@ -59,17 +70,6 @@ export class ServiceExtraActionsComponent {
 
   readonly hasLogs = computed<boolean>(() => this.service().service === ServiceName.Cifs);
 
-  constructor(
-    private translate: TranslateService,
-    private api: ApiService,
-    private router: Router,
-    private slideIn: SlideIn,
-    private urlOptions: UrlOptionsService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private snackbar: SnackbarService,
-  ) {}
-
   changeServiceState(service: Service): void {
     if (service.state === ServiceStatus.Running) {
       this.stopService(service);
@@ -80,6 +80,9 @@ export class ServiceExtraActionsComponent {
 
   configureService(service: Service): void {
     switch (service.service) {
+      case ServiceName.NvmeOf:
+        this.slideIn.open(NvmeOfConfigurationComponent);
+        break;
       case ServiceName.Iscsi:
         this.slideIn.open(GlobalTargetConfigurationComponent);
         break;
@@ -114,26 +117,28 @@ export class ServiceExtraActionsComponent {
   }
 
   private startService(service: Service): void {
-    this.api.call('service.start', [service.service, { silent: false }])
+    this.api.job('service.control', [ServiceOperation.Start, service.service, { silent: false }])
       .pipe(
+        observeJob(),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Service started'));
+      .subscribe({
+        complete: () => this.snackbar.success(this.translate.instant('Service started')),
       });
   }
 
   private stopService(service: Service): void {
-    this.api.call('service.stop', [service.service, { silent: false }])
+    this.api.job('service.control', [ServiceOperation.Stop, service.service, { silent: false }])
       .pipe(
+        observeJob(),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Service stopped'));
+      .subscribe({
+        complete: () => this.snackbar.success(this.translate.instant('Service stopped')),
       });
   }
 }

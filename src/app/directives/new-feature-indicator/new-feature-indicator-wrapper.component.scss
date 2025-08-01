@@ -26,3 +26,17 @@
   font-size: 12px;
   line-height: 1.3;
 }
+
+.fade-in-delayed {
+  animation: fade-in-delayed 200ms 150ms ease-in backwards;
+}
+
+@keyframes fade-in-delayed {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

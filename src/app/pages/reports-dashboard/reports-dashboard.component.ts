@@ -1,11 +1,5 @@
 import { CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from '@angular/cdk/scrolling';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -40,6 +34,11 @@ import { ReportsService } from './reports.service';
   ],
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private layoutService = inject(LayoutService);
+  private reportsService = inject(ReportsService);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly searchableElements = reportingElements;
 
   scrollContainer: HTMLElement | null;
@@ -50,13 +49,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   activeReports: Report[] = [];
   visibleReports: number[] = [];
   allTabs: ReportTab[];
-
-  constructor(
-    private route: ActivatedRoute,
-    private layoutService: LayoutService,
-    private reportsService: ReportsService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.scrollContainer = this.layoutService.getContentContainer();
@@ -99,7 +91,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  activateTabFromUrl(): void {
+  private activateTabFromUrl(): void {
     const subpath = this.route.snapshot?.url[0]?.path;
     const tabFound = this.allTabs.find((tab) => (tab.value as string) === subpath);
     this.updateActiveTab(tabFound || this.allTabs[0]);
@@ -113,7 +105,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  activateTab(activeTab: ReportTab): void {
+  private activateTab(activeTab: ReportTab): void {
     const reportCategories = activeTab.value === ReportType.Disk
       ? this.diskReports
       : this.otherReports.filter(
@@ -186,7 +178,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
    * @param list Report[]
    * @returns Report[]
    */
-  flattenReports(list: Report[]): Report[] {
+  private flattenReports(list: Report[]): Report[] {
     const result: Report[] = [];
     list.forEach((report) => {
       // With identifiers
@@ -217,7 +209,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     return result.sort((a, b) => a.identifiers?.[0]?.localeCompare(b.identifiers?.[0]));
   }
 
-  buildDiskMetrics(): void {
+  private buildDiskMetrics(): void {
     const metrics: Option[] = [];
 
     this.diskReports.forEach((item) => {

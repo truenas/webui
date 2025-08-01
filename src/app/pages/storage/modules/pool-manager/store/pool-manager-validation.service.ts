@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -32,12 +32,11 @@ import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.sel
 
 @Injectable()
 export class PoolManagerValidationService {
-  constructor(
-    protected store: PoolManagerStore,
-    protected systemStore$: Store<AppState>,
-    protected translate: TranslateService,
-    private addVdevsStore: AddVdevsStore,
-  ) {}
+  protected store = inject(PoolManagerStore);
+  protected systemStore$ = inject<Store<AppState>>(Store);
+  protected translate = inject(TranslateService);
+  private addVdevsStore = inject(AddVdevsStore);
+
 
   exportedPoolsWarning = this.translate.instant(helptextPoolCreation.exportedSelectedDisksWarning);
 
@@ -214,10 +213,10 @@ export class PoolManagerValidationService {
     return this.poolCreationErrors$;
   }
 
-  getTopLevelWarningsForEachStep(): Observable<Partial<{ [key in PoolCreationWizardStep]: string | null }>> {
+  getTopLevelWarningsForEachStep(): Observable<Partial<Record<PoolCreationWizardStep, string | null>>> {
     return this.poolCreationErrors$.pipe(
       map((errors) => {
-        const result: Partial<{ [key in PoolCreationWizardStep]: string | null }> = {};
+        const result: Partial<Record<PoolCreationWizardStep, string | null>> = {};
 
         Object.values(PoolCreationWizardStep).forEach((step: PoolCreationWizardStep) => {
           result[step] = this.filterWarningsTypeByStep(errors, step)?.[0]?.text || null;
@@ -228,10 +227,10 @@ export class PoolManagerValidationService {
     );
   }
 
-  getTopLevelErrorsForEachStep(): Observable<Partial<{ [key in PoolCreationWizardStep]: string | null }>> {
+  getTopLevelErrorsForEachStep(): Observable<Partial<Record<PoolCreationWizardStep, string | null>>> {
     return this.poolCreationErrors$.pipe(
       map((errors) => {
-        const result: Partial<{ [key in PoolCreationWizardStep]: string | null }> = {};
+        const result: Partial<Record<PoolCreationWizardStep, string | null>> = {};
 
         Object.values(PoolCreationWizardStep).forEach((step: PoolCreationWizardStep) => {
           result[step] = this.filterErrorsTypeByStep(errors, step)?.[0]?.text || null;

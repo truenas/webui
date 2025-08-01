@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -18,6 +15,9 @@ import { helptextServiceFtp } from 'app/helptext/services/components/service-ftp
 import { FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -63,9 +63,21 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     TestDirective,
     TranslateModule,
     AsyncPipe,
+    ExplorerCreateDatasetComponent,
   ],
 })
 export class ServiceFtpComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
+  private systemGeneralService = inject(SystemGeneralService);
+  private filesystemService = inject(FilesystemService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  iecFormatter = inject(IxFormatterService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SharingFtpWrite];
 
   protected isFormLoading = signal(false);
@@ -124,18 +136,7 @@ export class ServiceFtpComponent implements OnInit {
   readonly isAnonymousLoginAllowed$ = this.form.select((values) => values.onlyanonymous);
   readonly isTlsEnabled$ = this.form.select((values) => values.tls);
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    private systemGeneralService: SystemGeneralService,
-    private filesystemService: FilesystemService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    public iecFormatter: IxFormatterService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -168,7 +169,7 @@ export class ServiceFtpComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

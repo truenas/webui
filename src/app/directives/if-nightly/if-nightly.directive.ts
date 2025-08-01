@@ -1,7 +1,4 @@
-import {
-  ChangeDetectorRef,
-  Directive, OnInit, TemplateRef, ViewContainerRef,
-} from '@angular/core';
+import { ChangeDetectorRef, Directive, OnInit, TemplateRef, ViewContainerRef, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/store';
@@ -12,14 +9,12 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   selector: '[ixIfNightly]',
 })
 export class IfNightlyDirective implements OnInit {
-  private isNightly = false;
+  private templateRef = inject<TemplateRef<unknown>>(TemplateRef);
+  private viewContainer = inject(ViewContainerRef);
+  private cdr = inject(ChangeDetectorRef);
+  private store$ = inject<Store<AppState>>(Store);
 
-  constructor(
-    private templateRef: TemplateRef<unknown>,
-    private viewContainer: ViewContainerRef,
-    private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
-  ) { }
+  private isNightly = false;
 
   ngOnInit(): void {
     this.store$.pipe(

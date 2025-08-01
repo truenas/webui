@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -29,6 +27,9 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class ScheduleSectionComponent implements OnChanges {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private taskService = inject(TaskService);
+
   readonly replication = input<ReplicationTask>();
 
   form = this.formBuilder.group({
@@ -44,11 +45,6 @@ export class ScheduleSectionComponent implements OnChanges {
 
   protected readonly helptext = helptextReplication;
   protected readonly CronPresetValue = CronPresetValue;
-
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private taskService: TaskService,
-  ) {}
 
   ngOnChanges(): void {
     const replication = this.replication();

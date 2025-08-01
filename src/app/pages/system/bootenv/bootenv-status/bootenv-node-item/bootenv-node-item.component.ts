@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-  input, output, computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, computed, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -36,6 +33,8 @@ import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/booten
   ],
 })
 export class BootenvNodeItemComponent {
+  private translate = inject(TranslateService);
+
   readonly node = input.required<VDevNestedDataNode>();
   readonly poolInstance = input.required<PoolInstance>();
   readonly oneDisk = input<boolean>();
@@ -83,8 +82,6 @@ export class BootenvNodeItemComponent {
     }
     return this.translate.instant('{n, plural, =0 {No Errors} one {# Error} other {# Errors}}', { n: errors });
   });
-
-  constructor(private translate: TranslateService) {}
 
   detach(): void {
     this.invokeAction.emit({

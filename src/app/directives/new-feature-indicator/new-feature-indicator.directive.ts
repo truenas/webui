@@ -1,6 +1,4 @@
-import {
-  ComponentRef, Directive, input, OnChanges, OnInit, TemplateRef, ViewContainerRef,
-} from '@angular/core';
+import { ComponentRef, Directive, input, OnChanges, OnInit, TemplateRef, ViewContainerRef, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NewFeatureIndicatorWrapperComponent } from 'app/directives/new-feature-indicator/new-feature-indicator-wrapper.component';
 import { NewFeatureIndicator } from 'app/directives/new-feature-indicator/new-feature-indicator.interface';
@@ -22,6 +20,10 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
   selector: '[ixNewFeatureIndicator]',
 })
 export class NewFeatureIndicatorDirective implements OnInit, OnChanges {
+  private indicatorService = inject(NewFeatureIndicatorService);
+  private templateRef = inject<TemplateRef<unknown>>(TemplateRef);
+  private viewContainerRef = inject(ViewContainerRef);
+
   private wrapperContainer: ComponentRef<NewFeatureIndicatorWrapperComponent>;
   private indicator: NewFeatureIndicator;
 
@@ -29,11 +31,7 @@ export class NewFeatureIndicatorDirective implements OnInit, OnChanges {
     alias: 'ixNewFeatureIndicator',
   });
 
-  constructor(
-    private indicatorService: NewFeatureIndicatorService,
-    private templateRef: TemplateRef<unknown>,
-    private viewContainerRef: ViewContainerRef,
-  ) {
+  constructor() {
     this.indicatorService.onShown.pipe(untilDestroyed(this)).subscribe((indicator) => {
       if (indicator === this.indicator) {
         this.updateIndicator();

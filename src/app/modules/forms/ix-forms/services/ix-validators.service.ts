@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
@@ -8,7 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
   providedIn: 'root',
 })
 export class IxValidatorsService {
-  constructor(protected translate: TranslateService) {}
+  protected translate = inject(TranslateService);
+
 
   makeErrorMessage(key: string, message: string): ValidationErrors {
     return {

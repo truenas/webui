@@ -13,11 +13,11 @@ export const environment: WebUiEnvironment = {
   buildYear: ${new Date().getFullYear()},
   production: true,
   sentryPublicDsn,
-  mockConfig: {
+  debugPanel: {
     enabled: false,
-    controllerModel: EnclosureModel.M40,
-    expansionModels: [],
-    scenario: MockEnclosureScenario.FillSomeSlots,
+    defaultMessageLimit: 100,
+    mockJobDefaultDelay: 1000,
+    persistMockConfigs: true,
   },
 };
 

@@ -16,6 +16,7 @@ describe('TruenasConnectButtonComponent', () => {
   const config = {
     enabled: true,
     ips: ['10.220.36.85'],
+    interfaces_ips: [],
     tnc_base_url: 'https://truenas.connect.dev.ixsystems.net/',
     account_service_base_url: 'https://account-service.dev.ixsystems.net/',
     leca_service_base_url: 'https://leca-server.dev.ixsystems.net/',
@@ -44,9 +45,10 @@ describe('TruenasConnectButtonComponent', () => {
     expect(openSpy).toHaveBeenCalledWith(TruenasConnectStatusModalComponent, {
       width: '400px',
       hasBackdrop: true,
+      panelClass: 'topbar-panel',
       position: {
         top: '48px',
-        right: '0px',
+        right: '16px',
       },
     });
   });

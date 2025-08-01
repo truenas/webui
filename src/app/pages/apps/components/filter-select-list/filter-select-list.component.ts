@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -24,6 +21,9 @@ type SelectListValue = string | number | null | (string | number | null)[];
   ],
 })
 export class FilterSelectListComponent implements ControlValueAccessor {
+  controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+
   label = input<string>();
   options = input<Option[]>();
   multiple = input<boolean>();
@@ -31,10 +31,7 @@ export class FilterSelectListComponent implements ControlValueAccessor {
   isDisabled = false;
   value: SelectListValue;
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 

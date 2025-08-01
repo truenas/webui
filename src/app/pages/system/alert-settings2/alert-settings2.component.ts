@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -49,6 +47,11 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class AlertSettings2Component implements OnInit {
+  private api = inject(ApiService);
+  private fb = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+  private themeService = inject(ThemeService);
+
   protected readonly requiredRoles = [Role.AlertListWrite];
 
   categories: AlertCategory[] = [];
@@ -59,13 +62,6 @@ export class AlertSettings2Component implements OnInit {
 
   policyOptions: string[] = [];
 
-  constructor(
-    private api: ApiService,
-    private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
-    private themeService: ThemeService,
-  ) { }
-
   ngOnInit(): void {
     this.loadCategories();
     this.loadClassesConfig();
@@ -73,7 +69,7 @@ export class AlertSettings2Component implements OnInit {
     this.handleSearchControl();
   }
 
-  loadCategories(): void {
+  private loadCategories(): void {
     this.api.call('alert.list_categories').pipe(
       untilDestroyed(this),
     ).subscribe({
@@ -85,7 +81,7 @@ export class AlertSettings2Component implements OnInit {
     });
   }
 
-  loadClassesConfig(): void {
+  private loadClassesConfig(): void {
     this.api.call('alertclasses.config').pipe(
       untilDestroyed(this),
     ).subscribe({
@@ -96,7 +92,7 @@ export class AlertSettings2Component implements OnInit {
     });
   }
 
-  loadPolicyOptions(): void {
+  private loadPolicyOptions(): void {
     this.api.call('alert.list_policies').pipe(
       untilDestroyed(this),
     ).subscribe({

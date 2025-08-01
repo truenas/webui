@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
@@ -70,6 +68,14 @@ import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-e
   ],
 })
 export class DatasetAclEditorComponent implements OnInit {
+  private store = inject(DatasetAclEditorStore);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
+  private matDialog = inject(MatDialog);
+  private userService = inject(UserService);
+  private formBuilder = inject(NonNullableFormBuilder);
+
   datasetPath: string;
   isLoading: boolean;
   acl: Acl | null;
@@ -96,16 +102,6 @@ export class DatasetAclEditorComponent implements OnInit {
   readonly helptext = helptextAcl;
 
   protected readonly Role = Role;
-
-  constructor(
-    private store: DatasetAclEditorStore,
-    private router: Router,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-    private matDialog: MatDialog,
-    private userService: UserService,
-    private formBuilder: NonNullableFormBuilder,
-  ) { }
 
   ngOnInit(): void {
     this.datasetPath = this.route.snapshot.queryParamMap.get('path');

@@ -1,13 +1,12 @@
 import { Location } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnDestroy, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Timeout } from 'app/interfaces/timeout.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
@@ -31,20 +30,19 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   ],
 })
 export class ConfigResetComponent implements OnInit, OnDestroy {
-  private connectedSubscription: Timeout;
+  private wsManager = inject(WebSocketHandlerService);
+  private wsStatus = inject(WebSocketStatusService);
+  protected router = inject(Router);
+  protected loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  translate = inject(TranslateService);
+  protected dialogService = inject(DialogService);
+  protected matDialog = inject(MatDialog);
+  private location = inject(Location);
+  private api = inject(ApiService);
+  private authService = inject(AuthService);
 
-  constructor(
-    private wsManager: WebSocketHandlerService,
-    private wsStatus: WebSocketStatusService,
-    protected router: Router,
-    protected loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    public translate: TranslateService,
-    protected dialogService: DialogService,
-    protected matDialog: MatDialog,
-    private location: Location,
-    private api: ApiService,
-  ) {}
+  private connectedSubscription: Timeout;
 
   isWsConnected(): void {
     // TODO: isConnected$ doesn't work correctly.
@@ -52,6 +50,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
       next: (isConnected) => {
         if (isConnected) {
           this.loader.close();
+          this.authService.clearAuthToken();
           this.router.navigate(['/signin']);
         } else {
           // TODO: Why not just rely on isConnected$ emitting new value.
@@ -77,7 +76,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
     }
   }
 
-  resetConfig(): void {
+  private resetConfig(): void {
     this.dialogService.jobDialog(
       this.api.job('config.reset', [{ reboot: true }]),
       {

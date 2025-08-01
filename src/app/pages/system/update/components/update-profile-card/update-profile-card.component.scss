@@ -1,0 +1,89 @@
+@import 'scss-imports/variables';
+
+.profiles-section {
+  &.not-available {
+    opacity: 0.4;
+    transition: opacity 0.3s ease-in-out;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .profile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 8px 0;
+
+    .profile-row {
+      align-items: center;
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 150px 1fr;
+
+      @media (max-width: $breakpoint-md) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .profile-name {
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .profile-note {
+      color: var(--alt-fg1);
+      display: block;
+      font-size: 0.85rem;
+      padding-top: 2px;
+    }
+  }
+}
+
+.tag-line {
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 5px;
+}
+
+.current-profile {
+  display: flex;
+  font-size: 13px;
+  gap: 4px;
+  margin-top: 16px;
+
+  .label {
+    margin-right: 0;
+  }
+
+  .value {
+    font-weight: bold;
+  }
+}
+
+.update-profile {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+
+  ix-select {
+    margin: 0;
+    min-width: 50%;
+  }
+
+  button {
+    margin-top: 24px;
+  }
+}
+
+.hint {
+  color: var(--alt-fg1);
+  margin-top: 15px;
+}
+
+h3 {
+  border-bottom: 1px solid var(--lines);
+  margin-top: 30px;
+  padding-bottom: 10px;
+}

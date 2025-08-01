@@ -33,35 +33,40 @@ export interface DashboardNicState extends NetworkInterfaceState {
  * TODO: Rewrite to have widgets pick what they need instead of doing global processing.
  */
 export function processNetworkInterfaces(interfaces: NetworkInterface[]): DashboardNetworkInterface[] {
-  const dashboardNetworkInterfaces = [...interfaces] as DashboardNetworkInterface[];
+  const dashboardNetworkInterfaces = interfaces.map((iface) => ({
+    ...iface,
+    state: {
+      ...iface.state,
+      vlans: [],
+      aliases: [...iface.state.aliases],
+    } as DashboardNicState,
+  })) as DashboardNetworkInterface[];
   const removeNics: Record<string, number | string> = {};
 
   const nicKeys: Record<string, number | string> = {};
   interfaces.forEach((networkInterface, index) => {
     nicKeys[networkInterface.name] = index.toString();
 
-    if (networkInterface.type !== NetworkInterfaceType.Vlan && !dashboardNetworkInterfaces[index].state.vlans) {
-      dashboardNetworkInterfaces[index].state.vlans = [];
-    }
-
     if (networkInterface.type === NetworkInterfaceType.Vlan && networkInterface.state.parent) {
       const parentIndex = parseInt(nicKeys[networkInterface.state.parent] as string);
-      if (!dashboardNetworkInterfaces[parentIndex].state.vlans) {
-        dashboardNetworkInterfaces[parentIndex].state.vlans = [];
-      }
-
-      dashboardNetworkInterfaces[parentIndex].state.vlans.push(networkInterface.state);
+      dashboardNetworkInterfaces[parentIndex].state.vlans.push({
+        ...networkInterface.state,
+        interface: undefined,
+      });
       removeNics[networkInterface.name] = index;
     }
 
     if (networkInterface.type === NetworkInterfaceType.LinkAggregation) {
-      dashboardNetworkInterfaces[index].state.lagg_ports = networkInterface.lag_ports;
+      dashboardNetworkInterfaces[index].state = {
+        ...dashboardNetworkInterfaces[index].state,
+        lagg_ports: networkInterface.lag_ports,
+      } as DashboardNicState;
       networkInterface.lag_ports
         .filter((nic) => Boolean(nicKeys[nic]))
         .forEach((nic) => {
-          dashboardNetworkInterfaces[index].state.aliases.forEach((alias) => {
-            (alias as DashboardNetworkInterfaceAlias).interface = nic;
-          });
+          dashboardNetworkInterfaces[index].state.aliases = dashboardNetworkInterfaces[index].state.aliases.map(
+            (alias) => ({ ...alias, interface: nic } as DashboardNetworkInterfaceAlias),
+          );
           if (dashboardNetworkInterfaces[nicKeys[nic] as number]) {
             const concatenatedAliases = dashboardNetworkInterfaces[index].state.aliases.concat(
               dashboardNetworkInterfaces[nicKeys[nic] as number].state.aliases,
@@ -69,9 +74,9 @@ export function processNetworkInterfaces(interfaces: NetworkInterface[]): Dashbo
             dashboardNetworkInterfaces[index].state.aliases = concatenatedAliases;
           }
 
-          dashboardNetworkInterfaces[index].state.vlans.forEach((vlan) => {
-            vlan.interface = nic;
-          });
+          dashboardNetworkInterfaces[index].state.vlans = dashboardNetworkInterfaces[index].state.vlans.map(
+            (vlan) => ({ ...vlan, interface: nic }),
+          );
           dashboardNetworkInterfaces[index].state.vlans = dashboardNetworkInterfaces[index].state.vlans.concat(
             dashboardNetworkInterfaces[nicKeys[nic] as number].state.vlans,
           );

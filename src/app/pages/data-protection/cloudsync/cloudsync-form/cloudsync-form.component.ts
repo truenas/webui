@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -20,6 +18,7 @@ import {
   catchError,
   filter, map, pairwise, startWith, switchMap, tap,
 } from 'rxjs/operators';
+import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
@@ -103,6 +102,21 @@ type FormValue = CloudSyncFormComponent['form']['value'];
   ],
 })
 export class CloudSyncFormComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  protected router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
+  protected matDialog = inject(MatDialog);
+  private filesystemService = inject(FilesystemService);
+  protected cloudCredentialService = inject(CloudCredentialService);
+  slideInRef = inject<SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask | false>>(SlideInRef);
+  private authService = inject(AuthService);
+
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -112,6 +126,8 @@ export class CloudSyncFormComponent implements OnInit {
       ? this.translate.instant('Add Cloud Sync Task')
       : this.translate.instant('Edit Cloud Sync Task');
   }
+
+  protected readonly slashRootNode = [slashRootNode];
 
   get credentialsDependentControls(): FormControl[] {
     return [
@@ -221,33 +237,18 @@ export class CloudSyncFormComponent implements OnInit {
 
   private editingTask: CloudSyncTaskUi | undefined;
 
-  constructor(
-    private translate: TranslateService,
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    protected router: Router,
-    private cdr: ChangeDetectorRef,
-    private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private dialogService: DialogService,
-    protected matDialog: MatDialog,
-    private filesystemService: FilesystemService,
-    protected cloudCredentialService: CloudCredentialService,
-    public slideInRef: SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask | false>,
-    private authService: AuthService,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
     this.editingTask = this.slideInRef.getData();
   }
 
-  getCredentialsList(): Observable<CloudSyncCredential[]> {
+  private getCredentialsList(): Observable<CloudSyncCredential[]> {
     return this.fetchCloudSyncCredentialsList();
   }
 
-  fetchCloudSyncCredentialsList(): Observable<CloudSyncCredential[]> {
+  private fetchCloudSyncCredentialsList(): Observable<CloudSyncCredential[]> {
     return this.cloudCredentialService.getCloudSyncCredentials().pipe(
       tap((credentials) => {
         this.credentialsList = credentials;
@@ -519,7 +520,7 @@ export class CloudSyncFormComponent implements OnInit {
     };
   }
 
-  handleCredentialsChange(credentials: number): void {
+  private handleCredentialsChange(credentials: number): void {
     this.credentialsDependentControls.forEach((control) => control.disable());
 
     if (credentials) {
@@ -575,12 +576,12 @@ export class CloudSyncFormComponent implements OnInit {
     }
   }
 
-  isCustomTransfers(transfers: number): boolean {
+  private isCustomTransfers(transfers: number): boolean {
     const transfersDefaultValues = this.transfersDefaultOptions.map((option) => option.value);
     return Boolean(transfers) && !transfersDefaultValues.includes(transfers);
   }
 
-  setTransfersOptions(isCustomTransfersSelected: boolean, customTransfers?: number): void {
+  private setTransfersOptions(isCustomTransfersSelected: boolean, customTransfers?: number): void {
     if (isCustomTransfersSelected) {
       const customOption = { label: this.translate.instant('Custom ({customTransfers})', { customTransfers }), value: customTransfers };
       this.transfersOptions$ = of([...this.transfersDefaultOptions, customOption, this.transfersCustomOption]);
@@ -772,7 +773,7 @@ export class CloudSyncFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInRef.close({ response, error: null });
+        this.slideInRef.close({ response });
       },
       error: (error: unknown) => {
         this.isLoading = false;
@@ -783,15 +784,12 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideInRef.swap?.(
-      CloudSyncWizardComponent,
-      { wide: true },
-    );
+    this.slideInRef.swap?.(CloudSyncWizardComponent, { wide: true });
   }
 
   goToManageCredentials(): void {
     this.router.navigate(['/', 'credentials', 'backup-credentials']);
-    this.slideInRef.close({ response: false, error: null });
+    this.slideInRef.close({ response: false });
   }
 
   private getInitialData(): void {

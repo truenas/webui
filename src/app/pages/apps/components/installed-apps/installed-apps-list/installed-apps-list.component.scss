@@ -43,13 +43,6 @@
   }
 }
 
-.no-apps {
-  color: var(--fg1);
-  display: flex;
-  justify-content: center;
-  margin: 15px;
-}
-
 ix-app-row,
 .app-header-row {
   grid-template-columns: 5% minmax(18%, auto) 10.5% 4% 7% 10.5% 11% 13% 10%;

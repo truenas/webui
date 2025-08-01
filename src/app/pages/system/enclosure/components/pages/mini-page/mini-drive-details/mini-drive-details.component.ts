@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { MatIconAnchor } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { enclosureDiskStatusLabels } from 'app/enums/enclosure-slot-status.enum';
@@ -24,13 +24,11 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   ],
 })
 export class MiniDriveDetailsComponent {
+  private store = inject(EnclosureStore);
+
   readonly slot = input.required<DashboardEnclosureSlot>();
 
   readonly enclosureDiskStatusLabels = enclosureDiskStatusLabels;
-
-  constructor(
-    private store: EnclosureStore,
-  ) {}
 
   onClosePressed(): void {
     this.store.selectSlot(null);

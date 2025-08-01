@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,6 +11,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   EMPTY, catchError, filter, map, of, switchMap, tap,
 } from 'rxjs';
+import { cloudSyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -21,6 +20,7 @@ import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/clouds
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -71,10 +71,24 @@ import { AppState } from 'app/store';
     IxTableBodyComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class CloudSyncTaskCardComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
+  private taskService = inject(TaskService);
+  private store$ = inject<Store<AppState>>(Store);
+  private snackbar = inject(SnackbarService);
+  private matDialog = inject(MatDialog);
+  protected emptyService = inject(EmptyService);
+
   protected readonly requiredRoles = [Role.CloudSyncWrite];
+  protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
 
   cloudSyncTasks: CloudSyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
@@ -157,20 +171,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
   });
 
-  constructor(
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-    private taskService: TaskService,
-    private store$: Store<AppState>,
-    private snackbar: SnackbarService,
-    private matDialog: MatDialog,
-    protected emptyService: EmptyService,
-  ) {}
-
   ngOnInit(): void {
     const cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
       map((cloudSyncTasks: CloudSyncTaskUi[]) => this.transformCloudSyncTasks(cloudSyncTasks)),
@@ -185,7 +185,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  doDelete(cloudsyncTask: CloudSyncTaskUi): void {
+  protected doDelete(cloudsyncTask: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', {
@@ -207,7 +207,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  onAdd(): void {
+  protected onAdd(): void {
     this.slideIn.open(CloudSyncWizardComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -218,7 +218,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  onEdit(row?: CloudSyncTaskUi): void {
+  protected onEdit(row?: CloudSyncTaskUi): void {
     this.slideIn.open(CloudSyncFormComponent, { wide: true, data: row }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -227,7 +227,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  runNow(row: CloudSyncTaskUi): void {
+  protected runNow(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
       message: this.translate.instant('Run «{name}» Cloud Sync now?', { name: row.description }),
@@ -254,7 +254,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  stopCloudSyncTask(row: CloudSyncTaskUi): void {
+  protected stopCloudSyncTask(row: CloudSyncTaskUi): void {
     this.dialogService
       .confirm({
         title: this.translate.instant('Stop'),
@@ -277,7 +277,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       });
   }
 
-  dryRun(row: CloudSyncTaskUi): void {
+  protected dryRun(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant(helptextCloudSync.dryRunTitle),
       message: this.translate.instant(helptextCloudSync.dryRunDialog),
@@ -302,7 +302,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  restore(row: CloudSyncTaskUi): void {
+  protected restore(row: CloudSyncTaskUi): void {
     this.matDialog
       .open(CloudSyncRestoreDialog, { data: row.id })
       .afterClosed()

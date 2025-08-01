@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -16,13 +16,12 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   providedIn: 'root',
 })
 export class RedirectService {
-  constructor(
-    protected api: ApiService,
-    private translate: TranslateService,
-    private matDialog: MatDialog,
-    private store$: Store<AppState>,
-    @Inject(WINDOW) private window: Window,
-  ) {}
+  protected api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private matDialog = inject(MatDialog);
+  private store$ = inject<Store<AppState>>(Store);
+  private window = inject<Window>(WINDOW);
+
 
   openWindow(url: string, target?: string): void {
     if (!url.includes('http://')) {

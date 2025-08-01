@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -46,6 +46,10 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   ],
 })
 export class ReplicationSettingsCardComponent {
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+
   protected readonly requiredRoles = [Role.ReplicationTaskConfigWrite];
   private replicationConfig: ReplicationConfig;
   private readonly reloadConfig$ = new Subject<void>();
@@ -61,12 +65,6 @@ export class ReplicationSettingsCardComponent {
       bufferSize: 1,
     }),
   );
-
-  constructor(
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private firstTimeWarning: FirstTimeWarningService,
-  ) {}
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(

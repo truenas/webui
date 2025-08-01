@@ -1,17 +1,18 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { switchMap, filter, tap } from 'rxjs';
+import {
+  switchMap, filter, tap, Observable,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -58,6 +59,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CloudCredentialsCardComponent implements OnInit {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+  private slideIn = inject(SlideIn);
+  private dialog = inject(DialogService);
+  private cloudCredentialService = inject(CloudCredentialService);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly requiredRoles = [Role.CloudSyncWrite];
   protected readonly searchableElements = cloudCredentialsCardElements;
 
@@ -97,16 +106,6 @@ export class CloudCredentialsCardComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('Cloud Credential')],
   });
 
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-    private slideIn: SlideIn,
-    private dialog: DialogService,
-    private cloudCredentialService: CloudCredentialService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
-
   ngOnInit(): void {
     const credentials$ = this.api.call('cloudsync.credentials.query').pipe(
       tap((credentials) => this.credentials = credentials),
@@ -114,25 +113,27 @@ export class CloudCredentialsCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncCredential>(credentials$);
     this.setDefaultSort();
-    this.getCredentials();
 
-    this.getProviders();
+    this.getProviders()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.getCredentials();
+      });
   }
 
   getCredentials(): void {
     this.dataProvider.load();
   }
 
-  getProviders(): void {
-    this.cloudCredentialService
+  private getProviders(): Observable<CloudSyncProvider[]> {
+    return this.cloudCredentialService
       .getProviders()
       .pipe(
+        tap((providers) => {
+          providers.forEach((provider) => this.providers.set(provider.name, provider.title));
+        }),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe((providers) => {
-        providers.forEach((provider) => this.providers.set(provider.name, provider.title));
-      });
+      );
   }
 
   setDefaultSort(): void {
@@ -143,7 +144,7 @@ export class CloudCredentialsCardComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(CloudCredentialsFormComponent)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
@@ -151,7 +152,7 @@ export class CloudCredentialsCardComponent implements OnInit {
       });
   }
 
-  doEdit(credential: CloudSyncCredential): void {
+  protected doEdit(credential: CloudSyncCredential): void {
     const close$ = this.slideIn.open(
       CloudCredentialsFormComponent,
       {
@@ -165,7 +166,7 @@ export class CloudCredentialsCardComponent implements OnInit {
     });
   }
 
-  doDelete(credential: CloudSyncCredential): void {
+  protected doDelete(credential: CloudSyncCredential): void {
     this.dialog
       .confirm({
         title: this.translate.instant('Delete Cloud Credential'),

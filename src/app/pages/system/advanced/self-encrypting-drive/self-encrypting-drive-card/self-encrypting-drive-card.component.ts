@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -16,7 +16,6 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { SedUser } from 'app/enums/sed-user.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -49,11 +48,15 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   ],
 })
 export class SelfEncryptingDriveCardComponent {
+  private store$ = inject<Store<AppState>>(Store);
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = sedCardElements;
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
-  private sedConfig: { sedUser: SedUser; sedPassword: string };
   readonly sedConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => {
@@ -71,7 +74,6 @@ export class SelfEncryptingDriveCardComponent {
       ]);
     }),
     map(([sedUser, sedPassword]) => ({ sedUser, sedPassword })),
-    tap((config) => this.sedConfig = config),
     toLoadingState(),
     shareReplay({
       refCount: false,
@@ -79,16 +81,12 @@ export class SelfEncryptingDriveCardComponent {
     }),
   );
 
-  constructor(
-    private store$: Store<AppState>,
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private firstTimeWarning: FirstTimeWarningService,
-  ) {}
-
   onConfigure(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(SelfEncryptingDriveFormComponent, { data: this.sedConfig })),
+      switchMap(() => this.slideIn.open(
+        SelfEncryptingDriveFormComponent,
+        { data: { sedPassword: '' } },
+      )),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
       untilDestroyed(this),

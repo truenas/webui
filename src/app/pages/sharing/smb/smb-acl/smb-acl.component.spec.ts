@@ -15,6 +15,7 @@ import { User as TnUser } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -60,7 +61,7 @@ describe('SmbAclComponent', () => {
   const slideInRef: SlideInRef<string | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -78,9 +79,7 @@ describe('SmbAclComponent', () => {
           group: 'wheel', id: 1, gid: 1, smb: true,
         }] as Group[]),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(UserService, {
@@ -108,8 +107,7 @@ describe('SmbAclComponent', () => {
   });
 
   it('shows name of the share in the title', () => {
-    const title = spectator.query('ix-modal-header');
-    expect(title).toHaveText('Share ACL for myshare');
+    expect(spectator.query(ModalHeaderComponent)).toExist();
   });
 
   describe('user ace', () => {

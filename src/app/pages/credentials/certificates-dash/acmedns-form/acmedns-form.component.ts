@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { UntypedFormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -60,6 +58,13 @@ interface DnsAuthenticatorList {
   ],
 })
 export class AcmednsFormComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandlerService = inject(FormErrorHandlerService);
+  private api = inject(ApiService);
+  slideInRef = inject<SlideInRef<DnsAuthenticator | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   get isNew(): boolean {
@@ -90,21 +95,14 @@ export class AcmednsFormComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  getAuthenticatorSchemas(): Observable<AuthenticatorSchema[]> {
+  private getAuthenticatorSchemas(): Observable<AuthenticatorSchema[]> {
     return this.api.call('acme.dns.authenticator.authenticator_schemas');
   }
 
   authenticatorOptions$: Observable<Option[]>;
   private editingAcmedns: DnsAuthenticator | undefined;
 
-  constructor(
-    private translate: TranslateService,
-    private formBuilder: FormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandlerService: FormErrorHandlerService,
-    private api: ApiService,
-    public slideInRef: SlideInRef<DnsAuthenticator | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -167,12 +165,12 @@ export class AcmednsFormComponent implements OnInit {
       .map((input) => getDynamicFormSchemaNode(input));
   }
 
-  parseSchemaForDnsAuthList(schema: AuthenticatorSchema): DnsAuthenticatorList {
+  private parseSchemaForDnsAuthList(schema: AuthenticatorSchema): DnsAuthenticatorList {
     const variables = Object.values(schema.schema.properties).map((input) => input._name_);
     return { key: schema.key, variables };
   }
 
-  onAuthenticatorTypeChanged(event: DnsAuthenticatorType): void {
+  protected onAuthenticatorTypeChanged(event: DnsAuthenticatorType): void {
     this.dnsAuthenticatorList.forEach((auth) => {
       if (auth.key === event) {
         auth.variables.forEach((variable) => {
@@ -196,7 +194,7 @@ export class AcmednsFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = {
       name: this.form.value.name,
       attributes: this.form.value.attributes,
@@ -225,7 +223,7 @@ export class AcmednsFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

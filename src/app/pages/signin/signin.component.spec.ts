@@ -1,3 +1,4 @@
+import { fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
@@ -7,7 +8,6 @@ import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyri
 import {
   DisconnectedMessageComponent,
 } from 'app/pages/signin/disconnected-message/disconnected-message.component';
-import { ReconnectMessage } from 'app/pages/signin/reconnect-message/reconnect-message.component';
 import {
   SetAdminPasswordFormComponent,
 } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
@@ -27,7 +27,9 @@ describe('SigninComponent', () => {
   const isConnected$ = new BehaviorSubject<boolean>(true);
   const loginBanner$ = new BehaviorSubject<string>('');
   const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
+  const isLoading$ = new BehaviorSubject<boolean>(false);
   const isReconnectAllowed$ = new BehaviorSubject<boolean>(false);
+  const isFailoverRestart$ = new BehaviorSubject<boolean>(false);
 
   const createComponent = createComponentFactory({
     component: SigninComponent,
@@ -38,7 +40,6 @@ describe('SigninComponent', () => {
         SetAdminPasswordFormComponent,
         TrueCommandStatusComponent,
         CopyrightLineComponent,
-        ReconnectMessage,
       ),
     ],
     componentProviders: [
@@ -46,13 +47,13 @@ describe('SigninComponent', () => {
         wasAdminSet$,
         canLogin$,
         loginBanner$,
-        isLoading$: of(false),
+        isLoading$,
         init: jest.fn(),
       }),
     ],
     providers: [
       mockProvider(DialogService, {
-        fullScreenDialog: jest.fn(),
+        fullScreenDialog: jest.fn(() => of()),
       }),
       mockProvider(AuthService, {
         hasAuthToken: true,
@@ -64,41 +65,37 @@ describe('SigninComponent', () => {
         isConnected$,
         isReconnectAllowed$,
         setReconnectAllowed: jest.fn(),
+        isFailoverRestart$,
+        setFailoverStatus: jest.fn(),
       }),
     ],
   });
 
   beforeEach(() => {
-    spectator = createComponent();
     wasAdminSet$.next(true);
     canLogin$.next(true);
     isConnected$.next(true);
     loginBanner$.next('');
     isTokenWithinTimeline$.next(false);
+    isLoading$.next(false);
+
+    spectator = createComponent();
   });
 
   it('initializes SigninStore on component init', () => {
     expect(spectator.inject(SigninStore, true).init).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketStatusService).setReconnectAllowed).toHaveBeenCalledWith(true);
   });
 
   describe('disconnected', () => {
-    it('shows DisconnectedMessageComponent when there is no websocket connection', () => {
+    it('shows DisconnectedMessageComponent when there is no websocket connection', fakeAsync(() => {
       isConnected$.next(false);
 
+      spectator.detectChanges();
+      tick(1000); // Wait for isConnectedDelayed$ delay
       spectator.detectChanges();
 
       expect(spectator.query(DisconnectedMessageComponent)).toExist();
-    });
-
-    it('shows ReconnectMessage when has established initial connection', () => {
-      isConnected$.next(false);
-      isReconnectAllowed$.next(true);
-
-      spectator.detectChanges();
-
-      expect(spectator.query(ReconnectMessage)).toExist();
-    });
+    }));
   });
 
   describe('connected', () => {
@@ -144,6 +141,14 @@ describe('SigninComponent', () => {
       spectator.detectChanges();
 
       expect(spectator.inject(DialogService).fullScreenDialog).toHaveBeenCalled();
+    });
+
+    it('checks signin store is initialized when isFailoverStart$ is true', () => {
+      isFailoverRestart$.next(true);
+      spectator.detectChanges();
+
+      expect(spectator.inject(SigninStore, true).init).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketStatusService).setFailoverStatus).toHaveBeenCalledWith(false);
     });
   });
 });

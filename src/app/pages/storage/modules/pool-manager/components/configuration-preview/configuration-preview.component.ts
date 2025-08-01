@@ -1,12 +1,11 @@
 import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { omitBy } from 'lodash-es';
 import { map } from 'rxjs';
 import { VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
@@ -39,6 +38,9 @@ import {
   ],
 })
 export class ConfigurationPreviewComponent {
+  private store = inject(PoolManagerStore);
+  private translate = inject(TranslateService);
+
   protected readonly vdevTypeLabels = vdevTypeLabels;
   readonly vDevType = VDevType;
 
@@ -47,21 +49,19 @@ export class ConfigurationPreviewComponent {
 
   protected topology$ = this.store.topology$.pipe(
     map((topology) => {
-      const newTopology = { ...topology };
-      if (this.store.isUsingDraidLayout(newTopology)) {
-        delete newTopology.spare;
-      }
-      return newTopology;
+      // Remove empty vdevs and spare vdevs if using DRAID layout
+      return omitBy(topology, (value, key) => {
+        if ((key as VDevType) === VDevType.Spare && this.store.isUsingDraidLayout(topology)) {
+          return true;
+        }
+
+        return value.vdevs.length === 0;
+      });
     }),
   );
 
   protected totalCapacity$ = this.store.totalUsableCapacity$;
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
-
-  constructor(
-    private store: PoolManagerStore,
-    private translate: TranslateService,
-  ) {}
 
   get unknownProp(): string {
     return this.translate.instant('None');

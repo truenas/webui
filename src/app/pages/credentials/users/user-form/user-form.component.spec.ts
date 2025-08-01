@@ -70,7 +70,7 @@ describe('OldUserFormComponent', () => {
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -146,7 +146,7 @@ describe('OldUserFormComponent', () => {
 
     it('loads home share path and puts it in home field', async () => {
       const homeInput = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
-      expect(api.call).toHaveBeenCalledWith('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]]]);
+      expect(api.call).toHaveBeenCalledWith('sharing.smb.query', [[['enabled', '=', true], ['options.home', '=', true]]]);
       expect(await homeInput.getValue()).toBe('/mnt/users');
 
       const usernameInput = await loader.getHarness(IxInputHarness.with({ label: 'Username' }));

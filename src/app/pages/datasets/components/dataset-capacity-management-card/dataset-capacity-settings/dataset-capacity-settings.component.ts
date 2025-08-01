@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -49,6 +47,15 @@ import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dat
   ],
 })
 export class DatasetCapacitySettingsComponent implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  formatter = inject(IxFormatterService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private snackbarService = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private validators = inject(IxValidatorsService);
+  slideInRef = inject<SlideInRef<DatasetDetails | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   readonly isLoading = signal(false);
@@ -102,16 +109,9 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     quota_critical_inherit: 'quota_critical',
   } as const;
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: NonNullableFormBuilder,
-    public formatter: IxFormatterService,
-    private errorHandler: FormErrorHandlerService,
-    private snackbarService: SnackbarService,
-    private translate: TranslateService,
-    private validators: IxValidatorsService,
-    public slideInRef: SlideInRef<DatasetDetails | undefined, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -143,7 +143,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     return !!this.dataset && isRootDataset(this.dataset);
   }
 
-  setDatasetForEdit(dataset: DatasetDetails): void {
+  private setDatasetForEdit(dataset: DatasetDetails): void {
     this.oldValues = {
       refquota: dataset.refquota.parsed,
       refquota_warning: dataset.refquota_warning?.parsed ?? this.defaultQuotaWarning,
@@ -173,7 +173,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
           this.snackbarService.success(
             this.translate.instant('Dataset settings updated.'),
           );
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.errorHandler.handleValidationErrors(error, this.form);

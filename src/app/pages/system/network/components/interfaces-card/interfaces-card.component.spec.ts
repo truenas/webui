@@ -4,8 +4,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of, Subject } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { BehaviorSubject, of, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LinkState, NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { AllNetworkInterfacesUpdate, NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
@@ -44,10 +44,12 @@ describe('InterfacesCardComponent', () => {
     {
       id: 'eno2',
       name: 'eno2',
+      description: 'Main NIC',
       type: NetworkInterfaceType.Physical,
-      aliases: [],
+      aliases: [] as string[],
       state: {
         link_state: LinkState.Down,
+        permanent_link_address: 'ac:1f:6b:ca:32:24',
       },
     },
     {
@@ -60,6 +62,7 @@ describe('InterfacesCardComponent', () => {
       },
     },
   ];
+  const failoverConfig$ = new BehaviorSubject({ disabled: true });
 
   const updateSubject$ = new Subject<AllNetworkInterfacesUpdate>();
 
@@ -78,11 +81,17 @@ describe('InterfacesCardComponent', () => {
           isLoading: false,
         } as InterfacesState),
       }),
-      mockApi([
-        mockCall('interface.delete'),
-      ]),
+      mockProvider(ApiService, {
+        call: jest.fn((method) => {
+          if (method === 'failover.config') {
+            return failoverConfig$;
+          }
+          return of({});
+        }),
+      }),
       mockProvider(NetworkService, {
         subscribeToInOutUpdates: jest.fn(() => updateSubject$),
+        getIsHaEnabled: jest.fn(() => failoverConfig$.pipe(map((config) => !config.disabled))),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true })),
@@ -107,10 +116,10 @@ describe('InterfacesCardComponent', () => {
 
   it('shows table with network interfaces', async () => {
     expect(await table.getCellTexts()).toEqual([
-      ['', 'Name', 'IP Addresses', ''],
-      ['', 'eno1', '84.23.23.1/24', ''],
-      ['', 'eno2', '', ''],
-      ['', 'vlan1', '', ''],
+      ['', 'Name', 'IP Addresses', 'MAC Address', ''],
+      ['', 'eno1', '84.23.23.1/24', '', ''],
+      ['', 'eno2 (Main NIC)', '', 'ac:1f:6b:ca:32:24', ''],
+      ['', 'vlan1', '', '', ''],
     ]);
   });
 
@@ -153,7 +162,7 @@ describe('InterfacesCardComponent', () => {
   it('resets a network interface when Reset icon is pressed on a physical interface', async () => {
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
     await menu.open();
-    await menu.clickItem({ text: 'Refresh' });
+    await menu.clickItem({ text: 'Reset configuration' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Reset Configuration',
@@ -164,7 +173,7 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('disables Add and Delete buttons on HA systems', async () => {
-    spectator.setInput('isHaEnabled', true);
+    failoverConfig$.next({ disabled: false });
 
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     expect(await addButton.isDisabled()).toBe(true);

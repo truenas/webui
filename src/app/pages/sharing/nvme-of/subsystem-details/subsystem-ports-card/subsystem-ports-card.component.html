@@ -1,0 +1,46 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Ports' | translate }}</h3>
+
+    <ix-add-port-menu
+      [subsystemPorts]="subsystem().ports"
+      [ixUiSearch]="searchableElements.elements.addPort"
+      (portSelected)="onPortAdded($event)"
+    ></ix-add-port-menu>
+  </mat-card-header>
+  <mat-card-content>
+    @if (!subsystem().ports?.length) {
+      <div class="no-ports-warning">
+        <ix-icon
+          name="mdi-alert"
+          class="icon"
+        ></ix-icon>
+
+        <div>
+          {{ helptext.noPortsWarning | translate }}
+        </div>
+      </div>
+    } @else {
+      <ul class="port-list">
+        @for (port of subsystem().ports; track port.id) {
+          <li>
+            <span class="port">
+              <ix-port-description [port]="port"></ix-port-description>
+
+              <span class="port-actions">
+                <button
+                  mat-icon-button
+                  [ixTest]="['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
+                  [matTooltip]="'Remove port from the subsystem' | translate"
+                  (click)="onRemoveAssociation(port)"
+                >
+                  <ix-icon class="icon" name="mdi-link-variant-off"></ix-icon>
+                </button>
+              </span>
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  </mat-card-content>
+</mat-card>

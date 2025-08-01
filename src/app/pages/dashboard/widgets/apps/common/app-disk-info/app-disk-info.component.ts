@@ -1,8 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input, computed,
-  effect,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, effect, signal, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -27,6 +23,9 @@ import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/commo
   ],
 })
 export class AppDiskInfoComponent {
+  private theme = inject(ThemeService);
+  private translate = inject(TranslateService);
+
   stats = input.required<LoadingState<AppStats>>();
   aspectRatio = input<number>(3);
 
@@ -39,6 +38,8 @@ export class AppDiskInfoComponent {
     const cachedStats = this.cachedDiskStats();
     return [...this.initialDiskStats, ...cachedStats].slice(-this.numberOfPoints);
   });
+
+  private previousStats: { read: number; write: number } | null = null;
 
   protected diskChartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
@@ -71,16 +72,20 @@ export class AppDiskInfoComponent {
     };
   });
 
-  constructor(
-    private theme: ThemeService,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     effect(() => {
       const diskStats = this.stats()?.value?.blkio;
       if (diskStats) {
+        const deltaRead = this.previousStats
+          ? Math.max(diskStats.read - this.previousStats.read, 0)
+          : diskStats.read;
+        const deltaWrite = this.previousStats
+          ? Math.max(diskStats.write - this.previousStats.write, 0)
+          : diskStats.write;
         this.cachedDiskStats.update((cachedStats) => {
-          return [...cachedStats, [diskStats.read, diskStats.write]].slice(-this.numberOfPoints);
+          return [...cachedStats, [deltaRead, deltaWrite]].slice(-this.numberOfPoints);
         });
+        this.previousStats = { read: diskStats.read, write: diskStats.write };
       }
     });
   }

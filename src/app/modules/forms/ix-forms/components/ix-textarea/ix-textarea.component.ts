@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import {
   ControlValueAccessor, NgControl, FormsModule, ReactiveFormsModule,
 } from '@angular/forms';
@@ -35,6 +33,9 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   ],
 })
 export class IxTextareaComponent implements ControlValueAccessor {
+  controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly label = input<TranslatedString>();
   readonly placeholder = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
@@ -49,10 +50,7 @@ export class IxTextareaComponent implements ControlValueAccessor {
   onChange: (value: string) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 

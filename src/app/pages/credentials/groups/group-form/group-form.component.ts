@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -59,6 +56,16 @@ import { UserService } from 'app/services/user.service';
   ],
 })
 export class GroupFormComponent implements OnInit {
+  private fb = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  private store$ = inject<Store<GroupSlice>>(Store);
+  private snackbar = inject(SnackbarService);
+  slideInRef = inject<SlideInRef<Group | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.AccountWrite];
 
   get isNew(): boolean {
@@ -98,17 +105,7 @@ export class GroupFormComponent implements OnInit {
     map((privileges) => privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }))),
   );
 
-  constructor(
-    private fb: NonNullableFormBuilder,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    private store$: Store<GroupSlice>,
-    private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<Group | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -120,7 +117,7 @@ export class GroupFormComponent implements OnInit {
     this.getPrivilegesList();
   }
 
-  readonly privilegesProvider: ChipsProvider = (query: string) => {
+  protected readonly privilegesProvider: ChipsProvider = (query: string) => {
     return this.api.call('privilege.query', []).pipe(
       map((privileges) => {
         const chips = privileges.map((privilege) => privilege.name);
@@ -129,7 +126,7 @@ export class GroupFormComponent implements OnInit {
     );
   };
 
-  setupForm(): void {
+  protected setupForm(): void {
     this.setFormRelations();
 
     if (this.editingGroup) {
@@ -157,7 +154,7 @@ export class GroupFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value;
     const commonBody = {
       name: values.name,
@@ -200,7 +197,7 @@ export class GroupFormComponent implements OnInit {
         }
 
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);
@@ -283,7 +280,7 @@ export class GroupFormComponent implements OnInit {
   private mapPrivilegeToPrivilegeUpdate(privilege: Privilege, localGroups: number[]): PrivilegeUpdate {
     return {
       local_groups: localGroups,
-      ds_groups: [...privilege.ds_groups.map((group) => group.gid)],
+      ds_groups: privilege.ds_groups.map((group) => group.gid),
       name: privilege.name,
       roles: privilege.roles,
       web_shell: privilege.web_shell,

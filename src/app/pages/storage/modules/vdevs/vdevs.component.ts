@@ -1,8 +1,6 @@
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, signal, OnInit, AfterViewInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, OnInit, AfterViewInit, inject } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -46,6 +44,12 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
   ],
 })
 export class VDevsComponent implements OnInit, AfterViewInit {
+  private route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private breakpointObserver = inject(BreakpointObserver);
+  protected vDevsStore = inject(VDevsStore);
+
   protected poolId = signal<number | null>(null);
   protected poolName = signal<string>('');
 
@@ -78,14 +82,6 @@ export class VDevsComponent implements OnInit, AfterViewInit {
       ? this.translate.instant('{name} VDEVs', { name: this.poolName() })
       : this.translate.instant('VDEVs');
   }
-
-  constructor(
-    private route: ActivatedRoute,
-    private translate: TranslateService,
-    private api: ApiService,
-    private breakpointObserver: BreakpointObserver,
-    protected vDevsStore: VDevsStore,
-  ) { }
 
   ngOnInit(): void {
     this.poolId.set(Number(this.route.snapshot.paramMap.get('poolId')));

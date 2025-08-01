@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -26,9 +24,6 @@ import { GlobalSearchTriggerComponent } from 'app/modules/global-search/componen
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
-import {
-  DirectoryServicesIndicatorComponent,
-} from 'app/modules/layout/topbar/directory-services-indicator/directory-services-indicator.component';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
@@ -64,7 +59,6 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
     HaStatusIconComponent,
-    DirectoryServicesIndicatorComponent,
     JobsIndicatorComponent,
     MatBadge,
     UserMenuComponent,
@@ -79,6 +73,15 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
   ],
 })
 export class TopbarComponent implements OnInit {
+  private router = inject(Router);
+  private systemGeneralService = inject(SystemGeneralService);
+  private matDialog = inject(MatDialog);
+  private store$ = inject<Store<AlertSlice>>(Store);
+  private appStore$ = inject<Store<AppState>>(Store);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private tnc = inject(TruenasConnectService);
+
   updateIsDone: Subscription;
 
   updateDialog: MatDialogRef<UpdateDialog>;
@@ -86,14 +89,14 @@ export class TopbarComponent implements OnInit {
   updateIsRunning = false;
   systemWillRestart = false;
   updateNotificationSent = false;
-  tooltips = helptextTopbar.mat_tooltips;
+  tooltips = helptextTopbar.tooltips;
   protected searchableElements = toolBarElements;
 
   readonly hasRebootRequiredReasons = signal(false);
   readonly shownDialog = signal(false);
   readonly hasTncConfig = computed(() => {
     const config = this.tnc.config();
-    return config?.ips?.length && config.tnc_base_url
+    return config && (config.ips.length || config.interfaces_ips.length) && config.tnc_base_url
       && config.account_service_base_url
       && config.leca_service_base_url;
   });
@@ -111,16 +114,7 @@ export class TopbarComponent implements OnInit {
     ].join(' ');
   });
 
-  constructor(
-    private router: Router,
-    private systemGeneralService: SystemGeneralService,
-    private matDialog: MatDialog,
-    private store$: Store<AlertSlice>,
-    private appStore$: Store<AppState>,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private tnc: TruenasConnectService,
-  ) {
+  constructor() {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateNotificationSent = true;
       this.cdr.markForCheck();
@@ -187,7 +181,7 @@ export class TopbarComponent implements OnInit {
     this.store$.dispatch(sidenavIndicatorPressed());
   }
 
-  updateInProgress(): void {
+  private updateInProgress(): void {
     this.systemGeneralService.updateRunning.emit('true');
     if (!this.updateNotificationSent) {
       this.showUpdateDialog();

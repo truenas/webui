@@ -1,18 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef, input,
-  OnInit, output, signal, Signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnInit, output, signal, Signal, viewChild, inject } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { MatCalendar } from '@angular/material/datepicker';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
   autocompletion, closeBrackets, CompletionContext, startCompletion,
 } from '@codemirror/autocomplete';
-import { linter } from '@codemirror/lint';
+import { Diagnostic, linter } from '@codemirror/lint';
 import { EditorState, StateEffect, StateField } from '@codemirror/state';
 import {
   EditorView, keymap, placeholder,
@@ -29,7 +23,7 @@ import { SearchProperty } from 'app/modules/forms/search-input/types/search-prop
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
-const setDiagnostics = StateEffect.define<unknown[] | null>();
+const setDiagnostics = StateEffect.define<Diagnostic[] | null>();
 
 @Component({
   selector: 'ix-advanced-search',
@@ -48,6 +42,11 @@ const setDiagnostics = StateEffect.define<unknown[] | null>();
   ],
 })
 export class AdvancedSearchComponent<T> implements OnInit {
+  private queryParser = inject<QueryParserService<T>>(QueryParserService);
+  private queryToApi = inject<QueryToApiService<T>>(QueryToApiService);
+  private advancedSearchAutocomplete = inject<AdvancedSearchAutocompleteService<T>>(AdvancedSearchAutocompleteService);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly query = input<QueryFilters<T>>([]);
   readonly filterPresets = input<FilterPreset<T>[]>([]);
   readonly properties = input<SearchProperty<T>[]>([]);
@@ -71,13 +70,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
   }
 
   readonly selectedPresetLabels = signal<Set<string>>(new Set());
-
-  constructor(
-    private queryParser: QueryParserService<T>,
-    private queryToApi: QueryToApiService<T>,
-    private advancedSearchAutocomplete: AdvancedSearchAutocompleteService<T>,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.initEditor();
@@ -105,10 +97,10 @@ export class AdvancedSearchComponent<T> implements OnInit {
     });
 
     const diagnosticField = StateField.define({
-      create() {
-        return [];
+      create(): Diagnostic[] {
+        return [] as Diagnostic[];
       },
-      update(diagnostics, transaction) {
+      update(diagnostics, transaction): Diagnostic[] {
         for (const effect of transaction.effects) {
           if (effect.is(setDiagnostics)) {
             return effect.value;
@@ -165,25 +157,44 @@ export class AdvancedSearchComponent<T> implements OnInit {
   applyPreset(filters: QueryFilters<T>[], presetLabels: Set<string>): void {
     this.selectedPresetLabels.set(new Set(presetLabels));
 
-    const presetQuery = this.queryParser.formatFiltersToQuery(filters.flat(), this.properties());
     const currentQuery = this.editorView.state.doc.toString().trim();
+    const newFilters = filters.flat();
+    const updatedQuery = this.smartMergePresetFilters(currentQuery, newFilters);
 
-    const presetChunks = presetQuery
-      .split(/(?:\s+AND\s+|\s+OR\s+)/)
-      .map((chunk) => chunk.trim())
-      .filter(Boolean)
-      .filter((chunk) => !this.normalize(currentQuery).includes(this.normalize(chunk)));
+    this.replaceEditorContents(updatedQuery);
+  }
 
-    if (presetChunks.length === 0) return;
+  private smartMergePresetFilters(currentQuery: string, newFilters: QueryFilters<T>): string {
+    if (!currentQuery.trim()) {
+      return this.queryParser.formatFiltersToQuery(newFilters, this.properties());
+    }
 
-    const endsWithLogicalOperator = /\b(AND|OR)\s*$/i.test(currentQuery);
-    const operator = endsWithLogicalOperator ? ' ' : ' AND ';
+    const parsedQuery = this.queryParser.parseQuery(currentQuery);
+    if (parsedQuery.hasErrors) {
+      const presetQuery = this.queryParser.formatFiltersToQuery(newFilters, this.properties());
+      return `${currentQuery} AND ${presetQuery}`;
+    }
 
-    const mergedQuery = currentQuery
-      ? `${currentQuery}${operator}${presetChunks.join(' AND ')}`
-      : presetChunks.join(' AND ');
+    const currentFilters = this.queryToApi.buildFilters(parsedQuery, this.properties());
 
-    this.replaceEditorContents(mergedQuery);
+    const newFilterProperties = new Set<string>();
+    newFilters.forEach((filter) => {
+      if (Array.isArray(filter) && filter.length === 3) {
+        const [property] = filter;
+        newFilterProperties.add(String(property));
+      }
+    });
+
+    const nonConflictingFilters = currentFilters.filter((filter) => {
+      if (Array.isArray(filter) && filter.length === 3) {
+        const [property] = filter;
+        return !newFilterProperties.has(String(property));
+      }
+      return true;
+    });
+
+    const mergedFilters = [...nonConflictingFilters, ...newFilters];
+    return this.queryParser.formatFiltersToQuery(mergedFilters, this.properties());
   }
 
   protected onResetInput(): void {
@@ -214,7 +225,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
         this.errorMessages = parsedQuery.errors;
         this.editorView.dispatch({
           effects: setDiagnostics.of(
-            parsedQuery.errors.filter((error) => error.from !== error.to),
+            parsedQuery.errors.filter((error) => error.from !== error.to) as Diagnostic[],
           ),
         });
         return;
@@ -226,7 +237,8 @@ export class AdvancedSearchComponent<T> implements OnInit {
       this.errorMessages = null;
 
       const filters = this.queryToApi.buildFilters(parsedQuery, this.properties());
-      this.paramsChange.emit(filters);
+      const mergedFilters = this.mergeConflictingFilters(filters);
+      this.paramsChange.emit(mergedFilters);
     });
   }
 
@@ -268,6 +280,28 @@ export class AdvancedSearchComponent<T> implements OnInit {
     }
 
     this.selectedPresetLabels.set(activeLabels);
+  }
+
+  private mergeConflictingFilters(filters: QueryFilters<T>): QueryFilters<T> {
+    const mergedFilters: QueryFilters<T> = [];
+    const propertyMap = new Map<string, { filter: QueryFilters<T>[number]; index: number }>();
+
+    filters.forEach((filter, index) => {
+      if (Array.isArray(filter) && filter.length === 3) {
+        const [property] = filter;
+        const propertyKey = String(property);
+        propertyMap.set(propertyKey, { filter, index });
+      } else {
+        mergedFilters.push(filter);
+      }
+    });
+
+    const standardFilters = Array.from(propertyMap.values())
+      .sort((a, b) => a.index - b.index)
+      .map(({ filter }) => filter);
+
+    mergedFilters.push(...(standardFilters as QueryFilters<T>));
+    return mergedFilters;
   }
 
   private normalize(value: string): string {

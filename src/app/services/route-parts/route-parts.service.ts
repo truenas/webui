@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   ActivatedRoute, NavigationEnd, Router,
 } from '@angular/router';
@@ -16,9 +16,12 @@ export interface RoutePart {
   providedIn: 'root',
 })
 export class RoutePartsService {
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+
   private fullRouteParts: RoutePart[] | null;
 
-  constructor(private activatedRoute: ActivatedRoute, private router: Router) {
+  constructor() {
     // only execute when routechange
     this.fullRouteParts = this.generateRouteParts(this.activatedRoute.root);
     this.router.events.pipe(

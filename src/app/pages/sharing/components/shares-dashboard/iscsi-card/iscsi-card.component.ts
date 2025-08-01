@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -16,12 +13,14 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, Observable, startWith, tap,
 } from 'rxjs';
+import { iscsiCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -75,9 +74,20 @@ import { selectService } from 'app/store/services/services.selectors';
     AsyncPipe,
     RouterLink,
     MatTooltip,
+    EmptyComponent,
   ],
 })
 export class IscsiCardComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  protected emptyService = inject(EmptyService);
+  private store$ = inject<Store<ServicesState>>(Store);
+  private matDialog = inject(MatDialog);
+  private iscsiService = inject(IscsiService);
+  private cdr = inject(ChangeDetectorRef);
+  private license = inject(LicenseService);
+
   service$ = this.store$.select(selectService(ServiceName.Iscsi));
   requiredRoles = [
     Role.SharingIscsiTargetWrite,
@@ -92,6 +102,7 @@ export class IscsiCardComponent implements OnInit {
   );
 
   protected readonly searchableElements = iscsiCardElements;
+  protected readonly emptyConfig = iscsiCardEmptyConfig;
 
   dataProvider: AsyncDataProvider<IscsiTarget>;
 
@@ -130,17 +141,7 @@ export class IscsiCardComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('iSCSI Target')],
   });
 
-  constructor(
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    private api: ApiService,
-    protected emptyService: EmptyService,
-    private store$: Store<ServicesState>,
-    private matDialog: MatDialog,
-    private iscsiService: IscsiService,
-    private cdr: ChangeDetectorRef,
-    private license: LicenseService,
-  ) {
+  constructor() {
     effect(() => {
       if (this.targets()?.some((target) => target.mode !== IscsiTargetMode.Iscsi)) {
         this.columns = this.columns.map((column) => {

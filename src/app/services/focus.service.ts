@@ -1,13 +1,11 @@
-import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, DOCUMENT, inject } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FocusService {
-  constructor(
-    @Inject(DOCUMENT) private document: Document,
-  ) {}
+  private document = inject<Document>(DOCUMENT);
+
 
   private lastFocusedElement: HTMLElement | null = null;
 

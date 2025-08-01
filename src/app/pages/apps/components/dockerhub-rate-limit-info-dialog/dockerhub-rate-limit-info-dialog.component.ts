@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-  Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent,
@@ -30,6 +27,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class DockerHubRateInfoDialog {
+  private translate = inject(TranslateService);
+  data = inject<DockerHubRateLimit>(MAT_DIALOG_DATA);
+
   helpText = helptextApps;
 
   get warningText(): string {
@@ -40,9 +40,4 @@ export class DockerHubRateInfoDialog {
       },
     );
   }
-
-  constructor(
-    private translate: TranslateService,
-    @Inject(MAT_DIALOG_DATA) public data: DockerHubRateLimit,
-  ) {}
 }

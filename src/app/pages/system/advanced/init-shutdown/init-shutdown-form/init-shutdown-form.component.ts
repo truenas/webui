@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -18,6 +16,9 @@ import { helptextInitShutdown } from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -51,9 +52,18 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TestDirective,
     TranslateModule,
     AsyncPipe,
+    ExplorerCreateDatasetComponent,
   ],
 })
 export class InitShutdownFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private filesystemService = inject(FilesystemService);
+  slideInRef = inject<SlideInRef<InitShutdownScript | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SystemCronWrite];
 
   get isNew(): boolean {
@@ -97,15 +107,7 @@ export class InitShutdownFormComponent implements OnInit {
 
   private editingScript: InitShutdownScript | undefined;
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: FormErrorHandlerService,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private filesystemService: FilesystemService,
-    public slideInRef: SlideInRef<InitShutdownScript | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -123,7 +125,7 @@ export class InitShutdownFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value;
 
     this.isFormLoading.set(true);
@@ -145,7 +147,7 @@ export class InitShutdownFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Init/Shutdown Script updated'));
         }
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

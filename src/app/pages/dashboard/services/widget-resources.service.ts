@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { subHours } from 'date-fns';
 import {
@@ -30,6 +30,9 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   providedIn: 'root',
 })
 export class WidgetResourcesService {
+  private api = inject(ApiService);
+  private store$ = inject<Store<AppState>>(Store);
+
   readonly realtimeUpdates$ = this.api.subscribe('reporting.realtime');
 
   readonly refreshInterval$ = timer(0, 5000).pipe(startWith(0));
@@ -71,8 +74,8 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly updateAvailable$ = this.api.call('update.get_pending').pipe(
-    map((updates) => Boolean(updates.length)),
+  readonly updateAvailable$ = this.api.call('update.status').pipe(
+    map((updateStatus) => Boolean(updateStatus.status?.new_version)),
     catchError(() => of(false)),
     shareReplay({ refCount: false, bufferSize: 1 }),
   );
@@ -145,11 +148,6 @@ export class WidgetResourcesService {
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
-
-  constructor(
-    private api: ApiService,
-    private store$: Store<AppState>,
-  ) {}
 
   refreshDashboardSystemInfo(): void {
     this.triggerRefreshDashboardSystemInfo$.next();

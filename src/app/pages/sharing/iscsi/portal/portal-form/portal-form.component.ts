@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -53,6 +49,14 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class PortalFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  protected api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(FormErrorHandlerService);
+  protected iscsiService = inject(IscsiService);
+  slideInRef = inject<SlideInRef<IscsiPortal | undefined, boolean>>(SlideInRef);
+
   protected isLoading = signal(false);
   listen: IscsiInterface[] = [];
 
@@ -92,15 +96,7 @@ export class PortalFormComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  constructor(
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    protected api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
-    protected iscsiService: IscsiService,
-    public slideInRef: SlideInRef<IscsiPortal | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -126,17 +122,17 @@ export class PortalFormComponent implements OnInit {
     });
   }
 
-  onAdd(): void {
+  protected onAdd(): void {
     this.form.controls.ip.push(this.fb.control('', [Validators.required, ipValidator('all')]));
     this.listen.push({ ip: '' } as IscsiInterface);
   }
 
-  onDelete(index: number): void {
+  protected onDelete(index: number): void {
     this.form.controls.ip.removeAt(index);
     this.listen.splice(index, 1);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value;
     const params = {
       comment: values.comment,
@@ -154,7 +150,7 @@ export class PortalFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

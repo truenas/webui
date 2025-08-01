@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, forwardRef, Signal, signal,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, forwardRef, Signal, signal, viewChild, inject } from '@angular/core';
 import {
   FormControl, ValidationErrors, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -48,6 +45,9 @@ import { WidgetGroupSlotFormComponent } from './widget-group-slot-form/widget-gr
   ],
 })
 export class WidgetGroupFormComponent {
+  slideInRef = inject<SlideInRef<WidgetGroup | undefined, WidgetGroup | false>>(SlideInRef);
+  private cdr = inject(ChangeDetectorRef);
+
   protected group = signal<WidgetGroup>(
     { layout: WidgetGroupLayout.Full, slots: [{ type: null }] },
   );
@@ -81,10 +81,7 @@ export class WidgetGroupFormComponent {
     return validationErrors.some((errors) => !!Object.keys(errors).length);
   });
 
-  constructor(
-    public slideInRef: SlideInRef<WidgetGroup | undefined, WidgetGroup | false>,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(this.layoutControl.dirty || this.widgetGroupSlotForm()?.form?.dirty));
     });
@@ -131,7 +128,7 @@ export class WidgetGroupFormComponent {
     ).subscribe();
   }
 
-  selectedSlotChanged(slotIndex: SlotPosition): void {
+  protected selectedSlotChanged(slotIndex: SlotPosition): void {
     if (
       slotIndex === this.selectedSlot().slotPosition
       && this.selectedSlot().slotSize === layoutToSlotSizes[this.group().layout][slotIndex]
@@ -141,7 +138,7 @@ export class WidgetGroupFormComponent {
     this.updateSelectedSlot(slotIndex);
   }
 
-  updateSelectedSlot(slotPosition: SlotPosition): void {
+  private updateSelectedSlot(slotPosition: SlotPosition): void {
     this.selectedSlot.update(() => {
       const group = this.group();
       return {
@@ -160,7 +157,6 @@ export class WidgetGroupFormComponent {
     }
     this.slideInRef.close({
       response: this.group(),
-      error: false,
     });
   }
 
@@ -179,7 +175,7 @@ export class WidgetGroupFormComponent {
     });
   }
 
-  updateSlotValidation([slotPosition, errors]: [SlotPosition, ValidationErrors]): void {
+  protected updateSlotValidation([slotPosition, errors]: [SlotPosition, ValidationErrors]): void {
     this.validationErrors.update((validaitonErrors) => {
       const newErrors = [...validaitonErrors];
       newErrors[slotPosition] = errors;
@@ -187,7 +183,7 @@ export class WidgetGroupFormComponent {
     });
   }
 
-  updateSlotSettings(slot: WidgetGroupSlot<object>): void {
+  protected updateSlotSettings(slot: WidgetGroupSlot<object>): void {
     this.group.update((group) => {
       const newGroup: WidgetGroup = { layout: group.layout, slots: [] };
       const slotsCount = Math.max(layoutToSlotSizes[newGroup.layout].length, group.slots.length);

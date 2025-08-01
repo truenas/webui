@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -27,6 +27,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   StaticRouteDeleteDialog,
@@ -54,10 +55,17 @@ import { staticRoutesCardElements } from 'app/pages/system/network/components/st
     IxTableBodyComponent,
     IxTablePagerShowMoreComponent,
     TranslateModule,
+    TooltipComponent,
     AsyncPipe,
   ],
 })
 export class StaticRoutesCardComponent implements OnInit {
+  private matDialog = inject(MatDialog);
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+
   protected readonly searchableElements = staticRoutesCardElements.elements;
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
@@ -92,14 +100,6 @@ export class StaticRoutesCardComponent implements OnInit {
     ariaLabels: (row) => [row.description, this.translate.instant('Static Route')],
   });
 
-  constructor(
-    private matDialog: MatDialog,
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-  ) {}
-
   ngOnInit(): void {
     const staticRoutes$ = this.api.call('staticroute.query').pipe(
       tap((staticRoutes) => this.staticRoutes = staticRoutes),
@@ -110,7 +110,7 @@ export class StaticRoutesCardComponent implements OnInit {
     this.getStaticRoutes();
   }
 
-  getStaticRoutes(): void {
+  private getStaticRoutes(): void {
     this.dataProvider.load();
   }
 

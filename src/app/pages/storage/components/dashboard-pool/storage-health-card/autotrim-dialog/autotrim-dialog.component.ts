@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -40,21 +38,19 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AutotrimDialog implements OnInit {
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogRef = inject<MatDialogRef<AutotrimDialog>>(MatDialogRef);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  pool = inject<Pool>(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.PoolWrite];
 
   autotrimControl = new FormControl(false);
 
   readonly helptext = helptextVolumes;
-
-  constructor(
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogRef: MatDialogRef<AutotrimDialog>,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    @Inject(MAT_DIALOG_DATA) public pool: Pool,
-  ) { }
 
   ngOnInit(): void {
     this.autotrimControl.setValue(this.pool.autotrim.value === 'on');

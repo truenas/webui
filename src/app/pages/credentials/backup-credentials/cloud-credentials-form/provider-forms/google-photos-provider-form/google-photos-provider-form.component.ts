@@ -1,7 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -25,21 +22,17 @@ import {
   ],
 })
 export class GooglePhotosProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
+  private formBuilder = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+
   form = this.formBuilder.group({
     token: ['', Validators.required],
     client_id: ['', Validators.required],
     client_secret: ['', Validators.required],
   });
 
-  readonly oauthTooltip = helptext.token_google_photos.oauth_tooltip;
-  readonly tokenTooltip = helptext.token_google_photos.tooltip;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
-  ) {
-    super();
-  }
+  readonly oauthTooltip = helptext.googlePhotosToken.oauth_tooltip;
+  readonly tokenTooltip = helptext.googlePhotosToken.tooltip;
 
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {

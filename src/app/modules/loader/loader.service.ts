@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import {
@@ -9,12 +9,10 @@ import { FocusService } from 'app/services/focus.service';
 
 @Injectable({ providedIn: 'root' })
 export class LoaderService {
-  dialogRef: MatDialogRef<AppLoaderComponent> | null = null;
+  private matDialog = inject(MatDialog);
+  private focusService = inject(FocusService);
 
-  constructor(
-    private matDialog: MatDialog,
-    private focusService: FocusService,
-  ) { }
+  dialogRef: MatDialogRef<AppLoaderComponent> | null = null;
 
   /**
    * Opens loader when observable (request) starts and closes when it ends.

@@ -7,6 +7,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -21,6 +22,9 @@ import {
 import { Service } from 'app/interfaces/service.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -44,7 +48,7 @@ describe('IscsiWizardComponent', () => {
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(() => true),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -55,12 +59,11 @@ describe('IscsiWizardComponent', () => {
       TargetWizardStepComponent,
       ExtentWizardStepComponent,
       ProtocolOptionsWizardStepComponent,
+      MockComponent(ExplorerCreateDatasetComponent),
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -156,6 +159,7 @@ describe('IscsiWizardComponent', () => {
       disk: 'zvol/my+pool/test_zvol',
       insecure_tpc: true,
       name: 'test-name',
+      product_id: null,
       rpm: 'SSD',
       type: 'DISK',
       xen: false,
@@ -225,6 +229,7 @@ describe('IscsiWizardComponent', () => {
       disk: 'zvol/my+pool/test_zvol',
       insecure_tpc: true,
       name: 'test-name',
+      product_id: null,
       rpm: 'SSD',
       type: 'DISK',
       xen: false,

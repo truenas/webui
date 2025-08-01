@@ -64,6 +64,7 @@ describe('CloudBackupFormComponent', () => {
     job: null,
     password: '1234',
     keep_last: 2,
+    rate_limit: null,
     credentials: storjCreds,
     schedule: {
       minute: '0',
@@ -81,7 +82,7 @@ describe('CloudBackupFormComponent', () => {
   const slideInRef: SlideInRef<CloudBackup | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
     swap: jest.fn(),
   };
   const createComponent = createComponentFactory({
@@ -106,7 +107,6 @@ describe('CloudBackupFormComponent', () => {
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
-        components$: of([]),
       }),
       mockProvider(CloudCredentialService, {
         getCloudSyncCredentials: jest.fn(() => of([googlePhotosCreds, storjCreds])),
@@ -149,6 +149,7 @@ describe('CloudBackupFormComponent', () => {
         Password: 'qwerty',
         Credentials: 'Storj (Storj)',
         'Keep Last': 5,
+        'Rate Limit': 1000,
         Folder: '/',
         Bucket: 'Add new',
         'New Bucket Name': 'brand-new-bucket',
@@ -167,6 +168,7 @@ describe('CloudBackupFormComponent', () => {
         exclude: [],
         include: [],
         keep_last: 5,
+        rate_limit: 1000,
         password: 'qwerty',
         path: '/mnt/my pool 2',
         post_script: '',
@@ -182,7 +184,7 @@ describe('CloudBackupFormComponent', () => {
         absolute_paths: false,
         transfer_setting: CloudsyncTransferSetting.Default,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
     });
 
     it('adds a new cloud backup task when new form is saved', async () => {
@@ -194,6 +196,7 @@ describe('CloudBackupFormComponent', () => {
         Password: 'qwerty',
         Credentials: 'Storj (Storj)',
         'Keep Last': 3,
+        'Rate Limit': 500,
         Folder: '/',
         Enabled: false,
         Bucket: 'bucket1',
@@ -216,6 +219,7 @@ describe('CloudBackupFormComponent', () => {
         exclude: ['/test'],
         include: [],
         keep_last: 3,
+        rate_limit: 500,
         password: 'qwerty',
         path: '/mnt/my pool 2',
         post_script: '',
@@ -231,7 +235,7 @@ describe('CloudBackupFormComponent', () => {
         absolute_paths: true,
         transfer_setting: CloudsyncTransferSetting.FastStorage,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
     });
   });
 
@@ -259,6 +263,7 @@ describe('CloudBackupFormComponent', () => {
         Name: 'sdf',
         Folder: '/My Folder',
         'Keep Last': '2',
+        'Rate Limit': '',
         Password: '1234',
         'Post-script': '',
         'Pre-script': '',
@@ -300,6 +305,7 @@ describe('CloudBackupFormComponent', () => {
         exclude: [],
         include: [],
         keep_last: 2,
+        rate_limit: null,
         password: 'qwerty123',
         path: '/mnt/path1',
         post_script: '',
@@ -314,7 +320,7 @@ describe('CloudBackupFormComponent', () => {
         snapshot: false,
         transfer_setting: CloudsyncTransferSetting.Performance,
       }]);
-      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
     });
   });
 });

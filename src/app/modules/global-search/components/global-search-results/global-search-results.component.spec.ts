@@ -125,13 +125,13 @@ describe('GlobalSearchResultsComponent', () => {
   });
 
   it('should toggle between showing limited results and all results', () => {
-    const mockResults: UiSearchableElement[] = [
-      ...['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].map((adjustment) => ({
+    const mockResults: UiSearchableElement[]
+      = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].map((adjustment) => ({
         ...mockedUiElement,
         anchor: adjustment,
         hierarchy: [...mockedUiElement.hierarchy, adjustment],
-      })),
-    ];
+      }))
+    ;
 
     spectator.setInput('results', mockResults);
     spectator.setInput('searchTerm', 'Item');

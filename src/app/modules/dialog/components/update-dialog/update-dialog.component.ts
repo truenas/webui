@@ -27,10 +27,8 @@ import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
   ],
 })
 export class UpdateDialog {
+  private store$ = inject<Store<JobsState>>(Store);
+
   selectRunningJobs$ = this.store$.select(selectUpdateJob);
   contentText = inject<{ message: string; title: string }>(MAT_DIALOG_DATA);
-
-  constructor(
-    private store$: Store<JobsState>,
-  ) {}
 }

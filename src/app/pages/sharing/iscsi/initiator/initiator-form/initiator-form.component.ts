@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
@@ -54,6 +51,12 @@ interface InitiatorItem {
   ],
 })
 export class InitiatorFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private errorHandler = inject(ErrorHandlerService);
+  private fb = inject(FormBuilder);
+
   protected readonly searchableElements = initiatorFormElements;
 
   protected isFormLoading = signal(false);
@@ -87,14 +90,6 @@ export class InitiatorFormComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  constructor(
-    private api: ApiService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private errorHandler: ErrorHandlerService,
-    private fb: FormBuilder,
-  ) {}
-
   ngOnInit(): void {
     this.isFormLoading.set(true);
     this.activatedRoute.params.pipe(untilDestroyed(this)).subscribe((params) => {
@@ -109,11 +104,11 @@ export class InitiatorFormComponent implements OnInit {
     this.getConnectedInitiators();
   }
 
-  onCancel(): void {
+  protected onCancel(): void {
     this.router.navigate(['/', 'sharing', 'iscsi', 'initiators']);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const payload = {
       comment: this.form.getRawValue().comment,
       initiators: this.isAllowAll ? [] : this.selectedInitiators().map((item) => item.id),
@@ -139,7 +134,7 @@ export class InitiatorFormComponent implements OnInit {
     });
   }
 
-  getConnectedInitiators(): void {
+  protected getConnectedInitiators(): void {
     this.api.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe({
       next: (sessions) => {
         this.connectedInitiators.set(unionBy(sessions, (item) => item.initiator && item.initiator_addr));
@@ -150,7 +145,7 @@ export class InitiatorFormComponent implements OnInit {
     });
   }
 
-  onAddInitiator(): void {
+  protected onAddInitiator(): void {
     const newInitiator = this.form.value.new_initiator;
     if (newInitiator) {
       if (!this.allInitiators().find((item) => item.id === newInitiator)) {
@@ -161,7 +156,7 @@ export class InitiatorFormComponent implements OnInit {
     }
   }
 
-  setForm(): void {
+  private setForm(): void {
     this.api.call('iscsi.initiator.query', [[['id', '=', this.pk]]])
       .pipe(untilDestroyed(this))
       .subscribe({

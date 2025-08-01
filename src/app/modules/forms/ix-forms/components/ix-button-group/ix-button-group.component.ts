@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, input, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { MatHint } from '@angular/material/form-field';
@@ -31,13 +29,15 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
     TranslateModule,
     TestDirective,
     TestOverrideDirective,
-    TestDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
   ],
 })
 export class IxButtonGroupComponent implements ControlValueAccessor {
+  controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly label = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
@@ -54,10 +54,7 @@ export class IxButtonGroupComponent implements ControlValueAccessor {
   isDisabled = false;
   value: string;
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 

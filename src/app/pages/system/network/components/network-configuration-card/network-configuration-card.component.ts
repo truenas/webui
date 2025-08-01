@@ -1,13 +1,11 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import ipRegex from 'ip-regex';
 import { combineLatest, filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -50,21 +48,19 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   ],
 })
 export class NetworkConfigurationCardComponent implements OnInit {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private slideIn = inject(SlideIn);
+  private searchDirectives = inject(UiSearchDirectivesService);
+  private actions$ = inject(Actions);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly networkConfigurationCardElements = networkConfigurationCardElements;
 
   summary: NetworkSummary;
   config: NetworkConfiguration;
   isLoading = false;
-
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private slideIn: SlideIn,
-    private searchDirectives: UiSearchDirectivesService,
-    private actions$: Actions,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     this.loadNetworkConfigAndSummary();
@@ -89,20 +85,27 @@ export class NetworkConfigurationCardComponent implements OnInit {
   }
 
   get additionalDomains(): string {
-    return this.config.domains.length > 0 ? this.config.domains.join(', ') : '---';
+    return this.config.domains.length > 0 ? this.config.domains.join(', ') : '-';
   }
 
   get outboundNetwork(): string {
-    if (this.config.activity.type === NetworkActivityType.Deny) {
+    if (this.config.activity.activities.length === 0) {
+      if (this.config.activity.type === NetworkActivityType.Allow) {
+        return this.translate.instant('Deny All');
+      }
+
       return this.translate.instant('Allow All');
     }
 
-    if (this.config.activity.activities.length === 0) {
-      return this.translate.instant('Deny All');
+    if (this.config.activity.type === NetworkActivityType.Allow) {
+      return this.translate.instant(
+        'Only allow: {activities}',
+        { activities: this.config.activity.activities.join(', ') },
+      );
     }
 
     return this.translate.instant(
-      'Allow {activities}',
+      'Allow all except: {activities}',
       { activities: this.config.activity.activities.join(', ') },
     );
   }
@@ -110,11 +113,17 @@ export class NetworkConfigurationCardComponent implements OnInit {
   get nameservers(): Option[] {
     const nameservers: Option[] = [];
     const nameserverAttributes = ['nameserver1', 'nameserver2', 'nameserver3'] as const;
-    nameserverAttributes.forEach((attribute, n) => {
+    const labels = [
+      this.translate.instant('Primary'),
+      this.translate.instant('Secondary'),
+      this.translate.instant('Tertiary'),
+    ];
+
+    nameserverAttributes.forEach((attribute, index) => {
       const nameserver = this.config[attribute];
       if (nameserver) {
         nameservers.push({
-          label: this.translate.instant('Nameserver {n}', { n: n + 1 }),
+          label: this.translate.instant(labels[index]),
           value: nameserver,
         });
       }

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import uniqBy from 'lodash-es/uniqBy';
@@ -28,6 +26,9 @@ import {
   ],
 })
 export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
+  private resources = inject(WidgetResourcesService);
+  private translate = inject(TranslateService);
+
   size = input.required<SlotSize>();
   settings = input.required<WidgetInterfaceIpSettings>();
 
@@ -53,11 +54,6 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
   });
 
   private interfaces = toSignal(this.resources.networkInterfaces$);
-
-  constructor(
-    private resources: WidgetResourcesService,
-    private translate: TranslateService,
-  ) {}
 
   private getIpAddresses(interfaces: NetworkInterface[], interfaceId: string): string {
     const networkInterface = interfaces.find((nic) => nic.name === interfaceId);

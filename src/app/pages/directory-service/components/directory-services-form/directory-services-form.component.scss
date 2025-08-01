@@ -1,0 +1,50 @@
+@import 'scss-imports/variables';
+
+.columns {
+  display: flex;
+
+  @media (max-width: $breakpoint-tablet) {
+    display: block;
+  }
+
+  > * {
+    display: block;
+    width: 50%;
+
+    @media (max-width: $breakpoint-tablet) {
+      width: 100%;
+    }
+  }
+}
+
+.kerberos-ldap-warning,
+.ipa-kerberos-user-info,
+.ldap-anonymous-info {
+  align-items: center;
+  background-color: var(--bg-alt);
+  border: 1px solid var(--lines);
+  border-radius: 4px;
+  color: var(--fg2);
+  display: flex;
+  font-size: 13px;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 12px;
+
+  ix-icon {
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+
+  span {
+    line-height: 1.4;
+  }
+}
+
+.trusted-domain-config {
+  width: 100%;
+
+  .columns {
+    margin-top: 0;
+  }
+}

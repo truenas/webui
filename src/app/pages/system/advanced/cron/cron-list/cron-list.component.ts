@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -66,6 +64,16 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class CronListComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private taskService = inject(TaskService);
+  private dialog = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private slideIn = inject(SlideIn);
+  private matDialog = inject(MatDialog);
+  protected emptyService = inject(EmptyService);
+
   protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = cronElements;
 
@@ -122,21 +130,9 @@ export class CronListComponent implements OnInit {
     ariaLabels: (row) => [row.command, this.translate.instant('Cron Job')],
   });
 
-  get hiddenColumns(): Column<CronjobRow, ColumnComponent<CronjobRow>>[] {
+  protected get hiddenColumns(): Column<CronjobRow, ColumnComponent<CronjobRow>>[] {
     return this.columns.filter((column) => column?.hidden);
   }
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private translate: TranslateService,
-    private taskService: TaskService,
-    private dialog: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private slideIn: SlideIn,
-    private matDialog: MatDialog,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const cronjobs$ = this.api.call('cronjob.query').pipe(
@@ -156,11 +152,11 @@ export class CronListComponent implements OnInit {
     });
   }
 
-  getCronJobs(): void {
+  protected getCronJobs(): void {
     this.dataProvider.load();
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(CronFormComponent)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
@@ -168,7 +164,7 @@ export class CronListComponent implements OnInit {
       });
   }
 
-  doEdit(row: CronjobRow): void {
+  protected doEdit(row: CronjobRow): void {
     this.slideIn.open(CronFormComponent, { data: row })
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
@@ -176,9 +172,8 @@ export class CronListComponent implements OnInit {
       });
   }
 
-  runNow(row: CronjobRow): void {
+  protected runNow(row: CronjobRow): void {
     this.dialog.confirm({
-      title: this.translate.instant('Run Now'),
       message: this.translate.instant('Run this job now?'),
       hideCheckbox: true,
     }).pipe(
@@ -199,7 +194,7 @@ export class CronListComponent implements OnInit {
     });
   }
 
-  doDelete(row: CronjobRow): void {
+  protected doDelete(row: CronjobRow): void {
     this.matDialog.open(CronDeleteDialog, {
       data: row,
     }).afterClosed()
@@ -209,12 +204,12 @@ export class CronListComponent implements OnInit {
       });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['user'] });
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();

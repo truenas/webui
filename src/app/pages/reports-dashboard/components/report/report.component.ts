@@ -1,14 +1,5 @@
-import { DOCUMENT, KeyValuePipe } from '@angular/common';
-import {
-  Component,
-  OnChanges,
-  OnInit,
-  Inject,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  input,
-  viewChild,
-} from '@angular/core';
+import { KeyValuePipe } from '@angular/common';
+import { Component, OnChanges, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, input, viewChild, DOCUMENT, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -16,9 +7,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
 import {
-  add, isToday, sub,
+  add, Duration, isToday, sub,
 } from 'date-fns';
 import { cloneDeep } from 'lodash-es';
 import {
@@ -27,6 +17,7 @@ import {
 import {
   delay, distinctUntilChanged, filter, skipWhile, throttleTime,
 } from 'rxjs/operators';
+import { v4 as uuidv4 } from 'uuid';
 import { invalidDate } from 'app/constants/invalid-date';
 import { oneDayMillis, oneHourMillis } from 'app/constants/time.constant';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
@@ -84,6 +75,15 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   ],
 })
 export class ReportComponent implements OnInit, OnChanges {
+  translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+  private formatDateTimePipe = inject(FormatDateTimePipe);
+  private themeService = inject(ThemeService);
+  private reportsService = inject(ReportsService);
+  private cdr = inject(ChangeDetectorRef);
+  private localeService = inject(LocaleService);
+  private document = inject<Document>(DOCUMENT);
+
   readonly localControls = input(true);
   readonly report = input.required<Report>();
   readonly identifier = input<string>();
@@ -96,7 +96,7 @@ export class ReportComponent implements OnInit, OnChanges {
   autoRefreshEnabled: boolean;
   isReady = false;
   data: ReportingData | undefined;
-  chartId = `chart-${UUID.UUID()}`;
+  chartId = `chart-${uuidv4()}`;
   chartColors: string[];
   legendData: LegendDataWithStackedTotalHtml = {} as LegendDataWithStackedTotalHtml;
   subtitle: string = this.translate.instant('% of all cores');
@@ -157,16 +157,7 @@ export class ReportComponent implements OnInit, OnChanges {
     return this.chartId === this.legendData.chartId;
   }
 
-  constructor(
-    public translate: TranslateService,
-    private store$: Store<AppState>,
-    private formatDateTimePipe: FormatDateTimePipe,
-    private themeService: ThemeService,
-    private reportsService: ReportsService,
-    private cdr: ChangeDetectorRef,
-    private localeService: LocaleService,
-    @Inject(DOCUMENT) private document: Document,
-  ) {
+  constructor() {
     this.reportsService.legendEventEmitterObs$.pipe(untilDestroyed(this)).subscribe({
       next: (data: LegendDataWithStackedTotalHtml) => {
         const clone = { ...data };
@@ -233,7 +224,7 @@ export class ReportComponent implements OnInit, OnChanges {
     });
   }
 
-  initAutoRefresh(): void {
+  private initAutoRefresh(): void {
     this.autoRefreshTimer = timer(2000, refreshInterval).pipe(
       filter(() => this.autoRefreshEnabled),
       untilDestroyed(this),
@@ -271,7 +262,7 @@ export class ReportComponent implements OnInit, OnChanges {
     }
   }
 
-  formatTime(stamp: number): string {
+  private formatTime(stamp: number): string {
     const result = this.formatDateTimePipe.transform(new Date(stamp));
     return result.toLowerCase() !== this.translate.instant(invalidDate).toLowerCase() ? result : '';
   }
@@ -294,7 +285,7 @@ export class ReportComponent implements OnInit, OnChanges {
     this.clearLastEndDateForCurrentZoomLevel();
   }
 
-  clearLastEndDateForCurrentZoomLevel(): void {
+  private clearLastEndDateForCurrentZoomLevel(): void {
     Object.keys(this.lastEndDateForCurrentZoomLevel).forEach((key: ReportZoomLevel) => {
       this.lastEndDateForCurrentZoomLevel[key] = null;
     });
@@ -391,7 +382,7 @@ export class ReportComponent implements OnInit, OnChanges {
   }
 
   // Convert timespan to start/end options
-  convertTimeSpan(
+  private convertTimeSpan(
     timespan: ReportZoomLevel,
     direction = ReportStepDirection.Backward,
     currentDate?: number,
@@ -441,7 +432,7 @@ export class ReportComponent implements OnInit, OnChanges {
     };
   }
 
-  getTimespan(zoomLevel: ReportZoomLevel): Record<string, number> {
+  private getTimespan(zoomLevel: ReportZoomLevel): Record<string, number> {
     let durationUnit: keyof Duration;
     let value: number;
 
@@ -470,7 +461,7 @@ export class ReportComponent implements OnInit, OnChanges {
     return { [durationUnit]: value };
   }
 
-  fetchReportData(fetchParams: FetchReportParams): void {
+  private fetchReportData(fetchParams: FetchReportParams): void {
     const { report, identifier, rrdOptions } = fetchParams;
     // Report options
     const params = identifier ? { name: report.name, identifier } : { name: report.name };

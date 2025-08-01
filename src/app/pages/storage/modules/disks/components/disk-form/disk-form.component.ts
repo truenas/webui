@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -59,6 +53,14 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class DiskFormComponent implements OnInit {
+  private store$ = inject<Store<AppState>>(Store);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private fb = inject(NonNullableFormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private snackbarService = inject(SnackbarService);
+  slideInRef = inject<SlideInRef<Disk, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.DiskWrite];
 
   form = this.fb.group({
@@ -82,15 +84,7 @@ export class DiskFormComponent implements OnInit {
     return this.isEnterprise() || (this.existingDisk()?.passwd && this.existingDisk()?.passwd !== '');
   });
 
-  constructor(
-    private store$: Store<AppState>,
-    private translate: TranslateService,
-    private api: ApiService,
-    private fb: NonNullableFormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private snackbarService: SnackbarService,
-    public slideInRef: SlideInRef<Disk, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -103,7 +97,7 @@ export class DiskFormComponent implements OnInit {
     }
   }
 
-  setFormDisk(disk: Disk): void {
+  private setFormDisk(disk: Disk): void {
     this.existingDisk.set(disk);
     this.form.patchValue({ ...disk });
   }
@@ -123,7 +117,7 @@ export class DiskFormComponent implements OnInit {
       );
   }
 
-  prepareUpdate(value: DiskFormComponent['form']['value']): DiskUpdate {
+  private prepareUpdate(value: DiskFormComponent['form']['value']): DiskUpdate {
     const transformedValue = { ...value };
 
     if (transformedValue.passwd === '') {
@@ -141,7 +135,7 @@ export class DiskFormComponent implements OnInit {
     return transformedValue;
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const valuesDiskUpdate: DiskUpdate = this.prepareUpdate(this.form.value);
 
     this.isLoading.set(true);
@@ -150,7 +144,7 @@ export class DiskFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
           this.snackbarService.success(this.translate.instant('Disk settings successfully saved.'));
         },
         error: (error: unknown) => {

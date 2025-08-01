@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
@@ -50,6 +48,13 @@ export const maxFileSizeBytes = 5 * MiB;
   ],
 })
 export class FileReviewComponent {
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private imageValidator = inject(ImageValidatorService);
+  private feedbackService = inject(FeedbackService);
+  private systemGeneralService = inject(SystemGeneralService);
+  private translate = inject(TranslateService);
+
   readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
   readonly isLoading = input<boolean>();
 
@@ -66,27 +71,23 @@ export class FileReviewComponent {
     take_screenshot: [true],
   });
 
-  protected readonly voteForNewFeaturesText = helptext.review.vote_for_new_features;
+  protected readonly voteForNewFeaturesText = helptext.review.voteForNewFeatures;
   protected readonly acceptedFiles = ticketAcceptedFiles;
 
   protected get messagePlaceholderText(): TranslatedString {
-    if (this.form.controls.rating.value !== maxRatingValue) {
-      return this.translate.instant(helptext.review.message.placeholder);
+    const rating = this.form.controls.rating.value;
+    const baseText = this.translate.instant(helptext.review.message.placeholder);
+
+    if ((rating !== maxRatingValue && rating > 2) || !rating) {
+      return baseText;
     }
 
-    return this.translate.instant(helptext.review.message.placeholder)
-      + '\n\n'
-      + this.translate.instant(helptext.review.message.placeholder_additional) as TranslatedString;
-  }
+    const extra = rating <= 2
+      ? this.translate.instant(helptext.review.message.placeholderLowRating)
+      : this.translate.instant(helptext.review.message.placeholderHighRating);
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private imageValidator: ImageValidatorService,
-    private feedbackService: FeedbackService,
-    private systemGeneralService: SystemGeneralService,
-    private translate: TranslateService,
-  ) {}
+    return `${baseText}\n\n${extra}` as TranslatedString;
+  }
 
   onSubmit(): void {
     this.isLoadingChange.emit(true);

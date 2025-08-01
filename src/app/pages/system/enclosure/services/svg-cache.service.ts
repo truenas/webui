@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -7,11 +7,9 @@ import { tap } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class SvgCacheService {
-  private cache = new Map<string, string>();
+  private http = inject(HttpClient);
 
-  constructor(
-    private http: HttpClient,
-  ) {}
+  private cache = new Map<string, string>();
 
   loadSvg(url: string): Observable<string> {
     const cachedSvg = this.cache.get(url);

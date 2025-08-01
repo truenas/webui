@@ -3,7 +3,7 @@
     formControlName="target_dataset"
     [label]="'Destination' | translate"
     [required]="true"
-    [root]="''"
+    [rootNodes]="emptyRootNode"
     [tooltip]="helptext.targetDatasetTooltip | translate"
     [nodeProvider]="nodeProvider()"
   ></ix-explorer>

@@ -1,10 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -70,6 +65,11 @@ import { jobsListElements } from 'app/pages/jobs/jobs-list.elements';
   ],
 })
 export class JobsListComponent implements OnInit {
+  protected emptyService = inject(EmptyService);
+  private translate = inject(TranslateService);
+  private store$ = inject<Store<JobSlice>>(Store);
+  private cdr = inject(ChangeDetectorRef);
+
   protected readonly searchableElements = jobsListElements;
 
   protected readonly isLoading$ = this.store$.select(selectJobState).pipe(map((state) => state.isLoading));
@@ -126,13 +126,6 @@ export class JobsListComponent implements OnInit {
     }),
   );
 
-  constructor(
-    protected emptyService: EmptyService,
-    private translate: TranslateService,
-    private store$: Store<JobSlice>,
-    private cdr: ChangeDetectorRef,
-  ) {}
-
   ngOnInit(): void {
     this.selectedJobs$.pipe(untilDestroyed(this)).subscribe((jobs) => {
       this.jobs = jobs;
@@ -142,7 +135,7 @@ export class JobsListComponent implements OnInit {
     });
   }
 
-  onTabChange(tab: JobTab): void {
+  protected onTabChange(tab: JobTab): void {
     this.selectedIndex = tab;
     switch (this.selectedIndex) {
       case JobTab.Failed:

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Theme } from 'app/interfaces/theme.interface';
 import { LanguageService } from 'app/modules/language/language.service';
@@ -11,10 +11,12 @@ import { ThemeService } from 'app/modules/theme/theme.service';
   imports: [RouterOutlet],
 })
 export class BlankLayoutComponent implements OnInit {
-  constructor(
-    public language: LanguageService,
-    private themeService: ThemeService,
-  ) {
+  language = inject(LanguageService);
+  private themeService = inject(ThemeService);
+
+  constructor() {
+    const language = this.language;
+
     // Translator init
     language.setLanguageFromBrowser();
   }
@@ -23,7 +25,7 @@ export class BlankLayoutComponent implements OnInit {
     this.setCssVars(this.themeService.getActiveTheme());
   }
 
-  setCssVars(theme: Theme): void {
+  private setCssVars(theme: Theme): void {
     const palette = Object.keys(theme) as (keyof Theme)[];
     palette.splice(0, 6);
 

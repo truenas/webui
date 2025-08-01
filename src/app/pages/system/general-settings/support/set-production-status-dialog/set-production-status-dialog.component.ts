@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -37,13 +37,11 @@ export interface SetProductionStatusDialogResult {
   ],
 })
 export class SetProductionStatusDialog {
+  private dialogRef = inject<MatDialogRef<SetProductionStatusDialog, SetProductionStatusDialogResult>>(MatDialogRef);
+
   protected readonly requiredRoles = [Role.FullAdmin];
 
   sendInitialDebugCheckbox = new FormControl(false, { nonNullable: true });
-
-  constructor(
-    private dialogRef: MatDialogRef<SetProductionStatusDialog, SetProductionStatusDialogResult>,
-  ) { }
 
   onSubmit(): void {
     this.dialogRef.close({ sendInitialDebug: this.sendInitialDebugCheckbox.value });

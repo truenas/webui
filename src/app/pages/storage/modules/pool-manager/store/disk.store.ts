@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { sortBy } from 'lodash-es';
@@ -20,6 +20,9 @@ const initialState: DiskState = {
 @UntilDestroy()
 @Injectable()
 export class DiskStore extends ComponentStore<DiskState> {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+
   private readonly unusedDisks$ = this.select((state) => state.unusedDisks);
   readonly usedDisks$ = this.select((state) => state.usedDisks);
 
@@ -32,10 +35,7 @@ export class DiskStore extends ComponentStore<DiskState> {
     },
   );
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-  ) {
+  constructor() {
     super(initialState);
   }
 

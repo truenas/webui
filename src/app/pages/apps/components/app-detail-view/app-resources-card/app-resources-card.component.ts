@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -27,6 +24,9 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   ],
 })
 export class AppResourcesCardComponent implements OnInit {
+  private api = inject(ApiService);
+  private dockerStore = inject(DockerStore);
+
   readonly isLoading = input<boolean>();
   readonly cpuPercentage = signal(0);
   readonly memoryUsed = signal(0);
@@ -34,16 +34,11 @@ export class AppResourcesCardComponent implements OnInit {
   readonly availableSpace$ = this.api.call('app.available_space');
   readonly selectedPool = toSignal(this.dockerStore.selectedPool$);
 
-  constructor(
-    private api: ApiService,
-    private dockerStore: DockerStore,
-  ) {}
-
   ngOnInit(): void {
     this.getResourcesUsageUpdates();
   }
 
-  getResourcesUsageUpdates(): void {
+  private getResourcesUsageUpdates(): void {
     this.api.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
       throttleTime(2000),

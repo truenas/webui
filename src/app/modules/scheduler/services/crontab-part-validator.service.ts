@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
@@ -15,10 +15,9 @@ export enum CrontabPart {
   providedIn: 'root',
 })
 export class CrontabPartValidatorService {
-  constructor(
-    private validatorsService: IxValidatorsService,
-    private translate: TranslateService,
-  ) {}
+  private validatorsService = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+
 
   crontabPartValidator(part: CrontabPart): ValidatorFn {
     const validator = (control: AbstractControl<string>): ValidationErrors | null => {

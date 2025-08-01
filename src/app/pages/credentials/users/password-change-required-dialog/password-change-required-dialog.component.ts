@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -26,25 +24,25 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
     MatButton,
     MatCard,
     MatToolbarRow,
-    TestDirective,
     MatDialogClose,
+    TestDirective,
   ],
 })
 export class PasswordChangeRequiredDialog {
-  wasRequiredPasswordChanged = toSignal(this.authService.wasRequiredPasswordChanged$);
+  protected authService = inject(AuthService);
+  private dialogRef = inject<MatDialogRef<PasswordChangeRequiredDialog>>(MatDialogRef);
+  private router = inject(Router);
+  private wsHandler = inject(WebSocketHandlerService);
 
-  constructor(
-    private authService: AuthService,
-    private dialogRef: MatDialogRef<PasswordChangeRequiredDialog>,
-    private router: Router,
-    private wsHandler: WebSocketHandlerService,
-  ) { }
+  protected isPasswordChangeRequired = toSignal(
+    this.authService.isPasswordChangeRequired$,
+  );
 
-  passwordChanged(): void {
-    this.authService.wasRequiredPasswordChanged$.next(true);
+  protected onPasswordUpdated(): void {
+    this.authService.requiredPasswordChanged();
   }
 
-  logOut(): void {
+  protected logOut(): void {
     this.authService.logout()
       .pipe(untilDestroyed(this))
       .subscribe(() => {

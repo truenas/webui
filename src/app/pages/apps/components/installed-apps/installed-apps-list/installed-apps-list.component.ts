@@ -1,11 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy,
-  output,
-  input, OnInit,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, output, input, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -22,6 +17,7 @@ import { injectParams } from 'ngxtension/inject-params';
 import {
   combineLatest, filter, forkJoin, Observable, switchMap,
 } from 'rxjs';
+import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -35,6 +31,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -43,7 +40,7 @@ import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
-import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
+import { AppBulkUpdateComponent } from 'app/pages/apps/components/installed-apps/app-bulk-update/app-bulk-update.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { InstalledAppsListBulkActionsComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list-bulk-actions/installed-apps-list-bulk-actions.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
@@ -89,6 +86,24 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
 })
 
 export class InstalledAppsListComponent implements OnInit {
+  private api = inject(ApiService);
+  private appService = inject(ApplicationsService);
+  private cdr = inject(ChangeDetectorRef);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private installedAppsStore = inject(InstalledAppsStore);
+  private dockerStore = inject(DockerStore);
+  private errorHandler = inject(ErrorHandlerService);
+  private store$ = inject<Store<WebuiAppState>>(Store);
+  private location = inject(Location);
+  private appsStats = inject(AppsStatsService);
+  private loader = inject(LoaderService);
+  private layoutService = inject(LayoutService);
+
   readonly appId = injectParams('appId');
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
@@ -162,24 +177,7 @@ export class InstalledAppsListComponent implements OnInit {
     );
   }
 
-  constructor(
-    private api: ApiService,
-    private appService: ApplicationsService,
-    private cdr: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private matDialog: MatDialog,
-    private dialogService: DialogService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private installedAppsStore: InstalledAppsStore,
-    private dockerStore: DockerStore,
-    private errorHandler: ErrorHandlerService,
-    private store$: Store<WebuiAppState>,
-    private location: Location,
-    private appsStats: AppsStatsService,
-    private loader: LoaderService,
-  ) {
+  constructor() {
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationStart || event instanceof NavigationEnd),
@@ -205,8 +203,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   viewDetails(app: App): void {
     this.selectAppForDetails(app.id);
-
-    this.router.navigate(['/apps/installed', app.metadata.train, app.id]);
+    this.layoutService.navigatePreservingScroll(this.router, ['/apps/installed', app.metadata.train, app.id]);
 
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(true);
@@ -223,18 +220,19 @@ export class InstalledAppsListComponent implements OnInit {
 
   toggleAppsChecked(checked: boolean): void {
     if (checked) {
-      this.dataSource.forEach((app) => this.selection.select(app.id));
+      this.filteredApps.forEach((app) => this.selection.select(app.id));
     } else {
       this.selection.clear();
     }
   }
 
-  showLoadStatus(type: EmptyType.FirstUse | EmptyType.NoPageData | EmptyType.Errors | EmptyType.NoSearchResults): void {
+  private showLoadStatus(
+    type: EmptyType.FirstUse | EmptyType.NoPageData | EmptyType.Errors | EmptyType.NoSearchResults,
+  ): void {
     switch (type) {
       case EmptyType.FirstUse:
       case EmptyType.NoPageData:
-        this.entityEmptyConf.title = this.translate.instant(helptextApps.message.noInstalledApps);
-        this.entityEmptyConf.message = this.translate.instant('Applications you install will automatically appear here. Click below and browse available apps to get started.');
+        this.entityEmptyConf = { ...installedAppsEmptyConfig };
         this.entityEmptyConf.button = {
           label: this.translate.instant('Check Available Apps'),
           action: () => this.redirectToAvailableApps(),
@@ -260,7 +258,7 @@ export class InstalledAppsListComponent implements OnInit {
     this.entityEmptyConf.type = type;
   }
 
-  loadInstalledApps(): void {
+  private loadInstalledApps(): void {
     this.cdr.markForCheck();
 
     combineLatest([
@@ -370,11 +368,11 @@ export class InstalledAppsListComponent implements OnInit {
     this.toggleAppsChecked(false);
   }
 
-  onBulkUpgrade(updateAll = false): void {
+  onBulkUpdate(updateAll = false): void {
     const apps = this.dataSource.filter((app) => (
       updateAll ? app.upgrade_available : this.selection.isSelected(app.id)
     ));
-    this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
+    this.matDialog.open(AppBulkUpdateComponent, { data: apps })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe(() => {

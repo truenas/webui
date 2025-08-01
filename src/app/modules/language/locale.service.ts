@@ -1,30 +1,30 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { isValid, parse } from 'date-fns';
-import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { format, toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { combineLatest } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
-type SupportedTimeFormat = 'hh:mm:ss aa' | "hh:mm:ss aaaaa'm'" | 'HH:mm:ss';
+export type SupportedTimeFormat = 'hh:mm:ss aa' | "hh:mm:ss aaaaa'm'" | 'HH:mm:ss';
 
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class LocaleService {
+  private store$ = inject<Store<AppState>>(Store);
+  private translate = inject(TranslateService);
+
   t24 = T('(24 Hours)');
   timezone: string | undefined;
   dateFormat = 'yyyy-MM-dd';
   timeFormat: SupportedTimeFormat = 'HH:mm:ss';
 
-  constructor(
-    private store$: Store<AppState>,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     combineLatest([
       this.store$.select(selectTimezone),
       this.store$.pipe(waitForPreferences),
@@ -44,7 +44,7 @@ export class LocaleService {
   getDateFormatOptions(tz?: string): Option[] {
     let date = new Date();
     if (tz) {
-      date = utcToZonedTime(new Date().valueOf(), tz);
+      date = toZonedTime(new Date().valueOf(), tz);
     }
 
     return [
@@ -62,7 +62,7 @@ export class LocaleService {
   getTimeFormatOptions(tz?: string): Option[] {
     let date = new Date();
     if (tz) {
-      date = utcToZonedTime(new Date().valueOf(), tz);
+      date = toZonedTime(new Date().valueOf(), tz);
     }
     return [
       { label: `${format(date, 'HH:mm:ss')} ${this.translate.instant(this.t24)}`, value: 'HH:mm:ss' },
@@ -86,7 +86,7 @@ export class LocaleService {
       const parsedDate = parse(normalizedTimestamp, dateFormat, new Date());
       if (isValid(parsedDate)) {
         if (timezone) {
-          return zonedTimeToUtc(parsedDate, timezone);
+          return fromZonedTime(parsedDate, timezone);
         }
         return parsedDate;
       }
@@ -106,9 +106,9 @@ export class LocaleService {
   getDateAndTime(tz?: string): [string, string] {
     let date = new Date();
     if (tz) {
-      date = utcToZonedTime(new Date().valueOf(), tz);
+      date = toZonedTime(new Date().valueOf(), tz);
     } else if (this.timezone) {
-      date = utcToZonedTime(new Date().valueOf(), this.timezone);
+      date = toZonedTime(new Date().valueOf(), this.timezone);
     }
     return [format(date, this.dateFormat), format(date, this.timeFormat)];
   }

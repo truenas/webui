@@ -1,12 +1,5 @@
 import { CdkObserveContent } from '@angular/cdk/observers';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component, computed, contentChildren,
-  ElementRef,
-  input, OnDestroy, OnInit, output,
-  signal, viewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChildren, ElementRef, input, OnDestroy, OnInit, output, signal, viewChild, inject } from '@angular/core';
 import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
@@ -16,6 +9,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 
 /**
  * Editable component that allows inline editing of a value.
+ *
+ * You may want to use it with ix-details-table.
  *
  * @example
  * ```html
@@ -44,7 +39,21 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
+  private translate = inject(TranslateService);
+  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private editableService = inject(EditableService);
+
   readonly emptyValue = input(this.translate.instant('Not Set'));
+
+  /**
+   * Disabled prevents editable from being opened, but still communicated to the user that it can be.
+   */
+  readonly disabled = input(false);
+
+  /**
+   * Readonly just shows value as text.
+   */
+  readonly readonly = input(false);
 
   readonly closed = output();
 
@@ -53,12 +62,6 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   private triggerValue = viewChild<ElementRef<HTMLElement>>('triggerValue');
   private ngControls = contentChildren(NgControl, { descendants: true });
   private controls = computed(() => this.ngControls().map((control) => control.control));
-
-  constructor(
-    private translate: TranslateService,
-    private elementRef: ElementRef<HTMLElement>,
-    private editableService: EditableService,
-  ) {}
 
   protected valueAsText = signal('');
 
@@ -89,8 +92,37 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.editableService.deregister(this);
   }
 
+  /**
+   * Determines whether the given target element should be considered "inside"
+   * this editable component. This prevents the editable from being closed when:
+   *
+   * - The click occurs within the editable itself.
+   * - The click occurs within allowed overlay components like autocomplete, select dropdowns, menus, or datepickers.
+   * - Any modal/dialog container is currently open (assumes it overlaps the editable contextually).
+   *
+   * @param target - The DOM element that was clicked or interacted with.
+   * @returns True if the target is within the editable or a valid overlay area; otherwise, false.
+  */
   isElementWithin(target: HTMLElement): boolean {
-    return this.elementRef.nativeElement.contains(target);
+    const editableEl = this.elementRef.nativeElement;
+
+    if (editableEl.contains(target)) return true;
+
+    const allowedOverlaySelectors = [
+      '.mat-mdc-autocomplete-panel',
+      '.mat-mdc-select-panel',
+      '.mat-mdc-menu-panel',
+      '.mat-datepicker-content',
+    ];
+
+    if (
+      allowedOverlaySelectors.some((sel) => document.querySelector(sel)?.contains(target))
+      || document.querySelector('.mat-mdc-dialog-container')
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
   open(): void {
@@ -122,6 +154,6 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private canClose(): boolean {
-    return this.controls().every((control) => control.valid);
+    return this.controls().every((control) => control?.errors === null || Object.keys(control?.errors)?.length === 0);
   }
 }

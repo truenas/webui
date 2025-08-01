@@ -1,10 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute } from '@angular/router';
@@ -80,6 +75,17 @@ interface QuotaData {
   ],
 })
 export class DatasetQuotasListComponent implements OnInit {
+  protected api = inject(ApiService);
+  protected formatter = inject(IxFormatterService);
+  protected dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  protected loader = inject(LoaderService);
+  protected route = inject(ActivatedRoute);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
+  private emptyService = inject(EmptyService);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
   readonly emptyValue = '—';
   readonly helpText = helptextQuotas;
@@ -191,19 +197,6 @@ export class DatasetQuotasListComponent implements OnInit {
     return this.emptyService;
   }
 
-  constructor(
-    protected api: ApiService,
-    protected formatter: IxFormatterService,
-    protected dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    protected loader: LoaderService,
-    protected route: ActivatedRoute,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-    private emptyService: EmptyService,
-  ) { }
-
   ngOnInit(): void {
     const paramMap = this.route.snapshot.params;
     this.datasetId = paramMap.datasetId as string;
@@ -256,7 +249,7 @@ export class DatasetQuotasListComponent implements OnInit {
     this.cdr.markForCheck();
   };
 
-  checkInvalidQuotas(): void {
+  private checkInvalidQuotas(): void {
     this.api.call(
       'pool.dataset.get_quota',
       [this.datasetId, this.quotaType, this.invalidFilter],
@@ -310,7 +303,7 @@ export class DatasetQuotasListComponent implements OnInit {
     ).subscribe();
   }
 
-  setQuota(quotas: SetDatasetQuota[]): Observable<void> {
+  private setQuota(quotas: SetDatasetQuota[]): Observable<void> {
     return this.api.call('pool.dataset.set_quota', [this.datasetId, quotas]);
   }
 

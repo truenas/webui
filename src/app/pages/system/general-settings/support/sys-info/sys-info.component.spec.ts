@@ -12,7 +12,7 @@ describe('SysInfoComponent', () => {
     system_serial: 'ffbb355c',
   };
   const licenseInfo = {
-    customer_name: 'iXsystems Inc.',
+    customer_name: 'TrueNAS',
     features: ['DEDUP', 'FIBRECHANNEL', 'VM'],
     model: 'M60',
     contract_type: 'GOLD',
@@ -39,7 +39,7 @@ describe('SysInfoComponent', () => {
     const sysInfoValues = spectator.queryAll('.sys-info-wrapper .value');
     const sysInfoLabels = spectator.queryAll('.sys-info-wrapper .label');
     const infoRows = sysInfoValues.reduce((acc, item, i) => {
-      return { ...acc, ...{ [sysInfoLabels[i].textContent!]: item.textContent } };
+      return { ...acc, [sysInfoLabels[i].textContent!]: item.textContent };
     }, {} as Record<string, string>);
     const sysLicenseBlock = spectator.query('.sys-license-wrapper');
 
@@ -61,7 +61,7 @@ describe('SysInfoComponent', () => {
     const sysLicenseValues = spectator.queryAll('.sys-license-wrapper .value');
     const sysLicenseLabels = spectator.queryAll('.sys-license-wrapper .label');
     const infoRows = sysLicenseValues.reduce((acc, item, i) => {
-      return { ...acc, ...{ [sysLicenseLabels[i].textContent!]: item.textContent!.replace(/\s{2,}/g, ' ').trim() } };
+      return { ...acc, [sysLicenseLabels[i].textContent!]: item.textContent!.replace(/\s{2,}/g, ' ').trim() };
     }, {} as Record<string, string>);
     const sysInfoBlock = spectator.query('.sys-info-wrapper');
 

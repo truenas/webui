@@ -1,0 +1,314 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { EventEmitter } from '@angular/core';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { byText } from '@ngneat/spectator';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { UpdateCode } from 'app/enums/system-update.enum';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
+import {
+  UpdateConfig,
+  UpdateProfileChoice,
+  UpdateProfileChoices,
+  UpdateStatus,
+} from 'app/interfaces/system-update.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
+import { jobsInitialState } from 'app/modules/jobs/store/job.reducer';
+import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
+import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  SaveConfigDialog,
+} from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
+import {
+  UpdateProfileCard,
+} from 'app/pages/system/update/components/update-profile-card/update-profile-card.component';
+import { UpdateComponent } from 'app/pages/system/update/update.component';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+
+describe('UpdateComponent', () => {
+  let spectator: Spectator<UpdateComponent>;
+  let loader: HarnessLoader;
+
+  const profileChoices = {
+    CONSERVATIVE: {
+      name: 'Conservative',
+      available: true,
+    } as UpdateProfileChoice,
+    DEVELOPER: {
+      name: 'Developer',
+      available: true,
+    } as UpdateProfileChoice,
+  } as UpdateProfileChoices;
+
+  const updateConfig = {
+    profile: 'DEVELOPER',
+  } as UpdateConfig;
+
+  const createComponent = createComponentFactory({
+    component: UpdateComponent,
+    imports: [
+      MockComponent(UpdateProfileCard),
+    ],
+    providers: [
+      mockApi([
+        mockJob('update.run', fakeSuccessfulJob()),
+        mockJob('failover.upgrade', fakeSuccessfulJob()),
+        mockCall('webui.main.dashboard.sys_info', {
+          version: '22.12.3',
+        } as SystemInfo),
+        mockCall('update.profile_choices', profileChoices),
+        mockCall('update.status', {
+          code: UpdateCode.Normal,
+          error: null,
+          status: {
+            current_version: {
+              matches_profile: true,
+            },
+            new_version: null,
+          },
+        } as UpdateStatus),
+        mockCall('update.config', updateConfig),
+      ]),
+      mockAuth(),
+      provideMockStore({
+        initialState: {
+          jobs: jobsInitialState,
+        },
+        selectors: [
+          {
+            selector: selectIsEnterprise,
+            value: false,
+          },
+          {
+            selector: selectUpdateJob,
+            value: [],
+          },
+        ],
+      }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          close: jest.fn(),
+          afterClosed: () => of(true),
+        } as unknown as MatDialogRef<unknown>)),
+      }),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of({}),
+        })),
+      }),
+      mockProvider(SystemGeneralService, {
+        updateRunningNoticeSent: new EventEmitter<void>(),
+      }),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  describe('page elements', () => {
+    it('shows current version', () => {
+      const versionElement = spectator.query(byText('Current version:'));
+
+      expect(versionElement.parentElement).toHaveText('22.12.3');
+    });
+
+    it('adds a note if profile of the currently installed version differs from profile in config', () => {
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('update.status', {
+        code: UpdateCode.Normal,
+        error: null,
+        status: {
+          current_version: {
+            matches_profile: false,
+            profile: 'CONSERVATIVE',
+          },
+          new_version: null,
+        },
+      } as UpdateStatus);
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      const profileMismatchNote = spectator.query('.profile-mismatch');
+      expect(profileMismatchNote).toBeTruthy();
+      expect(profileMismatchNote).toHaveText('(from Conservative profile)');
+    });
+
+    it('renders ix-update-profile-card', () => {
+      const updateProfileCard = spectator.query(UpdateProfileCard);
+
+      expect(updateProfileCard).toBeTruthy();
+      expect(updateProfileCard.profileChoices).toBe(profileChoices);
+      expect(updateProfileCard.currentProfileId).toBe('DEVELOPER');
+    });
+
+    it('queries update status, config and profile choices on page load', () => {
+      const api = spectator.inject(ApiService);
+
+      expect(api.call).toHaveBeenCalledWith('update.profile_choices');
+      expect(api.call).toHaveBeenCalledWith('update.status');
+      expect(api.call).toHaveBeenCalledWith('update.config');
+    });
+  });
+
+  describe('when there are no updates', () => {
+    it('shows line that system is up to date', async () => {
+      const upToDateMessage = spectator.query(byText('System is up to date!'));
+      expect(upToDateMessage).toBeTruthy();
+
+      const checkIcon = await loader.getHarness(IxIconHarness.with({ name: 'check_circle' }));
+      expect(checkIcon).toBeTruthy();
+    });
+  });
+
+  describe('when there are updates', () => {
+    beforeEach(() => {
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('update.status', {
+        code: UpdateCode.Normal,
+        error: null,
+        status: {
+          current_version: {
+            matches_profile: true,
+            profile: 'DEVELOPER',
+          },
+          new_version: {
+            version: '22.12.4',
+            manifest: {
+              changelog: 'Important changes',
+            },
+            release_notes_url: 'http://truenas.com/release-notes/22.12.4',
+          },
+        },
+      } as UpdateStatus);
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+    });
+
+    it('shows new version', () => {
+      const newVersionElement = spectator.query(byText('Update version:'));
+      expect(newVersionElement).toBeTruthy();
+      expect(newVersionElement.parentElement).toHaveText('22.12.4');
+    });
+
+    it('shows changelog', () => {
+      const changelogElement = spectator.query('.changelog');
+      expect(changelogElement).toBeTruthy();
+      expect(changelogElement).toHaveText('Important changes');
+    });
+
+    it('shows release notes url', () => {
+      const releaseNotesLink = spectator.query('.release-notes-link');
+      expect(releaseNotesLink).toBeTruthy();
+      expect(releaseNotesLink.getAttribute('href')).toBe('http://truenas.com/release-notes/22.12.4');
+      expect(releaseNotesLink).toHaveText('View Release Notes');
+    });
+
+    it('offers to save config when Install Update is pressed', async () => {
+      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
+      await installButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SaveConfigDialog, {
+        data: expect.objectContaining({
+          title: 'Save configuration settings from this machine before updating?',
+        }),
+      });
+    });
+
+    it('asks for confirmation before installing updates', async () => {
+      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
+      await installButton.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
+        title: 'Install Update?',
+      }));
+    });
+
+    it('runs the update', async () => {
+      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
+      await installButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('update.run', [{ reboot: true }]);
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalledWith(
+        expect.any(Object),
+        { title: 'Update' },
+      );
+    });
+
+    it('uses failover.upgrade for HA systems', async () => {
+      const mockStore$ = spectator.inject(MockStore);
+      mockStore$.overrideSelector(selectIsHaLicensed, true);
+      mockStore$.refreshState();
+
+      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Update' }));
+      await installButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('failover.upgrade');
+    });
+  });
+
+  describe('when there is an error getting an update', () => {
+    it('shows the error', () => {
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('update.status', {
+        code: UpdateCode.Error,
+        error: 'Failed to check for updates',
+        status: null,
+      } as UpdateStatus);
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      const errorElement = spectator.query(byText('Failed to check for updates'));
+      expect(errorElement).toBeTruthy();
+    });
+  });
+
+  describe('manual update', () => {
+    it('shows Other Options with Manual Update', () => {
+      const h3 = spectator.query('.other-options h3');
+      expect(h3).toHaveText('Other Options');
+
+      const h4 = spectator.query('.other-options h4');
+      expect(h4).toHaveText('Manual Update');
+
+      const paragraph = spectator.query('.manual-update');
+      expect(paragraph?.textContent).toContain('See the manual image installation guide');
+
+      const link = spectator.query('.manual-update a');
+      expect(link.getAttribute('href')).toContain('https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/#performing-a-manual-update');
+    });
+
+    it('offers to save configuration and redirects user when Install manual update is pressed', async () => {
+      const router = spectator.inject(Router);
+      jest.spyOn(router, 'navigate').mockImplementation();
+
+      const installManualButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install', ancestor: '.manual-update' }));
+      await installManualButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SaveConfigDialog, {
+        data: expect.objectContaining({
+          saveButton: 'Save Configuration',
+        }),
+      });
+
+      expect(router.navigate).toHaveBeenCalledWith(['/system/update/manualupdate']);
+    });
+  });
+});

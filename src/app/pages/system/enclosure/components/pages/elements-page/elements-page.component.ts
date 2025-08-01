@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatCardHeader, MatCardContent } from '@angular/material/card';
 import { TranslateService } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
@@ -33,6 +31,9 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   ],
 })
 export class ElementsPageComponent {
+  private translate = inject(TranslateService);
+  private store = inject(EnclosureStore);
+
   protected readonly currentView = injectParams<EnclosureElementType>((params) => {
     return params.view as EnclosureElementType;
   });
@@ -86,9 +87,4 @@ export class ElementsPageComponent {
     dataProvider.setRows(elements);
     return dataProvider;
   });
-
-  constructor(
-    private translate: TranslateService,
-    private store: EnclosureStore,
-  ) {}
 }

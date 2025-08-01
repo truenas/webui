@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
@@ -25,12 +24,13 @@ describe('KerberosRealmsFormComponent', () => {
     kdc: ['center1', 'center2'],
     admin_server: ['10.1.12.1', '10.1.12.2'],
     kpasswd_server: ['10.2.30.1', '10.2.30.2'],
+    primary_kdc: 'primary_kdc',
   } as KerberosRealm;
 
   const slideInRef: SlideInRef<KerberosRealm | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -43,9 +43,7 @@ describe('KerberosRealmsFormComponent', () => {
         mockCall('kerberos.realm.create'),
         mockCall('kerberos.realm.update'),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
@@ -66,6 +64,7 @@ describe('KerberosRealmsFormComponent', () => {
         KDC: ['kdc1', 'kdc2'],
         'Admin Servers': ['10.10.12.1', '10.10.12.2'],
         'Password Servers': ['10.10.30.1', '10.10.30.2'],
+        'Primary KDC': 'primary_kdc2',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -76,6 +75,7 @@ describe('KerberosRealmsFormComponent', () => {
         kdc: ['kdc1', 'kdc2'],
         admin_server: ['10.10.12.1', '10.10.12.2'],
         kpasswd_server: ['10.10.30.1', '10.10.30.2'],
+        primary_kdc: 'primary_kdc2',
       }]);
     });
   });
@@ -100,6 +100,7 @@ describe('KerberosRealmsFormComponent', () => {
         KDC: ['center1', 'center2'],
         'Admin Servers': ['10.1.12.1', '10.1.12.2'],
         'Password Servers': ['10.2.30.1', '10.2.30.2'],
+        'Primary KDC': 'primary_kdc',
       });
     });
 
@@ -110,6 +111,7 @@ describe('KerberosRealmsFormComponent', () => {
         KDC: ['center3', 'center4'],
         'Admin Servers': ['10.10.12.1'],
         'Password Servers': ['10.120.30.1'],
+        'Primary KDC': 'primary_kdc3',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -122,6 +124,7 @@ describe('KerberosRealmsFormComponent', () => {
           admin_server: ['10.10.12.1'],
           kdc: ['center3', 'center4'],
           kpasswd_server: ['10.120.30.1'],
+          primary_kdc: 'primary_kdc3',
         },
       ]);
     });

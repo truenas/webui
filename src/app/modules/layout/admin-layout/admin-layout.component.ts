@@ -1,14 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  OnDestroy,
-  OnInit,
-  QueryList,
-  ViewChildren,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, OnDestroy, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   MatDrawerMode, MatSidenav, MatSidenavContainer, MatSidenavContent,
@@ -37,7 +28,6 @@ import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
 import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
-import { SlideInControllerComponent } from 'app/modules/slide-ins/components/slide-in-controller/slide-in-controller.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
@@ -70,13 +60,19 @@ import {
     RouterOutlet,
     ConsoleFooterComponent,
     AlertsPanelComponent,
-    SlideInControllerComponent,
     AsyncPipe,
     TranslateModule,
     TruenasLogoComponent,
   ],
 })
 export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
+  private themeService = inject(ThemeService);
+  private sidenavService = inject(SidenavService);
+  private store$ = inject<Store<AppState>>(Store);
+  private languageService = inject(LanguageService);
+  private sessionTimeoutService = inject(SessionTimeoutService);
+  private sentryService = inject(SentryConfigurationService);
+
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
 
   protected readonly iconMarker = iconMarker;
@@ -126,15 +122,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     return productTypeLabels.get(productType) || productType;
   }
 
-  constructor(
-    private themeService: ThemeService,
-    private sidenavService: SidenavService,
-    private store$: Store<AppState>,
-    private languageService: LanguageService,
-    private sessionTimeoutService: SessionTimeoutService,
-    private sentryService: SentryConfigurationService,
-  ) {}
-
   ngOnInit(): void {
     performance.mark('Admin Init');
     performance.measure('Login', 'Login Start', 'Admin Init');
@@ -155,7 +142,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sessionTimeoutService.stop();
   }
 
-  listenForSidenavChanges(): void {
+  private listenForSidenavChanges(): void {
     this.sideNavs?.changes.pipe(untilDestroyed(this)).subscribe(() => {
       this.sidenavService.setSidenav(this.sideNavs.first);
     });

@@ -1,9 +1,9 @@
-import {
-  Component, ChangeDetectionStrategy, input, output,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -33,24 +33,29 @@ import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/grou
     IxIconComponent,
     RequiresRolesDirective,
     TranslateModule,
+    MatTooltip,
   ],
 })
 export class GroupDetailsRowComponent {
+  private slideIn = inject(SlideIn);
+  private router = inject(Router);
+  private matDialog = inject(MatDialog);
+
   readonly group = input.required<Group>();
   readonly colspan = input<number>();
 
   readonly delete = output<number>();
 
-  protected readonly Role = Role;
+  protected readonly deleteNotAllowedMsg = marker('Groups with privileges or members cannot be deleted.');
 
-  constructor(
-    private slideIn: SlideIn,
-    private router: Router,
-    private matDialog: MatDialog,
-  ) {}
+  protected readonly Role = Role;
 
   doEdit(group: Group): void {
     this.slideIn.open(GroupFormComponent, { data: group });
+  }
+
+  protected isDeleteDisabled(): boolean {
+    return Boolean(this.group()?.roles?.length) || Boolean(this.group()?.users?.length);
   }
 
   openGroupMembersForm(): void {

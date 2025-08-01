@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -51,6 +49,15 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   ],
 })
 export class AuditFormComponent implements OnInit {
+  private fb = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private store$ = inject<Store<AppState>>(Store);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SystemAuditWrite];
 
   protected isFormLoading = signal(false);
@@ -71,16 +78,7 @@ export class AuditFormComponent implements OnInit {
     quota_fill_critical: helptext.quotaFillCriticalTooltip,
   };
 
-  constructor(
-    private fb: NonNullableFormBuilder,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private store$: Store<AppState>,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private formErrorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -90,7 +88,7 @@ export class AuditFormComponent implements OnInit {
     this.loadForm();
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const configUpdate = this.form.value as AuditConfig;
     this.isFormLoading.set(true);
     this.api.call('audit.update', [configUpdate]).pipe(
@@ -98,7 +96,7 @@ export class AuditFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       }),
       catchError((error: unknown) => {
         this.isFormLoading.set(false);

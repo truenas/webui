@@ -1,7 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,7 +8,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  from, Observable, of, Subscription,
+  from, Observable, of, Subscription, catchError, EMPTY,
 } from 'rxjs';
 import {
   debounceTime, filter, map, switchMap, take,
@@ -19,6 +16,7 @@ import {
 import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { helptextUsers } from 'app/helptext/account/user-form';
@@ -31,6 +29,9 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import {
+  ExplorerCreateDatasetComponent,
+} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
@@ -97,9 +98,26 @@ export enum UserStigPasswordOption {
     MatButton,
     TestDirective,
     TranslateModule,
+    ExplorerCreateDatasetComponent,
   ],
 })
 export class OldUserFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private validatorsService = inject(IxValidatorsService);
+  private filesystemService = inject(FilesystemService);
+  private snackbar = inject(SnackbarService);
+  private storageService = inject(StorageService);
+  private downloadService = inject(DownloadService);
+  private store$ = inject<Store<AppState>>(Store);
+  private dialog = inject(DialogService);
+  private matDialog = inject(MatDialog);
+  slideInRef = inject<SlideInRef<User | undefined, User>>(SlideInRef);
+
   protected isFormLoading = signal(false);
   subscriptions: Subscription[] = [];
   homeModeOldValue = '';
@@ -250,23 +268,7 @@ export class OldUserFormComponent implements OnInit {
     return '';
   }
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    private validatorsService: IxValidatorsService,
-    private filesystemService: FilesystemService,
-    private snackbar: SnackbarService,
-    private storageService: StorageService,
-    private downloadService: DownloadService,
-    private store$: Store<AppState>,
-    private dialog: DialogService,
-    private matDialog: MatDialog,
-    public slideInRef: SlideInRef<User | undefined, User>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -337,10 +339,25 @@ export class OldUserFormComponent implements OnInit {
 
     if (this.editingUser?.home && !isEmptyHomeDirectory(this.editingUser.home)) {
       this.storageService.filesystemStat(this.editingUser.home)
-        .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
+        .pipe(
+          catchError((error: unknown) => {
+            const apiError = extractApiErrorDetails(error);
+            if (apiError?.reason?.includes('[ENOENT]')) {
+              return of(null);
+            }
+            this.errorHandler.showErrorModal(error);
+            return EMPTY;
+          }),
+          untilDestroyed(this),
+        )
         .subscribe((stat) => {
-          this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
-          this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);
+          if (stat) {
+            this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
+            this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);
+          } else {
+            this.form.patchValue({ home_mode: '700' });
+            this.form.controls.home_mode.disable();
+          }
         });
     } else {
       this.form.patchValue({ home_mode: '700' });
@@ -379,7 +396,7 @@ export class OldUserFormComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const payload = this.getPayload();
 
     const homeCreateConfirmation$ = this.getHomeCreateConfirmation();
@@ -400,7 +417,7 @@ export class OldUserFormComponent implements OnInit {
             this.store$.dispatch(userChanged({ user }));
           }
           this.isFormLoading.set(false);
-          this.slideInRef.close({ response: user, error: null });
+          this.slideInRef.close({ response: user });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);
@@ -509,7 +526,7 @@ export class OldUserFormComponent implements OnInit {
     return this.api.call('user.update', [this.editingUser.id, payload]);
   }
 
-  onDownloadSshPublicKey(): void {
+  protected onDownloadSshPublicKey(): void {
     const name = this.form.controls.username.value;
     const key = this.form.controls.sshpubkey.value;
     const blob = new Blob([key], { type: 'text/plain' });
@@ -584,7 +601,7 @@ export class OldUserFormComponent implements OnInit {
   private setHomeSharePath(): void {
     this.api.call('sharing.smb.query', [[
       ['enabled', '=', true],
-      ['home', '=', true],
+      ['options.home', '=', true],
     ]]).pipe(
       filter((shares) => !!shares?.length),
       map((shares) => shares[0].path),

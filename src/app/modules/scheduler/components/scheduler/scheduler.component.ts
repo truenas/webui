@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import {
   ControlValueAccessor, NgControl, ReactiveFormsModule, FormsModule,
 } from '@angular/forms';
@@ -42,6 +40,11 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   ],
 })
 export class SchedulerComponent implements ControlValueAccessor {
+  controlDirective = inject(NgControl);
+  private matDialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly label = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
   readonly required = input(false);
@@ -63,12 +66,7 @@ export class SchedulerComponent implements ControlValueAccessor {
   onTouched: () => void;
   onChange: (crontab: string) => void;
 
-  constructor(
-    public controlDirective: NgControl,
-    private matDialog: MatDialog,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 
@@ -94,7 +92,7 @@ export class SchedulerComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  onCustomOptionSelected(previousValue: string | undefined): void {
+  private onCustomOptionSelected(previousValue: string | undefined): void {
     this.matDialog.open(SchedulerModalComponent, {
       data: {
         startTime: this.startTime(),

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -39,6 +37,9 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
   ],
 })
 export class EmailCardComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private api = inject(ApiService);
+
   readonly helptext = helptextSystemEmail;
   protected readonly searchableElements = emailCardElements;
 
@@ -48,11 +49,6 @@ export class EmailCardComponent implements OnInit {
   });
 
   protected hasLoadedConfig = computed(() => Boolean(this.emailConfigState().value));
-
-  constructor(
-    private slideIn: SlideIn,
-    private api: ApiService,
-  ) {}
 
   ngOnInit(): void {
     this.loadEmailConfig();

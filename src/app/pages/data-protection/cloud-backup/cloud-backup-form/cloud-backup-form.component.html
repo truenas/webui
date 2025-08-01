@@ -13,7 +13,7 @@
             [tooltip]="helptext.sourcePathTooltip | translate"
             [required]="true"
             [multiple]="false"
-            [root]="'/'"
+            [rootNodes]="slashRootNode"
             [nodeProvider]="fileNodeProvider"
           ></ix-explorer>
 
@@ -64,7 +64,7 @@
             } @else {
               <ix-explorer
                 formControlName="folder"
-                root="/"
+                [rootNodes]="slashRootNode"
                 [label]="helptext.folder | translate"
                 [tooltip]="helptext.folderTooltip | translate"
                 [nodeProvider]="bucketNodeProvider"
@@ -88,6 +88,12 @@
             [label]="helptext.keepLast | translate"
             [tooltip]="helptext.keepLastTooltip | translate"
             [required]="true"
+          ></ix-input>
+          <ix-input
+            formControlName="rate_limit"
+            type="number"
+            [label]="helptext.rateLimit | translate"
+            [tooltip]="helptext.rateLimitTooltip | translate"
           ></ix-input>
           <ix-input
             formControlName="password"

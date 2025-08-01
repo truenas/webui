@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -64,6 +64,15 @@ interface AllowedAddressRow {
   ],
 })
 export class AllowedAddressesCardComponent implements OnInit {
+  private api = inject(ApiService);
+  private store$ = inject<Store<AppState>>(Store);
+  private dialog = inject(DialogService);
+  private slideIn = inject(SlideIn);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+  protected emptyService = inject(EmptyService);
+
   protected readonly searchableElements = allowedAddressesCardElements;
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
   dataProvider: AsyncDataProvider<AllowedAddressRow>;
@@ -88,17 +97,6 @@ export class AllowedAddressesCardComponent implements OnInit {
     ariaLabels: (row) => [row.address, this.translate.instant('Allowed Address')],
   });
 
-  constructor(
-    private api: ApiService,
-    private store$: Store<AppState>,
-    private dialog: DialogService,
-    private slideIn: SlideIn,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private firstTimeWarning: FirstTimeWarningService,
-    protected emptyService: EmptyService,
-  ) {}
-
   ngOnInit(): void {
     const config$ = this.api.call('system.general.config').pipe(
       map((config) => this.getAddressesSourceFromConfig(config)),
@@ -119,7 +117,7 @@ export class AllowedAddressesCardComponent implements OnInit {
     ).subscribe();
   }
 
-  promptDeleteAllowedAddress(row: AllowedAddressRow): void {
+  private promptDeleteAllowedAddress(row: AllowedAddressRow): void {
     this.dialog
       .confirm({
         title: this.translate.instant('Delete Allowed Address'),

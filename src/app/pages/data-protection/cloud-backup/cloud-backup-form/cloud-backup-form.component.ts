@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -10,6 +8,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   debounceTime, distinctUntilChanged, map, of,
 } from 'rxjs';
+import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncTransferSetting, cloudsyncTransferSettingLabels } from 'app/enums/cloudsync-transfer-setting.enum';
@@ -73,6 +72,15 @@ type FormValue = CloudBackupFormComponent['form']['value'];
   ],
 })
 export class CloudBackupFormComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private filesystemService = inject(FilesystemService);
+  private cloudCredentialService = inject(CloudCredentialService);
+  slideInRef = inject<SlideInRef<CloudBackup | undefined, CloudBackup | false>>(SlideInRef);
+
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -80,6 +88,8 @@ export class CloudBackupFormComponent implements OnInit {
   get isNewBucketOptionSelected(): boolean {
     return this.form.value.bucket === newOption;
   }
+
+  protected readonly slashRootNode = [slashRootNode];
 
   get title(): string {
     return this.isNew
@@ -109,6 +119,7 @@ export class CloudBackupFormComponent implements OnInit {
     enabled: [true],
     password: ['', [Validators.required]],
     keep_last: new FormControl(null as number | null, [Validators.required]),
+    rate_limit: new FormControl(null as number | null, [Validators.min(1)]),
 
     folder: ['', [Validators.required]],
     bucket: ['', [Validators.required]],
@@ -136,16 +147,9 @@ export class CloudBackupFormComponent implements OnInit {
 
   readonly helptext = helptextCloudBackup;
 
-  constructor(
-    private translate: TranslateService,
-    private fb: FormBuilder,
-    private api: ApiService,
-    private errorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
-    private filesystemService: FilesystemService,
-    private cloudCredentialService: CloudCredentialService,
-    public slideInRef: SlideInRef<CloudBackup | undefined, CloudBackup | false>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -252,6 +256,7 @@ export class CloudBackupFormComponent implements OnInit {
       credentials: editingTask.credentials.id,
       folder: editingTask.attributes.folder as string,
       bucket: editingTask.attributes.bucket === newOption ? '' : editingTask.attributes.bucket as string || '',
+      rate_limit: editingTask.rate_limit,
     });
   }
 
@@ -273,7 +278,7 @@ export class CloudBackupFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading.set(false);
-        this.slideInRef.close({ response, error: null });
+        this.slideInRef.close({ response });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

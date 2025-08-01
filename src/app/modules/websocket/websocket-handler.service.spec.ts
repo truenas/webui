@@ -2,6 +2,7 @@ import {
   discardPeriodicTasks, fakeAsync, tick,
 } from '@angular/core/testing';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { Subject } from 'rxjs';
 import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
@@ -29,6 +30,17 @@ describe('WebSocketHandlerService', () => {
         provide: WEBSOCKET,
         useFactory: () => fakeSocketFactory,
       },
+      provideMockStore({
+        initialState: {
+          webSocketDebug: {
+            isPanelOpen: false,
+            activeTab: 'websocket',
+            messages: [],
+            mockConfigs: [],
+            messageLimit: 200,
+          },
+        },
+      }),
     ],
   });
 
@@ -36,6 +48,7 @@ describe('WebSocketHandlerService', () => {
     responseStream$ = new Subject();
     jest.spyOn(WebSocketConnection.prototype, 'send');
     jest.spyOn(WebSocketConnection.prototype, 'close');
+    jest.spyOn(WebSocketConnection.prototype, 'connect');
     jest.spyOn(WebSocketConnection.prototype, 'stream$', 'get').mockImplementation(() => responseStream$.asObservable());
     spectator = createService();
   });
@@ -100,5 +113,14 @@ describe('WebSocketHandlerService', () => {
     let isAccessRestricted;
     spectator.service.isAccessRestricted$.subscribe((value) => isAccessRestricted = value);
     expect(isAccessRestricted).toBe(true);
+  });
+
+  it('handles reconnect logic', () => {
+    const service: WebSocketHandlerService = spectator.service;
+
+    service.reconnect();
+
+    expect(WebSocketConnection.prototype.close).toHaveBeenCalled();
+    expect(WebSocketConnection.prototype.connect).toHaveBeenCalled();
   });
 });

@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -40,6 +38,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class JbofFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  slideInRef = inject<SlideInRef<Jbof | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.JbofWrite];
 
   protected isFormLoading = signal(false);
@@ -63,14 +68,7 @@ export class JbofFormComponent implements OnInit {
       : this.translate.instant('Edit Expansion Shelf');
   }
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    public slideInRef: SlideInRef<Jbof | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -97,7 +95,7 @@ export class JbofFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

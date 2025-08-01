@@ -1,8 +1,5 @@
 import { NgClass } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -49,8 +46,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class TruecommandButtonComponent implements OnInit {
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private matDialog = inject(MatDialog);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly TrueCommandStatus = TrueCommandStatus;
-  tooltips = helptextTopbar.mat_tooltips;
+  tooltips = helptextTopbar.tooltips;
   protected searchableElements = trueCommandElements;
 
   tcStatus: TrueCommandConfig;
@@ -70,15 +74,6 @@ export class TruecommandButtonComponent implements OnInit {
 
     return '';
   }
-
-  constructor(
-    private api: ApiService,
-    private dialogService: DialogService,
-    private matDialog: MatDialog,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.api.call('truecommand.config').pipe(untilDestroyed(this)).subscribe((config) => {

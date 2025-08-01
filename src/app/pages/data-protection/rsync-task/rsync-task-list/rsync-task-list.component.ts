@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,12 +7,15 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
+import { rsyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -55,6 +56,7 @@ import { TaskService } from 'app/services/task.service';
 @Component({
   selector: 'ix-rsync-task-list',
   templateUrl: './rsync-task-list.component.html',
+  styleUrls: ['./rsync-task-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CrontabExplanationPipe],
   imports: [
@@ -72,11 +74,27 @@ import { TaskService } from 'app/services/task.service';
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class RsyncTaskListComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private crontabExplanation = inject(CrontabExplanationPipe);
+  private taskService = inject(TaskService);
+  private snackbar = inject(SnackbarService);
+  protected emptyService = inject(EmptyService);
+  private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
+
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = rsyncTaskListElements;
+  protected readonly emptyConfig = rsyncTaskEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   dataProvider: AsyncDataProvider<RsyncTask>;
   filterString = '';
@@ -184,21 +202,6 @@ export class RsyncTaskListComponent implements OnInit {
     ariaLabels: (row) => [row.path, row.remotehost, this.translate.instant('Rsync Task')],
   });
 
-  constructor(
-    private translate: TranslateService,
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private crontabExplanation: CrontabExplanationPipe,
-    private taskService: TaskService,
-    private snackbar: SnackbarService,
-    protected emptyService: EmptyService,
-    private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute,
-  ) {}
-
   ngOnInit(): void {
     this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
 
@@ -248,13 +251,13 @@ export class RsyncTaskListComponent implements OnInit {
       .subscribe(() => this.refresh());
   }
 
-  private edit(row: RsyncTask): void {
+  protected edit(row: RsyncTask): void {
     this.slideIn.open(RsyncTaskFormComponent, { wide: true, data: row })
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.refresh());
   }
 
-  private delete(row: RsyncTask): void {
+  protected delete(row: RsyncTask): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete Task'),
       message: this.translate.instant('Are you sure you want to delete this task?'),
@@ -274,7 +277,7 @@ export class RsyncTaskListComponent implements OnInit {
       .subscribe(() => this.refresh());
   }
 
-  private refresh(): void {
+  protected refresh(): void {
     this.dataProvider.load();
   }
 }

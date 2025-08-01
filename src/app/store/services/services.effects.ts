@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -22,6 +22,13 @@ import { serviceEnabled } from './services.actions';
 
 @Injectable()
 export class ServicesEffects {
+  private store$ = inject<Store<AppState>>(Store);
+  private actions$ = inject(Actions);
+  private api = inject(ApiService);
+  private matDialog = inject(MatDialog);
+  private authService = inject(AuthService);
+  private servicesService = inject(ServicesService);
+
   loadServices$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
@@ -85,15 +92,6 @@ export class ServicesEffects {
       return of(serviceStarted());
     }),
   ));
-
-  constructor(
-    private store$: Store<AppState>,
-    private actions$: Actions,
-    private api: ApiService,
-    private matDialog: MatDialog,
-    private authService: AuthService,
-    private servicesService: ServicesService,
-  ) {}
 
   private canUserManageService(serviceName: ServiceName): Observable<boolean> {
     const requiredRoles = this.servicesService.getRolesRequiredToManage(serviceName);

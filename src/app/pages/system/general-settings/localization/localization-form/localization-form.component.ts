@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -57,6 +54,16 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class LocalizationFormComponent implements OnInit {
+  private sysGeneralService = inject(SystemGeneralService);
+  private fb = inject(FormBuilder);
+  localeService = inject(LocaleService);
+  protected api = inject(ApiService);
+  protected langService = inject(LanguageService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private store$ = inject<Store<AppState>>(Store);
+  slideInRef = inject<SlideInRef<LocalizationSettings, boolean>>(SlideInRef);
+  private window = inject<Window>(WINDOW);
+
   fieldsetTitle = helptext.localeTitle;
 
   isFormLoading = signal<boolean>(false);
@@ -108,17 +115,7 @@ export class LocalizationFormComponent implements OnInit {
 
   protected isEnterprise$ = this.store$.select(selectIsEnterprise);
 
-  constructor(
-    private sysGeneralService: SystemGeneralService,
-    private fb: FormBuilder,
-    public localeService: LocaleService,
-    protected api: ApiService,
-    protected langService: LanguageService,
-    private errorHandler: FormErrorHandlerService,
-    private store$: Store<AppState>,
-    public slideInRef: SlideInRef<LocalizationSettings, boolean>,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.formGroup.dirty);
     });
@@ -132,14 +129,14 @@ export class LocalizationFormComponent implements OnInit {
     }
   }
 
-  setTimeOptions(tz: string): void {
+  private setTimeOptions(tz: string): void {
     const timeOptions = this.localeService.getTimeFormatOptions(tz);
     this.timeFormat.options = of(timeOptions);
     const dateOptions = this.localeService.getDateFormatOptions(tz);
     this.dateFormat.options = of(dateOptions);
   }
 
-  setupForm(): void {
+  protected setupForm(): void {
     this.setTimeOptions(this.localizationSettings.timezone);
     this.formGroup.patchValue({
       language: this.localizationSettings.language,
@@ -150,7 +147,7 @@ export class LocalizationFormComponent implements OnInit {
     });
   }
 
-  submit(): void {
+  protected submit(): void {
     const values = this.formGroup.getRawValue();
     this.isFormLoading.set(true);
     this.window.localStorage.setItem('language', values.language);
@@ -169,7 +166,7 @@ export class LocalizationFormComponent implements OnInit {
         this.store$.dispatch(generalConfigUpdated());
         this.store$.dispatch(systemInfoUpdated());
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
         this.langService.setLanguage(values.language);
         this.setTimeOptions(payload.timezone);
       },

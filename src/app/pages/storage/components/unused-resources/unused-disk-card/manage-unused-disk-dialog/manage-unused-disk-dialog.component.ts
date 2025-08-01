@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -49,6 +47,14 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
   ],
 })
 export class ManageUnusedDiskDialog implements OnInit {
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private translate = inject(TranslateService);
+  private validatorsService = inject(IxValidatorsService);
+  cdr = inject(ChangeDetectorRef);
+  private dialogRef = inject<MatDialogRef<ManageUnusedDiskDialog>>(MatDialogRef);
+  resource = inject<ManageUnusedDiskDialogResource>(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.DiskWrite];
 
   readonly toPoolOptions$: Observable<SelectOption<AddToPoolType>[]> = of([
@@ -80,16 +86,6 @@ export class ManageUnusedDiskDialog implements OnInit {
       ],
     ],
   });
-
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private translate: TranslateService,
-    private validatorsService: IxValidatorsService,
-    public cdr: ChangeDetectorRef,
-    private dialogRef: MatDialogRef<ManageUnusedDiskDialog>,
-    @Inject(MAT_DIALOG_DATA) public resource: ManageUnusedDiskDialogResource,
-  ) {}
 
   get noPoolsDisks(): { formattedDisk: string }[] {
     const diskInfoFormats = this.resource.unusedDisks.filter((disk) => {

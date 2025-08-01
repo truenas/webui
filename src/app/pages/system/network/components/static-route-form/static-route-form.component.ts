@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -42,6 +40,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class StaticRouteFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  slideInRef = inject<SlideInRef<StaticRoute | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   get isNew(): boolean {
@@ -66,14 +71,7 @@ export class StaticRouteFormComponent implements OnInit {
     gateway: helptextStaticRoutes.gatewayTooltip,
   };
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private snackbar: SnackbarService,
-    private errorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    public slideInRef: SlideInRef<StaticRoute | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -108,7 +106,7 @@ export class StaticRouteFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Static route updated'));
         }
         this.isFormLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isFormLoading.set(false);

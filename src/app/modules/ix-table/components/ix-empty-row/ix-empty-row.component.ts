@@ -1,14 +1,5 @@
 import { TemplatePortal, CdkPortalOutlet } from '@angular/cdk/portal';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  input,
-  TemplateRef,
-  ViewContainerRef,
-  viewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, input, TemplateRef, ViewContainerRef, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -34,6 +25,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxTableEmptyRowComponent implements AfterViewInit {
+  private viewContainerRef = inject(ViewContainerRef);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly conf = input<EmptyConfig>({
     title: this.translate.instant('No records'),
     message: this.translate.instant('There are no records to show.'),
@@ -43,12 +38,6 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
 
   readonly templatePortalContent = viewChild.required<TemplateRef<unknown>>('templatePortalContent');
   templatePortal: TemplatePortal;
-
-  constructor(
-    private viewContainerRef: ViewContainerRef,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngAfterViewInit(): void {
     this.templatePortal = new TemplatePortal(this.templatePortalContent(), this.viewContainerRef);

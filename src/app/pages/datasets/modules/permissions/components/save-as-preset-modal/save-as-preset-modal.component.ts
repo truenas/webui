@@ -1,8 +1,5 @@
 import { NgClass } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton, MatButton } from '@angular/material/button';
 import {
@@ -55,6 +52,16 @@ import { UserService } from 'app/services/user.service';
   ],
 })
 export class SaveAsPresetModalComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private userService = inject(UserService);
+  private dialogRef = inject<MatDialogRef<SaveAsPresetModalComponent>>(MatDialogRef);
+  private store = inject(DatasetAclEditorStore);
+  data = inject<SaveAsPresetModalConfig>(MAT_DIALOG_DATA);
+
   form = this.fb.group({
     presetName: ['', Validators.required],
   });
@@ -62,18 +69,6 @@ export class SaveAsPresetModalComponent implements OnInit {
   presets: AclTemplateByPath[] = [];
   protected isFormLoading = signal(false);
   acl: Acl;
-
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private userService: UserService,
-    private dialogRef: MatDialogRef<SaveAsPresetModalComponent>,
-    private store: DatasetAclEditorStore,
-    @Inject(MAT_DIALOG_DATA) public data: SaveAsPresetModalConfig,
-  ) {}
 
   ngOnInit(): void {
     this.loadOptions();

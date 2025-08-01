@@ -1,17 +1,14 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
-  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent,
+  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialog,
 } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { isObject } from 'lodash-es';
 import { forkJoin } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -21,6 +18,7 @@ import { isFailedJobError } from 'app/helpers/api.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
+import { isServicesToBeRestartedInfo, ServicesToBeRestartedInfo } from 'app/interfaces/pool-export.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
@@ -33,9 +31,12 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import {
+  ServicesToBeRestartedDialogComponent,
+} from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/services-need-to-be-restarted-dialog/services-to-be-restarted-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -60,6 +61,20 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ExportDisconnectModalComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private dialogRef = inject<MatDialogRef<ExportDisconnectModalComponent>>(MatDialogRef);
+  private translate = inject(TranslateService);
+  private validatorsService = inject(IxValidatorsService);
+  private dialogService = inject(DialogService);
+  private matDialog = inject(MatDialog);
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private datasetStore = inject(DatasetTreeStore);
+  private cdr = inject(ChangeDetectorRef);
+  private snackbar = inject(SnackbarService);
+  private errorHandler = inject(ErrorHandlerService);
+  pool = inject<Pool>(MAT_DIALOG_DATA);
+
   readonly helptext = helptextVolumes;
 
   readonly nameInputRequired = this.validatorsService.withMessage(
@@ -107,21 +122,6 @@ export class ExportDisconnectModalComponent implements OnInit {
   restartServices = false;
 
   protected readonly Role = Role;
-
-  constructor(
-    private fb: FormBuilder,
-    private dialogRef: MatDialogRef<ExportDisconnectModalComponent>,
-    private translate: TranslateService,
-    private validatorsService: IxValidatorsService,
-    private dialogService: DialogService,
-    private loader: LoaderService,
-    private api: ApiService,
-    private datasetStore: DatasetTreeStore,
-    private cdr: ChangeDetectorRef,
-    private snackbar: SnackbarService,
-    private errorHandler: ErrorHandlerService,
-    @Inject(MAT_DIALOG_DATA) public pool: Pool,
-  ) {}
 
   ngOnInit(): void {
     if (this.pool.status === PoolStatus.Unknown) {
@@ -175,12 +175,8 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   private handleDisconnectJobFailure(error: unknown): void {
     if (isFailedJobError(error) && error.job.error) {
-      if (
-        isObject(error.job.exc_info.extra)
-        && !Array.isArray(error.job.exc_info.extra)
-        && error.job.exc_info.extra.code === 'control_services'
-      ) {
-        this.showServicesErrorsDialog(error.job);
+      if (isServicesToBeRestartedInfo(error.job.exc_info.extra)) {
+        this.showServicesToBeRestartedDialog(error.job.exc_info.extra);
         return;
       }
       if (error.job.extra && error.job.extra.code === 'unstoppable_processes') {
@@ -192,7 +188,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.errorHandler.showErrorModal(error);
   }
 
-  showUnstoppableErrorDialog(failureData: Job): void {
+  private showUnstoppableErrorDialog(failureData: Job): void {
     let conditionalErrMessage = '';
     const msg = this.translate.instant(helptextVolumes.exportMessages.unableToTerminate);
     conditionalErrMessage = msg + (failureData.extra?.processes as string);
@@ -203,48 +199,23 @@ export class ExportDisconnectModalComponent implements OnInit {
     });
   }
 
-  showServicesErrorsDialog(failureData: Job): void {
-    // TODO: Just create a separate component for this.
-    const stopMsg = this.translate.instant(helptextVolumes.exportMessages.stopServices);
-    const restartMsg = this.translate.instant(helptextVolumes.exportMessages.restartServices);
-    let conditionalErrMessage = '';
-    if (isObject(failureData.exc_info.extra) && !Array.isArray(failureData.exc_info.extra)) {
-      if ((failureData.exc_info.extra.stop_services as string[]).length > 0) {
-        conditionalErrMessage += '<div class="warning-box">' + stopMsg;
-        (failureData.exc_info.extra.stop_services as string[]).forEach((item) => {
-          conditionalErrMessage += `<br>- ${item}`;
-        });
-      }
-      if ((failureData.exc_info.extra.restart_services as string[]).length > 0) {
-        if ((failureData.exc_info.extra.stop_services as string[]).length > 0) {
-          conditionalErrMessage += '<br><br>';
-        }
-        conditionalErrMessage += '<div class="warning-box">' + restartMsg;
-        (failureData.exc_info.extra.restart_services as string[]).forEach((item) => {
-          conditionalErrMessage += `<br>- ${item}`;
-        });
-      }
-    }
-
-    const continueMsg = this.translate.instant(helptextVolumes.exportMessages.continueMessage);
-    conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
-
-    this.dialogService.confirm({
-      title: this.translate.instant(helptextVolumes.exportError),
-      message: ignoreTranslation(conditionalErrMessage),
-      hideCheckbox: true,
-      buttonText: this.translate.instant(helptextVolumes.exportMessages.continueAction),
-    }).pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.restartServices = true;
-      this.startExportDisconnectJob();
-      this.cdr.markForCheck();
-    });
+  private showServicesToBeRestartedDialog(servicesInfo: ServicesToBeRestartedInfo): void {
+    this.matDialog.open(ServicesToBeRestartedDialogComponent, {
+      data: servicesInfo,
+    })
+      .afterClosed()
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.restartServices = true;
+        this.startExportDisconnectJob();
+        this.cdr.markForCheck();
+      });
   }
 
-  handleDisconnectJobSuccess(value: Partial<{
+  private handleDisconnectJobSuccess(value: Partial<{
     destroy: boolean;
     cascade: boolean;
     confirm: boolean;

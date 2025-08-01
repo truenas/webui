@@ -18,6 +18,7 @@ import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -133,9 +134,10 @@ describe('ReplicationWizardComponent', () => {
 
     await goToNextStep();
 
-    await form!.fillForm({
-      'Destination Snapshot Lifetime': 'Custom',
-    });
+    const lifeTimeRadioGroup = await loader.getHarness(
+      IxRadioGroupHarness.with({ label: 'Destination Snapshot Lifetime' }),
+    );
+    await lifeTimeRadioGroup.setValue('Custom');
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -196,6 +198,6 @@ describe('ReplicationWizardComponent', () => {
     }]);
 
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Replication task created.');
-    expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+    expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
   });
 });

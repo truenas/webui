@@ -17,6 +17,7 @@ import {
   XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -26,13 +27,16 @@ import {
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DefaultGatewayDialog,
 } from 'app/pages/system/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
@@ -64,7 +68,7 @@ describe('InterfaceFormComponent', () => {
   const slideInRef: SlideInRef<NetworkInterface | undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -103,12 +107,18 @@ describe('InterfaceFormComponent', () => {
         }),
         mockCall('interface.create'),
         mockCall('interface.update'),
+        mockCall('interface.save_default_route'),
+        mockCall('network.configuration.update'),
         mockCall('network.general.summary', {
           default_routes: ['1.1.1.1'],
+          nameservers: ['8.8.8.8', '8.8.4.4'],
         } as NetworkSummary),
-        mockCall('interface.default_route_will_be_removed', true),
+        mockCall('interface.network_config_to_be_removed', { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' }),
         mockCall('failover.licensed', false),
         mockCall('failover.node', 'A'),
+        mockCall('failover.config', {
+          disabled: true,
+        } as FailoverConfig),
       ]),
       mockProvider(NetworkService, {
         getBridgeMembersChoices: jest.fn(() => of({
@@ -131,16 +141,22 @@ describe('InterfaceFormComponent', () => {
         getV4Netmasks: () => [
           { label: '24', value: '24' },
         ],
+        getIsHaEnabled: jest.fn(() => of(false)),
       }),
       mockProvider(DialogService),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.Enterprise,
       }),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
+      mockProvider(LoaderService, {
+        withLoader: () => (source$: unknown) => source$,
+      }),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: () => (source$: unknown) => source$,
+      }),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -162,7 +178,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -228,11 +244,14 @@ describe('InterfaceFormComponent', () => {
       const store$ = spectator.inject(Store);
       expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
-      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
-        { width: '600px' },
+        {
+          width: '600px',
+          data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
+        },
       );
       jest.spyOn(spectator.inject(MatDialog), 'closeAll');
     });
@@ -245,7 +264,7 @@ describe('InterfaceFormComponent', () => {
           Type: 'Link Aggregation',
           Name: 'bond0',
           Description: 'LAG',
-          DHCP: true,
+          DHCP: 'Get IP Address Automatically from DHCP',
           'Link Aggregation Protocol': 'LACP',
           MTU: 1024,
           'Transmit Hash Policy': 'LAYER2+3',
@@ -275,11 +294,14 @@ describe('InterfaceFormComponent', () => {
       expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
-      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
-        { width: '600px' },
+        {
+          width: '600px',
+          data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
+        },
       );
     });
 
@@ -312,32 +334,60 @@ describe('InterfaceFormComponent', () => {
         mtu: 1500,
         aliases: [],
       }]);
-      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
-        { width: '600px' },
+        {
+          width: '600px',
+          data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
+        },
       );
     });
 
     it('hides Aliases when either DHCP or Autoconfigure IPv6 is enabled', async () => {
-      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Static IP Addresses' }));
       expect(aliasesList).toBeTruthy();
 
       await form.fillForm({
-        DHCP: true,
+        DHCP: 'Get IP Address Automatically from DHCP',
       });
 
-      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Static IP Addresses' }));
       expect(aliasesList).toBeNull();
 
       await form.fillForm({
-        DHCP: false,
+        DHCP: 'Define Static IP Addresses',
         'Autoconfigure IPv6': true,
       });
 
-      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Static IP Addresses' }));
       expect(aliasesList).toBeTruthy();
+    });
+
+    it('disables save button when HA is enabled', async () => {
+      // Fill form with valid data first
+      await form.fillForm({
+        Type: 'Bridge',
+        Name: 'br0',
+        Description: 'Test Bridge',
+      });
+
+      const networkService = spectator.inject(NetworkService);
+      jest.spyOn(networkService, 'getIsHaEnabled').mockReturnValue(of(true));
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Reset to HA disabled
+      jest.spyOn(networkService, 'getIsHaEnabled').mockReturnValue(of(false));
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      expect(await saveButton.isDisabled()).toBe(false);
     });
   });
 
@@ -350,7 +400,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -358,7 +408,7 @@ describe('InterfaceFormComponent', () => {
       const values = await form.getValues();
       expect(values).toEqual({
         Name: 'enp0s6',
-        DHCP: false,
+        DHCP: 'Define Static IP Addresses',
         'Autoconfigure IPv6': false,
         Description: 'Main NIC',
         MTU: '1500',
@@ -385,7 +435,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -414,7 +464,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -446,7 +496,7 @@ describe('InterfaceFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -460,7 +510,7 @@ describe('InterfaceFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
+      aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
     });
 
@@ -493,11 +543,14 @@ describe('InterfaceFormComponent', () => {
           failover_group: 1,
         }),
       ]);
-      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
-        { width: '600px' },
+        {
+          width: '600px',
+          data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
+        },
       );
     });
 
@@ -527,11 +580,14 @@ describe('InterfaceFormComponent', () => {
           failover_virtual_aliases: [{ address: '192.168.1.3' }],
         }),
       ]);
-      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialog,
-        { width: '600px' },
+        {
+          width: '600px',
+          data: { ipv4gateway: '192.168.1.1', nameserver1: '8.8.8.8', nameserver2: '8.8.4.4' },
+        },
       );
     });
   });

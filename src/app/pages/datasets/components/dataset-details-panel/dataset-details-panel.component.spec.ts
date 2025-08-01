@@ -53,7 +53,7 @@ describe('DatasetDetailsPanelComponent', () => {
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -124,7 +124,7 @@ describe('DatasetDetailsPanelComponent', () => {
     await addZvolButton.click();
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       ZvolFormComponent,
-      { data: { parentId: 'root/parent/child', isNew: true } },
+      { data: { parentOrZvolId: 'root/parent/child', isNew: true } },
     );
   });
 

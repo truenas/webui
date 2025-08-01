@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, input, OnChanges, output, TrackByFunction,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, output, TrackByFunction, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { Router } from '@angular/router';
@@ -34,6 +32,12 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class GlobalSearchResultsComponent implements OnChanges {
+  protected authService = inject(AuthService);
+  private searchProvider = inject(UiSearchProvider);
+  private globalSearchSectionsProvider = inject(GlobalSearchSectionsProvider);
+  private router = inject(Router);
+  private window = inject<Window>(WINDOW);
+
   readonly searchTerm = input('');
   readonly isLoading = input(false);
   readonly isSearchInputFocused = input(false);
@@ -72,14 +76,6 @@ export class GlobalSearchResultsComponent implements OnChanges {
   get firstAvailableSearchResult(): UiSearchableElement | null {
     return this.availableSections.flatMap((section) => this.getLimitedSectionResults(section.value))[0];
   }
-
-  constructor(
-    protected authService: AuthService,
-    private searchProvider: UiSearchProvider,
-    private globalSearchSectionsProvider: GlobalSearchSectionsProvider,
-    private router: Router,
-    @Inject(WINDOW) private window: Window,
-  ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.searchTerm) {

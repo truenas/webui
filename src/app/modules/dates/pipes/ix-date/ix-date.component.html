@@ -1,5 +1,6 @@
 <span
   class="date-spanner"
+  [class.has-time-difference]="isTimezoneDifference"
   [matTooltip]="'Browser time: {time}' | translate: { time: (date() | formatDateTime) }"
   [matTooltipDisabled]="!isTimezoneDifference"
 >

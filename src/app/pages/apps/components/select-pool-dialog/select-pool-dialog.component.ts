@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogClose, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
@@ -16,6 +14,7 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -40,10 +39,22 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     TestDirective,
     MatDialogClose,
+    IxCheckboxComponent,
     RequiresRolesDirective,
   ],
 })
 export class SelectPoolDialog implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private dialogService = inject(DialogService);
+  private appService = inject(ApplicationsService);
+  private router = inject(Router);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private translate = inject(TranslateService);
+  private dialogRef = inject<MatDialogRef<SelectPoolDialog>>(MatDialogRef);
+  private snackbar = inject(SnackbarService);
+  private dockerStore = inject(DockerStore);
+
   protected readonly requiredRoles = [Role.AppsWrite];
 
   form = this.formBuilder.nonNullable.group({
@@ -52,26 +63,21 @@ export class SelectPoolDialog implements OnInit {
   });
 
   pools$: Observable<Option[]>;
+  private selectedPoolName: string | null = null;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private dialogService: DialogService,
-    private appService: ApplicationsService,
-    private router: Router,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private translate: TranslateService,
-    private dialogRef: MatDialogRef<SelectPoolDialog>,
-    private snackbar: SnackbarService,
-    private dockerStore: DockerStore,
-  ) { }
+  get showMigrateCheckbox(): boolean {
+    const selected = this.form.value.pool;
+    return !!this.selectedPoolName && selected && selected !== this.selectedPoolName;
+  }
 
   ngOnInit(): void {
     this.loadPools();
   }
 
   onSubmit(): void {
-    this.dockerStore.setDockerPool(this.form.getRawValue().pool).pipe(
+    const { pool, migrateApplications } = this.form.getRawValue();
+
+    this.dockerStore.setDockerPool(pool, migrateApplications).pipe(
       untilDestroyed(this),
     ).subscribe(() => {
       this.snackbar.success(
@@ -89,6 +95,12 @@ export class SelectPoolDialog implements OnInit {
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([selectedPool, pools]) => {
+          this.form.patchValue({
+            pool: selectedPool || '',
+          });
+
+          this.selectedPoolName = selectedPool || null;
+
           this.form.patchValue({
             pool: selectedPool || '',
           });

@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
@@ -46,6 +41,16 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
   ],
 })
 export class CloudSyncProviderComponent implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(FormBuilder);
+  private slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef);
+  private cdr = inject(ChangeDetectorRef);
+  private dialogService = inject(DialogService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  private cloudCredentialService = inject(CloudCredentialService);
+  private snackbarService = inject(SnackbarService);
+
   readonly save = output<CloudSyncCredential>();
   readonly loading = output<boolean>();
 
@@ -60,18 +65,6 @@ export class CloudSyncProviderComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: FormBuilder,
-    private slideInRef: SlideInRef<unknown, unknown>,
-    private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
-    private formErrorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    private cloudCredentialService: CloudCredentialService,
-    private snackbarService: SnackbarService,
-  ) {}
-
   get areActionsDisabled(): boolean {
     return this.isLoading || this.form.invalid || !this.form.controls.exist_credential.value;
   }
@@ -82,7 +75,7 @@ export class CloudSyncProviderComponent implements OnInit {
     this.getExistingCredentials();
   }
 
-  getExistingCredentials(): void {
+  private getExistingCredentials(): void {
     this.loading.emit(true);
     this.cloudCredentialService.getCloudSyncCredentials()
       .pipe(
@@ -103,7 +96,7 @@ export class CloudSyncProviderComponent implements OnInit {
       });
   }
 
-  subToLoading(): void {
+  private subToLoading(): void {
     this.loading.subscribe((isLoading) => this.isLoading = isLoading);
   }
 
@@ -141,10 +134,7 @@ export class CloudSyncProviderComponent implements OnInit {
   }
 
   openAdvanced(): void {
-    this.slideInRef.swap?.(
-      CloudSyncFormComponent,
-      { wide: true },
-    );
+    this.slideInRef.swap?.(CloudSyncFormComponent, { wide: true });
   }
 
   private setFormEvents(): void {
@@ -180,7 +170,7 @@ export class CloudSyncProviderComponent implements OnInit {
       });
   }
 
-  emitSelectedCredential(credsId: number): void {
+  private emitSelectedCredential(credsId: number): void {
     this.existingCredential = this.credentials.find((credential) => credential.id === credsId);
     this.save.emit(this.existingCredential);
     this.cdr.markForCheck();

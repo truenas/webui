@@ -15,7 +15,6 @@ export const helptextApps = {
     loading: T('Loading...'),
     notRunning: T('Applications are not running'),
     noSearchResults: T('No Search Results.'),
-    noInstalledApps: T('No Applications Installed'),
   },
 
   dockerRegistries: {
@@ -48,7 +47,7 @@ export const helptextApps = {
 
   apps: {
     deleting: T('Deleting...'),
-    upgrading: T('Upgrading...'),
+    upgrading: T('Updating...'),
 
     rollbackDialog: {
       version: {
@@ -88,6 +87,12 @@ export const helptextApps = {
     },
     installNvidiaDriver: {
       tooltip: T('Please specify whether to install NVIDIA driver or not.'),
+    },
+
+    registryMirrors: {
+      generalTooltip: T('A registry mirror is an alternative server used to cache and serve container images, helping speed up downloads and potentially reduce network load. It can be public or private, and optionally secure.'),
+      secureTooltip: T('Secure mirrors require HTTPS and a valid certificate.'),
+      insecureTooltip: T('Insecure mirrors can use HTTP or HTTPS with a self-signed certificate.'),
     },
   },
 

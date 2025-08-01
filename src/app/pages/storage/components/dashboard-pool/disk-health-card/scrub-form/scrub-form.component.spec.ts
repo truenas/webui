@@ -38,7 +38,7 @@ describe('ScrubTaskFormComponent', () => {
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn(() => ({
       poolId: 2,
-      existingScrubTask: null,
+      existingScrubTask: null as ScrubTask | null,
     })),
   };
 

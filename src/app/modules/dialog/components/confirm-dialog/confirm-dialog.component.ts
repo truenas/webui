@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
@@ -32,23 +29,25 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class ConfirmDialog {
+  private dialogRef = inject<MatDialogRef<ConfirmDialog>>(MatDialogRef);
+  private translate = inject(TranslateService);
+
   options: ConfirmOptionsWithSecondaryCheckbox;
 
   isSubmitEnabled = false;
   isSecondaryCheckboxChecked = false;
 
   private readonly defaultOptions = {
+    title: this.translate.instant('Please confirm'),
     buttonText: this.translate.instant('Continue'),
     cancelText: this.translate.instant('Cancel'),
     hideCheckbox: false,
     confirmationCheckboxText: this.translate.instant('Confirm'),
   } as ConfirmOptions;
 
-  constructor(
-    private dialogRef: MatDialogRef<ConfirmDialog>,
-    private translate: TranslateService,
-    @Inject(MAT_DIALOG_DATA) options: ConfirmOptionsWithSecondaryCheckbox,
-  ) {
+  constructor() {
+    const options = inject<ConfirmOptionsWithSecondaryCheckbox>(MAT_DIALOG_DATA);
+
     this.options = { ...this.defaultOptions, ...options };
     if (options.hideCancel) {
       this.dialogRef.disableClose = options.hideCancel;

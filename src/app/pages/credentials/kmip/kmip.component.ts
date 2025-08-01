@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -57,6 +55,15 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class KmipComponent implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  private systemGeneralService = inject(SystemGeneralService);
+  private snackbar = inject(SnackbarService);
+  private store$ = inject<Store<AppState>>(Store);
+
   protected isKmipEnabled = signal(false);
   protected isSyncPending = signal(false);
   protected isLoading = signal(false);
@@ -83,22 +90,11 @@ export class KmipComponent implements OnInit {
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly allowSedManage = computed(() => this.isEnterprise() || this.hasGlobalEncryption());
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: FormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private dialogService: DialogService,
-    private systemGeneralService: SystemGeneralService,
-    private snackbar: SnackbarService,
-    private store$: Store<AppState>,
-  ) {}
-
   ngOnInit(): void {
     this.loadKmipConfig();
   }
 
-  onSyncKeysPressed(): void {
+  protected onSyncKeysPressed(): void {
     this.isLoading.set(true);
     this.api.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe({
       next: () => {
@@ -115,7 +111,7 @@ export class KmipComponent implements OnInit {
     });
   }
 
-  onClearSyncKeysPressed(): void {
+  protected onClearSyncKeysPressed(): void {
     this.isLoading.set(true);
     this.api.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe({
       next: () => {
@@ -132,7 +128,7 @@ export class KmipComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.dialogService.jobDialog(
       this.api.job('kmip.update', [this.form.value as KmipConfigUpdate]),
       { title: this.translate.instant(helptextSystemKmip.jobDialog.title) },

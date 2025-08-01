@@ -6,15 +6,15 @@ export const networkConfigurationCardElements = {
   anchorRouterLink: ['/system', 'network'],
   elements: {
     configuration: {
-      hierarchy: [T('Global Configuration')],
-      synonyms: [T('Network Configuration'), T('Network Settings')],
+      hierarchy: [T('Network Configuration')],
+      synonyms: [T('Global Configuration'), T('Network Settings')],
     },
     nameServers: {
       hierarchy: [T('Nameserver')],
       synonyms: [T('NS')],
     },
     settings: {
-      hierarchy: [T('Global Configuration Settings')],
+      hierarchy: [T('Network Configuration Settings')],
       synonyms: [
         T('Hostname'),
         T('Domain'),

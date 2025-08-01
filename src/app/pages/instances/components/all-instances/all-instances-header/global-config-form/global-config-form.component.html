@@ -8,10 +8,10 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'Storage' | translate">
-        <ix-checkbox
+        <ix-slide-toggle
           formControlName="pool"
-          [label]="'Enabled' | translate"
-        ></ix-checkbox>
+          [label]="'Enable Containers' | translate"
+        ></ix-slide-toggle>
 
         @if (form.controls.pool.value) {
           <ix-select

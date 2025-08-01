@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Router } from '@angular/router';
@@ -30,6 +28,8 @@ export interface ViewOption {
   ],
 })
 export class ViewElementsMenuComponent {
+  private router = inject(Router);
+
   readonly enclosure = input.required<DashboardEnclosure>();
 
   readonly views = computed<ViewOption[]>(() => {
@@ -49,10 +49,6 @@ export class ViewElementsMenuComponent {
         };
       });
   });
-
-  constructor(
-    private router: Router,
-  ) {}
 
   protected changeView(option: ViewOption): void {
     this.router.navigate(option.url);

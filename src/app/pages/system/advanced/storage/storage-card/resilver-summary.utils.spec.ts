@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject as inject_1 } from '@angular/core';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { Weekday } from 'app/enums/weekday.enum';
@@ -14,9 +14,7 @@ import { getResilverSummary } from './resilver-summary.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class DummyComponent {
-  constructor(
-    public translate: TranslateService,
-  ) {}
+  translate = inject_1(TranslateService);
 }
 
 describe('getResilverSummary', () => {

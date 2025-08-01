@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -37,6 +35,10 @@ import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualiz
   ],
 })
 export class InstanceNicsComponent {
+  private devicesStore = inject(VirtualizationDevicesStore);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
@@ -45,12 +47,6 @@ export class InstanceNicsComponent {
       return device.dev_type === VirtualizationDeviceType.Nic && !!device.nic_type;
     });
   });
-
-  constructor(
-    private devicesStore: VirtualizationDevicesStore,
-    private translate: TranslateService,
-    private api: ApiService,
-  ) {}
 
   protected getDeviceDescription(device: VirtualizationDevice): string {
     return getDeviceDescription(this.translate, device);

@@ -1,15 +1,12 @@
 import { DatePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component,
-  OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
+import { datasetsRootNode, slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -29,6 +26,7 @@ import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -55,6 +53,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
     IxFieldsetComponent,
     IxRadioGroupComponent,
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     IxInputComponent,
     FormActionsComponent,
     RequiresRolesDirective,
@@ -65,6 +64,19 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private fb = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private snackbar = inject(SnackbarService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private filesystemService = inject(FilesystemService);
+  private dialogService = inject(DialogService);
+  slideInRef = inject<SlideInRef<{
+    backup: CloudBackup;
+    snapshot: CloudBackupSnapshot;
+  }, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   readonly mntPath = mntPath;
   readonly helptext = helptextTruecloudBackup;
@@ -89,6 +101,15 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     includedPaths: [[] as string[]],
   });
 
+  protected get includedPathsRootNodes(): ExplorerNodeData[] {
+    return this.form.controls.subFolder.value
+      ? [{ ...datasetsRootNode, path: this.form.controls.subFolder.value, name: this.form.controls.subFolder.value }]
+      : [{ ...datasetsRootNode, path: this.backupMntPath, name: this.backupMntPath }];
+  }
+
+  protected readonly rootDatasetNode: ExplorerNodeData = datasetsRootNode;
+  protected readonly slashRootNode: ExplorerNodeData = slashRootNode;
+
   protected isLoading = signal(false);
 
   createDatasetProps: Omit<DatasetCreate, 'name'> = {
@@ -111,18 +132,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     return this.form.controls.includeExclude.value === SnapshotIncludeExclude.IncludeFromSubFolder;
   }
 
-  constructor(
-    private translate: TranslateService,
-    private fb: NonNullableFormBuilder,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private snackbar: SnackbarService,
-    private errorHandler: FormErrorHandlerService,
-    private filesystemService: FilesystemService,
-    private dialogService: DialogService,
-
-    public slideInRef: SlideInRef<{ backup: CloudBackup; snapshot: CloudBackupSnapshot }, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -158,7 +168,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
         complete: () => {
           this.snackbar.success(this.translate.instant('Cloud Backup Restored Successfully'));
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);
@@ -167,7 +177,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
       });
   }
 
-  getSnapshotNodeProvider(): TreeNodeProvider {
+  private getSnapshotNodeProvider(): TreeNodeProvider {
     return (node: TreeNode<ExplorerNodeData>) => {
       return this.api.call(
         'cloud_backup.list_snapshot_directory',

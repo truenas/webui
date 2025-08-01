@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -38,6 +36,11 @@ import { UserService } from 'app/services/user.service';
   ],
 })
 export class EditPosixAceComponent implements OnInit, OnChanges {
+  private userService = inject(UserService);
+  private store = inject(DatasetAclEditorStore);
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+
   readonly ace = input.required<PosixAclItem>();
 
   form = this.formBuilder.nonNullable.group({
@@ -58,13 +61,6 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
 
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly groupProvider = new GroupComboboxProvider(this.userService);
-
-  constructor(
-    private userService: UserService,
-    private store: DatasetAclEditorStore,
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-  ) {}
 
   get isUserTag(): boolean {
     return this.form.value.tag === PosixAclTag.User;

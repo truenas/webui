@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy, input,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy, input, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -50,6 +48,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private matDialog = inject(MatDialog);
+  private cdr = inject(ChangeDetectorRef);
+  private snackbar = inject(SnackbarService);
+
   readonly snapshot = input.required<ZfsSnapshotUi>();
 
   isLoading = true;
@@ -62,17 +69,6 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     return !!this.snapshotInfo?.properties?.clones?.value;
   }
 
-  constructor(
-    private dialogService: DialogService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
-    private cdr: ChangeDetectorRef,
-    private snackbar: SnackbarService,
-  ) {}
-
   ngOnInit(): void {
     this.getSnapshotInfo();
     this.holdControl.valueChanges
@@ -84,7 +80,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     this.loader.close();
   }
 
-  getSnapshotInfo(): void {
+  private getSnapshotInfo(): void {
     this.api.call(
       'pool.snapshot.query',
       [
@@ -115,7 +111,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       });
   }
 
-  doHoldOrRelease(): void {
+  private doHoldOrRelease(): void {
     const holdOrRelease = this.holdControl.value ? 'pool.snapshot.hold' : 'pool.snapshot.release';
     this.api.call(holdOrRelease, [this.snapshotInfo.name])
       .pipe(this.loader.withLoader(), untilDestroyed(this))

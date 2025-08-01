@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component, HostBinding, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, input, inject } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
@@ -25,6 +22,8 @@ export interface VmwareState {
   imports: [MatTooltip, TranslateModule],
 })
 export class VmwareStatusCellComponent {
+  private translate = inject(TranslateService);
+
   readonly state = input.required<VmwareState>();
 
   get tooltip(): string {
@@ -40,6 +39,4 @@ export class VmwareStatusCellComponent {
   @HostBinding('class') get hostClasses(): string[] {
     return ['status', this.state()?.state.toLowerCase()];
   }
-
-  constructor(private translate: TranslateService) { }
 }

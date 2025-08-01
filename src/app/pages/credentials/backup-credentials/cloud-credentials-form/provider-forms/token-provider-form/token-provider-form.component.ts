@@ -1,6 +1,4 @@
-import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -29,18 +27,14 @@ import {
   ],
 })
 export class TokenProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
+  private formBuilder = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+
   private readonly oauthComponent = viewChild(OauthProviderComponent);
 
   form = this.formBuilder.nonNullable.group({
     token: ['', Validators.required],
   });
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
-  ) {
-    super();
-  }
 
   get hasOAuth(): boolean {
     return Boolean(this.provider.credentials_oauth);
@@ -49,13 +43,13 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent implem
   get tooltip(): string {
     switch (this.provider.name) {
       case CloudSyncProviderName.Box:
-        return helptext.token_box.tooltip;
+        return helptext.box.token.tooltip;
       case CloudSyncProviderName.Dropbox:
-        return helptext.token_dropbox.tooltip;
+        return helptext.dropbox.token.tooltip;
       case CloudSyncProviderName.Hubic:
-        return helptext.token_hubic.tooltip;
+        return helptext.hubic.token.tooltip;
       case CloudSyncProviderName.Yandex:
-        return helptext.token_yandex.tooltip;
+        return helptext.yandex.token.tooltip;
       default:
         return '';
     }

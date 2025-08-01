@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -32,15 +30,13 @@ import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-st
   providers: [FileSizePipe],
 })
 export class DeduplicationStatsComponent {
+  private fileSizePipe = inject(FileSizePipe);
+  private matDialog = inject(MatDialog);
+  private store = inject(PoolsDashboardStore);
+
   pool = input.required<Pool>();
 
   protected readonly Role = Role;
-
-  constructor(
-    private fileSizePipe: FileSizePipe,
-    private matDialog: MatDialog,
-    private store: PoolsDashboardStore,
-  ) {}
 
   protected deduplicationStats = computed(() => {
     if (this.pool().dedup_table_quota !== 'auto' && this.pool().dedup_table_quota !== '0') {

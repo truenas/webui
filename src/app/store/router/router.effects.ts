@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { routerNavigationAction, RouterNavigationAction } from '@ngrx/router-store';
@@ -9,12 +9,11 @@ import { CustomRouterState } from 'app/store/router/custom-router-serializer';
 
 @Injectable()
 export class RouterEffects {
-  constructor(
-    private actions$: Actions,
-    private titleService: Title,
-    private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
-  ) {}
+  private actions$ = inject(Actions);
+  private titleService = inject(Title);
+  private translate = inject(TranslateService);
+  private window = inject<Window>(WINDOW);
+
 
   navigate$ = createEffect(
     () => this.actions$.pipe(

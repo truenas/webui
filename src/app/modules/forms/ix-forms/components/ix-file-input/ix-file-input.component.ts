@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, viewChild, inject } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
   ReactiveFormsModule,
@@ -38,6 +36,11 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   ],
 })
 export class IxFileInputComponent implements ControlValueAccessor {
+  controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+  private formatter = inject(IxFormatterService);
+  private translate = inject(TranslateService);
+
   readonly label = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
   readonly acceptedFiles = input('*.*');
@@ -51,12 +54,7 @@ export class IxFileInputComponent implements ControlValueAccessor {
   private onTouch: () => void = (): void => {};
   private fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-    private formatter: IxFormatterService,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 
@@ -103,7 +101,7 @@ export class IxFileInputComponent implements ControlValueAccessor {
   * @param files Array of files to add to the FileList
   * @returns FileList
   */
-  transformFiles(files: File[]): FileList {
+  private transformFiles(files: File[]): FileList {
     const dataTransfer = new ClipboardEvent('').clipboardData || new DataTransfer();
     for (let i = 0, len = files.length; i < len; i++) {
       dataTransfer.items.add(files[i]);

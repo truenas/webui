@@ -38,7 +38,7 @@ describe('SelfEncryptingDriveCardComponent', () => {
         ],
       }),
       mockProvider(SlideIn, {
-        open: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true })),
       }),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -56,7 +56,6 @@ describe('SelfEncryptingDriveCardComponent', () => {
     const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
 
     expect(itemTexts).toEqual([
-      'ATA Security User: admin',
       'Password: ********',
     ]);
   });
@@ -69,7 +68,7 @@ describe('SelfEncryptingDriveCardComponent', () => {
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       SelfEncryptingDriveFormComponent,
       {
-        data: { sedPassword: '********', sedUser: 'admin' },
+        data: { sedPassword: '' },
       },
     );
   });

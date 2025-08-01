@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -59,6 +57,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class TunableListComponent implements OnInit {
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  private cdr = inject(ChangeDetectorRef);
+  protected emptyService = inject(EmptyService);
+  private snackbar = inject(SnackbarService);
+  private slideIn = inject(SlideIn);
+
   protected readonly requiredRoles = [Role.SystemTunableWrite];
   protected readonly searchableElements = tunableListElements;
 
@@ -106,17 +113,6 @@ export class TunableListComponent implements OnInit {
     ariaLabels: (row) => [row.var, this.translate.instant('Tunable')],
   });
 
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
-    protected emptyService: EmptyService,
-    private snackbar: SnackbarService,
-    private slideIn: SlideIn,
-  ) {}
-
   ngOnInit(): void {
     const tunables$ = this.api.call('tunable.query').pipe(
       tap((tunables) => this.tunables = tunables),
@@ -130,11 +126,11 @@ export class TunableListComponent implements OnInit {
     });
   }
 
-  getTunables(): void {
+  private getTunables(): void {
     this.dataProvider.load();
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(TunableFormComponent).pipe(
       filter((response) => !!response.response),
       tap(() => this.getTunables()),
@@ -142,7 +138,7 @@ export class TunableListComponent implements OnInit {
     ).subscribe();
   }
 
-  doEdit(tunable: Tunable): void {
+  protected doEdit(tunable: Tunable): void {
     this.slideIn.open(TunableFormComponent, { data: tunable }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -151,7 +147,7 @@ export class TunableListComponent implements OnInit {
     });
   }
 
-  doDelete(tunable: Tunable): void {
+  protected doDelete(tunable: Tunable): void {
     this.dialogService
       .confirm({
         title: this.translate.instant('Delete Sysctl'),
@@ -182,7 +178,7 @@ export class TunableListComponent implements OnInit {
       .subscribe();
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({
       query,
@@ -194,7 +190,7 @@ export class TunableListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  setDefaultSort(): void {
+  protected setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,

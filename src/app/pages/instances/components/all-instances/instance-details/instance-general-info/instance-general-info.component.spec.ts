@@ -144,7 +144,7 @@ describe('InstanceGeneralInfoComponent', () => {
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('virt.instance.delete', ['demo']);
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/instances'], { state: { hideMobileDetails: true } });
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers'], { state: { hideMobileDetails: true } });
   });
 
   it('opens edit instance form when Edit is pressed', async () => {

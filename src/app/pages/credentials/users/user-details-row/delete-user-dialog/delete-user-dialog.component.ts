@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -43,23 +41,21 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class OldDeleteUserDialog implements OnInit {
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  user = inject<User>(MAT_DIALOG_DATA);
+  private dialogRef = inject<MatDialogRef<OldDeleteUserDialog>>(MatDialogRef);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+
   protected readonly requiredRoles = [Role.AccountWrite];
 
   deleteGroupCheckbox = new FormControl(false, { nonNullable: true });
   isLastGroupMember = false;
 
   readonly deleteMessage = T('Are you sure you want to delete user <b>"{user}"</b>?');
-
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private loader: LoaderService,
-    @Inject(MAT_DIALOG_DATA) public user: User,
-    private dialogRef: MatDialogRef<OldDeleteUserDialog>,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-  ) { }
 
   ngOnInit(): void {
     this.checkIfLastGroupMember();

@@ -6,7 +6,6 @@ import {
   createComponentFactory, mockProvider,
   Spectator,
 } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -28,7 +27,7 @@ describe('ProactiveComponent', () => {
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -55,9 +54,7 @@ describe('ProactiveComponent', () => {
         mockCall('support.is_available_and_enabled', true),
       ]),
       mockProvider(FormErrorHandlerService),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),
     ],
@@ -77,7 +74,7 @@ describe('ProactiveComponent', () => {
       Name: 'Zepp Karlsen',
       Email: 'test-user@test-user.com',
       Title: 'Cannot connect',
-      'Enable iXsystems Proactive Support': true,
+      'Enable TrueNAS Proactive Support': true,
       'Phone Number': '+888888888',
       'Secondary Email': 'test-user@test-user.com',
       'Secondary Name': 'Zepp Karlsen',

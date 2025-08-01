@@ -55,4 +55,22 @@ describe('cpuValidator', () => {
     const result = cpuValidator()(control);
     expect(result).toBeNull();
   });
+
+  it('should fail validation for a single "0"', () => {
+    control.setValue('0');
+    const result = cpuValidator()(control);
+    expect(result).toEqual({ cpu: true });
+  });
+
+  it('should pass validation when "0" is part of a set', () => {
+    control.setValue('0,1');
+    const result = cpuValidator()(control);
+    expect(result).toBeNull();
+  });
+
+  it('should pass validation when "0" is part of a range', () => {
+    control.setValue('0-2');
+    const result = cpuValidator()(control);
+    expect(result).toBeNull();
+  });
 });

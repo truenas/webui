@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
@@ -34,18 +34,16 @@ import {
   ],
 })
 export class CheckinIndicatorComponent implements OnInit {
+  private store$ = inject<Store<AppState>>(Store);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private router = inject(Router);
+
   protected hasPendingNetworkChanges$ = this.store$.select(selectHasPendingNetworkChanges);
 
-  protected readonly tooltips = helptextTopbar.mat_tooltips;
+  protected readonly tooltips = helptextTopbar.tooltips;
 
   private isWaitingForCheckin = false;
-
-  constructor(
-    private store$: Store<AppState>,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private router: Router,
-  ) {}
 
   ngOnInit(): void {
     this.listenToCheckinStatus();

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { DashboardEnclosureSlot, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
 import { EnclosureSideComponent } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-side.component';
@@ -26,15 +24,13 @@ import { VdevDisksLegendComponent } from './vdev-disks-legend/vdev-disks-legend.
   ],
 })
 export class PoolsViewComponent {
+  private store = inject(EnclosureStore);
+
   readonly enclosure = this.store.selectedEnclosure;
   readonly selectedSlot = this.store.selectedSlot;
   readonly selectedSide = this.store.selectedSide;
   readonly poolColors = this.store.poolColors;
   readonly hasMoreThanOneSide = this.store.hasMoreThanOneSide;
-
-  constructor(
-    private store: EnclosureStore,
-  ) {}
 
   protected onSlotSelected(slot: DashboardEnclosureSlot | null): void {
     this.store.selectSlot(slot?.drive_bay_number || null);

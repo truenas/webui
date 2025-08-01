@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { UnsavedFormGuard } from 'app/modules/unsaved-changes/unsaved-form.guard';
 import { AllInstancesComponent } from 'app/pages/instances/components/all-instances/all-instances.component';
 import {
   InstanceConsoleComponent,
@@ -12,7 +13,7 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 
 export const instancesRoutes: Routes = [{
   path: '',
-  data: { title: T('Instances'), breadcrumb: null },
+  data: { title: T('Containers'), breadcrumb: null },
   providers: [
     VirtualizationConfigStore,
     VirtualizationInstancesStore,
@@ -26,11 +27,12 @@ export const instancesRoutes: Routes = [{
     {
       path: 'new',
       component: InstanceWizardComponent,
-      data: { title: T('Add Instances') },
+      canDeactivate: [UnsavedFormGuard],
+      data: { title: T('Add Containers') },
     },
     {
       path: 'view/:id',
-      data: { title: T('Instances'), breadcrumb: null },
+      data: { title: T('Containers'), breadcrumb: null },
       children: [
         {
           path: '',
@@ -40,12 +42,12 @@ export const instancesRoutes: Routes = [{
         {
           path: 'shell',
           component: InstanceShellComponent,
-          data: { title: T('Instance Shell') },
+          data: { title: T('Container Shell') },
         },
         {
           path: 'console',
           component: InstanceConsoleComponent,
-          data: { title: T('Instance Console') },
+          data: { title: T('Container Console') },
         },
       ],
     },

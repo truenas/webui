@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -44,6 +42,12 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   ],
 })
 export class IsolatedGpusCardComponent implements OnInit {
+  private firstTimeWarning = inject(FirstTimeWarningService);
+  private gpuService = inject(GpuService);
+  private cdr = inject(ChangeDetectorRef);
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   isolatedGpus: Device[] = [];
@@ -55,14 +59,6 @@ export class IsolatedGpusCardComponent implements OnInit {
     large: false,
     message: this.translate.instant('To configure Isolated GPU Device(s), click the "Configure" button.'),
   };
-
-  constructor(
-    private firstTimeWarning: FirstTimeWarningService,
-    private gpuService: GpuService,
-    private cdr: ChangeDetectorRef,
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-  ) {}
 
   get isolatedGpuNames(): string {
     return this.isolatedGpus.map((gpu) => gpu.description).join(', ');

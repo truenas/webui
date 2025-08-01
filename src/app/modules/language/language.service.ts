@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
@@ -10,13 +10,11 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
-  currentLanguage: string | null = null;
+  protected translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+  private window = inject<Window>(WINDOW);
 
-  constructor(
-    protected translate: TranslateService,
-    private store$: Store<AppState>,
-    @Inject(WINDOW) private window: Window,
-  ) {}
+  currentLanguage: string | null = null;
 
   setLanguageFromBrowser(): Observable<boolean> {
     if (this.currentLanguage) {

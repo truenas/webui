@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component,
-  computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -68,6 +65,10 @@ import { SystemSecurityCardComponent } from './system-security/system-security-c
   ],
 })
 export class AdvancedSettingsComponent {
+  private api = inject(ApiService);
+  private store$ = inject<Store<AppState>>(Store);
+  private license = inject(LicenseService);
+
   protected readonly isSystemLicensed = toSignal(this.api.call('system.security.info.fips_available'));
   protected readonly Role = Role;
   protected readonly searchableElements = advancedSettingsElements;
@@ -75,10 +76,4 @@ export class AdvancedSettingsComponent {
   protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
   protected readonly showSedCard = computed(() => this.isEnterprise() || this.hasGlobalEncryption());
   protected readonly hasFailover$ = this.license.hasFailover$;
-
-  constructor(
-    private api: ApiService,
-    private store$: Store<AppState>,
-    private license: LicenseService,
-  ) {}
 }

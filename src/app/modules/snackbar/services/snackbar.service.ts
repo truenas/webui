@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
+import { Injectable, inject } from '@angular/core';
+import { MatSnackBar, MatSnackBarConfig, MatSnackBarRef } from '@angular/material/snack-bar';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
@@ -12,19 +12,21 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   providedIn: 'root',
 })
 export class SnackbarService {
-  constructor(
-    private matSnackBar: MatSnackBar,
-  ) {}
+  private matSnackBar = inject(MatSnackBar);
+
 
   success(message: TranslatedString): MatSnackBarRef<SnackbarComponent> {
-    return this.matSnackBar.openFromComponent(SnackbarComponent, {
+    const config: MatSnackBarConfig = {
       announcementMessage: message,
       politeness: 'assertive',
+      panelClass: 'ix-snackbar-high-priority',
       data: {
         message,
         icon: iconMarker('mdi-check'),
         iconCssColor: 'var(--green)',
       },
-    });
+    };
+
+    return this.matSnackBar.openFromComponent(SnackbarComponent, config);
   }
 }

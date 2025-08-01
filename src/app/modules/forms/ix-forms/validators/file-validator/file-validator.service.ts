@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { FormControl, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -8,9 +8,8 @@ import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-
   providedIn: 'root',
 })
 export class FileValidatorService {
-  constructor(
-    private translate: TranslateService,
-  ) {}
+  private translate = inject(TranslateService);
+
 
   maxSize(maxSizeInBytes: number) {
     return (control: FormControl<File[] | null>): ValidationErrors | null => {

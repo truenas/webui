@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject, signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -49,6 +47,18 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class GlobalTwoFactorAuthFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  slideInRef = inject<SlideInRef<GlobalTwoFactorConfig, boolean>>(SlideInRef);
+  private window = inject<Window>(WINDOW);
+
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
 
   protected isFormLoading = signal(false);
@@ -62,19 +72,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
 
   protected twoFactorConfig: GlobalTwoFactorConfig;
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private authService: AuthService,
-    private router: Router,
-    public slideInRef: SlideInRef<GlobalTwoFactorConfig, boolean>,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -125,7 +123,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
         if (!isEqual(this.twoFactorConfig, payload) && payload.enabled) {
           this.router.navigate(['/two-factor-auth']);
         }
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       }),
       catchError((error: unknown) => {
         this.isFormLoading.set(false);

@@ -89,9 +89,7 @@ describe('LocalizationFormComponent', () => {
           { label: '04:22:14 PM', value: 'hh:mm:ss aa' },
         ],
       }),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(LanguageService),
       mockProvider(FormErrorHandlerService),
       provideMockStore({

@@ -55,7 +55,7 @@
       <div class="details-item">
         <div class="label">{{ 'Enable Atime' | translate }}:</div>
         <div class="value">
-          {{ (dataset().atime ? OnOff.On : OnOff.Off) | translate }}
+        {{ (dataset().atime.parsed ? OnOff.On : OnOff.Off) | translate }}
         </div>
       </div>
     }
@@ -63,12 +63,18 @@
       <div class="label">{{ 'ZFS Deduplication' | translate }}:</div>
       <div class="value">{{ dataset().deduplication.value | orNotAvailable }}</div>
     </div>
-    <div class="details-item">
-      <div class="label">{{ 'Case Sensitivity' | translate }}:</div>
-      <div class="value">
-        {{ (dataset().casesensitive ? OnOff.On : OnOff.Off) | translate }}
+    @if (!isZvol()) {
+      <div class="details-item">
+        <div class="label">{{ 'Case Sensitivity' | translate }}:</div>
+        <div class="value">
+          {{ (
+              dataset().casesensitivity.value === DatasetCaseSensitivity.Sensitive
+                ? OnOff.On
+                : OnOff.Off
+            ) | translate }}
+        </div>
       </div>
-    </div>
+    }
     <div class="details-item">
       <div class="label">{{ 'Path' | translate }}:</div>
       <div

@@ -31,7 +31,7 @@ export const jobReducer = createReducer(
   on(jobIndicatorPressed, (state) => ({ ...state, isPanelOpen: !state.isPanelOpen })),
   on(jobPanelClosed, (state) => ({ ...state, isPanelOpen: false })),
 
-  on(adminUiInitialized, (state) => ({ ...state, isLoading: true, error: null })),
+  on(adminUiInitialized, (state) => ({ ...state, isLoading: true, error: null as string | null })),
   on(jobsLoaded, (state, { jobs }) => adapter.setAll(jobs, { ...state, isLoading: false })),
   on(jobsNotLoaded, (state, { error }) => ({ ...state, error, isLoading: true })),
 
@@ -40,7 +40,12 @@ export const jobReducer = createReducer(
     id: job.id,
     changes: job,
   }, state)),
-  on(jobRemoved, (state, { id }) => adapter.removeOne(id, state)),
+  on(jobRemoved, (state, { id }) => adapter.updateOne({
+    id,
+    changes: {
+      removed: true,
+    },
+  }, state)),
   on(jobAborted, (state, { job }) => adapter.updateOne({
     id: job.id,
     changes: {

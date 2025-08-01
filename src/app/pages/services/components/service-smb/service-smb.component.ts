@@ -1,6 +1,4 @@
-import {
-  Component, OnInit, ChangeDetectionStrategy, signal,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -67,6 +65,16 @@ interface BindIp {
   ],
 })
 export class ServiceSmbComponent implements OnInit {
+  private api = inject(ApiService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private userService = inject(UserService);
+  private validatorsService = inject(IxValidatorsService);
+  private snackbar = inject(SnackbarService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected isFormLoading = signal(false);
   isBasicMode = true;
   subscriptions: Subscription[] = [];
@@ -148,17 +156,7 @@ export class ServiceSmbComponent implements OnInit {
 
   readonly encryptionOptions$ = of(mapToOptions(smbEncryptionLabels, this.translate));
 
-  constructor(
-    private api: ApiService,
-    private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    private userService: UserService,
-    private validatorsService: IxValidatorsService,
-    private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -207,7 +205,7 @@ export class ServiceSmbComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

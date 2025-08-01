@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, OnInit, input, computed,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, OnInit, input, computed, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -55,6 +53,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private datasetStore = inject(DatasetTreeStore);
+  private slideIn = inject(SlideIn);
+
   readonly dataset = input.required<DatasetDetails>();
 
   protected readonly requiredRoles = [Role.DatasetWrite];
@@ -75,7 +79,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   });
 
   protected checkQuotas = computed(() => {
-    return !this.dataset().locked && this.isFilesystem() && !this.dataset().readonly;
+    return !this.dataset().locked && this.isFilesystem() && !this.dataset().readonly.parsed;
   });
 
   protected hasQuota = computed(() => {
@@ -89,14 +93,6 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   protected hasInheritedQuotas = computed(() => {
     return this.inheritedQuotasDataset?.quota?.parsed && this.inheritedQuotasDataset?.id !== this.dataset()?.id;
   });
-
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private datasetStore: DatasetTreeStore,
-    private slideIn: SlideIn,
-  ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     this.getInheritedQuotas();
@@ -113,7 +109,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     }
   }
 
-  initQuotas(): void {
+  private initQuotas(): void {
     this.refreshQuotas$.pipe(
       tap(() => {
         this.isLoadingQuotas = true;
@@ -139,7 +135,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     });
   }
 
-  getInheritedQuotas(): void {
+  private getInheritedQuotas(): void {
     this.datasetStore.selectedBranch$.pipe(
       filter((branch): branch is DatasetDetails[] => !!(branch)),
       map((datasets) => {

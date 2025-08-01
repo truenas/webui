@@ -1,0 +1,48 @@
+// Dynamic Markdown Component Global Styles
+ix-dynamic-markdown {
+  mat-tab-group {
+    .mat-mdc-tab-labels {
+      background-color: var(--bg2);
+      border-bottom: 1px solid var(--lines);
+    }
+
+    .mat-mdc-tab {
+      color: var(--fg2);
+      opacity: 1;
+
+      &:hover {
+        color: var(--fg1);
+      }
+
+      &.mat-mdc-tab-label-active {
+        color: var(--primary);
+      }
+    }
+
+    .mat-mdc-tab-body-content {
+      padding: 0;
+    }
+  }
+
+  .highlight-warning {
+    align-items: center;
+    background-color: rgba(var(--color-warning-rgb), 0.15);
+    border-radius: 4px;
+    color: var(--orange);
+    display: inline-flex;
+    font-weight: 500;
+    padding: 2px 8px;
+    position: relative;
+  }
+
+  .highlight-error {
+    align-items: center;
+    background-color: rgba(var(--color-error-rgb), 0.15);
+    border-radius: 4px;
+    color: var(--red);
+    display: inline-flex;
+    font-weight: 500;
+    padding: 2px 8px;
+    position: relative;
+  }
+}

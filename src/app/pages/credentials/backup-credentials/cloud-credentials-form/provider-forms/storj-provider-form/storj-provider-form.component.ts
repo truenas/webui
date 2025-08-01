@@ -1,9 +1,10 @@
-import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
+import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
+import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -21,13 +22,20 @@ import {
     ReactiveFormsModule,
     TestDirective,
     IxInputComponent,
+    DetailsTableComponent,
+    DetailsItemComponent,
+    EditableComponent,
     TranslateModule,
   ],
 })
 export class StorjProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
+  private formBuilder = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+
   form = this.formBuilder.group({
     access_key_id: ['', Validators.required],
     secret_access_key: ['', Validators.required],
+    endpoint: ['https://gateway.storjshare.io'],
   });
 
   ngAfterViewInit(): void {
@@ -35,12 +43,5 @@ export class StorjProviderFormComponent extends BaseProviderFormComponent implem
       this.form.patchValue(values);
       this.cdr.detectChanges();
     });
-  }
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
-  ) {
-    super();
   }
 }

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -34,17 +32,19 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class VirtualPortsNumberDialog {
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private dialogRef = inject<MatDialogRef<VirtualPortsNumberDialog>>(MatDialogRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private host = inject<FibreChannelHost>(MAT_DIALOG_DATA);
+
   protected form = new FormGroup({
     virtualPorts: new FormControl(0, [Validators.required, Validators.min(0)]),
   });
 
-  constructor(
-    private api: ApiService,
-    private loader: LoaderService,
-    private dialogRef: MatDialogRef<VirtualPortsNumberDialog>,
-    private errorHandler: ErrorHandlerService,
-    @Inject(MAT_DIALOG_DATA) private host: FibreChannelHost,
-  ) {
+  constructor() {
+    const host = this.host;
+
     this.form.setValue({
       virtualPorts: host.npiv,
     });

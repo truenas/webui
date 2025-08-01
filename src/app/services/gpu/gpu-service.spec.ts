@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -38,8 +38,16 @@ describe('GpuService', () => {
         mockCall('system.advanced.update_gpu_pci_ids'),
         mockCall('device.get_info', allGpus),
         mockCall('system.advanced.get_gpu_pci_choices', {
-          'GeForce [0000:01:00.0]': '0000:01:00.0',
-          'Radeon [0000:02:00.0]': '0000:02:00.0',
+          'GeForce [0000:01:00.0]': {
+            pci_slot: '0000:01:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+          'Radeon [0000:02:00.0]': {
+            pci_slot: '0000:02:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
         }),
       ]),
       provideMockStore({
@@ -75,8 +83,39 @@ describe('GpuService', () => {
       jest.spyOn(store$, 'dispatch');
       const options = await firstValueFrom(spectator.service.getGpuOptions());
       expect(options).toEqual([
-        { label: 'GeForce [0000:01:00.0]', value: '0000:01:00.0' },
-        { label: 'Radeon [0000:02:00.0]', value: '0000:02:00.0' },
+        { label: 'GeForce [0000:01:00.0]', value: '0000:01:00.0', disabled: false },
+        { label: 'Radeon [0000:02:00.0]', value: '0000:02:00.0', disabled: false },
+      ]);
+    });
+
+    it('marks GPUs with system critical devices in the label', async () => {
+      const apiService = spectator.inject(ApiService);
+      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+        if (method === 'system.advanced.get_gpu_pci_choices') {
+          return of({
+            'Safe GPU [0000:01:00.0]': {
+              pci_slot: '0000:01:00.0',
+              uses_system_critical_devices: false,
+              critical_reason: '',
+            },
+            'Critical GPU [0000:02:00.0]': {
+              pci_slot: '0000:02:00.0',
+              uses_system_critical_devices: true,
+              critical_reason: 'Critical devices found: 0000:00:01.0',
+            },
+          });
+        }
+        return of([]);
+      });
+
+      const options = await firstValueFrom(spectator.service.getGpuOptions());
+      expect(options).toEqual([
+        { label: 'Safe GPU [0000:01:00.0]', value: '0000:01:00.0', disabled: false },
+        {
+          label: 'Critical GPU [0000:02:00.0] (System Critical)',
+          value: '0000:02:00.0',
+          disabled: false,
+        },
       ]);
     });
   });

@@ -1,14 +1,4 @@
-import {
-  AfterContentInit,
-  Attribute,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef, HostBinding,
-  Inject, input,
-  OnChanges,
-  OnInit,
-  Optional,
-} from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, ElementRef, HostBinding, input, OnChanges, OnInit, inject, HostAttributeToken } from '@angular/core';
 import {
   MatIcon, MatIconDefaultOptions, MatIconLocation, MAT_ICON_DEFAULT_OPTIONS, MAT_ICON_LOCATION,
 } from '@angular/material/icon';
@@ -38,6 +28,8 @@ import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxIconComponent extends MatIcon implements OnInit, OnChanges, AfterContentInit {
+  readonly errorHandler: IconErrorHandlerService;
+
   /**
    * Do not apply ordinary 24px size to the icon.
    */
@@ -80,15 +72,17 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
     return this._elementRef?.nativeElement?.innerText;
   }
 
-  constructor(
-    elementRef: ElementRef<HTMLElement>,
-    iconRegistry: IxIconRegistry,
-    @Attribute('aria-hidden') ariaHidden: string,
-    @Inject(MAT_ICON_LOCATION) location: MatIconLocation,
-    readonly errorHandler: IconErrorHandlerService,
-    @Optional() @Inject(MAT_ICON_DEFAULT_OPTIONS) defaults?: MatIconDefaultOptions,
-  ) {
+  constructor() {
+    const elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+    const iconRegistry = inject(IxIconRegistry);
+    const ariaHidden = inject(new HostAttributeToken('aria-hidden'), { optional: true });
+    const location = inject<MatIconLocation>(MAT_ICON_LOCATION);
+    const errorHandler = inject(IconErrorHandlerService);
+    const defaults = inject<MatIconDefaultOptions>(MAT_ICON_DEFAULT_OPTIONS, { optional: true });
+
     super(elementRef, iconRegistry, ariaHidden, location, errorHandler, defaults);
+
+    this.errorHandler = errorHandler;
   }
 
   ngOnChanges(): void {

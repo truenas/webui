@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -39,13 +39,11 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   ],
 })
 export class InstanceProxiesComponent {
-  protected readonly isLoadingDevices = this.devicesStore.isLoading;
+  private slideIn = inject(SlideIn);
+  private devicesStore = inject(VirtualizationDevicesStore);
+  private instancesStore = inject(VirtualizationInstancesStore);
 
-  constructor(
-    private slideIn: SlideIn,
-    private devicesStore: VirtualizationDevicesStore,
-    private instancesStore: VirtualizationInstancesStore,
-  ) {}
+  protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly proxies = computed(() => {
     return this.devicesStore.devices().filter((device) => {

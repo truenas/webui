@@ -1,0 +1,36 @@
+<div class="controls">
+  <h5>{{ 'Ports' | translate }}</h5>
+
+  <ix-add-port-menu
+    [subsystemPorts]="portsControl().value"
+    (portSelected)="onPortAdded($event)"
+  ></ix-add-port-menu>
+</div>
+
+@if (!portsControl().value.length) {
+  <div class="no-ports">
+    {{ helptext.addPort | translate }}
+  </div>
+}
+@else {
+  <ul class="port-list">
+    @for (port of portsControl().value; track port.id) {
+      <li>
+        <span class="port">
+          <ix-port-description [port]="port"></ix-port-description>
+
+          <span class="port-actions">
+            <button
+              mat-icon-button
+              [ixTest]="['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
+              (click)="onRemovePort(port)"
+            >
+              <ix-icon class="icon" name="clear"></ix-icon>
+            </button>
+          </span>
+        </span>
+      </li>
+    }
+  </ul>
+}
+

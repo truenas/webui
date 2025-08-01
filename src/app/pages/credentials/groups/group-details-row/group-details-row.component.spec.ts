@@ -124,6 +124,13 @@ describe('GroupDetailsRowComponent', () => {
       expect(editButton).toBeNull();
     });
 
+    it('does not show Edit button for immutable groups', async () => {
+      spectator.setInput('group', { ...dummyGroup, immutable: true });
+
+      const editButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Edit' }));
+      expect(editButton).toBeNull();
+    });
+
     it('does not show Edit button for Active Directory groups', async () => {
       spectator.setInput('group', { ...dummyGroup, local: false });
 
@@ -139,5 +146,13 @@ describe('GroupDetailsRowComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteGroupDialog, {
       data: dummyGroup,
     });
+  });
+
+  it('should disable Delete button when group has roles or users', async () => {
+    spectator.setInput('group', { ...dummyGroup, roles: ['admin'], users: [1] });
+
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
+
+    expect(await deleteButton.isDisabled()).toBe(true);
   });
 });

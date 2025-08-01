@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
@@ -31,14 +31,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ExportAllKeysDialog {
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private loader: LoaderService,
-    private dialogRef: MatDialogRef<ExportAllKeysDialog>,
-    private download: DownloadService,
-    @Inject(MAT_DIALOG_DATA) public dataset: Dataset,
-  ) { }
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private dialogRef = inject<MatDialogRef<ExportAllKeysDialog>>(MatDialogRef);
+  private download = inject(DownloadService);
+  dataset = inject<Dataset>(MAT_DIALOG_DATA);
+
 
   onDownload(): void {
     const fileName = 'dataset_' + this.dataset.name + '_keys.json';

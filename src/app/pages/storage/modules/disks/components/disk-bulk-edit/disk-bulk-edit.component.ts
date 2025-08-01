@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -47,6 +47,14 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class DiskBulkEditComponent {
+  private fb = inject(NonNullableFormBuilder);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private snackbarService = inject(SnackbarService);
+  private errorHandler = inject(FormErrorHandlerService);
+  slideInRef = inject<SlideInRef<Disk[], boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.DiskWrite];
 
   diskIds: string[] = [];
@@ -62,22 +70,14 @@ export class DiskBulkEditComponent {
   readonly hddstandbyOptions$ = of(helptextDisks.standbyOptions);
   readonly advpowermgmtOptions$ = of(helptextDisks.advancedPowerManagementOptions);
 
-  constructor(
-    private fb: NonNullableFormBuilder,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private snackbarService: SnackbarService,
-    private errorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<Disk[], boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
     this.setFormDiskBulk(this.slideInRef.getData());
   }
 
-  setFormDiskBulk(selectedDisks: Disk[]): void {
+  private setFormDiskBulk(selectedDisks: Disk[]): void {
     const setForm: Required<DiskBulkEditComponent['form']['value']> = {
       disknames: [],
       hddstandby: '' as DiskStandby,
@@ -110,7 +110,7 @@ export class DiskBulkEditComponent {
     this.form.controls.disknames.disable();
   }
 
-  prepareDataSubmit(): [id: string, update: DiskUpdate][] {
+  private prepareDataSubmit(): [id: string, update: DiskUpdate][] {
     const data = { ...this.form.value };
 
     Object.keys(data).forEach((key) => {
@@ -151,7 +151,7 @@ export class DiskBulkEditComponent {
           });
 
           if (isSuccessful) {
-            this.slideInRef.close({ response: true, error: null });
+            this.slideInRef.close({ response: true });
             this.snackbarService.success(successText);
           }
         },

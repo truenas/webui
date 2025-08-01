@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { find } from 'lodash-es';
 import { Observable, of } from 'rxjs';
@@ -13,11 +13,10 @@ import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 
 @Injectable({ providedIn: 'root' })
 export class DatasetService {
-  constructor(
-    private api: ApiService,
-    private dialog: DialogService,
-    private translate: TranslateService,
-  ) {}
+  private api = inject(ApiService);
+  private dialog = inject(DialogService);
+  private translate = inject(TranslateService);
+
 
   getDatasetNodeProvider(): TreeNodeProvider {
     return () => {

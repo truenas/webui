@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -60,6 +60,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class InitShutdownListComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  protected emptyService = inject(EmptyService);
+
   protected readonly requiredRoles = [Role.SystemCronWrite];
   protected readonly searchableElements = initShudownListElements;
 
@@ -115,34 +123,24 @@ export class InitShutdownListComponent implements OnInit {
     ariaLabels: (row) => [row.command, this.translate.instant('Init/Shutdown Script')],
   });
 
-  constructor(
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    protected emptyService: EmptyService,
-  ) {}
-
   ngOnInit(): void {
     this.dataProvider = new AsyncDataProvider(this.api.call('initshutdownscript.query'));
     this.dataProvider.load();
   }
 
-  addScript(): void {
+  protected addScript(): void {
     this.slideIn.open(InitShutdownFormComponent)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
-  editScript(script: InitShutdownScript): void {
+  private editScript(script: InitShutdownScript): void {
     this.slideIn.open(InitShutdownFormComponent, { data: script })
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
-  deleteScript(script: InitShutdownScript): void {
+  private deleteScript(script: InitShutdownScript): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Are you sure you want to delete this script?'),

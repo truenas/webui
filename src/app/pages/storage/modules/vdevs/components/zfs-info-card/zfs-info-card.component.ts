@@ -1,7 +1,5 @@
 import { NgTemplateOutlet, UpperCasePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, input, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions,
@@ -55,6 +53,15 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
   ],
 })
 export class ZfsInfoCardComponent {
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private matDialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+  private vDevsStore = inject(VDevsStore);
+  private snackbar = inject(SnackbarService);
+
   readonly topologyItem = input.required<VDevItem>();
   readonly topologyParentItem = input<VDevItem>();
   readonly disk = input<Disk>();
@@ -120,17 +127,6 @@ export class ZfsInfoCardComponent {
       && this.topologyItem().status !== TopologyItemStatus.Unavail
       && ![VDevType.Spare, VDevType.Cache].includes(this.topologyCategory());
   });
-
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private matDialog: MatDialog,
-    private translate: TranslateService,
-    private vDevsStore: VDevsStore,
-    private snackbar: SnackbarService,
-  ) {}
 
   onOffline(): void {
     this.dialogService.confirm({

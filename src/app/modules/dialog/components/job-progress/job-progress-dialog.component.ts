@@ -1,7 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import {
-  AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, output,
-} from '@angular/core';
+import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
@@ -64,10 +62,15 @@ export interface JobProgressDialogConfig<Result> {
     TranslateModule,
     DecimalPipe,
     TestDirective,
-    TestDirective,
   ],
 })
 export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
+  private dialogRef = inject<MatDialogRef<JobProgressDialog<T>, MatDialogConfig>>(MatDialogRef);
+  data = inject<JobProgressDialogConfig<T>>(MAT_DIALOG_DATA);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
+
   readonly jobSuccess = output<Job<T>>();
   readonly jobFailure = output<unknown>();
   readonly jobAborted = output<Job<T>>();
@@ -105,14 +108,6 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
       JobState.Success,
     ].includes(this.job?.state) || this.isJobRunning;
   }
-
-  constructor(
-    private dialogRef: MatDialogRef<JobProgressDialog<T>, MatDialogConfig>,
-    @Inject(MAT_DIALOG_DATA) public data: JobProgressDialogConfig<T>,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
-  ) { }
 
   ngOnInit(): void {
     this.title = this.data?.title;
@@ -188,7 +183,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
     this.scrollBottom();
   }
 
-  scrollBottom(): void {
+  private scrollBottom(): void {
     const cardContainer = document.getElementsByClassName('job-dialog')[0];
     const logsContainer = cardContainer.getElementsByClassName('logs-container')[0];
     if (!logsContainer) {
@@ -214,7 +209,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
    * websocket updates. The subscription id is used to unsubscribe form those real time
    * websocket updates at a later time. Unsubscription is not possible without this id
    */
-  getRealtimeLogs(): Subscription {
+  private getRealtimeLogs(): Subscription {
     this.realtimeLogsSubscribed = true;
     this.cdr.markForCheck();
     return this.api.subscribe(`filesystem.file_tail_follow:${this.job.logs_path}`)

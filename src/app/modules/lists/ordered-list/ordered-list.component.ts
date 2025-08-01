@@ -1,10 +1,7 @@
 import {
   CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag,
 } from '@angular/cdk/drag-drop';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, input, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, inject } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -39,6 +36,9 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   ],
 })
 export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
+  controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly label = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
   readonly required = input(false);
@@ -56,10 +56,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
     return this.items.filter((item) => this.value.includes(item.value)).map((item) => item.value);
   }
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 
@@ -111,7 +108,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
     this.onChange(this.orderedValue);
   }
 
-  orderOptions(): void {
+  private orderOptions(): void {
     this.value.toReversed().forEach((value) => {
       const idx = this.items.findIndex((option) => option.value === value);
       this.items.unshift(...this.items.splice(idx, 1));

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnChanges, OnInit, input, computed, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnChanges, OnInit, input, computed, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -58,12 +56,18 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class PermissionsCardComponent implements OnInit, OnChanges {
+  private store = inject(PermissionsCardStore);
+  private errorHandler = inject(ErrorHandlerService);
+  private router = inject(Router);
+  private translate = inject(TranslateService);
+
   readonly dataset = input.required<DatasetDetails>();
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   protected readonly isLoading = signal(false);
   protected readonly isMissingMountpoint = signal(false);
+  protected readonly isNotMounted = signal(false);
   protected readonly stat = signal<FileSystemStat | null>(null);
   protected readonly acl = signal<Acl | null>(null);
 
@@ -77,19 +81,17 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     title: this.translate.instant('Dataset has no mountpoint'),
   };
 
+  notMountedEmptyConfig: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    title: this.translate.instant('Dataset is not mounted'),
+  };
+
   lockedEmptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     title: this.translate.instant('Dataset is locked'),
   };
 
   readonly AclType = AclType;
-
-  constructor(
-    private store: PermissionsCardStore,
-    private errorHandler: ErrorHandlerService,
-    private router: Router,
-    private translate: TranslateService,
-  ) {}
 
   redirectToEditPermissions(): void {
     if (this.acl()?.trivial) {
@@ -103,6 +105,9 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     if (this.isMissingMountpoint()) {
       return this.missionMountpointEmptyConfig;
     }
+    if (this.isNotMounted()) {
+      return this.notMountedEmptyConfig;
+    }
     if (this.isLocked()) {
       return this.lockedEmptyConfig;
     }
@@ -111,7 +116,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   });
 
   readonly canEditPermissions = computed(() => {
-    return this.acl() && !isRootDataset(this.dataset()) && !this.dataset().locked && !this.dataset().readonly;
+    return this.acl() && !isRootDataset(this.dataset()) && !this.dataset().locked && !this.dataset().readonly.parsed;
   });
 
   readonly isLocked = computed(() => {
@@ -131,7 +136,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
       return this.translate.instant(helptextPermissions.editDisabled.locked);
     }
 
-    if (this.dataset().readonly) {
+    if (this.dataset().readonly.parsed) {
       return this.translate.instant(helptextPermissions.editDisabled.readonly);
     }
 
@@ -183,6 +188,12 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     if (this.isMissingMountpoint()) {
       return;
     }
+
+    this.isNotMounted.set(!this.dataset().mounted?.parsed);
+    if (this.isNotMounted()) {
+      return;
+    }
+
     this.store.loadPermissions(this.dataset().mountpoint);
   }
 }

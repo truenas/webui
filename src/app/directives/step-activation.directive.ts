@@ -1,7 +1,4 @@
-import {
-  Directive, OnInit,
-  output,
-} from '@angular/core';
+import { Directive, OnInit, output, inject } from '@angular/core';
 import { MatStep, MatStepper } from '@angular/material/stepper';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
@@ -16,12 +13,10 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   selector: '[ixStepActivation]',
 })
 export class StepActivationDirective implements OnInit {
-  readonly activate = output();
+  private step = inject(MatStep);
+  private stepper = inject(MatStepper);
 
-  constructor(
-    private step: MatStep,
-    private stepper: MatStepper,
-  ) {}
+  readonly activate = output();
 
   ngOnInit(): void {
     this.stepper.selectionChange.subscribe((event) => {

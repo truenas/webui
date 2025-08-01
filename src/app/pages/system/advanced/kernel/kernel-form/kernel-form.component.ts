@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, OnInit, signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -43,6 +41,14 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   ],
 })
 export class KernelFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private store$ = inject<Store<AppState>>(Store);
+  slideInRef = inject<SlideInRef<boolean, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   protected isFormLoading = signal(false);
@@ -56,15 +62,9 @@ export class KernelFormComponent implements OnInit {
 
   private debugkernel = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private store$: Store<AppState>,
-    public slideInRef: SlideInRef<boolean, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -78,13 +78,13 @@ export class KernelFormComponent implements OnInit {
     this.setupForm();
   }
 
-  setupForm(): void {
+  protected setupForm(): void {
     this.form.patchValue({
       debugkernel: this.debugkernel,
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.value;
     const commonBody = {
       debugkernel: values.debugkernel,
@@ -94,7 +94,7 @@ export class KernelFormComponent implements OnInit {
       next: () => {
         this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Settings saved'));
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
         this.store$.dispatch(advancedConfigUpdated());
       },
       error: (error: unknown) => {

@@ -1,3 +1,4 @@
+import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AuditService } from 'app/enums/audit.enum';
@@ -20,9 +21,21 @@ interface User {
 }
 
 describe('QueryToApiService', () => {
-  const service = new QueryToApiService<User>({
-    instant: (key: string) => key,
-  } as TranslateService);
+  let spectator: SpectatorService<QueryToApiService<User>>;
+  let service: QueryToApiService<User>;
+  const createService = createServiceFactory<QueryToApiService<User>>({
+    service: QueryToApiService,
+    providers: [
+      mockProvider(TranslateService, {
+        instant: (key: string) => key,
+      }),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createService();
+    service = spectator.service;
+  });
 
   it('converts an array of parsed conditions to an API query - condition in root', () => {
     const condition = service.buildFilters({

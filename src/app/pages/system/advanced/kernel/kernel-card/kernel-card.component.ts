@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -44,6 +44,10 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   ],
 })
 export class KernelCardComponent {
+  private store$ = inject<Store<AppState>>(Store);
+  private slideIn = inject(SlideIn);
+  private firstTimeWarning = inject(FirstTimeWarningService);
+
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = kernelCardElements;
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
@@ -60,12 +64,6 @@ export class KernelCardComponent {
       bufferSize: 1,
     }),
   );
-
-  constructor(
-    private store$: Store<AppState>,
-    private slideIn: SlideIn,
-    private firstTimeWarning: FirstTimeWarningService,
-  ) {}
 
   onConfigurePressed(debugKernel: boolean): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(

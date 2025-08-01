@@ -1,0 +1,15 @@
+<span>
+  {{ 'Details for' | translate }}
+  {{ subsystem()?.name }}
+</span>
+
+<div class="detail-actions">
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    ixTest="delete-subsys"
+    (click)="deleteSubsystem()"
+  >
+    {{ 'Delete' | translate }}
+  </button>
+</div>

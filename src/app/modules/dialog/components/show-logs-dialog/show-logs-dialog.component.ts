@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogTitle, MatDialogActions, MatDialogClose,
@@ -30,12 +30,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ShowLogsDialog {
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private download: DownloadService,
-    @Inject(MAT_DIALOG_DATA) public job: Job,
-  ) { }
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private download = inject(DownloadService);
+  job = inject<Job>(MAT_DIALOG_DATA);
+
 
   downloadLogs(): void {
     this.api.call('core.job_download_logs', [this.job.id, `${this.job.id}.log`]).pipe(

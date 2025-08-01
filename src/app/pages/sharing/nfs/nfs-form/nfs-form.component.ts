@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -27,6 +25,7 @@ import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-co
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -35,12 +34,14 @@ import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-li
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
@@ -61,6 +62,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     IxInputComponent,
     IxCheckboxComponent,
     IxComboboxComponent,
@@ -76,6 +78,22 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class NfsFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(FormBuilder);
+  private userService = inject(UserService);
+  private translate = inject(TranslateService);
+  private filesystemService = inject(FilesystemService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private datasetService = inject(DatasetService);
+  private store$ = inject<Store<ServicesState>>(Store);
+  slideInRef = inject<SlideInRef<{
+    existingNfsShare?: NfsShare;
+    defaultNfsShare?: NfsShare;
+  } | undefined, boolean>>(SlideInRef);
+
+  private validatorsService = inject(IxValidatorsService);
+
   existingNfsShare: NfsShare | undefined;
   defaultNfsShare: NfsShare | undefined;
 
@@ -137,26 +155,19 @@ export class NfsFormComponent implements OnInit {
     },
   ] as Option[]);
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: FormBuilder,
-    private userService: UserService,
-    private translate: TranslateService,
-    private filesystemService: FilesystemService,
-    private formErrorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
-    private datasetService: DatasetService,
-    private store$: Store<ServicesState>,
-    public slideInRef: SlideInRef<{ existingNfsShare?: NfsShare; defaultNfsShare?: NfsShare } | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
+    this.form.controls.path.addValidators(this.validatorsService.customValidator(
+      getRootDatasetsValidator(this.existingNfsShare ? [this.existingNfsShare.path] : []),
+      this.translate.instant('Sharing root datasets is not recommended. Please create a child dataset.'),
+    ));
     this.existingNfsShare = this.slideInRef.getData()?.existingNfsShare;
     this.defaultNfsShare = this.slideInRef.getData()?.defaultNfsShare;
   }
 
-  setNfsShareForEdit(share: NfsShare): void {
+  private setNfsShareForEdit(share: NfsShare): void {
     share.networks.forEach(() => this.addNetworkControl());
     share.hosts.forEach(() => this.addHostControl());
     this.form.patchValue(share);
@@ -174,27 +185,27 @@ export class NfsFormComponent implements OnInit {
     }
   }
 
-  addNetworkControl(): void {
+  protected addNetworkControl(): void {
     this.form.controls.networks.push(this.formBuilder.control('', [Validators.required, ipv4or6cidrValidator()]));
   }
 
-  removeNetworkControl(index: number): void {
+  protected removeNetworkControl(index: number): void {
     this.form.controls.networks.removeAt(index);
   }
 
-  addHostControl(): void {
+  protected addHostControl(): void {
     this.form.controls.hosts.push(this.formBuilder.control('', Validators.required));
   }
 
-  removeHostControl(index: number): void {
+  protected removeHostControl(index: number): void {
     this.form.controls.hosts.removeAt(index);
   }
 
-  toggleAdvancedMode(): void {
+  protected toggleAdvancedMode(): void {
     this.isAdvancedMode = !this.isAdvancedMode;
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const nfsShare = { ...this.form.value } as NfsShareUpdate;
 
     if (!this.isEnterprise()) {
@@ -229,7 +240,7 @@ export class NfsFormComponent implements OnInit {
           }
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

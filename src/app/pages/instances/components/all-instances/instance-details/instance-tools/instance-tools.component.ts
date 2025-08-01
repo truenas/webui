@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, Inject, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -33,13 +31,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class InstanceToolsComponent {
+  private window = inject<Window>(WINDOW);
+
   readonly instance = input.required<VirtualizationInstance>();
 
   protected readonly isInstanceStopped = computed(() => this.instance().status !== VirtualizationStatus.Running);
   protected readonly isVm = computed(() => this.instance().type === VirtualizationType.Vm);
   protected readonly vncLink = computed(() => `vnc://${this.window.location.hostname}:${this.instance().vnc_port}`);
-
-  constructor(
-    @Inject(WINDOW) private window: Window,
-  ) {}
 }

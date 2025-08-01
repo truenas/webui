@@ -35,6 +35,9 @@ export const helptextUsers = {
  <i>No:</i> Requires adding a <b>Password</b> to the account. The \
  account can use the saved <b>Password</b> to authenticate with \
  password-based services.'),
+  oneTimePasswordWarning: T('Once generated, one time-password is only valid for one login within 24 hours and does not persist across reboots. \
+User will be required to set new password after they log in.<br><br> \
+Do you want to continue?'),
   oneTimePasswordTooltip: T('Temporary password will be generated and shown to you once form is saved. \
  <br><br>This password is only valid for one login within 24 hours and does not persist across reboots. \
  <br><br>User will be encouraged to choose their own password after they login for the first time.'),

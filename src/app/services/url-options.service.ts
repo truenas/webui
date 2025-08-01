@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AdvancedSearchQuery, BasicSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
@@ -12,9 +12,8 @@ export interface UrlOptions<T> {
 
 @Injectable({ providedIn: 'root' })
 export class UrlOptionsService {
-  constructor(
-    private location: Location,
-  ) {}
+  private location = inject(Location);
+
 
   setUrlOptions<T>(url: string, options: UrlOptions<T>): void {
     const constructedUrl = this.buildUrl(url, options);

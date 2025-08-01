@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import {
   FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -21,9 +19,13 @@ import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { CatalogUpdate } from 'app/interfaces/catalog.interface';
+import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
+import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
+import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
@@ -51,6 +53,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
     MatCard,
     IxFieldsetComponent,
     IxCheckboxListComponent,
+    IxChipsComponent,
     IxListItemComponent,
     IxListComponent,
     IxIpInputWithNetmaskComponent,
@@ -62,12 +65,23 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
     TestDirective,
     TranslateModule,
     AsyncPipe,
+    DetailsTableComponent,
+    DetailsItemComponent,
+    EditableComponent,
   ],
   providers: [
     DockerStore,
   ],
 })
 export class AppsSettingsComponent implements OnInit {
+  private dockerStore = inject(DockerStore);
+  private api = inject(ApiService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private errorHandler = inject(FormErrorHandlerService);
+  private fb = inject(FormBuilder);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+
   protected hasNvidiaCard$ = this.api.call('docker.nvidia_present');
   protected isFormLoading = signal(false);
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
@@ -80,6 +94,8 @@ export class AppsSettingsComponent implements OnInit {
       base: FormControl<string>;
       size: FormControl<number | null>;
     }>>([]),
+    secure_registry_mirrors: [[] as string[]],
+    insecure_registry_mirrors: [[] as string[]],
   });
 
   protected allTrains$ = this.api.call('catalog.trains').pipe(
@@ -89,17 +105,16 @@ export class AppsSettingsComponent implements OnInit {
   readonly tooltips = {
     preferred_trains: helptextApps.settingsForm.preferredTrains.tooltip,
     install_nvidia_driver: helptextApps.settingsForm.installNvidiaDriver.tooltip,
+    registry_mirrors: helptextApps.settingsForm.registryMirrors.generalTooltip,
+    secure_registry_mirrors: helptextApps.settingsForm.registryMirrors.secureTooltip,
+    insecure_registry_mirrors: helptextApps.settingsForm.registryMirrors.insecureTooltip,
   };
 
-  constructor(
-    private dockerStore: DockerStore,
-    private api: ApiService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-    private errorHandler: FormErrorHandlerService,
-    private fb: FormBuilder,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-  ) {
+  get mirrorsCount(): number {
+    return this.form.value.secure_registry_mirrors.length + this.form.value.insecure_registry_mirrors.length;
+  }
+
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -126,11 +141,13 @@ export class AppsSettingsComponent implements OnInit {
           enable_image_updates: dockerConfig.enable_image_updates,
           address_pools: dockerConfig.address_pools,
           nvidia: dockerConfig.nvidia,
+          secure_registry_mirrors: dockerConfig.secure_registry_mirrors || [],
+          insecure_registry_mirrors: dockerConfig.insecure_registry_mirrors || [],
         });
       });
   }
 
-  addAddressPool(): void {
+  protected addAddressPool(): void {
     const control = this.fb.nonNullable.group({
       base: ['', [Validators.required, ipv4or6cidrValidator()]],
       size: [null as number | null, [Validators.required]],
@@ -139,11 +156,11 @@ export class AppsSettingsComponent implements OnInit {
     this.form.controls.address_pools.push(control);
   }
 
-  removeAddressPool(index: number): void {
+  protected removeAddressPool(index: number): void {
     this.form.controls.address_pools.removeAt(index);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.getRawValue();
 
     this.isFormLoading.set(true);
@@ -153,6 +170,8 @@ export class AppsSettingsComponent implements OnInit {
         enable_image_updates: values.enable_image_updates,
         address_pools: values.address_pools,
         nvidia: Boolean(values.nvidia),
+        secure_registry_mirrors: values.secure_registry_mirrors,
+        insecure_registry_mirrors: values.insecure_registry_mirrors,
       }]),
     ])
       .pipe(untilDestroyed(this))
@@ -160,7 +179,7 @@ export class AppsSettingsComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Settings saved'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

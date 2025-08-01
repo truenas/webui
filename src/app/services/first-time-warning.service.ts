@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
@@ -8,11 +8,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
   providedIn: 'root',
 })
 export class FirstTimeWarningService {
-  shownWarnings = new Set<string>();
+  private dialogService = inject(DialogService);
 
-  constructor(
-    private dialogService: DialogService,
-  ) {}
+  shownWarnings = new Set<string>();
 
   showFirstTimeWarningIfNeeded(title?: string, message?: string): Observable<true> {
     const effectiveTitle = title || helptextSystemAdvanced.firstTime.title;

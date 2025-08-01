@@ -1,13 +1,11 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import {
   MatCard, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
+import { getUserType, isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 
 @UntilDestroy()
@@ -25,22 +23,11 @@ import { User } from 'app/interfaces/user.interface';
   ],
 })
 export class UserProfileCardComponent {
+  private translate = inject(TranslateService);
+
   user = input.required<User>();
 
-  constructor(
-    private translate: TranslateService,
-  ) {}
-
-  protected type = computed(() => {
-    if (this.user().builtin) {
-      return this.translate.instant('Built-In');
-    }
-    if (this.user().local) {
-      return this.translate.instant('Local');
-    }
-
-    return this.translate.instant('Directory Services');
-  });
+  protected type = computed(() => this.translate.instant(getUserType(this.user())));
 
   protected hasHomeDirectory = computed(() => {
     return !isEmptyHomeDirectory(this.user().home);

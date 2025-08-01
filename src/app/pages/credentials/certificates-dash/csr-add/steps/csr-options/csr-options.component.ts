@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -41,6 +39,10 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class CsrOptionsComponent implements SummaryProvider {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+
   hasLifetime = input(false);
 
   form = this.formBuilder.nonNullable.group({
@@ -61,12 +63,6 @@ export class CsrOptionsComponent implements SummaryProvider {
   readonly digestAlgorithms$ = of(mapToOptions(certificateDigestAlgorithmLabels, this.translate));
   readonly keyLengths$ = of(certificateKeyLengths);
   readonly ecCurves$ = this.api.call('certificate.ec_curve_choices').pipe(choicesToOptions());
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private api: ApiService,
-  ) { }
 
   getSummary(): SummarySection {
     const values = this.form.getRawValue();

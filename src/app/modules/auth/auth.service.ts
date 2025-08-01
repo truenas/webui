@@ -1,14 +1,18 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { environment } from 'environments/environment';
 import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject,
   catchError,
+  combineLatest,
   filter,
   map,
   Observable,
   of,
   ReplaySubject,
+  Subject,
   Subscription,
   switchMap,
   take,
@@ -16,6 +20,7 @@ import {
   timer,
 } from 'rxjs';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
+import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
@@ -32,14 +37,29 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class AuthService implements OnDestroy {
+  private store$ = inject<Store<AppState>>(Store);
+  private api = inject(ApiService);
+  private tokenLastUsedService = inject(TokenLastUsedService);
+  private wsStatus = inject(WebSocketStatusService);
+  private errorHandler = inject(ErrorHandlerService);
+  private window = inject<Window>(WINDOW);
+
   @LocalStorage() private token: string | undefined | null;
   protected loggedInUser$ = new BehaviorSubject<LoggedInUser | null>(null);
-  wasOneTimePasswordChanged$ = new BehaviorSubject<boolean>(false);
-  wasRequiredPasswordChanged$ = new BehaviorSubject<boolean>(false);
+
+  // Store pending authentication data before session initialization
+  private pendingAuthData: {
+    userInfo: LoggedInUser;
+    authenticator?: AuthenticatorLoginLevel;
+  } | null = null;
+
+  // Flag to prevent premature adminUiInitialized dispatch
+  private sessionInitialized = false;
 
   /**
    * This is 10 seconds less than 300 seconds which is the default life
@@ -50,7 +70,7 @@ export class AuthService {
 
   private latestTokenGenerated$ = new ReplaySubject<string | null>(1);
   get authToken$(): Observable<string> {
-    return this.latestTokenGenerated$.asObservable().pipe(filter<string>((token) => !!token));
+    return this.latestTokenGenerated$.asObservable().pipe(filter((token): token is string => !!token));
   }
 
   get hasAuthToken(): boolean {
@@ -60,16 +80,22 @@ export class AuthService {
   private generateTokenSubscription: Subscription | null;
 
   readonly user$ = this.loggedInUser$.asObservable();
-  readonly isTokenAllowed$ = new BehaviorSubject<boolean>(false);
+  private readonly checkIsTokenAllowed$ = new Subject<void>();
 
-  isOtpwUser$: Observable<boolean> = this.user$.pipe(
+  readonly isLocalUser$: Observable<boolean> = this.user$.pipe(
     filter(Boolean),
-    map((user) => user.account_attributes.includes(AccountAttribute.Otpw)),
+    map((user) => user.account_attributes.includes(AccountAttribute.Local)),
   );
 
-  isPasswordChangeRequired$: Observable<boolean> = this.user$.pipe(
-    filter(Boolean),
-    map((user) => user.account_attributes.includes(AccountAttribute.PasswordChangeRequired)),
+  private readonly hasPasswordChangedSinceLastLogin$ = new BehaviorSubject(false);
+  readonly isPasswordChangeRequired$: Observable<boolean> = combineLatest([
+    this.user$.pipe(
+      filter(Boolean),
+      map((user) => user.account_attributes.includes(AccountAttribute.PasswordChangeRequired)),
+    ),
+    this.hasPasswordChangedSinceLastLogin$,
+  ]).pipe(
+    map(([changeRequired, changedSinceLastLogin]) => changeRequired && !changedSinceLastLogin),
   );
 
   /**
@@ -85,16 +111,9 @@ export class AuthService {
     map((user) => user.two_factor_config),
   );
 
-  private cachedGlobalTwoFactorConfig: GlobalTwoFactorConfig | null;
+  private readonly cachedGlobalTwoFactorConfig$ = new BehaviorSubject<GlobalTwoFactorConfig | null>(null);
 
-  constructor(
-    private store$: Store<AppState>,
-    private api: ApiService,
-    private tokenLastUsedService: TokenLastUsedService,
-    private wsStatus: WebSocketStatusService,
-    private errorHandler: ErrorHandlerService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.setupAuthenticationUpdate();
     this.setupWsConnectionUpdate();
     this.setupPeriodicTokenGeneration();
@@ -102,19 +121,21 @@ export class AuthService {
   }
 
   getGlobalTwoFactorConfig(): Observable<GlobalTwoFactorConfig> {
-    if (this.cachedGlobalTwoFactorConfig) {
-      return of(this.cachedGlobalTwoFactorConfig);
-    }
+    return this.cachedGlobalTwoFactorConfig$.pipe(
+      switchMap((cachedConfig) => {
+        if (cachedConfig) {
+          return of(cachedConfig);
+        }
 
-    return this.api.call('auth.twofactor.config').pipe(
-      tap((config) => {
-        this.cachedGlobalTwoFactorConfig = config;
+        return this.api.call('auth.twofactor.config').pipe(
+          tap((config) => this.cachedGlobalTwoFactorConfig$.next(config)),
+        );
       }),
     );
   }
 
   globalTwoFactorConfigUpdated(): void {
-    this.cachedGlobalTwoFactorConfig = null;
+    this.cachedGlobalTwoFactorConfig$.next(null);
   }
 
   /**
@@ -130,17 +151,42 @@ export class AuthService {
     this.setupTokenUpdate();
   }
 
-  login(username: string, password: string, otp: string | null = null): Observable<LoginResult> {
-    return (otp
+  login(
+    username: string,
+    password: string,
+    otp: string | null = null,
+  ): Observable<{ loginResult: LoginResult; loginResponse: LoginExResponse }> {
+    const loginCall$ = otp
       ? this.api.call('auth.login_ex_continue', [{ mechanism: LoginExMechanism.OtpToken, otp_token: otp }])
-      : this.api.call('auth.login_ex', [{ mechanism: LoginExMechanism.PasswordPlain, username, password }])
-    ).pipe(
-      switchMap((loginResult) => this.processLoginResult(loginResult)),
+      : this.api.call('auth.login_ex', [{ mechanism: LoginExMechanism.PasswordPlain, username, password }]);
+
+    return loginCall$.pipe(
+      switchMap((result) => this.processLoginResult(result).pipe(
+        map((loginResult) => ({
+          loginResponse: result,
+          loginResult,
+        })),
+      )),
+    );
+  }
+
+  isTwoFactorSetupRequired(): Observable<boolean> {
+    return this.getGlobalTwoFactorConfig().pipe(
+      switchMap((globalConfig) => {
+        if (!globalConfig.enabled) {
+          return of(false);
+        }
+
+        return this.userTwoFactorConfig$.pipe(
+          map((userConfig) => !userConfig.secret_configured),
+        );
+      }),
     );
   }
 
   setQueryToken(token: string | null): void {
-    if (!token || this.window.location.protocol !== 'https:') {
+    const isSecure = this.window.location.protocol === 'https:' || !environment.production;
+    if (!token || !isSecure) {
       return;
     }
 
@@ -191,18 +237,27 @@ export class AuthService {
     return this.api.call('auth.logout').pipe(
       tap(() => {
         this.clearAuthToken();
-        this.wasOneTimePasswordChanged$.next(false);
-        this.wasRequiredPasswordChanged$.next(false);
+        this.hasPasswordChangedSinceLastLogin$.next(false);
         this.wsStatus.setLoginStatus(false);
         this.api.clearSubscriptions();
+        this.sessionInitialized = false;
+        this.pendingAuthData = null;
       }),
     );
+  }
+
+  requiredPasswordChanged(): void {
+    this.hasPasswordChangedSinceLastLogin$.next(true);
+  }
+
+  isFullAdmin(): Observable<boolean> {
+    return this.hasRole([Role.FullAdmin]).pipe(take(1));
   }
 
   refreshUser(): Observable<undefined> {
     this.loggedInUser$.next(null);
     return this.getLoggedInUserInformation().pipe(
-      map(() => undefined),
+      map((): undefined => undefined),
     );
   }
 
@@ -210,43 +265,96 @@ export class AuthService {
     return this.api.call('auth.generate_token', [300, {}, true, true]);
   }
 
-  private processLoginResult(loginResult: LoginExResponse): Observable<LoginResult> {
+  /**
+   * Completes the login process by initializing the session.
+   * This should only be called after all pre-flight checks (like failover) have passed.
+   */
+  initializeSession(): Observable<LoginResult> {
+    if (!this.pendingAuthData) {
+      return of(LoginResult.NoToken);
+    }
+
+    const { userInfo, authenticator } = this.pendingAuthData;
+
+    // Now safe to set the user and initialize the app
+    this.loggedInUser$.next(userInfo);
+    this.wsStatus.setLoginStatus(true);
+    this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
+
+    // Mark session as initialized and dispatch adminUiInitialized
+    this.sessionInitialized = true;
+    this.store$.dispatch(adminUiInitialized());
+
+    // Clear pending data
+    this.pendingAuthData = null;
+
+    if (authenticator === AuthenticatorLoginLevel.Level1) {
+      this.checkIsTokenAllowed$.next();
+      return this.latestTokenGenerated$.pipe(
+        take(1),
+        map(() => LoginResult.Success),
+        catchError(() => {
+          // Clean up on error
+          this.cleanupFailedSession();
+          return of(LoginResult.NoToken);
+        }),
+      );
+    }
+
+    return of(LoginResult.Success);
+  }
+
+  protected processLoginResult(loginResult: LoginExResponse): Observable<LoginResult> {
     return of(loginResult).pipe(
       switchMap((result) => {
         if (result.response_type === LoginExResponseType.Success) {
-          this.loggedInUser$.next(result.user_info);
-
           if (!result.user_info?.privilege?.webui_access) {
-            this.wsStatus.setLoginStatus(false);
+            // Don't set login status here - wait for session initialization
             return of(LoginResult.NoAccess);
           }
 
-          this.wsStatus.setLoginStatus(true);
-          this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
-          if (result?.authenticator === AuthenticatorLoginLevel.Level1) {
-            this.isTokenAllowed$.next(true);
-            return this.authToken$.pipe(
-              take(1),
-              map(() => LoginResult.Success),
-            );
-          }
+          // Store authentication data but don't initialize session yet
+          this.pendingAuthData = {
+            userInfo: result.user_info,
+            authenticator: result?.authenticator,
+          };
+
+          // Return success but session is not initialized
           return of(LoginResult.Success);
         }
-        this.wsStatus.setLoginStatus(false);
+
+        // Don't set login status for error cases - it should remain false
+        // Clean up any pending auth data on error
+        this.pendingAuthData = null;
 
         if (result.response_type === LoginExResponseType.OtpRequired) {
           return of(LoginResult.NoOtp);
         }
+
+        if (result.response_type === LoginExResponseType.Redirect) {
+          return of(LoginResult.Redirect);
+        }
+
         return of(LoginResult.IncorrectDetails);
       }),
     );
   }
 
   private setupPeriodicTokenGeneration(): void {
-    this.isTokenAllowed$.pipe(
-      filter(Boolean),
+    this.checkIsTokenAllowed$.pipe(
       filterAsync(() => this.wsStatus.isAuthenticated$),
-    ).subscribe(() => {
+      switchMap(() => this.api.call('auth.mechanism_choices').pipe(
+        catchError((wsError: unknown) => {
+          console.error(wsError);
+          return of([]);
+        }),
+      )),
+      map((choices) => choices.includes(AuthMechanism.TokenPlain)),
+    ).subscribe((canGenerateToken) => {
+      if (!canGenerateToken) {
+        this.latestTokenGenerated$.next(null);
+        return;
+      }
       if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
         this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
           switchMap(() => this.wsStatus.isAuthenticated$.pipe(take(1))),
@@ -266,10 +374,12 @@ export class AuthService {
     );
   }
 
-  private setupAuthenticationUpdate(): void {
-    this.wsStatus.isAuthenticated$.subscribe({
+  protected setupAuthenticationUpdate(): void {
+    this.wsStatus.isAuthenticated$.pipe(
+      untilDestroyed(this),
+    ).subscribe({
       next: (isAuthenticated) => {
-        if (isAuthenticated) {
+        if (isAuthenticated && this.sessionInitialized) {
           this.store$.dispatch(adminUiInitialized());
         } else if (this.generateTokenSubscription) {
           this.latestTokenGenerated$?.complete();
@@ -277,20 +387,43 @@ export class AuthService {
           this.setupTokenUpdate();
           this.generateTokenSubscription.unsubscribe();
           this.generateTokenSubscription = null;
+          this.cachedGlobalTwoFactorConfig$.next(null);
         }
       },
     });
   }
 
-  private setupWsConnectionUpdate(): void {
-    this.wsStatus.isConnected$.pipe(filter((isConnected) => !isConnected)).subscribe(() => {
+  protected setupWsConnectionUpdate(): void {
+    this.wsStatus.isConnected$.pipe(
+      filter((isConnected) => !isConnected),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.wsStatus.setLoginStatus(false);
+      this.loggedInUser$.next(null);
+      // Reset session initialized flag when connection is lost
+      this.sessionInitialized = false;
     });
   }
 
-  private setupTokenUpdate(): void {
-    this.latestTokenGenerated$.subscribe((token) => {
+  protected setupTokenUpdate(): void {
+    this.latestTokenGenerated$.pipe(
+      untilDestroyed(this),
+    ).subscribe((token) => {
       this.token = token;
     });
+  }
+
+  ngOnDestroy(): void {
+    // @UntilDestroy will handle unsubscribing from all observables
+    // Reset session state
+    this.sessionInitialized = false;
+    this.pendingAuthData = null;
+  }
+
+  protected cleanupFailedSession(): void {
+    this.sessionInitialized = false;
+    this.pendingAuthData = null;
+    this.loggedInUser$.next(null);
+    this.wsStatus.setLoginStatus(false);
   }
 }

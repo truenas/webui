@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -32,6 +32,12 @@ import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 @Injectable()
 export class AlertEffects {
+  private actions$ = inject(Actions);
+  private api = inject(ApiService);
+  private store$ = inject<Store<AlertSlice>>(Store);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+
   loadAlerts$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, alertIndicatorPressed, alertReceivedWhenPanelIsOpen),
     switchMap(() => {
@@ -133,12 +139,4 @@ export class AlertEffects {
       );
     }),
   ), { dispatch: false });
-
-  constructor(
-    private actions$: Actions,
-    private api: ApiService,
-    private store$: Store<AlertSlice>,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 }

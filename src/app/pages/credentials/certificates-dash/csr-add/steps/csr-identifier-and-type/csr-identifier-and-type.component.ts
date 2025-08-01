@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
@@ -39,6 +37,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private validators = inject(IxValidatorsService);
+
   readonly profileSelected = output<CertificateProfile>();
 
   form = this.formBuilder.nonNullable.group({
@@ -64,15 +69,6 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   ]);
 
   readonly createTypes$ = of(mapToOptions(this.createTypes, this.translate));
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private validators: IxValidatorsService,
-  ) {}
 
   get isImport(): boolean {
     return this.form.value.create_type === CertificateCreateType.ImportCsr;

@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -44,6 +41,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DockerRegistryFormComponent implements OnInit {
+  private api = inject(ApiService);
+  slideInRef = inject<SlideInRef<{
+    isLoggedInToDockerHub?: boolean;
+    registry?: DockerRegistry;
+  } | undefined, boolean>>(SlideInRef);
+
+  private errorHandler = inject(ErrorHandlerService);
+  private fb = inject(FormBuilder);
+  private urlValidationService = inject(UrlValidationService);
+  private translate = inject(TranslateService);
+
   protected readonly requiredRoles = [Role.AppsWrite];
 
   protected existingDockerRegistry: DockerRegistry | undefined;
@@ -73,14 +81,7 @@ export class DockerRegistryFormComponent implements OnInit {
       : this.translate.instant('Create Docker Registry');
   }
 
-  constructor(
-    private api: ApiService,
-    public slideInRef: SlideInRef<{ isLoggedInToDockerHub?: boolean; registry?: DockerRegistry } | undefined, boolean>,
-    private errorHandler: ErrorHandlerService,
-    private fb: FormBuilder,
-    private urlValidationService: UrlValidationService,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -126,7 +127,7 @@ export class DockerRegistryFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

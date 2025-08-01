@@ -3,9 +3,9 @@ import { GlobalSearchVisibleToken } from 'app/modules/global-search/enums/global
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
 export const instanceDetailsElements = {
-  hierarchy: [T('Instances')],
-  synonyms: [T('VM'), T('Virtual Machines'), T('Instances'), T('Virtualization'), T('Containers')],
-  anchorRouterLink: ['/instances/view/def'],
+  hierarchy: [T('Containers')],
+  synonyms: [T('Containers'), T('Containers')],
+  anchorRouterLink: ['/containers/view/def'],
   elements: {
     generalInfo: {
       hierarchy: [T('General Info')],
@@ -34,10 +34,6 @@ export const instanceDetailsElements = {
     tools: {
       hierarchy: [T('Tools')],
       anchor: 'tools',
-    },
-    metrics: {
-      hierarchy: [T('Metrics')],
-      anchor: 'metrics',
     },
   },
   visibleTokens: [GlobalSearchVisibleToken.Vms],

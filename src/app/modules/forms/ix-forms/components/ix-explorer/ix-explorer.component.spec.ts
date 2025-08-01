@@ -1,48 +1,49 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import {
+  ITreeState,
   TreeComponent,
   TreeModel,
   TreeModule,
 } from '@bugsplat/angular-tree-component';
-import { IDTypeDictionary } from '@bugsplat/angular-tree-component/lib/defs/api';
 import { FormControl } from '@ngneat/reactive-forms';
 import { SpectatorHost } from '@ngneat/spectator';
-import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createHostFactory } from '@ngneat/spectator/jest';
 import { MockInstance, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
-import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
-import { CreateDatasetDialog } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 
-// TODO: Update when fix is ready
-// See https://github.com/help-me-mom/ng-mocks/issues/10503
+describe('IxExplorerComponent', () => {
+  const mockNode = {
+    id: '/mnt/test',
+    data: { path: '/mnt/test', name: 'test', type: ExplorerNodeType.Directory },
+    loadNodeChildren: jest.fn().mockResolvedValue([]),
+    setIsExpanded: jest.fn(),
+    expand: jest.fn(),
+  };
 
-// eslint-disable-next-line jest/no-disabled-tests
-describe.skip('IxExplorerComponent', () => {
   const mockTreeMock = {
-    selectedLeafNodeIds: {},
+    selectedLeafNodeIds: {} as Record<string, boolean>,
     get selectedLeafNodes(): unknown[] {
       return [];
     },
-    setState(newState: { selectedLeafNodeIds: IDTypeDictionary }) {
-      this.selectedLeafNodeIds = newState.selectedLeafNodeIds;
+    setState(newState: ITreeState) {
+      const typedMockTreeMock = mockTreeMock as { selectedLeafNodeIds: Record<string, boolean> };
+      typedMockTreeMock.selectedLeafNodeIds = newState.selectedLeafNodeIds;
     },
     getState() {
+      const typedMockTreeMock = mockTreeMock as { selectedLeafNodeIds: Record<string, boolean> };
       return {
-        selectedLeafNodeIds: this.selectedLeafNodeIds,
+        selectedLeafNodeIds: typedMockTreeMock.selectedLeafNodeIds,
       };
     },
     update() {},
-  } as TreeModel;
+    getNodeByPath: jest.fn().mockReturnValue(mockNode),
+  } as unknown as TreeModel;
   jest.spyOn(mockTreeMock, 'setState');
   jest.spyOn(mockTreeMock, 'getState');
   MockInstance(TreeComponent, 'treeModel', mockTreeMock);
@@ -50,7 +51,6 @@ describe.skip('IxExplorerComponent', () => {
   const fakeNodeProvider = jest.fn(() => of([]));
 
   let spectator: SpectatorHost<IxExplorerComponent>;
-  let loader: HarnessLoader;
   const formControl = new FormControl<string | string[]>();
   const createHost = createHostFactory({
     component: IxExplorerComponent,
@@ -61,11 +61,6 @@ describe.skip('IxExplorerComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => ({
-          afterClosed: () => of({ name: 'new_dataset' } as Dataset),
-        })),
-      }),
     ],
   });
 
@@ -78,10 +73,8 @@ describe.skip('IxExplorerComponent', () => {
         [hint]="hint"
         [required]="required"
         [tooltip]="tooltip"
-        [root]="root"
+        [rootNodes]="[root]"
         [multiple]="multiple"
-        [canCreateDataset]="canCreateDataset"
-        [createDatasetProps]="createDatasetProps"
       ></ix-explorer>`,
       {
         hostProps: {
@@ -91,16 +84,22 @@ describe.skip('IxExplorerComponent', () => {
           hint: undefined,
           required: false,
           tooltip: undefined,
-          root: mntPath,
+          root: {
+            hasChildren: true,
+            name: mntPath,
+            path: mntPath,
+            type: ExplorerNodeType.Directory,
+          },
           multiple: false,
-          canCreateDataset: false,
-          createDatasetProps: {},
         },
       },
     );
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     (mockTreeMock.setState as jest.Mock).mockClear();
     (mockTreeMock.getState as jest.Mock).mockClear();
+    (mockTreeMock.getNodeByPath as jest.Mock).mockClear();
+    (mockNode.loadNodeChildren as jest.Mock).mockClear();
+    (mockNode.setIsExpanded as jest.Mock).mockClear();
+    (mockNode.expand as jest.Mock).mockClear();
   });
 
   describe('rendering – tree', () => {
@@ -112,7 +111,6 @@ describe.skip('IxExplorerComponent', () => {
           name: mntPath,
           path: mntPath,
           type: ExplorerNodeType.Directory,
-          isMountpoint: true,
         },
       ]);
     });
@@ -259,97 +257,6 @@ describe.skip('IxExplorerComponent', () => {
     });
   });
 
-  describe('creating new dataset', () => {
-    it('hides Create Dataset button when canCreateDataset is false', async () => {
-      spectator.setHostInput('canCreateDataset', false);
-      spectator.detectComponentChanges();
-
-      const createDatasetButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Create Dataset' }));
-      expect(createDatasetButton).toBeNull();
-    });
-
-    it('disables Create Dataset button when node is unselected', async () => {
-      spectator.setHostInput('canCreateDataset', true);
-      spectator.detectComponentChanges();
-
-      formControl.setValue([]);
-
-      spectator.component.tree().treeModel = {
-        ...mockTreeMock,
-        selectedLeafNodes: [{ data: { isMountpoint: true } }],
-      } as TreeModel;
-
-      const createDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-      expect(await createDatasetButton.isDisabled()).toBeTruthy();
-    });
-
-    it('disables Create Dataset button when node is not mountpoint', async () => {
-      spectator.setHostInput('canCreateDataset', true);
-      spectator.detectComponentChanges();
-
-      formControl.setValue('/mnt/place');
-
-      spectator.component.tree().treeModel = {
-        ...mockTreeMock,
-        selectedLeafNodes: [{ data: { isMountpoint: false } }],
-      } as TreeModel;
-
-      const createDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-      expect(await createDatasetButton.isDisabled()).toBeTruthy();
-    });
-
-    it('disables Create Dataset button when form control is disabled', async () => {
-      spectator.setHostInput('canCreateDataset', true);
-      spectator.setHostInput('createDatasetProps', {});
-      spectator.detectComponentChanges();
-
-      formControl.setValue('/mnt/place');
-
-      spectator.component.tree().treeModel = {
-        ...mockTreeMock,
-        selectedLeafNodes: [{ data: { isMountpoint: true } }],
-      } as TreeModel;
-
-      formControl.disable();
-      spectator.detectComponentChanges();
-
-      const createDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-      expect(await createDatasetButton.isDisabled()).toBeTruthy();
-    });
-
-    it('opens a creating dataset dialog when Create Dataset button is pressed', async () => {
-      const createDatasetProps: Omit<DatasetCreate, 'name'> = { encryption: true };
-      spectator.setHostInput('canCreateDataset', true);
-      spectator.setHostInput('createDatasetProps', createDatasetProps);
-      spectator.detectComponentChanges();
-
-      formControl.setValue('/mnt/place');
-      formControl.enable();
-
-      spectator.component.tree().treeModel = {
-        ...mockTreeMock,
-        selectedLeafNodes: [{
-          data: { isMountpoint: true },
-          expand: jest.fn(),
-        }],
-      } as TreeModel;
-
-      const createDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
-      expect(await createDatasetButton.isDisabled()).toBeFalsy();
-
-      await createDatasetButton.click();
-
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CreateDatasetDialog, {
-        data: {
-          dataset: createDatasetProps,
-          parentId: 'place',
-        },
-      });
-
-      expect(formControl.value).toBe('/mnt/new_dataset');
-    });
-  });
-
   describe('disabling', () => {
     it('disables input and explorer when form control is disabled', () => {
       formControl.disable();
@@ -362,5 +269,30 @@ describe.skip('IxExplorerComponent', () => {
     // TODO: Add test 'disables input when readonly is set to true on ix-explorer'
     // when overall tests for the component are working, after the following issue is solved
     // https://github.com/help-me-mom/ng-mocks/issues/10503
+  });
+
+  describe('expandTreeToPathNode', () => {
+    it('expands tree and selects node when user types a path in input', async () => {
+      const testPath = '/mnt/test';
+
+      spectator.typeInElement(testPath, 'input');
+      spectator.dispatchFakeEvent('input', 'change');
+
+      await spectator.fixture.whenStable();
+      spectator.detectComponentChanges();
+
+      expect(mockTreeMock.getNodeByPath).toHaveBeenCalledWith(['/']);
+      expect(mockTreeMock.getNodeByPath).toHaveBeenCalledWith(['/', '/mnt']);
+      expect(mockTreeMock.getNodeByPath).toHaveBeenCalledWith(['/', '/mnt', '/mnt/test']);
+      expect(mockNode.loadNodeChildren).toHaveBeenCalled();
+      expect(mockNode.setIsExpanded).toHaveBeenCalledWith(true);
+      expect(mockNode.expand).toHaveBeenCalled();
+      expect(spectator.component.lastSelectedNode()).toBe(mockNode);
+      expect(spectator.component.lastSelectedNode()?.id).toBe('/mnt/test');
+      expect(spectator.component.lastSelectedNode()?.data.path).toBe('/mnt/test');
+      expect(spectator.component.lastSelectedNode()?.data.name).toBe('test');
+      expect(spectator.component.lastSelectedNode()?.data.type).toBe(ExplorerNodeType.Directory);
+      expect(formControl.value).toBe(testPath);
+    });
   });
 });

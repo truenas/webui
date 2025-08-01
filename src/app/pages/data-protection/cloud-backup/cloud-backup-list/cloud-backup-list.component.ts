@@ -1,14 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input,
-  output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, output, signal, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
+import { cloudBackupTaskEmptyConfig } from 'app/constants/empty-configs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -16,6 +13,7 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -58,12 +56,24 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     AsyncPipe,
     SearchInput1Component,
+    EmptyComponent,
   ],
 })
 export class CloudBackupListComponent {
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private loader = inject(LoaderService);
+  protected emptyService = inject(EmptyService);
+
   readonly dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
   readonly cloudBackups = input<CloudBackup[]>([]);
   readonly isMobileView = input<boolean>(false);
+  protected readonly emptyConfig = cloudBackupTaskEmptyConfig;
 
   readonly toggleShowMobileDetails = output<boolean>();
   readonly searchQuery = signal<string>('');
@@ -122,17 +132,7 @@ export class CloudBackupListComponent {
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Backup')],
   });
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private loader: LoaderService,
-    protected emptyService: EmptyService,
-  ) {
+  constructor() {
     effect(() => {
       if (!this.cloudBackups().length) {
         this.dataProvider().expandedRow = null;

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
@@ -20,14 +18,12 @@ import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclos
   ],
 })
 export class EnclosureSideSwitchComponent {
+  private store = inject(EnclosureStore);
+
   readonly enclosure = input.required<DashboardEnclosure>();
 
   protected readonly hasMoreThanOneSide = this.store.hasMoreThanOneSide;
   protected readonly EnclosureSide = EnclosureSide;
-
-  constructor(
-    private store: EnclosureStore,
-  ) {}
 
   protected onSideChange(side: EnclosureSide): void {
     this.store.selectSide(side);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -35,14 +35,12 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class PowerMenuComponent {
-  protected readonly tooltips = helptextTopbar.mat_tooltips;
+  private matDialog = inject(MatDialog);
+  private router = inject(Router);
+
+  protected readonly tooltips = helptextTopbar.tooltips;
   protected readonly requiredRoles = [Role.FullAdmin];
   protected searchableElements = powerMenuElements;
-
-  constructor(
-    private matDialog: MatDialog,
-    private router: Router,
-  ) { }
 
   onReboot(): void {
     this.matDialog.open(RebootOrShutdownDialog, {

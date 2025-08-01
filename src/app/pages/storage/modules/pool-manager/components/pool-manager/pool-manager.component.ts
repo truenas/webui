@@ -1,7 +1,7 @@
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, ViewChild, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { Observable, of } from 'rxjs';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import {
   AddVdevsStore,
 } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
@@ -34,9 +34,18 @@ import {
   ],
 })
 export class PoolManagerComponent {
+  private unsavedChangesService = inject(UnsavedChangesService);
+
+  @ViewChild('poolManagerWizard') poolManagerWizard: PoolManagerWizardComponent;
+
   protected hasConfigurationPreview = true;
+  protected isFormDirty = signal(false);
 
   onStepChanged(step: PoolCreationWizardStep): void {
     this.hasConfigurationPreview = step !== PoolCreationWizardStep.Review;
+  }
+
+  canDeactivate(): Observable<boolean> {
+    return this.poolManagerWizard.isFormDirty ? this.unsavedChangesService.showConfirmDialog() : of(true);
   }
 }

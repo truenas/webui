@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -43,6 +41,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ChangeRootDiskSetupComponent {
+  private instance = inject<VirtualizationInstance>(MAT_DIALOG_DATA);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private dialogRef = inject<MatDialogRef<ChangeRootDiskSetupComponent>>(MatDialogRef);
+  protected formatter = inject(IxFormatterService);
+
   protected readonly form = this.formBuilder.group({
     size: [0],
     root_disk_io_bus: [DiskIoBus.Nvme],
@@ -51,17 +59,7 @@ export class ChangeRootDiskSetupComponent {
   protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
   protected readonly instancesHelptext = instancesHelptext;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) private instance: VirtualizationInstance,
-    private formBuilder: NonNullableFormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private dialogRef: MatDialogRef<ChangeRootDiskSetupComponent>,
-    protected formatter: IxFormatterService,
-  ) {
+  constructor() {
     this.form.setValue({
       size: Number(this.instance.root_disk_size) / GiB,
       root_disk_io_bus: this.instance.root_disk_io_bus,

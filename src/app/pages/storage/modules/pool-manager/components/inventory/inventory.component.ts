@@ -1,7 +1,5 @@
 import { KeyValue, AsyncPipe, KeyValuePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
@@ -35,6 +33,9 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
   ],
 })
 export class InventoryComponent implements OnInit {
+  poolManagerStore = inject(PoolManagerStore);
+  private cdr = inject(ChangeDetectorRef);
+
   protected sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
   protected readonly DiskType = DiskType;
 
@@ -42,11 +43,6 @@ export class InventoryComponent implements OnInit {
   protected hasDisks$ = this.poolManagerStore.inventory$.pipe(
     map((unusedDisks) => unusedDisks.length),
   );
-
-  constructor(
-    public poolManagerStore: PoolManagerStore,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.isLoading$.pipe(
@@ -63,7 +59,7 @@ export class InventoryComponent implements OnInit {
     return buildNormalizedFileSize(Number(size));
   }
 
-  orderBySize(a: KeyValue<string, DetailsDisk[]>, b: KeyValue<string, DetailsDisk[]>): number {
+  protected orderBySize(a: KeyValue<string, DetailsDisk[]>, b: KeyValue<string, DetailsDisk[]>): number {
     return Number(a.key) - Number(b.key);
   }
 }

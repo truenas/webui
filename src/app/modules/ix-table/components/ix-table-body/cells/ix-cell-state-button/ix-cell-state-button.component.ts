@@ -68,7 +68,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     this.setupRow();
   }
 
-  setupRow(): void {
+  private setupRow(): void {
     if (this.getJob) {
       const job = this.getJob(this.row());
       this.job.set(job);
@@ -151,7 +151,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
   }
 
-  showJobDialog(): void {
+  private showJobDialog(): void {
     this.dialogService.jobDialog(
       this.jobUpdates$.pipe(observeJob()),
       {
@@ -176,8 +176,8 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     switch (this.state()) {
       case JobState.Pending:
       case JobState.Aborted:
-      case JobState.Running:
         return 'fn-theme-orange';
+      case JobState.Running:
       case JobState.Finished:
       case JobState.Success:
         return 'fn-theme-green';

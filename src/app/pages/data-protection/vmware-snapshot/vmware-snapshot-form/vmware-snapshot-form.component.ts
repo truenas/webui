@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -48,6 +46,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class VmwareSnapshotFormComponent implements OnInit {
+  private errorHandler = inject(ErrorHandlerService);
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  protected dialogService = inject(DialogService);
+  slideInRef = inject<SlideInRef<VmwareSnapshot | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
 
   get isNew(): boolean {
@@ -93,16 +100,9 @@ export class VmwareSnapshotFormComponent implements OnInit {
   filesystemOptions$ = of<Option[]>([]);
   datastoreOptions$ = of<Option[]>([]);
 
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private fb: FormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-    private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    protected dialogService: DialogService,
-    public slideInRef: SlideInRef<VmwareSnapshot | undefined, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -130,7 +130,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
     return !hostname || !username || !password;
   }
 
-  setSnapshotForEdit(): void {
+  private setSnapshotForEdit(): void {
     this.form.patchValue(this.editingSnapshot);
     this.onFetchDataStores();
   }
@@ -226,7 +226,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
       request$.pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading = false;

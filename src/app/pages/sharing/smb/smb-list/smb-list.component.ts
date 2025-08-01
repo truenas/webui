@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -12,13 +10,16 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, of, take, tap,
 } from 'rxjs';
+import { smbCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { shared } from 'app/helptext/sharing';
-import { SmbShare } from 'app/interfaces/smb-share.interface';
+import { SmbSharePurpose, SmbShare } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -55,6 +56,7 @@ import { selectService } from 'app/store/services/services.selectors';
 @Component({
   selector: 'ix-smb-list',
   templateUrl: './smb-list.component.html',
+  styleUrls: ['./smb-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
@@ -77,11 +79,25 @@ import { selectService } from 'app/store/services/services.selectors';
     TranslateModule,
     AsyncPipe,
     RouterLink,
+    EmptyComponent,
   ],
 })
 export class SmbListComponent implements OnInit {
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private dialog = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
+  protected emptyService = inject(EmptyService);
+  private router = inject(Router);
+  private store$ = inject<Store<ServicesState>>(Store);
+
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   protected readonly searchableElements = smbListElements;
+  protected readonly emptyConfig = smbCardEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
@@ -96,7 +112,7 @@ export class SmbListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Path'),
-      propertyName: 'path_local',
+      propertyName: 'path',
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -128,13 +144,14 @@ export class SmbListComponent implements OnInit {
         {
           iconName: iconMarker('share'),
           tooltip: this.translate.instant('Edit Share ACL'),
-          requiredRoles: this.requiredRoles,
           onClick: (row) => {
             if (row.locked) {
               this.lockedPathDialog(row.path);
             } else {
               // A home share has a name (homes) set; row.name works for other shares
-              const searchName = row.home ? 'homes' : row.name;
+              const searchName = (row.purpose === SmbSharePurpose.LegacyShare && row.options?.home)
+                ? 'homes'
+                : row.name;
               this.loader.open();
               this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
                 .pipe(untilDestroyed(this))
@@ -154,7 +171,6 @@ export class SmbListComponent implements OnInit {
         {
           iconName: iconMarker('security'),
           tooltip: this.translate.instant('Edit Filesystem ACL'),
-          requiredRoles: this.requiredRoles,
           disabled: (row) => of(isRootShare(row.path)),
           onClick: (row) => {
             if (row.locked) {
@@ -162,7 +178,7 @@ export class SmbListComponent implements OnInit {
             } else {
               this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
                 queryParams: {
-                  path: row.path_local,
+                  path: row.path,
                 },
               });
             }
@@ -201,19 +217,6 @@ export class SmbListComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('SMB Share')],
   });
 
-  constructor(
-    private loader: LoaderService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private dialog: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-    protected emptyService: EmptyService,
-    private router: Router,
-    private store$: Store<ServicesState>,
-  ) {}
-
   ngOnInit(): void {
     const shares$ = this.api.call('sharing.smb.query').pipe(
       tap((shares) => this.smbShares = shares),
@@ -227,7 +230,7 @@ export class SmbListComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 0,
       direction: SortDirection.Asc,
@@ -235,7 +238,7 @@ export class SmbListComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(SmbFormComponent).pipe(
       take(1),
       filter((response) => !!response.response),
@@ -247,7 +250,7 @@ export class SmbListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({
       query,
@@ -256,7 +259,7 @@ export class SmbListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();

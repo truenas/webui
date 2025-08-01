@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -63,6 +61,15 @@ import { waitForServices } from 'app/store/services/services.selectors';
   ],
 })
 export class ServicesComponent implements OnInit {
+  protected emptyService = inject(EmptyService);
+  private servicesService = inject(ServicesService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private store$ = inject<Store<ServicesState>>(Store);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+
   protected readonly searchableElements = servicesElements;
   protected readonly requiredRoles = [Role.ServiceWrite];
 
@@ -98,7 +105,7 @@ export class ServicesComponent implements OnInit {
   error = false;
   loading = true;
 
-  get emptyConfig(): EmptyType {
+  protected get emptyConfig(): EmptyType {
     switch (true) {
       case this.loading:
         return EmptyType.Loading;
@@ -111,22 +118,11 @@ export class ServicesComponent implements OnInit {
     }
   }
 
-  constructor(
-    protected emptyService: EmptyService,
-    private servicesService: ServicesService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private store$: Store<ServicesState>,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-  ) {}
-
   ngOnInit(): void {
     this.getData();
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({
       list: this.services,

@@ -8,7 +8,10 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import {
+  VirtualizationInstance,
+  VirtualizationInstanceMetrics,
+} from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -24,9 +27,22 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 const instance = {
   id: 'my-instance',
   name: 'agi_instance',
+  autostart: false,
   status: VirtualizationStatus.Running,
   type: VirtualizationType.Container,
 } as VirtualizationInstance;
+
+const metrics: VirtualizationInstanceMetrics = {
+  cpu: {
+    cpu_user_percentage: 20,
+  },
+  mem_usage: {
+    mem_usage_ram_mib: 512,
+  },
+  io_full_pressure: {
+    io_full_pressure_full_60_percentage: 10,
+  },
+};
 
 describe('InstanceRowComponent', () => {
   let spectator: Spectator<InstanceRowComponent>;
@@ -70,7 +86,7 @@ describe('InstanceRowComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent({
-      props: { instance },
+      props: { instance, metrics },
     });
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -86,9 +102,16 @@ describe('InstanceRowComponent', () => {
       expect(cells[2]).toHaveText('Running');
     });
 
-    it('shows instance type', () => {
+    it('shows autostart value', () => {
       const cells = spectator.queryAll('.cell');
-      expect(cells[3]).toHaveText('Container');
+      expect(cells[3]).toHaveText('No');
+    });
+
+    it('shows metrics', () => {
+      const cells = spectator.queryAll('.cell');
+      expect(cells[4]).toHaveText('20%');
+      expect(cells[5]).toHaveText('512 MiB');
+      expect(cells[6]).toHaveText('10%');
     });
 
     it('shows Stop and Restart button when instance is Running', async () => {
@@ -135,7 +158,7 @@ describe('InstanceRowComponent', () => {
         'virt.instance.stop',
         ['my-instance', { force: true, timeout: -1 }],
       );
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Instance stopped');
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container stopped');
     });
 
     it('shows restart options dialog and restarts instance when Restart icon is pressed', async () => {
@@ -150,7 +173,7 @@ describe('InstanceRowComponent', () => {
         'virt.instance.restart',
         ['my-instance', { force: true, timeout: -1 }],
       );
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Instance restarted');
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container restarted');
     });
 
     it('starts an instance when Start icon is pressed', async () => {
@@ -164,7 +187,7 @@ describe('InstanceRowComponent', () => {
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.start', ['my-instance']);
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Instance started');
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container started');
     });
   });
 });

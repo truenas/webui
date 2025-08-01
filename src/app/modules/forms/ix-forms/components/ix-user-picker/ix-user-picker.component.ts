@@ -67,6 +67,9 @@ import { OldUserFormComponent } from 'app/pages/credentials/users/user-form/user
   ],
 })
 export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
+  controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly label = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
@@ -107,10 +110,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     disabled: false,
   };
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 
@@ -312,7 +312,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     return result.response.username;
   }
 
-  listenForAddNew(): void {
+  private listenForAddNew(): void {
     this.controlDirective?.control?.valueChanges?.pipe(
       distinctUntilChanged(),
       filter((selectedOption) => selectedOption === newOption),

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -20,6 +18,9 @@ import { CustomLayoutAppliedComponent } from './custom-layout-applied/custom-lay
   imports: [AutomatedDiskSelectionComponent, CustomLayoutAppliedComponent],
 })
 export class LayoutStepComponent implements OnInit {
+  private store = inject(PoolManagerStore);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly isStepActive = input<boolean>(false);
   readonly type = input.required<VDevType>();
   readonly description = input<string>();
@@ -30,11 +31,6 @@ export class LayoutStepComponent implements OnInit {
   readonly inventory = input<DetailsDisk[]>([]);
 
   protected topologyCategory: PoolManagerTopologyCategory;
-
-  constructor(
-    private store: PoolManagerStore,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.connectToStore();

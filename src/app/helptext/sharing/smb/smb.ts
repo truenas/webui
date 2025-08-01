@@ -49,6 +49,16 @@ export const helptextSharingSmb = {
   timemachineQuotaLabel: T('Time Machine Quota'),
   timemachineQuotaTooltip: T('Number of bytes'),
 
+  autoDatasetCreationLabel: T('Auto Dataset Creation'),
+  autoDatasetCreationTooltip: T('Create dataset automatically if it does not exist.'),
+  datasetNamingSchemaLabel: T('Dataset Naming Schema'),
+  datasetNamingSchemaTooltip: T('The naming schema to use when Auto Dataset Creation is specified.\
+ If you do not set a schema, the server uses %u (username) if it is not joined to Active Directory.\
+ If the server is joined to Active Directory it uses %D/%u (domain/username).'),
+  autoQuotaLabel: T('Auto Quota'),
+  autoQuotaTooltip: T('Set the specified ZFS quota (in gibibytes) on new datasets.\
+ If the value is zero, TrueNAS disables automatic quotas for the share.'),
+
   afpLabel: T('Legacy AFP Compatibility'),
   afpTooltip: T(
     'This controls how the SMB share reads and writes data. Leave unset for the share to behave like a normal SMB share and set for the share to behave like the deprecated Apple Filing Protocol (AFP). This should only be set when this share originated as an AFP sharing configuration. This is not required for pure SMB shares or MacOS SMB clients.',
@@ -82,8 +92,8 @@ export const helptextSharingSmb = {
     dataset if we have nested datasets. Because of (2) there is no \
     automatic deletion based on file size.'),
 
-  placeholder_guestok: T('Allow Guest Access'),
-  tooltip_guestok: T(
+  guestokLabel: T('Allow Guest Access'),
+  guestokTooltip: T(
     'Legacy feature. <br><br>Privileges are the same as the guest account. \
  Guest access is disabled by default in Windows 10 version 1709 and \
  Windows Server version 1903. Additional client-side configuration is \
@@ -96,17 +106,30 @@ export const helptextSharingSmb = {
  for more details.',
   ),
 
-  placeholder_abe: T('Access Based Share Enumeration'),
-  tooltip_abe: T(
+  abeLabel: T('Access Based Share Enumeration'),
+  abeTooltip: T(
     'Restrict share visibility to users with read or write access\
  to the share. See the <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html"\
  target=_blank>smb.conf</a> manual page.',
   ),
 
-  placeholder_hostsallow: T('Hosts Allow'),
-
-  placeholder_hostsdeny: T('Hosts Deny'),
-  tooltip_hostsdeny: T(
+  hostsallowLabel: T('Hosts Allow'),
+  hostsAllowTooltip: T('Enter a list of allowed hostnames or IP addresses.\
+    Separate entries by pressing <code>Enter</code>. A more detailed description \
+    with examples can be found \
+    <a href="https://wiki.samba.org/index.php/1.4_Samba_Security" target="_blank">here</a>. <br><br> \
+    If neither *Hosts Allow* or *Hosts Deny* contains \
+    an entry, then SMB share access is allowed for any host. <br><br> \
+    If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow \
+    hosts on the *Hosts Allow* list. <br><br> \
+    If there is a *Hosts Deny* list but no *Hosts Allow* list, then allow all \
+    hosts that are not on the *Hosts Deny* list. <br><br> \
+    If there is both a *Hosts Allow* and *Hosts Deny* list, then allow all hosts \
+    that are on the *Hosts Allow* list. <br><br> \
+    If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* list, \
+    then allow it.'),
+  hostsdenyLabel: T('Hosts Deny'),
+  hostsdenyTooltip: T(
     'Enter a list of denied hostnames or IP addresses.\
  Separate entries by pressing <code>Enter</code>. \
  If neither *Hosts Allow* or *Hosts Deny* contains \
@@ -121,35 +144,35 @@ export const helptextSharingSmb = {
  then allow it.',
   ),
 
-  placeholder_shadowcopy: T('Enable Shadow Copies'),
-  tooltip_shadowcopy: T(
+  shadowcopyLabel: T('Enable Shadow Copies'),
+  shadowcopyTooltip: T(
     'Export ZFS snapshots as\
  <a href="https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-and-shadow-copy-sets"\
  target=_blank>Shadow Copies</a> for VSS clients.',
   ),
 
-  placeholder_aapl_name_mangling: T('Use Apple-style Character Encoding'),
-  tooltip_aapl_name_mangling: T(
+  aaplNameManglingLabel: T('Use Apple-style Character Encoding'),
+  aaplNameManglingTooltip: T(
     'By default, Samba uses a hashing algorithm for NTFS illegal \
  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.',
   ),
 
-  placeholder_streams: T('Enable Alternate Data Streams'),
-  tooltip_streams: T(
+  streamsLabel: T('Enable Alternate Data Streams'),
+  streamsTooltip: T(
     'Allows multiple \
  <a href="http://www.ntfs.com/ntfs-multiple.htm">NTFS data streams</a>. \
  Disabling this option causes macOS to write streams to files on the filesystem.',
   ),
 
-  placeholder_durablehandle: T('Enable SMB2/3 Durable Handles'),
-  tooltip_durablehandle: T(
+  durablehandleLabel: T('Enable SMB2/3 Durable Handles'),
+  durablehandleTooltip: T(
     'Allow using open file handles that can withstand short disconnections. \
  Support for POSIX byte-range locks in Samba is also disabled. This option is not recommended when \
  configuring multi-protocol or local access to files.',
   ),
 
-  placeholder_fsrvp: T('Enable FSRVP'),
-  tooltip_fsrvp: T(
+  fsrvpLabel: T('Enable FSRVP'),
+  fsrvpTooltip: T(
     'Enable support for the File Server Remote VSS Protocol \
  (<a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp" target="_blank">FSRVP</a>). \
  This protocol allows RPC clients to manage snapshots for a specific SMB share. \
@@ -158,8 +181,8 @@ export const helptextSharingSmb = {
  this prefix for an RPC user to delete it.',
   ),
 
-  placeholder_path_suffix: T('Path Suffix'),
-  tooltip_path_suffix: T(
+  pathSuffixLabel: T('Path Suffix'),
+  pathSuffixTooltip: T(
     'Appends a suffix to the share connection path. \
  This is used to provide unique shares on a per-user, per-computer, or per-IP address basis. \
  Suffixes can contain a macro. See the \
@@ -167,22 +190,22 @@ export const helptextSharingSmb = {
  a list of supported macros. The connectpath **must** be preset before a client connects.',
   ),
 
-  placeholder_auxsmbconf: T('Additional Parameters String'),
-  tooltip_auxsmbconf: T('String of additional smb4.conf parameters not covered by the system\'s API.'),
+  auxsmbconfLabel: T('Additional Parameters String'),
+  auxsmbconfTooltip: T('String of additional smb4.conf parameters not covered by the system\'s API.'),
 
-  restarted_smb_dialog: {
+  restartedSmbDialog: {
     title: T('SMB Service'),
     message: T('The SMB service has been restarted.'),
   },
 
-  ae_perm_tooltip: T(
+  aePermTooltip: T(
     'Predefined permission combinations:<br><i>Read</i>:\
  Read access and Execute permission on the object (RX).<br><i>Change</i>: Read\
  access, Execute permission, Write access, and Delete object (RXWD).<br><i>Full</i>:\
  Read access, Execute permission, Write access, Delete object, change Permissions, and take Ownership (RXWDPO).<br><br>\
  For more details, see <a href="https://www.samba.org/samba/docs/current/man-html/smbcacls.1.html" target="_blank">smbacls(1)</a>.',
   ),
-  ae_type_tooltip: T(
+  aeTypeTooltip: T(
     'How permissions are applied to the share.\
  <i>Allowed</i> denies all permissions by default except those that are manually defined.\
  <i>Denied</i> allows all permissions by default except those that are manually defined.',
@@ -195,9 +218,9 @@ export const helptextSharingSmb = {
     title: T('Warning'),
     message: T(
       'An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share. \
- ACLs must be stripped from the dataset prior to creating an SMB share.',
+ ACLs should be stripped from the dataset prior to creating an SMB share.',
     ),
-    button: T('Close'),
+    button: T('Continue'),
   },
 
   manglingDialog: {

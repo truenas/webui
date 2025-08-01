@@ -1,11 +1,11 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -20,14 +20,15 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { NvmeOfService } from 'app/pages/sharing/nvme-of/utils/nvme-of.service';
+import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-nvme-of-configuration',
   templateUrl: './nvme-of-configuration.component.html',
-  styleUrls: ['./nvme-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
@@ -46,25 +47,24 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class NvmeOfConfigurationComponent implements OnInit {
+  slideInRef = inject<SlideInRef<void, boolean>>(SlideInRef);
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private nvmeOfService = inject(NvmeOfService);
+  private store$ = inject<Store<AppState>>(Store);
+
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
   protected isLoading = signal(false);
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   protected form = this.formBuilder.nonNullable.group({
     basenqn: [''],
     ana: [false],
     rdma: [false],
-    xport_referral: [false],
   });
-
-  constructor(
-    public slideInRef: SlideInRef<void, boolean>,
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private nvmeOfService: NvmeOfService,
-  ) {}
 
   protected readonly helptext = helptextNvmeOf;
 
@@ -88,6 +88,10 @@ export class NvmeOfConfigurationComponent implements OnInit {
       if (!isRdmaEnabled) {
         this.form.controls.rdma.disable();
       }
+
+      if (!this.isEnterprise()) {
+        this.form.controls.ana.disable();
+      }
     });
   }
 
@@ -104,7 +108,6 @@ export class NvmeOfConfigurationComponent implements OnInit {
       this.snackbar.success(this.translate.instant('Global configuration updated.'));
       this.slideInRef.close({
         response: true,
-        error: null,
       });
     });
   }

@@ -1,10 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component,
-  OnInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
@@ -73,6 +68,12 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   ],
 })
 export class GroupListComponent implements OnInit {
+  private emptyService = inject(EmptyService);
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
+  private store$ = inject<Store<AppState>>(Store);
+  private translate = inject(TranslateService);
+
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly searchableElements = groupListElements;
 
@@ -133,17 +134,9 @@ export class GroupListComponent implements OnInit {
     }),
   );
 
-  get emptyConfigService(): EmptyService {
+  protected get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
-
-  constructor(
-    private emptyService: EmptyService,
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
-    private translate: TranslateService,
-  ) { }
 
   ngOnInit(): void {
     this.store$.dispatch(groupPageEntered());
@@ -152,20 +145,20 @@ export class GroupListComponent implements OnInit {
     this.setDefaultSort();
   }
 
-  toggleBuiltins(): void {
+  protected toggleBuiltins(): void {
     this.store$.dispatch(builtinGroupsToggled());
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(GroupFormComponent);
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ list: this.groups, query, columnKeys: ['group', 'gid'] });
   }
 
-  handleDeletedGroup(id: number): void {
+  protected handleDeletedGroup(id: number): void {
     this.store$.dispatch(groupRemoved({ id }));
   }
 

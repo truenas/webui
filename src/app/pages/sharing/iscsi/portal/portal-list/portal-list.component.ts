@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -64,6 +62,16 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class PortalListComponent implements OnInit {
+  emptyService = inject(EmptyService);
+  private loader = inject(LoaderService);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private errorHandler = inject(ErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private iscsiService = inject(IscsiService);
+
   protected readonly searchableElements = portalListElements;
 
   protected readonly requiredRoles = [
@@ -139,18 +147,6 @@ export class PortalListComponent implements OnInit {
     ariaLabels: (row) => [row.comment, this.translate.instant('Portal')],
   });
 
-  constructor(
-    public emptyService: EmptyService,
-    private loader: LoaderService,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private iscsiService: IscsiService,
-  ) {}
-
   ngOnInit(): void {
     this.iscsiService.getIpChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
       this.ipChoices = new Map(Object.entries(choices));
@@ -170,19 +166,19 @@ export class PortalListComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(PortalFormComponent).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.refresh());
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['comment'] });
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();

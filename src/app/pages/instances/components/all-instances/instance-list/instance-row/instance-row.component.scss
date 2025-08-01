@@ -27,7 +27,10 @@
       }
     }
 
-    &:nth-child(2) {
+    &:nth-child(2),
+    &:nth-child(6),
+    &:nth-child(7),
+    &:nth-child(8) {
       @media (max-width: $breakpoint-xs) {
         display: inline-flex;
 

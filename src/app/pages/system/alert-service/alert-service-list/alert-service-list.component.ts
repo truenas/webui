@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -63,6 +61,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AlertServiceListComponent implements OnInit {
+  protected emptyService = inject(EmptyService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private cdr = inject(ChangeDetectorRef);
+
   protected readonly requiredRoles = [Role.AlertListWrite];
   protected readonly searchableElements = alertServiceListElements;
 
@@ -76,10 +82,11 @@ export class AlertServiceListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Type'),
-      propertyName: 'type',
-      getValue: (service) => this.translate.instant(
-        alertServiceNames.find((alertService) => alertService.value === service.type)?.label || '',
-      ),
+      getValue: (service) => {
+        return this.translate.instant(
+          alertServiceNames.find((alertService) => alertService.value === service.attributes.type)?.label || '',
+        );
+      },
     }),
     textColumn({
       title: this.translate.instant('Level'),
@@ -119,16 +126,6 @@ export class AlertServiceListComponent implements OnInit {
 
   private alertServices: AlertService[] = [];
 
-  constructor(
-    protected emptyService: EmptyService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
-  ) { }
-
   ngOnInit(): void {
     const alertServices$ = this.api.call('alertservice.query').pipe(
       tap((alertServices) => this.alertServices = alertServices),
@@ -141,7 +138,7 @@ export class AlertServiceListComponent implements OnInit {
     });
   }
 
-  addAlertService(): void {
+  protected addAlertService(): void {
     this.slideIn.open(AlertServiceComponent).pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -150,7 +147,7 @@ export class AlertServiceListComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setFilter({ list: this.alertServices, query, columnKeys: ['name', 'type', 'level'] });
+    this.dataProvider.setFilter({ list: this.alertServices, query, columnKeys: ['name', 'level'] });
   }
 
   protected columnsChange(columns: typeof this.columns): void {

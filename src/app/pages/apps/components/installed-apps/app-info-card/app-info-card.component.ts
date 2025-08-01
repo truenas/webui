@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, effect, Inject, input, output,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal, WritableSignal, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
@@ -16,7 +12,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
-  filter, map, switchMap, take, tap,
+  filter, switchMap, tap,
 } from 'rxjs';
 import { appImagePlaceholder, customApp } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -24,7 +20,7 @@ import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { AppUpgradeDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
+import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -38,7 +34,7 @@ import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
-import { AppUpgradeDialog } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
+import { AppUpdateDialog } from 'app/pages/apps/components/installed-apps/app-update-dialog/app-update-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
@@ -75,6 +71,19 @@ import { RedirectService } from 'app/services/redirect.service';
   ],
 })
 export class AppInfoCardComponent {
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private redirect = inject(RedirectService);
+  private errorHandler = inject(ErrorHandlerService);
+  private appService = inject(ApplicationsService);
+  private matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private router = inject(Router);
+  private installedAppsStore = inject(InstalledAppsStore);
+  private slideIn = inject(SlideIn);
+  private window = inject<Window>(WINDOW);
+
   readonly app = input.required<App>();
   readonly startApp = output();
   readonly stopApp = output();
@@ -120,21 +129,6 @@ export class AppInfoCardComponent {
     return `${this.app().name} (${this.app().metadata.name})`;
   });
 
-  constructor(
-    private api: ApiService,
-    private loader: LoaderService,
-    private redirect: RedirectService,
-    private errorHandler: ErrorHandlerService,
-    private appService: ApplicationsService,
-    private matDialog: MatDialog,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private router: Router,
-    private installedAppsStore: InstalledAppsStore,
-    private slideIn: SlideIn,
-    @Inject(WINDOW) private window: Window,
-  ) {}
-
   openPortalLink(app: App, name = 'web_portal'): void {
     const portalUrl = new URL(app.portals[name]);
 
@@ -152,14 +146,14 @@ export class AppInfoCardComponent {
     this.appService.getAppUpgradeSummary(name).pipe(
       this.loader.withLoader(),
       switchMap(
-        (summary) => this.matDialog.open(AppUpgradeDialog, {
+        (summary) => this.matDialog.open(AppUpdateDialog, {
           width: '50vw',
           minWidth: '500px',
           maxWidth: '750px',
           data: {
             appInfo: this.app(),
             upgradeSummary: summary,
-          } as AppUpgradeDialogConfig,
+          } as AppUpdateDialogConfig,
         }).afterClosed(),
       ),
       filter(Boolean),
@@ -204,7 +198,7 @@ export class AppInfoCardComponent {
       .subscribe((options) => this.executeDelete(name, options));
   }
 
-  executeDelete(name: string, options: AppDeleteDialogOutputData): void {
+  private executeDelete(name: string, options: AppDeleteDialogOutputData): void {
     this.dialogService.jobDialog(
       this.api.job('app.delete', [name, {
         remove_images: options.removeImages,
@@ -220,14 +214,7 @@ export class AppInfoCardComponent {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.installedAppsStore.installedApps$.pipe(
-          map((apps) => !apps.length),
-          filter(Boolean),
-          take(1),
-          untilDestroyed(this),
-        ).subscribe(() => {
-          this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
-        });
+        this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
       });
   }
 

@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
@@ -56,6 +53,16 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private dialogService = inject(DialogService);
+  protected applicationsStore = inject(AppsStore);
+  protected appsFilterStore = inject(AppsFilterStore);
+  protected installedAppsStore = inject(InstalledAppsStore);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
   form = this.fb.group({
@@ -74,6 +81,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     { label: this.translate.instant('Category'), value: null },
     { label: this.translate.instant('App Name'), value: AppsFiltersSort.Title },
     { label: this.translate.instant('Updated Date'), value: AppsFiltersSort.LastUpdate },
+    { label: this.translate.instant('Popularity'), value: AppsFiltersSort.PopularityRank },
   ]);
 
   categoriesProvider$: ChipsProvider = (query: string) => this.applicationsStore.appsCategories$.pipe(
@@ -84,18 +92,6 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   );
 
   readonly AppExtraCategory = AppExtraCategory;
-
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
-    protected applicationsStore: AppsStore,
-    protected appsFilterStore: AppsFilterStore,
-    protected installedAppsStore: InstalledAppsStore,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     this.searchControl.valueChanges.pipe(

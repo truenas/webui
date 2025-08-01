@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -43,6 +41,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class PullImageFormComponent {
+  private api = inject(ApiService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private fb = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+
   protected readonly requiredRoles = [Role.AppsWrite];
 
   protected isFormLoading = signal(false);
@@ -58,20 +63,13 @@ export class PullImageFormComponent {
     image: helptextApps.pullImageForm.imageName.tooltip,
   };
 
-  constructor(
-    private api: ApiService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-    private errorHandler: ErrorHandlerService,
-    private fb: NonNullableFormBuilder,
-    private translate: TranslateService,
-    private dialogService: DialogService,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.getRawValue();
 
     const params: PullContainerImageParams = {
@@ -98,7 +96,7 @@ export class PullImageFormComponent {
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

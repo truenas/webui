@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -17,6 +17,9 @@ import { selectTheme } from 'app/store/preferences/preferences.selectors';
   providedIn: 'root',
 })
 export class ThemeService {
+  private store$ = inject<Store<AppState>>(Store);
+  private window = inject<Window>(WINDOW);
+
   defaultTheme = defaultTheme.name;
   activeTheme = this.defaultTheme;
   activeTheme$ = new BehaviorSubject<string>(this.defaultTheme);
@@ -30,10 +33,7 @@ export class ThemeService {
     return this.activeTheme === this.defaultTheme;
   }
 
-  constructor(
-    private store$: Store<AppState>,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.loadTheme$.subscribe(() => {
       const savedTheme = this.window.sessionStorage.getItem('theme') || defaultTheme.name;
 

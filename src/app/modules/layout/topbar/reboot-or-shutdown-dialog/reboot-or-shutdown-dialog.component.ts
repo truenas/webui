@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -8,6 +9,7 @@ import {
 } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { SelectOption } from 'app/interfaces/option.interface';
@@ -16,6 +18,8 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 const customReasonValue = 'CUSTOM_REASON_VALUE';
 
@@ -41,6 +45,12 @@ const customReasonValue = 'CUSTOM_REASON_VALUE';
   ],
 })
 export class RebootOrShutdownDialog {
+  dialogRef = inject<MatDialogRef<RebootOrShutdownDialog>>(MatDialogRef);
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+  isShutdown = inject(MAT_DIALOG_DATA) ?? false;
+
   form = this.fb.group({
     confirm: [false, Validators.requiredTrue],
     reason: ['', Validators.required],
@@ -104,6 +114,8 @@ export class RebootOrShutdownDialog {
     },
   ]);
 
+  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+
   get title(): string {
     return this.isShutdown
       ? this.translate.instant('Shutdown')
@@ -116,12 +128,7 @@ export class RebootOrShutdownDialog {
       : this.translate.instant('Restart');
   }
 
-  constructor(
-    public dialogRef: MatDialogRef<RebootOrShutdownDialog>,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    @Inject(MAT_DIALOG_DATA) public isShutdown = false,
-  ) {
+  constructor() {
     this.form.controls.reason.valueChanges.pipe(untilDestroyed(this)).subscribe((reason) => {
       if (reason === customReasonValue) {
         this.form.controls.customReason.enable();
@@ -134,6 +141,6 @@ export class RebootOrShutdownDialog {
   onSubmit(): void {
     const formValue = this.form.value;
     const reason = formValue.reason === customReasonValue ? formValue.customReason : formValue.reason;
-    this.dialogRef.close(reason);
+    this.dialogRef.close(reason || this.translate.instant('Unspecified'));
   }
 }

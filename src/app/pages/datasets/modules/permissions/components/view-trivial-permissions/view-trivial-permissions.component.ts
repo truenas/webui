@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { parseApiMode } from 'app/helpers/mode.helper';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
@@ -21,15 +19,13 @@ import {
   imports: [PermissionsItemComponent, TranslateModule],
 })
 export class ViewTrivialPermissionsComponent {
+  private translate = inject(TranslateService);
+
   readonly stat = input.required<FileSystemStat>();
 
   readonly permissionItems = computed(() => {
     return this.statToPermissionItems(this.stat());
   });
-
-  constructor(
-    private translate: TranslateService,
-  ) {}
 
   private statToPermissionItems(stat: FileSystemStat): PermissionItem[] {
     const permissions = parseApiMode(stat.mode);

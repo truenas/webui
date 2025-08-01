@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, output, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -36,6 +34,9 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
   ],
 })
 export class DiskSizeSelectsComponent implements OnChanges {
+  private formBuilder = inject(FormBuilder);
+  private store = inject(PoolManagerStore);
+
   readonly layout = input.required<CreateVdevLayout>();
   readonly type = input.required<VDevType>();
   readonly inventory = input.required<DetailsDisk[]>();
@@ -48,15 +49,14 @@ export class DiskSizeSelectsComponent implements OnChanges {
   protected sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
   protected compareSizeAndTypeWith = isEqual;
 
+  protected canSelectLargerDisk = signal(false);
+
   protected form = this.formBuilder.nonNullable.group({
     sizeAndType: [[null, null] as [number | null, DiskType | null], Validators.required],
-    treatDiskSizeAsMinimum: [{ value: false, disabled: true }],
+    treatDiskSizeAsMinimum: [false],
   });
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private store: PoolManagerStore,
-  ) {
+  constructor() {
     this.setControlRelations();
     this.updateStoreOnChanges();
     this.emitUpdatesOnChanges();
@@ -94,9 +94,12 @@ export class DiskSizeSelectsComponent implements OnChanges {
   private setControlRelations(): void {
     this.form.controls.sizeAndType
       .valueChanges
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.form.controls.treatDiskSizeAsMinimum.enable();
+        const canSelectLargerDisk = this.selectedDiskSize
+          && this.inventory().some((disk) => disk.size > this.selectedDiskSize);
+
+        this.canSelectLargerDisk.set(canSelectLargerDisk);
       });
   }
 

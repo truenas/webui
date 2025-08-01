@@ -1,19 +1,16 @@
 ##NODE temporary builder image
-from node:20-bookworm as uibuilder
+from node:22-bookworm as uibuilder
 COPY ./ /src-ui
 WORKDIR /src-ui
 RUN yarn install --frozen-lockfile
 RUN yarn build:prod:aot
 
-#Download base image debian buster
-FROM debian:buster-slim
+FROM debian:stable-slim
 
 # Install packages
-#COPY docker/krb5.conf /etc/krb5.conf
 RUN apt-get update && \
-	export DEBIAN_FRONTEND=noninteractive && apt-get -yq install  \
-	nginx \
-	&& apt-get clean
+	DEBIAN_FRONTEND=noninteractive apt-get -yq install nginx && \
+	apt-get clean
 
 #Remove any extra packages we don't need from the container
 # Also cleanup any random things we don't want to distribute

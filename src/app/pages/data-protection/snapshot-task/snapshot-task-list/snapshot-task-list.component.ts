@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,11 +7,14 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, filter, switchMap, take, tap,
 } from 'rxjs';
+import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -71,15 +72,28 @@ import { TaskService } from 'app/services/task.service';
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class SnapshotTaskListComponent implements OnInit {
+  protected emptyService = inject(EmptyService);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private taskService = inject(TaskService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private slideIn = inject(SlideIn);
+  private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
+
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = snapshotTaskListElements;
 
   snapshotTasks: PeriodicSnapshotTaskUi[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
+  protected readonly emptyConfig = snapshotTaskEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   protected columns = createTable<PeriodicSnapshotTaskUi>([
     textColumn({
@@ -163,17 +177,7 @@ export class SnapshotTaskListComponent implements OnInit {
     return this.columns.filter((column) => column?.hidden);
   }
 
-  constructor(
-    protected emptyService: EmptyService,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private taskService: TaskService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private slideIn: SlideIn,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
@@ -196,36 +200,36 @@ export class SnapshotTaskListComponent implements OnInit {
     });
   }
 
-  getSnapshotTasks(): void {
+  protected getSnapshotTasks(): void {
     this.dataProvider.load();
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ list: this.snapshotTasks, query, columnKeys: ['dataset', 'naming_schema'] });
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(SnapshotTaskFormComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getSnapshotTasks());
   }
 
-  doEdit(row: PeriodicSnapshotTaskUi): void {
+  protected doEdit(row: PeriodicSnapshotTaskUi): void {
     this.slideIn.open(SnapshotTaskFormComponent, { wide: true, data: row }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getSnapshotTasks());
   }
 
-  doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
+  protected doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Periodic Snapshot Task <b>"{value}"</b>?', {

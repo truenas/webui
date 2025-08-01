@@ -1,8 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, model, OnChanges, OnInit, output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, model, OnChanges, OnInit, output, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -37,6 +34,9 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   ],
 })
 export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private store$ = inject<Store<AppState>>(Store);
+
   readonly columns = model.required<Column<T, ColumnComponent<T>>[]>();
   readonly columnPreferencesKey = input<string>();
 
@@ -54,10 +54,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     return !this.columns().filter((column) => column.hidden && !!column.title).length;
   }
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
-  ) {
+  constructor() {
     this.subscribeToColumnsChange();
   }
 

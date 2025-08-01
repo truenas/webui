@@ -22,7 +22,7 @@ describe('PullImageFormComponent', () => {
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -34,9 +34,7 @@ describe('PullImageFormComponent', () => {
       mockApi([
         mockJob('app.image.pull'),
       ]),
-      mockProvider(SlideIn, {
-        components$: of([]),
-      }),
+      mockProvider(SlideIn),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {

@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogClose, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { ZvolToImport } from 'app/interfaces/virtualization.interface';
@@ -36,10 +37,21 @@ import { FilesystemService } from 'app/services/filesystem.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportZvolsDialog {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private filesystem = inject(FilesystemService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogRef = inject<MatDialogRef<ImportZvolsDialog, boolean>>(MatDialogRef);
+  private snackbar = inject(SnackbarService);
+
   protected form = this.formBuilder.group({
     zvols: [[] as string[], Validators.required],
     clone: [false],
   });
+
+  protected readonly zvolsRootNodes = [zvolsRootNode];
 
   protected zvolProvider = this.filesystem.getFilesystemNodeProvider({
     zvolsOnly: true,
@@ -59,17 +71,6 @@ export class ImportZvolsDialog {
   ]);
 
   protected helptext = instancesHelptext;
-
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private filesystem: FilesystemService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private dialogRef: MatDialogRef<ImportZvolsDialog, boolean>,
-    private snackbar: SnackbarService,
-  ) {}
 
   protected onSubmit(): void {
     const toImport = this.form.getRawValue().zvols.map((zvol) => {

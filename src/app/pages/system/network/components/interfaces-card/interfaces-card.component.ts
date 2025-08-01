@@ -1,11 +1,6 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component, input,
-  OnChanges,
-  OnInit, output,
-  signal,
-} from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, signal, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -13,8 +8,10 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, of } from 'rxjs';
-import { filter, map, throttleTime } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, of } from 'rxjs';
+import {
+  filter, map, throttleTime,
+} from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
@@ -64,14 +61,24 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     UiSearchDirective,
     IxTableComponent,
     IxTableHeadComponent,
+    AsyncPipe,
     IxTableBodyComponent,
     IxTableCellDirective,
     InterfaceStatusIconComponent,
     TranslateModule,
   ],
 })
-export class InterfacesCardComponent implements OnInit, OnChanges {
-  readonly isHaEnabled = input(false);
+export class InterfacesCardComponent implements OnInit {
+  private interfacesStore$ = inject(InterfacesStore);
+  private store$ = inject<Store<AppState>>(Store);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private networkService = inject(NetworkService);
 
   protected readonly searchableElements = interfacesCardElements.elements;
 
@@ -80,7 +87,8 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected interfaces: NetworkInterface[] = [];
 
-  isHaEnabled$ = new BehaviorSubject(false);
+  protected readonly isHaEnabled$ = new BehaviorSubject<boolean>(false);
+  private readonly isHaEnabled = toSignal(this.isHaEnabled$);
 
   isLoading = false;
   dataProvider = new ArrayDataProvider<NetworkInterface>();
@@ -93,10 +101,25 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
+      getValue: (row) => {
+        const value = row.name;
+
+        if (row.description) {
+          return `${value} (${row.description})`;
+        }
+
+        return value;
+      },
     }),
     ipAddressesColumn({
       title: this.translate.instant('IP Addresses'),
       sortBy: (row) => row.aliases.map((alias) => alias.address).join(', '),
+      cssClass: 'wider-column',
+    }),
+    textColumn({
+      title: this.translate.instant('MAC Address'),
+      cssClass: 'wider-column',
+      getValue: (row) => row.state.permanent_link_address,
     }),
     actionsWithMenuColumn({
       actions: [
@@ -108,20 +131,30 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         {
           iconName: iconMarker('refresh'),
           requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Refresh'),
-          hidden: (row) => of(!this.isPhysical(row)),
-          disabled: () => this.isHaEnabled$,
-          dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => (isHaEnabled
-            ? this.translate.instant(helptextInterfaces.haEnabledResetMessage)
-            : this.translate.instant('Reset configuration')))),
+          hidden: (row) => combineLatest([
+            of(!this.isPhysical(row)),
+            this.isHaEnabled$,
+          ]).pipe(
+            map(([isNotPhysical, isHaEnabled]) => isHaEnabled || isNotPhysical),
+          ),
+          tooltip: this.translate.instant('Reset configuration'),
           onClick: (row) => this.onReset(row),
+        },
+        {
+          iconName: iconMarker(''),
+          hidden: () => this.isHaEnabled$.pipe(map((isHaEnabled) => !isHaEnabled)),
+          disabled: () => of(true),
+          tooltip: this.translate.instant(helptextInterfaces.haEnabledResetMessage),
+          onClick: (): void => {},
         },
         {
           iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
-          tooltip: this.isHaEnabled()
-            ? this.translate.instant(helptextInterfaces.haEnabledDeleteMessage)
-            : this.translate.instant('Delete'),
+          dynamicTooltip: () => this.isHaEnabled$.pipe(
+            map((isHaEnabled) => (isHaEnabled
+              ? this.translate.instant(helptextInterfaces.haEnabledDeleteMessage)
+              : this.translate.instant('Delete'))),
+          ),
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),
           disabled: () => this.isHaEnabled$,
@@ -135,25 +168,8 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   readonly helptext = helptextInterfaces;
 
-  constructor(
-    private interfacesStore$: InterfacesStore,
-    private store$: Store<AppState>,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private networkService: NetworkService,
-  ) {}
-
-  isPhysical(row: NetworkInterface): boolean {
+  private isPhysical(row: NetworkInterface): boolean {
     return row.type === NetworkInterfaceType.Physical;
-  }
-
-  ngOnChanges(): void {
-    this.isHaEnabled$.next(this.isHaEnabled());
   }
 
   ngOnInit(): void {
@@ -178,9 +194,19 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
       this.cdr.markForCheck();
     });
+    this.checkFailoverDisabled();
   }
 
-  onAddNew(): void {
+  private checkFailoverDisabled(): void {
+    this.networkService.getIsHaEnabled().pipe(
+      untilDestroyed(this),
+    ).subscribe((isHaEnabled) => {
+      this.isHaEnabled$.next(isHaEnabled);
+      this.cdr.markForCheck();
+    });
+  }
+
+  protected onAddNew(): void {
     this.slideIn.open(InterfaceFormComponent, {
       data: {
         interfaces: this.interfaces,
@@ -195,7 +221,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
       });
   }
 
-  onEdit(row: NetworkInterface): void {
+  protected onEdit(row: NetworkInterface): void {
     this.slideIn.open(InterfaceFormComponent, {
       data: {
         interface: row,
@@ -209,7 +235,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     });
   }
 
-  onDelete(row: NetworkInterface): void {
+  protected onDelete(row: NetworkInterface): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete Interface'),
       message: this.translate.instant(helptextInterfaces.deleteDialogText),
@@ -219,7 +245,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
       .subscribe(() => this.makeDeleteCall(row));
   }
 
-  onReset(row: NetworkInterface): void {
+  protected onReset(row: NetworkInterface): void {
     this.dialogService.confirm({
       title: this.translate.instant('Reset Configuration'),
       message: this.translate.instant(helptextInterfaces.deleteDialogText),

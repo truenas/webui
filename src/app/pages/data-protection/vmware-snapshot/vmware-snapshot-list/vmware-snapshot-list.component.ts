@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -58,6 +56,13 @@ import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-ce
   ],
 })
 export class VmwareSnapshotListComponent implements OnInit {
+  protected translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  protected emptyService = inject(EmptyService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly searchableElements = vmwareSnapshotListElements;
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
 
@@ -91,15 +96,6 @@ export class VmwareSnapshotListComponent implements OnInit {
     ariaLabels: (row) => [row.hostname, this.translate.instant('VMware Snapshot')],
   });
 
-  constructor(
-    protected translate: TranslateService,
-    private slideIn: SlideIn,
-    protected emptyService: EmptyService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
-
   ngOnInit(): void {
     const snapshots$ = this.api.call('vmware.query').pipe(
       tap((snapshots) => this.snapshots = snapshots),
@@ -112,30 +108,30 @@ export class VmwareSnapshotListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['hostname', 'datastore', 'filesystem', 'username'] });
   }
 
-  getSnapshotsData(): void {
+  private getSnapshotsData(): void {
     this.dataProvider.load();
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(VmwareSnapshotFormComponent).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getSnapshotsData());
   }
 
-  doEdit(snapshot: VmwareSnapshot): void {
+  protected doEdit(snapshot: VmwareSnapshot): void {
     this.slideIn.open(VmwareSnapshotFormComponent, { data: snapshot }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getSnapshotsData());
   }
 
-  doDelete(snapshot: VmwareSnapshot): void {
+  protected doDelete(snapshot: VmwareSnapshot): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Are you sure you want to delete this snapshot?'),

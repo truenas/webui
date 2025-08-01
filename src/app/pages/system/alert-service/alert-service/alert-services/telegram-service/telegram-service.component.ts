@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   AbstractControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
@@ -20,6 +20,10 @@ import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-servi
   ],
 })
 export class TelegramServiceComponent extends BaseAlertServiceForm {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private validatorsService = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+
   form = this.formBuilder.group({
     bot_token: ['', Validators.required],
     chat_ids: [[] as number[], [
@@ -31,14 +35,6 @@ export class TelegramServiceComponent extends BaseAlertServiceForm {
     ]],
   });
 
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private validatorsService: IxValidatorsService,
-    private translate: TranslateService,
-  ) {
-    super();
-  }
-
   override getSubmitAttributes(): TelegramServiceComponent['form']['value'] {
     return {
       ...this.form.getRawValue(),
@@ -46,8 +42,8 @@ export class TelegramServiceComponent extends BaseAlertServiceForm {
     };
   }
 
-  validateTelegramChatIds(control: AbstractControl): boolean {
+  private validateTelegramChatIds(control: AbstractControl): boolean {
     const chatIds = control.value as string[];
-    return chatIds.every((chatId) => String(chatId).match(/^-?\d*$/));
+    return chatIds.every((chatId) => /^-?\d*$/.exec(String(chatId)));
   }
 }

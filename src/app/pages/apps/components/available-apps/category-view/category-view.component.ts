@@ -1,7 +1,5 @@
 import { AsyncPipe, TitleCasePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnDestroy, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   Router,
@@ -42,16 +40,14 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
   ],
 })
 export class CategoryViewComponent implements OnInit, OnDestroy {
+  protected router = inject(Router);
+  private applicationsStore = inject(AppsStore);
+  private appsFilterStore = inject(AppsFilterStore);
+
   protected readonly category = injectParams('category');
   pageTitle$ = new BehaviorSubject('Category');
   apps$ = this.appsFilterStore.filteredApps$;
   isLoading$ = this.applicationsStore.isLoading$;
-
-  constructor(
-    protected router: Router,
-    private applicationsStore: AppsStore,
-    private appsFilterStore: AppsFilterStore,
-  ) {}
 
   ngOnInit(): void {
     const category = this.category();

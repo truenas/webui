@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -48,6 +46,15 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class CloudSyncRestoreDialog {
+  private api = inject(ApiService);
+  private formBuilder = inject(FormBuilder);
+  private filesystem = inject(FilesystemService);
+  private translate = inject(TranslateService);
+  private dialogRef = inject<MatDialogRef<CloudSyncRestoreDialog>>(MatDialogRef);
+  private errorHandler = inject(FormErrorHandlerService);
+  private loader = inject(LoaderService);
+  private parentTaskId = inject(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   readonly form = this.formBuilder.nonNullable.group({
@@ -68,17 +75,6 @@ export class CloudSyncRestoreDialog {
       label: this.translate.instant('COPY'),
     },
   ]);
-
-  constructor(
-    private api: ApiService,
-    private formBuilder: FormBuilder,
-    private filesystem: FilesystemService,
-    private translate: TranslateService,
-    private dialogRef: MatDialogRef<CloudSyncRestoreDialog>,
-    private errorHandler: FormErrorHandlerService,
-    private loader: LoaderService,
-    @Inject(MAT_DIALOG_DATA) private parentTaskId: number,
-  ) { }
 
   onSubmit(): void {
     this.api.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudSyncRestoreParams)

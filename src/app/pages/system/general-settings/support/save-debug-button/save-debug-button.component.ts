@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
@@ -37,17 +37,15 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class SaveDebugButtonComponent {
-  protected readonly searchableElement = saveDebugElement;
+  private api = inject(ApiService);
+  private store$ = inject<Store<AppState>>(Store);
+  private datePipe = inject(DatePipe);
+  private errorHandler = inject(ErrorHandlerService);
+  private download = inject(DownloadService);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
 
-  constructor(
-    private api: ApiService,
-    private store$: Store<AppState>,
-    private datePipe: DatePipe,
-    private errorHandler: ErrorHandlerService,
-    private download: DownloadService,
-    private translate: TranslateService,
-    private dialogService: DialogService,
-  ) {}
+  protected readonly searchableElement = saveDebugElement;
 
   onSaveDebugClicked(): void {
     this.dialogService

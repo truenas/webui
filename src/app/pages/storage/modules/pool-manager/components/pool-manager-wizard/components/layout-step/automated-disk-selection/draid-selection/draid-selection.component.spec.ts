@@ -62,7 +62,6 @@ describe('DraidSelectionComponent', () => {
   it('keeps inputs disabled until disks are selected', async () => {
     expect(await form.getDisabledState()).toEqual({
       'Disk Size': false,
-      'Treat Disk Size as Minimum': false,
       Children: true,
       'Data Devices': true,
       'Distributed Hot Spares': true,

@@ -14,7 +14,7 @@ import {
   getDate, isBefore,
   startOfMonth, differenceInCalendarMonths,
 } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
+import { toZonedTime } from 'date-fns-tz';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 import { SchedulerDateExamplesComponent } from 'app/modules/scheduler/components/scheduler-modal/scheduler-date-examples/scheduler-date-examples.component';
@@ -56,7 +56,7 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
 
   get startDate(): Date {
     if (!this.calendar().activeDate || differenceInCalendarMonths(this.calendar().activeDate, new Date()) < 1) {
-      return utcToZonedTime(new Date(), this.timezone());
+      return toZonedTime(new Date(), this.timezone());
     }
 
     return startOfMonth(this.calendar().activeDate);
@@ -86,7 +86,7 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
     return '';
   };
 
-  onCalendarUpdated(): void {
+  private onCalendarUpdated(): void {
     this.updatePreviewDates();
   }
 

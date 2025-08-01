@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,8 +8,10 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   EMPTY, catchError, filter, map, switchMap, tap,
 } from 'rxjs';
+import { cloudSyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -19,6 +19,7 @@ import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/clouds
 import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -79,10 +80,25 @@ import { AppState } from 'app/store';
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    EmptyComponent,
   ],
 })
 export class CloudSyncListComponent implements OnInit {
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private taskService = inject(TaskService);
+  private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private matDialog = inject(MatDialog);
+  private snackbar = inject(SnackbarService);
+  private store$ = inject<Store<AppState>>(Store);
+  protected emptyService = inject(EmptyService);
+
   protected readonly searchableElements = cloudSyncListElements;
+  protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
+  protected readonly EmptyType = EmptyType;
 
   cloudSyncTasks: CloudSyncTaskUi[] = [];
   filterString = '';
@@ -155,23 +171,9 @@ export class CloudSyncListComponent implements OnInit {
     ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
   });
 
-  get hiddenColumns(): Column<CloudSyncTaskUi, ColumnComponent<CloudSyncTaskUi>>[] {
+  protected get hiddenColumns(): Column<CloudSyncTaskUi, ColumnComponent<CloudSyncTaskUi>>[] {
     return this.columns.filter((column) => column?.hidden);
   }
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private translate: TranslateService,
-    private taskService: TaskService,
-    private slideIn: SlideIn,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
-    private snackbar: SnackbarService,
-    private store$: Store<AppState>,
-    protected emptyService: EmptyService,
-  ) {}
 
   ngOnInit(): void {
     const cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
@@ -185,11 +187,11 @@ export class CloudSyncListComponent implements OnInit {
     });
   }
 
-  getCloudSyncTasks(): void {
+  protected getCloudSyncTasks(): void {
     this.dataProvider.load();
   }
 
-  runNow(row: CloudSyncTaskUi): void {
+  protected runNow(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
       message: this.translate.instant('Run «{name}» Cloud Sync now?', { name: row.description }),
@@ -213,7 +215,7 @@ export class CloudSyncListComponent implements OnInit {
     });
   }
 
-  stopCloudSyncTask(row: CloudSyncTaskUi): void {
+  protected stopCloudSyncTask(row: CloudSyncTaskUi): void {
     this.dialogService
       .confirm({
         title: this.translate.instant('Stop'),
@@ -236,7 +238,7 @@ export class CloudSyncListComponent implements OnInit {
       });
   }
 
-  dryRun(row: CloudSyncTaskUi): void {
+  protected dryRun(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant(helptextCloudSync.dryRunTitle),
       message: this.translate.instant(helptextCloudSync.dryRunDialog),
@@ -259,7 +261,7 @@ export class CloudSyncListComponent implements OnInit {
     });
   }
 
-  restore(row: CloudSyncTaskUi): void {
+  protected restore(row: CloudSyncTaskUi): void {
     this.matDialog.open(CloudSyncRestoreDialog, { data: row.id })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -271,7 +273,7 @@ export class CloudSyncListComponent implements OnInit {
       });
   }
 
-  openForm(row?: CloudSyncTaskUi): void {
+  protected openForm(row?: CloudSyncTaskUi): void {
     if (row) {
       this.slideIn.open(CloudSyncFormComponent, { data: row, wide: true }).pipe(
         filter((response) => !!response.response),
@@ -293,9 +295,8 @@ export class CloudSyncListComponent implements OnInit {
     }
   }
 
-  doDelete(row: CloudSyncTaskUi): void {
+  protected doDelete(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', {
         name: row.description,
       }),
@@ -318,12 +319,12 @@ export class CloudSyncListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['description'] });
   }
 
-  columnsChange(columns: typeof this.columns): void {
+  protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();

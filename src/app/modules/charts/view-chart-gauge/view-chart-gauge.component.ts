@@ -2,8 +2,8 @@ import { NgClass } from '@angular/common';
 import {
   Component, AfterViewInit, OnChanges, ChangeDetectionStrategy, input,
 } from '@angular/core';
-import { UUID } from 'angular2-uuid';
 import * as d3 from 'd3';
+import { v4 as uuidv4 } from 'uuid';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
 export type GaugeDataItem = string | number;
@@ -36,7 +36,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
   chartClass = 'view-chart-gauge';
   private _data: GaugeData;
   private arc: d3.Arc<unknown, d3.DefaultArcObject>;
-  chartId = UUID.UUID();
+  chartId: string = uuidv4();
   private doublePi = 2 * Math.PI;
   units = '%'; // default unit type
   diameter = 120; // default diameter
@@ -79,7 +79,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
 
     const width = this.config().diameter;
     const height = this.config().diameter;
-    const svg = d3.select('#gauge-' + this.chartId).append('svg')
+    const svg = d3.select(`#gauge-${this.chartId}`).append('svg')
       .attr('width', width)
       .attr('height', height);
 
@@ -152,11 +152,11 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
   update(value: GaugeDataItem): void {
     if (!document.hidden) {
       d3.transition()
-        .select('#gauge-' + this.chartId + ' path.value')
+        .select(`#gauge-${this.chartId} path.value`)
         .duration(750)
         .attrTween('d', this.load(this.percentToAngle(Number(value))));
 
-      d3.select('#gauge-' + this.chartId + ' text#text-value')
+      d3.select(`#gauge-${this.chartId} text#text-value`)
         .text(String(value) + this.config().units);
     }
   }
@@ -173,13 +173,13 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
     };
   }
 
-  percentToAngle(value: number): number {
+  private percentToAngle(value: number): number {
     return value / 100 * this.doublePi;
   }
 
-  updateSubtitle(): void {
-    d3.select('#gauge-' + this.chartId + ' #text-value');
-    d3.select('#gauge-' + this.chartId + ' #text-subtitle')
+  private updateSubtitle(): void {
+    d3.select(`#gauge-${this.chartId} #text-value`);
+    d3.select(`#gauge-${this.chartId} #text-subtitle`)
       .text(this.subtitle);
   }
 }

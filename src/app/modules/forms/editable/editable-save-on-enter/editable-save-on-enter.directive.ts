@@ -1,4 +1,4 @@
-import { Directive, HostListener } from '@angular/core';
+import { Directive, HostListener, inject } from '@angular/core';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 
 @Directive({
@@ -6,9 +6,8 @@ import { EditableComponent } from 'app/modules/forms/editable/editable.component
   standalone: true,
 })
 export class EditableSaveOnEnterDirective {
-  constructor(
-    private editable: EditableComponent,
-  ) {}
+  private editable = inject(EditableComponent);
+
 
   @HostListener('keydown.enter', ['$event'])
   onEnter(event: KeyboardEvent): void {

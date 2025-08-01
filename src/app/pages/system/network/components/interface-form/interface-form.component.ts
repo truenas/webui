@@ -1,16 +1,18 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
-} from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { range } from 'lodash-es';
-import { forkJoin, of } from 'rxjs';
+import {
+  BehaviorSubject, forkJoin, of,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   CreateNetworkInterfaceType,
@@ -36,6 +38,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -91,13 +94,35 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     MatButton,
     TestDirective,
     TranslateModule,
+    AsyncPipe,
+    IxRadioGroupComponent,
+    MatTooltip,
   ],
 })
 export class InterfaceFormComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private networkService = inject(NetworkService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private validatorsService = inject(IxValidatorsService);
+  private interfaceFormValidator = inject(InterfaceNameValidatorService);
+  private matDialog = inject(MatDialog);
+  private systemGeneralService = inject(SystemGeneralService);
+  private store$ = inject<Store<AppState>>(Store);
+  slideInRef = inject<SlideInRef<{
+    interfaces?: NetworkInterface[];
+    interface?: NetworkInterface;
+  }, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected existingInterface: NetworkInterface | undefined;
 
   readonly defaultMtu = 1500;
+  protected readonly isHaEnabled$ = new BehaviorSubject(false);
 
   protected isLoading = signal(false);
   isHaLicensed = false;
@@ -146,6 +171,11 @@ export class InterfaceFormComponent implements OnInit {
     { label: 'VLAN', value: NetworkInterfaceType.Vlan },
   ]);
 
+  dhcpOptions$ = of([
+    { label: this.translate.instant('Get IP Address Automatically from DHCP'), value: true },
+    { label: this.translate.instant('Define Static IP Addresses'), value: false },
+  ]);
+
   bridgeMembers$ = this.networkService.getBridgeMembersChoices().pipe(choicesToOptions());
 
   lagProtocols$ = this.networkService.getLaggProtocolChoices().pipe(singleArrayToOptions());
@@ -170,22 +200,9 @@ export class InterfaceFormComponent implements OnInit {
 
   readonly helptext = helptextInterfacesForm;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private translate: TranslateService,
-    private networkService: NetworkService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
-    private validatorsService: IxValidatorsService,
-    private interfaceFormValidator: InterfaceNameValidatorService,
-    private matDialog: MatDialog,
-    private systemGeneralService: SystemGeneralService,
-    private store$: Store<AppState>,
-    public slideInRef: SlideInRef<{ interfaces?: NetworkInterface[]; interface?: NetworkInterface }, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -220,21 +237,30 @@ export class InterfaceFormComponent implements OnInit {
     return this.form.controls.lag_protocol.value === LinkAggregationProtocol.LoadBalance;
   }
 
-  get canHaveAliases(): boolean {
+  get canHaveStaticIpAddresses(): boolean {
     return !this.form.value.ipv4_dhcp;
   }
 
   ngOnInit(): void {
     this.loadFailoverStatus();
     this.validateNameOnTypeChange();
+    this.checkFailoverDisabled();
 
     if (this.existingInterface) {
       this.setInterfaceForEdit(this.existingInterface);
     }
   }
 
-  setInterfaceForEdit(nic: NetworkInterface): void {
-    nic.aliases.forEach(() => this.addAlias());
+  private checkFailoverDisabled(): void {
+    this.networkService.getIsHaEnabled().pipe(
+      untilDestroyed(this),
+    ).subscribe((isHaEnabled) => {
+      this.isHaEnabled$.next(isHaEnabled);
+    });
+  }
+
+  private setInterfaceForEdit(nic: NetworkInterface): void {
+    nic.aliases.forEach(() => this.addStaticIpAddress());
     this.form.patchValue({
       ...nic,
       mtu: nic.mtu || this.defaultMtu,
@@ -245,7 +271,7 @@ export class InterfaceFormComponent implements OnInit {
     this.disableVlanParentInterface();
   }
 
-  addAlias(): void {
+  protected addStaticIpAddress(): void {
     this.form.controls.aliases.push(this.formBuilder.group({
       address: ['', [Validators.required, ipv4or6cidrValidator()]],
       failover_address: ['', [
@@ -265,11 +291,11 @@ export class InterfaceFormComponent implements OnInit {
     }));
   }
 
-  removeAlias(index: number): void {
+  protected removeStaticIpAddress(index: number): void {
     this.form.controls.aliases.removeAt(index);
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
     const params = this.prepareSubmitParams();
 
@@ -281,14 +307,15 @@ export class InterfaceFormComponent implements OnInit {
       next: () => {
         this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
 
-        this.api.call('interface.default_route_will_be_removed').pipe(untilDestroyed(this)).subscribe((approved) => {
-          if (approved) {
+        this.api.call('interface.network_config_to_be_removed').pipe(untilDestroyed(this)).subscribe((configToRemove) => {
+          if (configToRemove && Object.keys(configToRemove).length > 0) {
             this.matDialog.open(DefaultGatewayDialog, {
               width: '600px',
+              data: configToRemove,
             });
           }
 
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
           this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Network interface updated'));
         });
@@ -327,7 +354,7 @@ export class InterfaceFormComponent implements OnInit {
   private getUsedNumbersForPrefix(interfaces: NetworkInterface[], prefix: string): Set<number> {
     return new Set(
       interfaces
-        .map((item) => item.name.match(new RegExp(`^${prefix}(\\d+)$`)))
+        .map((item) => new RegExp(`^${prefix}(\\d+)$`).exec(item.name))
         .filter(Boolean)
         .map((match) => Number(match[1])),
     );

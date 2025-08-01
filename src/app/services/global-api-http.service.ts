@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -8,12 +8,12 @@ import { WINDOW } from 'app/helpers/window.helper';
   providedIn: 'root',
 })
 export class GlobalApiHttpService {
+  private http = inject(HttpClient);
+  private window = inject<Window>(WINDOW);
+
   private readonly baseUrl: string;
 
-  constructor(
-    private http: HttpClient,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     const protocol = this.window.location.protocol === 'https:' ? 'https://' : 'http://';
     this.baseUrl = environment.production ? `${protocol}${environment.remote}/api` : '/api';
   }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import UiElementsJson from 'app/../assets/ui-searchable-elements.json';
 import Fuse from 'fuse.js';
@@ -17,6 +17,10 @@ import { LicenseService } from 'app/services/license.service';
   providedIn: 'root',
 })
 export class UiSearchProvider implements GlobalSearchProvider {
+  private authService = inject(AuthService);
+  private translate = inject(TranslateService);
+  private license = inject(LicenseService);
+
   uiElements = UiElementsJson as UiSearchableElement[];
 
   private selectedElement$ = new BehaviorSubject<UiSearchableElement | null>(null);
@@ -27,11 +31,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
 
   fuseSearch: Fuse<UiSearchableElement> = this.generateFuseSearch();
 
-  constructor(
-    private authService: AuthService,
-    private translate: TranslateService,
-    private license: LicenseService,
-  ) {
+  constructor() {
     this.translate.onLangChange.subscribe(() => this.fuseSearch = this.generateFuseSearch());
   }
 

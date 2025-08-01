@@ -1,12 +1,7 @@
 import {
-  animate, group as groupAnimations, style, transition, trigger,
-} from '@angular/animations';
-import {
   CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray,
 } from '@angular/cdk/drag-drop';
-import {
-  ChangeDetectionStrategy, Component, HostListener, OnInit, computed, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnInit, computed, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -15,6 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { AnimateOutDirective } from 'app/directives/animate-out/animate-out.directive';
 import { DisableFocusableElementsDirective } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -45,16 +41,6 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('groupRemovedTrigger', [
-      transition(':leave', [
-        groupAnimations([
-          animate('200ms', style({ transform: 'scale(0.3)' })),
-          animate('100ms', style({ opacity: 0 })),
-        ]),
-      ]),
-    ]),
-  ],
   imports: [
     PageHeaderComponent,
     MatButton,
@@ -69,6 +55,7 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
     MatTooltip,
     CdkDrag,
     CdkDropList,
+    AnimateOutDirective,
   ],
   providers: [
     WidgetResourcesService,
@@ -76,6 +63,14 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
   ],
 })
 export class DashboardComponent implements OnInit {
+  private dashboardStore = inject(DashboardStore);
+  private slideIn = inject(SlideIn);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
+  private store$ = inject<Store<AppState>>(Store);
+
   readonly searchableElements = dashboardElements;
   readonly isEditing = signal(false);
   readonly renderedGroups = signal<WidgetGroup[]>([]);
@@ -83,6 +78,7 @@ export class DashboardComponent implements OnInit {
   readonly isLoading = toSignal(this.dashboardStore.isLoading$);
   readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   readonly isLoadingFirstTime = computed(() => this.isLoading() && this.savedGroups() === null);
+  readonly removingGroups = signal(new Set<WidgetGroup>());
 
   readonly customLayout = computed(() => {
     return !isEqual(this.renderedGroups(), getDefaultWidgets(this.isHaLicensed()));
@@ -95,16 +91,6 @@ export class DashboardComponent implements OnInit {
     title: this.translate.instant('Your dashboard is currently empty!'),
     message: this.translate.instant('Start adding widgets to personalize it. Click on the "Configure" button to enter edit mode.'),
   };
-
-  constructor(
-    private dashboardStore: DashboardStore,
-    private slideIn: SlideIn,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private dialogService: DialogService,
-    private store$: Store<AppState>,
-  ) {}
 
   ngOnInit(): void {
     performance.mark('Dashboard Start');
@@ -170,8 +156,21 @@ export class DashboardComponent implements OnInit {
   }
 
   protected onDeleteGroup(groupToRemove: WidgetGroup): void {
+    this.removingGroups.update((removing) => {
+      const newSet = new Set(removing);
+      newSet.add(groupToRemove);
+      return newSet;
+    });
+  }
+
+  protected onGroupRemovalComplete(groupToRemove: WidgetGroup): void {
     this.renderedGroups.update((groups) => {
       return groups.filter((group) => group !== groupToRemove);
+    });
+    this.removingGroups.update((removing) => {
+      const newSet = new Set(removing);
+      newSet.delete(groupToRemove);
+      return newSet;
     });
   }
 
@@ -200,6 +199,10 @@ export class DashboardComponent implements OnInit {
         this.renderedGroups.set(getDefaultWidgets(this.isHaLicensed()));
         this.snackbar.success(this.translate.instant('Default widgets restored'));
       });
+  }
+
+  protected isGroupRemoving(group: WidgetGroup): boolean {
+    return this.removingGroups().has(group);
   }
 
   private loadGroups(): void {

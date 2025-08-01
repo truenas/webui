@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -68,6 +64,17 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class ReplicationWizardComponent {
+  private api = inject(ApiService);
+  private replicationService = inject(ReplicationService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
+  private authService = inject(AuthService);
+  slideInRef = inject<SlideInRef<undefined, ReplicationTask | undefined>>(SlideInRef);
+
   protected whatAndWhere = viewChild.required(ReplicationWhatAndWhereComponent);
   protected when = viewChild.required(ReplicationWhenComponent);
 
@@ -83,24 +90,13 @@ export class ReplicationWizardComponent {
   createdSnapshotTasks: PeriodicSnapshotTask[] = [];
   createdReplication: ReplicationTask | undefined;
 
-  constructor(
-    private api: ApiService,
-    private replicationService: ReplicationService,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private loader: LoaderService,
-    private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<undefined, ReplicationTask | undefined>,
-    private authService: AuthService,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(this.whatAndWhere()?.form?.dirty || this.when()?.form?.dirty));
     });
   }
 
-  getSteps(): [
+  private getSteps(): [
     ReplicationWhatAndWhereComponent,
     ReplicationWhenComponent,
   ] {
@@ -164,10 +160,14 @@ export class ReplicationWizardComponent {
         }
         return of(createdReplication);
       }),
+      catchError((err: unknown) => {
+        this.handleError(err);
+        return EMPTY;
+      }),
       untilDestroyed(this),
     ).subscribe((createdReplication) => {
       this.cdr.markForCheck();
-      this.slideInRef.close({ response: createdReplication, error: null });
+      this.slideInRef.close({ response: createdReplication });
     });
   }
 
@@ -195,7 +195,7 @@ export class ReplicationWizardComponent {
     return payload;
   }
 
-  getSnapshotsCount(payload: CountManualSnapshotsParams): Observable<EligibleManualSnapshotsCount> {
+  private getSnapshotsCount(payload: CountManualSnapshotsParams): Observable<EligibleManualSnapshotsCount> {
     return this.authService.hasRole([
       Role.ReplicationTaskWrite,
       Role.ReplicationTaskWritePull,
@@ -209,23 +209,23 @@ export class ReplicationWizardComponent {
     );
   }
 
-  getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Observable<Record<string, string[]>> {
+  private getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Observable<Record<string, string[]>> {
     return this.api.call('replication.target_unmatched_snapshots', payload);
   }
 
-  createPeriodicSnapshotTask(payload: PeriodicSnapshotTaskCreate): Observable<PeriodicSnapshotTask> {
+  private createPeriodicSnapshotTask(payload: PeriodicSnapshotTaskCreate): Observable<PeriodicSnapshotTask> {
     return this.api.call('pool.snapshottask.create', [payload]);
   }
 
-  createSnapshot(payload: CreateZfsSnapshot): Observable<ZfsSnapshot> {
+  private createSnapshot(payload: CreateZfsSnapshot): Observable<ZfsSnapshot> {
     return this.api.call('pool.snapshot.create', [payload]);
   }
 
-  createReplication(payload: ReplicationCreate): Observable<ReplicationTask> {
+  private createReplication(payload: ReplicationCreate): Observable<ReplicationTask> {
     return this.api.call('replication.create', [payload]);
   }
 
-  getSnapshotsCountPayload(value: ReplicationWizardData): CountManualSnapshotsParams | undefined {
+  private getSnapshotsCountPayload(value: ReplicationWizardData): CountManualSnapshotsParams | undefined {
     let transport = value.transport || TransportMode.Local;
     if (value.ssh_credentials_target) {
       transport = TransportMode.Local;
@@ -249,7 +249,7 @@ export class ReplicationWizardComponent {
     return undefined;
   }
 
-  getPeriodicSnapshotTasksPayload(data: ReplicationWizardData): PeriodicSnapshotTaskCreate[] {
+  private getPeriodicSnapshotTasksPayload(data: ReplicationWizardData): PeriodicSnapshotTaskCreate[] {
     const payload: PeriodicSnapshotTaskCreate[] = [];
     for (const dataset of data.source_datasets) {
       payload.push({
@@ -265,7 +265,7 @@ export class ReplicationWizardComponent {
     return payload;
   }
 
-  getSnapshotsPayload(data: ReplicationWizardData): CreateZfsSnapshot[] {
+  private getSnapshotsPayload(data: ReplicationWizardData): CreateZfsSnapshot[] {
     const payload: CreateZfsSnapshot[] = [];
     for (const dataset of data.source_datasets) {
       payload.push({
@@ -277,7 +277,7 @@ export class ReplicationWizardComponent {
     return payload;
   }
 
-  getReplicationPayload(data: ReplicationWizardData): ReplicationCreate {
+  private getReplicationPayload(data: ReplicationWizardData): ReplicationCreate {
     let payload = {
       name: data.name,
       direction: data.source_datasets_from === DatasetSource.Remote ? Direction.Pull : Direction.Push,
@@ -349,7 +349,7 @@ export class ReplicationWizardComponent {
     return payload;
   }
 
-  isSnapshotTaskExist(payload: {
+  private isSnapshotTaskExist(payload: {
     dataset: string;
     schedule: Schedule;
     naming_schema?: string;
@@ -365,7 +365,7 @@ export class ReplicationWizardComponent {
     ]]);
   }
 
-  setSchemaOrRegexForObject(
+  private setSchemaOrRegexForObject(
     data: ReplicationCreate,
     schemaOrRegex: SnapshotNamingOption,
     schema: string | null = null,
@@ -388,7 +388,7 @@ export class ReplicationWizardComponent {
     this.rollBack();
   }
 
-  callCreateSnapshots(values: ReplicationWizardData): Observable<ZfsSnapshot[] | null> {
+  private callCreateSnapshots(values: ReplicationWizardData): Observable<ZfsSnapshot[] | null> {
     const snapshotsCountPayload = this.getSnapshotsCountPayload(values);
     if (snapshotsCountPayload) {
       return this.getSnapshotsCount(snapshotsCountPayload).pipe(
@@ -408,7 +408,7 @@ export class ReplicationWizardComponent {
     return of(null);
   }
 
-  callCreateTasks(values: ReplicationWizardData): Observable<PeriodicSnapshotTask[] | null> {
+  private callCreateTasks(values: ReplicationWizardData): Observable<PeriodicSnapshotTask[] | null> {
     if (values.schedule_method === ScheduleMethod.Cron && values.source_datasets_from === DatasetSource.Local) {
       this.existSnapshotTasks = [];
       const requestsTasks = [];
@@ -437,7 +437,7 @@ export class ReplicationWizardComponent {
     return of(null);
   }
 
-  callCreateReplication(values: ReplicationWizardData): Observable<ReplicationTask> {
+  private callCreateReplication(values: ReplicationWizardData): Observable<ReplicationTask> {
     const replicationPayload = this.getReplicationPayload(values);
     return this.getUnmatchedSnapshots([
       replicationPayload.direction,

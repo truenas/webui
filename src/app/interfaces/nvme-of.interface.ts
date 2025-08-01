@@ -1,5 +1,5 @@
-import { Required } from 'utility-types';
-import { NvmeOfAddressFamily, NvmeOfNamespaceDeviceType, NvmeOfTransportType } from 'app/enums/nvme-of.enum';
+import { Required, Overwrite } from 'utility-types';
+import { NvmeOfAddressFamily, NvmeOfNamespaceType, NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 
 export interface NvmeOfGlobalConfig {
   id: number;
@@ -22,6 +22,21 @@ export interface NvmeOfSubsystem {
   qix_max: number | null;
   ieee_oui: string | null;
   ana: boolean | null;
+
+  /**
+   * List of ids. Only populated with extra.options.verbose
+   */
+  ports: number[] | null;
+
+  /**
+   * List of ids. Only populated with extra.options.verbose
+   */
+  hosts: number[] | null;
+
+  /**
+   * List of ids. Only populated with extra.options.verbose
+   */
+  namespaces: number[] | null;
 }
 
 export type UpdateNvmeOfSubsystem = Partial<Omit<NvmeOfSubsystem, 'id'>>;
@@ -56,7 +71,7 @@ export interface NvmeOfNamespace {
   id: number;
   nsid: number | null;
   subsystem: NvmeOfSubsystem;
-  device_type: NvmeOfNamespaceDeviceType;
+  device_type: NvmeOfNamespaceType;
   device_path: string;
   filesize: number | null;
   device_uuid: string;
@@ -68,7 +83,7 @@ export interface NvmeOfNamespace {
 export type UpdateNvmeOfNamespace = Pick<
   Partial<NvmeOfNamespace>,
   'nsid' | 'device_type' | 'device_path' | 'filesize' | 'enabled'
-> & { subsys_id: number };
+> & { subsys_id?: number };
 export type CreateNvmeOfNamespace = Required<UpdateNvmeOfNamespace, 'device_type' | 'device_path' | 'subsys_id'>;
 
 export type DeleteNamespaceParams = [
@@ -97,6 +112,8 @@ export interface SubsystemPortAssociation {
   id: number;
   port: NvmeOfPort;
   subsystem: NvmeOfSubsystem;
+  subsys_id: number;
+  port_id: number;
 }
 
 export interface AssociateSubsystemPort {
@@ -108,6 +125,8 @@ export interface SubsystemHostAssociation {
   id: number;
   host: NvmeOfHost;
   subsystem: NvmeOfSubsystem;
+  subsys_id: number;
+  host_id: number;
 }
 
 export interface AssociateSubsystemHost {
@@ -117,5 +136,23 @@ export interface AssociateSubsystemHost {
 
 export type GenerateNvmeHostParams = [
   dhchap_hash: string,
-  nqn: string,
+  nqn?: string,
 ];
+
+export type NvmeOfSubsystemDetails = Overwrite<NvmeOfSubsystem, {
+  hosts: NvmeOfHost[];
+  ports: NvmeOfPort[];
+  namespaces: NvmeOfNamespace[];
+}>;
+
+export enum PortOrHostDeleteType {
+  Port = 'port',
+  Host = 'host',
+}
+
+export interface PortOrHostDeleteDialogData {
+  type: PortOrHostDeleteType;
+  item: NvmeOfPort | NvmeOfHost;
+  name: string;
+  subsystemsInUse: NvmeOfSubsystemDetails[];
+}

@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Inject,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -46,6 +41,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class BootPoolReplaceDialog implements OnInit {
+  pk = inject(MAT_DIALOG_DATA);
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private dialogRef = inject<MatDialogRef<BootPoolReplaceDialog>>(MatDialogRef);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+
   unusedDisks: DetailsDisk[] = [];
   protected isFormLoading = false;
   protected helptextSystemBootenv = helptextSystemBootenv;
@@ -55,17 +59,6 @@ export class BootPoolReplaceDialog implements OnInit {
   });
 
   protected readonly Role = Role;
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public pk: string,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    private api: ApiService,
-    private dialogRef: MatDialogRef<BootPoolReplaceDialog>,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-  ) {}
 
   ngOnInit(): void {
     this.setupWarningForExportedPools();

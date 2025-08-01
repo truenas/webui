@@ -9,7 +9,7 @@ export const helptextSystemCertificates = {
     },
 
     csrCreateType: {
-      placeholder: T('Type'),
+      label: T('Type'),
       tooltip: T('<i>Certificate Signing Requests</i> control when an external CA will issue (sign) the certificate. Typically used with ACME or other CAs that most popular browsers trust by default \
  <i>Import Certificate Signing Request</i> lets you import an existing CSR onto the system. Typically used with ACME or internal CAs.'),
     },
@@ -53,7 +53,7 @@ matches your certificate usage scenario.'),
     },
 
     lifetime: {
-      placeholder: T('Lifetime'),
+      label: T('Lifetime'),
       tooltip: T('The lifetime of the CA specified in days.'),
       validation: [Validators.required, Validators.min(0)],
     },
@@ -134,7 +134,7 @@ matches your certificate usage scenario.'),
           CA and enable Critical Extension.'),
       },
       ca: {
-        placeholder: T('CA'),
+        label: T('CA'),
         tooltip: T('Identify this certificate as a Certificate Authority (CA).'),
       },
       enabled: {
@@ -148,7 +148,7 @@ this certificate in a valid certification path. Entering <i>0</i> allows a singl
 additional certificate to follow in the certificate path. Cannot be less than <i>0</i>.'),
       },
       extensionCritical: {
-        placeholder: T('Critical Extension'),
+        label: T('Critical Extension'),
         tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
 be recognized by the certificate-using system or this certificate will be rejected. Extensions \
 identified as <i>not</i> critical can be ignored by the certificate-using system and the \
@@ -173,7 +173,7 @@ See <a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, sec
 for more details.'),
       },
       extensionCritical: {
-        placeholder: T('Critical Extension'),
+        label: T('Critical Extension'),
         tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
 be recognized by the certificate-using system or this certificate will be rejected. Extensions \
 identified as <i>not</i> critical can be ignored by the certificate-using system and the \
@@ -201,52 +201,52 @@ certificate still approved.'),
  for more information.'),
       },
       digitalSignature: {
-        placeholder: T('Digital Signature'),
+        label: T('Digital Signature'),
         tooltip: T('This certificate\'s public key is used with digital signature methods \
 that are separate from certificate or CRL signing.'),
       },
       contentCommitment: {
-        placeholder: T('Content Commitment'),
+        label: T('Content Commitment'),
         tooltip: T('This certificate\'s public key verifies digital signatures used for a \
 non-repudiation service.'),
       },
-      key_Encipherment: {
-        placeholder: T('Key Encipherment'),
+      keyEncipherment: {
+        label: T('Key Encipherment'),
         tooltip: T('This certificate\'s public key is used for key management.'),
       },
       dataEncipherment: {
-        placeholder: T('Data Encipherment'),
+        label: T('Data Encipherment'),
         tooltip: T('This certificate\'s public key is used to encipher user data.'),
       },
       keyAgreement: {
-        placeholder: T('Key Agreement'),
+        label: T('Key Agreement'),
         tooltip: T('This certificate\'s public key is used to manage key agreement.'),
       },
       keyCertSign: {
-        placeholder: T('Key Cert Sign'),
+        label: T('Key Cert Sign'),
         tooltip: T('This certificate\'s public key is used to verify signatures on \
 other public key certificates. Activating this also requires enabling the \
 <b>CA</b> basic constraint.'),
       },
       crlSign: {
-        placeholder: T('CRL Sign'),
+        label: T('CRL Sign'),
         tooltip: T('This certificate\'s public key is used to verify signatures \
 on a certificate revocation list (CRL).'),
       },
       encipherOnly: {
-        placeholder: T('Encipher Only'),
+        label: T('Encipher Only'),
         tooltip: T('The certificate\'s public key is used to encipher user \
 data only during key agreement operations. Requires that \
 <b>Key Agreement</b> is also set.'),
       },
       decipherOnly: {
-        placeholder: T('Decipher Only'),
+        label: T('Decipher Only'),
         tooltip: T('This certificate\'s public key is used to decipher \
 user data only during key agreement operations. Requires that \
 <b>Key Agreement</b> is also set.'),
       },
       extensionCritical: {
-        placeholder: T('Critical Extension'),
+        label: T('Critical Extension'),
         tooltip: T('Identify this extension as critical for the certificate. Critical extensions must \
 be recognized by the certificate-using system or this certificate will be rejected. Extensions \
 identified as <i>not</i> critical can be ignored by the certificate-using system and the \

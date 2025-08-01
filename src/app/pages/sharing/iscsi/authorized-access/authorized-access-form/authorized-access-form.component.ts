@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -51,6 +49,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class AuthorizedAccessFormComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private api = inject(ApiService);
+  private validatorService = inject(IxValidatorsService);
+  slideInRef = inject<SlideInRef<IscsiAuthAccess | undefined, boolean>>(SlideInRef);
+
   get isNew(): boolean {
     return !this.editingAccess;
   }
@@ -131,14 +136,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  constructor(
-    private translate: TranslateService,
-    private formBuilder: NonNullableFormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private api: ApiService,
-    private validatorService: IxValidatorsService,
-    public slideInRef: SlideInRef<IscsiAuthAccess | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -176,11 +174,11 @@ export class AuthorizedAccessFormComponent implements OnInit {
     }
   }
 
-  isPeerUserSet(): boolean {
+  protected isPeerUserSet(): boolean {
     return Boolean(this.form?.value?.peeruser);
   }
 
-  setAccessForEdit(access: IscsiAuthAccess): void {
+  private setAccessForEdit(access: IscsiAuthAccess): void {
     this.form.patchValue({
       ...access,
       secret_confirm: access.secret,
@@ -188,7 +186,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     const values = this.form.getRawValue();
     const payload = {
       tag: values.tag,
@@ -207,7 +205,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

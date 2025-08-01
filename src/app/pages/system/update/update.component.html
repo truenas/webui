@@ -1,58 +1,156 @@
-<ix-train-card></ix-train-card>
-<ix-system-version-card></ix-system-version-card>
+<ix-page-header [loading]="isLoading()"></ix-page-header>
 
-@if ((updateService.status$ | async) === SystemUpdateStatus.Available) {
-  <mat-card
-    id="upgrades-card"
-    [ixUiSearch]="searchableElements.elements.update"
-  >
-    <mat-card-content id="upgrades-card-scrollbox">
-      <table class="table table-striped table-sm upgrades-table" ixTest="upgrades-table">
-        <thead>
-          <tr ixTest="table-header">
-            <th>{{ 'Operation' | translate }}</th>
-            <th>{{ 'Name' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (package of updateService.packages$ | async; track package) {
-            <tr [ixTest]="package.name">
-              <td>{{ package.operation }}</td>
-              <td>{{ package.name }}</td>
-            </tr>
-          }
-          @if ((updateService.packages$ | async)?.length === 0) {
-            <tr ixTest="no-update-found">
-              <td>{{ 'No update found.' | translate }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-      @if (updateService.releaseNotesUrl$ | async; as releaseNotesUrl) {
-        <a
-          class="release-notes-link"
-          target="_blank"
-          ixTest="check-release-notes"
-          [href]="releaseNotesUrl"
-          [ixUiSearch]="searchableElements.elements.releaseNotes"
-        >
-          {{ 'Check Release Notes' | translate }}
-        </a>
+<div class="update-container">
+  <div>
+    <h2>
+      @if (isUpdateAvailable()) {
+        {{ 'Update Available' | translate }}
+      } @else {
+        {{ 'Installed Version' | translate }}
       }
-    </mat-card-content>
-  </mat-card>
-}
+    </h2>
 
-@if ((updateService.changeLog$ | async) && (trainService.nightlyTrain$ | async)) {
-  <mat-card id="changelog-card">
-    <mat-card-title id="changelog-title">
-      <div>{{ 'Change log' | translate }}</div>
-    </mat-card-title>
-    <mat-card-content id="changelog-scrollbox">
-      <div [innerHTML]="updateService.changeLog$ | async"></div>
-    </mat-card-content>
-  </mat-card>
-}
+    <div class="update-available">
+      <div class="versions">
+        <h4 class="current-version">
+          <div class="label">
+            {{ 'Current version' | translate }}:
+          </div>
+          <div class="value">
+            <div class="current-version-number">
+              @if (systemVersion(); as systemVersion) {
+                <span>{{ systemVersion }}</span>
+              } @else {
+                <ngx-skeleton-loader class="inline-loader"></ngx-skeleton-loader>
+              }
+            </div>
+            @if (doesNotMatchProfile() && currentVersionProfile()) {
+              <div class="profile-mismatch">
+                {{ '(from {profile} profile)' | translate: { profile: currentVersionProfile() } }}
+              </div>
+              }
+          </div>
+        </h4>
 
-<ix-train-info-card></ix-train-info-card>
-<ix-update-actions-card></ix-update-actions-card>
+        @if (standbySystemVersion(); as standbySystemVersion) {
+          <h4>
+            {{ 'Current version (standby node)' | translate }}:
+            <span>{{ standbySystemVersion }}</span>
+          </h4>
+        }
+
+        @if (status()?.error) {
+          <h4>
+            {{ status()?.error }}
+          </h4>
+        }
+
+        @if (newVersion()) {
+          <h4>
+            {{ 'Update version' | translate }}:
+            <span>{{ newVersion().version }}</span>
+          </h4>
+        }
+      </div>
+
+      @if (isUpdateAvailable()) {
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          color="primary"
+          ixTest="install-updates"
+          [disabled]="isUpdateInProgress$ | async"
+          (click)="onInstallUpdatePressed()"
+        >
+          @if (isUpdateInProgress$ | async) {
+            {{ 'Installing Update...' | translate }}
+          } @else {
+            {{ 'Install Update' | translate }}
+          }
+        </button>
+      }
+
+      @if (isSystemUpToDate()) {
+        <h4>
+          <b>{{ 'System is up to date!' | translate }}</b>
+          <ix-icon name="check_circle" class="up-to-date-icon"></ix-icon>
+        </h4>
+      }
+    </div>
+
+    @if (isRebootRequired()) {
+      <h4 class="hint">{{ 'An update is already applied. Please restart the system.' | translate }}</h4>
+    }
+
+    @if (changelog() || newVersion()?.release_notes_url) {
+      <div class="update-summary">
+        <h3>
+          {{ 'Update Summary for {version}' | translate: { version: newVersion().version } }}
+        </h3>
+
+        @if (changelog()) {
+          <h4>{{ 'Summary' | translate }}:</h4>
+
+          <div class="changelog" [innerHTML]="changelog()"></div>
+        }
+
+        @if (newVersion()?.release_notes_url) {
+          <a
+            class="release-notes-link"
+            target="_blank"
+            ixTest="view-release-notes"
+            [href]="newVersion()?.release_notes_url"
+            [ixUiSearch]="searchableElements.elements.releaseNotes"
+          >
+            {{ 'View Release Notes' | translate }}
+          </a>
+        }
+      </div>
+    }
+
+    @if (newVersion()?.release_notes) {
+      <div class="release-notes-section">
+        <h3>{{ 'Release Notes' | translate }}</h3>
+        <div class="release-notes-content">
+          <ix-dynamic-markdown 
+            [content]="newVersion().release_notes"
+            [context]="releaseNotesContext()"
+          ></ix-dynamic-markdown>
+        </div>
+      </div>
+    }
+
+    <div class="other-options">
+      <h3>{{ 'Other Options' | translate }}</h3>
+
+      <div class="manual-update">
+        <div>
+          <h4>{{ 'Manual Update' | translate }}</h4>
+          <a
+            ixTest="download-truenas"
+            target="_blank"
+            [attr.href]="manualUpdateUrl"
+          >
+            {{ 'See the manual image installation guide' | translate }}
+          </a>
+        </div>
+
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          ixTest="install-manual-update"
+          (click)="manualUpdate()"
+        >
+          {{ 'Install' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (profileChoices()) {
+    <ix-update-profile-card
+      [currentProfileId]="config().profile"
+      [profileChoices]="profileChoices()"
+    ></ix-update-profile-card>
+  }
+</div>

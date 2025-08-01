@@ -1,0 +1,46 @@
+:host {
+  background-color: var(--bg2);
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3); // default cdk-overlay backdrop background
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 48px - 75px); // 100vh - topbarHeight - modalHeaderHeight
+  padding-top: 75px;
+  position: fixed;
+  right: 0;
+  transform: translateX(100%); // Start hidden by default
+  transition: transform 150ms ease-out;
+  width: 480px;
+
+  &.slide-in-hidden {
+    transform: translateX(100%);
+    transition: transform 150ms ease-in;
+  }
+
+  &.slide-in-visible {
+    transform: translateX(0);
+    transition: transform 150ms ease-out;
+  }
+}
+
+// When debug panel is open, adjust the slide-in position
+body:has(ix-websocket-debug-panel .websocket-debug-panel.open) {
+  :host {
+    right: var(--debug-panel-width, 550px); // Use dynamic debug panel width
+  }
+}
+
+.slide-in-wrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding: 0 20px;
+  width: 100%;
+
+  > * {
+    box-sizing: border-box;
+    flex: 1 0 auto;
+    width: 100%;
+  }
+}

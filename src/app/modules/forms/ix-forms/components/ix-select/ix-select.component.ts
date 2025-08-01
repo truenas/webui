@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, input, model, OnChanges, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, model, OnChanges, OnInit, ViewChild, inject } from '@angular/core';
 import {
   ControlValueAccessor, NgControl, FormsModule, ReactiveFormsModule,
 } from '@angular/forms';
@@ -55,8 +52,15 @@ export type IxSelectValue = SelectOptionValueType;
   hostDirectives: [
     { ...registeredDirectiveConfig },
   ],
+  host: {
+    tabindex: '0',
+    '(focus)': 'onHostFocus()',
+  },
 })
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
+  controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly label = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
   readonly options = model<Observable<SelectOption[]>>();
@@ -64,6 +68,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   readonly tooltip = input<TranslatedString>();
   readonly multiple = input<boolean>();
   readonly emptyValue = input<string | null>(null);
+  readonly emptyLabel = input('--');
   readonly hideEmpty = input(false);
   readonly showSelectAll = input(false);
   readonly compareWith = input<(val1: unknown, val2: unknown) => boolean>((val1, val2) => val1 === val2);
@@ -81,9 +86,11 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   private opts: SelectOption[] = [];
   private optsSubscription: Subscription;
 
+  @ViewChild(MatSelect) private matSelect: MatSelect;
+
   get selectedLabel(): string {
     if (this.value === undefined) {
-      return '';
+      return this.emptyLabel();
     }
 
     if (this.multiple()) {
@@ -91,7 +98,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     }
 
     const selectedOption = this.opts.find((opt) => this.compareWith()(opt.value, this.value));
-    return selectedOption ? selectedOption.label : '';
+    return selectedOption ? selectedOption.label : this.emptyLabel();
   }
 
   get multipleLabels(): string[] {
@@ -112,10 +119,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     return this.isLoading || !this.options();
   }
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 
@@ -181,23 +185,19 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     }
   }
 
-  onOptionTooltipClicked(event: MouseEvent): void {
-    event.stopPropagation();
-  }
-
-  selectAll(): void {
+  private selectAll(): void {
     if (this.multiple()) {
       this.value = this.opts.map((opt) => opt.value) as SelectOptionValueType;
       this.onChange(this.value);
     }
   }
 
-  unselectAll(): void {
+  private unselectAll(): void {
     this.value = [];
     this.onChange(this.value);
   }
 
-  toggleSelectAll(checked: boolean): void {
+  protected toggleSelectAll(checked: boolean): void {
     if (checked) {
       this.selectAll();
     } else {
@@ -206,7 +206,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     this.updateSelectAllState();
   }
 
-  updateSelectAllState(): void {
+  private updateSelectAllState(): void {
     if (Array.isArray(this.value)) {
       if (this.value.length === 0) {
         this.selectAllState.checked = false;
@@ -215,6 +215,24 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
       } else {
         this.selectAllState.checked = false;
       }
+    }
+  }
+
+  /**
+   * Focus the select element
+   */
+  focus(): void {
+    if (this.matSelect) {
+      this.matSelect.focus();
+    }
+  }
+
+  /**
+   * Handle focus on the host element
+   */
+  onHostFocus(): void {
+    if (this.matSelect && !this.isDisabled) {
+      this.matSelect.focus();
     }
   }
 }

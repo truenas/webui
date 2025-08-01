@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -53,6 +51,12 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   ],
 })
 export class InstanceDisksComponent {
+  private slideIn = inject(SlideIn);
+  private matDialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+  private devicesStore = inject(VirtualizationDevicesStore);
+  private instanceStore = inject(VirtualizationInstancesStore);
+
   readonly instance = input.required<VirtualizationInstance>();
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
@@ -68,14 +72,6 @@ export class InstanceDisksComponent {
 
   protected readonly isVm = computed(() => this.instance().type === VirtualizationType.Vm);
   protected readonly isContainer = computed(() => this.instance().type === VirtualizationType.Container);
-
-  constructor(
-    private slideIn: SlideIn,
-    private matDialog: MatDialog,
-    private translate: TranslateService,
-    private devicesStore: VirtualizationDevicesStore,
-    private instanceStore: VirtualizationInstancesStore,
-  ) {}
 
   protected readonly visibleDisks = computed(() => this.devicesStore.devices().filter(
     (device): device is VirtualizationDisk => device.dev_type === VirtualizationDeviceType.Disk && !!device.source,

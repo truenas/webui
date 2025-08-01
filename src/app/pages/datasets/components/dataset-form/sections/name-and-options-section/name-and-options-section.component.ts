@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -14,11 +12,12 @@ import {
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
+import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
+import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import {
   forbiddenValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -34,7 +33,8 @@ import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validat
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,
-    IxTextareaComponent,
+    DetailsTableComponent,
+    DetailsItemComponent,
     IxSelectComponent,
     IxCheckboxComponent,
     IxInputComponent,
@@ -42,6 +42,11 @@ import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validat
   ],
 })
 export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+  private smbValidationService = inject(SmbValidationService);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly existing = input<Dataset>();
   readonly parent = input<Dataset>();
 
@@ -75,13 +80,6 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   get canCreateNfs(): boolean {
     return this.form.value.share_type === DatasetPreset.Multiprotocol;
   }
-
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private translate: TranslateService,
-    private smbValidationService: SmbValidationService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnChanges(): void {
     const parent = this.parent();

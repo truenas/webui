@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardTitle, MatCardContent, MatCardActions,
@@ -37,7 +35,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatCardTitle,
     ReadOnlyComponent,
     MatCardContent,
-    DualListBoxComponent,
     MatCardActions,
     RequiresRolesDirective,
     MatButton,
@@ -47,6 +44,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class GroupMembersComponent implements OnInit {
+  private api = inject(ApiService);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private errorHandler = inject(ErrorHandlerService);
+  private authService = inject(AuthService);
+
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly iconMarker = iconMarker;
   protected selectedMembers: User[] = [];
@@ -58,14 +61,6 @@ export class GroupMembersComponent implements OnInit {
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);
   }
-
-  constructor(
-    private api: ApiService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private errorHandler: ErrorHandlerService,
-    private authService: AuthService,
-  ) {}
 
   ngOnInit(): void {
     this.isLoading.set(true);

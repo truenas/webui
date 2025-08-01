@@ -78,16 +78,16 @@ describe('AlertServiceComponent', () => {
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn((): undefined => undefined),
   };
 
   const existingService = {
     id: 4,
     name: 'Existing Service',
     enabled: true,
-    type: AlertServiceType.AwsSns,
     level: AlertLevel.Warning,
     attributes: {
+      type: AlertServiceType.AwsSns,
       region: 'us-east-1',
       topic_arn: 'arn:aws:sns:us-east-1:123456789012:MyTopic',
       aws_access_key_id: 'KEY1',
@@ -146,9 +146,9 @@ describe('AlertServiceComponent', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.create', [{
         name: 'My Alert Service',
         enabled: true,
-        type: AlertServiceType.AwsSns,
         level: AlertLevel.Error,
         attributes: {
+          type: AlertServiceType.AwsSns,
           aws_access_key_id: 'KEY1',
           aws_secret_access_key: 'SECRET1',
           region: 'us-east-1',
@@ -174,6 +174,7 @@ describe('AlertServiceComponent', () => {
       expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.test', [{
         attributes: {
+          type: AlertServiceType.AwsSns,
           aws_access_key_id: 'KEY1',
           aws_secret_access_key: 'SECRET1',
           region: 'us-east-1',
@@ -182,7 +183,6 @@ describe('AlertServiceComponent', () => {
         enabled: true,
         level: AlertLevel.Error,
         name: 'My Alert Service',
-        type: AlertServiceType.AwsSns,
       }]);
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -233,8 +233,10 @@ describe('AlertServiceComponent', () => {
           name: 'Updated Service',
           enabled: false,
           level: AlertLevel.Warning,
-          type: AlertServiceType.OpsGenie,
-          attributes: { email: 'me@truenas.com' },
+          attributes: {
+            type: AlertServiceType.OpsGenie,
+            email: 'me@truenas.com',
+          },
         },
       ]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

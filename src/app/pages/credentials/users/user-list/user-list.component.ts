@@ -1,10 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component,
-  OnInit,
-  ChangeDetectorRef,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
@@ -69,6 +64,13 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   ],
 })
 export class OldUserListComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
+  private store$ = inject<Store<AppState>>(Store);
+  private translate = inject(TranslateService);
+  private emptyService = inject(EmptyService);
+  private router = inject(Router);
+
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly searchableElements = userListElements;
 
@@ -125,18 +127,9 @@ export class OldUserListComponent implements OnInit {
   filterString = '';
   users: User[] = [];
 
-  get emptyConfigService(): EmptyService {
+  protected get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
-
-  constructor(
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
-    private translate: TranslateService,
-    private emptyService: EmptyService,
-    private router: Router,
-  ) { }
 
   ngOnInit(): void {
     this.store$.dispatch(userPageEntered());
@@ -155,7 +148,7 @@ export class OldUserListComponent implements OnInit {
     });
   }
 
-  getUsers(): void {
+  private getUsers(): void {
     this.store$.pipe(
       select(selectUsers),
       untilDestroyed(this),
@@ -171,19 +164,19 @@ export class OldUserListComponent implements OnInit {
     });
   }
 
-  toggleBuiltins(): void {
+  protected toggleBuiltins(): void {
     this.store$.dispatch(builtinUsersToggled());
   }
 
-  doAdd(): void {
+  protected doAdd(): void {
     this.slideIn.open(OldUserFormComponent, { wide: true });
   }
 
-  navigateToApiKeys(): void {
+  protected navigateToApiKeys(): void {
     this.router.navigate(['/credentials/users/api-keys']);
   }
 
-  onListFiltered(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ list: this.users, query, columnKeys: ['username', 'full_name', 'uid'] });
   }
@@ -196,7 +189,7 @@ export class OldUserListComponent implements OnInit {
     });
   }
 
-  handleDeletedUser(id: number): void {
+  protected handleDeletedUser(id: number): void {
     this.store$.dispatch(userRemoved({ id }));
   }
 }

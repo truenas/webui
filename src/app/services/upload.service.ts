@@ -1,7 +1,7 @@
 import {
   HttpClient, HttpEvent, HttpProgressEvent, HttpRequest, HttpResponse,
 } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
@@ -24,12 +24,11 @@ export interface UploadOptions<M extends ApiJobMethod = ApiJobMethod> {
   providedIn: 'root',
 })
 export class UploadService {
-  constructor(
-    protected http: HttpClient,
-    private translate: TranslateService,
-    private authService: AuthService,
-    private store$: Store<AppState>,
-  ) {}
+  protected http = inject(HttpClient);
+  private translate = inject(TranslateService);
+  private authService = inject(AuthService);
+  private store$ = inject<Store<AppState>>(Store);
+
 
   /**
    * Reports progress.

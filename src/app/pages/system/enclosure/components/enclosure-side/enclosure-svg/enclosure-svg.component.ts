@@ -1,18 +1,4 @@
-import {
-  animate, style, transition, trigger,
-} from '@angular/animations';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  effect,
-  ElementRef,
-  input,
-  model,
-  OnDestroy,
-  Renderer2,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, ElementRef, input, model, OnDestroy, Renderer2, signal, viewChild, inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -30,17 +16,15 @@ export type TintingFunction = (slot: DashboardEnclosureSlot) => string | null;
   templateUrl: './enclosure-svg.component.html',
   styleUrls: ['./enclosure-svg.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('svgTransition', [
-      transition(':enter', [
-        style({ opacity: 0, height: '*' }),
-        animate('300ms ease-in', style({ opacity: 1, height: '*' })),
-      ]),
-    ]),
-  ],
   imports: [NgxSkeletonLoaderModule],
 })
 export class EnclosureSvgComponent implements OnDestroy {
+  private renderer = inject(Renderer2);
+  private svgLoader = inject(SvgCacheService);
+  private errorHandler = inject(ErrorHandlerService);
+  private sanitizer = inject(DomSanitizer);
+  private translate = inject(TranslateService);
+
   readonly emptyOpacity = 0.15;
   readonly unselectedOpacity = 0.3;
   readonly svgUrl = input.required<string>();
@@ -57,14 +41,6 @@ export class EnclosureSvgComponent implements OnDestroy {
 
   private overlayRects: Record<number, SVGRectElement> = {};
   private slotElements: Record<number, SVGGElement> = {};
-
-  constructor(
-    private renderer: Renderer2,
-    private svgLoader: SvgCacheService,
-    private errorHandler: ErrorHandlerService,
-    private sanitizer: DomSanitizer,
-    private translate: TranslateService,
-  ) {}
 
   ngOnDestroy(): void {
     if (this.keyDownListener) {

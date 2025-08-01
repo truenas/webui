@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import {
   FormControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
@@ -62,6 +60,17 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   ],
 })
 export class EmailFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private validatorService = inject(IxValidatorsService);
+  private snackbar = inject(SnackbarService);
+  private systemGeneralService = inject(SystemGeneralService);
+  slideInRef = inject<SlideInRef<MailConfig | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.AlertWrite];
 
   sendMethodControl = new FormControl(MailSendMethod.Smtp, { nonNullable: true });
@@ -88,15 +97,15 @@ export class EmailFormComponent implements OnInit {
 
   readonly sendMethodOptions$ = of([
     {
-      label: helptextSystemEmail.send_mail_method.smtp.placeholder,
+      label: helptextSystemEmail.sendMailMethod.smtp.label,
       value: MailSendMethod.Smtp,
     },
     {
-      label: helptextSystemEmail.send_mail_method.gmail.placeholder,
+      label: helptextSystemEmail.sendMailMethod.gmail.label,
       value: MailSendMethod.Gmail,
     },
     {
-      label: helptextSystemEmail.send_mail_method.outlook.placeholder,
+      label: helptextSystemEmail.sendMailMethod.outlook.label,
       value: MailSendMethod.Outlook,
     },
   ]);
@@ -133,18 +142,7 @@ export class EmailFormComponent implements OnInit {
     }
   }
 
-  constructor(
-    private api: ApiService,
-    private dialogService: DialogService,
-    private formErrorHandler: FormErrorHandlerService,
-    private formBuilder: NonNullableFormBuilder,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private validatorService: IxValidatorsService,
-    private snackbar: SnackbarService,
-    private systemGeneralService: SystemGeneralService,
-    public slideInRef: SlideInRef<MailConfig | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -177,7 +175,7 @@ export class EmailFormComponent implements OnInit {
     }
   }
 
-  onSendTestEmailPressed(): void {
+  protected onSendTestEmailPressed(): void {
     this.api.call('mail.local_administrator_email')
       .pipe(
         this.errorHandler.withErrorHandler(),
@@ -197,11 +195,11 @@ export class EmailFormComponent implements OnInit {
       });
   }
 
-  onLoggedIn(credentials: unknown): void {
+  protected onLoggedIn(credentials: unknown): void {
     this.oauthCredentials = credentials as MailOauthConfig;
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.isLoading.set(true);
     const update = this.prepareConfigUpdate();
 
@@ -211,7 +209,7 @@ export class EmailFormComponent implements OnInit {
         next: () => {
           this.isLoading.set(false);
           this.snackbar.success(this.translate.instant('Email settings updated.'));
-          this.slideInRef.close({ response: true, error: null });
+          this.slideInRef.close({ response: true });
         },
         error: (error: unknown) => {
           this.isLoading.set(false);

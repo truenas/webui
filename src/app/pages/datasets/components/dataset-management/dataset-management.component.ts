@@ -5,20 +5,7 @@ import {
 } from '@angular/cdk/layout';
 import { CdkTreeNodePadding, FlatTreeControl } from '@angular/cdk/tree';
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  AfterViewInit,
-  OnDestroy,
-  ElementRef,
-  Inject,
-  TrackByFunction,
-  HostBinding,
-  computed,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TrackByFunction, HostBinding, computed, viewChild, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import {
@@ -37,6 +24,7 @@ import {
   map,
   switchMap,
 } from 'rxjs/operators';
+import { datasetEmptyConfig } from 'app/constants/empty-configs';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -44,7 +32,6 @@ import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
@@ -58,9 +45,9 @@ import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-d
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { datasetManagementElements } from 'app/pages/datasets/components/dataset-management/dataset-management.elements';
@@ -97,6 +84,18 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDestroy {
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private activatedRoute = inject(ActivatedRoute);
+  private datasetStore = inject(DatasetTreeStore);
+  private router = inject(Router);
+  protected translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private breakpointObserver = inject(BreakpointObserver);
+  private searchDirectives = inject(UiSearchDirectivesService);
+  private layoutService = inject(LayoutService);
+  private window = inject<Window>(WINDOW);
+
   readonly ixTreeHeader = viewChild<ElementRef<HTMLElement>>('ixTreeHeader');
   readonly ixTree = viewChild<ElementRef<HTMLElement>>('ixTree');
 
@@ -115,7 +114,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   error = toSignal(this.datasetStore.error$);
 
-  emptyConf = computed<EmptyConfig>(() => {
+  emptyConfig = computed<EmptyConfig>(() => {
     const error = this.error();
 
     const apiError = extractApiErrorDetails(error);
@@ -133,16 +132,9 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     }
 
     return {
-      type: EmptyType.NoPageData,
-      large: true,
-      title: this.translate.instant('No Datasets'),
-      message: `${this.translate.instant(
-        "It seems you haven't configured pools yet.",
-      )} ${this.translate.instant(
-        'Please click the button below to create a pool.',
-      )}` as TranslatedString,
+      ...datasetEmptyConfig,
       button: {
-        label: this.translate.instant('Create pool'),
+        label: this.translate.instant('Create Pool'),
         action: () => this.createPool(),
       },
     };
@@ -170,19 +162,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset?.id;
   readonly hasChild = (_: number, dataset: DatasetDetails): boolean => Number(dataset?.children?.length) > 0;
 
-  constructor(
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute,
-    private datasetStore: DatasetTreeStore,
-    private router: Router,
-    protected translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private breakpointObserver: BreakpointObserver,
-    private searchDirectives: UiSearchDirectivesService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
       .subscribe(() => {
@@ -222,7 +202,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  listenForLoading(): void {
+  private listenForLoading(): void {
     this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
       this.isLoading = isLoading;
       this.cdr.markForCheck();
@@ -233,36 +213,36 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  isSystemDataset(dataset: DatasetDetails): boolean {
+  protected isSystemDataset(dataset: DatasetDetails): boolean {
     return dataset.name.split('/').length === 1 && this.systemDataset() === dataset.name;
   }
 
-  treeHeaderScrolled(): void {
+  protected treeHeaderScrolled(): void {
     this.scrollSubject.next(this.ixTreeHeader()?.nativeElement?.scrollLeft || 0);
   }
 
-  datasetTreeScrolled(scrollLeft: number): void {
+  protected datasetTreeScrolled(scrollLeft: number): void {
     this.scrollSubject.next(scrollLeft);
   }
 
-  datasetTreeWidthChanged(event: ResizedEvent): void {
+  protected datasetTreeWidthChanged(event: ResizedEvent): void {
     this.treeWidthChange$.next(event);
   }
 
-  onSearch(query: string): void {
+  protected onSearch(query: string): void {
     this.dataSource.filter(query);
   }
 
-  closeMobileDetails(): void {
+  protected closeMobileDetails(): void {
     this.showMobileDetails = false;
   }
 
-  createPool(): void {
+  protected createPool(): void {
     this.router.navigate(['/storage', 'create']);
   }
 
-  viewDetails(dataset: DatasetDetails): void {
-    this.router.navigate(['/datasets', dataset.id]);
+  protected viewDetails(dataset: DatasetDetails): void {
+    this.layoutService.navigatePreservingScroll(this.router, ['/datasets', dataset.id]);
 
     if (this.isMobileView) {
       this.showMobileDetails = true;

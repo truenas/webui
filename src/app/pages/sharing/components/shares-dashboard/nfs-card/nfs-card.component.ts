@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -8,12 +8,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, filter, switchMap } from 'rxjs';
+import { nfsCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -61,13 +63,23 @@ import { selectService } from 'app/store/services/services.selectors';
     TranslateModule,
     AsyncPipe,
     RouterLink,
+    EmptyComponent,
   ],
 })
 export class NfsCardComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private store$ = inject<Store<ServicesState>>(Store);
+  protected emptyService = inject(EmptyService);
+
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   service$ = this.store$.select(selectService(ServiceName.Nfs));
   dataProvider: AsyncDataProvider<NfsShare>;
+  protected readonly emptyConfig = nfsCardEmptyConfig;
 
   columns = createTable<NfsShare>([
     textColumn({
@@ -105,16 +117,6 @@ export class NfsCardComponent implements OnInit {
     ariaLabels: (row) => [row.path, this.translate.instant('NFS Share')],
   });
 
-  constructor(
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private store$: Store<ServicesState>,
-    protected emptyService: EmptyService,
-  ) {}
-
   ngOnInit(): void {
     const nfsShares$ = this.api.call('sharing.nfs.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<NfsShare>(nfsShares$);
@@ -122,7 +124,7 @@ export class NfsCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  openForm(row?: NfsShare): void {
+  protected openForm(row?: NfsShare): void {
     this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -131,9 +133,8 @@ export class NfsCardComponent implements OnInit {
     });
   }
 
-  doDelete(nfs: NfsShare): void {
+  protected doDelete(nfs: NfsShare): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Are you sure you want to delete NFS Share <b>"{path}"</b>?', { path: nfs.path }),
       buttonColor: 'warn',
       buttonText: this.translate.instant('Delete'),
@@ -168,7 +169,7 @@ export class NfsCardComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
+  protected setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 0,
       direction: SortDirection.Asc,

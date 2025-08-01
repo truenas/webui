@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   BehaviorSubject, distinctUntilChanged, filter, Observable,
@@ -20,13 +20,11 @@ import { AppState } from 'app/store';
   providedIn: 'root',
 })
 export class IscsiService {
-  private refreshData$ = new BehaviorSubject<IscsiTarget | null>(null);
+  protected api = inject(ApiService);
+  protected auth = inject(AuthService);
+  private store$ = inject<Store<AppState>>(Store);
 
-  constructor(
-    protected api: ApiService,
-    protected auth: AuthService,
-    private store$: Store<AppState>,
-  ) {}
+  private refreshData$ = new BehaviorSubject<IscsiTarget | null>(null);
 
   listenForDataRefresh(): Observable<IscsiTarget | null> {
     return this.refreshData$.pipe(distinctUntilChanged(), filter(Boolean));

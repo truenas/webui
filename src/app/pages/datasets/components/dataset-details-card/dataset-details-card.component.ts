@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
@@ -12,7 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { DatasetType } from 'app/enums/dataset.enum';
+import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -29,7 +27,7 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { getDatasetLabel, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -55,21 +53,20 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DatasetDetailsCardComponent {
+  private translate = inject(TranslateService);
+  private matDialog = inject(MatDialog);
+  private datasetStore = inject(DatasetTreeStore);
+  private slideIn = inject(SlideIn);
+  private errorHandler = inject(ErrorHandlerService);
+  private router = inject(Router);
+  private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+
   readonly dataset = input.required<DatasetDetails>();
 
   protected readonly Role = Role;
   readonly OnOff = OnOff;
-
-  constructor(
-    private translate: TranslateService,
-    private matDialog: MatDialog,
-    private datasetStore: DatasetTreeStore,
-    private slideIn: SlideIn,
-    private errorHandler: ErrorHandlerService,
-    private router: Router,
-    private api: ApiService,
-    private snackbar: SnackbarService,
-  ) { }
+  readonly DatasetCaseSensitivity = DatasetCaseSensitivity;
 
   protected readonly datasetCompression = computed(() => {
     const compressRatioValue = this.dataset().compressratio?.value;
@@ -131,10 +128,15 @@ export class DatasetDetailsCardComponent {
 
   editZvol(): void {
     this.slideIn.open(ZvolFormComponent, {
-      data: { isNew: false, parentId: this.dataset().id },
+      data: { isNew: false, parentOrZvolId: this.dataset().id },
     }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
-    ).subscribe(() => this.datasetStore.datasetUpdated());
+    ).subscribe(({ response }) => {
+      this.snackbar.success(
+        this.translate.instant('Zvol «{name}» updated.', { name: getDatasetLabel(response) }),
+      );
+      this.datasetStore.datasetUpdated();
+    });
   }
 }

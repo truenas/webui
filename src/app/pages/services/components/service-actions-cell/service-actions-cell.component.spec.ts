@@ -1,7 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -9,7 +8,6 @@ import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceActionsCellComponent } from 'app/pages/services/components/service-actions-cell/service-actions-cell.component';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
@@ -18,21 +16,16 @@ import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
+import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 
 describe('ServiceActionsCellComponent', () => {
   let spectator: SpectatorHost<ServiceActionsCellComponent>;
   let loader: ReturnType<typeof TestbedHarnessEnvironment.loader>;
-  let api: ApiService;
 
   const createHost = createHostFactory({
     component: ServiceActionsCellComponent,
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('service.update', 1),
-        mockCall('service.start'),
-        mockCall('service.stop'),
-      ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
       }),
@@ -48,7 +41,6 @@ describe('ServiceActionsCellComponent', () => {
       hostProps: { service: service as Service },
     });
 
-    api = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
@@ -73,29 +65,16 @@ describe('ServiceActionsCellComponent', () => {
     expect(hasViewSessions).toBe(true);
   });
 
-  it('shows "Start Service" icon when service is stopped', async () => {
-    setup({ service: ServiceName.Ftp, state: ServiceStatus.Stopped });
-
-    const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
-    expect(startIcon).toBeTruthy();
-
-    await startIcon.click();
-
-    expect(api.call).toHaveBeenCalledWith('service.start', [ServiceName.Ftp, { silent: false }]);
-  });
-
-  it('shows "Stop Service" icon when service is running', async () => {
-    setup({ service: ServiceName.Ftp, state: ServiceStatus.Running });
-
-    const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop-circle' }));
-    expect(stopIcon).toBeTruthy();
-
-    await stopIcon.click();
-
-    expect(api.call).toHaveBeenCalledWith('service.stop', [ServiceName.Ftp, { silent: false }]);
-  });
-
   describe('edit', () => {
+    it('should open NVMe-oF global configuration form', async () => {
+      setup({ service: ServiceName.NvmeOf, state: ServiceStatus.Stopped });
+
+      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      await editIcon.click();
+
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NvmeOfConfigurationComponent);
+    });
+
     it('should open iSCSI global configuration form', async () => {
       setup({ service: ServiceName.Iscsi, state: ServiceStatus.Stopped });
 

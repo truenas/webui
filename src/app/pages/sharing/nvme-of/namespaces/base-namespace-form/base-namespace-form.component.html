@@ -1,0 +1,74 @@
+<ix-modal-header
+  [title]="isNew() ? ('Add Namespace' | translate) : ('Edit Namespace' | translate)"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-button-group
+          formControlName="device_type"
+          [options]="typeOptions$"
+          [label]="'Type' | translate"
+        ></ix-button-group>
+
+        @switch (form.value.device_type) {
+          @case (FormNamespaceType.Zvol) {
+            <ix-explorer
+              formControlName="device_path"
+              [label]="'Path To Zvol' | translate"
+              [rootNodes]="zvolsRootNode"
+              [nodeProvider]="zvolProvider"
+            >
+              <ix-explorer-create-zvol></ix-explorer-create-zvol>
+            </ix-explorer>
+          }
+
+          @case (FormNamespaceType.ExistingFile) {
+            <ix-explorer
+              formControlName="device_path"
+              [label]="'Path To File' | translate"
+              [rootNodes]="datasetsRootNode"
+              [nodeProvider]="fileProvider"
+            ></ix-explorer>
+          }
+
+          @case (FormNamespaceType.NewFile) {
+            <ix-explorer
+              formControlName="device_path"
+              [label]="'Parent Directory' | translate"
+              [rootNodes]="datasetsRootNode"
+              [nodeProvider]="directoryProvider"
+            ></ix-explorer>
+
+            <ix-input
+              formControlName="filename"
+              [label]="'Filename' | translate"
+              [required]="true"
+            ></ix-input>
+
+            <ix-input
+              formControlName="filesize"
+              [label]="'File Size' | translate"
+              [required]="true"
+              [parse]="formatter.memorySizeParsing"
+              [format]="formatter.memorySizeFormatting"
+            ></ix-input>
+          }
+        }
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          color="primary"
+          type="submit"
+          ixTest="save"
+          [disabled]="form.invalid"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

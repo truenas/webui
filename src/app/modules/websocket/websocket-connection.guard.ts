@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,15 +10,15 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class WebSocketConnectionGuard {
+  private wsManager = inject(WebSocketHandlerService);
+  protected router = inject(Router);
+  private matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private window = inject<Window>(WINDOW);
+
   isConnected = false;
-  constructor(
-    private wsManager: WebSocketHandlerService,
-    protected router: Router,
-    private matDialog: MatDialog,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.wsManager.isClosed$.pipe(untilDestroyed(this)).subscribe((isClosed) => {
       if (isClosed) {
         this.resetUi();
@@ -31,7 +31,7 @@ export class WebSocketConnectionGuard {
     this.wsManager.isAccessRestricted$.pipe(untilDestroyed(this)).subscribe((isRestricted) => {
       if (isRestricted) {
         this.showAccessRestrictedDialog();
-        this.wsManager.isAccessRestricted$ = false;
+        this.wsManager.isAccessRestricted = false;
       }
     });
   }

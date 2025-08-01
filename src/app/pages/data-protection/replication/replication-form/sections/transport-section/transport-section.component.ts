@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -38,6 +36,10 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   ],
 })
 export class TransportSectionComponent implements OnChanges {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  formatter = inject(IxFormatterService);
+
   readonly replication = input<ReplicationTask>();
   readonly transport = input<TransportMode>();
 
@@ -57,15 +59,9 @@ export class TransportSectionComponent implements OnChanges {
   readonly netcatActiveSides$ = of(mapToOptions(netcatModeNames, this.translate));
   readonly compressions$ = of(mapToOptions(compressionTypeNames, this.translate));
 
-  readonly sizeSuggestion = this.translate.instant(helptextGlobal.human_readable.suggestion_label);
+  readonly sizeSuggestion = this.translate.instant(helptextGlobal.humanReadable.suggestionLabel);
 
   protected readonly helptext = helptextReplication;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    public formatter: IxFormatterService,
-  ) { }
 
   ngOnChanges(): void {
     const replication = this.replication();

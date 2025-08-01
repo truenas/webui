@@ -43,6 +43,8 @@ describe('IxSelectComponent', () => {
           [tooltip]="tooltip"
           [options]="options"
           [showSelectAll]="showSelectAll"
+          [emptyValue]="emptyValue"
+          [emptyLabel]="emptyLabel"
         ></ix-select>`,
         {
           hostProps: {
@@ -52,6 +54,8 @@ describe('IxSelectComponent', () => {
             tooltip: undefined,
             options: undefined,
             showSelectAll: undefined,
+            emptyValue: null,
+            emptyLabel: '--',
           },
         },
       );
@@ -77,10 +81,23 @@ describe('IxSelectComponent', () => {
       const label = spectator.query(IxLabelComponent)!;
       expect(label).toExist();
       expect(label.label()).toBe('Select Group');
-      // Required selects are always rendered without an asterisk,
-      // because there is no way to select an empty value anyway.
-      expect(label.required()).toBe(false);
+      expect(label.required()).toBe(true);
       expect(label.tooltip()).toBe('Select group to use.');
+    });
+
+    it('shows an empty label and value for non-required selects', async () => {
+      spectator.setHostInput({ options: options$ });
+      spectator.setHostInput('emptyLabel', 'Select Group');
+      spectator.setHostInput('emptyValue', 0);
+
+      const select = await loader.getHarness(IxSelectHarness);
+      const options = await select.getOptionLabels();
+
+      expect(options[0]).toBe('Select Group');
+
+      await select.setValue('Select Group');
+
+      expect(control.value).toBe(0);
     });
 
     it('shows loader while options are loading', fakeAsync(() => {

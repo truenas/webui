@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -69,6 +67,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CertificateListComponent implements OnInit {
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+  private download = inject(DownloadService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+
   readonly certificateDeleted = output();
 
   protected readonly requiredRoles = [Role.CertificateWrite];
@@ -114,16 +120,6 @@ export class CertificateListComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('Certificate')],
   });
 
-  constructor(
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-    private download: DownloadService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
-
   ngOnInit(): void {
     const certificates$ = this.api.call('certificate.query').pipe(
       map((certificates) => {
@@ -137,11 +133,11 @@ export class CertificateListComponent implements OnInit {
     this.getCertificates();
   }
 
-  getCertificates(): void {
+  protected getCertificates(): void {
     this.dataProvider.load();
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,
@@ -149,7 +145,7 @@ export class CertificateListComponent implements OnInit {
     });
   }
 
-  doImport(): void {
+  protected doImport(): void {
     this.slideIn.open(ImportCertificateComponent).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -158,7 +154,7 @@ export class CertificateListComponent implements OnInit {
     });
   }
 
-  doEdit(certificate: Certificate): void {
+  protected doEdit(certificate: Certificate): void {
     this.slideIn.open(CertificateEditComponent, {
       wide: true,
       data: certificate,
@@ -170,7 +166,7 @@ export class CertificateListComponent implements OnInit {
     });
   }
 
-  doDelete(certificate: Certificate): void {
+  protected doDelete(certificate: Certificate): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete Certificate'),
       message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: certificate.name }),
@@ -199,7 +195,7 @@ export class CertificateListComponent implements OnInit {
     });
   }
 
-  doDownload(certificate: Certificate): void {
+  protected doDownload(certificate: Certificate): void {
     const isCsr = certificate.cert_type_CSR;
     const path = isCsr ? certificate.csr_path : certificate.certificate_path;
     const fileName = `${certificate.name}.${isCsr ? 'csr' : 'crt'}`;

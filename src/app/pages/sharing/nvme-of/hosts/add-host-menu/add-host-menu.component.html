@@ -1,0 +1,62 @@
+@if (noHostsExist()) {
+  <button
+    mat-button
+    type="button"
+    [ixTest]="'add-host'"
+    (click)="openHostForm()"
+  >
+    {{ 'Add' | translate }}
+  </button>
+}
+@else {
+  <button
+    mat-button
+    type="button"
+    [ixTest]="'add-host'"
+    [matMenuTriggerFor]="addMenu"
+  >
+    {{ 'Add' | translate }}
+
+    <ix-icon name="mdi-menu-down"></ix-icon>
+  </button>
+
+  <mat-menu #addMenu="matMenu">
+    @for (host of unusedHosts(); track host.id) {
+      <button
+        mat-menu-item
+        [ixTest]="['add-host', host.hostnqn]"
+        (click)="selectHost(host)"
+      >
+        {{ host.hostnqn }}
+      </button>
+    }
+
+    <mat-divider></mat-divider>
+
+    <button
+      mat-menu-item
+      ixTest="create-new-host"
+      (click)="openHostForm()"
+    >
+      {{ 'Create New' | translate }}
+    </button>
+
+    <button
+      mat-menu-item
+      ixTest="manage-hosts"
+      (click)="manageHosts()"
+    >
+      {{ 'Manage Hosts' | translate }}
+    </button>
+
+    @if (showAllowAnyHost()) {
+      <button
+        mat-menu-item
+        ixTest="allow-all-hosts"
+        (click)="allowAllHosts()"
+      >
+        {{ 'Allow all hosts' | translate }}
+      </button>
+    }
+  </mat-menu>
+}

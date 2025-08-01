@@ -1,29 +1,25 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy,
-  output,
-  input,
-  effect,
-  signal,
-} from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Component, ChangeDetectionStrategy, output, input, signal, inject } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { injectParams } from 'ngxtension/inject-params';
-import { of } from 'rxjs';
-import { roleNames } from 'app/enums/role.enum';
+import { getUserType } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
+import { UsersDataProvider } from 'app/pages/credentials/new-users/all-users/users-data-provider';
 import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/users-search/users-search.component';
+import { UserAccessCellComponent } from './user-access-cell/user-access-cell.component';
 
 @UntilDestroy()
 @Component({
@@ -39,20 +35,27 @@ import { UsersSearchComponent } from 'app/pages/credentials/new-users/all-users/
     IxTableEmptyDirective,
     IxTableHeadComponent,
     IxTablePagerComponent,
+    IxTableCellDirective,
     NgTemplateOutlet,
     UsersSearchComponent,
+    UserAccessCellComponent,
   ],
 })
 export class UserListComponent {
-  readonly userName = injectParams('id');
+  protected emptyService = inject(EmptyService);
+  private translate = inject(TranslateService);
+  private searchDirectives = inject(UiSearchDirectivesService);
 
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
   readonly userSelected = output<User>();
   protected readonly currentBatch = signal<User[]>([]);
-  // TODO: NAS-135333 - Handle case after url linking is implemented to decide when no to show selected user
-  readonly isSelectedUserVisible$ = of(true);
-  readonly dataProvider = input.required<ApiDataProvider<'user.query'>>();
+  readonly dataProvider = input.required<UsersDataProvider>();
+
+  protected readonly pagination: TablePagination = {
+    pageSize: 50,
+    pageNumber: 1,
+  };
 
   protected columns = createTable<User>([
     textColumn({
@@ -60,51 +63,26 @@ export class UserListComponent {
       propertyName: 'username',
     }),
     textColumn({
-      title: this.translate.instant('UID'),
-      propertyName: 'uid',
-    }),
-    yesNoColumn({
-      title: this.translate.instant('Built in'),
-      propertyName: 'builtin',
-    }),
-    textColumn({
       title: this.translate.instant('Full Name'),
       propertyName: 'full_name',
     }),
     textColumn({
-      title: this.translate.instant('Roles'),
-      getValue: (row) => row.roles
-        .map((role) => this.translate.instant(roleNames.get(role) || role))
-        .join(', ') || this.translate.instant('N/A'),
+      title: this.translate.instant('Type'),
+      propertyName: 'builtin',
+      getValue: (user) => this.translate.instant(getUserType(user)),
+    }),
+    templateColumn({
+      title: this.translate.instant('Access'),
+      propertyName: 'roles',
+      disableSorting: true,
     }),
   ], {
     uniqueRowTag: (row) => 'user-' + row.username,
     ariaLabels: (row) => [row.username, this.translate.instant('User')],
   });
 
-  constructor(
-    protected emptyService: EmptyService,
-    private translate: TranslateService,
-    private searchDirectives: UiSearchDirectivesService,
-  ) {
-    effect(() => {
-      const dataProvider = this.dataProvider();
-      if (!dataProvider) {
-        return;
-      }
-
-      dataProvider.currentPage$.pipe(
-        untilDestroyed(this),
-      ).subscribe({
-        next: (users) => {
-          this.currentBatch.set(users);
-          this.userSelected.emit(users[0]);
-        },
-      });
-    });
-    setTimeout(() => {
-      this.handlePendingGlobalSearchElement();
-    });
+  constructor() {
+    setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);
   }
 
   navigateToDetails(user: User): void {

@@ -1,10 +1,10 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { distinctUntilChanged, filter, map } from 'rxjs';
+import {
+  distinctUntilChanged, filter, map,
+} from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -35,17 +35,17 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   ],
 })
 export class AllInstancesComponent implements OnInit {
+  private configStore = inject(VirtualizationConfigStore);
+  private instancesStore = inject(VirtualizationInstancesStore);
+  private router = inject(Router);
+  private dialogService = inject(DialogService);
+  private window = inject<Window>(WINDOW);
+
   readonly selectedInstance = this.instancesStore.selectedInstance;
 
   protected readonly searchableElements = allInstancesElements;
 
-  constructor(
-    private configStore: VirtualizationConfigStore,
-    private instancesStore: VirtualizationInstancesStore,
-    private router: Router,
-    private dialogService: DialogService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
       .subscribe(() => {
@@ -73,7 +73,7 @@ export class AllInstancesComponent implements OnInit {
 
       this.dialogService.warn(
         'Warning',
-        'Containers and virtual machines powered by Incus are experimental and only recommended for advanced users. Make all configuration changes using the TrueNAS UI. Operations using the command line are not supported.',
+        'Containers are experimental and only recommended for advanced users. Make all configuration changes using the TrueNAS UI. Operations using the command line are not supported.',
       ).pipe(untilDestroyed(this)).subscribe(() => {
         this.window.localStorage.setItem('showNewVmInstancesWarning', 'true');
       });

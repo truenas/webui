@@ -16,6 +16,7 @@ import {
 import {
   FibreChannelPortCardComponent,
 } from 'app/pages/sharing/iscsi/target/all-targets/target-details/fibre-channel-port-card/fibre-channel-port-card.component';
+import { IscsiGroupsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/iscsi-groups-card/iscsi-groups-card.component';
 import { TargetDetailsComponent } from './target-details.component';
 
 describe('TargetDetailsComponent', () => {
@@ -34,6 +35,7 @@ describe('TargetDetailsComponent', () => {
       NgxSkeletonLoaderComponent,
       MockComponents(
         AuthorizedNetworksCardComponent,
+        IscsiGroupsCardComponent,
         FibreChannelPortCardComponent,
         AssociatedExtentsCardComponent,
       ),
@@ -45,6 +47,8 @@ describe('TargetDetailsComponent', () => {
         mockCall('iscsi.extent.query', []),
         mockCall('iscsi.targetextent.query', []),
         mockCall('iscsi.global.sessions', []),
+        mockCall('iscsi.target.query', []),
+        mockCall('iscsi.initiator.query', []),
       ]),
     ],
   });
@@ -70,6 +74,10 @@ describe('TargetDetailsComponent', () => {
       mode: IscsiTargetMode.Both,
       auth_networks: ['192.168.1.0/24', '10.0.0.0/24'],
     });
+  });
+
+  it('renders IscsiGroupsCardComponent if target has groups', () => {
+    expect(spectator.query(IscsiGroupsCardComponent)).toExist();
   });
 
   it('renders FibreChannelPortCardComponent if targetPort is set', () => {
