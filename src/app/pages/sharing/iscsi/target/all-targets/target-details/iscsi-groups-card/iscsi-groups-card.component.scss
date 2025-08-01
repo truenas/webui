@@ -1,0 +1,45 @@
+.group {
+  margin-bottom: 14px;
+
+  &:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+}
+
+.group-header {
+  margin-bottom: 12px;
+}
+
+.group-title {
+  border-bottom: 1px solid var(--lines);
+  color: var(--fg1);
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  padding-bottom: 10px;
+}
+
+.attribute-row {
+  align-items: flex-start;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.attribute-label {
+  color: var(--fg2);
+  flex-shrink: 0;
+  font-weight: bold;
+}
+
+.attribute-value {
+  color: var(--fg1);
+  flex: 1;
+  font-weight: normal;
+  word-break: break-word;
+}

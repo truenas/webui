@@ -13,6 +13,7 @@ import {
 import { FibreChannelConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/fibre-channel-connections-card/fibre-channel-connections-card.component';
 import { FibreChannelPortCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/fibre-channel-port-card/fibre-channel-port-card.component';
 import { IscsiConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/iscsi-connections-card/iscsi-connections-card.component';
+import { IscsiGroupsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/iscsi-groups-card/iscsi-groups-card.component';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +22,7 @@ import { IscsiConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/al
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AuthorizedNetworksCardComponent,
+    IscsiGroupsCardComponent,
     FibreChannelPortCardComponent,
     FibreChannelConnectionsCardComponent,
     AssociatedExtentsCardComponent,
