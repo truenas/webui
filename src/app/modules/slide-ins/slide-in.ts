@@ -9,7 +9,6 @@ import {
 import { ComponentRef, computed, Injectable, Injector, signal, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { cloneDeep } from 'lodash-es';
 import {
@@ -18,6 +17,7 @@ import {
   take,
   tap,
 } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ComponentInSlideIn, SlideInInstance, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
@@ -56,7 +56,7 @@ export class SlideIn {
   ): Observable<SlideInResponse<R>> {
     const open$ = this.animateOutTopComponent().pipe(
       switchMap(() => {
-        const slideInId = UUID.UUID();
+        const slideInId = uuidv4();
 
         const cdkOverlayRef = this.cdkOverlay.create(this.getOverlayConfig());
         const containerPortal = new ComponentPortal(SlideInContainerComponent);

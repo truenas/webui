@@ -2,8 +2,8 @@ import { NgClass } from '@angular/common';
 import {
   Component, AfterViewInit, OnChanges, ChangeDetectionStrategy, input,
 } from '@angular/core';
-import { UUID } from 'angular2-uuid';
 import * as d3 from 'd3';
+import { v4 as uuidv4 } from 'uuid';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
 export type GaugeDataItem = string | number;
@@ -36,7 +36,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
   chartClass = 'view-chart-gauge';
   private _data: GaugeData;
   private arc: d3.Arc<unknown, d3.DefaultArcObject>;
-  chartId = UUID.UUID();
+  chartId = uuidv4();
   private doublePi = 2 * Math.PI;
   units = '%'; // default unit type
   diameter = 120; // default diameter
