@@ -59,7 +59,7 @@ export class DefaultGatewayDialog implements OnInit {
     nameserver1?: string;
     nameserver2?: string;
     nameserver3?: string;
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected readonly currentGateway = signal('');

@@ -58,7 +58,7 @@ export class SelectImageDialog implements OnInit {
   protected data = inject<{
     remote: VirtualizationRemote;
     type: VirtualizationType;
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
 
   protected readonly columns = ['label', 'os', 'release', 'archs', 'variant', 'actions'];
   protected filterForm = this.fb.group({

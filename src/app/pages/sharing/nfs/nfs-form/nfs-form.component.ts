@@ -90,7 +90,8 @@ export class NfsFormComponent implements OnInit {
   slideInRef = inject<SlideInRef<{
     existingNfsShare?: NfsShare;
     defaultNfsShare?: NfsShare;
-} | undefined, boolean>>(SlideInRef);
+  } | undefined, boolean>>(SlideInRef);
+
   private validatorsService = inject(IxValidatorsService);
 
   existingNfsShare: NfsShare | undefined;

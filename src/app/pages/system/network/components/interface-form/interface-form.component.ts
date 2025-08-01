@@ -116,7 +116,7 @@ export class InterfaceFormComponent implements OnInit {
   slideInRef = inject<SlideInRef<{
     interfaces?: NetworkInterface[];
     interface?: NetworkInterface;
-}, boolean>>(SlideInRef);
+  }, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected existingInterface: NetworkInterface | undefined;

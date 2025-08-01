@@ -50,7 +50,7 @@ export class DiskWipeDialog {
   data = inject<{
     diskName: string;
     exportedPool: string;
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
 
   form = this.formBuilder.nonNullable.group({
     wipe_method: [DiskWipeMethod.Quick, [Validators.required]],

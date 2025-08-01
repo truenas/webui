@@ -42,7 +42,8 @@ export class ChangeBootFromDiskComponent {
     instance: VirtualizationInstance;
     primaryBootDisk: VirtualizationDisk;
     visibleDisks: VirtualizationDisk[];
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
+
   private formBuilder = inject(NonNullableFormBuilder);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);

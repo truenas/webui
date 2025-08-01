@@ -37,7 +37,7 @@ export class Tree<T, K = T> extends CdkTree<T, K> implements OnInit, OnDestroy {
 
   constructor() {
     super();
-    
+
     this.differs = inject(IterableDiffers);
     this.changeDetectorRef = inject(ChangeDetectorRef);
   }

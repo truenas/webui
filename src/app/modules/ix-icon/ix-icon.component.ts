@@ -81,7 +81,7 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
     const defaults = inject<MatIconDefaultOptions>(MAT_ICON_DEFAULT_OPTIONS, { optional: true });
 
     super(elementRef, iconRegistry, ariaHidden, location, errorHandler, defaults);
-  
+
     this.errorHandler = errorHandler;
   }
 

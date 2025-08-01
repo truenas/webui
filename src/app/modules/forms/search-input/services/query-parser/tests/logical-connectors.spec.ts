@@ -18,7 +18,7 @@ describe('QueryParserService - logical connectors', () => {
         },
       ],
     });
-    
+
     service = TestBed.inject(QueryParserService);
   });
 

@@ -84,7 +84,7 @@ export class DeviceFormComponent implements OnInit {
   slideInRef = inject<SlideInRef<{
     virtualMachineId?: number;
     device?: VmDevice;
-} | undefined, boolean>>(SlideInRef);
+  } | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.VmDeviceWrite];
 

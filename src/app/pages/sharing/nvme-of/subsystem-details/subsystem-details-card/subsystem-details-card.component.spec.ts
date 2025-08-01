@@ -1,16 +1,13 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { By } from '@angular/platform-browser';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
-import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
-import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
@@ -79,12 +76,16 @@ describe('SubsystemDetailsCardComponent', () => {
     const nvmeOfStore = spectator.inject(NvmeOfStore);
     const snackbarService = spectator.inject(SnackbarService);
 
-    // Set the form value through the component's form
-    spectator.component['form'].patchValue({ name: 'Updated Subsystem' });
-    
-    // Call updateField directly since the harness doesn't work well with inject()
+    // Access the form directly (even though it's protected) using bracket notation
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    const form = spectator.component['form'];
+    form.patchValue({ name: 'Updated Subsystem' });
+    spectator.detectChanges();
+
+    // Call updateField directly (even though it's protected) using bracket notation
+    // eslint-disable-next-line @typescript-eslint/dot-notation
     spectator.component['updateField']('name');
-    
+
     // Wait for async operations
     spectator.detectChanges();
     await spectator.fixture.whenStable();
@@ -101,12 +102,16 @@ describe('SubsystemDetailsCardComponent', () => {
     const nvmeOfStore = spectator.inject(NvmeOfStore);
     const snackbarService = spectator.inject(SnackbarService);
 
-    // Set the form value through the component's form
-    spectator.component['form'].patchValue({ subnqn: 'nqn.2014-08.org.nvmexpress:uuid:11111111' });
-    
-    // Call updateField directly since the harness doesn't work well with inject()
+    // Access the form directly (even though it's protected) using bracket notation
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    const form = spectator.component['form'];
+    form.patchValue({ subnqn: 'nqn.2014-08.org.nvmexpress:uuid:11111111' });
+    spectator.detectChanges();
+
+    // Call updateField directly (even though it's protected) using bracket notation
+    // eslint-disable-next-line @typescript-eslint/dot-notation
     spectator.component['updateField']('subnqn');
-    
+
     // Wait for async operations
     spectator.detectChanges();
     await spectator.fixture.whenStable();

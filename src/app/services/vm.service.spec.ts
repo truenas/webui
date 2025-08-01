@@ -36,21 +36,26 @@ describe('VmService', () => {
         })),
       }),
       mockProvider(LoaderService, {
-        withLoader: () => (source$: any) => source$,
+        withLoader: () => <T>(source$: T) => source$,
       }),
       mockProvider(TranslateService, {
         instant: jest.fn((key: string) => key),
       }),
       mockProvider(ErrorHandlerService, {
         showErrorModal: jest.fn(),
-        withErrorHandler: () => (source$: any) => source$,
+        withErrorHandler: () => <T>(source$: T) => source$,
       }),
       mockProvider(DownloadService, {
         downloadUrl: jest.fn(),
       }),
       {
         provide: WINDOW,
-        useValue: window,
+        useValue: {
+          open: jest.fn(),
+          location: {
+            href: '',
+          },
+        },
       },
     ],
   });
@@ -82,7 +87,7 @@ describe('VmService', () => {
   it('should call websocket to restart vm', () => {
     const apiService = spectator.inject(ApiService);
     jest.spyOn(apiService, 'startJob').mockReturnValue(of(1));
-    
+
     spectator.service.doRestart({ id: 1 } as VirtualMachine);
     expect(apiService.startJob).toHaveBeenCalledWith('vm.restart', [1]);
   });

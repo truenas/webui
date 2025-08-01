@@ -75,7 +75,7 @@ export class PciPassthroughDialog implements OnInit {
   protected dialogRef = inject<MatDialogRef<PciPassthroughDialog, Option[]>>(MatDialogRef);
   protected options = inject<{
     existingDeviceAddresses: string[];
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
 
   protected readonly columns = ['type', 'device', 'actions'];
 

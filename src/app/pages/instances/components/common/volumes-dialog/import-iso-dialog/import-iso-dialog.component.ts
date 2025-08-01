@@ -50,7 +50,7 @@ export class IxImportIsoDialogComponent implements OnInit {
   private loader = inject(LoaderService);
   private options = inject<{
     config: VirtualizationGlobalConfig;
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
 
   protected form = this.fb.group({
     iso_location: ['', [

@@ -2,7 +2,7 @@ import { Injectable, EventEmitter, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { environment } from 'environments/environment';
 import { tap } from 'rxjs';
-import { webSocket as rxjsWebSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { WebSocketSubject } from 'rxjs/webSocket';
 import { ShellMessageType } from 'app/enums/api.enum';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';

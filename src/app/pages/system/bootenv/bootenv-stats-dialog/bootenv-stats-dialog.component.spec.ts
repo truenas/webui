@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -18,7 +18,6 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AppState } from 'app/store';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { BootenvStatsDialog } from './bootenv-stats-dialog.component';
 
@@ -37,7 +36,6 @@ describe('BootenvStatsDialogComponent', () => {
   let spectator: Spectator<BootenvStatsDialog>;
   let loader: HarnessLoader;
   let api: ApiService;
-  let store$: MockStore<AppState>;
   const createComponent = createComponentFactory({
     component: BootenvStatsDialog,
     imports: [
@@ -72,7 +70,6 @@ describe('BootenvStatsDialogComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
-    store$ = spectator.inject(MockStore);
   });
 
   function getStatusItems(): Record<string, string> {

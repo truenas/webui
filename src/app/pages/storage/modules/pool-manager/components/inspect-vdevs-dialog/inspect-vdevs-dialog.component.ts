@@ -49,7 +49,7 @@ export class InspectVdevsDialog implements OnInit {
   protected data = inject<{
     topology: PoolManagerTopology;
     enclosures: Enclosure[];
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
 
   protected presentTypes: VDevType[] = [];
   protected selectedType: VDevType;

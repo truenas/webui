@@ -20,13 +20,13 @@ export class TreeNodeToggleDirective<T> extends CdkTreeNodeToggle<T> {
   @HostBinding('class.ix-tree-node-toggle') get hostClass(): boolean { return true; }
 
   constructor() {
-    const _tree = inject<Tree<T>>(Tree);
-    const _treeNode = inject<CdkTreeNode<T>>(CdkTreeNode);
+    const tree = inject<Tree<T>>(Tree);
+    const treeNode = inject<CdkTreeNode<T>>(CdkTreeNode);
 
-    super(_tree, _treeNode);
-  
-    this._tree = _tree;
-    this._treeNode = _treeNode;
+    super(tree, treeNode);
+
+    this._tree = tree;
+    this._treeNode = treeNode;
   }
 
   /**

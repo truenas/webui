@@ -7,7 +7,7 @@ import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.inte
 export class IxTableDetailsRowDirective<T> {
   templateRef = inject<TemplateRef<{
     $implicit: T;
-}>>(TemplateRef);
+  }>>(TemplateRef);
 
   readonly dataProvider = input.required<DataProvider<T>>();
 

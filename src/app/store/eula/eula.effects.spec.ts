@@ -1,9 +1,7 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of, ReplaySubject, EMPTY } from 'rxjs';
-import { TestScheduler } from 'rxjs/testing';
-import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
+import { of, ReplaySubject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -18,7 +16,7 @@ import { selectProductType } from 'app/store/system-info/system-info.selectors';
 describe('EulaEffects', () => {
   let spectator: SpectatorService<EulaEffects>;
   let actions$: ReplaySubject<unknown>;
-  
+
   const createService = createServiceFactory({
     service: EulaEffects,
     providers: [
@@ -67,22 +65,22 @@ describe('EulaEffects', () => {
     it('does not check for EULA if user does not have FullAdmin role', () => {
       // Create a fresh instance with ReadonlyAdmin role
       actions$ = new ReplaySubject<unknown>(1);
-      
+
       const authServiceMock = {
         hasRole: jest.fn().mockReturnValue(of(false)),
         user$: of({ roles: [Role.ReadonlyAdmin] }),
       };
-      
+
       spectator = createService({
         providers: [
           provideMockActions(() => actions$),
           { provide: AuthService, useValue: authServiceMock },
         ],
       });
-      
+
       const apiService = spectator.inject(ApiService);
       jest.clearAllMocks();
-      
+
       actions$.next(adminUiInitialized());
       spectator.service.checkEula$.subscribe();
 

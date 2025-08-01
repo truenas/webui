@@ -44,7 +44,7 @@ export class SnapshotCloneDialog implements OnInit {
   private fb = inject(FormBuilder);
   private errorHandler = inject(FormErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
-  private snapshotName = inject(MAT_DIALOG_DATA);
+  private snapshotName = inject<string>(MAT_DIALOG_DATA);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
 

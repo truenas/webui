@@ -116,7 +116,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   slideInRef = inject<SlideInRef<{
     existingSmbShare?: SmbShare;
     defaultSmbShare?: SmbShare;
-} | undefined, boolean>>(SlideInRef);
+  } | undefined, boolean>>(SlideInRef);
 
   private existingSmbShare: SmbShare | undefined;
   private defaultSmbShare: SmbShare | undefined;

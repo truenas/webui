@@ -17,7 +17,7 @@ describe('QueryParserService - comparators', () => {
         },
       ],
     });
-    
+
     service = TestBed.inject(QueryParserService);
   });
 
