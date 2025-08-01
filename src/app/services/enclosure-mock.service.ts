@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { distinctUntilChanged, first, takeUntil } from 'rxjs/operators';
@@ -17,11 +17,12 @@ import { enclosureMockIds } from 'app/modules/websocket-debug-panel/utils/mock-i
   providedIn: 'root',
 })
 export class EnclosureMockService implements OnDestroy {
+  private store$ = inject(Store);
   private mockGenerator: MockEnclosureGenerator | null = null;
   private currentConfig: MockEnclosureConfig | null = null;
   private readonly destroy$ = new Subject<void>();
 
-  constructor(private store$: Store) {
+  constructor() {
     // Initialize the subscription immediately
     this.initializeSubscription();
   }

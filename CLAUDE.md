@@ -62,6 +62,36 @@ Key state slices: systemConfig, preferences, services, jobs, alerts, networkInte
 - **Prefer**: Signals over @Output, standalone components, OnPush change detection
 - **Error Handling**: Throw Error objects only, use explicit error types.
 
+### Dependency Injection Pattern
+Use the `inject()` function instead of constructor parameters for dependency injection:
+
+**Preferred** (using `inject()`):
+```typescript
+export class MyComponent {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+}
+```
+
+**Avoid** (constructor injection):
+```typescript
+export class MyComponent {
+  constructor(
+    private fb: FormBuilder,
+    private api: ApiService,
+  ) {}
+}
+```
+
+**Benefits of `inject()` pattern**:
+- Cleaner, more readable code
+- No need to maintain constructor parameter lists
+- Better tree-shaking and smaller bundle sizes
+- Consistent with Angular's modern APIs
+- Works seamlessly with functional guards and interceptors
+
+**ESLint enforcement**: The `@angular-eslint/prefer-inject` rule is enabled to ensure consistent usage across the codebase.
+
 ## Testing Guidelines
 - Cover main happy paths.
 - Write tests using Jest and Spectator.

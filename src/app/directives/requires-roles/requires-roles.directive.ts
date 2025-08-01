@@ -1,4 +1,4 @@
-import { Directive, HostBinding, Input, TemplateRef, ViewContainerRef, inject } from '@angular/core';
+import { Directive, HostBinding, Input, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { isEqual } from 'lodash-es';
 import { take } from 'rxjs';
@@ -11,8 +11,6 @@ import { AuthService } from 'app/modules/auth/auth.service';
   selector: '[ixRequiresRoles]',
 })
 export class RequiresRolesDirective extends HasAccessDirective {
-  protected override templateRef: TemplateRef<HTMLElement>;
-  protected override viewContainerRef: ViewContainerRef;
   private authService = inject(AuthService);
 
   private previousRoles: Role[] | null = null;
@@ -48,9 +46,5 @@ export class RequiresRolesDirective extends HasAccessDirective {
 
   override set elementClass(val: string) {
     this.cssClassList = val.split(' ');
-  }
-
-  constructor() {
-    super();
   }
 }

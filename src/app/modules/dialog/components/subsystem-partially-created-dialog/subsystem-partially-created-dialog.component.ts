@@ -32,5 +32,5 @@ export class SubsystemPartiallyCreatedDialogComponent {
   data = inject<{
     subsystem: NvmeOfSubsystem;
     relatedErrors: string[];
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
 }

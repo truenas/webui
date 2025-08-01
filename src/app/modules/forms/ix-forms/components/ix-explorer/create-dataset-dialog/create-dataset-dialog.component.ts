@@ -54,7 +54,7 @@ export class CreateDatasetDialog implements OnInit {
   private data = inject<{
     parentId: string;
     dataset: DatasetCreate;
-}>(MAT_DIALOG_DATA);
+  }>(MAT_DIALOG_DATA);
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 

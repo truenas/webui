@@ -45,6 +45,7 @@ export const extraRules = {
     preferReadonlySignalProperties: false,
   }],
   "@angular-eslint/no-duplicates-in-metadata-arrays": "error",
+  "@angular-eslint/prefer-inject": "error",
 
   // Angular file naming
   "angular-file-naming/component-filename-suffix": "error",
