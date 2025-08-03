@@ -1051,7 +1051,7 @@
   "Multiprotocol": "",
   "Name ^ \"Local\" AND \"Web Shell Access\" = true": "",
   "Name And Method": "名前と方法",
-  "Name and Type": "	名前とタイプ",
+  "Name and Type": "名前とタイプ",
   "Name cannot be changed after container is created": "コンテナが作成された後は、名前を変更できません",
   "Name not added": "名前は追加されていません",
   "Name of the pool is required": "プールの名前は必須です",
