@@ -248,11 +248,11 @@ describe('TopbarComponent', () => {
   });
 
   describe('feedback button', () => {
-    it('should have correct tooltip when not experimental build', () => {
+    it('should not be disabled when not experimental build', () => {
       expect(spectator.component.isExperimentalBuild()).toBe(false);
 
       const feedbackButton = spectator.query('[ixTest="leave-feedback"]');
-      expect(feedbackButton).not.toHaveClass('disabled');
+      expect(feedbackButton).not.toHaveAttribute('disabled');
     });
   });
 });
@@ -271,11 +271,11 @@ describe('TopbarComponent - Experimental Build', () => {
   });
 
   describe('feedback button', () => {
-    it('should be disabled and show different tooltip when experimental build', () => {
+    it('should be disabled when experimental build', () => {
       expect(spectator.component.isExperimentalBuild()).toBe(true);
 
       const feedbackButton = spectator.query('[ixTest="leave-feedback"]');
-      expect(feedbackButton).toHaveClass('disabled');
+      expect(feedbackButton).toHaveAttribute('disabled', 'disabled');
     });
   });
 });

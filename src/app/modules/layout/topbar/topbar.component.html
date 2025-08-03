@@ -19,17 +19,20 @@
       <ix-truenas-logo></ix-truenas-logo>
 
       <div class="topbar-mobile-footer" [class.has-console-footer]="hasConsoleFooter$ | async">
-        <button
-          mat-icon-button
-          class="topbar-button-right"
-          ixTest="leave-feedback"
-          [class.disabled]="isExperimentalBuild()"
+        <span
           [matTooltip]="isExperimentalBuild() ? ('Feedback is not available for experimental builds' | translate) : ('Send Feedback' | translate)"
-          [ixUiSearch]="searchableElements.elements.sendFeedback"
-          (click)="onFeedbackIndicatorPressed()"
         >
-          <ix-icon name="mdi-emoticon"></ix-icon>
-        </button>
+          <button
+            mat-icon-button
+            class="topbar-button-right"
+            ixTest="leave-feedback"
+            [disabled]="isExperimentalBuild()"
+            [ixUiSearch]="searchableElements.elements.sendFeedback"
+            (click)="onFeedbackIndicatorPressed()"
+          >
+            <ix-icon name="mdi-emoticon"></ix-icon>
+          </button>
+        </span>
 
         <ix-truecommand-button></ix-truecommand-button>
         @if (hasTncConfig()) {
