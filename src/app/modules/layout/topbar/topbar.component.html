@@ -23,7 +23,8 @@
           mat-icon-button
           class="topbar-button-right"
           ixTest="leave-feedback"
-          [matTooltip]="'Send Feedback' | translate"
+          [class.disabled]="isExperimentalBuild()"
+          [matTooltip]="isExperimentalBuild() ? ('Feedback is not available for experimental builds' | translate) : ('Send Feedback' | translate)"
           [ixUiSearch]="searchableElements.elements.sendFeedback"
           (click)="onFeedbackIndicatorPressed()"
         >
