@@ -70,10 +70,9 @@
                   formControlName="result"
                   [label]="'Result (JSON)' | translate"
                   [rows]="3"
-                  [placeholder]="'{ &quot;id&quot;: 1, &quot;name&quot;: &quot;tank&quot; }' | translate"
                 ></ix-textarea>
               }
-              
+
               @if (getEventControl(i).get('state')?.value === 'FAILED') {
                 <ix-input
                   ixTest="error-input"
