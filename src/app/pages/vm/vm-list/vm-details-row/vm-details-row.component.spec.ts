@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { Subject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VmState } from 'app/enums/vm.enum';
@@ -45,11 +45,10 @@ describe('VirtualMachineDetailsRowComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(VmService, {
-        refreshVmList$: new Subject(),
         hasVirtualizationSupport$: of(true),
         downloadLogs: jest.fn(() => of(fakeFile('test.log'))),
-        doStart: jest.fn(),
-        doStop: jest.fn(),
+        doStart: jest.fn(() => of()),
+        doStop: jest.fn(() => of()),
         doRestart: jest.fn(() => of()),
       }),
       mockProvider(SlideIn, {

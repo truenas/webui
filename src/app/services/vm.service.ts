@@ -3,10 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, filter, Observable, repeat, Subject, switchMap, take,
+  BehaviorSubject, catchError, filter, Observable, of, repeat, Subject, switchMap, take,
 } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
-import { VmState } from 'app/enums/vm.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
@@ -37,7 +36,6 @@ export class VmService {
   private window = inject<Window>(WINDOW);
 
   hasVirtualizationSupport$ = new BehaviorSubject<boolean>(true);
-  refreshVmList$ = new Subject<void>();
   private checkMemory$ = new Subject<void>();
 
   private wsMethods = {
@@ -66,21 +64,42 @@ export class VmService {
     this.checkMemory$.next();
   }
 
-  doStart(vm: VirtualMachine, overcommit = false): void {
-    if (overcommit) {
-      this.doAction(vm, this.wsMethods.start, [vm.id, { overcommit: true }]);
-    } else {
-      this.doAction(vm, this.wsMethods.start);
-    }
+  doStart(vm: VirtualMachine, overcommit = false): Observable<boolean> {
+    const params = overcommit ? [vm.id, { overcommit: true }] : [vm.id];
+
+    return this.api.call(this.wsMethods.start, params as ApiCallParams<typeof this.wsMethods.start>)
+      .pipe(
+        this.loader.withLoader(),
+        take(1),
+        switchMap(() => {
+          this.checkMemory();
+          return of(true);
+        }),
+        catchError((error: unknown) => {
+          const apiError = extractApiErrorDetails(error);
+          if (apiError?.errname === ApiErrorName.NoMemory) {
+            this.onMemoryError(vm);
+            return of(false);
+          }
+          this.errorHandler.showErrorModal(error);
+          return of(false);
+        }),
+      );
   }
 
-  doStop(vm: VirtualMachine): void {
-    this.matDialog.open<StopVmDialogComponent, unknown, StopVmDialogData>(StopVmDialogComponent, { data: vm })
+  doStop(vm: VirtualMachine): Observable<boolean> {
+    return this.matDialog.open<StopVmDialogComponent, unknown, StopVmDialogData>(StopVmDialogComponent, { data: vm })
       .afterClosed()
-      .pipe(filter(Boolean), take(1))
-      .subscribe((data) => {
-        this.doStopJob(vm, data.forceAfterTimeout);
-      });
+      .pipe(
+        take(1),
+        switchMap((data) => {
+          if (data) {
+            this.doStopJob(vm, data.forceAfterTimeout);
+            return of(true);
+          }
+          return of(false);
+        }),
+      );
   }
 
   doRestart(vm: VirtualMachine): Observable<number> {
@@ -107,27 +126,20 @@ export class VmService {
       });
   }
 
-  toggleVmStatus(vm: VirtualMachine): void {
-    if (vm.status.state === VmState.Running) {
-      this.doStop(vm);
-    } else {
-      this.doStart(vm);
-    }
-  }
-
-  toggleVmAutostart(vm: VirtualMachine): void {
-    this.api.call('vm.update', [vm.id, { autostart: !vm.autostart } as VirtualMachineUpdate])
-      .pipe(this.loader.withLoader(), take(1))
-      .subscribe({
-        next: () => {
+  toggleVmAutostart(vm: VirtualMachine): Observable<boolean> {
+    return this.api.call('vm.update', [vm.id, { autostart: !vm.autostart } as VirtualMachineUpdate])
+      .pipe(
+        this.loader.withLoader(),
+        take(1),
+        switchMap(() => {
           this.checkMemory();
-          this.refreshVmList$.next();
-        },
-        error: (error: unknown) => {
-          this.refreshVmList$.next();
+          return of(true);
+        }),
+        catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
-        },
-      });
+          return of(false);
+        }),
+      );
   }
 
   private doAction<T extends 'vm.start' | 'vm.update' | 'vm.poweroff'>(
@@ -140,7 +152,6 @@ export class VmService {
       .subscribe({
         next: () => {
           this.checkMemory();
-          this.refreshVmList$.next();
         },
         error: (error: unknown) => {
           const apiError = extractApiErrorDetails(error);
@@ -149,7 +160,6 @@ export class VmService {
             this.onMemoryError(vm);
             return;
           }
-          this.refreshVmList$.next();
           this.errorHandler.showErrorModal(error);
         },
       });
@@ -199,7 +209,6 @@ export class VmService {
       )
       .subscribe(() => {
         this.checkMemory();
-        this.refreshVmList$.next();
         this.dialogService.info(
           this.translate.instant('Finished'),
           this.translate.instant(helptextVmList.stop_dialog.successMessage, { vmName: vm.name }),
@@ -215,9 +224,11 @@ export class VmService {
       confirmationCheckboxText: this.translate.instant(helptextVmList.memory_dialog.secondaryCheckboxMessage),
       buttonText: this.translate.instant(helptextVmList.memory_dialog.buttonMessage),
     })
-      .pipe(filter(Boolean), take(1))
-      .subscribe(() => {
-        this.doStart(vm, true);
-      });
+      .pipe(
+        filter(Boolean),
+        take(1),
+        switchMap(() => this.doStart(vm, true)),
+      )
+      .subscribe();
   }
 }
