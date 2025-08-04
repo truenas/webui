@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -32,7 +31,6 @@ export class TruenasConnectButtonComponent {
   private matDialog = inject(MatDialog);
   tnc = inject(TruenasConnectService);
 
-  readonly TruenasConnectStatus = TruenasConnectStatus;
   tooltips = helptextTopbar.tooltips;
 
   protected showStatus(): void {
