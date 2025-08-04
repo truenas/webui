@@ -397,7 +397,7 @@ describe('SmbFormComponent', () => {
       await submitForm({
         ...commonValues,
         Purpose: 'External Share',
-        'Remote Path': ['192.168.0.1\\SHARE'],
+        'Remote Paths': ['192.168.0.1\\SHARE'],
       });
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
