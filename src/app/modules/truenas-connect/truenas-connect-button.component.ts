@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -9,7 +8,6 @@ import { helptextTopbar } from 'app/helptext/topbar';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
-import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
 @UntilDestroy()
 @Component({
@@ -17,7 +15,6 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
   imports: [
     IxIconComponent,
     MatButtonModule,
-    MatBadgeModule,
     MatIconButton,
     MatTooltip,
     TranslateModule,
@@ -29,7 +26,6 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 })
 export class TruenasConnectButtonComponent {
   private matDialog = inject(MatDialog);
-  tnc = inject(TruenasConnectService);
 
   tooltips = helptextTopbar.tooltips;
 
