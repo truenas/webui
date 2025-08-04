@@ -49,11 +49,10 @@ const mockGlobalTwoFactorConfig: GlobalTwoFactorConfig = {
   services: { ssh: false },
 };
 
-describe('UserAccessCardComponent', () => {
-  let spectator: Spectator<UserAccessCardComponent>;
-  let loader: HarnessLoader;
-
-  const createComponent = createComponentFactory({
+function createTestComponent(
+  globalTwoFactorConfig: GlobalTwoFactorConfig = mockGlobalTwoFactorConfig,
+): ReturnType<typeof createComponentFactory<UserAccessCardComponent>> {
+  return createComponentFactory({
     component: UserAccessCardComponent,
     imports: [
       IxIconComponent,
@@ -66,7 +65,7 @@ describe('UserAccessCardComponent', () => {
       mockAuth(),
       mockProvider(ApiService),
       mockProvider(AuthService, {
-        getGlobalTwoFactorConfig: jest.fn(() => of(mockGlobalTwoFactorConfig)),
+        getGlobalTwoFactorConfig: jest.fn(() => of(globalTwoFactorConfig)),
         hasRole: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
@@ -75,6 +74,7 @@ describe('UserAccessCardComponent', () => {
       }),
       mockApi([
         mockCall('user.update'),
+        mockCall('user.unset_2fa_secret'),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({})),
@@ -84,6 +84,13 @@ describe('UserAccessCardComponent', () => {
       }),
     ],
   });
+}
+
+describe('UserAccessCardComponent', () => {
+  let spectator: Spectator<UserAccessCardComponent>;
+  let loader: HarnessLoader;
+
+  const createComponent = createTestComponent();
 
   beforeEach(() => {
     spectator = createComponent({
@@ -140,6 +147,30 @@ describe('UserAccessCardComponent', () => {
     expect(additionalShellAccessInfo).toHaveText('Allowed sudo commands: command1, command2  Allowed Sudo Commands (No Password): command3');
   });
 
+  describe('Clear Two-Factor Authentication', () => {
+    let clearTwoFactorSpectator: Spectator<UserAccessCardComponent>;
+    let clearTwoFactorLoader: HarnessLoader;
+
+    const disabledTwoFactorConfig = { ...mockGlobalTwoFactorConfig, enabled: false };
+    const createClearTwoFactorComponent = createTestComponent(disabledTwoFactorConfig);
+
+    beforeEach(() => {
+      clearTwoFactorSpectator = createClearTwoFactorComponent({
+        props: { user: mockUser },
+      });
+      clearTwoFactorLoader = TestbedHarnessEnvironment.loader(clearTwoFactorSpectator.fixture);
+    });
+
+    it('clears two-factor authentication when Clear Two-Factor Authentication is clicked', async () => {
+      const button = await clearTwoFactorLoader.getHarness(MatButtonHarness.with({ text: 'Clear Two-Factor Authentication' }));
+      await button.click();
+
+      expect(clearTwoFactorSpectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(clearTwoFactorSpectator.inject(ApiService).call).toHaveBeenCalledWith('user.unset_2fa_secret', [mockUser.username]);
+      expect(clearTwoFactorSpectator.inject(SnackbarService).success).toHaveBeenCalledWith('Two-Factor Authentication settings cleared');
+    });
+  });
+
   it('should open lock user when button Lock User is clicked', async () => {
     const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock User' }));
     await lockButton.click();
@@ -178,7 +209,7 @@ describe('UserAccessCardComponent', () => {
 
   describe('API Keys', () => {
     it('shows API keys count', () => {
-      const apiKeysSection = spectator.query('.content-wrapper:nth-child(8)');
+      const apiKeysSection = spectator.query('.content-wrapper:nth-of-type(7) .flex-container');
       expect(apiKeysSection).toHaveText('API Keys: 2 keys');
     });
 

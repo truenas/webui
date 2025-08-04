@@ -1,10 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input, output, inject,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
+import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -51,6 +54,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     UserLastActionComponent,
     RouterLink,
     UiSearchDirective,
+    MatTooltip,
   ],
 })
 export class UserAccessCardComponent {
@@ -159,5 +163,25 @@ export class UserAccessCardComponent {
       .pipe(untilDestroyed(this)).subscribe(() => {
         this.reloadUsers.emit();
       });
+  }
+
+  protected onClearTwoFactorAuth(): void {
+    const username = this.user().username;
+    this.dialogService.confirm({
+      title: this.translate.instant('Clear Two-Factor Authentication'),
+      message: this.translate.instant('Are you sure you want to clear two-factor authentication settings for "{user}" user?', { user: username }),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Clear'),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.api.call('user.unset_2fa_secret', [username]).pipe(
+        this.loader.withLoader(),
+        this.errorHandler.withErrorHandler(),
+      )),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.snackbar.success(this.translate.instant('Two-Factor Authentication settings cleared'));
+      this.reloadUsers.emit();
+    });
   }
 }
