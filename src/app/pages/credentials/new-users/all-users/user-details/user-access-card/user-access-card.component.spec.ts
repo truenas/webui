@@ -147,6 +147,12 @@ describe('UserAccessCardComponent', () => {
     expect(additionalShellAccessInfo).toHaveText('Allowed sudo commands: command1, command2  Allowed Sudo Commands (No Password): command3');
   });
 
+  it('disables Clear Two-Factor Authentication button if global 2FA setting is enabled', async () => {
+    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Two-Factor Authentication' }));
+
+    expect(await button.isDisabled()).toBe(true);
+  });
+
   describe('Clear Two-Factor Authentication', () => {
     let clearTwoFactorSpectator: Spectator<UserAccessCardComponent>;
     let clearTwoFactorLoader: HarnessLoader;
