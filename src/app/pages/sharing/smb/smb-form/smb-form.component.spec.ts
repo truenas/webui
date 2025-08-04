@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -498,9 +499,9 @@ describe('SmbFormComponent', () => {
     it('toggle between Basic/Advanced fields when corresponding buttons are pressed', async () => {
       // Start with advanced options visible because we opened it in beforeEach
       expect(await form.getLabels()).toEqual([
+        'Purpose',
         'Path',
         'Name',
-        'Purpose',
         'Description',
         'Enabled',
         'Export Read Only',
@@ -514,9 +515,9 @@ describe('SmbFormComponent', () => {
       await basicOptions.click();
 
       expect(await form.getLabels()).toEqual([
+        'Purpose',
         'Path',
         'Name',
-        'Purpose',
         'Description',
         'Enabled',
       ]);
@@ -557,6 +558,48 @@ describe('SmbFormComponent', () => {
       await submitForm(commonValues);
 
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
+    });
+
+    it('should change purpose to External when path contains IP address/share format', fakeAsync(async () => {
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      const purposeControl = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
+
+      // Initially should be Default Share
+      expect(await purposeControl.getValue()).toBe('Default Share');
+
+      // Set IP address path format
+      await pathControl.setValue('192.168.0.200\\SHARE');
+
+      // Wait for debounced changes to trigger
+      tick(100);
+      spectator.detectChanges();
+
+      // Purpose should now be External Share
+      expect(await purposeControl.getValue()).toBe('External Share');
+    }));
+
+    it('should change purpose to External when path starts with EXTERNAL prefix', async () => {
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      const purposeControl = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
+
+      expect(await purposeControl.getValue()).toBe('Default Share');
+
+      await pathControl.setValue('EXTERNAL:192.168.0.200\\SHARE');
+      spectator.detectChanges();
+
+      expect(await purposeControl.getValue()).toBe('External Share');
+    });
+
+    it('should change purpose to External when path starts with EXTERNAL only', async () => {
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      const purposeControl = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
+
+      expect(await purposeControl.getValue()).toBe('Default Share');
+
+      await pathControl.setValue('external:');
+      spectator.detectChanges();
+
+      expect(await purposeControl.getValue()).toBe('External Share');
     });
   });
 
