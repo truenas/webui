@@ -93,5 +93,6 @@ export enum VmState {
   Stopped = 'STOPPED',
   // Below statuses been seen in ApiEvent<VirtualMachine>. Perhaps we could handle them.
   Shutoff = 'SHUTOFF',
+  Suspended = 'SUSPENDED',
   UpdatingConfiguration = 'UPDATING CONFIGURATION',
 }

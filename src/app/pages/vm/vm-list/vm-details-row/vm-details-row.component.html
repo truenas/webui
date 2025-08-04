@@ -28,6 +28,26 @@
     <ix-icon name="power_settings_new"></ix-icon>
     <span>{{ 'Power Off' | translate }}</span>
   </button>
+} @else if (isSuspended()) {
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    [ixTest]="['resume', vm().id]"
+    (click)="doStart()"
+  >
+    <ix-icon name="mdi-play-circle"></ix-icon>
+    <span>{{ 'Resume' | translate }}</span>
+  </button>
+
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    [ixTest]="['power_off', vm().id]"
+    (click)="doPowerOff()"
+  >
+    <ix-icon name="power_settings_new"></ix-icon>
+    <span>{{ 'Power Off' | translate }}</span>
+  </button>
 } @else {
   <button
     *ixRequiresRoles="requiredRoles"
