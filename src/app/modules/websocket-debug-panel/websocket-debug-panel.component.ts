@@ -16,6 +16,15 @@ import {
 } from './store/websocket-debug.selectors';
 import { safeGetItem } from './utils/local-storage-utils';
 
+// Panel dimension constants
+const panelWidthDefault = 550;
+const panelWidthMin = 450;
+const panelWidthMax = 900;
+
+// Retry mechanism constants
+const maxRetryAttempts = 30;
+const retryIntervalMs = 100;
+
 @UntilDestroy()
 @Component({
   selector: 'ix-websocket-debug-panel',
@@ -59,9 +68,9 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     }),
   );
 
-  protected panelWidth = 550;
+  protected panelWidth = panelWidthDefault;
   private isPanelOpen = false;
-  private mutationObserver: MutationObserver | null = null;
+  private retryTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   ngOnInit(): void {
     // Load saved mock configs and restore panel state
@@ -70,9 +79,6 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
 
     // Ensure EnclosureMockService starts listening after configs are loaded
     // The service is injected in constructor, so it's already created
-
-    // Set up MutationObserver to watch for admin layout element
-    this.setupMutationObserver();
 
     // Restore panel state from localStorage asynchronously
     this.ngZone.runOutsideAngular(() => {
@@ -95,73 +101,55 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     });
   }
 
-  private setupMutationObserver(): void {
-    // Set up a MutationObserver to watch for the admin layout element
-    // This ensures we catch it even if it's added dynamically after initial load
-    this.ngZone.runOutsideAngular(() => {
-      if (this.mutationObserver) {
-        return; // Already set up
-      }
-
-      this.mutationObserver = new MutationObserver(() => {
-        // Check if admin layout has been added to DOM
-        const adminLayout = this.document.querySelector('.fn-maincontent');
-        if (adminLayout && this.isPanelOpen) {
-          // Apply margin if panel is open
-          this.updateAdminLayoutMargin(true);
-          // Disconnect observer once we've found and updated the element
-          this.mutationObserver?.disconnect();
-          this.mutationObserver = null;
-        }
-      });
-
-      // Start observing the document body for child additions
-      this.mutationObserver.observe(this.document.body, {
-        childList: true,
-        subtree: true,
-      });
-    });
-  }
-
   private updateAdminLayoutMargin(isOpen: boolean, retryCount = 0): void {
+    // Clear any existing retry timeout
+    if (this.retryTimeoutId) {
+      clearTimeout(this.retryTimeoutId);
+      this.retryTimeoutId = null;
+    }
+
     // Run outside Angular to avoid unnecessary change detection
     this.ngZone.runOutsideAngular(() => {
       const adminLayout = this.document.querySelector('.fn-maincontent') as HTMLElement;
       if (adminLayout) {
-        if (isOpen) {
-          this.renderer.setStyle(adminLayout, 'margin-right', `${this.panelWidth}px`);
-          this.renderer.setStyle(adminLayout, 'transition', 'margin-right 300ms cubic-bezier(0.4, 0, 0.2, 1)');
-        } else {
-          this.renderer.removeStyle(adminLayout, 'margin-right');
-          this.renderer.removeStyle(adminLayout, 'transition');
+        try {
+          if (isOpen) {
+            this.renderer.setStyle(adminLayout, 'margin-right', `${this.panelWidth}px`);
+            this.renderer.setStyle(adminLayout, 'transition', 'margin-right 300ms cubic-bezier(0.4, 0, 0.2, 1)');
+          } else {
+            this.renderer.removeStyle(adminLayout, 'margin-right');
+            this.renderer.removeStyle(adminLayout, 'transition');
+          }
+        } catch (error) {
+          console.warn('Failed to update admin layout margin:', error);
         }
-        // Disconnect mutation observer if it's still watching
-        if (this.mutationObserver) {
-          this.mutationObserver.disconnect();
-          this.mutationObserver = null;
-        }
-      } else if (isOpen && retryCount < 50) {
+      } else if (isOpen && retryCount < maxRetryAttempts) {
         // If admin layout is not found yet and panel should be open, try again
-        // Increase retry count and use a small delay for page load scenarios
-        setTimeout(() => {
+        // Use exponential backoff for better performance
+        const delay = Math.min(retryIntervalMs * (1.5 ** Math.floor(retryCount / 5)), 1000);
+        this.retryTimeoutId = setTimeout(() => {
           this.updateAdminLayoutMargin(isOpen, retryCount + 1);
-        }, 100);
+        }, delay);
       }
     });
   }
 
   ngOnDestroy(): void {
+    // Clean up retry timeout
+    if (this.retryTimeoutId) {
+      clearTimeout(this.retryTimeoutId);
+      this.retryTimeoutId = null;
+    }
+
     // Clean up body margin on destroy
     const adminLayout = this.document.querySelector('.fn-maincontent') as HTMLElement;
     if (adminLayout) {
-      this.renderer.removeStyle(adminLayout, 'margin-right');
-      this.renderer.removeStyle(adminLayout, 'transition');
-    }
-
-    // Clean up MutationObserver
-    if (this.mutationObserver) {
-      this.mutationObserver.disconnect();
-      this.mutationObserver = null;
+      try {
+        this.renderer.removeStyle(adminLayout, 'margin-right');
+        this.renderer.removeStyle(adminLayout, 'transition');
+      } catch (error) {
+        console.warn('Failed to clean up admin layout margin:', error);
+      }
     }
   }
 
@@ -194,7 +182,7 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
 
     const handleMouseMove = (moveEvent: MouseEvent): void => {
       const diff = startX - moveEvent.clientX;
-      this.panelWidth = Math.max(450, Math.min(900, startWidth + diff));
+      this.panelWidth = Math.max(panelWidthMin, Math.min(panelWidthMax, startWidth + diff));
       document.documentElement.style.setProperty('--debug-panel-width', `${this.panelWidth}px`);
 
       // Update admin layout margin if panel is open
