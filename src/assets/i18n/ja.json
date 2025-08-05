@@ -777,7 +777,7 @@
   "Testing": "テスト中",
   "The {name} service is {status}": "{name} サービスは {status} です",
   "The length of {field} should be at least {minLength}": "{field} の長さは、少なくとも {minLength} でなければなりません",
-  "The length of {field} should be no more than {maxLength}": "field} の長さは {maxLength} 以下でなければなりません",
+  "The length of {field} should be no more than {maxLength}": "{field} の長さは {maxLength} 以下でなければなりません",
   "The length of the field should be at least {minLength}": "フィールドの長さは、少なくとも {minLength} でなければなりません",
   "The length of the field should be no more than {maxLength}": "フィールドの長さは {maxLength} 以下でなければなりません",
   "The local node must be rebooted because": "ローカルノードは次の理由により再起動する必要があります",
