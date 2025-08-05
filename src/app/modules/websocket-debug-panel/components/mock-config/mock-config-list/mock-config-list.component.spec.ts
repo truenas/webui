@@ -89,10 +89,10 @@ describe('MockConfigListComponent', () => {
 
     it('should generate correct config descriptions', () => {
       expect(spectator.component['getConfigDescription'](mockConfigs[0]))
-        .toBe('Response: test.method1 (pattern1)');
+        .toBe('{success} • 100ms delay • pattern: pattern1');
 
       expect(spectator.component['getConfigDescription'](mockConfigs[1]))
-        .toBe('With Events: test.method2');
+        .toBe('1 events • null');
 
       const configWithoutPattern: MockConfig = {
         id: 'config-3',
@@ -101,7 +101,7 @@ describe('MockConfigListComponent', () => {
         response: { result: {} },
       };
       expect(spectator.component['getConfigDescription'](configWithoutPattern))
-        .toBe('Response: test.method3');
+        .toBe('{}');
     });
   });
 
