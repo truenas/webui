@@ -353,7 +353,18 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private setupMangleWarning(): void {
     this.form.controls.aapl_name_mangling.valueChanges.pipe(
       filter((value) => {
-        return value !== (this.existingSmbShare?.options as LegacySmbShareOptions)?.aapl_name_mangling && !this.isNew;
+        if (this.isNew) {
+          return false;
+        }
+
+        // Check if the original share purpose supported aapl_name_mangling
+        const originalPurpose = this.existingSmbShare?.purpose;
+        const originalSupportedFields = originalPurpose ? presetEnabledFields[originalPurpose] : [];
+        const wasFieldSupported = originalSupportedFields?.includes('aapl_name_mangling') ?? false;
+
+        // Only show warning if the field was supported in the original purpose and the value actually changed
+        return wasFieldSupported
+          && value !== (this.existingSmbShare?.options as LegacySmbShareOptions)?.aapl_name_mangling;
       }),
       take(1),
       switchMap(() => this.dialogService.confirm({

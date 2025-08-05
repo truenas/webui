@@ -679,4 +679,40 @@ describe('SmbFormComponent', () => {
       );
     });
   });
+
+  describe('External share to Default share transition', () => {
+    it('should not show warning when changing from External share to another purpose', async () => {
+      // Set up an External share that doesn't support aapl_name_mangling
+      await setupTest({
+        purpose: SmbSharePurpose.ExternalShare,
+        options: { remote_path: ['EXTERNAL:192.168.1.100\\share'] },
+      });
+
+      // Change to a share type that supports aapl_name_mangling
+      await form.fillForm({
+        Purpose: 'Default Share',
+      });
+
+      // Wait for the form to update and render the new fields
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Change the aapl_name_mangling value
+      const aaplNameManglingCheckbox = await loader.getHarness(
+        IxCheckboxHarness.with({ label: formLabels.aapl_name_mangling }),
+      );
+      await aaplNameManglingCheckbox.setValue(true);
+
+      // Mangle warning should NOT be shown since External shares don't support this field
+      // Check that the manglingDialog specifically was not called
+      const dialogService = spectator.inject(DialogService);
+      const confirmCalls = (dialogService.confirm as jest.Mock).mock.calls as { message: string }[][];
+
+      const manglingDialogCall = confirmCalls.find(
+        (call) => call?.[0]?.message === helptextSharingSmb.manglingDialog.message,
+      );
+
+      expect(manglingDialogCall).toBeUndefined();
+    });
+  });
 });
