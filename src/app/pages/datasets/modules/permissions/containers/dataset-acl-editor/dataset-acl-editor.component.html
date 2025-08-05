@@ -68,6 +68,34 @@
             </button>
           </div>
 
+          @if (acl?.acltype === AclType.Posix1e) {
+            <div class="posix-helpers">
+              <h4 class="helpers-label">{{ 'POSIX ACL Helpers' | translate }}</h4>
+              <div class="control-buttons">
+                <button
+                  mat-button
+                  class="action"
+                  ixTest="copy-access-to-default"
+                  [disabled]="!hasAccessEntries()"
+                  (click)="onCopyAccessToDefaultPressed()"
+                >
+                  <ix-icon name="content_copy"></ix-icon>
+                  {{ 'Copy Access to Default' | translate }}
+                </button>
+                <button
+                  mat-button
+                  class="action"
+                  ixTest="ensure-mask-entries"
+                  [disabled]="!needsMaskEntries()"
+                  (click)="onEnsureMaskEntriesPressed()"
+                >
+                  <ix-icon name="security"></ix-icon>
+                  {{ 'Add Missing MASK Entries' | translate }}
+                </button>
+              </div>
+            </div>
+          }
+
           <div class="controls-container">
             <div class="controls">
               <ix-acl-editor-save-controls

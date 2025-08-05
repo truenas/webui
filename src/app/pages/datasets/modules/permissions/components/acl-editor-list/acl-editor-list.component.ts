@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input, OnChanges, inject,
+} from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -68,28 +70,38 @@ export class AclEditorListComponent implements OnChanges {
 
   /**
    * POSIX acl must have at least one of each: USER_OBJ, GROUP_OBJ and OTHER.
+   * This applies to both ACCESS and DEFAULT ACLs separately.
    */
   canBeRemoved(aceToRemove: NfsAclItem | PosixAclItem): boolean {
     if (this.acl().acltype === AclType.Nfs4) {
       return true;
     }
 
+    const posixAceToRemove = aceToRemove as PosixAclItem;
+    const isDefaultAce = posixAceToRemove.default;
+
+    // Check if removing this ACE would leave the ACCESS or DEFAULT ACL invalid
     let hasAnotherUserObj = false;
     let hasAnotherGroupObj = false;
     let hasAnotherOtherAce = false;
+
     this.acl().acl.forEach((ace) => {
       if (ace === aceToRemove) {
         return;
       }
 
-      if (ace.tag === PosixAclTag.UserObject) {
-        hasAnotherUserObj = true;
-      }
-      if (ace.tag === PosixAclTag.GroupObject) {
-        hasAnotherGroupObj = true;
-      }
-      if (ace.tag === PosixAclTag.Other) {
-        hasAnotherOtherAce = true;
+      const posixAce = ace as PosixAclItem;
+      // Only count entries from the same ACL type (ACCESS vs DEFAULT)
+      if (posixAce.default === isDefaultAce) {
+        if (posixAce.tag === PosixAclTag.UserObject) {
+          hasAnotherUserObj = true;
+        }
+        if (posixAce.tag === PosixAclTag.GroupObject) {
+          hasAnotherGroupObj = true;
+        }
+        if (posixAce.tag === PosixAclTag.Other) {
+          hasAnotherOtherAce = true;
+        }
       }
     });
 
