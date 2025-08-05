@@ -1,6 +1,8 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, viewChild, inject,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,7 +20,7 @@ import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/director
 import { Role } from 'app/enums/role.enum';
 import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
-import { isLdapCredentialPlain } from 'app/interfaces/directoryservice-credentials.interface';
+import { credentialTypeLabels } from 'app/interfaces/directoryservice-credentials.interface';
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -211,13 +213,19 @@ export class DirectoryServicesComponent implements OnInit {
 
           items.push(
             {
+              label: this.translate.instant(helptextDashboard.ldap.serverUrls),
+              value: ldapConfig.server_urls?.join(', ') || null,
+            },
+            {
               label: this.translate.instant(helptextDashboard.ldap.baseDN),
               value: ldapConfig.basedn || null,
             },
             {
-              label: this.translate.instant(helptextDashboard.ldap.bindDN),
-              value: isLdapCredentialPlain(directoryServicesConfig?.credential)
-                ? directoryServicesConfig.credential.binddn
+              label: this.translate.instant(helptextDashboard.ldap.credentialType),
+              value: directoryServicesConfig?.credential
+                ? this.translate.instant(
+                  credentialTypeLabels[directoryServicesConfig.credential.credential_type],
+                )
                 : null,
             },
           );
