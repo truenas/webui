@@ -13,9 +13,5 @@ export const directoryServicesElements = {
       synonyms: [T('Active Directory')],
       anchor: 'configure-active-directory',
     },
-    configureLdap: {
-      hierarchy: [T('Configure LDAP')],
-      anchor: 'configure-ldap',
-    },
   },
 } satisfies UiSearchableElement;
