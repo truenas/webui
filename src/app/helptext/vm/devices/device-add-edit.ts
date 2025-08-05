@@ -44,6 +44,8 @@ export const helptextDevice = {
 
   port_tooltip: T('SPICE server port for direct remote desktop client connections (e.g., virt-viewer).'),
 
+  web_port_tooltip: T('Web console port for browser-based access to the VM display.'),
+
   wait_placeholder: T('Delay VM Boot Until SPICE Connects'),
   wait_tooltip: T('Wait to start VM until SPICE client connects.'),
 
