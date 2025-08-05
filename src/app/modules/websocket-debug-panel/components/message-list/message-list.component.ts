@@ -6,8 +6,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { scrollToBottomDelayMs } from 'app/modules/websocket-debug-panel/constants';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
@@ -30,6 +32,8 @@ interface FormattedWebSocketDebugMessage extends WebSocketDebugMessage {
     MatButtonModule,
     MatCheckboxModule,
     MatTooltipModule,
+    TranslateModule,
+    IxInputComponent,
     IxIconComponent,
   ],
   templateUrl: './message-list.component.html',
@@ -45,6 +49,8 @@ export class MessageListComponent implements AfterViewInit {
   autoScroll = true;
   protected hasMessages = false;
   protected formattedMessagesArray: FormattedWebSocketDebugMessage[] = [];
+  protected filteredMessagesArray: FormattedWebSocketDebugMessage[] = [];
+  protected filterText = '';
 
   formattedMessages$: Observable<FormattedWebSocketDebugMessage[]> = this.messages$.pipe(
     map((messages) => messages.map((msg) => ({
@@ -61,9 +67,8 @@ export class MessageListComponent implements AfterViewInit {
     this.formattedMessages$.pipe(
       untilDestroyed(this),
     ).subscribe((messages) => {
-      this.hasMessages = messages.length > 0;
       this.formattedMessagesArray = messages;
-      this.cdr.markForCheck();
+      this.applyFilter();
       // Auto-scroll logic
       if (this.autoScroll && messages.length > 0 && this.messageViewport) {
         // Use setTimeout to ensure the DOM has updated
@@ -89,6 +94,19 @@ export class MessageListComponent implements AfterViewInit {
   protected toggleMessage(messageId: string): void {
     // Create a new action to toggle message expansion
     this.store$.dispatch(toggleMessageExpansion({ messageId }));
+  }
+
+  protected applyFilter(): void {
+    if (!this.filterText.trim()) {
+      this.filteredMessagesArray = this.formattedMessagesArray;
+    } else {
+      const filterLower = this.filterText.trim().toLowerCase();
+      this.filteredMessagesArray = this.formattedMessagesArray.filter(
+        (message) => message.methodName.toLowerCase().includes(filterLower),
+      );
+    }
+    this.hasMessages = this.filteredMessagesArray.length > 0;
+    this.cdr.markForCheck();
   }
 
   private formatTime(timestamp: string): string {
