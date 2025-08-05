@@ -10,25 +10,6 @@
       <ix-smb-users-warning></ix-smb-users-warning>
 
       <ix-fieldset [title]="'Basic' | translate">
-        @if (form.controls.purpose.value !== SmbPresetType.ExternalShare) {
-          <ix-explorer
-            formControlName="path"
-            [required]="true"
-            [tooltip]="helptextSharingSmb.pathTooltip | translate"
-            [label]="helptextSharingSmb.pathLabel | translate"
-            [nodeProvider]="treeNodeProvider"
-            [rootNodes]="rootNodes()"
-          >
-            <ix-explorer-create-dataset [datasetProperties]="createDatasetProps"></ix-explorer-create-dataset>
-          </ix-explorer>
-        }
-
-        <ix-input
-          formControlName="name"
-          [label]="helptextSharingSmb.nameLabel | translate"
-          [required]="true"
-        ></ix-input>
-
         <ix-select
           formControlName="purpose"
           emptyValue=""
@@ -48,10 +29,29 @@
           ></ix-smb-extensions-warning>
         }
 
+        @if (form.controls.purpose.value !== SmbPresetType.ExternalShare) {
+          <ix-explorer
+            formControlName="path"
+            [required]="true"
+            [tooltip]="helptextSharingSmb.pathTooltip | translate"
+            [label]="helptextSharingSmb.pathLabel | translate"
+            [nodeProvider]="treeNodeProvider"
+            [rootNodes]="rootNodes()"
+          >
+            <ix-explorer-create-dataset [datasetProperties]="createDatasetProps"></ix-explorer-create-dataset>
+          </ix-explorer>
+        }
+
+        <ix-input
+          formControlName="name"
+          [label]="helptextSharingSmb.nameLabel | translate"
+          [required]="true"
+        ></ix-input>
+
         @if (form.controls.remote_path.enabled) {
           <ix-chips
             formControlName="remote_path"
-            [label]="'Remote Path' | translate"
+            [label]="'Remote Paths' | translate"
             [tooltip]="'This is the path to the external server and share. Each server entry must include a full domain name or IP address and share name. Separate the server and share with the `\\` character. \n\n Example: 192.168.0.200\\SHARE' | translate"
             [required]="true"
           ></ix-chips>
