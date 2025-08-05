@@ -9,7 +9,7 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
@@ -44,13 +44,39 @@ const fakeRebootInfo: RebootInfoState = {
   otherNodeRebootInfo: null,
 };
 
-describe('TopbarComponent', () => {
-  let spectator: Spectator<TopbarComponent>;
-  let loader: HarnessLoader;
-  const updateRunningStatus$ = new EventEmitter<'true' | 'false'>();
+interface ComponentOptions {
+  isExperimentalBuild?: boolean;
+  updateJob?: Job[];
+  updateRunningStatus$?: EventEmitter<'true' | 'false'>;
+  matDialog?: Partial<MatDialog>;
+}
+
+function createTopbarComponent(options: ComponentOptions = {}): {
+  factory: () => Spectator<TopbarComponent>;
+  mockConfigSignal: ReturnType<typeof signal<TruenasConnectConfig | null>>;
+} {
+  const {
+    isExperimentalBuild = false,
+    updateJob = [
+      {
+        state: JobState.Running,
+        arguments: [] as unknown[],
+      } as Job,
+    ],
+    updateRunningStatus$ = new EventEmitter<'true' | 'false'>(),
+    matDialog = {
+      open: jest.fn(() => ({
+        componentInstance: {
+          setMessage: jest.fn(),
+        },
+        afterClosed: () => of({}),
+      })),
+    },
+  } = options;
+
   const mockConfigSignal = signal<TruenasConnectConfig | null>(null);
 
-  const createComponent = createComponentFactory({
+  const factory = createComponentFactory({
     component: TopbarComponent,
     declarations: [
       MockComponents(
@@ -70,15 +96,10 @@ describe('TopbarComponent', () => {
         updateRunningNoticeSent: new EventEmitter<string>(),
       }),
       mockProvider(UiSearchProvider),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => ({
-          componentInstance: {
-            setMessage: jest.fn(),
-          },
-          afterClosed: () => of({}),
-        })),
-      }),
-      mockApi(),
+      mockProvider(MatDialog, matDialog),
+      mockApi([
+        mockCall('system.experimental', isExperimentalBuild),
+      ]),
       mockProvider(TruenasConnectService, {
         config: mockConfigSignal,
       }),
@@ -90,12 +111,7 @@ describe('TopbarComponent', () => {
           },
           {
             selector: selectUpdateJob,
-            value: [
-              {
-                state: JobState.Running,
-                arguments: [] as unknown[],
-              } as Job,
-            ],
+            value: updateJob,
           },
           {
             selector: selectGeneralConfig,
@@ -110,7 +126,21 @@ describe('TopbarComponent', () => {
     ],
   });
 
+  return { factory, mockConfigSignal };
+}
+
+describe('TopbarComponent', () => {
+  let spectator: Spectator<TopbarComponent>;
+  let loader: HarnessLoader;
+  let mockConfigSignal: ReturnType<typeof signal<TruenasConnectConfig | null>>;
+  const updateRunningStatus$ = new EventEmitter<'true' | 'false'>();
+
+  const { factory: createComponent, mockConfigSignal: configSignal } = createTopbarComponent({
+    updateRunningStatus$,
+  });
+
   beforeEach(() => {
+    mockConfigSignal = configSignal;
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
@@ -214,6 +244,38 @@ describe('TopbarComponent', () => {
         interfaces_ips: ['10.0.0.1', '10.0.0.2'],
       } as TruenasConnectConfig);
       expect(spectator.component.hasTncConfig()).toBeTruthy();
+    });
+  });
+
+  describe('feedback button', () => {
+    it('should not be disabled when not experimental build', () => {
+      expect(spectator.component.isExperimentalBuild()).toBe(false);
+
+      const feedbackButton = spectator.query('[ixTest="leave-feedback"]');
+      expect(feedbackButton).not.toHaveAttribute('disabled');
+    });
+  });
+});
+
+describe('TopbarComponent - Experimental Build', () => {
+  let spectator: Spectator<TopbarComponent>;
+
+  const { factory: createComponent } = createTopbarComponent({
+    isExperimentalBuild: true,
+    updateJob: [],
+    matDialog: {},
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+  });
+
+  describe('feedback button', () => {
+    it('should be disabled when experimental build', () => {
+      expect(spectator.component.isExperimentalBuild()).toBe(true);
+
+      const feedbackButton = spectator.query('[ixTest="leave-feedback"]');
+      expect(feedbackButton).toHaveAttribute('disabled', 'disabled');
     });
   });
 });

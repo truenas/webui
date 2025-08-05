@@ -40,6 +40,11 @@
     .topbar-button-right {
       margin: 0;
 
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
       @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
         margin: 4px;
       }
