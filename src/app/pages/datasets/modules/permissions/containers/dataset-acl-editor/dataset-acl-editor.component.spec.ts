@@ -14,7 +14,8 @@ import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
-import { NfsAcl } from 'app/interfaces/acl.interface';
+import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
+import { NfsAcl, PosixAcl, PosixAclItem } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -201,6 +202,179 @@ describe('DatasetAclEditorComponent', () => {
   describe('saving', () => {
     it('renders save controls', () => {
       expect(spectator.query(AclEditorSaveControlsComponent)).toExist();
+    });
+  });
+});
+
+describe('DatasetAclEditorComponent - POSIX1E Features', () => {
+  let spectator: SpectatorRouting<DatasetAclEditorComponent>;
+  let loader: HarnessLoader;
+
+  const createPosixAce = (tag: PosixAclTag, isDefault = false): PosixAclItem => ({
+    tag,
+    default: isDefault,
+    perms: {
+      [PosixPermission.Read]: true,
+      [PosixPermission.Write]: false,
+      [PosixPermission.Execute]: false,
+    },
+    id: null,
+    who: tag === PosixAclTag.User ? 'testuser' : undefined,
+  });
+
+  const posixAcl: PosixAcl = {
+    acltype: AclType.Posix1e,
+    trivial: false,
+    flags: { setuid: false, setgid: false, sticky: false },
+    uid: 0,
+    gid: 0,
+    acl: [
+      createPosixAce(PosixAclTag.UserObject, false),
+      createPosixAce(PosixAclTag.GroupObject, false),
+      createPosixAce(PosixAclTag.Other, false),
+      createPosixAce(PosixAclTag.User, false),
+    ],
+  };
+
+  const createComponent = createRoutingFactory({
+    component: DatasetAclEditorComponent,
+    imports: [
+      CastPipe,
+      ReactiveFormsModule,
+    ],
+    declarations: [
+      MockComponent(EditPosixAceComponent),
+      MockComponent(EditNfsAceComponent),
+      MockComponent(AclEditorSaveControlsComponent),
+      AclEditorListComponent,
+      PermissionsItemComponent,
+    ],
+    providers: [
+      StorageService,
+      DatasetAclEditorStore,
+      mockProvider(DialogService),
+      mockApi([
+        mockCall('filesystem.getacl', posixAcl),
+        mockCall('filesystem.stat', {
+          user: 'john',
+          group: 'johns',
+        } as FileSystemStat),
+        mockJob('filesystem.setacl', fakeSuccessfulJob()),
+      ]),
+      mockProvider(UserService, {
+        userQueryDsCache: () => of(),
+        groupQueryDsCache: () => of(),
+      }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(),
+        })),
+      }),
+      mockAuth(),
+    ],
+    queryParams: {
+      path: '/mnt/pool/dataset',
+    },
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  describe('Copy Access to Default functionality', () => {
+    it('should show "Copy Access to Default" button for POSIX ACLs with access entries', async () => {
+      const copyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Copy Access to Default' }));
+      expect(copyButton).toBeTruthy();
+    });
+
+    it('should call store.copyAccessToDefault when button is clicked', async () => {
+      const store = spectator.inject(DatasetAclEditorStore);
+      const copyAccessToDefaultSpy = jest.spyOn(store, 'copyAccessToDefault');
+
+      const copyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Copy Access to Default' }));
+      await copyButton.click();
+
+      expect(copyAccessToDefaultSpy).toHaveBeenCalled();
+    });
+
+    it('should disable button when no access entries exist', () => {
+      const component = spectator.component;
+      expect(component.hasAccessEntries()).toBe(true);
+
+      // Test the method directly
+      component.acl = {
+        ...posixAcl,
+        acl: [createPosixAce(PosixAclTag.UserObject, true)], // Only default entries
+      };
+      expect(component.hasAccessEntries()).toBe(false);
+    });
+  });
+
+  describe('Ensure MASK Entries functionality', () => {
+    it('should show "Add Missing MASK Entries" button for POSIX ACLs', async () => {
+      const maskButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Missing MASK Entries' }));
+      expect(maskButton).toBeTruthy();
+    });
+
+    it('should call store.ensureMaskEntries when button is clicked', async () => {
+      const store = spectator.inject(DatasetAclEditorStore);
+      const ensureMaskEntriesSpy = jest.spyOn(store, 'ensureMaskEntries');
+
+      const maskButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Missing MASK Entries' }));
+      await maskButton.click();
+
+      expect(ensureMaskEntriesSpy).toHaveBeenCalled();
+    });
+
+    it('should correctly identify when MASK entries are needed', () => {
+      const component = spectator.component;
+
+      // Test with USER entries but no MASK
+      component.acl = {
+        ...posixAcl,
+        acl: [
+          createPosixAce(PosixAclTag.UserObject, false),
+          createPosixAce(PosixAclTag.GroupObject, false),
+          createPosixAce(PosixAclTag.Other, false),
+          createPosixAce(PosixAclTag.User, false), // USER entry without MASK
+        ],
+      };
+      expect(component.needsMaskEntries()).toBe(true);
+
+      // Test with USER entries and MASK
+      component.acl = {
+        ...posixAcl,
+        acl: [
+          createPosixAce(PosixAclTag.UserObject, false),
+          createPosixAce(PosixAclTag.GroupObject, false),
+          createPosixAce(PosixAclTag.Other, false),
+          createPosixAce(PosixAclTag.User, false),
+          createPosixAce(PosixAclTag.Mask, false), // MASK exists
+        ],
+      };
+      expect(component.needsMaskEntries()).toBe(false);
+
+      // Test with no USER/GROUP entries
+      component.acl = {
+        ...posixAcl,
+        acl: [
+          createPosixAce(PosixAclTag.UserObject, false),
+          createPosixAce(PosixAclTag.GroupObject, false),
+          createPosixAce(PosixAclTag.Other, false),
+        ],
+      };
+      expect(component.needsMaskEntries()).toBe(false);
+    });
+  });
+
+  describe('POSIX helpers section', () => {
+    it('should show POSIX ACL helpers section only for POSIX ACLs', () => {
+      const helpersSection = spectator.query('.posix-helpers');
+      expect(helpersSection).toExist();
+
+      const helpersLabel = spectator.query('.helpers-label');
+      expect(helpersLabel).toHaveText('POSIX ACL Helpers');
     });
   });
 });
