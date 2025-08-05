@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnInit, inject,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -15,7 +17,9 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
-import { LegacySmbShareOptions, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
+import {
+  ExternalSmbShareOptions, LegacySmbShareOptions, SmbShare, SmbSharesec,
+} from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -98,7 +102,7 @@ export class SmbCardComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Path'),
-      propertyName: 'path',
+      getValue: (row) => (row.options as ExternalSmbShareOptions)?.remote_path?.join(', ') || row.path,
     }),
     textColumn({
       title: this.translate.instant('Description'),
