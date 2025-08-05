@@ -61,6 +61,7 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
 
   protected panelWidth = 550;
   private isPanelOpen = false;
+  private mutationObserver: MutationObserver | null = null;
 
   ngOnInit(): void {
     // Load saved mock configs and restore panel state
@@ -70,6 +71,9 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     // Ensure EnclosureMockService starts listening after configs are loaded
     // The service is injected in constructor, so it's already created
 
+    // Set up MutationObserver to watch for admin layout element
+    this.setupMutationObserver();
+
     // Restore panel state from localStorage asynchronously
     this.ngZone.runOutsideAngular(() => {
       Promise.resolve().then(() => {
@@ -77,6 +81,8 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
         if (isOpen) {
           this.ngZone.run(() => {
             this.store$.dispatch(WebSocketDebugActions.setPanelOpen({ isOpen }));
+            // Immediately try to update margin when restoring panel state
+            this.updateAdminLayoutMargin(true);
           });
         }
       });
@@ -86,6 +92,34 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     this.isPanelOpen$.pipe(untilDestroyed(this)).subscribe((isOpen) => {
       this.isPanelOpen = isOpen;
       this.updateAdminLayoutMargin(isOpen);
+    });
+  }
+
+  private setupMutationObserver(): void {
+    // Set up a MutationObserver to watch for the admin layout element
+    // This ensures we catch it even if it's added dynamically after initial load
+    this.ngZone.runOutsideAngular(() => {
+      if (this.mutationObserver) {
+        return; // Already set up
+      }
+
+      this.mutationObserver = new MutationObserver(() => {
+        // Check if admin layout has been added to DOM
+        const adminLayout = this.document.querySelector('.fn-maincontent');
+        if (adminLayout && this.isPanelOpen) {
+          // Apply margin if panel is open
+          this.updateAdminLayoutMargin(true);
+          // Disconnect observer once we've found and updated the element
+          this.mutationObserver?.disconnect();
+          this.mutationObserver = null;
+        }
+      });
+
+      // Start observing the document body for child additions
+      this.mutationObserver.observe(this.document.body, {
+        childList: true,
+        subtree: true,
+      });
     });
   }
 
@@ -101,14 +135,17 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
           this.renderer.removeStyle(adminLayout, 'margin-right');
           this.renderer.removeStyle(adminLayout, 'transition');
         }
-      } else if (isOpen && retryCount < 10) {
+        // Disconnect mutation observer if it's still watching
+        if (this.mutationObserver) {
+          this.mutationObserver.disconnect();
+          this.mutationObserver = null;
+        }
+      } else if (isOpen && retryCount < 50) {
         // If admin layout is not found yet and panel should be open, try again
-        // Use requestAnimationFrame for better performance
-        requestAnimationFrame(() => {
-          this.ngZone.run(() => {
-            this.updateAdminLayoutMargin(isOpen, retryCount + 1);
-          });
-        });
+        // Increase retry count and use a small delay for page load scenarios
+        setTimeout(() => {
+          this.updateAdminLayoutMargin(isOpen, retryCount + 1);
+        }, 100);
       }
     });
   }
@@ -119,6 +156,12 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     if (adminLayout) {
       this.renderer.removeStyle(adminLayout, 'margin-right');
       this.renderer.removeStyle(adminLayout, 'transition');
+    }
+
+    // Clean up MutationObserver
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect();
+      this.mutationObserver = null;
     }
   }
 
