@@ -625,6 +625,7 @@ describe('DeviceFormComponent', () => {
         bind: '0.0.0.0',
         password: '12345678910',
         web: true,
+        web_port: 5901,
         type: VmDisplayType.Spice,
         resolution: '1024x768',
         port: 5900,
@@ -658,6 +659,7 @@ describe('DeviceFormComponent', () => {
           Port: '5900',
           Resolution: '1024x768',
           'Web Interface': true,
+          'Web Port': '5901',
         });
       });
     });

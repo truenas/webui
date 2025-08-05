@@ -200,6 +200,15 @@
                 [label]="'Web Interface' | translate"
                 [tooltip]="helptext.web_tooltip | translate"
               ></ix-checkbox>
+
+              @if (displayForm.controls.web.value) {
+                <ix-input
+                  formControlName="web_port"
+                  type="number"
+                  [label]="'Web Port' | translate"
+                  [tooltip]="'Web console port for browser-based access to the VM display.' | translate"
+                ></ix-input>
+              }
             }
           }
         </ng-container>

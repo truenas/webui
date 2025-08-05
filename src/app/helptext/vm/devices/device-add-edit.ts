@@ -42,9 +42,7 @@ export const helptextDevice = {
   rootpwd_tooltip: T('Enter a password for the <i>rancher</i> user. This\
  is used to log in to the VM from the serial shell.'),
 
-  port_tooltip: T('Can be set to <i>0</i>, left empty for TrueNAS to\
- assign a port when the VM is started, or set to a\
- fixed, preferred port number.'),
+  port_tooltip: T('SPICE server port for direct remote desktop client connections (e.g., virt-viewer).'),
 
   wait_placeholder: T('Delay VM Boot Until SPICE Connects'),
   wait_tooltip: T('Wait to start VM until SPICE client connects.'),

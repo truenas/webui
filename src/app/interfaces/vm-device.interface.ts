@@ -108,6 +108,7 @@ interface VmDisplayAttributes {
   type: VmDisplayType;
   wait: boolean;
   web: boolean;
+  web_port: number | null;
   dtype: VmDeviceType.Display;
 }
 
