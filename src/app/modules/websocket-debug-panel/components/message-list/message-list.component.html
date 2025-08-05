@@ -1,6 +1,13 @@
 <div class="message-list-container">
   <div class="message-list-header">
     <div class="header-controls">
+      <ix-input
+        class="filter-field"
+        ixTest="websocket-debug-filter"
+        [placeholder]="'Filter by method' | translate"
+        [(ngModel)]="filterText"
+        (ngModelChange)="applyFilter()">
+      </ix-input>
       <mat-checkbox
         ixTest="websocket-debug-auto-scroll"
         matTooltip="Auto-scroll to latest message"
@@ -24,7 +31,7 @@
     </div>
   } @else {
     <div #messageViewport class="message-viewport">
-      @for (message of formattedMessagesArray; track message.id) {
+      @for (message of filteredMessagesArray; track message.id) {
         <div class="message-item"
              [class.outgoing]="message.direction === 'out'"
              [class.incoming]="message.direction === 'in'"

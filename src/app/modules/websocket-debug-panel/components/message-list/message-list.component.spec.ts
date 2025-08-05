@@ -280,5 +280,81 @@ describe('MessageListComponent', () => {
     });
   });
 
+  describe('filter functionality', () => {
+    beforeEach(() => {
+      // Initialize component with messages
+      spectator.component.ngAfterViewInit();
+      spectator.detectChanges();
+    });
+
+    it('should initialize with empty filter text', () => {
+      expect(spectator.component['filterText']).toBe('');
+    });
+
+    it('should show all messages when filter is empty', () => {
+      spectator.component['filterText'] = '';
+      spectator.component['applyFilter']();
+      expect(spectator.component['filteredMessagesArray']).toHaveLength(2);
+      expect(spectator.component['hasMessages']).toBe(true);
+    });
+
+    it('should filter messages by method name (case-insensitive)', () => {
+      // Test filtering for "system"
+      spectator.component['filterText'] = 'system';
+      spectator.component['applyFilter']();
+      expect(spectator.component['filteredMessagesArray']).toHaveLength(1);
+      expect(spectator.component['filteredMessagesArray'][0].methodName).toBe('system.info');
+
+      // Test case-insensitive filtering
+      spectator.component['filterText'] = 'SYSTEM';
+      spectator.component['applyFilter']();
+      expect(spectator.component['filteredMessagesArray']).toHaveLength(1);
+
+      // Test partial match
+      spectator.component['filterText'] = 'info';
+      spectator.component['applyFilter']();
+      expect(spectator.component['filteredMessagesArray']).toHaveLength(1);
+      expect(spectator.component['filteredMessagesArray'][0].methodName).toBe('system.info');
+    });
+
+    it('should show no messages when filter matches nothing', () => {
+      spectator.component['filterText'] = 'nonexistent';
+      spectator.component['applyFilter']();
+      expect(spectator.component['filteredMessagesArray']).toHaveLength(0);
+      expect(spectator.component['hasMessages']).toBe(false);
+    });
+
+    it('should update hasMessages based on filtered results', () => {
+      // With matching filter
+      spectator.component['filterText'] = 'system';
+      spectator.component['applyFilter']();
+      expect(spectator.component['hasMessages']).toBe(true);
+
+      // With non-matching filter
+      spectator.component['filterText'] = 'xyz';
+      spectator.component['applyFilter']();
+      expect(spectator.component['hasMessages']).toBe(false);
+
+      // Clear filter
+      spectator.component['filterText'] = '';
+      spectator.component['applyFilter']();
+      expect(spectator.component['hasMessages']).toBe(true);
+    });
+
+    it('should trim whitespace in filter text', () => {
+      spectator.component['filterText'] = '  system  ';
+      spectator.component['applyFilter']();
+      expect(spectator.component['filteredMessagesArray']).toHaveLength(1);
+      expect(spectator.component['filteredMessagesArray'][0].methodName).toBe('system.info');
+    });
+
+    it('should handle filter for messages with Unknown method name', () => {
+      spectator.component['filterText'] = 'unknown';
+      spectator.component['applyFilter']();
+      expect(spectator.component['filteredMessagesArray']).toHaveLength(1);
+      expect(spectator.component['filteredMessagesArray'][0].methodName).toBe('Unknown');
+    });
+  });
+
   // trackBy function was removed from the component
 });
