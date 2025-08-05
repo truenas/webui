@@ -12,7 +12,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
-import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -52,13 +51,6 @@ const dummyUser = {
   groups: [] as number[],
   twofactor_auth_configured: true,
 } as User;
-
-const mockGlobalTwoFactorConfig: GlobalTwoFactorConfig = {
-  id: 1,
-  enabled: false,
-  window: 0,
-  services: { ssh: false },
-};
 
 const mockLoggedInUser = {
   pw_name: 'admin',
@@ -100,7 +92,6 @@ describe('UserDetailsRowComponent', () => {
       }),
       mockAuth(),
       mockProvider(AuthService, {
-        getGlobalTwoFactorConfig: jest.fn(() => of(mockGlobalTwoFactorConfig)),
         user$: of(mockLoggedInUser),
         hasRole: jest.fn(() => of(true)),
       }),

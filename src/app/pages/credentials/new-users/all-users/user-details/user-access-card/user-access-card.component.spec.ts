@@ -147,34 +147,13 @@ describe('UserAccessCardComponent', () => {
     expect(additionalShellAccessInfo).toHaveText('Allowed sudo commands: command1, command2  Allowed Sudo Commands (No Password): command3');
   });
 
-  it('disables Clear Two-Factor Authentication button if global 2FA setting is enabled', async () => {
+  it('clears two-factor authentication when Clear Two-Factor Authentication is clicked', async () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Two-Factor Authentication' }));
+    await button.click();
 
-    expect(await button.isDisabled()).toBe(true);
-  });
-
-  describe('Clear Two-Factor Authentication', () => {
-    let clearTwoFactorSpectator: Spectator<UserAccessCardComponent>;
-    let clearTwoFactorLoader: HarnessLoader;
-
-    const disabledTwoFactorConfig = { ...mockGlobalTwoFactorConfig, enabled: false };
-    const createClearTwoFactorComponent = createTestComponent(disabledTwoFactorConfig);
-
-    beforeEach(() => {
-      clearTwoFactorSpectator = createClearTwoFactorComponent({
-        props: { user: mockUser },
-      });
-      clearTwoFactorLoader = TestbedHarnessEnvironment.loader(clearTwoFactorSpectator.fixture);
-    });
-
-    it('clears two-factor authentication when Clear Two-Factor Authentication is clicked', async () => {
-      const button = await clearTwoFactorLoader.getHarness(MatButtonHarness.with({ text: 'Clear Two-Factor Authentication' }));
-      await button.click();
-
-      expect(clearTwoFactorSpectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(clearTwoFactorSpectator.inject(ApiService).call).toHaveBeenCalledWith('user.unset_2fa_secret', [mockUser.username]);
-      expect(clearTwoFactorSpectator.inject(SnackbarService).success).toHaveBeenCalledWith('Two-Factor Authentication settings cleared');
-    });
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.unset_2fa_secret', [mockUser.username]);
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Two-Factor Authentication settings cleared');
   });
 
   it('should open lock user when button Lock User is clicked', async () => {

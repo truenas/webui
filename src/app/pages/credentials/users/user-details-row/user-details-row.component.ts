@@ -4,7 +4,6 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -44,7 +43,6 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     IxIconComponent,
     RequiresRolesDirective,
     TranslateModule,
-    MatTooltip,
   ],
   providers: [
     FormatDateTimePipe,
@@ -68,7 +66,6 @@ export class UserDetailsRowComponent implements OnInit {
   readonly user = input.required<User>();
   readonly delete = output<number>();
 
-  protected readonly globalTwoFactorConfig = toSignal(this.authService.getGlobalTwoFactorConfig());
   protected readonly loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
   isStigMode = signal<boolean>(false);
 

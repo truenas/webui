@@ -7,7 +7,6 @@ import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -54,7 +53,6 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     UserLastActionComponent,
     RouterLink,
     UiSearchDirective,
-    MatTooltip,
   ],
 })
 export class UserAccessCardComponent {
