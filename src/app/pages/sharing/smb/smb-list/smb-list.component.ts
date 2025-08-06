@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject,
+} from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -17,7 +19,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { shared } from 'app/helptext/sharing';
-import { SmbSharePurpose, SmbShare } from 'app/interfaces/smb-share.interface';
+import { SmbSharePurpose, SmbShare, ExternalSmbShareOptions } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -112,7 +114,7 @@ export class SmbListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Path'),
-      propertyName: 'path',
+      getValue: (row) => (row.options as ExternalSmbShareOptions)?.remote_path?.join(', ') || row.path,
     }),
     textColumn({
       title: this.translate.instant('Description'),
