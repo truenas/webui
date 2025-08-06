@@ -5481,7 +5481,7 @@
   "URL": "URL",
   "URL of the HTTP host to connect to.": "接続先のHTTPホストのURL。",
   "Usable Capacity": "使用可能容量",
-  "Usage": "用途",
+  "Usage": "使用状況",
   "Usage collection & UI error reporting": "使用状況の収集とUIエラーレポート",
   "USB Passthrough Device": "USBパススルーデバイス",
   "Use  <a href=\"https://rclone.org/crypt/\" target=\"_blank\">rclone crypt</a>  to manage data encryption during <i>PUSH</i> or <i>PULL</i> transfers:<br><br>  <i>PUSH:</i> Encrypt files before transfer and store the encrypted  files on the remote system. Files are encrypted using the  <b>Encryption Password</b> and <b>Encryption Salt</b> values.<br><br>  <i>PULL:</i> Decrypt files that are being stored on the remote system  before the transfer. Transferring the encrypted files requires entering  the same <b>Encryption Password</b> and <b>Encryption Salt</b> that was  used to encrypt the files.<br><br>  Additional details about the encryption algorithm and key derivation  are available in the  <a href=\"https://rclone.org/crypt/#file-formats\" target=\"_blank\">rclone crypt File formats documentation</a>.": "<a href=\"https://rclone.org/crypt/\" target=\"_blank\">rclone crypt</a> を使用して、 <i>PUSH</i> または <i>PULL</i> 転送中のデータ暗号化を管理します：<br><br>  <i>PUSH:</i> 転送前にファイルを暗号化し、暗号化されたファイルをリモートシステムに保存します。 ファイルは、 <b>暗号化パスワード</b> と <b>暗号化ソルト</b> の値を使用して暗号化されます。<br><br>  <i>PULL:</i> 転送前にリモートシステムに保存されているファイルを復号化します。 暗号化されたファイルを転送するには、ファイルの暗号化に使用されたのと同じ <b>暗号化パスワード</b> と <b>暗号化ソルト</b> を入力する必要があります。<br><br>  暗号化アルゴリズムと鍵の導出に関する詳細は、 <a href=\"https://rclone.org/crypt/\\#file-formats\" target=\"_blank\">rclone crypt ファイルフォーマットドキュメント</a> を参照してください。",
