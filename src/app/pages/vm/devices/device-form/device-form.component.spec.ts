@@ -625,6 +625,7 @@ describe('DeviceFormComponent', () => {
         bind: '0.0.0.0',
         password: '12345678910',
         web: true,
+        web_port: 5901,
         type: VmDisplayType.Spice,
         resolution: '1024x768',
         port: 5900,
@@ -658,7 +659,30 @@ describe('DeviceFormComponent', () => {
           Port: '5900',
           Resolution: '1024x768',
           'Web Interface': true,
+          'Web Port': '5901',
         });
+      });
+
+      it('shows web_port field only when Web Interface is enabled', async () => {
+        // Initially web is true, so web_port should be visible
+        let values = await form.getValues();
+        expect(values).toHaveProperty('Web Port', '5901');
+
+        // Disable Web Interface
+        await form.fillForm({ 'Web Interface': false });
+        spectator.detectChanges();
+
+        // Web Port field should no longer be in the form values
+        values = await form.getValues();
+        expect(values).not.toHaveProperty('Web Port');
+
+        // Re-enable Web Interface
+        await form.fillForm({ 'Web Interface': true });
+        spectator.detectChanges();
+
+        // Web Port field should be visible again (though value may be cleared)
+        values = await form.getValues();
+        expect(values).toHaveProperty('Web Port');
       });
     });
 
