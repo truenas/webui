@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   distinctUntilChanged, filter, map,
 } from 'rxjs';
@@ -40,6 +40,7 @@ export class AllInstancesComponent implements OnInit {
   private router = inject(Router);
   private dialogService = inject(DialogService);
   private window = inject<Window>(WINDOW);
+  private translate = inject(TranslateService);
 
   readonly selectedInstance = this.instancesStore.selectedInstance;
 
@@ -72,8 +73,8 @@ export class AllInstancesComponent implements OnInit {
       this.dialogService.closeAllDialogs();
 
       this.dialogService.warn(
-        'Warning',
-        'Containers are experimental and only recommended for advanced users. Make all configuration changes using the TrueNAS UI. Operations using the command line are not supported.',
+        this.translate.instant('Warning'),
+        this.translate.instant('Containers are experimental and only recommended for advanced users. Make all configuration changes using the TrueNAS UI. Operations using the command line are not supported.'),
       ).pipe(untilDestroyed(this)).subscribe(() => {
         this.window.localStorage.setItem('showNewVmInstancesWarning', 'true');
       });
