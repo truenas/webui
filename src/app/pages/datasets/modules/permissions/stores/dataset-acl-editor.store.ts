@@ -163,49 +163,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     }
 
     const aces = state.acl.acl as PosixAclItem[];
-    const updatedAces = [...aces];
-
-    // Check ACCESS ACL for USER/GROUP entries without MASK
-    const accessAces = aces.filter((ace) => !ace.default);
-    const hasAccessUserOrGroup = accessAces.some(
-      (ace) => ace.tag === PosixAclTag.User || ace.tag === PosixAclTag.Group,
-    );
-    const hasAccessMask = accessAces.some((ace) => ace.tag === PosixAclTag.Mask);
-
-    if (hasAccessUserOrGroup && !hasAccessMask) {
-      const newAccessMask: PosixAclItem = {
-        tag: PosixAclTag.Mask,
-        default: false,
-        id: null,
-        perms: {
-          [PosixPermission.Read]: true,
-          [PosixPermission.Write]: true,
-          [PosixPermission.Execute]: true,
-        },
-      };
-      updatedAces.push(newAccessMask);
-    }
-
-    // Check DEFAULT ACL for USER/GROUP entries without MASK
-    const defaultAces = aces.filter((ace) => ace.default);
-    const hasDefaultUserOrGroup = defaultAces.some(
-      (ace) => ace.tag === PosixAclTag.User || ace.tag === PosixAclTag.Group,
-    );
-    const hasDefaultMask = defaultAces.some((ace) => ace.tag === PosixAclTag.Mask);
-
-    if (hasDefaultUserOrGroup && !hasDefaultMask) {
-      const newDefaultMask: PosixAclItem = {
-        tag: PosixAclTag.Mask,
-        default: true,
-        id: null,
-        perms: {
-          [PosixPermission.Read]: true,
-          [PosixPermission.Write]: true,
-          [PosixPermission.Execute]: true,
-        },
-      };
-      updatedAces.push(newDefaultMask);
-    }
+    const updatedAces = this.addMaskEntriesIfNeeded(aces);
 
     return {
       ...state,
@@ -271,17 +229,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     const hasAccessMask = accessAces.some((ace) => ace.tag === PosixAclTag.Mask);
 
     if (hasAccessUserOrGroup && !hasAccessMask) {
-      const newAccessMask: PosixAclItem = {
-        tag: PosixAclTag.Mask,
-        default: false,
-        id: null,
-        perms: {
-          [PosixPermission.Read]: true,
-          [PosixPermission.Write]: true,
-          [PosixPermission.Execute]: true,
-        },
-      };
-      updatedAces.push(newAccessMask);
+      updatedAces.push(this.createMaskEntry(false));
     }
 
     // Check DEFAULT ACL for USER/GROUP entries without MASK
@@ -292,20 +240,26 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     const hasDefaultMask = defaultAces.some((ace) => ace.tag === PosixAclTag.Mask);
 
     if (hasDefaultUserOrGroup && !hasDefaultMask) {
-      const newDefaultMask: PosixAclItem = {
-        tag: PosixAclTag.Mask,
-        default: true,
-        id: null,
-        perms: {
-          [PosixPermission.Read]: true,
-          [PosixPermission.Write]: true,
-          [PosixPermission.Execute]: true,
-        },
-      };
-      updatedAces.push(newDefaultMask);
+      updatedAces.push(this.createMaskEntry(true));
     }
 
     return updatedAces;
+  }
+
+  /**
+   * Create a new MASK entry with full permissions
+   */
+  private createMaskEntry(isDefault: boolean): PosixAclItem {
+    return {
+      tag: PosixAclTag.Mask,
+      default: isDefault,
+      id: null,
+      perms: {
+        [PosixPermission.Read]: true,
+        [PosixPermission.Write]: true,
+        [PosixPermission.Execute]: true,
+      },
+    };
   }
 
   readonly updateSelectedAceValidation = this.updater((state: DatasetAclEditorState, isValid: boolean) => {

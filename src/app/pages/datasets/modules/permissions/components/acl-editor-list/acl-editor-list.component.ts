@@ -80,32 +80,35 @@ export class AclEditorListComponent implements OnChanges {
     const posixAceToRemove = aceToRemove as PosixAclItem;
     const isDefaultAce = posixAceToRemove.default;
 
-    // Check if removing this ACE would leave the ACCESS or DEFAULT ACL invalid
-    let hasAnotherUserObj = false;
-    let hasAnotherGroupObj = false;
-    let hasAnotherOtherAce = false;
+    // If we're trying to remove a required entry type, check if there's another one
+    if (posixAceToRemove.tag === PosixAclTag.UserObject) {
+      return this.hasAnotherRequiredEntry(PosixAclTag.UserObject, aceToRemove, isDefaultAce);
+    }
+    if (posixAceToRemove.tag === PosixAclTag.GroupObject) {
+      return this.hasAnotherRequiredEntry(PosixAclTag.GroupObject, aceToRemove, isDefaultAce);
+    }
+    if (posixAceToRemove.tag === PosixAclTag.Other) {
+      return this.hasAnotherRequiredEntry(PosixAclTag.Other, aceToRemove, isDefaultAce);
+    }
 
-    this.acl().acl.forEach((ace) => {
+    // Non-required entries can always be removed
+    return true;
+  }
+
+  private hasAnotherRequiredEntry(
+    tagType: PosixAclTag,
+    aceToRemove: NfsAclItem | PosixAclItem,
+    isDefaultAce: boolean,
+  ): boolean {
+    return this.acl().acl.some((ace) => {
       if (ace === aceToRemove) {
-        return;
+        return false;
       }
 
       const posixAce = ace as PosixAclItem;
       // Only count entries from the same ACL type (ACCESS vs DEFAULT)
-      if (posixAce.default === isDefaultAce) {
-        if (posixAce.tag === PosixAclTag.UserObject) {
-          hasAnotherUserObj = true;
-        }
-        if (posixAce.tag === PosixAclTag.GroupObject) {
-          hasAnotherGroupObj = true;
-        }
-        if (posixAce.tag === PosixAclTag.Other) {
-          hasAnotherOtherAce = true;
-        }
-      }
+      return posixAce.default === isDefaultAce && posixAce.tag === tagType;
     });
-
-    return hasAnotherUserObj && hasAnotherGroupObj && hasAnotherOtherAce;
   }
 
   onRemoveAcePressed(index: number): void {

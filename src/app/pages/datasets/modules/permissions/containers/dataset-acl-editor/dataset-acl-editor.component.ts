@@ -192,19 +192,34 @@ export class DatasetAclEditorComponent implements OnInit {
 
     const aces = this.acl.acl as PosixAclItem[];
 
-    // Check ACCESS ACL
-    const accessAces = aces.filter((ace) => !ace.default);
-    const hasAccessUserOrGroup = accessAces.some(
-      (ace) => ace.tag === PosixAclTag.User || ace.tag === PosixAclTag.Group,
-    );
-    const hasAccessMask = accessAces.some((ace) => ace.tag === PosixAclTag.Mask);
+    // Single pass through all ACEs to collect required information
+    let hasAccessUserOrGroup = false;
+    let hasAccessMask = false;
+    let hasDefaultUserOrGroup = false;
+    let hasDefaultMask = false;
 
-    // Check DEFAULT ACL
-    const defaultAces = aces.filter((ace) => ace.default);
-    const hasDefaultUserOrGroup = defaultAces.some(
-      (ace) => ace.tag === PosixAclTag.User || ace.tag === PosixAclTag.Group,
-    );
-    const hasDefaultMask = defaultAces.some((ace) => ace.tag === PosixAclTag.Mask);
+    for (const ace of aces) {
+      if (ace.default) {
+        // DEFAULT ACL entries
+        if (ace.tag === PosixAclTag.User || ace.tag === PosixAclTag.Group) {
+          hasDefaultUserOrGroup = true;
+        } else if (ace.tag === PosixAclTag.Mask) {
+          hasDefaultMask = true;
+        }
+      } else {
+        // ACCESS ACL entries
+        if (ace.tag === PosixAclTag.User || ace.tag === PosixAclTag.Group) {
+          hasAccessUserOrGroup = true;
+        } else if (ace.tag === PosixAclTag.Mask) {
+          hasAccessMask = true;
+        }
+      }
+
+      // Early exit if we've found all the information we need
+      if (hasAccessMask && hasDefaultMask && hasAccessUserOrGroup && hasDefaultUserOrGroup) {
+        return false; // No MASK entries needed
+      }
+    }
 
     return (hasAccessUserOrGroup && !hasAccessMask) || (hasDefaultUserOrGroup && !hasDefaultMask);
   }
