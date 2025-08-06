@@ -38,8 +38,26 @@ export class ExplorerCreateDatasetComponent implements AfterViewInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   protected isButtonDisabled = computed(() => {
-    const isMountpointSelected = this.explorer.lastSelectedNode()?.data.isMountpoint;
-    return this.explorer.isDisabled() || !isMountpointSelected || !this.parent();
+    const currentValue = this.explorerValue();
+    const selectedPath = Array.isArray(currentValue) ? currentValue[0] : currentValue;
+    const lastSelectedNode = this.explorer.lastSelectedNode();
+
+    // Check if explorer is disabled
+    if (this.explorer.isDisabled()) {
+      return true;
+    }
+
+    // Check if we have a valid parent path
+    if (!this.parent()) {
+      return true;
+    }
+
+    // Check if the current path matches the selected node path
+    // This ensures the button is disabled when path is manually changed to invalid value
+    const isPathMatchingSelection = lastSelectedNode?.data.path === selectedPath;
+    const isMountpointSelected = lastSelectedNode?.data.isMountpoint;
+
+    return !isPathMatchingSelection || !isMountpointSelected;
   });
 
   protected explorerValue = signal<string | string[]>('');
