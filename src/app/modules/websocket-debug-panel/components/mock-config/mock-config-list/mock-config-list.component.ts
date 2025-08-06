@@ -16,6 +16,10 @@ import {
 } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectMockConfigs } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 
+// Constants for configuration display
+const maxStringPreviewLength = 50;
+const maxObjectKeysPreview = 3;
+
 @Component({
   selector: 'ix-mock-config-list',
   standalone: true,
@@ -169,9 +173,84 @@ export class MockConfigListComponent {
   }
 
   protected getConfigDescription(config: MockConfig): string {
+    const parts = this.buildDescriptionParts(config);
+    return parts.length > 0 ? parts.join(' • ') : 'Empty response';
+  }
+
+  private buildDescriptionParts(config: MockConfig): string[] {
+    const parts: string[] = [];
     const hasEvents = config.events && config.events.length > 0;
-    const type = hasEvents ? 'With Events' : 'Response';
-    const pattern = config.messagePattern ? ` (${config.messagePattern})` : '';
-    return `${type}: ${config.methodName}${pattern}`;
+
+    if (hasEvents && config.events) {
+      parts.push(`${config.events.length} events`);
+    }
+
+    const responsePreview = this.getResponsePreview(config.response?.result);
+    if (responsePreview) {
+      parts.push(responsePreview);
+    }
+
+    if (config.response?.delay) {
+      parts.push(`${config.response.delay}ms delay`);
+    }
+
+    if (config.messagePattern) {
+      parts.push(`pattern: ${config.messagePattern}`);
+    }
+
+    return parts;
+  }
+
+  private getResponsePreview(result: unknown): string {
+    if (result === undefined) {
+      return '';
+    }
+
+    if (result === null) {
+      return 'null';
+    }
+
+    if (typeof result === 'string') {
+      return this.getStringPreview(result);
+    }
+
+    if (typeof result === 'number' || typeof result === 'boolean') {
+      return String(result);
+    }
+
+    if (Array.isArray(result)) {
+      return `Array[${result.length}]`;
+    }
+
+    if (typeof result === 'object') {
+      return this.getObjectPreview(result as Record<string, unknown>);
+    }
+
+    return typeof result;
+  }
+
+  private getStringPreview(str: string): string {
+    if (str.length > maxStringPreviewLength) {
+      return `"${str.substring(0, maxStringPreviewLength)}..."`;
+    }
+    return `"${str}"`;
+  }
+
+  private getObjectPreview(obj: Record<string, unknown>): string {
+    try {
+      const keys = Object.keys(obj);
+      if (keys.length === 0) {
+        return '{}';
+      }
+
+      if (keys.length <= maxObjectKeysPreview) {
+        return `{${keys.join(', ')}}`;
+      }
+
+      return `{${keys.slice(0, maxObjectKeysPreview).join(', ')}, ...}`;
+    } catch {
+      // Handle edge cases where Object.keys might fail
+      return '{...}';
+    }
   }
 }
