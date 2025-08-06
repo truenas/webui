@@ -31,7 +31,8 @@ export class GroupedDisks {
       }
 
       const matchingDisks: DetailsDisk[] = [];
-      [DiskType.Hdd, DiskType.Ssd].forEach((type) => {
+      // Process SSD first, then HDD to avoid automatically prioritizing slower drives
+      [DiskType.Ssd, DiskType.Hdd].forEach((type) => {
         const disksByType = this.diskMap[type];
         for (const diskSize of Object.keys(disksByType)) {
           if (categoryDiskSize <= Number(diskSize)) {
@@ -46,7 +47,9 @@ export class GroupedDisks {
       return this.diskMap[diskType][categoryDiskSize] || [];
     }
 
-    return [...this.diskMap.HDD[categoryDiskSize] || [], ...this.diskMap.SSD[categoryDiskSize] || []];
+    // When no specific disk type is selected, return SSD first to avoid
+    // automatically prioritizing slower drives over faster ones
+    return [...this.diskMap.SSD[categoryDiskSize] || [], ...this.diskMap.HDD[categoryDiskSize] || []];
   }
 
   removeUsedDisks(usedDisks: DetailsDisk[]): void {

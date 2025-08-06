@@ -138,6 +138,38 @@ describe('GroupedDisks', () => {
         expect(disks).toContainEqual(expect.objectContaining({ devname: 'sdh' }));
         expect(disks.every((disk) => disk.type === DiskType.Hdd)).toBe(true);
       });
+
+      it('returns SSDs first when no disk type is specified (treatDiskSizeAsMinimum = false)', () => {
+        const disks = groupedDisks.findSuitableDisks({
+          diskType: null,
+          diskSize: 4 * GiB,
+          treatDiskSizeAsMinimum: false,
+        } as PoolManagerTopologyCategory);
+
+        expect(disks).toHaveLength(4); // 1 SSD + 3 HDDs
+        expect(disks).toContainEqual(expect.objectContaining({ devname: 'sde' })); // SSD
+        expect(disks).toContainEqual(expect.objectContaining({ devname: 'sdb' })); // HDD
+        expect(disks).toContainEqual(expect.objectContaining({ devname: 'sdd' })); // HDD
+        expect(disks).toContainEqual(expect.objectContaining({ devname: 'sdh' })); // HDD
+
+        // First disk should be SSD to prioritize faster storage
+        expect(disks[0]).toMatchObject({ devname: 'sde', type: DiskType.Ssd });
+      });
+
+      it('returns SSDs first when no disk type is specified (treatDiskSizeAsMinimum = true)', () => {
+        const disks = groupedDisks.findSuitableDisks({
+          diskType: null,
+          diskSize: 4 * GiB,
+          treatDiskSizeAsMinimum: true,
+        } as PoolManagerTopologyCategory);
+
+        expect(disks).toHaveLength(6); // 2 SSDs + 4 HDDs
+        expect(disks.some((disk) => disk.type === DiskType.Ssd)).toBe(true);
+        expect(disks.some((disk) => disk.type === DiskType.Hdd)).toBe(true);
+
+        // First disk should be SSD to prioritize faster storage
+        expect(disks[0].type).toBe(DiskType.Ssd);
+      });
     });
   });
 
