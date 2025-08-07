@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject,
+} from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
@@ -9,9 +11,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
+import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
-import { Acl } from 'app/interfaces/acl.interface';
+import { Acl, PosixAclItem } from 'app/interfaces/acl.interface';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -81,6 +84,8 @@ export class DatasetAclEditorComponent implements OnInit {
   acl: Acl | null;
   selectedAceIndex: number;
   acesWithError: number[];
+
+  protected readonly AclType = AclType;
 
   ownerFormGroup = this.formBuilder.group({
     owner: ['', Validators.required],
@@ -162,6 +167,61 @@ export class DatasetAclEditorComponent implements OnInit {
         datasetPath: this.datasetPath,
       } as SaveAsPresetModalConfig,
     });
+  }
+
+  onCopyAccessToDefaultPressed(): void {
+    this.store.copyAccessToDefault();
+  }
+
+  onEnsureMaskEntriesPressed(): void {
+    this.store.ensureMaskEntries();
+  }
+
+  hasAccessEntries(): boolean {
+    if (!this.acl || this.acl.acltype !== AclType.Posix1e) {
+      return false;
+    }
+
+    return (this.acl.acl as PosixAclItem[]).some((ace) => !ace.default);
+  }
+
+  needsMaskEntries(): boolean {
+    if (!this.acl || this.acl.acltype !== AclType.Posix1e) {
+      return false;
+    }
+
+    const aces = this.acl.acl as PosixAclItem[];
+
+    // Single pass through all ACEs to collect required information
+    let hasAccessUserOrGroup = false;
+    let hasAccessMask = false;
+    let hasDefaultUserOrGroup = false;
+    let hasDefaultMask = false;
+
+    for (const ace of aces) {
+      if (ace.default) {
+        // DEFAULT ACL entries
+        if (ace.tag === PosixAclTag.User || ace.tag === PosixAclTag.Group) {
+          hasDefaultUserOrGroup = true;
+        } else if (ace.tag === PosixAclTag.Mask) {
+          hasDefaultMask = true;
+        }
+      } else {
+        // ACCESS ACL entries
+        if (ace.tag === PosixAclTag.User || ace.tag === PosixAclTag.Group) {
+          hasAccessUserOrGroup = true;
+        } else if (ace.tag === PosixAclTag.Mask) {
+          hasAccessMask = true;
+        }
+      }
+
+      // Early exit if we've found all the information we need
+      if (hasAccessMask && hasDefaultMask && hasAccessUserOrGroup && hasDefaultUserOrGroup) {
+        return false; // No MASK entries needed
+      }
+    }
+
+    return (hasAccessUserOrGroup && !hasAccessMask) || (hasDefaultUserOrGroup && !hasDefaultMask);
   }
 
   onUsePresetPressed(): void {

@@ -111,3 +111,25 @@
     }
   }
 }
+
+.posix-helpers {
+  border-top: 1px solid var(--lines);
+  margin: 16px 20px 0;
+  padding-top: 16px;
+
+  .helpers-label {
+    font-size: 14px;
+    margin-bottom: 10px;
+    margin-top: 0;
+  }
+
+  .control-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    button {
+      width: 100%;
+    }
+  }
+}

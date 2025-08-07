@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input, OnChanges, inject,
+} from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -68,32 +70,45 @@ export class AclEditorListComponent implements OnChanges {
 
   /**
    * POSIX acl must have at least one of each: USER_OBJ, GROUP_OBJ and OTHER.
+   * This applies to both ACCESS and DEFAULT ACLs separately.
    */
   canBeRemoved(aceToRemove: NfsAclItem | PosixAclItem): boolean {
     if (this.acl().acltype === AclType.Nfs4) {
       return true;
     }
 
-    let hasAnotherUserObj = false;
-    let hasAnotherGroupObj = false;
-    let hasAnotherOtherAce = false;
-    this.acl().acl.forEach((ace) => {
+    const posixAceToRemove = aceToRemove as PosixAclItem;
+    const isDefaultAce = posixAceToRemove.default;
+
+    // If we're trying to remove a required entry type, check if there's another one
+    if (posixAceToRemove.tag === PosixAclTag.UserObject) {
+      return this.hasAnotherRequiredEntry(PosixAclTag.UserObject, aceToRemove, isDefaultAce);
+    }
+    if (posixAceToRemove.tag === PosixAclTag.GroupObject) {
+      return this.hasAnotherRequiredEntry(PosixAclTag.GroupObject, aceToRemove, isDefaultAce);
+    }
+    if (posixAceToRemove.tag === PosixAclTag.Other) {
+      return this.hasAnotherRequiredEntry(PosixAclTag.Other, aceToRemove, isDefaultAce);
+    }
+
+    // Non-required entries can always be removed
+    return true;
+  }
+
+  private hasAnotherRequiredEntry(
+    tagType: PosixAclTag,
+    aceToRemove: NfsAclItem | PosixAclItem,
+    isDefaultAce: boolean,
+  ): boolean {
+    return this.acl().acl.some((ace) => {
       if (ace === aceToRemove) {
-        return;
+        return false;
       }
 
-      if (ace.tag === PosixAclTag.UserObject) {
-        hasAnotherUserObj = true;
-      }
-      if (ace.tag === PosixAclTag.GroupObject) {
-        hasAnotherGroupObj = true;
-      }
-      if (ace.tag === PosixAclTag.Other) {
-        hasAnotherOtherAce = true;
-      }
+      const posixAce = ace as PosixAclItem;
+      // Only count entries from the same ACL type (ACCESS vs DEFAULT)
+      return posixAce.default === isDefaultAce && posixAce.tag === tagType;
     });
-
-    return hasAnotherUserObj && hasAnotherGroupObj && hasAnotherOtherAce;
   }
 
   onRemoveAcePressed(index: number): void {
