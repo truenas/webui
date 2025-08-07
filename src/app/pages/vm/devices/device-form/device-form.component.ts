@@ -140,6 +140,7 @@ export class DeviceFormComponent implements OnInit {
     bind: [''],
     password: [''],
     web: [true],
+    web_port: [null as number | null, [Validators.min(5900), Validators.max(65535)]],
   });
 
   usbForm = this.formBuilder.group({

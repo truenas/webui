@@ -18,16 +18,60 @@
   background-color: var(--bg2);
   border-bottom: 1px solid var(--lines);
   display: flex;
-  justify-content: flex-end;
   padding: 4px 12px;
 
   .header-controls {
     align-items: center;
     display: flex;
+    flex: 1;
     gap: 12px;
+    justify-content: space-between;
     
     mat-checkbox {
       font-size: 12px;
+      margin-left: auto;
+    }
+
+    ix-input.filter-field {
+      display: block;
+      flex: 0 1 200px;
+      margin: 0 !important;
+      min-width: 150px;
+      padding: 0 !important;
+
+      ::ng-deep {
+        // Override all possible margins and paddings
+        * {
+          margin-bottom: 0 !important;
+          margin-top: 0 !important;
+        }
+
+        // Hide label completely
+        ix-label {
+          display: none !important;
+        }
+
+        .input-container {
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+
+        input {
+          font-size: 12px;
+          height: 28px;
+          margin: 0;
+          padding: 4px 8px;
+        }
+
+        // Remove any mat-form-field related spacing
+        .mat-mdc-form-field-wrapper,
+        .mat-mdc-text-field-wrapper,
+        .mat-mdc-form-field-flex,
+        .mat-mdc-form-field-infix {
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+      }
     }
   }
 

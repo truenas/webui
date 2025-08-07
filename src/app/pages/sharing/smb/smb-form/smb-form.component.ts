@@ -1,4 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal, inject,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -351,7 +353,18 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private setupMangleWarning(): void {
     this.form.controls.aapl_name_mangling.valueChanges.pipe(
       filter((value) => {
-        return value !== (this.existingSmbShare?.options as LegacySmbShareOptions)?.aapl_name_mangling && !this.isNew;
+        if (this.isNew) {
+          return false;
+        }
+
+        // Check if the original share purpose supported aapl_name_mangling
+        const originalPurpose = this.existingSmbShare?.purpose;
+        const originalSupportedFields = originalPurpose ? presetEnabledFields[originalPurpose] : [];
+        const wasFieldSupported = originalSupportedFields?.includes('aapl_name_mangling') ?? false;
+
+        // Only show warning if the field was supported in the original purpose and the value actually changed
+        return wasFieldSupported
+          && value !== (this.existingSmbShare?.options as LegacySmbShareOptions)?.aapl_name_mangling;
       }),
       take(1),
       switchMap(() => this.dialogService.confirm({
@@ -381,12 +394,34 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private setupPathControl(): void {
     this.form.controls.path.valueChanges.pipe(
       debounceTime(50),
-      tap(() => this.setNameFromPath()),
+      tap(() => {
+        const pathValue = this.form.controls.path.value?.toUpperCase() || '';
+
+        // Check if path is external (starts with EXTERNAL or matches IP\SHARE pattern)
+        if (this.isExternalPath(pathValue)) {
+          this.form.controls.purpose.setValue(SmbSharePurpose.ExternalShare);
+        }
+
+        this.setNameFromPath();
+      }),
       untilDestroyed(this),
     )
       .subscribe((path) => {
         this.checkAndShowStripAclWarning(path, this.form.controls.acl.value);
       });
+  }
+
+  private isExternalPath(path: string): boolean {
+    if (!path) return false;
+
+    // Check if path starts with EXTERNAL (case insensitive)
+    if (path.toUpperCase().startsWith(externalSmbSharePath.toUpperCase())) {
+      return true;
+    }
+
+    // Check if path matches IP\SHARE pattern (e.g., 192.168.0.200\SHARE)
+    const ipSharePattern = /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\\[^\\]+$/;
+    return ipSharePattern.test(path);
   }
 
   private setupAfpWarning(): void {
@@ -422,7 +457,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         return;
       }
 
-      nameControl.setValue(name);
+      nameControl.setValue(name.toLowerCase());
       nameControl.markAsTouched();
     }
   }
@@ -433,7 +468,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       || !path
       || aclValue
       || this.form.controls.purpose.value === SmbSharePurpose.ExternalShare
-      || path.startsWith(externalSmbSharePath)
+      || this.isExternalPath(path)
     ) {
       return;
     }
@@ -686,7 +721,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     if (
       this.form.controls.purpose.value === SmbSharePurpose.ExternalShare
-      || sharePath.startsWith(externalSmbSharePath)
+      || this.isExternalPath(sharePath)
     ) {
       return of(false);
     }

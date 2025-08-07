@@ -1,15 +1,3 @@
-@if (tnc.config()?.status === TruenasConnectStatus.Configured) {
-<button
-  ixTest="tnc-show-status"
-  mat-icon-button
-  matBadge="&#8288;"
-  matBadgeSize="small"
-  [matTooltip]="tooltips.tncStatus | translate"
-  (click)="showStatus()"
->
-  <ix-icon name="ix-truenas-connect-logo"></ix-icon>
-</button>
-} @else {
 <button
   ixTest="tnc-show-status"
   mat-icon-button
@@ -18,4 +6,3 @@
 >
   <ix-icon name="ix-truenas-connect-logo"></ix-icon>
 </button>
-}

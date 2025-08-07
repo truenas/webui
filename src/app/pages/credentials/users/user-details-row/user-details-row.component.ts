@@ -1,4 +1,6 @@
-import { Component, ChangeDetectionStrategy, input, output, signal, OnInit, inject } from '@angular/core';
+import {
+  Component, ChangeDetectionStrategy, input, output, signal, OnInit, inject,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,6 +20,7 @@ import { IxTableExpandableRowComponent } from 'app/modules/ix-table/components/i
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
@@ -58,11 +61,12 @@ export class UserDetailsRowComponent implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
 
   readonly user = input.required<User>();
   readonly delete = output<number>();
 
-  loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
+  protected readonly loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
   isStigMode = signal<boolean>(false);
 
   protected readonly Role = Role;
@@ -199,6 +203,24 @@ export class UserDetailsRowComponent implements OnInit {
       untilDestroyed(this),
     )
       .subscribe();
+  }
+
+  clearTwoFactorAuth(user: User): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Clear Two-Factor Authentication'),
+      message: this.translate.instant('Are you sure you want to clear two-factor authentication settings for "{user}" user?', { user: user.username }),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Clear'),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.api.call('user.unset_2fa_secret', [user.username]).pipe(
+        this.loader.withLoader(),
+      )),
+      this.errorHandler.withErrorHandler(),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.snackbar.success(this.translate.instant('Two-Factor Authentication settings cleared'));
+    });
   }
 
   private viewUserApiKeys(user: User): void {
