@@ -48,10 +48,15 @@ export class VirtualMachineDetailsRowComponent {
   protected readonly requiredReadRoles = [Role.VmRead];
   protected readonly requiredRoles = [Role.VmWrite];
 
-  readonly isRunning = computed(() => this.vm().status.state === VmState.Running);
-  readonly isSuspended = computed(() => this.vm().status.state === VmState.Suspended);
+  readonly vmStateInfo = computed(() => {
+    const state = this.vm().status.state;
+    return {
+      isRunning: state === VmState.Running,
+      isSuspended: state === VmState.Suspended,
+    };
+  });
 
-  readonly showDisplayButton = computed(() => this.isRunning() && this.vm().display_available);
+  readonly showDisplayButton = computed(() => this.vmStateInfo().isRunning && this.vm().display_available);
 
   protected doStart(): void {
     this.vmService.doStart(this.vm()).pipe(

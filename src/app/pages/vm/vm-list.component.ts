@@ -7,7 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { debounceTime, filter, take, tap } from 'rxjs';
+import { filter, take, tap } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -208,21 +208,21 @@ export class VmListComponent implements OnInit {
   subscribeToVmEvents(): void {
     this.api.subscribe('vm.query')
       .pipe(
-        debounceTime(100),
         untilDestroyed(this),
       )
       .subscribe((event) => {
         const updatedVm = event.fields;
-        const vmIndex = this.vmMachines.findIndex((vm) => vm?.id === updatedVm?.id);
+        const vmId = updatedVm?.id || event.id;
+        const vmIndex = this.vmMachines.findIndex((vm) => vm?.id === vmId);
 
-        if (vmIndex !== -1) {
+        if (vmIndex !== -1 && event.msg !== CollectionChangeType.Removed) {
           this.vmMachines = this.vmMachines.map((vm, index) => (
             index === vmIndex ? { ...vm, ...updatedVm } : vm
           ));
         } else if (event.msg === CollectionChangeType.Added) {
           this.vmMachines = [...this.vmMachines, updatedVm];
         } else if (event.msg === CollectionChangeType.Removed) {
-          this.vmMachines = this.vmMachines.filter((vm) => vm?.id !== updatedVm?.id);
+          this.vmMachines = this.vmMachines.filter((vm) => vm?.id !== vmId);
         }
 
         this.dataProvider.setRows([...this.vmMachines]);
