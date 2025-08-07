@@ -10,6 +10,8 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import {
   CreateDatasetDialog,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
@@ -21,14 +23,25 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 describe('ExplorerCreateDatasetComponent', () => {
   let spectator: Spectator<ExplorerCreateDatasetComponent>;
 
+  // Create a minimal mock TreeNode to avoid 'any' usage
+  const createMockTreeNode = (data: Partial<ExplorerNodeData>): Partial<TreeNode<ExplorerNodeData>> => ({
+    data: {
+      isMountpoint: true,
+      path: '/mnt/test',
+      name: 'test',
+      type: ExplorerNodeType.Directory,
+      hasChildren: false,
+      ...data,
+    },
+  });
+
   const fakeExplorer = {
     isDisabled: signal(false),
 
-    lastSelectedNode: signal({
-      data: {
-        isMountpoint: true,
-      },
-    }),
+    lastSelectedNode: signal(createMockTreeNode({
+      isMountpoint: true,
+      path: '/mnt/test',
+    }) as TreeNode<ExplorerNodeData>),
 
     refreshNode: jest.fn(),
   } as unknown as IxExplorerComponent;
@@ -94,5 +107,26 @@ describe('ExplorerCreateDatasetComponent', () => {
 
     expect(fakeExplorer.refreshNode).toHaveBeenCalled();
     expect(fakeControl.control.setValue).toHaveBeenCalledWith('/mnt/test');
+  });
+
+  it('disables Create Dataset button when path does not match selected node', async () => {
+    // Simulate user typing a different path than what's selected
+    fakeControl.control.setValue('/mnt/error');
+    spectator.detectChanges();
+
+    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+    expect(await createButton.isDisabled()).toBeTruthy();
+  });
+
+  it('disables Create Dataset button when no mountpoint is selected', async () => {
+    // Simulate selection of non-mountpoint
+    fakeExplorer.lastSelectedNode.set(createMockTreeNode({
+      isMountpoint: false,
+      path: '/mnt/test',
+    }) as TreeNode<ExplorerNodeData>);
+    spectator.detectChanges();
+
+    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+    expect(await createButton.isDisabled()).toBeTruthy();
   });
 });
