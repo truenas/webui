@@ -99,6 +99,10 @@ export class VmService {
           }
           return of(false);
         }),
+        catchError((error: unknown) => {
+          this.errorHandler.showErrorModal(error);
+          return of(false);
+        }),
       );
   }
 

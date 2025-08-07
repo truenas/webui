@@ -92,26 +92,15 @@ export class VirtualMachineDetailsRowComponent {
   }
 
   protected doEdit(): void {
-    this.slideIn
-      .open(VmEditFormComponent, { data: this.vm() })
-      .pipe(untilDestroyed(this))
-      .subscribe();
+    this.slideIn.open(VmEditFormComponent, { data: this.vm() });
   }
 
   protected doDelete(): void {
-    this.matDialog
-      .open(DeleteVmDialogComponent, { data: this.vm() })
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe();
+    this.matDialog.open(DeleteVmDialogComponent, { data: this.vm() });
   }
 
   protected doClone(): void {
-    this.matDialog
-      .open(CloneVmDialogComponent, { data: this.vm() })
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe();
+    this.matDialog.open(CloneVmDialogComponent, { data: this.vm() });
   }
 
   protected downloadLogs(): void {

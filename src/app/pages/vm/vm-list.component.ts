@@ -209,25 +209,20 @@ export class VmListComponent implements OnInit {
     this.api.subscribe('vm.query')
       .pipe(untilDestroyed(this))
       .subscribe((event) => {
-        // Update the local VM data to reflect real-time changes
         const updatedVm = event.fields;
         const vmIndex = this.vmMachines.findIndex((vm) => vm?.id === updatedVm?.id);
 
         if (vmIndex !== -1) {
-          // Update existing VM
           this.vmMachines[vmIndex] = { ...this.vmMachines[vmIndex], ...updatedVm };
           this.dataProvider.setRows([...this.vmMachines]);
         } else if (event.msg === CollectionChangeType.Added) {
-          // Add new VM
           this.vmMachines.push(updatedVm);
           this.dataProvider.setRows([...this.vmMachines]);
         } else if (event.msg === CollectionChangeType.Removed) {
-          // Remove deleted VM
           this.vmMachines = this.vmMachines.filter((vm) => vm?.id !== updatedVm?.id);
           this.dataProvider.setRows([...this.vmMachines]);
         }
 
-        // Trigger change detection
         this.cdr.detectChanges();
       });
   }
