@@ -1,5 +1,5 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnDestroy, inject } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { MatError } from '@angular/material/form-field';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -29,7 +29,7 @@ export const ixManualValidateError = 'ixManualValidateError';
     TranslateModule,
   ],
 })
-export class IxErrorsComponent implements OnChanges {
+export class IxErrorsComponent implements OnChanges, OnDestroy {
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private liveAnnouncer = inject(LiveAnnouncer);
@@ -87,6 +87,10 @@ export class IxErrorsComponent implements OnChanges {
     if ('control' in changes && this.control()) {
       this.subscribeToControlStatusChanges();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.statusChangeSubscription?.unsubscribe();
   }
 
   private subscribeToControlStatusChanges(): void {
