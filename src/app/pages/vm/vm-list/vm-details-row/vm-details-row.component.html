@@ -1,7 +1,8 @@
-@if (isRunning()) {
+@if (vmStateInfo().isRunning) {
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
+    [attr.aria-label]="'Stop' | translate"
     [ixTest]="['stop', vm().id]"
     (click)="doStop()"
   >
@@ -12,6 +13,7 @@
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
+    [attr.aria-label]="'Restart' | translate"
     [ixTest]="['restart', vm().id]"
     (click)="doRestart()"
   >
@@ -22,16 +24,18 @@
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
+    [attr.aria-label]="'Power Off' | translate"
     [ixTest]="['power_off', vm().id]"
     (click)="doPowerOff()"
   >
     <ix-icon name="power_settings_new"></ix-icon>
     <span>{{ 'Power Off' | translate }}</span>
   </button>
-} @else if (isSuspended()) {
+} @else if (vmStateInfo().isSuspended) {
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
+    [attr.aria-label]="'Resume' | translate"
     [ixTest]="['resume', vm().id]"
     (click)="doStart()"
   >
@@ -42,6 +46,7 @@
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
+    [attr.aria-label]="'Power Off' | translate"
     [ixTest]="['power_off', vm().id]"
     (click)="doPowerOff()"
   >
@@ -53,6 +58,7 @@
     *ixRequiresRoles="requiredRoles"
     mat-button
     [ixTest]="['start', vm().id]"
+    [attr.aria-label]="'Start' | translate"
     (click)="doStart()"
   >
     <ix-icon name="mdi-play-circle"></ix-icon>
@@ -63,6 +69,7 @@
 <button
   mat-button
   [ixTest]="['edit', vm().id]"
+  [attr.aria-label]="'Edit' | translate"
   (click)="doEdit()"
 >
   <ix-icon name="edit"></ix-icon>
@@ -72,6 +79,7 @@
 <button
   *ixRequiresRoles="requiredRoles"
   mat-button
+  [attr.aria-label]="'Delete' | translate"
   [ixTest]="['delete', vm().id]"
   (click)="doDelete()"
 >
@@ -81,6 +89,7 @@
 
 <button
   mat-button
+  [attr.aria-label]="'Devices' | translate"
   [ixTest]="['devices', vm().id]"
   (click)="openDevices()"
 >
@@ -91,6 +100,7 @@
 <button
   *ixRequiresRoles="requiredRoles"
   mat-button
+  [attr.aria-label]="'Clone' | translate"
   [ixTest]="['clone', vm().id]"
   (click)="doClone()"
 >
@@ -101,6 +111,7 @@
 @if (showDisplayButton()) {
   <button
     mat-button
+    [attr.aria-label]="'Display' | translate"
     [ixTest]="['open_display', vm().id]"
     (click)="openDisplay()"
   >
@@ -109,10 +120,11 @@
   </button>
 }
 
-@if (isRunning()) {
+@if (vmStateInfo().isRunning) {
   <button
     mat-button
     [ixTest]="['open_serial_shell', vm().id]"
+    [attr.aria-label]="'Serial Shell' | translate"
     (click)="openSerialShell()"
   >
     <ix-icon name="keyboard_arrow_right"></ix-icon>
@@ -124,6 +136,7 @@
   *ixRequiresRoles="requiredReadRoles"
   mat-button
   [ixTest]="['download_logs', vm().id]"
+  [attr.aria-label]="'Download Logs' | translate"
   (click)="downloadLogs()"
 >
   <ix-icon name="content_paste"></ix-icon>
