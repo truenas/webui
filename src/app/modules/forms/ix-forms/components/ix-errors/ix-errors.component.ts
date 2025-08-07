@@ -75,6 +75,12 @@ export class IxErrorsComponent implements OnChanges {
     number: () => this.translate.instant('Value must be a number'),
     cron: () => this.translate.instant('Invalid cron expression'),
     ip2: () => this.translate.instant('Invalid IP address'),
+    invalidRegex: () => this.translate.instant('Invalid regular expression'),
+    invalidStrftimeSpecifier: (specifier: string) => this.translate.instant('Invalid format specifier: {specifier}', { specifier }),
+    containsSlash: () => this.translate.instant('Forward slashes are not allowed'),
+    invalidCharacters: () => this.translate.instant('Contains invalid characters'),
+    orphanedPercent: () => this.translate.instant('Percent sign at end must be escaped as %%'),
+    empty: () => this.translate.instant('Value cannot be empty or whitespace only'),
   };
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -155,6 +161,20 @@ export class IxErrorsComponent implements OnChanges {
         return this.defaultErrMessages.cron();
       case DefaultValidationError.Ip2:
         return this.defaultErrMessages.ip2();
+      case DefaultValidationError.InvalidRegex:
+        return this.defaultErrMessages.invalidRegex();
+      case DefaultValidationError.InvalidStrftimeSpecifier:
+        return this.defaultErrMessages.invalidStrftimeSpecifier(
+          (errors.invalidStrftimeSpecifier as SomeError).specifier as string,
+        );
+      case DefaultValidationError.ContainsSlash:
+        return this.defaultErrMessages.containsSlash();
+      case DefaultValidationError.InvalidCharacters:
+        return this.defaultErrMessages.invalidCharacters();
+      case DefaultValidationError.OrphanedPercent:
+        return this.defaultErrMessages.orphanedPercent();
+      case DefaultValidationError.Empty:
+        return this.defaultErrMessages.empty();
       default:
         return '';
     }
