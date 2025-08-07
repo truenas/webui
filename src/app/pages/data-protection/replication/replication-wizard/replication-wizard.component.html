@@ -16,7 +16,7 @@
 
       <mat-step [stepControl]="when().form">
         <ng-template matStepLabel>{{ 'When' | translate }}</ng-template>
-        <ix-replication-when [isCustomRetentionVisible]="isCustomRetentionVisible" (save)="onSubmit()"></ix-replication-when>
+        <ix-replication-when [isCustomRetentionVisible]="isCustomRetentionVisible" [isLoading]="isLoading" (save)="onSubmit()"></ix-replication-when>
       </mat-step>
     </mat-vertical-stepper>
   </mat-card-content>
