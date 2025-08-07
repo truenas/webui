@@ -37,15 +37,24 @@ export class ExplorerCreateDatasetComponent implements AfterViewInit {
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
-  protected isButtonDisabled = computed(() => {
-    const isMountpointSelected = this.explorer.lastSelectedNode()?.data.isMountpoint;
-    return this.explorer.isDisabled() || !isMountpointSelected || !this.parent();
+  private isExplorerDisabled = computed(() => this.explorer.isDisabled());
+  private hasValidParent = computed(() => !!this.parent());
+  private isPathMatchingSelection = computed(() => {
+    const currentValue = this.explorerValue();
+    const selectedPath = Array.isArray(currentValue) ? currentValue[0] : currentValue;
+    return this.explorer.lastSelectedNode()?.data.path === selectedPath;
   });
+
+  protected isButtonDisabled = computed(() => this.isExplorerDisabled()
+    || !this.hasValidParent()
+    || !this.isPathMatchingSelection()
+    || !this.explorer.lastSelectedNode()?.data.isMountpoint);
 
   protected explorerValue = signal<string | string[]>('');
 
   ngAfterViewInit(): void {
-    // TODO: Unclear why this is needed, but control in `ngControl` is empty for some reason in constructor.
+    // NgControl is not initialized at construction time — it's only available after view init.
+    // We listen to control value changes here to sync explorerValue for button logic.
     this.ngControl.control?.valueChanges?.pipe(untilDestroyed(this))?.subscribe((value: string | string[]) => {
       this.explorerValue.set(value);
     });
