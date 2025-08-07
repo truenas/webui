@@ -107,6 +107,7 @@ export class VmListComponent implements OnInit {
   protected memWarning = helptextVmWizard.memory_warning;
   protected hasVirtualizationSupport$ = this.vmService.hasVirtualizationSupport$;
   protected availableMemory$ = this.vmService.getAvailableMemory().pipe(toLoadingState());
+  private vmMap = new Map<string | number, VirtualMachine>();
 
   vmNotSupportedConfig: EmptyConfig = {
     large: true,
@@ -199,7 +200,13 @@ export class VmListComponent implements OnInit {
   createDataProvider(): void {
     // TODO: Refactor VM data provider to use ngrx/store
     const virtualMachines$ = this.api.call('vm.query').pipe(
-      tap((vms) => this.vmMachines = vms),
+      tap((vms) => {
+        this.vmMachines = vms;
+
+        this.vmMap = new Map<number, VirtualMachine>(
+          vms.map((vm) => [vm.id, vm]),
+        );
+      }),
     );
     this.dataProvider = new AsyncDataProvider(virtualMachines$);
     this.refresh();
@@ -207,25 +214,26 @@ export class VmListComponent implements OnInit {
 
   subscribeToVmEvents(): void {
     this.api.subscribe('vm.query')
-      .pipe(
-        untilDestroyed(this),
-      )
+      .pipe(untilDestroyed(this))
       .subscribe((event) => {
         const updatedVm = event.fields;
         const vmId = updatedVm?.id || event.id;
-        const vmIndex = this.vmMachines.findIndex((vm) => vm?.id === vmId);
 
-        if (vmIndex !== -1 && event.msg !== CollectionChangeType.Removed) {
-          this.vmMachines = this.vmMachines.map((vm, index) => (
-            index === vmIndex ? { ...vm, ...updatedVm } : vm
-          ));
-        } else if (event.msg === CollectionChangeType.Added) {
-          this.vmMachines = [...this.vmMachines, updatedVm];
-        } else if (event.msg === CollectionChangeType.Removed) {
-          this.vmMachines = this.vmMachines.filter((vm) => vm?.id !== vmId);
+        if (!vmId) return;
+
+        switch (event.msg) {
+          case CollectionChangeType.Added:
+          case CollectionChangeType.Changed:
+            this.vmMap.set(vmId, { ...this.vmMap.get(vmId), ...updatedVm });
+            break;
+
+          case CollectionChangeType.Removed:
+            this.vmMap.delete(vmId);
+            break;
         }
 
-        this.dataProvider.setRows([...this.vmMachines]);
+        this.vmMachines = Array.from(this.vmMap.values());
+        this.dataProvider.setRows(this.vmMachines);
         this.cdr.detectChanges();
       });
   }
