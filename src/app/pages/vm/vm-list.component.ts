@@ -1,14 +1,17 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, tap } from 'rxjs';
+import { filter, take, tap } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { Role } from 'app/enums/role.enum';
 import {
   VmBootloader, VmDeviceType, VmState, vmTimeNames,
@@ -104,6 +107,7 @@ export class VmListComponent implements OnInit {
   protected memWarning = helptextVmWizard.memory_warning;
   protected hasVirtualizationSupport$ = this.vmService.hasVirtualizationSupport$;
   protected availableMemory$ = this.vmService.getAvailableMemory().pipe(toLoadingState());
+  private vmMap = new Map<string | number, VirtualMachine>();
 
   vmNotSupportedConfig: EmptyConfig = {
     large: true,
@@ -120,13 +124,13 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('Running'),
       requiredRoles: this.requiredRoles,
       getValue: (row) => row.status.state === VmState.Running,
-      onRowToggle: (row) => this.vmService.toggleVmStatus(row),
+      onRowToggle: (row, checked, toggle) => this.handleVmStatusToggle(row, checked, toggle),
     }),
     toggleColumn({
       title: this.translate.instant('Start on Boot'),
       requiredRoles: this.requiredRoles,
       propertyName: 'autostart',
-      onRowToggle: (row) => this.vmService.toggleVmAutostart(row),
+      onRowToggle: (row, checked, toggle) => this.handleAutostartToggle(row, checked, toggle),
     }),
     textColumn({
       title: this.translate.instant('Virtual CPUs'),
@@ -187,7 +191,7 @@ export class VmListComponent implements OnInit {
 
   ngOnInit(): void {
     this.createDataProvider();
-    this.listenForVmUpdates();
+    this.subscribeToVmEvents();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
       this.onListFiltered(this.filterString);
     });
@@ -196,17 +200,41 @@ export class VmListComponent implements OnInit {
   createDataProvider(): void {
     // TODO: Refactor VM data provider to use ngrx/store
     const virtualMachines$ = this.api.call('vm.query').pipe(
-      tap((vms) => this.vmMachines = vms),
+      tap((vms) => {
+        this.vmMachines = vms;
+
+        this.vmMap = new Map<number, VirtualMachine>(
+          vms.map((vm) => [vm.id, vm]),
+        );
+      }),
     );
     this.dataProvider = new AsyncDataProvider(virtualMachines$);
     this.refresh();
   }
 
-  listenForVmUpdates(): void {
-    this.vmService.refreshVmList$
+  subscribeToVmEvents(): void {
+    this.api.subscribe('vm.query')
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.refresh();
+      .subscribe((event) => {
+        const updatedVm = event.fields;
+        const vmId = updatedVm?.id || event.id;
+
+        if (!vmId) return;
+
+        switch (event.msg) {
+          case CollectionChangeType.Added:
+          case CollectionChangeType.Changed:
+            this.vmMap.set(vmId, { ...this.vmMap.get(vmId), ...updatedVm });
+            break;
+
+          case CollectionChangeType.Removed:
+            this.vmMap.delete(vmId);
+            break;
+        }
+
+        this.vmMachines = Array.from(this.vmMap.values());
+        this.dataProvider.setRows(this.vmMachines);
+        this.cdr.detectChanges();
       });
   }
 
@@ -254,5 +282,43 @@ export class VmListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
+  }
+
+  private handleVmStatusToggle(vm: VirtualMachine, checked: boolean, toggle: { toggle(): void }): void {
+    if (vm.status.state === VmState.Running && !checked) {
+      // User wants to stop a running VM - show stop dialog
+      this.vmService.doStop(vm).pipe(
+        take(1),
+        untilDestroyed(this),
+      ).subscribe((confirmed: boolean) => {
+        if (!confirmed) {
+          // User cancelled - revert toggle state
+          setTimeout(() => toggle.toggle(), 0);
+        }
+      });
+    } else if (vm.status.state !== VmState.Running && checked) {
+      // User wants to start a stopped VM - start directly
+      this.vmService.doStart(vm).pipe(
+        take(1),
+        untilDestroyed(this),
+      ).subscribe((success: boolean) => {
+        if (!success) {
+          // Start failed - revert toggle state
+          setTimeout(() => toggle.toggle(), 0);
+        }
+      });
+    }
+  }
+
+  private handleAutostartToggle(vm: VirtualMachine, _checked: boolean, toggle: { toggle(): void }): void {
+    this.vmService.toggleVmAutostart(vm).pipe(
+      take(1),
+      untilDestroyed(this),
+    ).subscribe((success: boolean) => {
+      if (!success) {
+        // Operation failed - revert toggle state
+        setTimeout(() => toggle.toggle(), 0);
+      }
+    });
   }
 }

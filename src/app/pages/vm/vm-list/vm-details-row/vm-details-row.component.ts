@@ -1,10 +1,11 @@
-import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
+import {
+  Component, ChangeDetectionStrategy, input, computed, inject,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmState } from 'app/enums/vm.enum';
@@ -47,16 +48,26 @@ export class VirtualMachineDetailsRowComponent {
   protected readonly requiredReadRoles = [Role.VmRead];
   protected readonly requiredRoles = [Role.VmWrite];
 
-  readonly isRunning = computed(() => this.vm().status.state === VmState.Running);
+  readonly vmStateInfo = computed(() => {
+    const state = this.vm().status.state;
+    return {
+      isRunning: state === VmState.Running,
+      isSuspended: state === VmState.Suspended,
+    };
+  });
 
-  readonly showDisplayButton = computed(() => this.isRunning() && this.vm().display_available);
+  readonly showDisplayButton = computed(() => this.vmStateInfo().isRunning && this.vm().display_available);
 
   protected doStart(): void {
-    this.vmService.doStart(this.vm());
+    this.vmService.doStart(this.vm()).pipe(
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   protected doStop(): void {
-    this.vmService.doStop(this.vm());
+    this.vmService.doStop(this.vm()).pipe(
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   protected doRestart(): void {
@@ -86,26 +97,15 @@ export class VirtualMachineDetailsRowComponent {
   }
 
   protected doEdit(): void {
-    this.slideIn
-      .open(VmEditFormComponent, { data: this.vm() })
-      .pipe(filter((response) => !!response.response), untilDestroyed(this))
-      .subscribe(() => this.vmService.refreshVmList$.next());
+    this.slideIn.open(VmEditFormComponent, { data: this.vm() });
   }
 
   protected doDelete(): void {
-    this.matDialog
-      .open(DeleteVmDialogComponent, { data: this.vm() })
-      .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.vmService.refreshVmList$.next());
+    this.matDialog.open(DeleteVmDialogComponent, { data: this.vm() });
   }
 
   protected doClone(): void {
-    this.matDialog
-      .open(CloneVmDialogComponent, { data: this.vm() })
-      .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.vmService.refreshVmList$.next());
+    this.matDialog.open(CloneVmDialogComponent, { data: this.vm() });
   }
 
   protected downloadLogs(): void {

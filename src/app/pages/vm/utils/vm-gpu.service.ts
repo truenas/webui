@@ -28,9 +28,9 @@ export class VmGpuService {
   updateVmGpus(vm: VirtualMachine, newGpuIds: string[]): Observable<unknown> {
     return this.gpuService.getAllGpus().pipe(
       switchMap((allGpus) => {
-        const previousVmPciDevices = vm.devices.filter((device) => {
+        const previousVmPciDevices = (vm.devices?.filter((device) => {
           return device.attributes.dtype === VmDeviceType.Pci;
-        }) as VmPciPassthroughDevice[];
+        }) || []) as VmPciPassthroughDevice[];
         const previousSlots = previousVmPciDevices.map((device) => device.attributes.pptdev);
         const previousGpus = allGpus.filter(byVmPciSlots(previousSlots));
 
