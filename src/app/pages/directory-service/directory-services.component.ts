@@ -29,10 +29,11 @@ import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -84,7 +85,7 @@ export class DirectoryServicesComponent implements OnInit {
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
-  private snackbar = inject(SnackbarService);
+  private searchDirectives = inject(UiSearchDirectivesService);
 
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = directoryServicesElements;
@@ -109,6 +110,10 @@ export class DirectoryServicesComponent implements OnInit {
     large: true,
     icon: iconMarker('mdi-account-box'),
   };
+
+  constructor() {
+    setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);
+  }
 
   ngOnInit(): void {
     this.refreshCards();
@@ -363,5 +368,13 @@ export class DirectoryServicesComponent implements OnInit {
       .subscribe(() => {
         this.refreshCards();
       });
+  }
+
+  private handlePendingGlobalSearchElement(): void {
+    const pendingHighlightElement = this.searchDirectives.pendingUiHighlightElement;
+
+    if (pendingHighlightElement) {
+      this.searchDirectives.get(pendingHighlightElement)?.highlight(pendingHighlightElement);
+    }
   }
 }
