@@ -6,7 +6,6 @@ on:
       - master
     paths-ignore:
       - 'src/assets/i18n/**'
-      - 'tests/**'
 jobs:
   review:
     runs-on: ubuntu-latest
@@ -24,7 +23,7 @@ jobs:
           fetch-depth: 1
 
       - name: Automatic PR Review
-        uses: anthropics/claude-code-action@v0.0.33
+        uses: anthropics/claude-code-action@v0.0.55
         with:
           anthropic_api_key: ${{ secrets.CLAUDE_API_KEY }}
           use_sticky_comment: true
