@@ -56,6 +56,7 @@
           <button
             mat-button color="default"
             [ixTest]="[card.title, 'settings']"
+            [ixUiSearch]="searchableElements.elements.settings"
             (click)="card.onSettingsPressed()"
           >
             {{ 'Settings' | translate }}
