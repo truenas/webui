@@ -8,7 +8,7 @@ export const directoryServicesElements = {
     directoryServices: {
       anchor: 'directory-services',
     },
-    configureActiveDirectory: {
+    configureDirectoryServices: {
       hierarchy: [T('Configure Directory Services')],
       synonyms: [T('Active Directory'), 'AD', 'LDAP', 'OpenLDAP', 'IPA', 'FreeIPA', 'DS'],
       anchor: 'configure-active-directory',
