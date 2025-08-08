@@ -1823,10 +1823,16 @@
     "hierarchy": [
       "Credentials",
       "Directory Services",
-      "Configure Active Directory"
+      "Configure Directory Services"
     ],
     "synonyms": [
-      "Active Directory"
+      "Active Directory",
+      "AD",
+      "LDAP",
+      "OpenLDAP",
+      "IPA",
+      "FreeIPA",
+      "DS"
     ],
     "requiredRoles": [
       "DIRECTORY_SERVICE_WRITE"
