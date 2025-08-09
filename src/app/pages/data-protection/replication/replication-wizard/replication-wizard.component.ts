@@ -215,7 +215,9 @@ export class ReplicationWizardComponent {
   }
 
   private getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Observable<Record<string, string[]>> {
-    return this.api.call('replication.target_unmatched_snapshots', payload);
+    return this.api.call('replication.target_unmatched_snapshots', payload).pipe(
+      catchError(() => of({})), // Will not block the creation process if this request fails
+    );
   }
 
   private createPeriodicSnapshotTask(payload: PeriodicSnapshotTaskCreate): Observable<PeriodicSnapshotTask> {
@@ -453,26 +455,21 @@ export class ReplicationWizardComponent {
       replicationPayload.transport,
       replicationPayload.ssh_credentials,
     ]).pipe(
-      catchError(() => {
-        return this.createReplication(replicationPayload);
-      }),
       switchMap((unmatchedSnapshots) => {
-        const hasBadSnapshots = Object.values(unmatchedSnapshots)
-          .some((snapshots: string[]) => snapshots.length > 0);
+        const hasBadSnapshots = Object.values(unmatchedSnapshots).some((snapshots: string[]) => snapshots.length > 0);
         if (hasBadSnapshots) {
           return this.dialogService.confirm({
             title: this.translate.instant(helptextReplicationWizard.clearSnapshotDialogTitle),
             message: this.translate.instant(helptextReplicationWizard.clearSnapshotDialogContent),
           }).pipe(
             switchMap((dialogResult) => {
-              replicationPayload.allow_from_scratch = dialogResult;
-              return this.createReplication(replicationPayload);
+              const payloadWithAllowFromScratch = { ...replicationPayload, allow_from_scratch: dialogResult };
+              return this.createReplication(payloadWithAllowFromScratch);
             }),
           );
         }
         return this.createReplication(replicationPayload);
       }),
-
     );
   }
 }
