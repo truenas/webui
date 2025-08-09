@@ -8,14 +8,14 @@ export const directoryServicesElements = {
     directoryServices: {
       anchor: 'directory-services',
     },
-    configureActiveDirectory: {
-      hierarchy: [T('Configure Active Directory')],
-      synonyms: [T('Active Directory')],
+    configureDirectoryServices: {
+      hierarchy: [T('Configure Directory Services')],
+      synonyms: ['DS'],
       anchor: 'configure-active-directory',
     },
-    configureLdap: {
-      hierarchy: [T('Configure LDAP')],
-      anchor: 'configure-ldap',
+    settings: {
+      synonyms: [T('Active Directory'), 'AD', 'LDAP', 'OpenLDAP', 'IPA', 'FreeIPA', 'DS'],
+      anchor: 'settings',
     },
   },
 } satisfies UiSearchableElement;

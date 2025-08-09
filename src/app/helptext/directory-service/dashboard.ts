@@ -16,9 +16,9 @@ export const helptextDashboard = {
     title: T('LDAP'),
     status: T('Status'),
     statusMessage: T('Status Message'),
-    hostname: T('Hostname'),
+    serverUrls: T('Server URLs'),
     baseDN: T('Base DN'),
-    bindDN: T('Bind DN'),
+    credentialType: T('Credential Type'),
   },
   ipa: {
     title: T('IPA'),
