@@ -1823,10 +1823,10 @@
     "hierarchy": [
       "Credentials",
       "Directory Services",
-      "Configure Active Directory"
+      "Configure Directory Services"
     ],
     "synonyms": [
-      "Active Directory"
+      "DS"
     ],
     "requiredRoles": [
       "DIRECTORY_SERVICE_WRITE"
@@ -1855,6 +1855,31 @@
     ],
     "routerLink": null,
     "anchor": "directory-services",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Directory Services"
+    ],
+    "synonyms": [
+      "Active Directory",
+      "AD",
+      "LDAP",
+      "OpenLDAP",
+      "IPA",
+      "FreeIPA",
+      "DS"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "directory-services"
+    ],
+    "routerLink": null,
+    "anchor": "settings",
     "triggerAnchor": null,
     "section": "ui"
   },
