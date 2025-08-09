@@ -12,7 +12,6 @@ import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
-import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
@@ -107,7 +106,11 @@ describe('ReplicationWhatAndWhereComponent', () => {
   });
 
   it('generates payload which will inherit dataset encryption from its parent dataset', async () => {
-    await form.fillForm({ 'Inherit Encryption': true });
+    await form.fillForm({
+      'Inherit Encryption': true,
+      'Replicate Custom Snapshots': true,
+      'Snapshot Name Regular Expression': '.*',
+    });
 
     expect(spectator.component.getPayload()).toEqual({
       exist_replication: null,
@@ -117,8 +120,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       target_dataset: 'pool3/',
       custom_snapshots: true,
       recursive: true,
-      schema_or_regex: SnapshotNamingOption.NamingSchema,
-      naming_schema: 'auto-%Y-%m-%d_%H-%M',
+      name_regex: '.*',
       encryption: true,
       encryption_inherit: true,
       name: 'pool1/,pool2/ - pool3/',
@@ -134,8 +136,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       target_dataset: 'pool3/',
       custom_snapshots: true,
       recursive: true,
-      schema_or_regex: SnapshotNamingOption.NamingSchema,
-      naming_schema: 'auto-%Y-%m-%d_%H-%M',
+      name_regex: '',
       encryption: true,
       encryption_inherit: false,
       encryption_key_format: EncryptionKeyFormat.Hex,
@@ -173,7 +174,13 @@ describe('ReplicationWhatAndWhereComponent', () => {
     await form.fillForm({ 'Task Name': 'task1' });
     expect(await nextButton.isDisabled()).toBe(true);
 
-    await form.fillForm({ 'Task Name': 'task3' });
+    await form.fillForm({
+      'Task Name': 'task3',
+      'Snapshot Name Regular Expression': '.*', // Fill required regex field
+    });
+    // Wait for async validation to complete
+    spectator.fixture.detectChanges();
+    await spectator.fixture.whenStable();
     expect(await nextButton.isDisabled()).toBe(false);
   });
 
@@ -208,5 +215,117 @@ describe('ReplicationWhatAndWhereComponent', () => {
     expect(
       slideInRef.swap,
     ).toHaveBeenCalledWith(ReplicationFormComponent, { wide: true });
+  });
+
+  describe('field availability based on source location', () => {
+    it('for Local system: only name_regex is available when custom snapshots enabled', async () => {
+      const testForm = await loader.getHarness(IxFormHarness);
+
+      await testForm.fillForm({
+        'Source Location': 'On this System',
+        'Destination Location': 'On this System',
+        'Replicate Custom Snapshots': true,
+      });
+
+      // For local sources with custom snapshots enabled, only name_regex should be enabled
+      expect(spectator.component.form.controls.schema_or_regex.disabled).toBe(true);
+      expect(spectator.component.form.controls.naming_schema.disabled).toBe(true);
+      expect(spectator.component.form.controls.name_regex.enabled).toBe(true);
+    });
+
+    it('for Local system: name_regex is disabled when custom snapshots disabled', async () => {
+      const testForm = await loader.getHarness(IxFormHarness);
+
+      await testForm.fillForm({
+        'Source Location': 'On this System',
+        'Destination Location': 'On this System',
+        'Replicate Custom Snapshots': false,
+      });
+
+      // For local sources with custom snapshots disabled, name_regex should be disabled
+      expect(spectator.component.form.controls.schema_or_regex.disabled).toBe(true);
+      expect(spectator.component.form.controls.naming_schema.disabled).toBe(true);
+      expect(spectator.component.form.controls.name_regex.disabled).toBe(true);
+    });
+
+    it('for Remote system: schema_or_regex, naming_schema are available, name_regex depends on selection', async () => {
+      const testForm = await loader.getHarness(IxFormHarness);
+
+      await testForm.fillForm({
+        'Source Location': 'On a Different System',
+        'SSH Connection': 'non-root-ssh-connection',
+      });
+
+      // For remote sources, schema_or_regex and naming_schema should be enabled
+      expect(spectator.component.form.controls.schema_or_regex.enabled).toBe(true);
+      expect(spectator.component.form.controls.naming_schema.enabled).toBe(true);
+
+      // By default naming_schema is selected, so name_regex should be disabled
+      expect(spectator.component.form.controls.name_regex.disabled).toBe(true);
+
+      // When switching to regex mode, name_regex should be enabled
+      await testForm.fillForm({
+        'Include snapshots with the name': 'Snapshot Name Regular Expression',
+      });
+
+      expect(spectator.component.form.controls.name_regex.enabled).toBe(true);
+      expect(spectator.component.form.controls.naming_schema.disabled).toBe(true);
+    });
+
+    it('switching from Local to Remote enables schema_or_regex and naming_schema', async () => {
+      const testForm = await loader.getHarness(IxFormHarness);
+
+      // Start with Local system
+      await testForm.fillForm({
+        'Source Location': 'On this System',
+        'Destination Location': 'On this System',
+        'Replicate Custom Snapshots': true,
+      });
+
+      // Verify Local system behavior
+      expect(spectator.component.form.controls.schema_or_regex.disabled).toBe(true);
+      expect(spectator.component.form.controls.naming_schema.disabled).toBe(true);
+      expect(spectator.component.form.controls.name_regex.enabled).toBe(true);
+
+      // Switch to Remote system
+      await testForm.fillForm({
+        'Source Location': 'On a Different System',
+        'SSH Connection': 'non-root-ssh-connection',
+      });
+
+      // Verify Remote system behavior - schema_or_regex and naming_schema enabled, name_regex depends on selection
+      expect(spectator.component.form.controls.schema_or_regex.enabled).toBe(true);
+      expect(spectator.component.form.controls.naming_schema.enabled).toBe(true);
+      // disabled by default (naming schema mode)
+      expect(spectator.component.form.controls.name_regex.disabled).toBe(true);
+    });
+
+    it('switching from Remote to Local disables schema_or_regex and naming_schema', async () => {
+      const testForm = await loader.getHarness(IxFormHarness);
+
+      // Start with Remote system
+      await testForm.fillForm({
+        'Source Location': 'On a Different System',
+        'SSH Connection': 'non-root-ssh-connection',
+      });
+
+      // Verify Remote system behavior
+      expect(spectator.component.form.controls.schema_or_regex.enabled).toBe(true);
+      expect(spectator.component.form.controls.naming_schema.enabled).toBe(true);
+      // disabled by default (naming schema mode)
+      expect(spectator.component.form.controls.name_regex.disabled).toBe(true);
+
+      // Switch to Local system
+      await testForm.fillForm({
+        'Source Location': 'On this System',
+        'Destination Location': 'On this System',
+        'Replicate Custom Snapshots': true,
+      });
+
+      // Verify Local system behavior - only name_regex should be enabled
+      expect(spectator.component.form.controls.schema_or_regex.disabled).toBe(true);
+      expect(spectator.component.form.controls.naming_schema.disabled).toBe(true);
+      expect(spectator.component.form.controls.name_regex.enabled).toBe(true);
+    });
   });
 });

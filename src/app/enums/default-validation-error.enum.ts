@@ -12,4 +12,10 @@ export enum DefaultValidationError {
   Number = 'number',
   Cron = 'cron',
   Ip2 = 'ip2',
+  InvalidRegex = 'invalidRegex',
+  InvalidStrftimeSpecifier = 'invalidStrftimeSpecifier',
+  ContainsSlash = 'containsSlash',
+  InvalidCharacters = 'invalidCharacters',
+  OrphanedPercent = 'orphanedPercent',
+  Empty = 'empty',
 }

@@ -1,5 +1,5 @@
 @if (control().touched || control().dirty) {
-  <div class="form-error">
+  <div class="form-error" role="alert" aria-live="polite">
     @for (message of messages; track trackMessage(message)) {
       <mat-error>
         <span [innerHTML]="message | translate"></span>
@@ -10,9 +10,14 @@
         <span class="manual-message" [innerHTML]="control().errors && control().errors?.[ixManualValidateError]?.message"></span>
         <ix-icon
           class="close-icon"
+          role="button"
+          tabindex="0"
           [matTooltip]="'Remove this error to try again' | translate"
           [name]="'close'"
+          [attr.aria-label]="'Remove this error to try again' | translate"
           (click)="removeManualError()"
+          (keydown.enter)="removeManualError()"
+          (keydown.space)="removeManualError()"
         ></ix-icon>
       </mat-error>
     }

@@ -133,10 +133,10 @@ export class ReplicationWizardComponent {
 
   onSubmit(): void {
     this.isLoading = true;
-
     this.createdSnapshots = [];
     this.createdSnapshotTasks = [];
     this.createdReplication = undefined;
+    this.cdr.markForCheck();
 
     const values = this.preparePayload();
 
@@ -147,6 +147,7 @@ export class ReplicationWizardComponent {
         this.snackbar.success(this.translate.instant('Replication task created.'));
         this.isLoading = false;
         this.createdReplication = createdReplication;
+        this.cdr.markForCheck();
       }),
       switchMap((createdReplication) => {
         if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
@@ -165,9 +166,13 @@ export class ReplicationWizardComponent {
         return EMPTY;
       }),
       untilDestroyed(this),
-    ).subscribe((createdReplication) => {
-      this.cdr.markForCheck();
-      this.slideInRef.close({ response: createdReplication });
+    ).subscribe({
+      next: (createdReplication) => {
+        this.slideInRef.close({ response: createdReplication });
+      },
+      error: (err: unknown) => {
+        this.handleError(err);
+      },
     });
   }
 
@@ -210,7 +215,9 @@ export class ReplicationWizardComponent {
   }
 
   private getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Observable<Record<string, string[]>> {
-    return this.api.call('replication.target_unmatched_snapshots', payload);
+    return this.api.call('replication.target_unmatched_snapshots', payload).pipe(
+      catchError(() => of({})), // Will not block the creation process if this request fails
+    );
   }
 
   private createPeriodicSnapshotTask(payload: PeriodicSnapshotTaskCreate): Observable<PeriodicSnapshotTask> {
@@ -384,6 +391,8 @@ export class ReplicationWizardComponent {
   }
 
   handleError(error: unknown): void {
+    this.isLoading = false;
+    this.cdr.markForCheck();
     this.errorHandler.showErrorModal(error);
     this.rollBack();
   }
@@ -446,26 +455,21 @@ export class ReplicationWizardComponent {
       replicationPayload.transport,
       replicationPayload.ssh_credentials,
     ]).pipe(
-      catchError(() => {
-        return this.createReplication(replicationPayload);
-      }),
       switchMap((unmatchedSnapshots) => {
-        const hasBadSnapshots = Object.values(unmatchedSnapshots)
-          .some((snapshots: string[]) => snapshots.length > 0);
+        const hasBadSnapshots = Object.values(unmatchedSnapshots).some((snapshots: string[]) => snapshots.length > 0);
         if (hasBadSnapshots) {
           return this.dialogService.confirm({
             title: this.translate.instant(helptextReplicationWizard.clearSnapshotDialogTitle),
             message: this.translate.instant(helptextReplicationWizard.clearSnapshotDialogContent),
           }).pipe(
             switchMap((dialogResult) => {
-              replicationPayload.allow_from_scratch = dialogResult;
-              return this.createReplication(replicationPayload);
+              const payloadWithAllowFromScratch = { ...replicationPayload, allow_from_scratch: dialogResult };
+              return this.createReplication(payloadWithAllowFromScratch);
             }),
           );
         }
         return this.createReplication(replicationPayload);
       }),
-
     );
   }
 }
