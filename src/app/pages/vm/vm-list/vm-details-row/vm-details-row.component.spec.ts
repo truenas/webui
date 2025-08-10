@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { Subject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VmState } from 'app/enums/vm.enum';
@@ -36,6 +36,14 @@ const stoppedVirtualMachine = {
   },
 } as VirtualMachine;
 
+const suspendedVirtualMachine = {
+  ...virtualMachine,
+  status: {
+    ...virtualMachine.status,
+    state: VmState.Suspended,
+  },
+} as VirtualMachine;
+
 describe('VirtualMachineDetailsRowComponent', () => {
   let spectator: Spectator<VirtualMachineDetailsRowComponent>;
   let loader: HarnessLoader;
@@ -45,12 +53,13 @@ describe('VirtualMachineDetailsRowComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(VmService, {
-        refreshVmList$: new Subject(),
         hasVirtualizationSupport$: of(true),
         downloadLogs: jest.fn(() => of(fakeFile('test.log'))),
-        doStart: jest.fn(),
-        doStop: jest.fn(),
+        doStart: jest.fn(() => of()),
+        doStop: jest.fn(() => of()),
         doRestart: jest.fn(() => of()),
+        doPowerOff: jest.fn(() => of()),
+        openDisplay: jest.fn(() => of()),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -166,5 +175,49 @@ describe('VirtualMachineDetailsRowComponent', () => {
     await openDisplayButton.click();
 
     expect(spectator.inject(VmService).openDisplay).toHaveBeenCalledWith(virtualMachine);
+  });
+
+  describe('suspended VM', () => {
+    beforeEach(() => {
+      spectator.setInput('vm', suspendedVirtualMachine);
+    });
+
+    it('should show Resume button for suspended VM', async () => {
+      const resumeButton = await loader.getHarness(MatButtonHarness.with({ text: /Resume/ }));
+      const resumeIcon = await resumeButton.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
+
+      expect(await resumeIcon.getName()).toBe('mdi-play-circle');
+      expect(resumeButton).toBeTruthy();
+    });
+
+    it('should show Power Off button for suspended VM', async () => {
+      const powerOffButton = await loader.getHarness(MatButtonHarness.with({ text: /Power Off/ }));
+      expect(powerOffButton).toBeTruthy();
+    });
+
+    it('should call service to resume suspended VM', async () => {
+      const resumeButton = await loader.getHarness(MatButtonHarness.with({ text: /Resume/ }));
+      await resumeButton.click();
+
+      expect(spectator.inject(VmService).doStart).toHaveBeenCalledWith(suspendedVirtualMachine);
+    });
+
+    it('should not show Stop or Restart buttons for suspended VM', async () => {
+      const stopButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: /Stop/ }));
+      const restartButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: /Restart/ }));
+
+      expect(stopButtons).toHaveLength(0);
+      expect(restartButtons).toHaveLength(0);
+    });
+
+    it('should not show Display button for suspended VM', async () => {
+      const displayButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: /Display/ }));
+      expect(displayButtons).toHaveLength(0);
+    });
+
+    it('should not show Serial Shell button for suspended VM', async () => {
+      const serialButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: /Serial Shell/ }));
+      expect(serialButtons).toHaveLength(0);
+    });
   });
 });
