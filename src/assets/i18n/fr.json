@@ -1,4 +1,4 @@
-{
+﻿{
   "0": "0",
   "": "",
   "...": "...",
@@ -5038,9 +5038,9 @@
   "Temperature data missing.": "Données de température manquantes.",
   "Temperature Sensors": "Capteurs de température",
   "Temporary password will be generated and shown to you once form is saved.  <br><br>This password is only valid for one login within 24 hours and does not persist across reboots.  <br><br>User will be encouraged to choose their own password after they login for the first time.": "Un mot de passe temporaire sera généré et affiché une fois le formulaire enregistré. <br><br>Ce mot de passe n'est valable que pour une seule connexion dans les 24 heures et ne persiste pas après les redémarrages. <br><br>L'utilisateur sera encouragé à choisir son propre mot de passe après sa première connexion.",
-  "Tenant domain - optional <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">(rclone documentation)</a>.": "Tenant domain - optional <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">(rclone documentation)</a>.",
+  "Tenant domain - optional <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">(rclone documentation)</a>.": "",
   "Tenant ID": "ID du locataire",
-  "Tenant ID - optional for v1 auth, this or tenant required otherwise <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">(rclone documentation)</a>.": "Tenant ID - optional for v1 auth, this or tenant required otherwise <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">(rclone documentation)</a>.",
+  "Tenant ID - optional for v1 auth, this or tenant required otherwise <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">(rclone documentation)</a>.": "",
   "Tenant Name": "Nom du locataire",
   "Terminate Other Sessions": "Terminer les autres sessions",
   "Terminate Other User Sessions": "Mettre fin aux sessions d'autres utilisateurs",
