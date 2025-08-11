@@ -1,10 +1,9 @@
 import { NgStyle } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, input, OnDestroy, OnInit, Signal, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { FitAddon } from '@xterm/addon-fit';
 import { Terminal } from '@xterm/xterm';
 import FontFaceObserver from 'fontfaceobserver';
@@ -40,8 +39,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class TerminalComponent implements OnInit, OnDestroy {
   private api = inject(ApiService);
   private shellService = inject(ShellService);
-  private matDialog = inject(MatDialog);
-  private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
@@ -57,6 +54,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   xterm: Terminal;
   shellConnected = false;
   connectionId: string;
+  isReconnecting = false;
   terminalSettings = {
     cursorBlink: false,
     tabStopWidth: 8,
@@ -188,16 +186,40 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.shellService.connect(this.token, this.conf().connectionData);
 
     this.shellService.shellConnected$
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(untilDestroyed(this))
       .subscribe((event: ShellConnectedEvent) => {
         this.shellConnected = event.connected;
         this.connectionId = event.id;
-        this.updateTerminal();
-        this.resizeTerm();
+
+        if (event.connected) {
+          this.isReconnecting = false;
+          this.updateTerminal();
+          this.resizeTerm();
+        } else {
+          // Connection lost or failed
+          this.isReconnecting = false;
+        }
+
+        this.cdr.markForCheck();
       });
   }
 
   reconnect(): void {
-    this.shellService.connect(this.token, this.conf().connectionData);
+    this.isReconnecting = true;
+    this.cdr.markForCheck();
+
+    this.authService.getOneTimeToken().pipe(
+      take(1),
+      tap((token) => {
+        this.token = token;
+        this.shellService.connect(this.token, this.conf().connectionData);
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      error: () => {
+        this.isReconnecting = false;
+        this.cdr.markForCheck();
+      },
+    });
   }
 }
