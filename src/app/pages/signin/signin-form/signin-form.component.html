@@ -1,4 +1,4 @@
-<form [formGroup]="form" (keydown.enter)="hasTwoFactor ? loginWithOtp() : login()">
+<form novalidate role="form" aria-label="Sign In Form" [formGroup]="form" (submit)="hasTwoFactor ? loginWithOtp() : login()">
   @if (!hasTwoFactor) {
     <ix-input
       formControlName="username"
@@ -23,11 +23,10 @@
     <button
       class="submit-button"
       mat-button
-      type="button"
+      type="submit"
       color="primary"
       ixTest="log-in"
       [disabled]="isFormDisabled()"
-      (click)="login()"
     >
       {{ 'Log In' | translate }}
     </button>
@@ -58,11 +57,10 @@
       <button
         class="submit-button"
         mat-button
-        type="button"
+        type="submit"
         color="primary"
         ixTest="log-in"
         [disabled]="isFormDisabled()"
-        (click)="loginWithOtp()"
       >
         {{ 'Proceed' | translate }}
       </button>
