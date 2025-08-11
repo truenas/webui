@@ -1,15 +1,15 @@
 <ix-page-header>
-  @if (shellConnected) {
+  @if (shellConnected()) {
     <ix-terminal-font-size (fontSizeChanged)="onFontSizeChanged($event)"></ix-terminal-font-size>
   } @else {
     <button
       mat-button
       color="primary"
       ixTest="reconnect"
-      [disabled]="isReconnecting"
+      [disabled]="isReconnecting()"
       (click)="reconnect()"
     >
-      @if (isReconnecting) {
+      @if (isReconnecting()) {
         {{ 'Reconnecting...' | translate }}
       } @else {
         {{ 'Reconnect' | translate }}

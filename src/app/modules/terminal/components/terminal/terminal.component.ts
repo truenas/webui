@@ -1,5 +1,5 @@
 import { NgStyle } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, input, OnDestroy, OnInit, Signal, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, input, OnDestroy, OnInit, Signal, signal, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -41,7 +41,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
   private shellService = inject(ShellService);
   private store$ = inject<Store<AppState>>(Store);
   private authService = inject(AuthService);
-  private cdr = inject(ChangeDetectorRef);
 
   readonly conf = input.required<TerminalConfiguration>();
 
@@ -52,9 +51,9 @@ export class TerminalComponent implements OnInit, OnDestroy {
   fontName = 'Inconsolata';
   defaultFontName = 'monospace';
   xterm: Terminal;
-  shellConnected = false;
-  connectionId: string;
-  isReconnecting = false;
+  protected readonly shellConnected = signal(false);
+  protected readonly connectionId = signal<string>(undefined);
+  protected readonly isReconnecting = signal(false);
   terminalSettings = {
     cursorBlink: false,
     tabStopWidth: 8,
@@ -91,7 +90,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
       filter((preferences) => Boolean(preferences.sidenavStatus)),
       untilDestroyed(this),
     ).subscribe(() => {
-      if (this.shellConnected) {
+      if (this.shellConnected()) {
         setTimeout(() => {
           this.resizeTerm();
         }, this.waitParentChanges);
@@ -101,7 +100,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
   @HostListener('window:resize')
   onWindowResized(): void {
-    if (this.shellConnected) {
+    if (this.shellConnected()) {
       setTimeout(() => {
         this.resizeTerm();
       }, this.waitParentChanges);
@@ -151,7 +150,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   private updateTerminal(): void {
-    if (this.shellConnected) {
+    if (this.shellConnected()) {
       this.xterm.clear();
     }
 
@@ -167,12 +166,11 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.xterm.options.fontSize = this.fontSize;
     this.fitAddon.fit();
     const size = this.fitAddon.proposeDimensions();
-    if (size && this.connectionId) {
-      this.api.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
+    if (size && this.connectionId()) {
+      this.api.call('core.resize_shell', [this.connectionId(), size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
         this.xterm.focus();
       });
     }
-    this.cdr.detectChanges();
     return true;
   }
 
@@ -188,25 +186,22 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.shellService.shellConnected$
       .pipe(untilDestroyed(this))
       .subscribe((event: ShellConnectedEvent) => {
-        this.shellConnected = event.connected;
-        this.connectionId = event.id;
+        this.shellConnected.set(event.connected);
+        this.connectionId.set(event.id);
 
         if (event.connected) {
-          this.isReconnecting = false;
+          this.isReconnecting.set(false);
           this.updateTerminal();
           this.resizeTerm();
         } else {
           // Connection lost or failed
-          this.isReconnecting = false;
+          this.isReconnecting.set(false);
         }
-
-        this.cdr.markForCheck();
       });
   }
 
   reconnect(): void {
-    this.isReconnecting = true;
-    this.cdr.markForCheck();
+    this.isReconnecting.set(true);
 
     this.authService.getOneTimeToken().pipe(
       take(1),
@@ -217,8 +212,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe({
       error: () => {
-        this.isReconnecting = false;
-        this.cdr.markForCheck();
+        this.isReconnecting.set(false);
       },
     });
   }
