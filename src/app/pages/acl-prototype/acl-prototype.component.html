@@ -1,0 +1,314 @@
+<div class="acl-prototype-container">
+  <!-- Header with Path and Basic Info -->
+  <mat-card class="header-card">
+    <div>
+      <mat-card-title>{{ 'POSIX ACL Editor - New Design' | translate }}</mat-card-title>
+      <div>{{ 'Prototype for improved UX' | translate }}</div>
+    </div>
+    <mat-card-content>
+      <div class="path-info">
+        <ix-icon name="folder" class="path-icon"></ix-icon>
+        <strong>{{ selectedPath() }}</strong>
+        <span class="owner-info">
+          ({{ 'Owner' | translate }}: {{ owner() }}, {{ 'Group' | translate }}: {{ ownerGroup() }})
+        </span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Presets Section - Prominently Displayed -->
+    <mat-card class="presets-card" [class.collapsed]="!showPresets()">
+      <div (click)="showPresets.set(!showPresets())">
+        <mat-card-title>
+          <ix-icon [name]="showPresets() ? 'expand_less' : 'expand_more'"></ix-icon>
+          {{ 'Quick Setup with Presets' | translate }}
+        </mat-card-title>
+        <div>{{ 'Choose a common configuration to get started quickly' | translate }}</div>
+      </div>
+      <mat-card-content [@.disabled]="true">
+        @if (showPresets()) {
+          <div class="presets-grid">
+            @for (preset of presets(); track preset.name) {
+              <div
+                class="preset-card"
+                [class.selected]="selectedPreset()?.name === preset.name"
+                (click)="applyPreset(preset)"
+              >
+                <h3>{{ preset.name }}</h3>
+                <p>{{ preset.description }}</p>
+                <div class="preset-preview">
+                  @for (entry of preset.entries.slice(0, 3); track entry.id) {
+                    <mat-chip class="permission-chip">
+                      {{ getTypeDisplayName(entry.type) }}: {{ getPermissionString(entry.permissions) }}
+                    </mat-chip>
+                  }
+                  @if (preset.entries.length > 3) {
+                    <mat-chip class="more-chip">+{{ preset.entries.length - 3 }} more</mat-chip>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- ACL Entries - Separated ACCESS and DEFAULT -->
+    <div class="acl-sections">
+      <!-- ACCESS Entries -->
+      <mat-card class="acl-section access-section">
+        <div>
+          <mat-card-title>
+            <ix-icon name="security" class="section-icon"></ix-icon>
+            {{ 'ACCESS Permissions' | translate }}
+          </mat-card-title>
+          <div>
+            {{ 'Controls permissions for the current file/directory' | translate }}
+          </div>
+        </div>
+        <mat-card-content>
+          <div class="entries-list">
+            @for (entry of accessEntries(); track entry.id) {
+              <div class="acl-entry" [class.required]="entry.type === 'USER_OBJ' || entry.type === 'GROUP_OBJ' || entry.type === 'OTHER'">
+                <div class="entry-type">
+                  <ix-icon class="type-icon" [name]="getTypeIcon(entry.type)"></ix-icon>
+                  <div class="type-info">
+                    <span class="type-name">{{ getTypeDisplayName(entry.type) }}</span>
+                    @if (entry.name) {
+                      <span class="entity-name">{{ entry.name }}</span>
+                    }
+                    @if (entry.type === 'USER_OBJ' || entry.type === 'GROUP_OBJ' || entry.type === 'OTHER') {
+                      <mat-chip class="required-chip" color="primary">Required</mat-chip>
+                    }
+                  </div>
+                </div>
+                <div class="permissions">
+                  <div class="permission-display">{{ getPermissionString(entry.permissions) }}</div>
+                  <div class="permission-toggles">
+                    <button mat-icon-button
+                            matTooltip="Read"
+                            [color]="entry.permissions.read ? 'primary' : ''">
+                      <ix-icon [name]="entry.permissions.read ? 'visibility' : 'visibility_off'"></ix-icon>
+                    </button>
+                    <button mat-icon-button
+                            matTooltip="Write"
+                            [color]="entry.permissions.write ? 'primary' : ''">
+                      <ix-icon [name]="entry.permissions.write ? 'edit' : 'edit_off'"></ix-icon>
+                    </button>
+                    <button mat-icon-button
+                            matTooltip="Execute"
+                            [color]="entry.permissions.execute ? 'primary' : ''">
+                      <ix-icon [name]="entry.permissions.execute ? 'play_arrow' : 'stop_circle'"></ix-icon>
+                    </button>
+                  </div>
+                </div>
+                <div class="entry-actions">
+                  @if (entry.type !== 'USER_OBJ' && entry.type !== 'GROUP_OBJ' && entry.type !== 'OTHER') {
+                    <button mat-icon-button color="warn" matTooltip="Remove">
+                      <ix-icon name="mdi-delete"></ix-icon>
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Add Entry Button -->
+          <div class="add-entry">
+            <button mat-raised-button color="primary">
+              <ix-icon name="add"></ix-icon>
+              {{ 'Add ACCESS Entry' | translate }}
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- DEFAULT Entries -->
+      <mat-card class="acl-section default-section">
+        <div>
+          <mat-card-title>
+            <ix-icon name="content_copy" class="section-icon"></ix-icon>
+            {{ 'DEFAULT Permissions' | translate }}
+          </mat-card-title>
+          <div>
+            {{ 'Template for new files and directories (directories only)' | translate }}
+          </div>
+        </div>
+        <mat-card-content>
+          <div class="entries-list">
+            @if (defaultEntries().length > 0) {
+              @for (entry of defaultEntries(); track entry.id) {
+                <div class="acl-entry default-entry">
+                  <div class="entry-type">
+                    <ix-icon class="type-icon" [name]="getTypeIcon(entry.type)"></ix-icon>
+                    <div class="type-info">
+                      <span class="type-name">{{ getTypeDisplayName(entry.type) }}</span>
+                      @if (entry.name) {
+                        <span class="entity-name">{{ entry.name }}</span>
+                      }
+                      <mat-chip class="default-chip" color="accent">Default</mat-chip>
+                    </div>
+                  </div>
+                  <div class="permissions">
+                    <div class="permission-display">{{ getPermissionString(entry.permissions) }}</div>
+                    <div class="permission-toggles">
+                      <button mat-icon-button
+                              matTooltip="Read"
+                              [color]="entry.permissions.read ? 'primary' : ''">
+                        <ix-icon [name]="entry.permissions.read ? 'visibility' : 'visibility_off'"></ix-icon>
+                      </button>
+                      <button mat-icon-button
+                              matTooltip="Write"
+                              [color]="entry.permissions.write ? 'primary' : ''">
+                        <ix-icon [name]="entry.permissions.write ? 'edit' : 'edit_off'"></ix-icon>
+                      </button>
+                      <button mat-icon-button
+                              matTooltip="Execute"
+                              [color]="entry.permissions.execute ? 'primary' : ''">
+                        <ix-icon [name]="entry.permissions.execute ? 'play_arrow' : 'stop'"></ix-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="entry-actions">
+                    <button mat-icon-button color="warn" matTooltip="Remove">
+                      <ix-icon name="mdi-delete"></ix-icon>
+                    </button>
+                  </div>
+                </div>
+              }
+            } @else {
+              <div class="empty-state">
+                <ix-icon class="info-icon" name="info"></ix-icon>
+                <p>{{ 'No default permissions set. New files and directories will inherit minimal permissions.' | translate }}</p>
+              </div>
+            }
+          </div>
+
+          <!-- Quick Actions for DEFAULT -->
+          <div class="default-actions">
+            <button mat-raised-button (click)="copyAccessToDefault()">
+              <ix-icon name="content_copy"></ix-icon>
+              {{ 'Copy from ACCESS' | translate }}
+            </button>
+            <button mat-raised-button color="primary">
+              <ix-icon name="add"></ix-icon>
+              {{ 'Add DEFAULT Entry' | translate }}
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Educational Content -->
+    <mat-card class="info-card">
+      <div>
+        <mat-card-title>
+          <ix-icon class="info-icon" name="help"></ix-icon>
+          {{ 'Understanding Your Permissions' | translate }}
+        </mat-card-title>
+      </div>
+      <mat-card-content>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <div>{{ 'Effective Permissions Explanation' | translate }}</div>
+          </mat-expansion-panel-header>
+          <p>{{ getEffectivePermissionsExplanation() }}</p>
+          <div class="permission-legend">
+            <h4>{{ 'Permission Codes' | translate }}:</h4>
+            <ul>
+              <li><strong>r</strong> - {{ 'Read: View file contents or list directory' | translate }}</li>
+              <li><strong>w</strong> - {{ 'Write: Modify file contents or create/delete files in directory' | translate }}</li>
+              <li><strong>x</strong> - {{ 'Execute: Run file as program or access directory contents' | translate }}</li>
+            </ul>
+          </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <div>{{ 'ACCESS vs DEFAULT Permissions' | translate }}</div>
+          </mat-expansion-panel-header>
+          <div class="acl-explanation">
+            <div class="explanation-section">
+              <h4>{{ 'ACCESS Permissions' | translate }}</h4>
+              <p>{{ 'Control who can access this file or directory right now. These are the active permissions.' | translate }}</p>
+            </div>
+            <div class="explanation-section">
+              <h4>{{ 'DEFAULT Permissions' | translate }}</h4>
+              <p>{{ 'Template permissions for new files and directories created inside this directory. Only applies to directories.' | translate }}</p>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Helpful Actions - More Prominent -->
+    <mat-card class="actions-card">
+      <div>
+        <mat-card-title>{{ 'Quick Actions' | translate }}</mat-card-title>
+      </div>
+      <mat-card-content>
+        <div class="action-buttons">
+          <button mat-raised-button color="primary" (click)="addMissingMaskEntries()">
+            <ix-icon name="security"></ix-icon>
+            {{ 'Auto-Add MASK Entries' | translate }}
+          </button>
+          <button mat-raised-button (click)="copyAccessToDefault()">
+            <ix-icon name="content_copy"></ix-icon>
+            {{ 'Copy ACCESS to DEFAULT' | translate }}
+          </button>
+          <button mat-stroked-button (click)="toggleAdvancedOptions()">
+            <ix-icon name="settings"></ix-icon>
+            {{ 'Advanced Options' | translate }}
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Advanced Options - Collapsed by Default -->
+    @if (showAdvancedOptions()) {
+      <mat-card class="advanced-options-card">
+        <div>
+          <mat-card-title>{{ 'Advanced Options' | translate }}</mat-card-title>
+          <div>{{ 'Rarely used settings' | translate }}</div>
+        </div>
+        <mat-card-content>
+          <div class="advanced-controls">
+            <label>
+              <input type="checkbox" checked> {{ 'Validate effective ACL' | translate }}
+              <small>{{ 'Ensure the ACL configuration is valid before saving' | translate }}</small>
+            </label>
+            <label>
+              <input type="checkbox"> {{ 'Apply owner' | translate }}
+              <small>{{ 'Change the file owner when saving permissions' | translate }}</small>
+            </label>
+            <label>
+              <input type="checkbox"> {{ 'Apply group' | translate }}
+              <small>{{ 'Change the file group when saving permissions' | translate }}</small>
+            </label>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- Save Actions - Fixed at Bottom -->
+    <mat-card class="save-card">
+      <mat-card-content>
+        <div class="save-actions">
+          <button mat-raised-button color="primary" class="save-button">
+            <ix-icon name="save"></ix-icon>
+            {{ 'Save Permissions' | translate }}
+          </button>
+          <button mat-raised-button>
+            <ix-icon name="bookmark_add"></ix-icon>
+            {{ 'Save as Preset' | translate }}
+          </button>
+          <button mat-stroked-button>
+            {{ 'Cancel' | translate }}
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
