@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
@@ -30,6 +31,7 @@ describe('SigninComponent', () => {
   const isLoading$ = new BehaviorSubject<boolean>(false);
   const isReconnectAllowed$ = new BehaviorSubject<boolean>(false);
   const isFailoverRestart$ = new BehaviorSubject<boolean>(false);
+  const mockPageReloadRequired = signal(false);
 
   const createComponent = createComponentFactory({
     component: SigninComponent,
@@ -67,6 +69,8 @@ describe('SigninComponent', () => {
         setReconnectAllowed: jest.fn(),
         isFailoverRestart$,
         setFailoverStatus: jest.fn(),
+        pageReloadRequired: mockPageReloadRequired,
+        setPageReload: jest.fn(),
       }),
     ],
   });
@@ -78,6 +82,7 @@ describe('SigninComponent', () => {
     loginBanner$.next('');
     isTokenWithinTimeline$.next(false);
     isLoading$.next(false);
+    mockPageReloadRequired.set(false);
 
     spectator = createComponent();
   });
@@ -149,6 +154,21 @@ describe('SigninComponent', () => {
 
       expect(spectator.inject(SigninStore, true).init).toHaveBeenCalled();
       expect(spectator.inject(WebSocketStatusService).setFailoverStatus).toHaveBeenCalledWith(false);
+    });
+
+    it('reloads page and resets signal when pageReloadRequired is true', () => {
+      const mockReload = jest.fn();
+      const mockWindow = {
+        location: {
+          reload: mockReload,
+        },
+      } as unknown as Window;
+      (spectator.component as unknown as { window: Window }).window = mockWindow;
+
+      mockPageReloadRequired.set(true);
+      spectator.detectChanges();
+      expect(mockReload).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketStatusService).setPageReload).toHaveBeenCalledWith(false);
     });
   });
 });

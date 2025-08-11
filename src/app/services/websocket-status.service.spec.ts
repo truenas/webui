@@ -136,4 +136,16 @@ describe('WebSocketStatusSerice', () => {
       expectObservable(spectator.service.isFailoverRestart$).toBe('a', { a: false });
     });
   });
+
+  it('initializes pageReloadRequired signal with false', () => {
+    expect(spectator.service.pageReloadRequired()).toBe(false);
+  });
+
+  it('allows setting pageReloadRequired via setPageReload method', () => {
+    spectator.service.setPageReload(true);
+    expect(spectator.service.pageReloadRequired()).toBe(true);
+
+    spectator.service.setPageReload(false);
+    expect(spectator.service.pageReloadRequired()).toBe(false);
+  });
 });

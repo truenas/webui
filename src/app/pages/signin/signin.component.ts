@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject, effect } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -110,6 +110,13 @@ export class SigninComponent implements OnInit {
       .subscribe(() => {
         this.focusFirstInput();
       });
+
+    effect(() => {
+      if (this.wsStatus.pageReloadRequired()) {
+        this.wsStatus.setPageReload(false);
+        this.window.location.reload();
+      }
+    });
   }
 
   ngOnInit(): void {
