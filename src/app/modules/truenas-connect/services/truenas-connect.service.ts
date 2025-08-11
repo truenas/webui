@@ -1,5 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   filter, map, merge, Observable, switchMap, tap,
 } from 'rxjs';
@@ -10,6 +11,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -33,13 +35,19 @@ export class TruenasConnectService {
         filter(Boolean),
       ),
     )
+      .pipe(untilDestroyed(this))
       .subscribe((config) => {
+        const currentConfig = this.config();
         if (
-          this.config()
+          currentConfig
           && (
-            (this.config().status === TruenasConnectStatus.CertGenerationSuccess
+            // TNC service was just enabled: cert generation completed -> fully configured
+            // Requires reload to update UI navigation and available features
+            (currentConfig.status === TruenasConnectStatus.CertGenerationSuccess
               && config.status === TruenasConnectStatus.Configured)
-              || (this.config().status === TruenasConnectStatus.Configured
+              // TNC service was just disabled: configured -> disabled
+              // Requires reload to hide TNC-related UI elements and restore default behavior
+              || (currentConfig.status === TruenasConnectStatus.Configured
                 && config.status === TruenasConnectStatus.Disabled)
           )
         ) {
