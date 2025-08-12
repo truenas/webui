@@ -14,9 +14,9 @@
           @if (!hasAttemptedAutoReconnect) {
             <ng-container *ngTemplateOutlet="terminalLoading"></ng-container>
           } @else {
-            <p>{{ 'Connection lost. Click Connect to restore the session.' | translate }}</p>
+            <p>{{ 'Connection lost. Click Reconnect to restore the session.' | translate }}</p>
             <button mat-raised-button color="primary" [disabled]="isReconnecting()" (click)="reconnect()">
-              {{ 'Connect' | translate }}
+              {{ 'Reconnect' | translate }}
             </button>
           }
         }
