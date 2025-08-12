@@ -1,4 +1,6 @@
 {
+  "0": "0",
+  "": "",
   "Apply Pending Update": "",
   "Apply Pending Updates": "",
   "Apply updates and restart system after downloading.": "",
@@ -18,8 +20,6 @@
   "Update Version": "",
   "Updates successfully downloaded": "",
   "Upgrades both controllers. Files are downloaded to the Active Controller and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers. Continue with download?": "",
-  "0": "0",
-  "": "",
   "({n, plural, =1 {# widget} other {# widgets}})": "({n, plural, =1 {# Widget} other {# Widgets}})",
   "{checked} exporter: {name}": "{checked} Exporter: {name}",
   "{n, plural, one {Pool in Enclosure} other {Pools in Enclosure} }": "{n, plural, one {Pool im Gehäuse} other {Pools im Gehäuse} }",

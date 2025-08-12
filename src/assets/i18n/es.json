@@ -1,4 +1,6 @@
 {
+  "0": "0",
+  "": "",
   "Apply Pending Update": "",
   "Apply Pending Updates": "",
   "Apply updates and restart system after downloading.": "",
@@ -18,8 +20,6 @@
   "Update Version": "",
   "Updates successfully downloaded": "",
   "Upgrades both controllers. Files are downloaded to the Active Controller and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers. Continue with download?": "",
-  "0": "0",
-  "": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              Parece que su sesión ha estado inactiva durante más de {lifetime} segundos.<br>\n              Por razones de seguridad, cerraremos su sesión a las {time}.\n            ",
   " as of {dateTime}": " a partir de {dateTime}",
   " bytes.": " bytes.",
