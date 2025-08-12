@@ -1,6 +1,7 @@
-import { NgStyle } from '@angular/common';
+import { NgStyle, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, input, OnDestroy, OnInit, Signal, signal, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,7 +15,6 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TerminalFontSizeComponent } from 'app/modules/terminal/components/font-size/terminal-font-size.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ShellService } from 'app/services/shell.service';
 import { AppState } from 'app/store';
@@ -29,9 +29,10 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
-    TestDirective,
+    MatProgressSpinner,
     NgStyle,
     TranslateModule,
+    NgTemplateOutlet,
     PageHeaderComponent,
     TerminalFontSizeComponent,
   ],
@@ -54,6 +55,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
   protected readonly shellConnected = signal(false);
   protected readonly connectionId = signal<string>(undefined);
   protected readonly isReconnecting = signal(false);
+  private autoReconnectEnabled = true;
+  protected hasAttemptedAutoReconnect = false;
   terminalSettings = {
     cursorBlink: false,
     tabStopWidth: 8,
@@ -117,10 +120,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
       }),
       untilDestroyed(this),
     ).subscribe();
-  }
-
-  ngOnDestroy(): void {
-    this.shellService.disconnectIfSessionActive();
   }
 
   onResize(): void {
@@ -191,11 +190,18 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
         if (event.connected) {
           this.isReconnecting.set(false);
+          this.hasAttemptedAutoReconnect = false;
           this.updateTerminal();
           this.resizeTerm();
         } else {
           // Connection lost or failed
           this.isReconnecting.set(false);
+
+          // Start immediate automatic reconnection for all shells (only once)
+          if (this.autoReconnectEnabled && !this.hasAttemptedAutoReconnect) {
+            this.hasAttemptedAutoReconnect = true;
+            this.performAutoReconnect();
+          }
         }
       });
   }
@@ -213,7 +219,39 @@ export class TerminalComponent implements OnInit, OnDestroy {
     ).subscribe({
       error: () => {
         this.isReconnecting.set(false);
+        // Manual reconnection failed - busy state will show reconnect button automatically
       },
     });
+  }
+
+
+  private performAutoReconnect(): void {
+    if (!this.autoReconnectEnabled || this.shellConnected() || this.isReconnecting()) {
+      return;
+    }
+
+    this.isReconnecting.set(true);
+
+    this.authService.getOneTimeToken().pipe(
+      take(1),
+      tap((token) => {
+        this.token = token;
+        this.shellService.connect(this.token, this.conf().connectionData);
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      error: () => {
+        this.isReconnecting.set(false);
+        // Auto-reconnection failed, keep busy state to show manual reconnect option
+      },
+    });
+  }
+
+  isInstanceShell(): boolean {
+    return 'virt_instance_id' in this.conf().connectionData;
+  }
+
+  ngOnDestroy(): void {
+    this.shellService.disconnectIfSessionActive();
   }
 }
