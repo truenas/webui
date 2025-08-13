@@ -103,7 +103,7 @@ export class TruenasConnectStatusModalComponent implements OnInit {
   protected open(): void {
     const baseUrl = this.tnc.config()?.tnc_base_url;
     if (baseUrl) {
-      this.tnc.openWindow(baseUrl);
+      this.tnc.openTruenasConnectWindow(baseUrl);
     }
   }
 

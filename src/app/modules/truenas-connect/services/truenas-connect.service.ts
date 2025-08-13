@@ -86,11 +86,7 @@ export class TruenasConnectService {
       );
   }
 
-  openWindow(url: string): void {
-    this.openTruenasConnectWindow(url);
-  }
-
-  private openTruenasConnectWindow(url: string): void {
+  openTruenasConnectWindow(url: string): void {
     const truenasTabName = 'TrueNASConnect';
 
     if (!globalTruenasConnectWindow || globalTruenasConnectWindow.closed) {

@@ -148,7 +148,7 @@ describe('TruenasConnectService', () => {
 
     // First connection - should open new window
     const firstUrl = 'https://first-url.com';
-    spectator.service.openWindow(firstUrl);
+    spectator.service.openTruenasConnectWindow(firstUrl);
     expect(windowMock.open).toHaveBeenCalledTimes(1);
     expect(windowMock.open).toHaveBeenCalledWith(
       firstUrl,
@@ -162,7 +162,7 @@ describe('TruenasConnectService', () => {
 
     // Second connection - should reuse existing window with empty URL (focus only)
     const secondUrl = 'https://second-url.com';
-    spectator.service.openWindow(secondUrl);
+    spectator.service.openTruenasConnectWindow(secondUrl);
 
     // Should call open again but with empty URL for focus only
     expect(windowMock.open).toHaveBeenCalledTimes(2);
@@ -195,7 +195,7 @@ describe('TruenasConnectService', () => {
 
     // First connection - open window
     const firstUrl = 'https://first-url.com';
-    spectator.service.openWindow(firstUrl);
+    spectator.service.openTruenasConnectWindow(firstUrl);
     expect(windowMock.open).toHaveBeenCalledTimes(1);
 
     // Simulate window being closed
@@ -203,7 +203,7 @@ describe('TruenasConnectService', () => {
 
     // Second connection - should open new window since previous is closed
     const secondUrl = 'https://second-url.com';
-    spectator.service.openWindow(secondUrl);
+    spectator.service.openTruenasConnectWindow(secondUrl);
 
     // Should open new window since previous was closed
     expect(windowMock.open).toHaveBeenCalledTimes(2);
@@ -225,7 +225,7 @@ describe('TruenasConnectService', () => {
     windowMock.open = jest.fn().mockReturnValue(mockTncWindow);
 
     const testUrl = 'https://test-url.com';
-    spectator.service.openWindow(testUrl);
+    spectator.service.openTruenasConnectWindow(testUrl);
 
     expect(windowMock.open).toHaveBeenCalledWith(
       testUrl,
@@ -248,7 +248,7 @@ describe('TruenasConnectService', () => {
     windowMock.open = jest.fn().mockReturnValue(mockTncWindow);
 
     // First connection - open window
-    spectator.service.openWindow(sameUrl);
+    spectator.service.openTruenasConnectWindow(sameUrl);
     expect(windowMock.open).toHaveBeenCalledTimes(1);
 
     // Reset focus mock and location.href setter
@@ -256,7 +256,7 @@ describe('TruenasConnectService', () => {
     const originalHref = mockTncWindow.location.href;
 
     // Second connection with same URL - should only focus, not navigate
-    spectator.service.openWindow(sameUrl);
+    spectator.service.openTruenasConnectWindow(sameUrl);
 
     // Should call open again with empty URL (focus only) and not change location
     expect(windowMock.open).toHaveBeenCalledTimes(2); // Called twice: first with URL, second with empty
@@ -279,14 +279,14 @@ describe('TruenasConnectService', () => {
     windowMock.open = jest.fn().mockReturnValue(mockTncWindow);
 
     // First connection
-    spectator.service.openWindow(firstUrl);
+    spectator.service.openTruenasConnectWindow(firstUrl);
     expect(windowMock.open).toHaveBeenCalledTimes(1);
 
     // Reset focus mock
     mockTncWindow.focus.mockClear();
 
     // Second connection with different URL - should only focus, no navigation
-    spectator.service.openWindow(secondUrl);
+    spectator.service.openTruenasConnectWindow(secondUrl);
 
     // Should call open with empty URL (focus only) and not navigate
     expect(windowMock.open).toHaveBeenCalledTimes(2); // Called twice: first with URL, second with empty
