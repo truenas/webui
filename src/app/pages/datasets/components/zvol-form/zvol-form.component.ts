@@ -524,7 +524,7 @@ export class ZvolFormComponent implements OnInit {
 
   private addSubmit(): void {
     this.isLoading.set(true);
-    const data: ZvolFormData = this.getPayload(this.form.value);
+    const data: ZvolFormData = this.getPayload(this.form.getRawValue());
 
     if (data.sync === inherit) {
       delete data.sync;
@@ -555,7 +555,13 @@ export class ZvolFormComponent implements OnInit {
 
     // encryption values
     if (data.inherit_encryption) {
-      delete data.encryption;
+      // When inheriting encryption from an encrypted parent, we must still specify encryption: true
+      // to avoid backend error: "Cannot create an unencrypted dataset within an encrypted dataset"
+      if (this.encryptedParent) {
+        data.encryption = true;
+      } else {
+        delete data.encryption;
+      }
     } else if (data.encryption) {
       data.encryption_options = {};
       if (data.encryption_type === 'key') {
@@ -591,7 +597,7 @@ export class ZvolFormComponent implements OnInit {
     this.isLoading.set(true);
     this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId]]]).pipe(untilDestroyed(this)).subscribe({
       next: (datasets) => {
-        const data: ZvolFormData = this.getPayload(this.form.value);
+        const data: ZvolFormData = this.getPayload(this.form.getRawValue());
 
         if (data.inherit_encryption) {
           delete data.encryption;

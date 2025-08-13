@@ -9,6 +9,7 @@ import {
   DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -202,6 +203,89 @@ describe('ZvolFormComponent', () => {
         type: DatasetType.Volume,
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+  });
+
+  describe('adds a new zvol with encrypted parent', () => {
+    let encryptedLoader: HarnessLoader;
+    let encryptedSpectator: Spectator<ZvolFormComponent>;
+    let encryptedForm: IxFormHarness;
+
+    // Mock an encrypted parent dataset
+    const encryptedParent = {
+      ...dataset,
+      encrypted: true,
+      encryption_algorithm: {
+        value: 'AES-256-GCM',
+        parsed: 'AES-256-GCM',
+        rawvalue: 'aes-256-gcm',
+        source: ZfsPropertySource.Default,
+      },
+      key_format: {
+        value: EncryptionKeyFormat.Hex,
+        parsed: 'hex',
+        rawvalue: 'hex',
+        source: ZfsPropertySource.Default,
+      },
+    } as Dataset;
+
+    const createComponentWithEncryptedParent = createComponentFactory({
+      component: ZvolFormComponent,
+      imports: [
+        ReactiveFormsModule,
+      ],
+      providers: [
+        mockApi([
+          mockCall('pool.dataset.create'),
+          mockCall('pool.dataset.update'),
+          mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
+          mockCall('pool.dataset.query', [encryptedParent]),
+          mockCall('pool.dataset.encryption_algorithm_choices', {
+            'AES-128-CCM': 'AES-128-CCM',
+            'AES-192-CCM': 'AES-192-CCM',
+            'AES-256-CCM': 'AES-256-CCM',
+            'AES-128-GCM': 'AES-128-GCM',
+            'AES-192-GCM': 'AES-192-GCM',
+            'AES-256-GCM': 'AES-256-GCM',
+          }),
+        ]),
+        mockProvider(DialogService),
+        mockProvider(SlideInRef, {
+          ...slideInRef,
+          getData: jest.fn(() => ({ isNew: true, parentOrZvolId: 'parentId' })),
+        }),
+        mockAuth(),
+      ],
+    });
+
+    beforeEach(async () => {
+      encryptedSpectator = createComponentWithEncryptedParent();
+      encryptedLoader = TestbedHarnessEnvironment.loader(encryptedSpectator.fixture);
+      encryptedForm = await encryptedLoader.getHarness(IxFormHarness);
+    });
+
+    it('creates a zvol with inherited encryption when parent is encrypted', async () => {
+      await encryptedForm.fillForm({
+        Name: 'encrypted-zvol',
+        Size: '1 GiB',
+      });
+
+      const saveButton = await encryptedLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      // Wait for the async operations to complete
+      await encryptedSpectator.fixture.whenStable();
+
+      const calls = (encryptedSpectator.inject(ApiService).call as jest.Mock).mock.calls;
+      const createCall = calls.find((call) => call[0] === 'pool.dataset.create');
+
+      expect(createCall).toBeDefined();
+      expect(createCall[1][0]).toMatchObject({
+        name: 'parentId/encrypted-zvol',
+        type: DatasetType.Volume,
+        encryption: true, // Should include encryption: true when inheriting from encrypted parent
+        inherit_encryption: true,
+      });
     });
   });
 
