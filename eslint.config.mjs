@@ -27,7 +27,7 @@ export default tsEslint.config(
       ".angular/",
       "debian/",
       "docker/",
-      "tests/"
+      "dist/"
     ],
   },
   {
