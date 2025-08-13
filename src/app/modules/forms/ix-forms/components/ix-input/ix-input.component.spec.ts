@@ -187,7 +187,7 @@ describe('IxInputComponent', () => {
         expect(spectator.query('.mat-mdc-form-field-error')).toBeNull();
       });
 
-      it('renders input element as pseudo-password field (via search input type) to disable password managers', () => {
+      it('renders input element as password field for proper password manager recognition', () => {
         formControl.setValue('test');
         spectator.setHostInput('type', 'password');
 

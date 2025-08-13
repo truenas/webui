@@ -143,6 +143,7 @@ describe('SigninFormComponent', () => {
       expect(signinStore.setLoadingState).toHaveBeenCalledWith(false);
       expect(signinStore.getLoginErrorMessage).toHaveBeenCalledWith(LoginResult.NoToken);
       expect(signinStore.showSnackbar).toHaveBeenCalledWith('Wrong username or password. Please try again.');
+      expect(spectator.query('.error p')).toHaveText('Wrong username or password. Please try again.');
     });
 
     it('handles OTP required login result', async () => {

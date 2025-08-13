@@ -163,8 +163,8 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   }
 
   getType(): string {
-    // Only convert to text when showing password (visibility toggle)
     // Keep password type for proper password manager recognition
+    // Only convert to text when showing password (visibility toggle)
     const shouldShowAsText = this.type() === 'password' && this.showPassword;
     return shouldShowAsText ? 'text' : this.type();
   }
