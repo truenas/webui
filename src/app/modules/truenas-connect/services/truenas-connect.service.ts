@@ -97,21 +97,23 @@ export class TruenasConnectService {
       if (globalTruenasConnectWindow) {
         globalTruenasConnectWindow.focus();
       }
-    } else {
-      // Tab is still open - just focus it without navigation/reload
-      // Use empty URL to focus only, no reload
-      const existingWindow = this.window.open('', truenasTabName);
-      if (existingWindow && !existingWindow.closed) {
-        existingWindow.focus();
-        globalTruenasConnectWindow = existingWindow; // Update reference
-      } else {
-        // Window reference was stale, open new one
-        const windowFeatures = 'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes';
-        globalTruenasConnectWindow = this.window.open(url, truenasTabName, windowFeatures);
-        if (globalTruenasConnectWindow) {
-          globalTruenasConnectWindow.focus();
-        }
-      }
+      return;
+    }
+
+    // Tab is still open - just focus it without navigation/reload
+    // Use empty URL to focus only, no reload
+    const existingWindow = this.window.open('', truenasTabName);
+    if (existingWindow && !existingWindow.closed) {
+      existingWindow.focus();
+      globalTruenasConnectWindow = existingWindow; // Update reference
+      return;
+    }
+
+    // Window reference was stale, open new one
+    const windowFeatures = 'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes';
+    globalTruenasConnectWindow = this.window.open(url, truenasTabName, windowFeatures);
+    if (globalTruenasConnectWindow) {
+      globalTruenasConnectWindow.focus();
     }
   }
 }
