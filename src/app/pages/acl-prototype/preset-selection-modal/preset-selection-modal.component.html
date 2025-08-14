@@ -1,0 +1,31 @@
+<h1 mat-dialog-title>{{ 'Select a preset ACL' | translate }}</h1>
+<div mat-dialog-content>
+  <p>{{ 'Choosing an entry loads a preset ACL that is configured to match general permissions situations.' | translate }}</p>
+
+  <form [formGroup]="form">
+    <ix-radio-group
+      formControlName="usePreset"
+      [options]="usePresetOptions$"
+    ></ix-radio-group>
+
+    @if (form.value.usePreset) {
+      <ix-select
+        formControlName="presetName"
+        [label]="'Preset' | translate"
+        [options]="presetOptions$"
+        [required]="true">
+      </ix-select>
+    }
+  </form>
+
+  <ix-form-actions>
+    <button mat-button matDialogClose>{{ 'Cancel' | translate }}</button>
+    <button
+      mat-button
+      color="primary"
+      [disabled]="form.invalid"
+      (click)="onContinuePressed()">
+      {{ 'Continue' | translate }}
+    </button>
+  </ix-form-actions>
+</div>

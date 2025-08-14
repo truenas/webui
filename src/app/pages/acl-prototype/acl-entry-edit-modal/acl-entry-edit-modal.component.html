@@ -1,0 +1,83 @@
+<div class="acl-entry-edit-modal">
+  <h2 mat-dialog-title>{{ 'Access Control Entry' | translate }}</h2>
+
+  <form class="modal-content" [formGroup]="form">
+    <ix-fieldset [title]="'Entry Details' | translate">
+      <!-- Entry Type Selection -->
+      <ix-select
+        formControlName="type"
+        [label]="'Who' | translate"
+        [required]="true"
+        [options]="typeOptions">
+      </ix-select>
+
+      <!-- User/Group Name Selection (only for USER/GROUP types) -->
+      @if (needsNameField()) {
+        @if (selectedType() === 'USER') {
+          <ix-select
+            formControlName="name"
+            [label]="'User' | translate"
+            [required]="true"
+            [options]="userOptions">
+          </ix-select>
+        } @else if (selectedType() === 'GROUP') {
+          <ix-select
+            formControlName="name"
+            [label]="'Group' | translate"
+            [required]="true"
+            [options]="groupOptions">
+          </ix-select>
+        }
+      }
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'Permissions' | translate">
+      <div class="permissions-grid" formGroupName="permissions">
+        <ix-checkbox
+          formControlName="read"
+          [label]="'Read' | translate"
+          [hint]="'View file contents or list directory' | translate">
+        </ix-checkbox>
+
+        <ix-checkbox
+          formControlName="write"
+          [label]="'Write' | translate"
+          [hint]="'Modify file contents or create/delete files in directory' | translate">
+        </ix-checkbox>
+
+        <ix-checkbox
+          formControlName="execute"
+          [label]="'Execute' | translate"
+          [hint]="'Run file as program or access directory contents' | translate">
+        </ix-checkbox>
+      </div>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'Flags' | translate">
+      <ix-checkbox
+        formControlName="isDefault"
+        [label]="'Default' | translate"
+        [hint]="'Applies to newly created files and directories' | translate">
+      </ix-checkbox>
+    </ix-fieldset>
+
+    @if (isRequiredEntry()) {
+      <div class="required-notice">
+        <ix-icon name="info"></ix-icon>
+        <span>{{ 'This is a required entry and cannot be removed.' | translate }}</span>
+      </div>
+    }
+  </form>
+
+  <div class="modal-actions">
+    <button mat-button (click)="onCancel()">
+      {{ 'Cancel' | translate }}
+    </button>
+    <button mat-button
+            color="primary"
+            [disabled]="!form.valid"
+            (click)="onSave()">
+      {{ 'Save' | translate }}
+    </button>
+  </div>
+</div>
