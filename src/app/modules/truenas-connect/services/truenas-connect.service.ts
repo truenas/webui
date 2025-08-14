@@ -9,6 +9,14 @@ import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.inte
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
+// Global reference to persist across potential service reinstantiation
+let globalTruenasConnectWindow: Window | null = null;
+
+// Export function to reset global state for testing
+export function resetGlobalTruenasConnectWindow(): void {
+  globalTruenasConnectWindow = null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -60,7 +68,7 @@ export class TruenasConnectService {
     return this.api.call('tn_connect.get_registration_uri')
       .pipe(
         tap((url) => {
-          this.window.open(url);
+          this.openTruenasConnectWindow(url);
         }),
         switchMap(() => {
           return this.config$.pipe(
@@ -76,5 +84,36 @@ export class TruenasConnectService {
       .pipe(
         this.errorHandler.withErrorHandler(),
       );
+  }
+
+  openTruenasConnectWindow(url: string): void {
+    const truenasTabName = 'TrueNASConnect';
+
+    if (!globalTruenasConnectWindow || globalTruenasConnectWindow.closed) {
+      // First time, or the old tab was closed - open new window with URL
+      const windowFeatures = 'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes';
+      globalTruenasConnectWindow = this.window.open(url, truenasTabName, windowFeatures);
+
+      if (globalTruenasConnectWindow) {
+        globalTruenasConnectWindow.focus();
+      }
+      return;
+    }
+
+    // Tab is still open - just focus it without navigation/reload
+    // Use empty URL to focus only, no reload
+    const existingWindow = this.window.open('', truenasTabName);
+    if (existingWindow && !existingWindow.closed) {
+      existingWindow.focus();
+      globalTruenasConnectWindow = existingWindow; // Update reference
+      return;
+    }
+
+    // Window reference was stale, open new one
+    const windowFeatures = 'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes';
+    globalTruenasConnectWindow = this.window.open(url, truenasTabName, windowFeatures);
+    if (globalTruenasConnectWindow) {
+      globalTruenasConnectWindow.focus();
+    }
   }
 }

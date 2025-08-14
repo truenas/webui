@@ -11,7 +11,6 @@ import {
   EMPTY, catchError, finalize, of, switchMap,
 } from 'rxjs';
 import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -41,7 +40,6 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TruenasConnectStatusModalComponent implements OnInit {
-  private window = inject<Window>(WINDOW);
   protected tnc = inject(TruenasConnectService);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
@@ -103,7 +101,10 @@ export class TruenasConnectStatusModalComponent implements OnInit {
   }
 
   protected open(): void {
-    this.window.open(this.tnc.config()?.tnc_base_url);
+    const baseUrl = this.tnc.config()?.tnc_base_url;
+    if (baseUrl) {
+      this.tnc.openTruenasConnectWindow(baseUrl);
+    }
   }
 
   protected connect(): void {

@@ -40,6 +40,7 @@ describe('TruenasConnectStatusModalComponent', () => {
         disableService: jest.fn(() => of(null)),
         enableService: jest.fn(() => of(null)),
         generateToken: jest.fn(() => of('')),
+        openTruenasConnectWindow: jest.fn(),
       }),
       mockProvider(DialogService, {
         error: jest.fn(),
@@ -72,9 +73,10 @@ describe('TruenasConnectStatusModalComponent', () => {
     );
     expect(openBtn).toBeTruthy();
 
-    const openSpy = jest.spyOn(spectator.inject<Window>(WINDOW), 'open');
+    const tncService = spectator.inject(TruenasConnectService);
+    const openTruenasConnectWindowSpy = jest.spyOn(tncService, 'openTruenasConnectWindow');
     await openBtn.click();
-    expect(openSpy).toHaveBeenCalledWith(config().tnc_base_url);
+    expect(openTruenasConnectWindowSpy).toHaveBeenCalledWith(config().tnc_base_url);
   });
 
   it('should display the status as ACTIVE', () => {
