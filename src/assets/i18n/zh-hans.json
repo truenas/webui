@@ -1,6 +1,10 @@
 {
   "0": "0",
   "": "",
+  "Available Host Memory": "",
+  "Edit CSR": "",
+  "Edit Dataset": "",
+  "Zvol Details": "",
   "...": "...",
   "(from {profile} profile)": "(来自 {profile} 配置文件)",
   "(Not Available)": "(不可用)",

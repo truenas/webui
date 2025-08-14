@@ -47,11 +47,6 @@ are submitted only when this box is set.'),
   traverseLabel: T('Apply permissions to child datasets'),
   traverseTooltip: T('Apply permissions recursively to all child datasets of the current dataset.'),
 
-  validateLabel: T('Validate effective ACL'),
-  validateTooltip: T('Ensure that ACL permissions are validated for all users and groups.\
- Disabling this may allow configurations that do not provide the intended access. \
- It is recommended to keep this option enabled.'),
-
   warningTitle: T('Warning'),
 
   recursiveDialogTitle: T('Warning'),

@@ -3,14 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
-import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AclEditorSaveControlsComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/acl-editor-save-controls/acl-editor-save-controls.component';
@@ -19,11 +16,6 @@ import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/st
 describe('AclEditorSaveControlsComponent', () => {
   let spectator: Spectator<AclEditorSaveControlsComponent>;
   let loader: HarnessLoader;
-  const call$ = new BehaviorSubject<DirectoryServicesStatus>({
-    type: DirectoryServiceType.ActiveDirectory,
-    status: DirectoryServiceStatus.Disabled,
-    status_msg: 'disabled',
-  });
   const createComponent = createComponentFactory({
     component: AclEditorSaveControlsComponent,
     imports: [
@@ -35,9 +27,6 @@ describe('AclEditorSaveControlsComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-      }),
-      mockProvider(ApiService, {
-        call: jest.fn(() => call$),
       }),
       mockAuth(),
     ],
@@ -84,19 +73,8 @@ describe('AclEditorSaveControlsComponent', () => {
     expect(traverseCheckbox).toBeTruthy();
   });
 
-  it('shows Validate Effective ACL checkbox that defaults to true when directory services are enabled', async () => {
-    call$.next({
-      type: DirectoryServiceType.ActiveDirectory,
-      status: DirectoryServiceStatus.Healthy,
-      status_msg: 'Healthy',
-    });
 
-    const validateAclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Validate effective ACL' }));
-    expect(validateAclCheckbox).toBeTruthy();
-    expect(await validateAclCheckbox.getValue()).toBe(true);
-  });
-
-  it('saves current ACL settings when save button is pressed', async () => {
+  it('saves current ACL settings with validation always enabled when save button is pressed', async () => {
     const recursiveCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Apply permissions recursively' }));
     await recursiveCheckbox.setValue(true);
 
@@ -106,7 +84,6 @@ describe('AclEditorSaveControlsComponent', () => {
     expect(spectator.inject(DatasetAclEditorStore).saveAcl).toHaveBeenCalledWith({
       recursive: true,
       traverse: false,
-      validateEffectiveAcl: true,
       owner: 'root',
       ownerGroup: 'wheel',
       applyOwner: true,

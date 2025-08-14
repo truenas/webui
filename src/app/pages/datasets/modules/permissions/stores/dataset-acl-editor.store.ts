@@ -275,7 +275,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       options: {
         recursive: options.recursive,
         traverse: options.traverse,
-        validate_effective_acl: options.validateEffectiveAcl,
+        validate_effective_acl: true, // Always validate for security - UI option removed
       },
       user: options.owner,
       group: options.ownerGroup,

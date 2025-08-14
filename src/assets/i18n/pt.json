@@ -1,6 +1,11 @@
 {
   "0": "0",
   "": "",
+  "Enter an email address to override the admin account’s default email.  If left blank, the admin account’s email address will be used": "",
+  "If something isn’t working correctly, it may be better to use the “Report a bug” option. This way you’ll automatically get status updates as we fix it.": "",
+  "Shares allow you to make your data accessible over the network. <br>\n You’ll need a pool and a dataset that you want to share.": "",
+  "Storage features in TrueNAS require at least one Pool to exist. <br>\n A Pool is a group of disks working together to store and protect your data. <br>\n Once you have a pool, this page will provide an overview of your pool’s health and status.": "",
+  "We’re unable to access the enclosure at the moment. Please ensure it’s connected properly and reload the page.": "",
   " Est. Usable Raw Capacity": " Capacidade bruta utilizável estimada",
   "... Make sure the TrueNAS system is powered on and connected to the network.": "... Certifique-se de que o sistema TrueNAS está ligado e conectado à rede.",
   "\"{source}\" is selected as the primary boot disk.": "\"{source}\" está selecionado como disco de inicialização primário.",

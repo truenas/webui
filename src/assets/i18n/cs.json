@@ -4766,6 +4766,7 @@
   "Your system is setting up with TrueNAS Connect, this may take a few moments.": "",
   "ZFS Errors": "",
   "Zvol": "",
+  "Zvol Details": "",
   "Zvol Location": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              Zdá se, že vaše relace byla neaktivní déle než {lifetime} sekund.<br>\n              Z bezpečnostních důvodů vás odhlásíme v {time}.\n            ",
   " as of {dateTime}": " k datu {dateTime}",
