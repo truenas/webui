@@ -106,7 +106,8 @@ export class SigninFormComponent implements OnInit {
     });
   }
 
-  protected async login(): Promise<void> {
+  protected async login(event?: Event): Promise<void> {
+    event?.preventDefault();
     if (await firstValueFrom(this.signinStore.isLoading$)) {
       return;
     }
@@ -183,7 +184,8 @@ export class SigninFormComponent implements OnInit {
     this.clearForm();
   }
 
-  protected loginWithOtp(): void {
+  protected loginWithOtp(event?: Event): void {
+    event?.preventDefault();
     this.signinStore.setLoadingState(true);
     const formValues = this.form.getRawValue();
     this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
