@@ -131,7 +131,7 @@ describe('CloudSyncFormComponent', () => {
       state: 'PENDING',
     },
     last_run: 'Disabled',
-  } as CloudSyncTaskUi;
+  } as unknown as CloudSyncTaskUi;
 
   let loader: HarnessLoader;
   let spectator: Spectator<CloudSyncFormComponent>;
