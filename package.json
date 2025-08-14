@@ -9,8 +9,7 @@
     "prebuild": "yarn icons",
     "prestart": "yarn icons",
     "build": "yarn run clean:dist && node ./setup-production-env.js && node --max-old-space-size=8192 node_modules/@angular/cli/bin/ng build",
-    "build:prod": "node ./setup-production-env.js && node scripts/setup_prod.js && yarn run build --configuration production",
-    "build:prod:aot": "node ./setup-production-env.js && yarn run build:prod --base-href /ui/",
+    "build:prod": "node ./setup-production-env.js && yarn run build --configuration production --base-href /ui/",
     "check-env": "cd $(git rev-parse --show-toplevel) && yarn run ui check-env",
     "clean:coverage": "rimraf coverage",
     "clean:dist": "rimraf dist",
@@ -43,7 +42,7 @@
     "url": "https://github.com/truenas/webui.git"
   },
   "bugs": {
-    "url": "https://jira.ixsystems.com"
+    "url": "https://ixsystems.atlassian.net"
   },
   "engines": {
     "node": ">=22.17.1"
@@ -79,7 +78,6 @@
     "@eslint/compat": "~1.2.1",
     "@eslint/eslintrc": "~3.1.0",
     "@eslint/js": "~9.13.0",
-    "@inquirer/prompts": "^6.0.1",
     "@lezer/common": "~1.2.1",
     "@lezer/generator": "~1.7.1",
     "@lezer/lr": "~1.4.2",
