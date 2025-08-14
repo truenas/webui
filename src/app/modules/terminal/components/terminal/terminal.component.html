@@ -1,18 +1,42 @@
 <ix-page-header>
-  @if (shellConnected) {
+  @if (shellConnected()) {
     <ix-terminal-font-size (fontSizeChanged)="onFontSizeChanged($event)"></ix-terminal-font-size>
-  } @else {
-    <button mat-button color="primary" ixTest="reconnect" (click)="reconnect()">
-      {{ 'Reconnect' | translate }}
-    </button>
   }
 </ix-page-header>
 
 <div class="terminal-wrapper">
+  @if (!shellConnected()) {
+    <div class="terminal-busy-overlay">
+      <div class="busy-content">
+        @if (isReconnecting()) {
+          <ng-container *ngTemplateOutlet="terminalLoading"></ng-container>
+        } @else {
+          @if (!hasAttemptedAutoReconnect) {
+            <ng-container *ngTemplateOutlet="terminalLoading"></ng-container>
+          } @else {
+            <p>{{ 'Connection lost. Click Reconnect to restore the session.' | translate }}</p>
+            <button mat-button color="primary" [disabled]="isReconnecting()" (click)="reconnect()">
+              {{ 'Reconnect' | translate }}
+            </button>
+          }
+        }
+      </div>
+    </div>
+  }
   <div
     #terminal
     id="terminal"
     [ngStyle]="{ 'font-size': fontSize + 'px' }"
+    [class.terminal-dimmed]="!shellConnected()"
     (window:resize)="onResize()"
   ></div>
 </div>
+
+<ng-template #terminalLoading>
+  <mat-progress-spinner diameter="48" mode="indeterminate"></mat-progress-spinner>
+  @if (isInstanceShell()) {
+    <p>{{ 'Connecting to instance shell...' | translate }}</p>
+  } @else {
+    <p>{{ 'Connecting...' | translate }}</p>
+  }
+</ng-template>
