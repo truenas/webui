@@ -1,7 +1,9 @@
+import { signal } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
+import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
@@ -30,6 +32,19 @@ describe('SigninComponent', () => {
   const isLoading$ = new BehaviorSubject<boolean>(false);
   const isReconnectAllowed$ = new BehaviorSubject<boolean>(false);
   const isFailoverRestart$ = new BehaviorSubject<boolean>(false);
+  const mockPageReloadRequired = signal(false);
+  const mockWindowReload = jest.fn();
+  const mockWindow = {
+    location: {
+      reload: mockWindowReload,
+    },
+    document: {
+      querySelector: jest.fn(),
+    },
+    sessionStorage: {
+      getItem: jest.fn(),
+    },
+  } as unknown as Window;
 
   const createComponent = createComponentFactory({
     component: SigninComponent,
@@ -67,7 +82,13 @@ describe('SigninComponent', () => {
         setReconnectAllowed: jest.fn(),
         isFailoverRestart$,
         setFailoverStatus: jest.fn(),
+        pageReloadRequired: mockPageReloadRequired,
+        setPageReload: jest.fn(),
       }),
+      {
+        provide: WINDOW,
+        useValue: mockWindow,
+      },
     ],
   });
 
@@ -78,6 +99,8 @@ describe('SigninComponent', () => {
     loginBanner$.next('');
     isTokenWithinTimeline$.next(false);
     isLoading$.next(false);
+    mockPageReloadRequired.set(false);
+    mockWindowReload.mockClear();
 
     spectator = createComponent();
   });
@@ -149,6 +172,14 @@ describe('SigninComponent', () => {
 
       expect(spectator.inject(SigninStore, true).init).toHaveBeenCalled();
       expect(spectator.inject(WebSocketStatusService).setFailoverStatus).toHaveBeenCalledWith(false);
+    });
+
+    it('reloads page and resets signal when pageReloadRequired is true', () => {
+      mockPageReloadRequired.set(true);
+      spectator.detectChanges();
+
+      expect(mockWindowReload).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketStatusService).setPageReload).toHaveBeenCalledWith(false);
     });
   });
 });

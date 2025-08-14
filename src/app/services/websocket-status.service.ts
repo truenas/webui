@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   BehaviorSubject, combineLatest,
@@ -23,6 +23,8 @@ export class WebSocketStatusService {
   private readonly isLoggedIn$ = new BehaviorSubject<boolean>(false);
   private readonly authStatus$ = new BehaviorSubject<boolean>(false);
   readonly isAuthenticated$ = this.authStatus$.asObservable();
+  readonly pageReloadRequired = signal(false);
+
   get isAuthenticated(): boolean {
     return this.authStatus$.getValue();
   }
@@ -55,5 +57,9 @@ export class WebSocketStatusService {
 
   setFailoverStatus(status: boolean): void {
     this.isFailoverRestart$.next(status);
+  }
+
+  setPageReload(status: boolean): void {
+    this.pageReloadRequired.set(status);
   }
 }
