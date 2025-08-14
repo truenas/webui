@@ -1,6 +1,5 @@
 import { NgStyle, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, input, OnDestroy, OnInit, Signal, signal, viewChild, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -28,7 +27,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   providers: [ShellService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
     MatProgressSpinner,
     NgStyle,
     TranslateModule,
