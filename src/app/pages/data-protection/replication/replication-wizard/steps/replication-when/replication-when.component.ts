@@ -49,6 +49,7 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
   private translate = inject(TranslateService);
 
   readonly isCustomRetentionVisible = input(true);
+  readonly isLoading = input(false);
 
   readonly save = output();
 

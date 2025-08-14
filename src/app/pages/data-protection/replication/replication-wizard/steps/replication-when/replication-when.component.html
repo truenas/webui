@@ -59,7 +59,7 @@
       type="button"
       color="primary"
       ixTest="save"
-      [disabled]="form.invalid"
+      [disabled]="form.invalid || isLoading()"
       (click)="onSave()"
     >{{ 'Save' | translate }}</button>
   </ix-form-actions>
