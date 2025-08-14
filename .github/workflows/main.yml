@@ -33,7 +33,7 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare
       - name: Build
-        run: yarn build:prod:aot
+        run: yarn build:prod
       - name: Check strict null checks
         run: yarn run check-env && yarn run strict-null-checks
 
