@@ -51,9 +51,12 @@ export interface CloudSyncTaskUpdate extends Omit<CloudSyncTask, 'id' | 'job' | 
 export interface CloudSyncTaskUi extends CloudSyncTask {
   credential: string;
   next_run: string;
-  next_run_time: Date | string;
+  next_run_time: Date | string | null;
+  next_run_sort_key: string;
   state: DataProtectionTaskState;
   last_run: string;
+  last_run_sort_key: string;
+  frequency_sort_key: string;
 }
 
 export interface CloudSyncListDirectoryParams {

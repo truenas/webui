@@ -39,7 +39,6 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -47,6 +46,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { CloudSyncDataTransformer } from 'app/pages/data-protection/cloudsync/utils/cloudsync-data-transformer';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
@@ -102,16 +102,24 @@ export class CloudSyncTaskCardComponent implements OnInit {
     scheduleColumn({
       title: this.translate.instant('Frequency'),
       getValue: (row) => row.schedule,
+      propertyName: 'frequency_sort_key',
     }),
-    relativeDateColumn({
+    textColumn({
       title: this.translate.instant('Next Run'),
-      getValue: (row) => (row.enabled
-        ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
-        : this.translate.instant('Disabled')),
+      getValue: (row: CloudSyncTaskUi) => {
+        // For disabled tasks, show "Disabled" text
+        if (!row.enabled) {
+          return this.translate.instant('Disabled');
+        }
+        // For enabled tasks, show the pre-computed relative time string
+        return row.next_run;
+      },
+      propertyName: 'next_run_sort_key',
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
       getValue: (row) => row.job?.time_finished?.$date,
+      propertyName: 'last_run_sort_key',
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
@@ -173,12 +181,30 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   ngOnInit(): void {
     const cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
-      map((cloudSyncTasks: CloudSyncTaskUi[]) => this.transformCloudSyncTasks(cloudSyncTasks)),
+      map((cloudSyncTasks) => CloudSyncDataTransformer.transformTasks(
+        cloudSyncTasks,
+        this.taskService,
+        this.translate,
+      )),
+      tap((cloudSyncTasks) => this.setupJobSubscriptions(cloudSyncTasks)),
       tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();
+  }
+
+  private setupJobSubscriptions(cloudSyncTasks: CloudSyncTaskUi[]): void {
+    cloudSyncTasks.forEach((transformed) => {
+      if (transformed.job) {
+        this.store$.select(selectJob(transformed.job.id)).pipe(filter(Boolean), untilDestroyed(this))
+          .subscribe((job: Job) => {
+            transformed.job = { ...job };
+            transformed.state = { state: job.state };
+            this.jobStates.set(job.id, job.state);
+          });
+      }
+    });
   }
 
   getCloudSyncTasks(): void {
@@ -315,27 +341,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
       });
   }
 
-  private transformCloudSyncTasks(cloudSyncTasks: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
-    return cloudSyncTasks.map((task) => {
-      const formattedCronSchedule = scheduleToCrontab(task.schedule);
-      task.credential = task.credentials.name;
-      task.next_run_time = task.enabled ? this.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');
-
-      if (task.job === null) {
-        task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
-      } else {
-        task.state = { state: task.job.state };
-        this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean), untilDestroyed(this))
-          .subscribe((job: Job) => {
-            task.state = { state: job.state };
-            task.job = job;
-            this.jobStates.set(job.id, job.state);
-          });
-      }
-
-      return task;
-    });
-  }
 
   private onChangeEnabledState(cloudsyncTask: CloudSyncTaskUi): void {
     this.api

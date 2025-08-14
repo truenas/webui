@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,7 +18,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
-import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -52,6 +54,7 @@ import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import { cloudSyncListElements } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.elements';
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { CloudSyncDataTransformer } from 'app/pages/data-protection/cloudsync/utils/cloudsync-data-transformer';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
@@ -95,6 +98,7 @@ export class CloudSyncListComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private store$ = inject<Store<AppState>>(Store);
   protected emptyService = inject(EmptyService);
+
 
   protected readonly searchableElements = cloudSyncListElements;
   protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
@@ -140,21 +144,26 @@ export class CloudSyncListComponent implements OnInit {
     scheduleColumn({
       title: this.translate.instant('Frequency'),
       getValue: (task) => task.schedule,
+      propertyName: 'frequency_sort_key',
     }),
-    relativeDateColumn({
+    textColumn({
       title: this.translate.instant('Next Run'),
       hidden: true,
-      getValue: (task) => {
-        if (task.enabled) {
-          return this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule));
+      getValue: (task: CloudSyncTaskUi) => {
+        // For disabled tasks, show "Disabled" text
+        if (!task.enabled) {
+          return this.translate.instant('Disabled');
         }
-        return this.translate.instant('Disabled');
+        // For enabled tasks, show the pre-computed relative time string
+        return task.next_run;
       },
+      propertyName: 'next_run_sort_key',
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
       hidden: true,
       getValue: (task) => task.job?.time_finished?.$date,
+      propertyName: 'last_run_sort_key',
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
@@ -177,7 +186,12 @@ export class CloudSyncListComponent implements OnInit {
 
   ngOnInit(): void {
     const cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
-      map((cloudSyncTasks) => this.transformCloudSyncData(cloudSyncTasks)),
+      map((cloudSyncTasks) => CloudSyncDataTransformer.transformTasks(
+        cloudSyncTasks,
+        this.taskService,
+        this.translate,
+      )),
+      tap((cloudSyncTasks) => this.setupJobSubscriptions(cloudSyncTasks)),
       tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
@@ -330,23 +344,16 @@ export class CloudSyncListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  private transformCloudSyncData(tasks: CloudSyncTask[]): CloudSyncTaskUi[] {
-    return tasks.map((task: CloudSyncTask) => {
-      const transformed = { ...task } as CloudSyncTaskUi;
-
-      if (task.job === null) {
-        transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };
-      } else {
-        transformed.state = { state: task.job.state };
-        this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean), untilDestroyed(this))
+  private setupJobSubscriptions(cloudSyncTasks: CloudSyncTaskUi[]): void {
+    cloudSyncTasks.forEach((transformed) => {
+      if (transformed.job) {
+        this.store$.select(selectJob(transformed.job.id)).pipe(filter(Boolean), untilDestroyed(this))
           .subscribe((job: Job) => {
             transformed.job = { ...job };
             transformed.state = { state: job.state };
             this.cdr.markForCheck();
           });
       }
-
-      return transformed;
     });
   }
 
