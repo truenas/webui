@@ -6,15 +6,10 @@ import {
 import {
   ComponentPortal,
 } from '@angular/cdk/portal';
-import {
-  ComponentRef,
-  computed,
-  Injectable,
-  Injector,
-  signal,
-} from '@angular/core';
+import { ComponentRef, computed, Injectable, Injector, signal, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { UUID } from 'angular2-uuid';
+import { Store } from '@ngrx/store';
+import { environment } from 'environments/environment';
 import { cloneDeep } from 'lodash-es';
 import {
   delay,
@@ -22,23 +17,25 @@ import {
   take,
   tap,
 } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ComponentInSlideIn, SlideInInstance, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { selectIsPanelOpen } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { AppState } from 'app/store';
 
 @UntilDestroy()
 // eslint-disable-next-line angular-file-naming/service-filename-suffix
 @Injectable({ providedIn: 'root' })
 export class SlideIn {
+  private cdkOverlay = inject(Overlay);
+  private injector = inject(Injector);
+  private unsavedChangesService = inject(UnsavedChangesService);
+  private store$ = inject<Store<AppState>>(Store);
+
   private slideInInstances = signal<SlideInInstance<unknown, unknown>[]>([]);
   readonly openSlideIns = computed(() => this.slideInInstances()?.length);
-
-  constructor(
-    private cdkOverlay: Overlay,
-    private injector: Injector,
-    private unsavedChangesService: UnsavedChangesService,
-  ) {}
 
   // TODO: Refactor this -> https://github.com/truenas/webui/pull/12168#pullrequestreview-2949579034
   closeAll(): void {
@@ -59,13 +56,14 @@ export class SlideIn {
   ): Observable<SlideInResponse<R>> {
     const open$ = this.animateOutTopComponent().pipe(
       switchMap(() => {
-        const slideInId = UUID.UUID();
+        const slideInId = uuidv4();
 
         const cdkOverlayRef = this.cdkOverlay.create(this.getOverlayConfig());
         const containerPortal = new ComponentPortal(SlideInContainerComponent);
         const containerRef = cdkOverlayRef.attach(containerPortal);
 
-        const close$ = this.getCloseSubject<SlideInResponse<R>>(cdkOverlayRef, containerRef, slideInId);
+        const closeSubject$ = this.getCloseSubject<SlideInResponse<R>>(cdkOverlayRef, containerRef, slideInId);
+        const close$ = closeSubject$ as Subject<SlideInResponse<R>>;
 
         const slideInInstance: SlideInInstance<D, R> = {
           slideInId,
@@ -185,10 +183,23 @@ export class SlideIn {
   }
 
   private getOverlayConfig(): OverlayConfig {
+    let rightPosition = '0';
+
+    if (environment.debugPanel?.enabled) {
+      const isDebugPanelOpen = this.store$.selectSignal(selectIsPanelOpen)();
+
+      if (isDebugPanelOpen) {
+        // Get the actual debug panel width from CSS variable
+        const debugPanelWidth = getComputedStyle(document.documentElement)
+          .getPropertyValue('--debug-panel-width') || '550px';
+        rightPosition = debugPanelWidth;
+      }
+    }
+
     return new OverlayConfig({
       hasBackdrop: true,
       backdropClass: !this.slideInInstances().length ? 'custom-slide-in-backdrop' : 'custom-slide-in-nobackdrop',
-      positionStrategy: this.cdkOverlay.position().global().top('48px').right('0'),
+      positionStrategy: this.cdkOverlay.position().global().top('48px').right(rightPosition),
       height: 'calc(100% - 48px)',
       panelClass: 'slide-in-panel',
     });

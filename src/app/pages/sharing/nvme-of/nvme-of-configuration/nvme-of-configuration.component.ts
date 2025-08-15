@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -49,6 +47,15 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class NvmeOfConfigurationComponent implements OnInit {
+  slideInRef = inject<SlideInRef<void, boolean>>(SlideInRef);
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private nvmeOfService = inject(NvmeOfService);
+  private store$ = inject<Store<AppState>>(Store);
+
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
   protected isLoading = signal(false);
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
@@ -58,17 +65,6 @@ export class NvmeOfConfigurationComponent implements OnInit {
     ana: [false],
     rdma: [false],
   });
-
-  constructor(
-    public slideInRef: SlideInRef<void, boolean>,
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private nvmeOfService: NvmeOfService,
-    private store$: Store<AppState>,
-  ) {}
 
   protected readonly helptext = helptextNvmeOf;
 

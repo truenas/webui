@@ -72,8 +72,8 @@ describe('NewMappingFormComponent', () => {
 
     await form.fillForm({
       User: 'john',
-      'Map to the same UID in the instance': false,
-      'Instance UID': 5000,
+      'Map to the same UID in the container': false,
+      'Container UID': 5000,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set' }));
@@ -104,15 +104,15 @@ describe('NewMappingFormComponent', () => {
 
     await form.fillForm({
       User: 'john',
-      'Map to the same UID in the instance': false,
-      'Instance UID': 5000,
+      'Map to the same UID in the container': false,
+      'Container UID': 5000,
     });
 
     spectator.setInput('type', ViewType.Groups);
 
     expect(await form.getValues()).toEqual({
       Group: '',
-      'Map to the same GID in the instance': true,
+      'Map to the same GID in the container': true,
     });
   });
 });

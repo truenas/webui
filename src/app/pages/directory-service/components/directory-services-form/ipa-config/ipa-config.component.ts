@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  output,
-  OnInit,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, output, OnInit, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
@@ -36,6 +30,9 @@ import { hasDeepNonNullValue } from 'app/pages/directory-service/components/dire
   standalone: true,
 })
 export class IpaConfigComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private validationService = inject(DirectoryServiceValidationService);
+
   private readonly SMB_RANGE_MIN = 1000;
   private readonly SMB_RANGE_MAX = 2147000000;
   private readonly SMB_RANGE_LOW_DEFAULT = 100000001;
@@ -68,11 +65,6 @@ export class IpaConfigComponent implements OnInit {
     this.form.controls.use_default_smb_domain.valueChanges,
     { initialValue: this.form.controls.use_default_smb_domain.value },
   );
-
-  constructor(
-    private fb: FormBuilder,
-    private validationService: DirectoryServiceValidationService,
-  ) {}
 
   ngOnInit(): void {
     this.fillFormWithPreviousConfig();

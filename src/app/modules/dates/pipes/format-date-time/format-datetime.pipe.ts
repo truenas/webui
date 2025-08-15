@@ -1,6 +1,4 @@
-import {
-  ChangeDetectorRef, Inject, Pipe, PipeTransform,
-} from '@angular/core';
+import { ChangeDetectorRef, Pipe, PipeTransform, inject } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
@@ -16,15 +14,15 @@ import { localizationFormSubmitted } from 'app/store/preferences/preferences.act
   pure: false,
 })
 export class FormatDateTimePipe implements PipeTransform {
+  private actions$ = inject(Actions);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private window = inject<Window>(WINDOW);
+
   dateFormat = 'yyyy-MM-dd';
   timeFormat = 'HH:mm:ss';
 
-  constructor(
-    private actions$: Actions,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.checkFormatsFromLocalStorage();
     this.actions$
       .pipe(

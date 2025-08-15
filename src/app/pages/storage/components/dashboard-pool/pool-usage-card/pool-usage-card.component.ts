@@ -1,8 +1,5 @@
 import { PercentPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component, computed, input, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatAnchor } from '@angular/material/button';
 import {
@@ -49,6 +46,10 @@ const maxPct = 80;
   ],
 })
 export class PoolUsageCardComponent implements OnInit {
+  themeService = inject(ThemeService);
+  private translate = inject(TranslateService);
+  private resources = inject(WidgetResourcesService);
+
   readonly poolState = input.required<Pool>();
   readonly rootDataset = input.required<Dataset>();
 
@@ -63,12 +64,6 @@ export class PoolUsageCardComponent implements OnInit {
   chartBlankColor: string;
 
   protected readonly searchableElements = usageCardElements;
-
-  constructor(
-    public themeService: ThemeService,
-    private translate: TranslateService,
-    private resources: WidgetResourcesService,
-  ) {}
 
   ngOnInit(): void {
     this.chartBlankColor = this.themeService.currentTheme().bg1;

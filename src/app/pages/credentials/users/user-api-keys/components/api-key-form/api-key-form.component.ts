@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -71,6 +68,14 @@ export interface ApiKeyParams {
   ],
 })
 export class ApiKeyFormComponent implements OnInit {
+  private fb = inject(NonNullableFormBuilder);
+  private matDialog = inject(MatDialog);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private authService = inject(AuthService);
+  slideInRef = inject<SlideInRef<ApiKeyParams | undefined, boolean>>(SlideInRef);
+
   protected readonly minDateToday = new Date();
   protected readonly editingRow = signal<ApiKey | undefined>(undefined);
   protected readonly isNew = computed(() => !this.editingRow());
@@ -118,15 +123,7 @@ export class ApiKeyFormComponent implements OnInit {
     [], { select: ['name'], order_by: ['name'] },
   ]).pipe(map((keys) => keys.map((key) => key.name)));
 
-  constructor(
-    private fb: NonNullableFormBuilder,
-    private matDialog: MatDialog,
-    private api: ApiService,
-    private loader: LoaderService,
-    private errorHandler: FormErrorHandlerService,
-    private authService: AuthService,
-    public slideInRef: SlideInRef<ApiKeyParams | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

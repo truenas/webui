@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -34,6 +32,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 
 export class UpdateProfileCard implements OnChanges {
+  private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+
   readonly currentProfileId = input.required<string>();
   readonly profileChoices = input.required<UpdateProfileChoices>();
 
@@ -87,15 +92,6 @@ export class UpdateProfileCard implements OnChanges {
         })),
     );
   });
-
-  constructor(
-    private api: ApiService,
-    private snackbar: SnackbarService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-  ) { }
 
   ngOnChanges(changes: IxSimpleChanges<UpdateProfileCard>): void {
     if ('currentProfileId' in changes) {

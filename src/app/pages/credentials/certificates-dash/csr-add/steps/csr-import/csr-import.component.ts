@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -34,6 +32,9 @@ import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/u
   ],
 })
 export class CsrImportComponent implements SummaryProvider {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+
   form = this.formBuilder.nonNullable.group({
     CSR: ['', Validators.required],
     privatekey: ['', Validators.required],
@@ -50,11 +51,6 @@ export class CsrImportComponent implements SummaryProvider {
   });
 
   readonly helptext = helptextSystemCertificates;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-  ) {}
 
   getSummary(): SummarySection {
     const values = this.form.getRawValue();

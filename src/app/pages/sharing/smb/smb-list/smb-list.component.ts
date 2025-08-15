@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject,
 } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -19,7 +19,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { shared } from 'app/helptext/sharing';
-import { SmbSharePurpose, SmbShare } from 'app/interfaces/smb-share.interface';
+import { SmbSharePurpose, SmbShare, ExternalSmbShareOptions } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -85,6 +85,17 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class SmbListComponent implements OnInit {
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private dialog = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
+  protected emptyService = inject(EmptyService);
+  private router = inject(Router);
+  private store$ = inject<Store<ServicesState>>(Store);
+
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   protected readonly searchableElements = smbListElements;
   protected readonly emptyConfig = smbCardEmptyConfig;
@@ -103,7 +114,7 @@ export class SmbListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Path'),
-      propertyName: 'path',
+      getValue: (row) => (row.options as ExternalSmbShareOptions)?.remote_path?.join(', ') || row.path,
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -207,19 +218,6 @@ export class SmbListComponent implements OnInit {
     uniqueRowTag: (row) => 'smb-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('SMB Share')],
   });
-
-  constructor(
-    private loader: LoaderService,
-    private api: ApiService,
-    private translate: TranslateService,
-    private dialog: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-    protected emptyService: EmptyService,
-    private router: Router,
-    private store$: Store<ServicesState>,
-  ) {}
 
   ngOnInit(): void {
     const shares$ = this.api.call('sharing.smb.query').pipe(

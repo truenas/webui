@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -33,23 +33,20 @@ import { selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info
   ],
 })
 export class RestartComponent implements OnInit {
+  protected api = inject(ApiService);
+  private wsManager = inject(WebSocketHandlerService);
+  protected router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private errorHandler = inject(ErrorHandlerService);
+  protected loader = inject(LoaderService);
+  protected matDialog = inject(MatDialog);
+  private location = inject(Location);
+  private wsStatus = inject(WebSocketStatusService);
+  private store$ = inject<Store<AppState>>(Store);
+  private authService = inject(AuthService);
+
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
-
-  constructor(
-    protected api: ApiService,
-    private wsManager: WebSocketHandlerService,
-    protected router: Router,
-    private route: ActivatedRoute,
-    private errorHandler: ErrorHandlerService,
-    protected loader: LoaderService,
-    protected matDialog: MatDialog,
-    private location: Location,
-    private wsStatus: WebSocketStatusService,
-    private store$: Store<AppState>,
-    private authService: AuthService,
-  ) {
-  }
 
   ngOnInit(): void {
     const reason = this.route.snapshot.queryParamMap.get('reason') || 'Unknown Reason';

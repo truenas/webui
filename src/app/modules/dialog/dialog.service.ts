@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
@@ -24,7 +24,8 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   providedIn: 'root',
 })
 export class DialogService {
-  constructor(private matDialog: MatDialog) { }
+  private matDialog = inject(MatDialog);
+
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>;
   confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): Observable<DialogWithSecondaryCheckboxResult>;

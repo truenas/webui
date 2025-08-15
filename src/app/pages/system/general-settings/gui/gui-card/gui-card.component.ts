@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -45,6 +43,9 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   ],
 })
 export class GuiCardComponent {
+  private store$ = inject<Store<AppState>>(Store);
+  private slideIn = inject(SlideIn);
+
   protected readonly searchableElements = guiCardElements;
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
 
@@ -59,11 +60,6 @@ export class GuiCardComponent {
   );
 
   readonly helptext = helptext;
-
-  constructor(
-    private store$: Store<AppState>,
-    private slideIn: SlideIn,
-  ) {}
 
   openSettings(): void {
     this.slideIn.open(GuiFormComponent).pipe(

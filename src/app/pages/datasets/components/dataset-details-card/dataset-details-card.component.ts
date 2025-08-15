@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
@@ -55,22 +53,20 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DatasetDetailsCardComponent {
+  private translate = inject(TranslateService);
+  private matDialog = inject(MatDialog);
+  private datasetStore = inject(DatasetTreeStore);
+  private slideIn = inject(SlideIn);
+  private errorHandler = inject(ErrorHandlerService);
+  private router = inject(Router);
+  private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+
   readonly dataset = input.required<DatasetDetails>();
 
   protected readonly Role = Role;
   readonly OnOff = OnOff;
   readonly DatasetCaseSensitivity = DatasetCaseSensitivity;
-
-  constructor(
-    private translate: TranslateService,
-    private matDialog: MatDialog,
-    private datasetStore: DatasetTreeStore,
-    private slideIn: SlideIn,
-    private errorHandler: ErrorHandlerService,
-    private router: Router,
-    private api: ApiService,
-    private snackbar: SnackbarService,
-  ) { }
 
   protected readonly datasetCompression = computed(() => {
     const compressRatioValue = this.dataset().compressratio?.value;

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -73,6 +71,15 @@ export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
   ],
 })
 export class NetworkConfigurationComponent implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private fb = inject(NonNullableFormBuilder);
+  private systemGeneralService = inject(SystemGeneralService);
+  private store$ = inject<Store<AppState>>(Store);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.NetworkGeneralWrite];
 
   protected isFormLoading = signal(false);
@@ -230,16 +237,7 @@ export class NetworkConfigurationComponent implements OnInit {
     tooltip: helptextNetworkConfiguration.hostsTooltip,
   };
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private fb: NonNullableFormBuilder,
-    private systemGeneralService: SystemGeneralService,
-    private store$: Store<AppState>,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

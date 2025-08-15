@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, effect, OnInit, signal,
-  WritableSignal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, OnInit, signal, WritableSignal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormArray,
@@ -69,6 +66,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -121,6 +119,20 @@ interface NicDeviceOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstanceWizardComponent implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private matDialog = inject(MatDialog);
+  private router = inject(Router);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
+  protected formatter = inject(IxFormatterService);
+  protected configStore = inject(VirtualizationConfigStore);
+  private authService = inject(AuthService);
+  private filesystem = inject(FilesystemService);
+  private unsavedChangesService = inject(UnsavedChangesService);
+
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
@@ -177,7 +189,7 @@ export class InstanceWizardComponent implements OnInit {
       [forbiddenAsyncValues(this.forbiddenNames$)],
     ],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
-    cpu: [''],
+    cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
     storage_pool: [null as string | null, [Validators.required]],
     use_default_network: [true],
@@ -210,21 +222,7 @@ export class InstanceWizardComponent implements OnInit {
     return this.configStore.config()?.v6_network || this.translate.instant('N/A');
   });
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: NonNullableFormBuilder,
-    private matDialog: MatDialog,
-    private router: Router,
-    private formErrorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private dialogService: DialogService,
-    protected formatter: IxFormatterService,
-    protected configStore: VirtualizationConfigStore,
-    private authService: AuthService,
-    private filesystem: FilesystemService,
-    private unsavedChangesService: UnsavedChangesService,
-  ) {
+  constructor() {
     this.configStore.initialize();
 
     effect(() => {
@@ -340,9 +338,9 @@ export class InstanceWizardComponent implements OnInit {
   protected addProxy(): void {
     const control = this.formBuilder.group({
       source_proto: [VirtualizationProxyProtocol.Tcp],
-      source_port: [null as number | null, Validators.required],
+      source_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
       dest_proto: [VirtualizationProxyProtocol.Tcp],
-      dest_port: [null as number | null, Validators.required],
+      dest_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
     });
 
     this.form.controls.proxies.push(control);
@@ -372,8 +370,8 @@ export class InstanceWizardComponent implements OnInit {
     this.createInstance().pipe(untilDestroyed(this)).subscribe({
       next: (instance) => {
         this.form.markAsPristine();
-        this.snackbar.success(this.translate.instant('Instance created'));
-        this.router.navigate(['/instances', 'view', instance?.id]);
+        this.snackbar.success(this.translate.instant('Container created'));
+        this.router.navigate(['/containers', 'view', instance?.id]);
       },
       error: (error: unknown) => {
         this.formErrorHandler.handleValidationErrors(error, this.form);
@@ -400,7 +398,7 @@ export class InstanceWizardComponent implements OnInit {
     const job$ = this.api.job('virt.instance.create', [payload]);
 
     return this.dialogService
-      .jobDialog(job$, { title: this.translate.instant('Creating Instance') })
+      .jobDialog(job$, { title: this.translate.instant('Creating Container') })
       .afterClosed().pipe(map((job) => job.result));
   }
 

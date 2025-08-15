@@ -1,5 +1,5 @@
-import { UUID } from 'angular2-uuid';
 import { omit } from 'lodash-es';
+import { v4 as uuidv4 } from 'uuid';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   ManualSelectionVdev,
@@ -7,7 +7,7 @@ import {
 
 export function vdevsToManualSelectionVdevs(vdevs: DetailsDisk[][]): ManualSelectionVdev[] {
   return vdevs.map((vdev) => {
-    const vdevId = UUID.UUID();
+    const vdevId = uuidv4();
     return {
       disks: vdev.map((disk) => {
         return {

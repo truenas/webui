@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -35,6 +33,9 @@ import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualiz
   ],
 })
 export class InstanceDevicesComponent {
+  private devicesStore = inject(VirtualizationDevicesStore);
+  private translate = inject(TranslateService);
+
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly shownDevices = computed(() => {
@@ -47,11 +48,6 @@ export class InstanceDevicesComponent {
       ].includes(device.dev_type);
     });
   });
-
-  constructor(
-    private devicesStore: VirtualizationDevicesStore,
-    private translate: TranslateService,
-  ) {}
 
   protected getDeviceDescription(device: VirtualizationDevice): string {
     return getDeviceDescription(this.translate, device);

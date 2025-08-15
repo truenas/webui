@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -7,9 +7,8 @@ import { PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-mana
   name: 'ixTopologyCategoryDescription',
 })
 export class TopologyCategoryDescriptionPipe implements PipeTransform {
-  constructor(
-    private translate: TranslateService,
-  ) {}
+  private translate = inject(TranslateService);
+
 
   transform(category: PoolManagerTopologyCategory, notLimitedToOneLayout = true, ignoreManualLayout = false): string {
     if (category.vdevs.length === 0) {

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,18 +21,18 @@ import { UnusedDiskCardComponent } from './unused-disk-card/unused-disk-card.com
   imports: [UnusedDiskCardComponent, TranslateModule],
 })
 export class UnusedResourcesComponent implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private matDialog = inject(MatDialog);
+
   readonly pools = input.required<Pool[]>();
 
   noPoolsDisks: DetailsDisk[] = [];
   exportedPoolsDisks: DetailsDisk[] = [];
   diskQuerySubscription: Subscription;
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private matDialog: MatDialog,
-  ) {
+  constructor() {
     effect(() => {
       if (this.pools()) {
         this.updateUnusedDisks();

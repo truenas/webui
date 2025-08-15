@@ -1,7 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, inject,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -37,6 +38,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -75,6 +77,16 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
   ],
 })
 export class TopbarComponent implements OnInit {
+  private router = inject(Router);
+  private systemGeneralService = inject(SystemGeneralService);
+  private matDialog = inject(MatDialog);
+  private store$ = inject<Store<AlertSlice>>(Store);
+  private appStore$ = inject<Store<AppState>>(Store);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private tnc = inject(TruenasConnectService);
+  private apiService = inject<ApiService>(ApiService);
+
   updateIsDone: Subscription;
 
   updateDialog: MatDialogRef<UpdateDialog>;
@@ -87,9 +99,10 @@ export class TopbarComponent implements OnInit {
 
   readonly hasRebootRequiredReasons = signal(false);
   readonly shownDialog = signal(false);
+  readonly isExperimentalBuild = toSignal(this.apiService.call('system.experimental'));
   readonly hasTncConfig = computed(() => {
     const config = this.tnc.config();
-    return config?.ips?.length && config.tnc_base_url
+    return config && (config.ips?.length || config.interfaces_ips?.length) && config.tnc_base_url
       && config.account_service_base_url
       && config.leca_service_base_url;
   });
@@ -107,16 +120,7 @@ export class TopbarComponent implements OnInit {
     ].join(' ');
   });
 
-  constructor(
-    private router: Router,
-    private systemGeneralService: SystemGeneralService,
-    private matDialog: MatDialog,
-    private store$: Store<AlertSlice>,
-    private appStore$: Store<AppState>,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private tnc: TruenasConnectService,
-  ) {
+  constructor() {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateNotificationSent = true;
       this.cdr.markForCheck();
@@ -214,6 +218,10 @@ export class TopbarComponent implements OnInit {
   }
 
   onFeedbackIndicatorPressed(): void {
+    if (this.isExperimentalBuild()) {
+      return;
+    }
+
     this.matDialog.open(FeedbackDialog);
   }
 

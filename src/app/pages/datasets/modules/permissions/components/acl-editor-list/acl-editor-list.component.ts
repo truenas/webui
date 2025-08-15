@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -29,6 +27,9 @@ import {
   ],
 })
 export class AclEditorListComponent implements OnChanges {
+  private store = inject(DatasetAclEditorStore);
+  private translate = inject(TranslateService);
+
   readonly acl = input.required<Acl>();
   readonly selectedAceIndex = input.required<number>();
   readonly acesWithError = input.required<number[]>();
@@ -37,12 +38,6 @@ export class AclEditorListComponent implements OnChanges {
 
   permissionItems: PermissionItem[] = [];
   aces: (NfsAclItem | PosixAclItem)[] = [];
-
-  constructor(
-    private store: DatasetAclEditorStore,
-    private translate: TranslateService,
-  ) {
-  }
 
   ngOnChanges(): void {
     this.aces = this.acl().acl;

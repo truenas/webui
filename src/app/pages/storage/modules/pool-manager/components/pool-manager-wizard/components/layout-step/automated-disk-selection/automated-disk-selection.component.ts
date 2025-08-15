@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject } from '@angular/core';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -40,6 +38,9 @@ import { NormalSelectionComponent } from './normal-selection/normal-selection.co
   ],
 })
 export class AutomatedDiskSelectionComponent implements OnChanges {
+  protected store = inject(PoolManagerStore);
+  private translate = inject(TranslateService);
+
   readonly isStepActive = input<boolean>(false);
   readonly type = input<VDevType>();
   readonly inventory = input<DetailsDisk[]>([]);
@@ -62,10 +63,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
 
   protected vdevLayoutOptions$ = of<SelectOption<CreateVdevLayout>[]>([]);
 
-  constructor(
-    protected store: PoolManagerStore,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     this.updateStoreOnChanges();
     this.listenForResetEvents();
   }
@@ -118,7 +116,6 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   private updateLayoutOptionsFromLimitedLayouts(limitLayouts: CreateVdevLayout[]): void {
     const allowedLayouts = vdevLayoutOptions.filter((option) => limitLayouts.includes(option.value));
     this.vdevLayoutOptions$ = of(allowedLayouts);
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
     const cannotChangeLayout = this.canChangeLayout() === false;
     if (cannotChangeLayout && limitLayouts.length) {
       setValueIfNotSame(this.layoutControl, limitLayouts[0]);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, Subscriber } from 'rxjs';
@@ -13,6 +13,8 @@ import { TerminalComponent } from 'app/modules/terminal/components/terminal/term
   imports: [TerminalComponent],
 })
 export class InstanceConsoleComponent implements TerminalConfiguration {
+  private aroute = inject(ActivatedRoute);
+
   protected instanceId = signal('');
 
   get connectionData(): TerminalConnectionData {
@@ -21,10 +23,6 @@ export class InstanceConsoleComponent implements TerminalConfiguration {
       use_console: true,
     };
   }
-
-  constructor(
-    private aroute: ActivatedRoute,
-  ) {}
 
   preInit(): Observable<void> {
     return new Observable<void>((subscriber: Subscriber<void>) => {

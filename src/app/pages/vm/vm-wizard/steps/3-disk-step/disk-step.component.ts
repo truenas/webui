@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -46,6 +46,12 @@ export enum NewOrExistingDisk {
   ],
 })
 export class DiskStepComponent implements OnInit, SummaryProvider {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private freeSpaceValidator = inject(FreeSpaceValidatorService);
+  formatter = inject(IxFormatterService);
+
   form = this.formBuilder.group({
     newOrExisting: [NewOrExistingDisk.New],
     hdd_type: [VmDiskMode.Ahci],
@@ -76,14 +82,6 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
     .pipe(singleArrayToOptions());
 
   readonly helptext = helptextVmWizard;
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private api: ApiService,
-    private freeSpaceValidator: FreeSpaceValidatorService,
-    public formatter: IxFormatterService,
-  ) { }
 
   get isCreatingNewDisk(): boolean {
     return this.form.controls.newOrExisting.value === NewOrExistingDisk.New;

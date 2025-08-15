@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { Observable } from 'rxjs';
@@ -11,9 +11,9 @@ type State = Record<string, AppStats>;
 @UntilDestroy()
 @Injectable()
 export class AppsStatsService extends ComponentStore<State> {
-  constructor(
-    private api: ApiService,
-  ) {
+  private api = inject(ApiService);
+
+  constructor() {
     super({});
   }
 

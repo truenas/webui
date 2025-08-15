@@ -1,7 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, OnInit,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -48,6 +45,14 @@ export interface SedConfig {
   ],
 })
 export class SelfEncryptingDriveFormComponent implements OnInit {
+  private fb = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private store$ = inject<Store<AppState>>(Store);
+  private snackbar = inject(SnackbarService);
+  slideInRef = inject<SlideInRef<SedConfig, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   protected isFormLoading = signal(false);
@@ -76,15 +81,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
 
   private sedConfig: SedConfig;
 
-  constructor(
-    private fb: NonNullableFormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private store$: Store<AppState>,
-    private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<SedConfig, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

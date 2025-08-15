@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -45,6 +43,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DeleteVmDialogComponent implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(FormBuilder);
+  private dialogRef = inject<MatDialogRef<DeleteVmDialogComponent>>(MatDialogRef);
+  private validators = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  vm = inject<VirtualMachine>(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.VmWrite];
 
   form = this.formBuilder.group({
@@ -54,17 +61,6 @@ export class DeleteVmDialogComponent implements OnInit {
   });
 
   readonly helptext = helptextVmList;
-
-  constructor(
-    private api: ApiService,
-    private formBuilder: FormBuilder,
-    private dialogRef: MatDialogRef<DeleteVmDialogComponent>,
-    private validators: IxValidatorsService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    @Inject(MAT_DIALOG_DATA) public vm: VirtualMachine,
-  ) { }
 
   ngOnInit(): void {
     this.setConfirmationValidator();

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, ElementRef, OnInit, signal, Signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, signal, Signal, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -38,6 +36,14 @@ import { ShellService } from 'app/services/shell.service';
   ],
 })
 export class ContainerLogsComponent implements OnInit {
+  private api = inject(ApiService);
+  protected aroute = inject(ActivatedRoute);
+  protected loader = inject(LoaderService);
+  protected download = inject(DownloadService);
+  private errorHandler = inject(ErrorHandlerService);
+  private matDialog = inject(MatDialog);
+  private router = inject(Router);
+
   private logContainer: Signal<ElementRef<HTMLElement>> = viewChild.required('logContainer', { read: ElementRef });
 
   protected fontSize = signal(14);
@@ -50,16 +56,6 @@ export class ContainerLogsComponent implements OnInit {
 
   private defaultTailLines = 500;
   private logsChangedListener: Subscription;
-
-  constructor(
-    private api: ApiService,
-    protected aroute: ActivatedRoute,
-    protected loader: LoaderService,
-    protected download: DownloadService,
-    private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
-    private router: Router,
-  ) {}
 
   ngOnInit(): void {
     if (!this.aroute.parent) {
@@ -121,7 +117,7 @@ export class ContainerLogsComponent implements OnInit {
   scrollToBottom(): void {
     try {
       this.logContainer().nativeElement.scrollTop = this.logContainer().nativeElement.scrollHeight;
-    } catch (_: unknown) {
+    } catch {
       // Ignore error
     }
   }

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import {
   FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -48,6 +46,21 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DefaultGatewayDialog implements OnInit {
+  private api = inject(ApiService);
+  private fb = inject(FormBuilder);
+  cdr = inject(ChangeDetectorRef);
+  private dialogRef = inject<MatDialogRef<DefaultGatewayDialog>>(MatDialogRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private loader = inject(LoaderService);
+  data = inject<{
+    ipv4gateway?: string;
+    nameserver1?: string;
+    nameserver2?: string;
+    nameserver3?: string;
+  }>(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected readonly currentGateway = signal('');
   protected readonly currentDns1 = signal('');
@@ -70,23 +83,6 @@ export class DefaultGatewayDialog implements OnInit {
   });
 
   readonly helptext = helptextNetworkConfiguration;
-
-  constructor(
-    private api: ApiService,
-    private fb: FormBuilder,
-    public cdr: ChangeDetectorRef,
-    private dialogRef: MatDialogRef<DefaultGatewayDialog>,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private loader: LoaderService,
-    @Inject(MAT_DIALOG_DATA) public data: {
-      ipv4gateway?: string;
-      nameserver1?: string;
-      nameserver2?: string;
-      nameserver3?: string;
-    },
-  ) {}
 
   ngOnInit(): void {
     this.loadNetworkSummary();

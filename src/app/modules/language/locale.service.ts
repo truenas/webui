@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -16,15 +16,15 @@ export type SupportedTimeFormat = 'hh:mm:ss aa' | "hh:mm:ss aaaaa'm'" | 'HH:mm:s
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class LocaleService {
+  private store$ = inject<Store<AppState>>(Store);
+  private translate = inject(TranslateService);
+
   t24 = T('(24 Hours)');
   timezone: string | undefined;
   dateFormat = 'yyyy-MM-dd';
   timeFormat: SupportedTimeFormat = 'HH:mm:ss';
 
-  constructor(
-    private store$: Store<AppState>,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     combineLatest([
       this.store$.select(selectTimezone),
       this.store$.pipe(waitForPreferences),

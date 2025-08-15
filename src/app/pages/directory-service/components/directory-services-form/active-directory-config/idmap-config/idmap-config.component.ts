@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, output, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, OnInit, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl, FormGroup, ReactiveFormsModule, Validators,
@@ -32,6 +30,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IdmapConfigComponent implements OnInit {
+  private fb = inject(FormBuilder);
+
   idmap = input.required<PrimaryDomainIdmap>();
   idmapUpdated = output<[useDefaultIdmap: boolean, primaryDomainIdmap: PrimaryDomainIdmap]>();
   isValid = output<boolean>();
@@ -73,10 +73,6 @@ export class IdmapConfigComponent implements OnInit {
     { label: ActiveDirectorySchemaMode.Sfu, value: ActiveDirectorySchemaMode.Sfu },
     { label: ActiveDirectorySchemaMode.Sfu20, value: ActiveDirectorySchemaMode.Sfu20 },
   ]);
-
-  constructor(
-    private fb: FormBuilder,
-  ) {}
 
   ngOnInit(): void {
     this.listenToTypeChanges();

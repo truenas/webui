@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -43,6 +41,11 @@ export enum DispersalStrategy {
   ],
 })
 export class EnclosureWizardStepComponent implements OnInit, OnChanges {
+  private store = inject(PoolManagerStore);
+  private translate = inject(TranslateService);
+  private formBuilder = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly isStepActive = input<boolean>();
   readonly stepWarning = input<string | null>();
 
@@ -76,13 +79,6 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
   ]);
 
   protected readonly helptext = helptextPoolCreation;
-
-  constructor(
-    private store: PoolManagerStore,
-    private translate: TranslateService,
-    private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   get isLimitingToSingle(): boolean {
     return this.form.value.dispersalStrategy === DispersalStrategy.LimitToSingle;

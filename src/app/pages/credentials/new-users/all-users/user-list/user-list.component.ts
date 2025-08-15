@@ -1,10 +1,5 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy,
-  output,
-  input,
-  signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, output, input, signal, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { getUserType } from 'app/helpers/user.helper';
@@ -47,6 +42,10 @@ import { UserAccessCellComponent } from './user-access-cell/user-access-cell.com
   ],
 })
 export class UserListComponent {
+  protected emptyService = inject(EmptyService);
+  private translate = inject(TranslateService);
+  private searchDirectives = inject(UiSearchDirectivesService);
+
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
   readonly userSelected = output<User>();
@@ -82,11 +81,7 @@ export class UserListComponent {
     ariaLabels: (row) => [row.username, this.translate.instant('User')],
   });
 
-  constructor(
-    protected emptyService: EmptyService,
-    private translate: TranslateService,
-    private searchDirectives: UiSearchDirectivesService,
-  ) {
+  constructor() {
     setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);
   }
 

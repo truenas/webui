@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,16 +28,14 @@ import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/use
   ],
 })
 export class UserDetailHeaderComponent {
+  private authService = inject(AuthService);
+  private slideIn = inject(SlideIn);
+  private matDialog = inject(MatDialog);
+
   user = input.required<User>();
 
   protected readonly Role = Role;
   protected loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
-
-  constructor(
-    private authService: AuthService,
-    private slideIn: SlideIn,
-    private matDialog: MatDialog,
-  ) {}
 
   protected doEdit(): void {
     this.slideIn.open(UserFormComponent, { data: this.user() });

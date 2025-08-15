@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, effect, input, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -31,6 +29,10 @@ export enum FibrePortOption {
   ],
 })
 export class FcPortsControlsComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+
   form = input.required<TargetFormComponent['fcForm']>();
   isEdit = input(false);
   currentPort = input<string | null>(null);
@@ -70,11 +72,7 @@ export class FcPortsControlsComponent implements OnInit {
     return Object.entries(ports).map(([value]) => ({ label: value, value }));
   }));
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     effect(() => {
       if (this.isEdit() && this.currentPort()) {
         this.optionsControl.setValue(FibrePortOption.KeepCurrentPort);

@@ -2,6 +2,7 @@
   <div class="scroll-window">
     @if (hasIscsiCards()) {
       <ix-authorized-networks-card [target]="target()"></ix-authorized-networks-card>
+      <ix-iscsi-groups-card [target]="target()"></ix-iscsi-groups-card>
     }
 
     @if (hasFibreCards()) {

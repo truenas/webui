@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -32,6 +32,11 @@ const initialState: DockerConfigState = {
 
 @Injectable()
 export class DockerStore extends ComponentStore<DockerConfigState> {
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly dockerConfig$ = this.select((state) => state.dockerConfig);
   readonly selectedPool$ = this.select((state) => state.dockerConfig?.pool || null);
@@ -42,12 +47,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   readonly status$ = this.select((state) => state.statusData.status);
   readonly statusDescription$ = this.select((state) => state.statusData.description);
 
-  constructor(
-    private api: ApiService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-  ) {
+  constructor() {
     super(initialState);
   }
 

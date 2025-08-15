@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import {
@@ -52,6 +50,13 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   ],
 })
 export class FeedbackDialog implements OnInit {
+  private feedbackService = inject(FeedbackService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private systemGeneralService = inject(SystemGeneralService);
+  protected dialogRef = inject<MatDialogRef<FeedbackDialog>>(MatDialogRef);
+  private requestedType = inject<FeedbackType>(MAT_DIALOG_DATA);
+
   protected isLoading = false;
   protected isLoadingTypes = false;
   protected typeControl = new FormControl(undefined as FeedbackType | undefined);
@@ -62,15 +67,6 @@ export class FeedbackDialog implements OnInit {
   get isReview(): boolean {
     return this.typeControl.value === FeedbackType.Review;
   }
-
-  constructor(
-    private feedbackService: FeedbackService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private systemGeneralService: SystemGeneralService,
-    protected dialogRef: MatDialogRef<FeedbackDialog>,
-    @Inject(MAT_DIALOG_DATA) private requestedType: FeedbackType,
-  ) {}
 
   ngOnInit(): void {
     this.loadFeedbackTypes();

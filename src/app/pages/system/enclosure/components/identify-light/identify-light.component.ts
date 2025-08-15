@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -27,16 +25,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class IdentifyLightComponent {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private store = inject(EnclosureStore);
+
   protected readonly isStatusKnown = computed(() => Boolean(this.status()));
   protected readonly status = computed(() => this.store.selectedSlot()?.drive_bay_light_status);
 
   protected readonly DriveBayLightStatus = DriveBayLightStatus;
-
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private store: EnclosureStore,
-  ) {}
 
   protected changeLightStatus(newStatus: DriveBayLightStatus): void {
     const slot = this.store.selectedSlot();

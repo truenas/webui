@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input,
-  OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
 import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -58,6 +55,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CloudBackupSnapshotsComponent implements OnChanges {
+  protected emptyService = inject(EmptyService);
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private dialog = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
+
   readonly backup = input.required<CloudBackup>();
 
   protected readonly requiredRoles = [Role.CloudBackupWrite];
@@ -93,17 +99,6 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     uniqueRowTag: (row) => 'cloud-backup-snapshot-' + row.hostname,
     ariaLabels: (row) => [row.hostname, this.translate.instant('Cloud Backup Snapshot')],
   });
-
-  constructor(
-    protected emptyService: EmptyService,
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    private api: ApiService,
-    private dialog: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private snackbar: SnackbarService,
-  ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (!changes.backup.currentValue?.id) {

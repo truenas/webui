@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -32,18 +32,17 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
   ],
 })
 export class FailoverComponent implements OnInit {
-  constructor(
-    protected api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private wsManager: WebSocketHandlerService,
-    private wsStatus: WebSocketStatusService,
-    protected router: Router,
-    protected loader: LoaderService,
-    protected matDialog: MatDialog,
-    private location: Location,
-    private store$: Store<AlertSlice>,
-    private authService: AuthService,
-  ) {}
+  protected api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private wsManager = inject(WebSocketHandlerService);
+  private wsStatus = inject(WebSocketStatusService);
+  protected router = inject(Router);
+  protected loader = inject(LoaderService);
+  protected matDialog = inject(MatDialog);
+  private location = inject(Location);
+  private store$ = inject<Store<AlertSlice>>(Store);
+  private authService = inject(AuthService);
+
 
   isWsConnected(): void {
     this.wsStatus.isConnected$.pipe(untilDestroyed(this)).subscribe({

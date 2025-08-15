@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -51,6 +49,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ServiceSnmpComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private validation = inject(IxValidatorsService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
 
   protected isFormLoading = signal(false);
@@ -100,16 +107,7 @@ export class ServiceSnmpComponent implements OnInit {
     return this.form?.value?.v3 || false;
   }
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private validation: IxValidatorsService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

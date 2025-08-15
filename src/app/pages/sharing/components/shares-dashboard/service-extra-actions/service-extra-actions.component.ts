@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Router } from '@angular/router';
@@ -47,6 +45,15 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   ],
 })
 export class ServiceExtraActionsComponent {
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private slideIn = inject(SlideIn);
+  private urlOptions = inject(UrlOptionsService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
+
   readonly service = input.required<Service>();
   readonly requiredRoles = input<Role[]>([]);
   readonly configServiceLabel = this.translate.instant('Config Service');
@@ -62,17 +69,6 @@ export class ServiceExtraActionsComponent {
   });
 
   readonly hasLogs = computed<boolean>(() => this.service().service === ServiceName.Cifs);
-
-  constructor(
-    private translate: TranslateService,
-    private api: ApiService,
-    private router: Router,
-    private slideIn: SlideIn,
-    private urlOptions: UrlOptionsService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private snackbar: SnackbarService,
-  ) {}
 
   changeServiceState(service: Service): void {
     if (service.state === ServiceStatus.Running) {

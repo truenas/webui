@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
 import {
   EMPTY,
   filter,
@@ -17,6 +16,7 @@ import {
   takeUntil,
   throwError,
 } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { isErrorResponse } from 'app/helpers/api.helper';
 import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
@@ -32,6 +32,7 @@ import {
   ApiEventTyped,
   ErrorResponse,
   IncomingMessage,
+  JsonRpcError,
   SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -45,16 +46,16 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   providedIn: 'root',
 })
 export class ApiService {
+  protected wsHandler = inject(WebSocketHandlerService);
+  protected wsStatus = inject(WebSocketStatusService);
+  protected subscriptionManager = inject(SubscriptionManagerService);
+  protected translate = inject(TranslateService);
+
   readonly clearSubscriptions$ = new Subject<void>();
 
   private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
 
-  constructor(
-    protected wsHandler: WebSocketHandlerService,
-    protected wsStatus: WebSocketStatusService,
-    protected subscriptionManager: SubscriptionManagerService,
-    protected translate: TranslateService,
-  ) {
+  constructor() {
     this.wsStatus.isConnected$?.subscribe((isConnected) => {
       if (!isConnected) {
         this.clearSubscriptions();
@@ -102,7 +103,7 @@ export class ApiService {
     method: M,
     params?: ApiJobParams<M>,
   ): Observable<Job<ApiJobResponse<M>>> {
-    const uuid = UUID.UUID();
+    const uuid = uuidv4();
     this.wsHandler.scheduleCall({
       id: uuid,
       method,
@@ -127,7 +128,7 @@ export class ApiService {
       switchMap((apiEvent) => {
         const erroredEvent = apiEvent as unknown as IncomingMessage;
         if (isErrorResponse(erroredEvent)) {
-          return throwError(() => new ApiCallError(erroredEvent.error));
+          return throwError(() => new ApiCallError(erroredEvent.error as JsonRpcError));
         }
         return of(apiEvent);
       }),
@@ -153,7 +154,7 @@ export class ApiService {
     method: M,
     params?: unknown[],
   ): Observable<unknown> {
-    const uuid = UUID.UUID();
+    const uuid = uuidv4();
     return of(uuid).pipe(
       switchMap(() => {
         performance.mark(`${method} - ${uuid} - start`);
@@ -184,7 +185,7 @@ export class ApiService {
           return EMPTY;
         }
 
-        return throwError(() => new ApiCallError(message.error));
+        return throwError(() => new ApiCallError(message.error as JsonRpcError));
       }
 
       performance.mark(`${method} - ${uuid} - end`);

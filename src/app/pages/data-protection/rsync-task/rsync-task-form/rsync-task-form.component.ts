@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -70,6 +67,17 @@ import { UserService } from 'app/services/user.service';
   ],
 })
 export class RsyncTaskFormComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(FormErrorHandlerService);
+  private userService = inject(UserService);
+  private filesystemService = inject(FilesystemService);
+  private snackbar = inject(SnackbarService);
+  private validatorsService = inject(IxValidatorsService);
+  slideInRef = inject<SlideInRef<RsyncTask | undefined, RsyncTask | false>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
 
   get isNew(): boolean {
@@ -140,18 +148,7 @@ export class RsyncTaskFormComponent implements OnInit {
 
   private editingTask: RsyncTask | undefined;
 
-  constructor(
-    private translate: TranslateService,
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
-    private userService: UserService,
-    private filesystemService: FilesystemService,
-    private snackbar: SnackbarService,
-    private validatorsService: IxValidatorsService,
-    public slideInRef: SlideInRef<RsyncTask | undefined, RsyncTask | false>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

@@ -1,13 +1,12 @@
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { UUID } from 'angular2-uuid';
 import { format } from 'date-fns';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
-import { LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
+import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -54,14 +53,32 @@ describe('ReportComponent', () => {
   });
 
   it('shows legend values only for the target report', () => {
-    jest.spyOn(UUID, 'UUID').mockReturnValue('uuid-selected-report');
-    spectator = createComponent();
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    jest.spyOn(require('uuid'), 'v4').mockReturnValue('uuid-selected-report');
+    spectator = createComponent({
+      props: {
+        report: {
+          name: 'cpu',
+          title: 'CPU Usage',
+          vertical_label: '%',
+        } as Report,
+      },
+    });
     expect(spectator.component.shouldShowLegendValue).toBeTruthy();
   });
 
   it('hides legend values for other reports', () => {
-    jest.spyOn(UUID, 'UUID').mockReturnValue('uuid-another-report');
-    spectator = createComponent();
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    jest.spyOn(require('uuid'), 'v4').mockReturnValue('uuid-another-report');
+    spectator = createComponent({
+      props: {
+        report: {
+          name: 'cpu',
+          title: 'CPU Usage',
+          vertical_label: '%',
+        } as Report,
+      },
+    });
     expect(spectator.component.shouldShowLegendValue).toBeFalsy();
   });
 });

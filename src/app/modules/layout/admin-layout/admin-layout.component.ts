@@ -1,14 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  OnDestroy,
-  OnInit,
-  QueryList,
-  ViewChildren,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, OnDestroy, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   MatDrawerMode, MatSidenav, MatSidenavContainer, MatSidenavContent,
@@ -75,6 +66,13 @@ import {
   ],
 })
 export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
+  private themeService = inject(ThemeService);
+  private sidenavService = inject(SidenavService);
+  private store$ = inject<Store<AppState>>(Store);
+  private languageService = inject(LanguageService);
+  private sessionTimeoutService = inject(SessionTimeoutService);
+  private sentryService = inject(SentryConfigurationService);
+
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
 
   protected readonly iconMarker = iconMarker;
@@ -123,15 +121,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
     return productTypeLabels.get(productType) || productType;
   }
-
-  constructor(
-    private themeService: ThemeService,
-    private sidenavService: SidenavService,
-    private store$: Store<AppState>,
-    private languageService: LanguageService,
-    private sessionTimeoutService: SessionTimeoutService,
-    private sentryService: SentryConfigurationService,
-  ) {}
 
   ngOnInit(): void {
     performance.mark('Admin Init');

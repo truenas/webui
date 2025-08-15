@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -34,6 +32,8 @@ import { SmbShareListComponent } from './components/smb-share-list/smb-share-lis
   ],
 })
 export class SmbStatusComponent {
+  protected translate = inject(TranslateService);
+
   readonly activeTab = input('sessions');
 
   navLinks = [{
@@ -51,8 +51,4 @@ export class SmbStatusComponent {
   }];
 
   protected readonly searchableElements = smbStatusElements;
-
-  constructor(
-    protected translate: TranslateService,
-  ) {}
 }

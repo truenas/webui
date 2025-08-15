@@ -1,9 +1,5 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import {
-  Component, OnInit, ChangeDetectionStrategy, input,
-  computed,
-  signal,
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, input, computed, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -51,6 +47,11 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   ],
 })
 export class AuditSearchComponent implements OnInit {
+  private api = inject(ApiService);
+  private activatedRoute = inject(ActivatedRoute);
+  private urlOptionsService = inject(UrlOptionsService);
+  private translate = inject(TranslateService);
+
   readonly dataProvider = input.required<AuditApiDataProvider>();
   readonly isMobileView = input.required<boolean>();
 
@@ -76,13 +77,6 @@ export class AuditSearchComponent implements OnInit {
   basicQueryFilters = computed<QueryFilters<AuditEntry>>(() => {
     return [['event', '~', `(?i)${(this.searchQuery() as { query: string })?.query || ''}`]];
   });
-
-  constructor(
-    private api: ApiService,
-    private activatedRoute: ActivatedRoute,
-    private urlOptionsService: UrlOptionsService,
-    private translate: TranslateService,
-  ) {}
 
   ngOnInit(): void {
     this.loadParamsFromRoute();

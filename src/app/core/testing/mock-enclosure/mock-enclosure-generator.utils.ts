@@ -33,7 +33,7 @@ export class MockEnclosureGenerator {
       ...response,
       platform: `TRUENAS-${this.config.controllerModel}`,
       system_product: `TRUENAS-${this.config.controllerModel}`,
-      system_manufacturer: 'iXsystems',
+      system_manufacturer: 'TrueNAS',
       remote_info: response.remote_info
         ? {
             ...response.remote_info,

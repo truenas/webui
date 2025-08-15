@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -48,6 +46,12 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class TunableFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  slideInRef = inject<SlideInRef<Tunable | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SystemTunableWrite];
 
   get isNew(): boolean {
@@ -79,13 +83,7 @@ export class TunableFormComponent implements OnInit {
     choicesToOptions(),
   );
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: FormErrorHandlerService,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    public slideInRef: SlideInRef<Tunable | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

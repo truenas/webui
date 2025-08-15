@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { SyntaxNode, TreeCursor } from '@lezer/common';
 import { TranslateService } from '@ngx-translate/core';
 import { format, fromUnixTime } from 'date-fns';
@@ -18,9 +18,9 @@ import { PropertyType, SearchProperty } from 'app/modules/forms/search-input/typ
   providedIn: 'root',
 })
 export class QueryParserService<T> {
-  private input: string;
+  private translate = inject(TranslateService);
 
-  constructor(private translate: TranslateService) {}
+  private input: string;
 
   extractTokens(query: string): string[] {
     const tree = parser.parse(query);

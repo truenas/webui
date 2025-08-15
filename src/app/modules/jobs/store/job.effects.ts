@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY, forkJoin, of } from 'rxjs';
@@ -16,6 +16,10 @@ import { jobAborted } from './job.actions';
 
 @Injectable()
 export class JobEffects {
+  private actions$ = inject(Actions);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+
   loadJobs$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     switchMap(() => {
@@ -77,10 +81,4 @@ export class JobEffects {
       );
     }),
   ));
-
-  constructor(
-    private actions$: Actions,
-    private api: ApiService,
-    private translate: TranslateService,
-  ) {}
 }

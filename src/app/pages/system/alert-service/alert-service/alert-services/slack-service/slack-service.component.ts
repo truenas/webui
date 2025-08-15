@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -18,14 +18,10 @@ import {
   ],
 })
 export class SlackServiceComponent extends BaseAlertServiceForm {
+  private formBuilder = inject(FormBuilder);
+  formatter = inject(IxFormatterService);
+
   form = this.formBuilder.group({
     url: ['', Validators.required],
   });
-
-  constructor(
-    private formBuilder: FormBuilder,
-    public formatter: IxFormatterService,
-  ) {
-    super();
-  }
 }

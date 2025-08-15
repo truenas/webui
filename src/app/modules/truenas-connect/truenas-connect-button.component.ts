@@ -1,16 +1,13 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatBadgeModule } from '@angular/material/badge';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
-import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
 @UntilDestroy()
 @Component({
@@ -18,7 +15,6 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
   imports: [
     IxIconComponent,
     MatButtonModule,
-    MatBadgeModule,
     MatIconButton,
     MatTooltip,
     TranslateModule,
@@ -29,11 +25,9 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TruenasConnectButtonComponent {
-  readonly TruenasConnectStatus = TruenasConnectStatus;
-  tooltips = helptextTopbar.tooltips;
+  private matDialog = inject(MatDialog);
 
-  constructor(private matDialog: MatDialog, public tnc: TruenasConnectService) {
-  }
+  tooltips = helptextTopbar.tooltips;
 
   protected showStatus(): void {
     this.matDialog.open(TruenasConnectStatusModalComponent, {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -42,20 +42,18 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class SubsystemHostsCardComponent {
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private nvmeOfService = inject(NvmeOfService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private nvmeOfStore = inject(NvmeOfStore);
+
   subsystem = input.required<NvmeOfSubsystemDetails>();
 
   protected helptext = helptextNvmeOf;
 
   protected readonly searchableElements = subsystemHostsCardElements;
-
-  constructor(
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private nvmeOfService: NvmeOfService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private nvmeOfStore: NvmeOfStore,
-  ) {}
 
   protected hostAdded(host: NvmeOfHost): void {
     const subsystem = this.subsystem();

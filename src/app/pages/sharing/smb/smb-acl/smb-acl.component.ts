@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -78,6 +76,14 @@ interface FormAclEntry {
   ],
 })
 export class SmbAclComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private userService = inject(UserService);
+  slideInRef = inject<SlideInRef<string, boolean>>(SlideInRef);
+
   form = this.formBuilder.group({
     entries: this.formBuilder.array<FormAclEntry>([]),
   });
@@ -124,15 +130,9 @@ export class SmbAclComponent implements OnInit {
 
   protected groupProvider: GroupComboboxProvider;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private userService: UserService,
-    public slideInRef: SlideInRef<string, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

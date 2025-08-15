@@ -22,10 +22,6 @@
   <span>{{ instance().autostart | yesNo }}</span>
 </div>
 
-<div class="cell">
-  {{ instance().type | mapValue: typeLabels | translate }}
-</div>
-
 <div class="cell" [matTooltip]="'Percentage of total core utilization' | translate">
   @if (hasMetrics()) {
     <span>{{ metrics()?.cpu.cpu_user_percentage.toFixed(0) }}%</span>

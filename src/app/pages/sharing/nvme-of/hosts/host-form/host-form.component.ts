@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import {
   FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -58,6 +56,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class HostFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  slideInRef = inject<SlideInRef<NvmeOfHost | undefined, NvmeOfHost | null>>(SlideInRef);
+
   protected isLoading = signal(false);
 
   private existingHost = signal<NvmeOfHost | null>(null);
@@ -81,14 +85,6 @@ export class HostFormComponent implements OnInit {
 
   protected isGeneratingHostKey = signal(false);
   protected isGeneratingTrueNasKey = signal(false);
-
-  constructor(
-    private api: ApiService,
-    private formBuilder: NonNullableFormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<NvmeOfHost | undefined, NvmeOfHost | null>,
-  ) {}
 
   ngOnInit(): void {
     const existingHost = this.slideInRef.getData();

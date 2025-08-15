@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { when } from 'jest-when';
-import { Observable, Subject, of } from 'rxjs';
+import { Observable, Subject, of, throwError, merge } from 'rxjs';
+import { filter, take } from 'rxjs/operators';
 import {
   CallResponseOrFactory,
   JobResponseOrFactory,
@@ -15,14 +15,9 @@ import {
 import {
   ApiJobMethod,
   ApiJobParams,
-  ApiJobResponse,
 } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiEventTyped } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
-import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
-import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 /**
  * Better than just expect.anything() because it allows null and undefined.
@@ -42,55 +37,79 @@ const anyArgument = when((_: ApiJobParams<ApiJobMethod>) => true);
  * ```
  */
 @Injectable()
-export class MockApiService extends ApiService {
+export class MockApiService {
   private subscribeStream$ = new Subject<ApiEventTyped>();
   private jobIdCounter = 1;
 
-  constructor(
-    wsHandler: WebSocketHandlerService,
-    wsStatus: WebSocketStatusService,
-    subscriptionManager: SubscriptionManagerService,
-    translate: TranslateService,
-  ) {
-    super(wsHandler, wsStatus, subscriptionManager, translate);
+  call: jest.Mock;
+  job: jest.Mock;
+  startJob: jest.Mock;
+  subscribe: jest.Mock;
+  callAndSubscribe: jest.Mock;
+  clearSubscriptions$ = new Subject<void>();
 
-    this.call = jest.fn();
-    this.job = jest.fn();
+  private mockCalls = new Map<ApiCallMethod, CallResponseOrFactory<ApiCallMethod>>();
+  private mockJobs = new Map<ApiJobMethod, JobResponseOrFactory<ApiJobMethod>>();
+
+  constructor() {
+    this.call = jest.fn((method: ApiCallMethod, params?: unknown) => {
+      if (this.mockCalls.has(method)) {
+        const response = this.mockCalls.get(method);
+        let preparedResponse = response;
+        if (response instanceof Function) {
+          preparedResponse = response(params);
+        }
+        return of(preparedResponse);
+      }
+      return throwError(() => new Error(`Unmocked api call ${method} with ${JSON.stringify(params)}`));
+    });
+    this.job = jest.fn((method: ApiJobMethod, params?: unknown) => {
+      if (this.mockJobs.has(method)) {
+        const getJobResponse = (): Job => {
+          const response = this.mockJobs.get(method);
+          if (response instanceof Function) {
+            return response(params as ApiJobParams<ApiJobMethod>);
+          }
+          return response;
+        };
+
+        const fullResponse$ = merge(
+          of(getJobResponse()),
+          this.clearSubscriptions$,
+        ).pipe(
+          filter((message) => message !== undefined),
+          take(1),
+        );
+
+        // Also mock the core.get_jobs call
+        when(this.call)
+          .calledWith('core.get_jobs', [[['id', '=', this.jobIdCounter]]])
+          .mockImplementation(() => of([getJobResponse()]));
+
+        this.jobIdCounter += 1;
+        return fullResponse$;
+      }
+      return throwError(() => new Error(`Unmocked api job call ${method} with ${JSON.stringify(params)}`));
+    });
     this.startJob = jest.fn();
     this.subscribe = jest.fn(() => this.subscribeStream$.asObservable());
-    this.callAndSubscribe = jest.fn();
-
-    when(this.call).mockImplementation((method: ApiCallMethod, args: unknown) => {
-      throw Error(`Unmocked api call ${method} with ${JSON.stringify(args)}`);
-    });
-    when(this.callAndSubscribe).mockImplementation((method: ApiCallAndSubscribeMethod, args: unknown) => {
-      throw Error(`Unmocked api callAndSubscribe ${method} with ${JSON.stringify(args)}`);
-    });
-    when(this.job).mockImplementation((method: ApiJobMethod, args: unknown) => {
-      throw Error(`Unmocked api job call ${method} with ${JSON.stringify(args)}`);
+    this.callAndSubscribe = jest.fn((method: ApiCallAndSubscribeMethod, args: unknown) => {
+      return throwError(() => new Error(`Unmocked api callAndSubscribe ${method} with ${JSON.stringify(args)}`));
     });
   }
 
   mockCall<K extends ApiCallMethod>(method: K, response: CallResponseOrFactory<K>): void {
+    this.mockCalls.set(method, response as CallResponseOrFactory<ApiCallMethod>);
+
+    // Still use jest-when for callAndSubscribe if needed
     const mockedImplementation = (_: K, params: ApiCallParams<K>): Observable<unknown> => {
       let preparedResponse = response;
       if (response instanceof Function) {
         preparedResponse = response(params);
       }
-
-      Object.freeze(preparedResponse);
-
       return of(preparedResponse);
     };
 
-    when(this.call).calledWith(method).mockImplementation(mockedImplementation);
-    when(this.call)
-      .calledWith(method, anyArgument as unknown as ApiCallParams<ApiCallMethod>)
-      .mockImplementation(mockedImplementation);
-
-    when(this.callAndSubscribe)
-      .calledWith(method as ApiCallAndSubscribeMethod)
-      .mockImplementation(mockedImplementation as jest.Mock);
     when(this.callAndSubscribe)
       .calledWith(method as ApiCallAndSubscribeMethod)
       .mockImplementation(mockedImplementation as jest.Mock);
@@ -103,35 +122,14 @@ export class MockApiService extends ApiService {
   }
 
   mockJob<M extends ApiJobMethod>(method: M, response: JobResponseOrFactory<M>): void {
-    const getJobResponse = (params: ApiJobParams<M> = undefined): Job<ApiJobResponse<M>> => {
-      let job: Job;
-      if (response instanceof Function) {
-        job = response(params);
-      } else {
-        job = response;
-      }
-
-      job = {
-        ...job,
-        id: this.jobIdCounter,
-      };
-
-      Object.freeze(job);
-      return job as Job<ApiJobResponse<M>>;
-    };
-    when(this.startJob).calledWith(method).mockReturnValue(of(this.jobIdCounter));
-    when(this.startJob).calledWith(method, anyArgument).mockReturnValue(of(this.jobIdCounter));
-    when(this.job).calledWith(method).mockImplementation(() => of(getJobResponse()));
-    when(this.job).calledWith(method, anyArgument)
-      .mockImplementation((_, params) => of(getJobResponse(params)));
-    when(this.call)
-      .calledWith('core.get_jobs', [[['id', '=', this.jobIdCounter]]])
-      .mockImplementation(() => of([getJobResponse()]));
-
-    this.jobIdCounter += 1;
+    this.mockJobs.set(method, response as JobResponseOrFactory<ApiJobMethod>);
   }
 
   emitSubscribeEvent(event: ApiEventTyped): void {
     this.subscribeStream$.next(event);
+  }
+
+  clearSubscriptions(): void {
+    this.clearSubscriptions$.next();
   }
 }

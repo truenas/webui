@@ -45,7 +45,7 @@ describe('VirtualizationInstancesStore', () => {
       }),
       mockProvider(Router, {
         events: routerEvents$,
-        url: '/instances/view/instance1',
+        url: '/containers/view/instance1',
         navigate: jest.fn(),
       }),
     ],

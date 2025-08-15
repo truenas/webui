@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, OnInit, signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -57,6 +55,16 @@ import {
   ],
 })
 export class AccessFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private store$ = inject<Store<AppState>>(Store);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private systemGeneralService = inject(SystemGeneralService);
+  private authService = inject(AuthService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
 
   protected isLoading = signal(false);
@@ -75,17 +83,7 @@ export class AccessFormComponent implements OnInit {
     return this.systemGeneralService.isEnterprise;
   }
 
-  constructor(
-    private fb: FormBuilder,
-    private store$: Store<AppState>,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private systemGeneralService: SystemGeneralService,
-    private authService: AuthService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

@@ -1,4 +1,4 @@
-import { computed, Injectable } from '@angular/core';
+import { computed, Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
 import { forkJoin, switchMap, tap } from 'rxjs';
@@ -29,6 +29,9 @@ const initialState: NvmeOfState = {
   providedIn: 'root',
 })
 export class NvmeOfStore extends ComponentStore<NvmeOfState> {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+
   readonly subsystems = computed((): NvmeOfSubsystemDetails[] => {
     const state = this.state();
     return state.subsystems.map((subsystem) => {
@@ -47,10 +50,7 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
 
   readonly isLoading = computed(() => this.state().isLoading);
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-  ) {
+  constructor() {
     super(initialState);
   }
 

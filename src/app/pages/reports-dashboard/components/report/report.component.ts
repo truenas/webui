@@ -1,15 +1,5 @@
 import { KeyValuePipe } from '@angular/common';
-import {
-  Component,
-  OnChanges,
-  OnInit,
-  Inject,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  input,
-  viewChild,
-  DOCUMENT,
-} from '@angular/core';
+import { Component, OnChanges, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, input, viewChild, DOCUMENT, inject, effect } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -17,7 +7,6 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
 import {
   add, Duration, isToday, sub,
 } from 'date-fns';
@@ -28,6 +17,7 @@ import {
 import {
   delay, distinctUntilChanged, filter, skipWhile, throttleTime,
 } from 'rxjs/operators';
+import { v4 as uuidv4 } from 'uuid';
 import { invalidDate } from 'app/constants/invalid-date';
 import { oneDayMillis, oneHourMillis } from 'app/constants/time.constant';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
@@ -85,9 +75,33 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   ],
 })
 export class ReportComponent implements OnInit, OnChanges {
+  translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+  private formatDateTimePipe = inject(FormatDateTimePipe);
+  private themeService = inject(ThemeService);
+  private reportsService = inject(ReportsService);
+  private cdr = inject(ChangeDetectorRef);
+  private localeService = inject(LocaleService);
+  private document = inject<Document>(DOCUMENT);
+
+  private initialFetchTriggered = false;
+
   readonly localControls = input(true);
   readonly report = input.required<Report>();
   readonly identifier = input<string>();
+
+  constructor() {
+    // Effect to trigger initial data fetch when report becomes available
+    effect(() => {
+      const report = this.report();
+      if (report && !this.initialFetchTriggered && this.currentStartDate !== undefined) {
+        this.initialFetchTriggered = true;
+        const rrdOptions = { start: this.currentStartDate, end: this.currentEndDate, step: '10' };
+        const identifier = report.identifiers ? report.identifiers[0] : undefined;
+        this.fetchReport$.next({ rrdOptions, identifier, report });
+      }
+    });
+  }
 
   private readonly lineChart = viewChild(LineChartComponent);
 
@@ -97,7 +111,7 @@ export class ReportComponent implements OnInit, OnChanges {
   autoRefreshEnabled: boolean;
   isReady = false;
   data: ReportingData | undefined;
-  chartId = `chart-${UUID.UUID()}`;
+  chartId = `chart-${uuidv4()}`;
   chartColors: string[];
   legendData: LegendDataWithStackedTotalHtml = {} as LegendDataWithStackedTotalHtml;
   subtitle: string = this.translate.instant('% of all cores');
@@ -158,16 +172,33 @@ export class ReportComponent implements OnInit, OnChanges {
     return this.chartId === this.legendData.chartId;
   }
 
-  constructor(
-    public translate: TranslateService,
-    private store$: Store<AppState>,
-    private formatDateTimePipe: FormatDateTimePipe,
-    private themeService: ThemeService,
-    private reportsService: ReportsService,
-    private cdr: ChangeDetectorRef,
-    private localeService: LocaleService,
-    @Inject(DOCUMENT) private document: Document,
-  ) {
+
+  private initAutoRefresh(): void {
+    this.autoRefreshTimer = timer(2000, refreshInterval).pipe(
+      filter(() => this.autoRefreshEnabled),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      const rrdOptions = this.convertTimeSpan(this.currentZoomLevel);
+      this.currentStartDate = rrdOptions.start;
+      this.currentEndDate = rrdOptions.end;
+
+      const identifier = this.report().identifiers ? this.report().identifiers[0] : undefined;
+      this.fetchReport$.next({ rrdOptions, identifier, report: this.report() });
+    });
+  }
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    const wasReportChanged = changes?.report?.firstChange
+      || (changes.report.previousValue && !this.isReady)
+      || (changes.report.previousValue.title !== changes.report.currentValue.title);
+
+    if (wasReportChanged) {
+      this.updateReport$.next(changes);
+    }
+  }
+
+  ngOnInit(): void {
+    // Initialize subscriptions
     this.reportsService.legendEventEmitterObs$.pipe(untilDestroyed(this)).subscribe({
       next: (data: LegendDataWithStackedTotalHtml) => {
         const clone = { ...data };
@@ -232,33 +263,8 @@ export class ReportComponent implements OnInit, OnChanges {
     ).subscribe((changes) => {
       this.applyChanges(changes);
     });
-  }
 
-  private initAutoRefresh(): void {
-    this.autoRefreshTimer = timer(2000, refreshInterval).pipe(
-      filter(() => this.autoRefreshEnabled),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      const rrdOptions = this.convertTimeSpan(this.currentZoomLevel);
-      this.currentStartDate = rrdOptions.start;
-      this.currentEndDate = rrdOptions.end;
-
-      const identifier = this.report().identifiers ? this.report().identifiers[0] : undefined;
-      this.fetchReport$.next({ rrdOptions, identifier, report: this.report() });
-    });
-  }
-
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    const wasReportChanged = changes?.report?.firstChange
-      || (changes.report.previousValue && !this.isReady)
-      || (changes.report.previousValue.title !== changes.report.currentValue.title);
-
-    if (wasReportChanged) {
-      this.updateReport$.next(changes);
-    }
-  }
-
-  ngOnInit(): void {
+    // Initialize time range
     const { start, end } = this.convertTimeSpan(this.currentZoomLevel);
     this.currentStartDate = start;
     this.currentEndDate = end;

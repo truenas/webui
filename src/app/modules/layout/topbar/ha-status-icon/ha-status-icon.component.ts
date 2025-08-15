@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -34,19 +32,17 @@ import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.se
   ],
 })
 export class HaStatusIconComponent implements OnInit {
+  private store$ = inject<Store<AppState>>(Store);
+  private cdr = inject(ChangeDetectorRef);
+  private matDialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+
   isFailoverLicensed$ = this.store$.select(selectIsHaLicensed);
 
   failoverDisabledReasons: FailoverDisabledReason[] = [];
 
   private isStatusPanelOpen = false;
   private statusPanelRef: MatDialogRef<HaStatusPopoverComponent>;
-
-  constructor(
-    private store$: Store<AppState>,
-    private cdr: ChangeDetectorRef,
-    private matDialog: MatDialog,
-    private translate: TranslateService,
-  ) { }
 
   get isReconnecting(): boolean {
     return this.failoverDisabledReasons[0] === FailoverDisabledReason.NoSystemReady;

@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -73,6 +71,16 @@ import { AppState } from 'app/store';
   ],
 })
 export class RsyncTaskCardComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private taskService = inject(TaskService);
+  private store$ = inject<Store<AppState>>(Store);
+  private snackbar = inject(SnackbarService);
+  protected emptyService = inject(EmptyService);
+  private slideIn = inject(SlideIn);
+
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly emptyConfig = rsyncTaskEmptyConfig;
 
@@ -141,18 +149,6 @@ export class RsyncTaskCardComponent implements OnInit {
     uniqueRowTag: (row) => 'card-rsync-task-' + row.path + '-' + row.remotehost,
     ariaLabels: (row) => [row.path, row.remotehost, this.translate.instant('Rsync Task')],
   });
-
-  constructor(
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private taskService: TaskService,
-    private store$: Store<AppState>,
-    private snackbar: SnackbarService,
-    protected emptyService: EmptyService,
-    private slideIn: SlideIn,
-  ) {}
 
   ngOnInit(): void {
     const rsyncTasks$ = this.api.call('rsynctask.query').pipe(

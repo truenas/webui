@@ -1,8 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -57,6 +54,16 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class LocalizationFormComponent implements OnInit {
+  private sysGeneralService = inject(SystemGeneralService);
+  private fb = inject(FormBuilder);
+  localeService = inject(LocaleService);
+  protected api = inject(ApiService);
+  protected langService = inject(LanguageService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private store$ = inject<Store<AppState>>(Store);
+  slideInRef = inject<SlideInRef<LocalizationSettings, boolean>>(SlideInRef);
+  private window = inject<Window>(WINDOW);
+
   fieldsetTitle = helptext.localeTitle;
 
   isFormLoading = signal<boolean>(false);
@@ -108,17 +115,7 @@ export class LocalizationFormComponent implements OnInit {
 
   protected isEnterprise$ = this.store$.select(selectIsEnterprise);
 
-  constructor(
-    private sysGeneralService: SystemGeneralService,
-    private fb: FormBuilder,
-    public localeService: LocaleService,
-    protected api: ApiService,
-    protected langService: LanguageService,
-    private errorHandler: FormErrorHandlerService,
-    private store$: Store<AppState>,
-    public slideInRef: SlideInRef<LocalizationSettings, boolean>,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.formGroup.dirty);
     });

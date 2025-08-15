@@ -1,19 +1,8 @@
-import {
-  Component,
-  AfterViewInit,
-  OnDestroy,
-  OnChanges,
-  ElementRef,
-  ChangeDetectionStrategy,
-  output,
-  input,
-  viewChild,
-  Signal,
-} from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, OnChanges, ElementRef, ChangeDetectionStrategy, output, input, viewChild, Signal, inject } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
-import { UUID } from 'angular2-uuid';
 import { toZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
+import { v4 as uuidv4 } from 'uuid';
 import { Gb, kb, Mb } from 'app/constants/bits.constant';
 import {
   GiB, KiB, MiB, TiB,
@@ -43,6 +32,10 @@ interface Conversion {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
+  themeService = inject(ThemeService);
+  private reportsService = inject(ReportsService);
+  private plotterService = inject(PlotterService);
+
   readonly chartId = input<string>();
   readonly chartColors = input<string[]>([]);
   readonly data = input<ReportingData>();
@@ -63,15 +56,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   theme: Theme;
   timeFormat = '%H:%M';
-  controlUid = `chart_${UUID.UUID()}`;
+  controlUid = `chart_${uuidv4()}`;
 
   readonly zoomChange = output<number[]>();
-
-  constructor(
-    public themeService: ThemeService,
-    private reportsService: ReportsService,
-    private plotterService: PlotterService,
-  ) {}
 
   render(update?: boolean): void {
     this.renderGraph(update);

@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
@@ -42,6 +39,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class IpmiEventsDialog implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+
   protected readonly isLoading = signal(false);
   protected events: IpmiEvent[] = [];
 
@@ -49,12 +50,6 @@ export class IpmiEventsDialog implements OnInit {
     title: this.translate.instant('No events to display.'),
     type: EmptyType.NoPageData,
   };
-
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-  ) {}
 
   get canClear(): boolean {
     return this.events.length > 0 && !this.isLoading();

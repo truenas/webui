@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import {
   FormArray, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -61,6 +59,15 @@ import { defaultVncPort } from 'app/pages/instances/instances.constants';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstanceEditFormComponent {
+  private api = inject(ApiService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
+  protected formatter = inject(IxFormatterService);
+  slideInRef = inject<SlideInRef<VirtualizationInstance, VirtualizationInstance | false>>(SlideInRef);
+
   protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
 
@@ -95,23 +102,14 @@ export class InstanceEditFormComponent {
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: NonNullableFormBuilder,
-    private formErrorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private dialogService: DialogService,
-    protected formatter: IxFormatterService,
-    public slideInRef: SlideInRef<VirtualizationInstance, VirtualizationInstance | false>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
 
     this.editingInstance = this.slideInRef.getData();
 
-    this.title = this.translate.instant('Edit Instance: {name}', { name: this.editingInstance.name });
+    this.title = this.translate.instant('Edit Container: {name}', { name: this.editingInstance.name });
     this.form.patchValue({
       cpu: this.editingInstance.cpu,
       autostart: this.editingInstance.autostart,
@@ -135,13 +133,13 @@ export class InstanceEditFormComponent {
     const job$ = this.api.job('virt.instance.update', [this.editingInstance.id, payload]);
 
     this.dialogService.jobDialog(job$, {
-      title: this.translate.instant('Updating Instance'),
+      title: this.translate.instant('Updating Container'),
     })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (response) => {
-          this.snackbar.success(this.translate.instant('Instance updated'));
+          this.snackbar.success(this.translate.instant('Container updated'));
           this.slideInRef.close({ response: response.result });
         },
         error: (error: unknown) => {

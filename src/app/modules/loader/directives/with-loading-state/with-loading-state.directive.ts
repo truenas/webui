@@ -1,6 +1,4 @@
-import {
-  ChangeDetectorRef, Directive, input, OnChanges, OnDestroy, TemplateRef, ViewContainerRef,
-} from '@angular/core';
+import { ChangeDetectorRef, Directive, input, OnChanges, OnDestroy, TemplateRef, ViewContainerRef, inject } from '@angular/core';
 import { isObservable, Observable, Subscription } from 'rxjs';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -24,13 +22,11 @@ import {
   selector: '[ixWithLoadingState]',
 })
 export class WithLoadingStateDirective<V = unknown> implements OnChanges, OnDestroy {
-  renderSubscription: Subscription;
+  private templateRef = inject<TemplateRef<WithLoadingStateContext<V>>>(TemplateRef);
+  private viewContainerRef = inject(ViewContainerRef);
+  private cdr = inject(ChangeDetectorRef);
 
-  constructor(
-    private templateRef: TemplateRef<WithLoadingStateContext<V>>,
-    private viewContainerRef: ViewContainerRef,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  renderSubscription: Subscription;
 
   readonly state = input.required<LoadingState<V> | Observable<LoadingState<V>>>({
     alias: 'ixWithLoadingState',

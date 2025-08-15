@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -58,6 +56,14 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class InitShutdownFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private filesystemService = inject(FilesystemService);
+  slideInRef = inject<SlideInRef<InitShutdownScript | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SystemCronWrite];
 
   get isNew(): boolean {
@@ -101,15 +107,7 @@ export class InitShutdownFormComponent implements OnInit {
 
   private editingScript: InitShutdownScript | undefined;
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: FormErrorHandlerService,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private filesystemService: FilesystemService,
-    public slideInRef: SlideInRef<InitShutdownScript | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

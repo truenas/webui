@@ -1,7 +1,5 @@
 import { DatePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
@@ -39,6 +37,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { namingSchemaValidator } from 'app/modules/forms/ix-forms/validators/naming-schema-validation/naming-schema-validation';
+import { regexValidator } from 'app/modules/forms/ix-forms/validators/regex-validation/regex-validation';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -73,10 +73,25 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider {
+  private formBuilder = inject(FormBuilder);
+  private replicationService = inject(ReplicationService);
+  private keychainCredentials = inject(KeychainCredentialService);
+  private datePipe = inject(DatePipe);
+  private translate = inject(TranslateService);
+  private authService = inject(AuthService);
+  private datasetService = inject(DatasetService);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorParser = inject(ErrorParserService);
+  private errorHandler = inject(ErrorHandlerService);
+  slideInRef = inject<SlideInRef<ReplicationTask, ReplicationTask>>(SlideInRef);
+
   readonly customRetentionVisibleChange = output<boolean>();
 
   protected sourceNodeProvider: TreeNodeProvider;
   protected targetNodeProvider: TreeNodeProvider;
+  protected DatasetSource = DatasetSource;
 
   protected targetDatasetsRootNodes: ExplorerNodeData[] = [];
   protected sourceDatasetsRootNodes: ExplorerNodeData[] = [];
@@ -98,8 +113,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     recursive: [false],
     custom_snapshots: [false],
     schema_or_regex: [SnapshotNamingOption.NamingSchema],
-    naming_schema: [this.defaultNamingSchema, [Validators.required]],
-    name_regex: ['', [Validators.required]],
+    naming_schema: [this.defaultNamingSchema, [Validators.required, namingSchemaValidator()]],
+    name_regex: ['', [Validators.required, regexValidator()]],
 
     target_dataset_from: new FormControl(null as DatasetSource | null, [Validators.required]),
     ssh_credentials_target: new FormControl(null as number | typeof newOption | null, [Validators.required]),
@@ -166,21 +181,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       : helptextReplicationWizard.nameSchemaOrRegexPull;
   }
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private replicationService: ReplicationService,
-    private keychainCredentials: KeychainCredentialService,
-    private datePipe: DatePipe,
-    private translate: TranslateService,
-    private authService: AuthService,
-    private datasetService: DatasetService,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorParser: ErrorParserService,
-    private errorHandler: ErrorHandlerService,
-    public slideInRef: SlideInRef<ReplicationTask, ReplicationTask>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -211,8 +212,13 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.custom_snapshots.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (this.form.controls.custom_snapshots.enabled) {
         if (value) {
-          this.form.controls.schema_or_regex.enable();
-          this.form.controls.naming_schema.enable();
+          // Only enable schema_or_regex & naming_schema & name_regex for remote sources
+          if (this.isRemoteSource) {
+            this.setSchemaOrRegexForRemoteSource();
+          } else {
+            // For local sources (push replication), only name_regex is available on API side
+            this.setSchemaOrRegexForLocalSource();
+          }
         } else {
           this.getSnapshots();
           this.disableCustomSnapshots();
@@ -598,6 +604,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.recursive.enable();
     this.form.controls.custom_snapshots.enable();
     this.form.controls.custom_snapshots.setValue(false);
+
+    this.setSchemaOrRegexForLocalSource();
   }
 
   private selectRemoteSource(): void {
@@ -609,6 +617,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.custom_snapshots.enable();
     this.form.controls.custom_snapshots.setValue(true);
     this.form.controls.custom_snapshots.disable();
+
+    this.setSchemaOrRegexForRemoteSource();
   }
 
   private updateExplorersOnChanges(): void {
@@ -643,5 +653,23 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.sourceDatasetsRootNodes = this.isRemoteSource ? [emptyRootNode] : [datasetsRootNode];
 
     this.cdr.markForCheck();
+  }
+
+  private setSchemaOrRegexForLocalSource(): void {
+    this.form.controls.schema_or_regex.disable();
+    this.form.controls.naming_schema.disable();
+
+    // Only enable name_regex if custom snapshots is enabled
+    if (this.form.controls.custom_snapshots.value) {
+      this.form.controls.name_regex.enable();
+    } else {
+      this.form.controls.name_regex.disable();
+    }
+  }
+
+  private setSchemaOrRegexForRemoteSource(): void {
+    this.form.controls.schema_or_regex.enable();
+    this.form.controls.naming_schema.enable();
+    this.form.controls.name_regex.enable();
   }
 }

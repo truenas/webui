@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges, output, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, output, signal, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -36,6 +34,9 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
   ],
 })
 export class DiskSizeSelectsComponent implements OnChanges {
+  private formBuilder = inject(FormBuilder);
+  private store = inject(PoolManagerStore);
+
   readonly layout = input.required<CreateVdevLayout>();
   readonly type = input.required<VDevType>();
   readonly inventory = input.required<DetailsDisk[]>();
@@ -55,10 +56,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
     treatDiskSizeAsMinimum: [false],
   });
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private store: PoolManagerStore,
-  ) {
+  constructor() {
     this.setControlRelations();
     this.updateStoreOnChanges();
     this.emitUpdatesOnChanges();
@@ -154,14 +152,16 @@ export class DiskSizeSelectsComponent implements OnChanges {
 
   private getSuitableDisks(): DetailsDisk[] {
     const selectedDiskSize = this.selectedDiskSize;
-    if (!selectedDiskSize) {
+    const selectedDiskType = this.selectedDiskType;
+
+    if (!selectedDiskSize || !selectedDiskType) {
       return [];
     }
 
     if (!this.form.controls.treatDiskSizeAsMinimum.value) {
-      return this.sizeDisksMap[this.selectedDiskType][selectedDiskSize];
+      return this.sizeDisksMap[selectedDiskType][selectedDiskSize];
     }
 
-    return this.inventory().filter((disk) => disk.size >= selectedDiskSize);
+    return this.inventory().filter((disk) => disk.size >= selectedDiskSize && disk.type === selectedDiskType);
   }
 }

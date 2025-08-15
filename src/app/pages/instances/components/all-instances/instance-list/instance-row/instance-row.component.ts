@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input, computed, output,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, output, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,7 +10,7 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { VirtualizationStatus, virtualizationTypeLabels } from 'app/enums/virtualization.enum';
+import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import {
   VirtualizationInstance,
   VirtualizationStopParams,
@@ -20,7 +18,6 @@ import {
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -47,11 +44,18 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatCheckboxModule,
     RequiresRolesDirective,
     InstanceStatusCellComponent,
-    MapValuePipe,
     YesNoPipe,
   ],
 })
 export class InstanceRowComponent {
+  private dialog = inject(DialogService);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private matDialog = inject(MatDialog);
+  private snackbar = inject(SnackbarService);
+  private instancesStore = inject(VirtualizationInstancesStore);
+
   protected readonly requiredRoles = [Role.VirtInstanceWrite];
   readonly instance = input.required<VirtualizationInstance>();
   readonly metrics = input<VirtualizationInstanceMetrics | undefined>();
@@ -68,18 +72,6 @@ export class InstanceRowComponent {
 
   readonly selectionChange = output();
 
-  protected readonly typeLabels = virtualizationTypeLabels;
-
-  constructor(
-    private dialog: DialogService,
-    private translate: TranslateService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
-    private snackbar: SnackbarService,
-    private instancesStore: VirtualizationInstancesStore,
-  ) {}
-
   start(): void {
     const instanceId = this.instance().id;
 
@@ -90,7 +82,7 @@ export class InstanceRowComponent {
       .afterClosed()
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Instance started'));
+        this.snackbar.success(this.translate.instant('Container started'));
         this.instancesStore.selectInstance(this.instance().id);
       });
   }
@@ -114,7 +106,7 @@ export class InstanceRowComponent {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Instance stopped'));
+        this.snackbar.success(this.translate.instant('Container stopped'));
         this.instancesStore.selectInstance(this.instance().id);
       });
   }
@@ -138,7 +130,7 @@ export class InstanceRowComponent {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Instance restarted'));
+        this.snackbar.success(this.translate.instant('Container restarted'));
         this.instancesStore.selectInstance(this.instance().id);
       });
   }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, switchMap } from 'rxjs';
@@ -15,21 +15,19 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   providedIn: 'root',
 })
 export class RebootService {
+  private dialog = inject(DialogService);
+  private translate = inject(TranslateService);
+  private router = inject(Router);
+  private snackbar = inject(SnackbarService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private authService = inject(AuthService);
+
   /**
    * Multiple dialogs may happen because of multiple events from failover.disabled.reasons.
    */
   private isFailoverPromptOpen = false;
   private isRemotePromptOpen = false;
-
-  constructor(
-    private dialog: DialogService,
-    private translate: TranslateService,
-    private router: Router,
-    private snackbar: SnackbarService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private authService: AuthService,
-  ) {}
 
   promptForRestart(): Observable<unknown> {
     return this.dialog.confirm({

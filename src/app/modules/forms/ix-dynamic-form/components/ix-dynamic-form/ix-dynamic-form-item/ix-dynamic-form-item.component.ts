@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output, inject } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -64,6 +62,8 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   ],
 })
 export class IxDynamicFormItemComponent implements OnInit {
+  private changeDetectorRef = inject(ChangeDetectorRef);
+
   readonly dynamicForm = input.required<UntypedFormGroup>();
   readonly dynamicSchema = input.required<DynamicFormSchemaNode>();
   readonly isEditMode = input<boolean>();
@@ -78,10 +78,6 @@ export class IxDynamicFormItemComponent implements OnInit {
       return item.editable !== undefined && item.editable !== null && !item.editable;
     });
   }
-
-  constructor(
-    private changeDetectorRef: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     const dependsOn = this.dynamicSchema()?.dependsOn;

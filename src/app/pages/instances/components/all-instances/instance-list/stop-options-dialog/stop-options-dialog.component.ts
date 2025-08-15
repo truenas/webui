@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, Inject, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -48,6 +46,10 @@ enum WaitFor {
   ],
 })
 export class StopOptionsDialog {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private dialogRef = inject<MatDialogRef<StopOptionsDialog, VirtualizationStopParams | false>>(MatDialogRef);
+
   protected readonly operation = signal(StopOptionsOperation.Stop);
 
   protected readonly isRestart = computed(() => this.operation() === StopOptionsOperation.Restart);
@@ -81,12 +83,9 @@ export class StopOptionsDialog {
     }),
   );
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private dialogRef: MatDialogRef<StopOptionsDialog, VirtualizationStopParams | false>,
-    @Inject(MAT_DIALOG_DATA) operation: StopOptionsOperation,
-  ) {
+  constructor() {
+    const operation = inject<StopOptionsOperation>(MAT_DIALOG_DATA);
+
     this.operation.set(operation);
   }
 

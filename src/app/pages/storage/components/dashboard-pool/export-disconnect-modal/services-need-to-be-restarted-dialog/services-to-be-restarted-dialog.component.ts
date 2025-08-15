@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -29,9 +29,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class ServicesToBeRestartedDialogComponent {
-  protected readonly helptext = helptextVolumes;
+  protected servicesInfo = inject<ServicesToBeRestartedInfo>(MAT_DIALOG_DATA);
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) protected servicesInfo: ServicesToBeRestartedInfo,
-  ) {}
+  protected readonly helptext = helptextVolumes;
 }

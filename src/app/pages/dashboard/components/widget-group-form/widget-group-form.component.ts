@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, forwardRef, Signal, signal,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, forwardRef, Signal, signal, viewChild, inject } from '@angular/core';
 import {
   FormControl, ValidationErrors, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -48,6 +45,9 @@ import { WidgetGroupSlotFormComponent } from './widget-group-slot-form/widget-gr
   ],
 })
 export class WidgetGroupFormComponent {
+  slideInRef = inject<SlideInRef<WidgetGroup | undefined, WidgetGroup | false>>(SlideInRef);
+  private cdr = inject(ChangeDetectorRef);
+
   protected group = signal<WidgetGroup>(
     { layout: WidgetGroupLayout.Full, slots: [{ type: null }] },
   );
@@ -81,10 +81,7 @@ export class WidgetGroupFormComponent {
     return validationErrors.some((errors) => !!Object.keys(errors).length);
   });
 
-  constructor(
-    public slideInRef: SlideInRef<WidgetGroup | undefined, WidgetGroup | false>,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(this.layoutControl.dirty || this.widgetGroupSlotForm()?.form?.dirty));
     });

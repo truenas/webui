@@ -5,20 +5,7 @@ import {
 } from '@angular/cdk/layout';
 import { CdkTreeNodePadding, FlatTreeControl } from '@angular/cdk/tree';
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  AfterViewInit,
-  OnDestroy,
-  ElementRef,
-  Inject,
-  TrackByFunction,
-  HostBinding,
-  computed,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TrackByFunction, HostBinding, computed, viewChild, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import {
@@ -97,6 +84,18 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDestroy {
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private activatedRoute = inject(ActivatedRoute);
+  private datasetStore = inject(DatasetTreeStore);
+  private router = inject(Router);
+  protected translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private breakpointObserver = inject(BreakpointObserver);
+  private searchDirectives = inject(UiSearchDirectivesService);
+  private layoutService = inject(LayoutService);
+  private window = inject<Window>(WINDOW);
+
   readonly ixTreeHeader = viewChild<ElementRef<HTMLElement>>('ixTreeHeader');
   readonly ixTree = viewChild<ElementRef<HTMLElement>>('ixTree');
 
@@ -163,19 +162,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset?.id;
   readonly hasChild = (_: number, dataset: DatasetDetails): boolean => Number(dataset?.children?.length) > 0;
 
-  constructor(
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute,
-    private datasetStore: DatasetTreeStore,
-    private router: Router,
-    protected translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private breakpointObserver: BreakpointObserver,
-    private searchDirectives: UiSearchDirectivesService,
-    private layoutService: LayoutService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
       .subscribe(() => {

@@ -42,7 +42,7 @@
 
       <ng-container matColumnDef="instanceUidOrGid">
         <th *matHeaderCellDef mat-header-cell>
-          {{ typeControl.value === ViewType.Users ? ('Instance UID' | translate) : ('Instance GID' | translate) }}</th>
+          {{ typeControl.value === ViewType.Users ? ('Container UID' | translate) : ('Container GID' | translate) }}</th>
         <td *matCellDef="let mapping" mat-cell>
           @if (mapping.instanceUidOrGid === directIdMapping) {
             {{ 'Same' | translate }}

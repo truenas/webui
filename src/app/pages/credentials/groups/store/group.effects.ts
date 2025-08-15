@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -22,6 +22,11 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 
 @Injectable()
 export class GroupEffects {
+  private actions$ = inject(Actions);
+  private api = inject(ApiService);
+  private store$ = inject<Store<AppState>>(Store);
+  private translate = inject(TranslateService);
+
   loadGroups$ = createEffect(() => this.actions$.pipe(
     ofType(groupPageEntered, builtinGroupsToggled),
     switchMap(() => this.store$.pipe(waitForPreferences)),
@@ -54,11 +59,4 @@ export class GroupEffects {
       );
     }),
   ));
-
-  constructor(
-    private actions$: Actions,
-    private api: ApiService,
-    private store$: Store<AppState>,
-    private translate: TranslateService,
-  ) {}
 }

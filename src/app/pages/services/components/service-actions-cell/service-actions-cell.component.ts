@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -36,6 +34,11 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   ],
 })
 export class ServiceActionsCellComponent {
+  private urlOptions = inject(UrlOptionsService);
+  private router = inject(Router);
+  private servicesService = inject(ServicesService);
+  private slideIn = inject(SlideIn);
+
   readonly service = input.required<Service>();
 
   protected readonly requiredRoles = computed(() => {
@@ -53,13 +56,6 @@ export class ServiceActionsCellComponent {
   protected uniqueRowTag = computed(() => {
     return 'service-' + this.service().service.replace(/\./g, '');
   });
-
-  constructor(
-    private urlOptions: UrlOptionsService,
-    private router: Router,
-    private servicesService: ServicesService,
-    private slideIn: SlideIn,
-  ) {}
 
   navigateToAuditLogs(): void {
     this.router.navigate([this.auditLogsUrl()]);

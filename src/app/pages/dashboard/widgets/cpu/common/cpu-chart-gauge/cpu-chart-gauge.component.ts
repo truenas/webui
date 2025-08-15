@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Signal, computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Signal, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -15,6 +13,9 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
   imports: [NgxSkeletonLoaderModule, ViewChartGaugeComponent],
 })
 export class CpuChartGaugeComponent {
+  private resources = inject(WidgetResourcesService);
+  private translate = inject(TranslateService);
+
   protected cpuData = toSignal(this.resources.realtimeUpdates$.pipe(
     map((update) => update.fields.cpu),
   ));
@@ -34,9 +35,4 @@ export class CpuChartGaugeComponent {
       subtitle: this.translate.instant('Avg Usage'),
     };
   });
-
-  constructor(
-    private resources: WidgetResourcesService,
-    private translate: TranslateService,
-  ) {}
 }

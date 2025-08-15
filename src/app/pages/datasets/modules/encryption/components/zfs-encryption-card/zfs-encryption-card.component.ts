@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
@@ -57,14 +55,12 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
   ],
 })
 export class ZfsEncryptionCardComponent {
+  private matDialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+  private datasetStore = inject(DatasetTreeStore);
+
   readonly dataset = input.required<DatasetDetails>();
   readonly parentDataset = input<DatasetDetails | undefined>(undefined);
-
-  constructor(
-    private matDialog: MatDialog,
-    private translate: TranslateService,
-    private datasetStore: DatasetTreeStore,
-  ) { }
 
   protected hasPassphrase = computed(() => {
     return isPasswordEncrypted(this.dataset());

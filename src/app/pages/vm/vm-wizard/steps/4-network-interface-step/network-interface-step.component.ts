@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -40,6 +38,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
+
   form = this.formBuilder.nonNullable.group({
     nic_type: [VmNicType.Virtio, Validators.required],
     nic_mac: [helptextVmWizard.NIC_mac_value, Validators.pattern(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
@@ -50,14 +54,6 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   readonly helptext = helptextVmWizard;
   readonly nicTypeOptions$ = of(mapToOptions(vmNicTypeLabels, this.translate));
   readonly nicAttachOptions$ = this.api.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   get isVirtio(): boolean {
     return this.form.value.nic_type === VmNicType.Virtio;

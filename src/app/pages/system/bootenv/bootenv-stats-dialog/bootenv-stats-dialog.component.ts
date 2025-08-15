@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
@@ -48,6 +46,17 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   ],
 })
 export class BootenvStatsDialog implements OnInit {
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private store$ = inject<Store<AppState>>(Store);
+  private dialogRef = inject<MatDialogRef<BootenvStatsDialog>>(MatDialogRef);
+  private translate = inject(TranslateService);
+  private fb = inject(NonNullableFormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private snackbar = inject(SnackbarService);
+
   form = this.fb.group({
     interval: [null as number | null, [Validators.required, Validators.min(1)]],
   });
@@ -57,19 +66,6 @@ export class BootenvStatsDialog implements OnInit {
   readonly PoolStatus = PoolStatus;
   readonly poolStatusLabels = poolStatusLabels;
   protected readonly Role = Role;
-
-  constructor(
-    private api: ApiService,
-    private loader: LoaderService,
-    private store$: Store<AppState>,
-    private dialogRef: MatDialogRef<BootenvStatsDialog>,
-    private translate: TranslateService,
-    private fb: NonNullableFormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private snackbar: SnackbarService,
-  ) {}
 
   get condition(): PoolStatus {
     return this.state.status;

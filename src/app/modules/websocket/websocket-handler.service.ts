@@ -1,13 +1,13 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
   BehaviorSubject,
   combineLatest,
   filter,
   map,
+  merge,
   mergeMap,
   Observable,
   of,
@@ -16,8 +16,11 @@ import {
   take,
   tap,
   timer,
+  shareReplay,
+  catchError,
+  throwError,
 } from 'rxjs';
-import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
+import { v4 as uuidv4 } from 'uuid';
 import { makeRequestMessage } from 'app/helpers/api.helper';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -26,17 +29,31 @@ import {
 } from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WebSocketConnection } from 'app/modules/websocket/websocket-connection.class';
+import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
+import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
+import {
+  MockGenerationError, MockServiceError,
+  WebSocketSendError,
+} from './errors';
 
-type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>>;
+type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>> & { jsonrpc: '2.0' };
 
 @UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketHandlerService {
-  private readonly wsConnection: WebSocketConnection = new WebSocketConnection(this.webSocket);
-  private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/api/current';
+  private wsStatus = inject(WebSocketStatusService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  protected window = inject<Window>(WINDOW);
+  private webSocket = inject(WEBSOCKET);
+  private debugService = inject(WebSocketDebugService);
+  private mockResponseService = inject(MockResponseService);
+
+  private readonly wsConnection: WebSocketConnection;
+  private connectionUrl: string;
 
   private readonly reconnectTimeoutMillis = 5 * 1000;
   private reconnectTimerSubscription: Subscription | undefined;
@@ -48,7 +65,7 @@ export class WebSocketHandlerService {
   }
 
   private readonly hasRestrictedError$ = new BehaviorSubject(false);
-  set isAccessRestricted$(value: boolean) {
+  set isAccessRestricted(value: boolean) {
     this.hasRestrictedError$.next(value);
   }
 
@@ -61,10 +78,6 @@ export class WebSocketHandlerService {
     return this.isConnectionLive$.pipe(map((isLive) => !isLive));
   }
 
-  get responses$(): Observable<IncomingMessage> {
-    return this.wsConnection.stream$ as Observable<IncomingMessage>;
-  }
-
   private readonly triggerNextCall$ = new Subject<void>();
   private activeCalls = 0;
   private readonly queuedCalls: ApiCall[] = [];
@@ -72,13 +85,34 @@ export class WebSocketHandlerService {
   private showingConcurrentCallsError = false;
   private callsInConcurrentCallsError = new Set<string>();
 
-  constructor(
-    private wsStatus: WebSocketStatusService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    @Inject(WINDOW) protected window: Window,
-    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebSocket,
-  ) {
+  // Create a single shared responses$ observable
+  private _responses$: Observable<IncomingMessage> | undefined;
+
+  get responses$(): Observable<IncomingMessage> {
+    if (!this._responses$) {
+      // Return merged stream of real and mock responses
+      const realResponses$ = this.wsConnection.stream$ as Observable<IncomingMessage>;
+      const mockResponses$ = this.mockResponseService.responses$;
+
+      this._responses$ = merge(realResponses$, mockResponses$).pipe(
+        tap((message) => {
+          // Log incoming messages for debugging
+          if (environment.debugPanel?.enabled) {
+            const isMocked = this.mockResponseService.isMockedResponse(message);
+            this.debugService.logIncomingMessage(message, isMocked);
+          }
+        }),
+        shareReplay({ bufferSize: 1, refCount: true }),
+      );
+    }
+    return this._responses$;
+  }
+
+  constructor() {
+    // Initialize connection properties
+    this.wsConnection = new WebSocketConnection(this.webSocket);
+    this.connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/api/current';
+
     this.setupWebSocket();
   }
 
@@ -106,20 +140,108 @@ export class WebSocketHandlerService {
     ).subscribe();
   }
 
-  private processCall(call: ApiCall): Observable<unknown> {
-    this.activeCalls++;
-    this.pendingCalls.set(call.id, call);
-    this.wsConnection.send(call);
+  private cleanupCall(callId: string): void {
+    this.activeCalls--;
+    this.pendingCalls.delete(callId);
+    this.triggerNextCall$.next();
+  }
 
+  private handleMockResponse(call: ApiCall): Observable<unknown> | null {
+    if (!environment.debugPanel?.enabled) {
+      return null;
+    }
+
+    let mockConfig;
+    try {
+      mockConfig = this.mockResponseService.checkMock(call);
+    } catch (error) {
+      // Log mock config errors but don't fail the request
+      console.warn('Mock config check failed, proceeding with real request:', error);
+      return null;
+    }
+
+    if (!mockConfig) {
+      // Log normal outgoing message
+      try {
+        this.debugService.logOutgoingMessage(call, false);
+      } catch (error) {
+        console.error('Error logging outgoing message:', error);
+      }
+      return null;
+    }
+
+    // Handle mock response
+    try {
+      this.debugService.logOutgoingMessage(call, true);
+      this.mockResponseService.generateMockResponse(call, mockConfig);
+    } catch (error) {
+      console.error('Mock generation failed:', error);
+      this.cleanupCall(call.id);
+      return throwError(() => new MockGenerationError(
+        `Failed to generate mock response for ${call.method}`,
+        error,
+      ));
+    }
+
+    // Return observable for mock response
     return this.responses$.pipe(
       filter((message) => 'id' in message && message.id === call.id),
       take(1),
-      tap(() => {
-        this.activeCalls--;
-        this.pendingCalls.delete(call.id);
-        this.triggerNextCall$.next();
+      tap(() => this.cleanupCall(call.id)),
+      catchError((error: unknown) => {
+        console.error('Mock response processing failed:', error);
+        this.cleanupCall(call.id);
+        // Wrap in MockServiceError if not already a mock error
+        if (error instanceof MockServiceError) {
+          return throwError(() => error);
+        }
+        return throwError(() => new MockServiceError(
+          'Failed to process mock response',
+          error,
+        ));
       }),
     );
+  }
+
+  private processCall(call: ApiCall): Observable<unknown> {
+    this.activeCalls++;
+    this.pendingCalls.set(call.id, call);
+
+    try {
+      // Check if we should handle this as a mock response
+      const mockResponse$ = this.handleMockResponse(call);
+      if (mockResponse$) {
+        return mockResponse$;
+      }
+
+      // Send the real request
+      try {
+        this.wsConnection.send(call);
+      } catch (error) {
+        console.error('Failed to send WebSocket message:', error);
+        this.cleanupCall(call.id);
+        return throwError(() => new WebSocketSendError(
+          `Failed to send ${call.method} over WebSocket`,
+          error,
+        ));
+      }
+
+      return this.responses$.pipe(
+        filter((message) => 'id' in message && message.id === call.id),
+        take(1),
+        tap(() => this.cleanupCall(call.id)),
+        catchError((error: unknown) => {
+          console.error('Error processing WebSocket response:', error);
+          this.cleanupCall(call.id);
+          return throwError(() => error);
+        }),
+      );
+    } catch (error) {
+      // Catch any unexpected errors
+      console.error('Unexpected error in processCall:', error);
+      this.cleanupCall(call.id);
+      return throwError(() => new Error(`Unexpected error: ${error instanceof Error ? error.message : 'Unknown error'}`));
+    }
   }
 
   private raiseConcurrentCallsError(): void {
@@ -193,7 +315,7 @@ export class WebSocketHandlerService {
 
     // TODO: Extract code in some constant.
     if (event.code === 1008) {
-      this.isAccessRestricted$ = true;
+      this.isAccessRestricted = true;
     } else {
       this.initiateReconnect();
     }
@@ -213,11 +335,11 @@ export class WebSocketHandlerService {
     this.scheduleCall({
       method: 'core.set_options',
       params: [{ legacy_jobs: false }],
-      id: UUID.UUID(),
+      id: uuidv4(),
     });
   }
 
-  scheduleCall(payload: ApiCall): void {
+  scheduleCall(payload: Pick<ApiCall, 'id' | 'method' | 'params'>): void {
     const message = makeRequestMessage(payload);
     this.queuedCalls.push(message as ApiCall);
     this.triggerNextCall$.next();

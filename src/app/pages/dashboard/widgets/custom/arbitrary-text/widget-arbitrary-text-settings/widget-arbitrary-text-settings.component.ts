@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -25,6 +23,9 @@ import { WidgetArbitraryTextSettings } from 'app/pages/dashboard/widgets/custom/
 })
 export class WidgetArbitraryTextSettingsComponent implements
   WidgetSettingsComponent<WidgetArbitraryTextSettings>, OnInit {
+  widgetSettingsRef = inject<WidgetSettingsRef<WidgetArbitraryTextSettings>>(WidgetSettingsRef);
+  private fb = inject(FormBuilder);
+
   form = this.fb.nonNullable.group({
     widgetTitle: [null as string | null, [Validators.required, Validators.maxLength(20)]],
     widgetText: [null as string | null, [Validators.required, Validators.maxLength(130)]],
@@ -32,10 +33,6 @@ export class WidgetArbitraryTextSettingsComponent implements
   });
 
   private readonly formFieldNames = ['widgetTitle', 'widgetText', 'widgetSubText'];
-  constructor(
-    public widgetSettingsRef: WidgetSettingsRef<WidgetArbitraryTextSettings>,
-    private fb: FormBuilder,
-  ) { }
 
   ngOnInit(): void {
     this.setupSettingsUpdate();

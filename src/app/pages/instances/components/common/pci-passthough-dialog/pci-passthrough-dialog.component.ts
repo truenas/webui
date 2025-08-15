@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
@@ -70,6 +68,15 @@ const unknownType = 'UNKNOWN' as const;
   ],
 })
 export class PciPassthroughDialog implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  protected dialogRef = inject<MatDialogRef<PciPassthroughDialog, Option[]>>(MatDialogRef);
+  protected options = inject<{
+    existingDeviceAddresses: string[];
+  }>(MAT_DIALOG_DATA);
+
   protected readonly columns = ['type', 'device', 'actions'];
 
   protected filterForm = this.formBuilder.group({
@@ -86,14 +93,7 @@ export class PciPassthroughDialog implements OnInit {
     large: true,
   } as EmptyConfig);
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: NonNullableFormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    protected dialogRef: MatDialogRef<PciPassthroughDialog, Option[]>,
-    @Inject(MAT_DIALOG_DATA) protected options: { existingDeviceAddresses: string[] },
-  ) {
+  constructor() {
     this.filterForm.valueChanges.pipe(untilDestroyed(this)).subscribe(() => this.filterTable());
   }
 

@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogClose,
@@ -37,17 +34,17 @@ export interface DownloadKeyDialogParams {
   ],
 })
 export class DownloadKeyDialog {
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private download = inject(DownloadService);
+  private data = inject<DownloadKeyDialogParams>(MAT_DIALOG_DATA);
+
   protected helptext = helptextDownloadKey;
   protected wasDownloaded = signal(false);
 
   private filename: string;
 
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private download: DownloadService,
-    @Inject(MAT_DIALOG_DATA) private data: DownloadKeyDialogParams,
-  ) {
+  constructor() {
     this.filename = `dataset_${this.data.name}_keys.json`;
   }
 

@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, output, OnInit,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -35,6 +32,9 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   ],
 })
 export class SpareWizardStepComponent implements OnInit {
+  private store = inject(PoolManagerStore);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly isStepActive = input<boolean>(false);
   readonly stepWarning = input<string | null>();
 
@@ -47,11 +47,6 @@ export class SpareWizardStepComponent implements OnInit {
 
   protected readonly vDevType = VDevType;
   readonly helptext = helptextPoolCreation;
-
-  constructor(
-    private store: PoolManagerStore,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.updateSpareTopologyWhenChanged();

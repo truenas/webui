@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, of, catchError, filter, switchMap, take, timeout, finalize,
@@ -24,14 +24,12 @@ export enum FailoverErrorType {
 
 @Injectable({ providedIn: 'root' })
 export class FailoverValidationService {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+
   private readonly FAILOVER_TIMEOUT_MS = 300000; // 5 minutes
   private activeLoader = false;
-
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private loader: LoaderService,
-  ) {}
 
   /**
    * Get consistent error message based on error type and context
@@ -87,6 +85,11 @@ export class FailoverValidationService {
   protected checkFailoverStatus(): Observable<FailoverValidationResult> {
     return this.api.call('failover.status').pipe(
       switchMap((status) => {
+        // SINGLE status means no failover is configured, proceed as normal
+        if (status === FailoverStatus.Single) {
+          return of({ success: true });
+        }
+
         if (status !== FailoverStatus.Master) {
           return of({
             success: false,

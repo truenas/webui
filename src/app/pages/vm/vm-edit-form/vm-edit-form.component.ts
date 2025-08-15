@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -66,6 +64,22 @@ import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-valid
   ],
 })
 export class VmEditFormComponent implements OnInit {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  formatter = inject(IxFormatterService);
+  private errorHandler = inject(ErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private cpuValidator = inject(CpuValidatorService);
+  private validators = inject(IxValidatorsService);
+  private gpuValidator = inject(IsolatedGpuValidatorService);
+  private gpuService = inject(GpuService);
+  private vmGpuService = inject(VmGpuService);
+  private snackbar = inject(SnackbarService);
+  private dialog = inject(DialogService);
+  private criticalGpuPrevention = inject(CriticalGpuPreventionService);
+  slideInRef = inject<SlideInRef<VirtualMachine, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.VmWrite];
 
   showCpuModelField = true;
@@ -111,23 +125,7 @@ export class VmEditFormComponent implements OnInit {
 
   protected existingVm: VirtualMachine;
 
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-    public formatter: IxFormatterService,
-    private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private cpuValidator: CpuValidatorService,
-    private validators: IxValidatorsService,
-    private gpuValidator: IsolatedGpuValidatorService,
-    private gpuService: GpuService,
-    private vmGpuService: VmGpuService,
-    private snackbar: SnackbarService,
-    private dialog: DialogService,
-    private criticalGpuPrevention: CriticalGpuPreventionService,
-    public slideInRef: SlideInRef<VirtualMachine, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -198,8 +196,8 @@ export class VmEditFormComponent implements OnInit {
 
   private setupGpuControl(vm: VirtualMachine): void {
     const vmPciSlots = vm.devices
-      .filter((device) => device.attributes.dtype === VmDeviceType.Pci)
-      .map((pciDevice: VmPciPassthroughDevice) => pciDevice.attributes.pptdev);
+      ?.filter((device) => device.attributes.dtype === VmDeviceType.Pci)
+      ?.map((pciDevice: VmPciPassthroughDevice) => pciDevice.attributes.pptdev);
 
     this.gpuService.getAllGpus().pipe(untilDestroyed(this)).subscribe((allGpus) => {
       const vmGpus = allGpus.filter(byVmPciSlots(vmPciSlots));

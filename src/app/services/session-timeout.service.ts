@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -28,6 +28,17 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
   providedIn: 'root',
 })
 export class SessionTimeoutService {
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private matDialog = inject(MatDialog);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private snackbar = inject(MatSnackBar);
+  private appStore$ = inject<Store<AppState>>(Store);
+  private tokenLastUsedService = inject(TokenLastUsedService);
+  private wsStatus = inject(WebSocketStatusService);
+  private window = inject<Window>(WINDOW);
+
   protected actionWaitTimeout: Timeout;
   protected terminateCancelTimeout: Timeout;
 
@@ -58,18 +69,7 @@ export class SessionTimeoutService {
       });
   };
 
-  constructor(
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private matDialog: MatDialog,
-    private authService: AuthService,
-    private router: Router,
-    private snackbar: MatSnackBar,
-    private appStore$: Store<AppState>,
-    private tokenLastUsedService: TokenLastUsedService,
-    private wsStatus: WebSocketStatusService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.matDialog.afterOpened.pipe(untilDestroyed(this)).subscribe((dialog) => {
       if (dialog.componentInstance instanceof JobProgressDialog) {
         this.stop();

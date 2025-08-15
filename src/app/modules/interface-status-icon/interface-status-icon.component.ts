@@ -1,13 +1,9 @@
 import { NgClass } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component,
-  computed,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { KiB } from 'app/constants/bytes.constant';
 import { LinkState } from 'app/enums/network-interface.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -28,6 +24,8 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   ],
 })
 export class InterfaceStatusIconComponent {
+  private translate = inject(TranslateService);
+
   update = input<NetworkInterfaceUpdate>();
 
   protected elementId: string;
@@ -69,10 +67,8 @@ export class InterfaceStatusIconComponent {
     }
   });
 
-  constructor(
-    private translate: TranslateService,
-  ) {
-    this.elementId = `in-out${UUID.UUID()}`;
+  constructor() {
+    this.elementId = `in-out${uuidv4()}`;
   }
 
   private formatBytes(bytes: number): string {

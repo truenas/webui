@@ -1,7 +1,5 @@
 import { PercentPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -35,6 +33,11 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActivePoolScanComponent {
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+
   readonly scan = input.required<PoolScanUpdate>();
   readonly pool = input.required<Pool>();
 
@@ -42,13 +45,6 @@ export class ActivePoolScanComponent {
   protected readonly isScrubPaused = computed(() => Boolean(this.scan()?.pause));
 
   protected readonly Role = Role;
-
-  constructor(
-    private translate: TranslateService,
-    private dialogService: DialogService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   protected scanLabel = computed(() => {
     if (!this.isScrub()) {

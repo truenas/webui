@@ -4,12 +4,10 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const allInstancesElements = {
   hierarchy: [T('Containers')],
-  synonyms: [T('Instances'), T('Incus'), T('Containers')],
-  anchorRouterLink: ['/instances/view/def'],
+  anchorRouterLink: ['/containers/view/def'],
   elements: {
     list: {
       hierarchy: [T('List')],
-      synonyms: [T('Containers'), T('Instances'), T('Incus')],
       anchor: 'containers-list',
     },
   },

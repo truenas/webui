@@ -1823,10 +1823,10 @@
     "hierarchy": [
       "Credentials",
       "Directory Services",
-      "Configure Active Directory"
+      "Configure Directory Services"
     ],
     "synonyms": [
-      "Active Directory"
+      "DS"
     ],
     "requiredRoles": [
       "DIRECTORY_SERVICE_WRITE"
@@ -1860,6 +1860,31 @@
   },
   {
     "hierarchy": [
+      "Credentials",
+      "Directory Services"
+    ],
+    "synonyms": [
+      "Active Directory",
+      "AD",
+      "LDAP",
+      "OpenLDAP",
+      "IPA",
+      "FreeIPA",
+      "DS"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "directory-services"
+    ],
+    "routerLink": null,
+    "anchor": "settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
       "Containers",
       "Global Settings"
     ],
@@ -1871,7 +1896,7 @@
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances"
+      "/containers"
     ],
     "routerLink": null,
     "anchor": "vm-global-settings",
@@ -1892,10 +1917,10 @@
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances"
+      "/containers"
     ],
     "routerLink": [
-      "/instances/new"
+      "/containers/new"
     ],
     "anchor": "add-instance",
     "triggerAnchor": null,
@@ -1906,16 +1931,13 @@
       "Containers",
       "List"
     ],
-    "synonyms": [
-      "Instances",
-      "Incus"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "containers-list",
@@ -1927,15 +1949,13 @@
       "Containers",
       "General Info"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "general-info",
@@ -1947,15 +1967,13 @@
       "Containers",
       "Devices"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "devices",
@@ -1967,15 +1985,13 @@
       "Containers",
       "Disks"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "disks",
@@ -1987,15 +2003,13 @@
       "Containers",
       "NIC"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "nic",
@@ -2007,15 +2021,13 @@
       "Containers",
       "Proxies"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "proxies",
@@ -2027,15 +2039,13 @@
       "Containers",
       "Idmap"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "idmap",
@@ -2047,15 +2057,13 @@
       "Containers",
       "Tools"
     ],
-    "synonyms": [
-      "Instances"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [
       "VMS"
     ],
     "anchorRouterLink": [
-      "/instances/view/def"
+      "/containers/view/def"
     ],
     "routerLink": null,
     "anchor": "tools",

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
@@ -12,6 +12,9 @@ import { LicenseService } from 'app/services/license.service';
   providedIn: 'root',
 })
 export class NavigationService {
+  private license = inject(LicenseService);
+  private authService = inject(AuthService);
+
   readonly menuItems: MenuItem[] = [
     {
       name: T('Dashboard'),
@@ -73,7 +76,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Containers'),
       icon: iconMarker('mdi-package-variant-closed'),
-      state: 'instances',
+      state: 'containers',
       isVisible$: this.license.shouldShowContainers$,
     },
     {
@@ -123,9 +126,4 @@ export class NavigationService {
       ],
     },
   ];
-
-  constructor(
-    private license: LicenseService,
-    private authService: AuthService,
-  ) {}
 }

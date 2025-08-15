@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { differenceBy } from 'lodash-es';
 import {
   forkJoin, Observable, of, switchMap,
@@ -15,10 +15,9 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   providedIn: 'root',
 })
 export class VmGpuService {
-  constructor(
-    private gpuService: GpuService,
-    private api: ApiService,
-  ) {}
+  private gpuService = inject(GpuService);
+  private api = inject(ApiService);
+
 
   /**
    * Relationship is:
@@ -29,9 +28,9 @@ export class VmGpuService {
   updateVmGpus(vm: VirtualMachine, newGpuIds: string[]): Observable<unknown> {
     return this.gpuService.getAllGpus().pipe(
       switchMap((allGpus) => {
-        const previousVmPciDevices = vm.devices.filter((device) => {
+        const previousVmPciDevices = (vm.devices?.filter((device) => {
           return device.attributes.dtype === VmDeviceType.Pci;
-        }) as VmPciPassthroughDevice[];
+        }) || []) as VmPciPassthroughDevice[];
         const previousSlots = previousVmPciDevices.map((device) => device.attributes.pptdev);
         const previousGpus = allGpus.filter(byVmPciSlots(previousSlots));
 

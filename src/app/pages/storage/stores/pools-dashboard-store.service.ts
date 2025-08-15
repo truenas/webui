@@ -1,4 +1,4 @@
-import { computed, Injectable } from '@angular/core';
+import { computed, Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { groupBy, keyBy, sortBy } from 'lodash-es';
 import {
@@ -34,6 +34,9 @@ const initialState: PoolsDashboardState = {
 
 @Injectable()
 export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
+  private errorHandler = inject(ErrorHandlerService);
+  private api = inject(ApiService);
+
   readonly pools = computed(() => this.state().pools);
   readonly arePoolsLoading = computed(() => this.state().arePoolsLoading);
   readonly isLoadingPoolDetails = computed(() => this.state().isLoadingPoolDetails);
@@ -49,10 +52,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     return this.state().scrubs.find((scrub) => scrub.pool === pool.id);
   }
 
-  constructor(
-    private errorHandler: ErrorHandlerService,
-    private api: ApiService,
-  ) {
+  constructor() {
     super(initialState);
   }
 
@@ -142,22 +142,26 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
       tempAgg: DiskTemperatureAgg;
     },
   ): Observable<StorageDashboardDisk[]> {
-    for (const disk of disks) {
-      disk.alerts = [];
-    }
+    const processedDisks = disks.map((disk) => ({
+      ...disk,
+      alerts: [] as Alert[],
+      tempAggregates: disk.tempAggregates,
+    }));
+
     for (const alert of alerts) {
       const alertArgs = (alert.args) as { device: string; message: string };
       const alertDevice = alertArgs.device.split('/').reverse()[0];
-      const alertDisk = disks.find((disk) => disk.name === alertDevice);
+      const alertDisk = processedDisks.find((disk) => disk.name === alertDevice);
       alertDisk?.alerts?.push(alert);
     }
+
     const disksWithTempData = Object.keys(tempAgg);
     for (const diskWithTempData of disksWithTempData) {
-      const dashboardDisk = disks.find((disk) => disk.devname === diskWithTempData);
+      const dashboardDisk = processedDisks.find((disk) => disk.devname === diskWithTempData);
       if (dashboardDisk) {
         dashboardDisk.tempAggregates = { ...tempAgg[diskWithTempData] };
       }
     }
-    return of(disks);
+    return of(processedDisks);
   }
 }

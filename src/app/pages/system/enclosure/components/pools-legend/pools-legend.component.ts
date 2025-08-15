@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
@@ -15,6 +13,8 @@ import { unassignedColor } from 'app/pages/system/enclosure/utils/unassigned-col
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolsLegendComponent {
+  private translate = inject(TranslateService);
+
   readonly enclosure = input.required<DashboardEnclosure>();
   readonly side = input.required<EnclosureSide>();
   readonly poolColors = input.required<Record<string, string>>();
@@ -38,8 +38,4 @@ export class PoolsLegendComponent {
       return [poolName, poolColors[poolName]] as [string, string];
     });
   });
-
-  constructor(
-    private translate: TranslateService,
-  ) {}
 }

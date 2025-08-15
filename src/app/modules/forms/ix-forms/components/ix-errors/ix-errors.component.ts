@@ -1,7 +1,5 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnDestroy, inject } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { MatError } from '@angular/material/form-field';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -31,7 +29,11 @@ export const ixManualValidateError = 'ixManualValidateError';
     TranslateModule,
   ],
 })
-export class IxErrorsComponent implements OnChanges {
+export class IxErrorsComponent implements OnChanges, OnDestroy {
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private liveAnnouncer = inject(LiveAnnouncer);
+
   readonly control = input.required<AbstractControl>();
   readonly label = input<string>();
 
@@ -73,18 +75,22 @@ export class IxErrorsComponent implements OnChanges {
     number: () => this.translate.instant('Value must be a number'),
     cron: () => this.translate.instant('Invalid cron expression'),
     ip2: () => this.translate.instant('Invalid IP address'),
+    invalidRegex: () => this.translate.instant('Invalid regular expression'),
+    invalidStrftimeSpecifier: (specifier: string) => this.translate.instant('Invalid format specifier: {specifier}', { specifier }),
+    containsSlash: () => this.translate.instant('Forward slashes are not allowed'),
+    invalidCharacters: () => this.translate.instant('Contains invalid characters'),
+    orphanedPercent: () => this.translate.instant('Percent sign at end must be escaped as %%'),
+    empty: () => this.translate.instant('Value cannot be empty or whitespace only'),
   };
-
-  constructor(
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private liveAnnouncer: LiveAnnouncer,
-  ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('control' in changes && this.control()) {
       this.subscribeToControlStatusChanges();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.statusChangeSubscription?.unsubscribe();
   }
 
   private subscribeToControlStatusChanges(): void {
@@ -159,6 +165,20 @@ export class IxErrorsComponent implements OnChanges {
         return this.defaultErrMessages.cron();
       case DefaultValidationError.Ip2:
         return this.defaultErrMessages.ip2();
+      case DefaultValidationError.InvalidRegex:
+        return this.defaultErrMessages.invalidRegex();
+      case DefaultValidationError.InvalidStrftimeSpecifier:
+        return this.defaultErrMessages.invalidStrftimeSpecifier(
+          (errors.invalidStrftimeSpecifier as SomeError).specifier as string,
+        );
+      case DefaultValidationError.ContainsSlash:
+        return this.defaultErrMessages.containsSlash();
+      case DefaultValidationError.InvalidCharacters:
+        return this.defaultErrMessages.invalidCharacters();
+      case DefaultValidationError.OrphanedPercent:
+        return this.defaultErrMessages.orphanedPercent();
+      case DefaultValidationError.Empty:
+        return this.defaultErrMessages.empty();
       default:
         return '';
     }

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
@@ -23,16 +21,14 @@ import { MiniSlotStatusComponent } from './mini-slot-status/mini-slot-status.com
   ],
 })
 export class MiniEnclosureComponent {
+  private store = inject(EnclosureStore);
+
   readonly enclosure = this.store.selectedEnclosure;
   readonly selectedSlot = this.store.selectedSlot;
 
   readonly poolTint = computed(() => {
     return makePoolTintFunction(this.store.poolColors());
   });
-
-  constructor(
-    private store: EnclosureStore,
-  ) {}
 
   protected onSlotSelected(slot: DashboardEnclosureSlot | null): void {
     this.store.selectSlot(slot ? slot.drive_bay_number : null);

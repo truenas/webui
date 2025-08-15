@@ -102,7 +102,7 @@ describe('NormalSelectionComponent', () => {
             case VDevType.Special:
               return of([CreateVdevLayout.Mirror]);
             default:
-              return of([...Object.values(CreateVdevLayout)]);
+              return of(Object.values(CreateVdevLayout));
           }
         }),
         startOver$,

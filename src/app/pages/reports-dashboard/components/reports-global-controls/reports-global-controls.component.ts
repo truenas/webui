@@ -1,9 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -47,6 +43,12 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   ],
 })
 export class ReportsGlobalControlsComponent implements OnInit {
+  private fb = inject(NonNullableFormBuilder);
+  private route = inject(ActivatedRoute);
+  private store$ = inject<Store<AppState>>(Store);
+  private reportsService = inject(ReportsService);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly diskOptionsChanged = output<{ devices: string[]; metrics: string[] }>();
 
   protected form = this.fb.group({
@@ -62,14 +64,6 @@ export class ReportsGlobalControlsComponent implements OnInit {
 
   protected readonly ReportType = ReportType;
   protected readonly searchableElements = reportingGlobalControlsElements;
-
-  constructor(
-    private fb: NonNullableFormBuilder,
-    private route: ActivatedRoute,
-    private store$: Store<AppState>,
-    private reportsService: ReportsService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.setupTabs();

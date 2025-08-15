@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
-  Component,
-  ElementRef,
-  input,
-  OnInit, Signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, input, OnInit, Signal, viewChild, inject } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
   ReactiveFormsModule,
@@ -61,6 +55,9 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   ],
 })
 export class IxComboboxComponent implements ControlValueAccessor, OnInit {
+  controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly label = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
   readonly required = input<boolean>(false);
@@ -89,10 +86,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   onChange: (value: string | number | null) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 

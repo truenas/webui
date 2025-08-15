@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -25,6 +23,9 @@ import { DiskTemperatureService } from 'app/services/disk-temperature.service';
   ],
 })
 export class MiniDriveTemperaturesComponent {
+  private store = inject(EnclosureStore);
+  private diskTemperatureService = inject(DiskTemperatureService);
+
   private temperature = toSignal(this.diskTemperatureService.getTemperature());
   private celsius = TemperatureUnit.Celsius;
   private readonly slots = computed(() => {
@@ -44,9 +45,4 @@ export class MiniDriveTemperaturesComponent {
         };
       });
   });
-
-  constructor(
-    private store: EnclosureStore,
-    private diskTemperatureService: DiskTemperatureService,
-  ) { }
 }

@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input, output,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -39,6 +37,10 @@ import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/grou
   ],
 })
 export class GroupDetailsRowComponent {
+  private slideIn = inject(SlideIn);
+  private router = inject(Router);
+  private matDialog = inject(MatDialog);
+
   readonly group = input.required<Group>();
   readonly colspan = input<number>();
 
@@ -47,12 +49,6 @@ export class GroupDetailsRowComponent {
   protected readonly deleteNotAllowedMsg = marker('Groups with privileges or members cannot be deleted.');
 
   protected readonly Role = Role;
-
-  constructor(
-    private slideIn: SlideIn,
-    private router: Router,
-    private matDialog: MatDialog,
-  ) {}
 
   doEdit(group: Group): void {
     this.slideIn.open(GroupFormComponent, { data: group });

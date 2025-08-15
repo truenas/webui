@@ -1,13 +1,18 @@
 import { MatDialog } from '@angular/material/dialog';
 import { SpectatorService } from '@ngneat/spectator';
 import { createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
+import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { WINDOW } from 'app/helpers/window.helper';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
+import { DownloadService } from 'app/services/download.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { VmService } from './vm.service';
 
 describe('VmService', () => {
@@ -30,6 +35,28 @@ describe('VmService', () => {
           afterClosed: () => of(true),
         })),
       }),
+      mockProvider(LoaderService, {
+        withLoader: () => <T>(source$: T) => source$,
+      }),
+      mockProvider(TranslateService, {
+        instant: jest.fn((key: string) => key),
+      }),
+      mockProvider(ErrorHandlerService, {
+        showErrorModal: jest.fn(),
+        withErrorHandler: () => <T>(source$: T) => source$,
+      }),
+      mockProvider(DownloadService, {
+        downloadUrl: jest.fn(),
+      }),
+      {
+        provide: WINDOW,
+        useValue: {
+          open: jest.fn(),
+          location: {
+            href: '',
+          },
+        },
+      },
     ],
   });
 
@@ -58,8 +85,11 @@ describe('VmService', () => {
   });
 
   it('should call websocket to restart vm', () => {
+    const apiService = spectator.inject(ApiService);
+    jest.spyOn(apiService, 'startJob').mockReturnValue(of(1));
+
     spectator.service.doRestart({ id: 1 } as VirtualMachine);
-    expect(spectator.inject(ApiService).startJob).toHaveBeenCalledWith('vm.restart', [1]);
+    expect(apiService.startJob).toHaveBeenCalledWith('vm.restart', [1]);
   });
 
   it('should call websocket to poweroff vm', () => {

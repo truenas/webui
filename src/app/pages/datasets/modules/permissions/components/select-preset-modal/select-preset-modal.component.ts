@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import {
   FormControl, FormGroup, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -46,6 +44,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class SelectPresetModalComponent implements OnInit {
+  private dialogRef = inject<MatDialogRef<SelectPresetModalComponent>>(MatDialogRef);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private aclEditorStore = inject(DatasetAclEditorStore);
+  private validatorsService = inject(IxValidatorsService);
+  data = inject<SelectPresetModalConfig>(MAT_DIALOG_DATA);
+
   form = new FormGroup({
     presetName: new FormControl('', this.validatorsService.validateOnCondition(
       (control) => control.parent?.get('usePreset')?.value,
@@ -70,16 +76,6 @@ export class SelectPresetModalComponent implements OnInit {
   ]);
 
   readonly helptext = helptextAcl.typeDialog;
-
-  constructor(
-    private dialogRef: MatDialogRef<SelectPresetModalComponent>,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private aclEditorStore: DatasetAclEditorStore,
-    private validatorsService: IxValidatorsService,
-    @Inject(MAT_DIALOG_DATA) public data: SelectPresetModalConfig,
-  ) {}
 
   ngOnInit(): void {
     this.setFormRelations();

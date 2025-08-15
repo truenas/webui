@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -42,6 +40,15 @@ export interface SetEnclosureLabelDialogData {
   ],
 })
 export class SetEnclosureLabelDialog implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private dialogRef = inject<MatDialogRef<SetEnclosureLabelDialog, string>>(MatDialogRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private validatorsService = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+  private data = inject<SetEnclosureLabelDialogData>(MAT_DIALOG_DATA);
+
   enclosureLabel = 'Enclosure Label';
 
   form = this.formBuilder.nonNullable.group({
@@ -53,17 +60,6 @@ export class SetEnclosureLabelDialog implements OnInit {
       )]],
     resetToDefault: [false],
   });
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private loader: LoaderService,
-    private dialogRef: MatDialogRef<SetEnclosureLabelDialog, string>,
-    private errorHandler: ErrorHandlerService,
-    private validatorsService: IxValidatorsService,
-    private translate: TranslateService,
-    @Inject(MAT_DIALOG_DATA) private data: SetEnclosureLabelDialogData,
-  ) { }
 
   ngOnInit(): void {
     this.form.patchValue({

@@ -1,9 +1,4 @@
-import {
-  AfterContentChecked,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, HostBinding, input, OnInit,
-  signal,
-} from '@angular/core';
+import { AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, input, OnInit, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -24,6 +19,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChecked {
+  private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
+
   dataProvider = input.required<DataProvider<T>>();
   pageSize = input(5);
   routerLink = input<string[]>([]);
@@ -40,11 +38,6 @@ export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChe
   @HostBinding('class.clickable') get clickable(): boolean {
     return Boolean(this.routerLink().length);
   }
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private router: Router,
-  ) {}
 
   dataTest(key: string): string[] {
     return [...this.ixTestOverride(), key];

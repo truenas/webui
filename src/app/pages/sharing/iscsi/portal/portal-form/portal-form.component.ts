@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -53,6 +49,14 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class PortalFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  protected api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(FormErrorHandlerService);
+  protected iscsiService = inject(IscsiService);
+  slideInRef = inject<SlideInRef<IscsiPortal | undefined, boolean>>(SlideInRef);
+
   protected isLoading = signal(false);
   listen: IscsiInterface[] = [];
 
@@ -92,15 +96,7 @@ export class PortalFormComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  constructor(
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    protected api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
-    protected iscsiService: IscsiService,
-    public slideInRef: SlideInRef<IscsiPortal | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, output, inject } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -24,12 +24,10 @@ import { UserFormComponent } from 'app/pages/credentials/new-users/user-form/use
   ],
 })
 export class AllUsersHeaderComponent {
+  private slideIn = inject(SlideIn);
+
   protected readonly searchableElements = allUsersHeaderElements;
   userCreated = output<User>();
-
-  constructor(
-    private slideIn: SlideIn,
-  ) {}
 
   protected doAdd(): void {
     this.slideIn.open(UserFormComponent, { wide: false }).pipe(

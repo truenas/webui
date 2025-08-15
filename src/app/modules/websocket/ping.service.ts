@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { UUID } from 'angular2-uuid';
 import {
   interval, tap, Subscription, distinctUntilChanged, startWith,
 } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
@@ -12,14 +12,14 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   providedIn: 'root',
 })
 export class PingService {
+  private wsHandler = inject(WebSocketHandlerService);
+  private wsStatus = inject(WebSocketStatusService);
+
   private readonly pingTimeoutMillis = 20 * 1000;
   private pingSubscription: Subscription | null = null;
   private isInitialized = false;
 
-  constructor(
-    private wsHandler: WebSocketHandlerService,
-    private wsStatus: WebSocketStatusService,
-  ) {
+  constructor() {
     // Auto-initialize service on first instantiation
     this.initializePingService();
   }
@@ -58,7 +58,7 @@ export class PingService {
     // Simplified ping setup - no double-checking since outer subscription already filters for connected state
     this.pingSubscription = interval(this.pingTimeoutMillis).pipe(
       tap(() => this.wsHandler.scheduleCall({
-        id: UUID.UUID(),
+        id: uuidv4(),
         method: 'core.ping',
         params: [],
       })),

@@ -1,11 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import {
   FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -93,6 +87,23 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
   ],
 })
 export class AppWizardComponent implements OnInit, OnDestroy {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private dialogService = inject(DialogService);
+  private appSchemaService = inject(AppSchemaService);
+  private validatorsService = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private activatedRoute = inject(ActivatedRoute);
+  private appService = inject(ApplicationsService);
+  private loader = inject(LoaderService);
+  private router = inject(Router);
+  private errorHandler = inject(ErrorHandlerService);
+  private dockerStore = inject(DockerStore);
+  private api = inject(ApiService);
+  private authService = inject(AuthService);
+  private matDialog = inject(MatDialog);
+  private unsavedChangesService = inject(UnsavedChangesService);
+
   appId: string;
   train: string;
   config: Record<string, ChartFormValue>;
@@ -142,25 +153,6 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);
   }
-
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private dialogService: DialogService,
-    private appSchemaService: AppSchemaService,
-    private validatorsService: IxValidatorsService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute,
-    private appService: ApplicationsService,
-    private loader: LoaderService,
-    private router: Router,
-    private errorHandler: ErrorHandlerService,
-    private dockerStore: DockerStore,
-    private api: ApiService,
-    private authService: AuthService,
-    private matDialog: MatDialog,
-    private unsavedChangesService: UnsavedChangesService,
-  ) {}
 
   ngOnInit(): void {
     this.getDockerHubRateLimitInfo();
@@ -259,6 +251,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     const data = this.appSchemaService.serializeFormValue(this.form.getRawValue(), this.chartSchema) as ChartFormValues;
+
     const deleteField$ = new Subject<string>();
     deleteField$.pipe(untilDestroyed(this)).subscribe({
       next: (fieldToBeDeleted) => {

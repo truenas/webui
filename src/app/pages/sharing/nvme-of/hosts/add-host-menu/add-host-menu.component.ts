@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
@@ -34,6 +32,10 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
   ],
 })
 export class AddHostMenuComponent {
+  private slideIn = inject(SlideIn);
+  private matDialog = inject(MatDialog);
+  private nvmeOfStore = inject(NvmeOfStore);
+
   hosts = input.required<NvmeOfHost[]>();
   showAllowAnyHost = input(false);
   hostSelected = output<NvmeOfHost>();
@@ -48,12 +50,6 @@ export class AddHostMenuComponent {
     const unusedHosts = this.allHosts().filter((host) => !usedHostIds.includes(host.id));
     return sortBy(unusedHosts, ['hostnqn']);
   });
-
-  constructor(
-    private slideIn: SlideIn,
-    private matDialog: MatDialog,
-    private nvmeOfStore: NvmeOfStore,
-  ) {}
 
   protected openHostForm(): void {
     this.slideIn

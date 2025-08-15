@@ -40,6 +40,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstanceNicMacDialog {
+  private fb = inject(FormBuilder);
+  private ixValidator = inject(IxValidatorsService);
+  private translate = inject(TranslateService);
+  private matDialogRef = inject<MatDialogRef<InstanceNicMacDialog>>(MatDialogRef);
+
   protected readonly nic = signal(inject<string>(MAT_DIALOG_DATA));
   protected readonly form = this.fb.group({
     use_default: [true as boolean],
@@ -55,13 +60,6 @@ export class InstanceNicMacDialog {
   );
 
   protected readonly useDefault = toSignal(this.form.controls.use_default.value$);
-
-  constructor(
-    private fb: FormBuilder,
-    private ixValidator: IxValidatorsService,
-    private translate: TranslateService,
-    private matDialogRef: MatDialogRef<InstanceNicMacDialog>,
-  ) { }
 
   protected addDevice(): void {
     if (this.form.value.use_default) {

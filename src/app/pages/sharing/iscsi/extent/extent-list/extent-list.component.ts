@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -64,6 +62,13 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class ExtentListComponent implements OnInit {
+  emptyService = inject(EmptyService);
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  private matDialog = inject(MatDialog);
+  private cdr = inject(ChangeDetectorRef);
+  private iscsiService = inject(IscsiService);
+
   protected readonly searchableElements = extentListElements;
 
   protected readonly requiredRoles = [
@@ -99,6 +104,10 @@ export class ExtentListComponent implements OnInit {
       propertyName: 'serial',
     }),
     textColumn({
+      title: this.translate.instant('Product ID'),
+      propertyName: 'product_id',
+    }),
+    textColumn({
       title: this.translate.instant('NAA'),
       propertyName: 'naa',
     }),
@@ -130,15 +139,6 @@ export class ExtentListComponent implements OnInit {
     uniqueRowTag: (row) => 'iscsi-extent-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('iSCSI Extent')],
   });
-
-  constructor(
-    public emptyService: EmptyService,
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    private matDialog: MatDialog,
-    private cdr: ChangeDetectorRef,
-    private iscsiService: IscsiService,
-  ) {}
 
   ngOnInit(): void {
     const extents$ = this.iscsiService.getExtents().pipe(

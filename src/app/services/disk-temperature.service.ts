@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   filter, map, Observable, repeat, switchMap, takeUntil,
 } from 'rxjs';
@@ -18,6 +18,8 @@ export interface Temperature {
   providedIn: 'root',
 })
 export class DiskTemperatureService {
+  protected api = inject(ApiService);
+
   private disksChanged$ = this.api.subscribe('disk.query').pipe(
     filter((event) => [
       CollectionChangeType.Added,
@@ -25,10 +27,6 @@ export class DiskTemperatureService {
       CollectionChangeType.Removed,
     ].includes(event.msg)),
   );
-
-  constructor(
-    protected api: ApiService,
-  ) { }
 
   getTemperature(): Observable<DiskTemperatures> {
     return this.api

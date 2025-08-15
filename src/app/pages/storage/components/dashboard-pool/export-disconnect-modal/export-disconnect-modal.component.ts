@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -63,6 +61,20 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ExportDisconnectModalComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private dialogRef = inject<MatDialogRef<ExportDisconnectModalComponent>>(MatDialogRef);
+  private translate = inject(TranslateService);
+  private validatorsService = inject(IxValidatorsService);
+  private dialogService = inject(DialogService);
+  private matDialog = inject(MatDialog);
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private datasetStore = inject(DatasetTreeStore);
+  private cdr = inject(ChangeDetectorRef);
+  private snackbar = inject(SnackbarService);
+  private errorHandler = inject(ErrorHandlerService);
+  pool = inject<Pool>(MAT_DIALOG_DATA);
+
   readonly helptext = helptextVolumes;
 
   readonly nameInputRequired = this.validatorsService.withMessage(
@@ -110,22 +122,6 @@ export class ExportDisconnectModalComponent implements OnInit {
   restartServices = false;
 
   protected readonly Role = Role;
-
-  constructor(
-    private fb: FormBuilder,
-    private dialogRef: MatDialogRef<ExportDisconnectModalComponent>,
-    private translate: TranslateService,
-    private validatorsService: IxValidatorsService,
-    private dialogService: DialogService,
-    private matDialog: MatDialog,
-    private loader: LoaderService,
-    private api: ApiService,
-    private datasetStore: DatasetTreeStore,
-    private cdr: ChangeDetectorRef,
-    private snackbar: SnackbarService,
-    private errorHandler: ErrorHandlerService,
-    @Inject(MAT_DIALOG_DATA) public pool: Pool,
-  ) {}
 
   ngOnInit(): void {
     if (this.pool.status === PoolStatus.Unknown) {

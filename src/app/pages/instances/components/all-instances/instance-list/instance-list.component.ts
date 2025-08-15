@@ -13,7 +13,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { injectParams } from 'ngxtension/inject-params';
 import { distinctUntilChanged, tap } from 'rxjs';
-import { instancesEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
+import { containersEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
@@ -46,6 +46,11 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 })
 
 export class InstanceListComponent {
+  private router = inject(Router);
+  private instancesStore = inject(VirtualizationInstancesStore);
+  private searchDirectives = inject(UiSearchDirectivesService);
+  private layoutService = inject(LayoutService);
+
   readonly instanceId = injectParams('id');
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
@@ -86,15 +91,10 @@ export class InstanceListComponent {
     if (this.searchQuery()?.length && !this.filteredInstances()?.length) {
       return noSearchResultsConfig;
     }
-    return instancesEmptyConfig;
+    return containersEmptyConfig;
   });
 
-  constructor(
-    private router: Router,
-    private instancesStore: VirtualizationInstancesStore,
-    private searchDirectives: UiSearchDirectivesService,
-    private layoutService: LayoutService,
-  ) {
+  constructor() {
     toObservable(this.instanceId).pipe(
       distinctUntilChanged(),
       tap((instanceId) => {
@@ -121,7 +121,7 @@ export class InstanceListComponent {
   }
 
   navigateToDetails(instance: VirtualizationInstance): void {
-    this.layoutService.navigatePreservingScroll(this.router, ['/instances', 'view', instance.id]);
+    this.layoutService.navigatePreservingScroll(this.router, ['/containers', 'view', instance.id]);
 
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(true);

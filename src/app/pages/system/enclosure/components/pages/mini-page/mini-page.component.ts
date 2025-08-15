@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, effect,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { MatCard, MatCardHeader, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -36,6 +34,9 @@ import { MiniPoolsComponent } from './mini-pools/mini-pools.component';
   ],
 })
 export class MiniPageComponent {
+  private store = inject(EnclosureStore);
+  private router = inject(Router);
+
   readonly enclosureLabel = this.store.enclosureLabel;
   readonly selectedSlot = this.store.selectedSlot;
   readonly isLoading = this.store.isLoading;
@@ -48,11 +49,6 @@ export class MiniPageComponent {
 
     return getSlotsOfSide(enclosure, EnclosureSide.Front);
   });
-
-  constructor(
-    private store: EnclosureStore,
-    private router: Router,
-  ) {}
 
   protected readonly redirectOnNonMinis = effect(() => {
     const enclosure = this.store.selectedEnclosure();

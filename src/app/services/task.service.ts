@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Options as CronOptions } from 'cronstrue/dist/options';
@@ -10,6 +10,10 @@ import { LocaleService } from 'app/modules/language/locale.service';
 
 @Injectable({ providedIn: 'root' })
 export class TaskService {
+  protected language = inject(LanguageService);
+  protected localeService = inject(LocaleService);
+  private translate = inject(TranslateService);
+
   protected timeOptions: Option[] = [
     { label: '00:00:00', value: '00:00' },
     { label: '00:15:00', value: '00:15' },
@@ -114,12 +118,6 @@ export class TaskService {
     verbose: true,
     locale: this.language.currentLanguage,
   };
-
-  constructor(
-    protected language: LanguageService,
-    protected localeService: LocaleService,
-    private translate: TranslateService,
-  ) {}
 
   getTimeOptions(): Option[] {
     return this.timeOptions;

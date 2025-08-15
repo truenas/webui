@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, Subscriber } from 'rxjs';
@@ -14,6 +14,8 @@ import { TerminalComponent } from 'app/modules/terminal/components/terminal/term
   imports: [TerminalComponent],
 })
 export class VmSerialShellComponent implements TerminalConfiguration {
+  private aroute = inject(ActivatedRoute);
+
   protected pk: string;
 
   get connectionData(): TerminalConnectionData {
@@ -21,10 +23,6 @@ export class VmSerialShellComponent implements TerminalConfiguration {
       vm_id: Number(this.pk),
     };
   }
-
-  constructor(
-    private aroute: ActivatedRoute,
-  ) {}
 
   preInit(): Observable<void> {
     return new Observable<void>((subscriber: Subscriber<void>) => {

@@ -6,7 +6,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         ixTest="configure-active-directory"
-        [ixUiSearch]="searchableElements.elements.configureActiveDirectory"
+        [ixUiSearch]="searchableElements.elements.configureDirectoryServices"
         (click)="openDirectoryServicesForm()"
       >
         {{ 'Configure Directory Services' | translate }}
@@ -56,6 +56,7 @@
           <button
             mat-button color="default"
             [ixTest]="[card.title, 'settings']"
+            [ixUiSearch]="searchableElements.elements.settings"
             (click)="card.onSettingsPressed()"
           >
             {{ 'Settings' | translate }}

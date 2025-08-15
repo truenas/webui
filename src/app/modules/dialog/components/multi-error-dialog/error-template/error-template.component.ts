@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, ElementRef, input, Signal, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, input, Signal, viewChild, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogTitle } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,6 +25,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ErrorTemplateComponent {
+  private api = inject(ApiService);
+  private download = inject(DownloadService);
+  private errorHandler = inject(ErrorHandlerService);
+
   private readonly errorMessageWrapper: Signal<ElementRef<HTMLElement>> = viewChild.required('errorMessageWrapper', { read: ElementRef });
   private readonly errorMdContent: Signal<ElementRef<HTMLElement>> = viewChild.required('errorMdContent', { read: ElementRef });
   private readonly errorBtPanel: Signal<ElementRef<HTMLElement> | undefined> = viewChild('errorBtPanel', { read: ElementRef });
@@ -38,12 +40,6 @@ export class ErrorTemplateComponent {
   readonly logs = input<Job>();
 
   isCloseMoreInfo = true;
-
-  constructor(
-    private api: ApiService,
-    private download: DownloadService,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   toggleOpen(): void {
     const messageWrapper = this.errorMessageWrapper().nativeElement;

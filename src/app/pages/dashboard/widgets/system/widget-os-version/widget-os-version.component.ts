@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -23,12 +21,10 @@ import { osVersionWidget } from 'app/pages/dashboard/widgets/system/widget-os-ve
   ],
 })
 export class WidgetOsVersionComponent implements WidgetComponent {
+  private resources = inject(WidgetResourcesService);
+
   size = input.required<SlotSize>();
   readonly name = osVersionWidget.name;
 
   systemInfo$ = this.resources.dashboardSystemInfo$;
-
-  constructor(
-    private resources: WidgetResourcesService,
-  ) {}
 }

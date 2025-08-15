@@ -16,6 +16,7 @@ import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { WithInherit } from 'app/enums/with-inherit.enum';
+import { YesNo } from 'app/enums/yes-no.enum';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
 export interface Dataset {
@@ -31,6 +32,7 @@ export interface Dataset {
   key_loaded: boolean;
   locked: boolean;
   mountpoint: string;
+  mounted: ZfsProperty<YesNo, boolean>;
   name: string;
   pool: string;
   readonly: ZfsProperty<OnOff, boolean>;
@@ -172,6 +174,7 @@ export interface DatasetDetails {
   locked: boolean;
   readonly: ZfsProperty<OnOff, boolean>;
   mountpoint: string;
+  mounted: ZfsProperty<YesNo, boolean>;
   name: string;
   pool: string;
   type: DatasetType;
@@ -214,5 +217,5 @@ export enum DiskSpaceKey {
   UsedByDataset = 'usedbydataset',
   UsedByChildren = 'usedbychildren',
 }
-export type DiskSpace = { [key in DiskSpaceKey]?: number };
-export type SwatchColors = { [key in DiskSpaceKey]?: { backgroundColor: string } };
+export type DiskSpace = Partial<Record<DiskSpaceKey, number>>;
+export type SwatchColors = Partial<Record<DiskSpaceKey, { backgroundColor: string }>>;

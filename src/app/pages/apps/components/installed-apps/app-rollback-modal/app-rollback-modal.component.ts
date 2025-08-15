@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -44,6 +42,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AppRollbackModalComponent {
+  private dialogRef = inject<MatDialogRef<AppRollbackModalComponent>>(MatDialogRef);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private app = inject<App>(MAT_DIALOG_DATA);
+
   form = this.formBuilder.group({
     app_version: ['', Validators.required],
     rollback_snapshot: [false],
@@ -54,15 +60,7 @@ export class AppRollbackModalComponent {
   readonly helptext = helptextApps.apps.rollbackDialog.version.tooltip;
   protected readonly requiredRoles = [Role.AppsWrite];
 
-  constructor(
-    private dialogRef: MatDialogRef<AppRollbackModalComponent>,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private formBuilder: FormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    @Inject(MAT_DIALOG_DATA) private app: App,
-  ) {
+  constructor() {
     this.setVersionOptions();
   }
 

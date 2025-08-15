@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -50,6 +48,13 @@ import { SchedulerPreviewColumnComponent } from './scheduler-preview-column/sche
   ],
 })
 export class SchedulerModalComponent implements OnInit {
+  private dialogRef = inject<MatDialogRef<SchedulerModalComponent>>(MatDialogRef);
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private validators = inject(CrontabPartValidatorService);
+  private store$ = inject<Store<AppState>>(Store);
+  config = inject<SchedulerModalConfig>(MAT_DIALOG_DATA);
+
   protected form = this.formBuilder.group({
     preset: [''],
     minutes: ['', [Validators.required, this.validators.crontabPartValidator(CrontabPart.Minutes)]],
@@ -113,15 +118,6 @@ export class SchedulerModalComponent implements OnInit {
   readonly hasOrConditionExplanation$ = this.form.select((values) => {
     return !this.areAllWeekdaysSelected && values.days !== '*';
   });
-
-  constructor(
-    private dialogRef: MatDialogRef<SchedulerModalComponent>,
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private validators: CrontabPartValidatorService,
-    private store$: Store<AppState>,
-    @Inject(MAT_DIALOG_DATA) public config: SchedulerModalConfig,
-  ) {}
 
   ngOnInit(): void {
     this.dialogRef.addPanelClass('scheduler-modal');

@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  computed,
-  effect,
-  input,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -46,6 +40,7 @@ import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-vali
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { defaultHomePath, UserFormStore } from 'app/pages/credentials/new-users/user-form/user.store';
+import { SudoCommandsValidatorService } from 'app/pages/credentials/new-users/user-form/validators/sudo-commands-validator.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
@@ -72,9 +67,22 @@ import { StorageService } from 'app/services/storage.service';
     TestDirective,
     ExplorerCreateDatasetComponent,
   ],
+  providers: [
+    SudoCommandsValidatorService,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdditionalDetailsSectionComponent implements OnInit {
+  private storageService = inject(StorageService);
+  private filesystemService = inject(FilesystemService);
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private userFormStore = inject(UserFormStore);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private sudoCommandsValidator = inject(SudoCommandsValidatorService);
+
   editingUser = input<User>();
   protected username = computed(() => this.userFormStore?.userConfig().username ?? '');
   protected sshAccess = this.userFormStore.sshAccess;
@@ -142,24 +150,15 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     uid: [null as number],
     shell: [null as string | null],
 
-    sudo_commands: [[] as string[]],
+    sudo_commands: [[] as string[], this.sudoCommandsValidator.validate],
     sudo_commands_all: [false],
-    sudo_commands_nopasswd: [[] as string[]],
+    sudo_commands_nopasswd: [[] as string[], this.sudoCommandsValidator.validate],
     sudo_commands_nopasswd_all: [false],
   });
 
   shellOptions$: Observable<Option[]>;
 
-  constructor(
-    private storageService: StorageService,
-    private filesystemService: FilesystemService,
-    private fb: FormBuilder,
-    private api: ApiService,
-    private userFormStore: UserFormStore,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     this.form.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -277,6 +276,22 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.resolveGroupNames(Array.from(ids));
   }
 
+  protected getSudoCommands(): string {
+    if (this.form.controls.sudo_commands_all.value) {
+      return allCommands;
+    }
+
+    return this.form.controls.sudo_commands.value?.join(', ') || '';
+  }
+
+  protected getSudoCommandsNoPasswd(): string {
+    if (this.form.controls.sudo_commands_nopasswd_all.value) {
+      return allCommands;
+    }
+
+    return this.form.controls.sudo_commands_nopasswd.value?.join(', ') || '';
+  }
+
   private resolveGroupNames(ids: number[]): void {
     const missingIds = ids.filter((groupId) => !this.groupNameCache.has(groupId));
     if (!missingIds.length) {
@@ -299,6 +314,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   private setupEditUserForm(user: User): void {
     const auxGroups = user.groups.filter((id) => id !== user.group?.id);
+    const allSudoCommands = user.sudo_commands.includes(allCommands);
+    const allSudoCommandsNoPasswd = user.sudo_commands_nopasswd.includes(allCommands);
 
     this.form.patchValue({
       full_name: user.full_name,
@@ -308,10 +325,10 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       uid: user.uid,
       group: user.group?.id,
       shell: user.shell,
-      sudo_commands: this.form.value.sudo_commands_all ? [allCommands] : this.form.value.sudo_commands,
-      sudo_commands_nopasswd: this.form.value.sudo_commands_nopasswd_all
-        ? [allCommands]
-        : this.form.value.sudo_commands_nopasswd,
+      sudo_commands_all: allSudoCommands,
+      sudo_commands: allSudoCommands ? [] : user.sudo_commands,
+      sudo_commands_nopasswd_all: allSudoCommandsNoPasswd,
+      sudo_commands_nopasswd: allSudoCommandsNoPasswd ? [] : user.sudo_commands_nopasswd,
     });
 
     this.form.controls.uid.disable();

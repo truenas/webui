@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -50,6 +50,19 @@ import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
   ],
 })
 export class FailoverFormComponent {
+  slideInRef = inject<SlideInRef<FailoverConfig, boolean>>(SlideInRef);
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private store$ = inject(Store);
+  private authService = inject(AuthService);
+  private wsHandler = inject(WebSocketHandlerService);
+  private router = inject(Router);
+
   protected form = this.formBuilder.group({
     enabled: [false],
     master: [true],
@@ -68,20 +81,7 @@ export class FailoverFormComponent {
     }),
   );
 
-  constructor(
-    public slideInRef: SlideInRef<FailoverConfig, boolean>,
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private store$: Store,
-    private authService: AuthService,
-    private wsHandler: WebSocketHandlerService,
-    private router: Router,
-  ) {
+  constructor() {
     const config = this.slideInRef.getData();
 
     this.form.patchValue({

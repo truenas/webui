@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -25,6 +25,10 @@ const disabledValue = 'disabled';
   ],
 })
 export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private validators = inject(IxValidatorsService);
+
   form = this.formBuilder.nonNullable.group({
     host: ['', Validators.required],
     port: [162],
@@ -105,14 +109,6 @@ export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
 
   get isV3(): boolean {
     return this.form.controls.v3.value;
-  }
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private validators: IxValidatorsService,
-  ) {
-    super();
   }
 
   override setValues(values: AlertServiceEdit['attributes']): void {

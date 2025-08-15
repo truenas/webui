@@ -1,11 +1,5 @@
 import { CdkVirtualScrollViewport, CdkFixedSizeVirtualScroll, CdkVirtualForOf } from '@angular/cdk/scrolling';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -40,6 +34,11 @@ import { ReportsService } from './reports.service';
   ],
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private layoutService = inject(LayoutService);
+  private reportsService = inject(ReportsService);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly searchableElements = reportingElements;
 
   scrollContainer: HTMLElement | null;
@@ -50,13 +49,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   activeReports: Report[] = [];
   visibleReports: number[] = [];
   allTabs: ReportTab[];
-
-  constructor(
-    private route: ActivatedRoute,
-    private layoutService: LayoutService,
-    private reportsService: ReportsService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     this.scrollContainer = this.layoutService.getContentContainer();

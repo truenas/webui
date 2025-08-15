@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -37,12 +35,10 @@ import {
   ],
 })
 export class AddSubsystemNamespacesComponent {
-  namespacesControl = input.required<FormControl<NamespaceChanges[]>>();
+  private slideIn = inject(SlideIn);
+  private cdr = inject(ChangeDetectorRef);
 
-  constructor(
-    private slideIn: SlideIn,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  namespacesControl = input.required<FormControl<NamespaceChanges[]>>();
 
   protected get namespaces(): NamespaceChanges[] {
     return this.namespacesControl()?.value || [];

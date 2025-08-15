@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -38,17 +36,15 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DeleteNamespaceDialogComponent {
-  readonly removeFileControl = new FormControl(false);
+  private dialogRef = inject<MatDialogRef<DeleteNamespaceDialogComponent>>(MatDialogRef);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  protected namespace = inject<NvmeOfNamespace>(MAT_DIALOG_DATA);
 
-  constructor(
-    private dialogRef: MatDialogRef<DeleteNamespaceDialogComponent>,
-    private api: ApiService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    @Inject(MAT_DIALOG_DATA) protected namespace: NvmeOfNamespace,
-  ) {}
+  readonly removeFileControl = new FormControl(false);
 
   protected get isFile(): boolean {
     return this.namespace.device_type === NvmeOfNamespaceType.File;

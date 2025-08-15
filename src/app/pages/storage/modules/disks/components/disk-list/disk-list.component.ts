@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -77,6 +75,14 @@ interface DiskUi extends Disk {
   ],
 })
 export class DiskListComponent implements OnInit {
+  private api = inject(ApiService);
+  private router = inject(Router);
+  private matDialog = inject(MatDialog);
+  private translate = inject(TranslateService);
+  private slideIn = inject(SlideIn);
+  protected emptyService = inject(EmptyService);
+  private cdr = inject(ChangeDetectorRef);
+
   protected readonly requiredRoles = [Role.DiskWrite];
   protected readonly searchableElements = diskListElements;
 
@@ -210,16 +216,6 @@ export class DiskListComponent implements OnInit {
     }
     return this.emptyService.defaultEmptyConfig(type);
   }
-
-  constructor(
-    private api: ApiService,
-    private router: Router,
-    private matDialog: MatDialog,
-    private translate: TranslateService,
-    private slideIn: SlideIn,
-    protected emptyService: EmptyService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnInit(): void {
     const request$ = forkJoin([

@@ -1,15 +1,15 @@
-import {
-  Directive, input, TemplateRef,
-} from '@angular/core';
+import { Directive, input, TemplateRef, inject } from '@angular/core';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
 
 @Directive({
   selector: '[ix-table-details-row]',
 })
 export class IxTableDetailsRowDirective<T> {
-  readonly dataProvider = input.required<DataProvider<T>>();
+  templateRef = inject<TemplateRef<{
+    $implicit: T;
+  }>>(TemplateRef);
 
-  constructor(public templateRef: TemplateRef<{ $implicit: T }>) {}
+  readonly dataProvider = input.required<DataProvider<T>>();
 
   static ngTemplateContextGuard<T>(
     dir: IxTableDetailsRowDirective<T>,

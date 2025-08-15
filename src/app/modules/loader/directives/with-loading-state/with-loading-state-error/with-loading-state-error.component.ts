@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
@@ -11,12 +9,10 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   imports: [TranslateModule],
 })
 export class WithLoadingStateErrorComponent {
-  readonly error = input<unknown>();
+  private errorParser = inject(ErrorParserService);
+  private translate = inject(TranslateService);
 
-  constructor(
-    private errorParser: ErrorParserService,
-    private translate: TranslateService,
-  ) {}
+  readonly error = input<unknown>();
 
   protected errorMessage = computed(() => {
     return this.errorParser.getFirstErrorMessage(this.error()) || this.translate.instant('Error');

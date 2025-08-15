@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal,
+  AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal, inject,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -98,6 +98,28 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class SmbFormComponent implements OnInit, AfterViewInit {
+  formatter = inject(IxFormatterService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
+  private datasetService = inject(DatasetService);
+  private translate = inject(TranslateService);
+  private router = inject(Router);
+  private userService = inject(UserService);
+  protected loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private filesystemService = inject(FilesystemService);
+  private snackbar = inject(SnackbarService);
+  private validatorsService = inject(IxValidatorsService);
+  private store$ = inject<Store<ServicesState>>(Store);
+  private smbValidationService = inject(SmbValidationService);
+  slideInRef = inject<SlideInRef<{
+    existingSmbShare?: SmbShare;
+    defaultSmbShare?: SmbShare;
+  } | undefined, boolean>>(SlideInRef);
+
   private existingSmbShare: SmbShare | undefined;
   private defaultSmbShare: SmbShare | undefined;
 
@@ -261,26 +283,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     ]],
   });
 
-  constructor(
-    public formatter: IxFormatterService,
-    private formBuilder: NonNullableFormBuilder,
-    private api: ApiService,
-    private matDialog: MatDialog,
-    private dialogService: DialogService,
-    private datasetService: DatasetService,
-    private translate: TranslateService,
-    private router: Router,
-    private userService: UserService,
-    protected loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
-    private filesystemService: FilesystemService,
-    private snackbar: SnackbarService,
-    private validatorsService: IxValidatorsService,
-    private store$: Store<ServicesState>,
-    private smbValidationService: SmbValidationService,
-    public slideInRef: SlideInRef<{ existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare } | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -350,7 +353,18 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private setupMangleWarning(): void {
     this.form.controls.aapl_name_mangling.valueChanges.pipe(
       filter((value) => {
-        return value !== (this.existingSmbShare?.options as LegacySmbShareOptions)?.aapl_name_mangling && !this.isNew;
+        if (this.isNew) {
+          return false;
+        }
+
+        // Check if the original share purpose supported aapl_name_mangling
+        const originalPurpose = this.existingSmbShare?.purpose;
+        const originalSupportedFields = originalPurpose ? presetEnabledFields[originalPurpose] : [];
+        const wasFieldSupported = originalSupportedFields?.includes('aapl_name_mangling') ?? false;
+
+        // Only show warning if the field was supported in the original purpose and the value actually changed
+        return wasFieldSupported
+          && value !== (this.existingSmbShare?.options as LegacySmbShareOptions)?.aapl_name_mangling;
       }),
       take(1),
       switchMap(() => this.dialogService.confirm({
@@ -380,12 +394,34 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private setupPathControl(): void {
     this.form.controls.path.valueChanges.pipe(
       debounceTime(50),
-      tap(() => this.setNameFromPath()),
+      tap(() => {
+        const pathValue = this.form.controls.path.value?.toUpperCase() || '';
+
+        // Check if path is external (starts with EXTERNAL or matches IP\SHARE pattern)
+        if (this.isExternalPath(pathValue)) {
+          this.form.controls.purpose.setValue(SmbSharePurpose.ExternalShare);
+        }
+
+        this.setNameFromPath();
+      }),
       untilDestroyed(this),
     )
       .subscribe((path) => {
         this.checkAndShowStripAclWarning(path, this.form.controls.acl.value);
       });
+  }
+
+  private isExternalPath(path: string): boolean {
+    if (!path) return false;
+
+    // Check if path starts with EXTERNAL (case insensitive)
+    if (path.toUpperCase().startsWith(externalSmbSharePath.toUpperCase())) {
+      return true;
+    }
+
+    // Check if path matches IP\SHARE pattern (e.g., 192.168.0.200\SHARE)
+    const ipSharePattern = /^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\\[^\\]+$/;
+    return ipSharePattern.test(path);
   }
 
   private setupAfpWarning(): void {
@@ -421,7 +457,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         return;
       }
 
-      nameControl.setValue(name);
+      nameControl.setValue(name.toLowerCase());
       nameControl.markAsTouched();
     }
   }
@@ -431,7 +467,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       this.wasStripAclWarningShown
       || !path
       || aclValue
-      || this.form.controls.purpose.value !== SmbSharePurpose.LegacyShare
+      || this.form.controls.purpose.value === SmbSharePurpose.ExternalShare
+      || this.isExternalPath(path)
     ) {
       return;
     }
@@ -682,7 +719,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     const sharePath: string = this.form.controls.path.value;
     const datasetId = sharePath.replace('/mnt/', '');
 
-    if (this.form.controls.purpose.value !== SmbSharePurpose.LegacyShare) {
+    if (
+      this.form.controls.purpose.value === SmbSharePurpose.ExternalShare
+      || this.isExternalPath(sharePath)
+    ) {
       return of(false);
     }
 
@@ -714,10 +754,9 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   private updateExtensionsWarning(): void {
-    const shouldShow = !this.smbConfig().aapl_extensions
-      && this.form.controls.purpose.value === SmbSharePurpose.TimeMachineShare;
-
-    this.showExtensionsWarning.set(shouldShow);
+    this.showExtensionsWarning.set(
+      !this.smbConfig()?.aapl_extensions && this.form.controls.purpose.value === SmbSharePurpose.TimeMachineShare,
+    );
   }
 
   private loadSmbConfig(): void {

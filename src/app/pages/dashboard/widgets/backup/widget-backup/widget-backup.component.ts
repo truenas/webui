@@ -1,8 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction, input, inject } from '@angular/core';
 import { MatIconAnchor } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
@@ -68,6 +65,11 @@ interface BackupRow {
   ],
 })
 export class WidgetBackupComponent implements OnInit {
+  translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private slideIn = inject(SlideIn);
+  private widgetResourcesService = inject(WidgetResourcesService);
+
   size = input.required<SlotSize>();
 
   readonly name = backupTasksWidget.name;
@@ -119,13 +121,6 @@ export class WidgetBackupComponent implements OnInit {
   get hasSendTasks(): boolean {
     return this.backups.some((backup) => this.isSendTask(backup));
   }
-
-  constructor(
-    public translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private slideIn: SlideIn,
-    private widgetResourcesService: WidgetResourcesService,
-  ) {}
 
   ngOnInit(): void {
     this.getBackups();

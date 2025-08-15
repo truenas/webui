@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -50,21 +48,19 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   ],
 })
 export class NetworkConfigurationCardComponent implements OnInit {
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private slideIn = inject(SlideIn);
+  private searchDirectives = inject(UiSearchDirectivesService);
+  private actions$ = inject(Actions);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly networkConfigurationCardElements = networkConfigurationCardElements;
 
   summary: NetworkSummary;
   config: NetworkConfiguration;
   isLoading = false;
-
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private slideIn: SlideIn,
-    private searchDirectives: UiSearchDirectivesService,
-    private actions$: Actions,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     this.loadNetworkConfigAndSummary();

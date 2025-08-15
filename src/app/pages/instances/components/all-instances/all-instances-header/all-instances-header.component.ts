@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -49,6 +49,11 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   ],
 })
 export class AllInstancesHeaderComponent {
+  private slideIn = inject(SlideIn);
+  private matDialog = inject(MatDialog);
+  private configStore = inject(VirtualizationConfigStore);
+  private instanceStore = inject(VirtualizationInstancesStore);
+
   protected readonly state = this.configStore.virtualizationState;
 
   protected readonly searchableElements = allInstancesHeaderElements;
@@ -64,13 +69,6 @@ export class AllInstancesHeaderComponent {
     // to communicate current state to the user better.
     return state && [VirtualizationGlobalState.Initializing, VirtualizationGlobalState.Initialized].includes(state);
   });
-
-  constructor(
-    private slideIn: SlideIn,
-    private matDialog: MatDialog,
-    private configStore: VirtualizationConfigStore,
-    private instanceStore: VirtualizationInstancesStore,
-  ) {}
 
   protected onGlobalConfiguration(): void {
     this.slideIn

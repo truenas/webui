@@ -32,7 +32,7 @@ export const helptextTopbar = {
     saveButton: T('Save'),
     apiKey: T('API Key'),
     apiTooltip: T('Enter or paste the API key provided from \
-<a href="https://portal.ixsystems.com/portal/login/" target="_blank">iXsystems Account Services</a>. \
+<a href="https://portal.truenas.com/portal/login/" target="_blank">TrueNAS Account Services</a>. \
 Login or signup is required.'),
     enabledLabel: T('Enable'),
     enabledTooltip: T('Immediately connect to TrueCommand.'),

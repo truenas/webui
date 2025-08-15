@@ -1,6 +1,4 @@
-import {
-  AfterViewInit, ChangeDetectionStrategy, Component, computed, signal,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -31,6 +29,10 @@ import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-
   ],
 })
 export class ExplorerCreateZvolComponent implements AfterViewInit {
+  private explorer = inject(IxExplorerComponent);
+  private slideIn = inject(SlideIn);
+  private ngControl = inject(NgControl);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   protected isButtonDisabled = computed(() => {
@@ -40,12 +42,6 @@ export class ExplorerCreateZvolComponent implements AfterViewInit {
   });
 
   protected explorerValue = signal<string | string[]>('');
-
-  constructor(
-    private explorer: IxExplorerComponent,
-    private slideIn: SlideIn,
-    private ngControl: NgControl,
-  ) {}
 
   ngAfterViewInit(): void {
     // TODO: Unclear why this is needed, but control in `ngControl` is empty for some reason in constructor.

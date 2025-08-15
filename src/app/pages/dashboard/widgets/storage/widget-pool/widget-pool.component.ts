@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, inject } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -44,6 +42,9 @@ import { PoolUsageGaugeComponent } from './common/pool-usage-gauge/pool-usage-ga
   ],
 })
 export class WidgetPoolComponent implements WidgetComponent {
+  private resources = inject(WidgetResourcesService);
+  private cdr = inject(ChangeDetectorRef);
+
   size = input.required<SlotSize>();
   settings = input.required<WidgetPoolSettings>();
   poolExists = true;
@@ -62,9 +63,4 @@ export class WidgetPoolComponent implements WidgetComponent {
   ));
 
   readonly name = poolWidget.name;
-
-  constructor(
-    private resources: WidgetResourcesService,
-    private cdr: ChangeDetectorRef,
-  ) {}
 }

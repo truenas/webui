@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -9,12 +9,12 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   providedIn: 'root',
 })
 export class AuthGuardService {
+  private router = inject(Router);
+  private wsStatus = inject(WebSocketStatusService);
+  private window = inject<Window>(WINDOW);
+
   isAuthenticated = false;
-  constructor(
-    private router: Router,
-    private wsStatus: WebSocketStatusService,
-    @Inject(WINDOW) private window: Window,
-  ) {
+  constructor() {
     this.wsStatus.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isLoggedIn) => {
       this.isAuthenticated = isLoggedIn;
     });

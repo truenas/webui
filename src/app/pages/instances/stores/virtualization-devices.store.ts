@@ -1,4 +1,4 @@
-import { computed, Injectable } from '@angular/core';
+import { computed, Injectable, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
@@ -25,14 +25,14 @@ const initialState: VirtualizationInstanceDeviceState = {
 @UntilDestroy()
 @Injectable()
 export class VirtualizationDevicesStore extends ComponentStore<VirtualizationInstanceDeviceState> {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private instanceStore = inject(VirtualizationInstancesStore);
+
   readonly isLoading = computed(() => this.state().isLoading);
   readonly devices = computed(() => this.state().devices);
   private readonly selectedInstance = this.instanceStore.selectedInstance;
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private instanceStore: VirtualizationInstancesStore,
-  ) {
+  constructor() {
     super(initialState);
     toObservable(this.selectedInstance).pipe(
       tap((instance) => {

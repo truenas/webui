@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -41,6 +39,9 @@ import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-se
   ],
 })
 export class SystemSecurityCardComponent {
+  private slideIn = inject(SlideIn);
+  private api = inject(ApiService);
+
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly requiredRoles = [Role.SystemSecurityWrite];
   readonly systemSecurityConfig$ = this.reloadConfig$.pipe(
@@ -53,11 +54,6 @@ export class SystemSecurityCardComponent {
   );
 
   protected readonly rulesetLabels = passwordComplexityRulesetLabels;
-
-  constructor(
-    private slideIn: SlideIn,
-    private api: ApiService,
-  ) {}
 
   openSystemSecuritySettings(config: SystemSecurityConfig): void {
     this.slideIn.open(SystemSecurityFormComponent, { data: config }).pipe(

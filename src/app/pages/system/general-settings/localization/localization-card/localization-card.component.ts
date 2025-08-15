@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -52,6 +50,11 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   ],
 })
 export class LocalizationCardComponent {
+  localeService = inject(LocaleService);
+  private store$ = inject<Store<AppState>>(Store);
+  private slideIn = inject(SlideIn);
+  private sysGeneralService = inject(SystemGeneralService);
+
   protected readonly searchableElements = localizationCardElements;
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
   protected readonly languages = languages;
@@ -77,13 +80,6 @@ export class LocalizationCardComponent {
   ));
 
   readonly helptext = helptext;
-
-  constructor(
-    public localeService: LocaleService,
-    private store$: Store<AppState>,
-    private slideIn: SlideIn,
-    private sysGeneralService: SystemGeneralService,
-  ) {}
 
   getKeyboardMapValue(mapChoices: Option[], config: SystemGeneralConfig): string {
     const keyboardMap = mapChoices.find((option) => option.value === config.kbdmap);

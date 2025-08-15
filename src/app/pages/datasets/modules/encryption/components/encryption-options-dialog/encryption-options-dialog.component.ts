@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -66,6 +64,17 @@ enum EncryptionType {
   ],
 })
 export class EncryptionOptionsDialog implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private dialog = inject(DialogService);
+  private dialogRef = inject<MatDialogRef<EncryptionOptionsDialog>>(MatDialogRef);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  data = inject<EncryptionOptionsDialogData>(MAT_DIALOG_DATA);
+
   form = this.fb.group({
     inherit_encryption: [false],
     encryption_type: new FormControl(null as EncryptionType | null),
@@ -102,19 +111,6 @@ export class EncryptionOptionsDialog implements OnInit {
   readonly encryptionTypeOptions$ = of(helptextDatasetForm.encryption.typeOptions);
 
   protected readonly Role = Role;
-
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-    private loader: LoaderService,
-    private dialog: DialogService,
-    private dialogRef: MatDialogRef<EncryptionOptionsDialog>,
-    private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    @Inject(MAT_DIALOG_DATA) public data: EncryptionOptionsDialogData,
-  ) {}
 
   get canInherit(): boolean {
     return this.data.parent?.encrypted;

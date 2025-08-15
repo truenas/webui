@@ -1,7 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -36,19 +33,15 @@ import {
   ],
 })
 export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
+  private formBuilder = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+
   private readonly oauthComponent = viewChild.required(OauthProviderComponent);
 
   form = this.formBuilder.group({
     token: ['', Validators.required],
     team_drive: [''],
   });
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
-  ) {
-    super();
-  }
 
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {

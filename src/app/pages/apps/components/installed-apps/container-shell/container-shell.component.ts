@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
@@ -17,6 +17,8 @@ import { TerminalComponent } from 'app/modules/terminal/components/terminal/term
   ],
 })
 export class ContainerShellComponent implements TerminalConfiguration {
+  private aroute = inject(ActivatedRoute);
+
   reconnectShell$ = new Subject<void>();
 
   protected appName: string;
@@ -29,10 +31,6 @@ export class ContainerShellComponent implements TerminalConfiguration {
       command: '/bin/sh',
     };
   }
-
-  constructor(
-    private aroute: ActivatedRoute,
-  ) {}
 
   preInit(): Observable<void> {
     return new Observable<void>((subscriber: Subscriber<void>) => {

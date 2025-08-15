@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -82,6 +80,19 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ZvolFormComponent implements OnInit {
+  formatter = inject(IxFormatterService);
+  private translate = inject(TranslateService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private cdr = inject(ChangeDetectorRef);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
+  slideInRef = inject<SlideInRef<{
+    isNew: boolean;
+    parentOrZvolId: string;
+  }, Dataset>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   get title(): string {
@@ -185,18 +196,7 @@ export class ZvolFormComponent implements OnInit {
     map((algorithms) => Object.keys(algorithms).map((algorithm) => ({ label: algorithm, value: algorithm }))),
   );
 
-  constructor(
-    public formatter: IxFormatterService,
-    private translate: TranslateService,
-    private formBuilder: NonNullableFormBuilder,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
-    private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    // TODO: Separate parentId and zvolId
-    public slideInRef: SlideInRef<{ isNew: boolean; parentOrZvolId: string }, Dataset>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -524,7 +524,7 @@ export class ZvolFormComponent implements OnInit {
 
   private addSubmit(): void {
     this.isLoading.set(true);
-    const data: ZvolFormData = this.getPayload(this.form.value);
+    const data: ZvolFormData = this.getPayload(this.form.getRawValue());
 
     if (data.sync === inherit) {
       delete data.sync;
@@ -555,7 +555,13 @@ export class ZvolFormComponent implements OnInit {
 
     // encryption values
     if (data.inherit_encryption) {
-      delete data.encryption;
+      // When inheriting encryption from an encrypted parent, we must still specify encryption: true
+      // to avoid backend error: "Cannot create an unencrypted dataset within an encrypted dataset"
+      if (this.encryptedParent) {
+        data.encryption = true;
+      } else {
+        delete data.encryption;
+      }
     } else if (data.encryption) {
       data.encryption_options = {};
       if (data.encryption_type === 'key') {
@@ -591,7 +597,7 @@ export class ZvolFormComponent implements OnInit {
     this.isLoading.set(true);
     this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId]]]).pipe(untilDestroyed(this)).subscribe({
       next: (datasets) => {
-        const data: ZvolFormData = this.getPayload(this.form.value);
+        const data: ZvolFormData = this.getPayload(this.form.getRawValue());
 
         if (data.inherit_encryption) {
           delete data.encryption;

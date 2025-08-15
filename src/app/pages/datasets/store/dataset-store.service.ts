@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY, Observable } from 'rxjs';
 import {
@@ -26,6 +26,8 @@ const initialState: DatasetTreeState = {
   providedIn: 'root',
 })
 export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
+  private api = inject(ApiService);
+
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly error$ = this.select((state) => state.error);
   readonly datasets$ = this.select((state) => state.datasets);
@@ -108,9 +110,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
     };
   });
 
-  constructor(
-    private api: ApiService,
-  ) {
+  constructor() {
     super(initialState);
   }
 }

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
@@ -36,19 +34,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class StaticRouteDeleteDialog {
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private dialogRef = inject<MatDialogRef<StaticRouteDeleteDialog>>(MatDialogRef);
+  route = inject<StaticRoute>(MAT_DIALOG_DATA);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   readonly deleteMessage = T('Are you sure you want to delete static route <b>"{name}"</b>?');
-
-  constructor(
-    private loader: LoaderService,
-    private api: ApiService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private dialogRef: MatDialogRef<StaticRouteDeleteDialog>,
-    @Inject(MAT_DIALOG_DATA) public route: StaticRoute,
-    private errorHandler: ErrorHandlerService,
-  ) { }
 
   onDelete(): void {
     this.api.call('staticroute.delete', [this.route.id])

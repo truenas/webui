@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -42,15 +40,13 @@ export interface StopVmDialogData {
   ],
 })
 export class StopVmDialogComponent {
+  private dialogRef = inject<MatDialogRef<StopVmDialogComponent, StopVmDialogData>>(MatDialogRef);
+  vm = inject<VirtualMachine>(MAT_DIALOG_DATA);
+
   forceAfterTimeoutCheckbox = new FormControl(false, { nonNullable: true });
   protected readonly requiredRoles = [Role.VmWrite];
 
   readonly helptext = helptextVmList;
-
-  constructor(
-    private dialogRef: MatDialogRef<StopVmDialogComponent, StopVmDialogData>,
-    @Inject(MAT_DIALOG_DATA) public vm: VirtualMachine,
-  ) { }
 
   onStop(): void {
     this.dialogRef.close({

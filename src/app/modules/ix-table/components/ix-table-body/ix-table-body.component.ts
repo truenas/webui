@@ -1,15 +1,7 @@
 import {
   NgStyle, NgClass, NgTemplateOutlet, AsyncPipe,
 } from '@angular/common';
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  ChangeDetectionStrategy,
-  Component,
-  contentChildren,
-  contentChild,
-  TemplateRef, output, input,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, contentChildren, contentChild, TemplateRef, output, input, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -46,6 +38,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxTableBodyComponent<T> implements AfterViewInit {
+  private cdr = inject(ChangeDetectorRef);
+
   readonly columns = input<Column<T, ColumnComponent<T>>[]>([]);
   readonly dataProvider = input.required<DataProvider<T>>();
   readonly isLoading = input(false);
@@ -64,8 +58,6 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   get detailsTemplate(): TemplateRef<{ $implicit: T }> | undefined {
     return this.detailsRow()?.templateRef;
   }
-
-  constructor(private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
     const templatedCellIndexes = this.customCells().map((cell) => cell.columnIndex());

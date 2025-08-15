@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogClose, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
@@ -46,6 +44,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class SelectPoolDialog implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private dialogService = inject(DialogService);
+  private appService = inject(ApplicationsService);
+  private router = inject(Router);
+  private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
+  private translate = inject(TranslateService);
+  private dialogRef = inject<MatDialogRef<SelectPoolDialog>>(MatDialogRef);
+  private snackbar = inject(SnackbarService);
+  private dockerStore = inject(DockerStore);
+
   protected readonly requiredRoles = [Role.AppsWrite];
 
   form = this.formBuilder.nonNullable.group({
@@ -60,19 +69,6 @@ export class SelectPoolDialog implements OnInit {
     const selected = this.form.value.pool;
     return !!this.selectedPoolName && selected && selected !== this.selectedPoolName;
   }
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private dialogService: DialogService,
-    private appService: ApplicationsService,
-    private router: Router,
-    private errorHandler: ErrorHandlerService,
-    private loader: LoaderService,
-    private translate: TranslateService,
-    private dialogRef: MatDialogRef<SelectPoolDialog>,
-    private snackbar: SnackbarService,
-    private dockerStore: DockerStore,
-  ) { }
 
   ngOnInit(): void {
     this.loadPools();

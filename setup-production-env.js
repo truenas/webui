@@ -2,8 +2,6 @@ import fs from "fs";
 
 const productionFilePath = './src/environments/environment.prod.ts';
 const productionFileContent = `import { enableProdMode } from '@angular/core';
-import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
-import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { sentryPublicDsn } from 'environments/sentry-public-dns.const';
 import { WebUiEnvironment, environmentVersion, remote } from './environment.interface';
 
@@ -13,16 +11,24 @@ export const environment: WebUiEnvironment = {
   buildYear: ${new Date().getFullYear()},
   production: true,
   sentryPublicDsn,
-  mockConfig: {
+  debugPanel: {
     enabled: false,
-    controllerModel: EnclosureModel.M40,
-    expansionModels: [],
-    scenario: MockEnclosureScenario.FillSomeSlots,
+    defaultMessageLimit: 100,
+    mockJobDefaultDelay: 1000,
+    persistMockConfigs: true,
   },
 };
 
 // Production
-enableProdMode();`;
+enableProdMode();
+`;
+const environmentTs = 'src/environments/environment.ts';
+
+
+// ng 7 requires this file to be there even though it replaces it upon runtime
+if(!fs.existsSync(environmentTs)) {
+  fs.closeSync(fs.openSync(environmentTs, 'w'));
+}
 
 function productionFileErrorHandler(err) {
   if(!err) {

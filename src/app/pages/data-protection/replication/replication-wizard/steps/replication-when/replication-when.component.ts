@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges, OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, OnInit, output, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious } from '@angular/material/stepper';
@@ -47,7 +45,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvider {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+
   readonly isCustomRetentionVisible = input(true);
+  readonly isLoading = input(false);
 
   readonly save = output();
 
@@ -89,11 +91,6 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
       ])
       : of(this.defaultRetentionPolicyOptions);
   }
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-  ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.isCustomRetentionVisible && !changes.isCustomRetentionVisible.currentValue) {

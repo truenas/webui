@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, of, OperatorFunction, pipe,
@@ -16,11 +16,10 @@ import { ApiService } from 'app/modules/websocket/api.service';
   providedIn: 'root',
 })
 export class DatasetFormService {
-  constructor(
-    private dialog: DialogService,
-    private api: ApiService,
-    private translate: TranslateService,
-  ) {}
+  private dialog = inject(DialogService);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+
 
   checkAndWarnForLengthAndDepth(path: string): Observable<boolean> {
     return of(!!path).pipe(

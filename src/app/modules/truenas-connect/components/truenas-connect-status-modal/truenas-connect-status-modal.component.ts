@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, Inject, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatDialogTitle, MatDialogContent, MatDialogActions,
@@ -13,7 +11,6 @@ import {
   EMPTY, catchError, finalize, of, switchMap,
 } from 'rxjs';
 import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -43,6 +40,10 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TruenasConnectStatusModalComponent implements OnInit {
+  protected tnc = inject(TruenasConnectService);
+  private dialog = inject(DialogService);
+  private translate = inject(TranslateService);
+
   readonly TruenasConnectStatus = TruenasConnectStatus;
   readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
   readonly TncStatus = TncStatus;
@@ -76,13 +77,6 @@ export class TruenasConnectStatusModalComponent implements OnInit {
     }
   });
 
-  constructor(
-    @Inject(WINDOW) private window: Window,
-    protected tnc: TruenasConnectService,
-    private dialog: DialogService,
-    private translate: TranslateService,
-  ) { }
-
   ngOnInit(): void {
     this.enableServiceIfDisabled();
   }
@@ -107,7 +101,10 @@ export class TruenasConnectStatusModalComponent implements OnInit {
   }
 
   protected open(): void {
-    this.window.open(this.tnc.config()?.tnc_base_url);
+    const baseUrl = this.tnc.config()?.tnc_base_url;
+    if (baseUrl) {
+      this.tnc.openTruenasConnectWindow(baseUrl);
+    }
   }
 
   protected connect(): void {

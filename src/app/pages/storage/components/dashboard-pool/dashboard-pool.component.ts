@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, input,
-  OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -59,6 +56,16 @@ import { StorageHealthCardComponent } from './storage-health-card/storage-health
   ],
 })
 export class DashboardPoolComponent implements OnChanges {
+  private matDialog = inject(MatDialog);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private api = inject(ApiService);
+  private snackbar = inject(SnackbarService);
+  private store = inject(PoolsDashboardStore);
+  private searchDirectives = inject(UiSearchDirectivesService);
+
   readonly pool = input<Pool>();
   readonly rootDataset = input<Dataset>();
   readonly isLoading = input<boolean>();
@@ -66,18 +73,6 @@ export class DashboardPoolComponent implements OnChanges {
 
   protected readonly requiredRoles = [Role.PoolWrite];
   protected readonly searchableElements = dashboardPoolElements;
-
-  constructor(
-    private matDialog: MatDialog,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private loader: LoaderService,
-    private api: ApiService,
-    private snackbar: SnackbarService,
-    private store: PoolsDashboardStore,
-    private searchDirectives: UiSearchDirectivesService,
-  ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.isLoading || !this.isLoading()) {

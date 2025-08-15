@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl, ValidationErrors,
 } from '@angular/forms';
@@ -12,11 +12,10 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   providedIn: 'root',
 })
 export class IsolatedGpuValidatorService {
-  constructor(
-    private translate: TranslateService,
-    private gpuService: GpuService,
-    private validatorsService: IxValidatorsService,
-  ) { }
+  private translate = inject(TranslateService);
+  private gpuService = inject(GpuService);
+  private validatorsService = inject(IxValidatorsService);
+
 
   validateGpu = (control: AbstractControl): Observable<ValidationErrors | null> => {
     return this.gpuService.getAllGpus().pipe(

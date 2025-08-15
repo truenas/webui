@@ -1,11 +1,12 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
   name: 'uptime',
 })
 export class UptimePipe implements PipeTransform {
-  constructor(private translate: TranslateService) {}
+  private translate = inject(TranslateService);
+
 
   transform(uptime: number, dateTime: string): string {
     const days = Math.floor(uptime / (3600 * 24));

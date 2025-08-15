@@ -9,14 +9,17 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { Role } from 'app/enums/role.enum';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User } from 'app/interfaces/user.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxTableExpandableRowComponent,
 } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import { OldDeleteUserDialog } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
@@ -46,7 +49,14 @@ const dummyUser = {
     bsdgrp_group: 'test-user',
   },
   groups: [] as number[],
+  twofactor_auth_configured: true,
 } as User;
+
+const mockLoggedInUser = {
+  pw_name: 'admin',
+  pw_uid: 1000,
+  roles: [Role.FullAdmin],
+};
 
 describe('UserDetailsRowComponent', () => {
   let spectator: Spectator<UserDetailsRowComponent>;
@@ -73,6 +83,7 @@ describe('UserDetailsRowComponent', () => {
           enable_gpos_stig: false,
         } as SystemSecurityConfig),
         mockCall('group.query', []),
+        mockCall('user.unset_2fa_secret'),
       ]),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -80,6 +91,11 @@ describe('UserDetailsRowComponent', () => {
         })),
       }),
       mockAuth(),
+      mockProvider(AuthService, {
+        user$: of(mockLoggedInUser),
+        hasRole: jest.fn(() => of(true)),
+      }),
+      mockProvider(SnackbarService),
       provideMockStore({
         selectors: [
           {
@@ -121,7 +137,7 @@ describe('UserDetailsRowComponent', () => {
   });
 
   it('does not show Delete button for logged in user', async () => {
-    spectator.setInput('user', { ...dummyUser, username: 'root' });
+    spectator.setInput('user', { ...dummyUser, username: 'admin' });
 
     const deleteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: /Delete/ }));
     expect(deleteButton).toBeNull();
@@ -167,5 +183,14 @@ describe('UserDetailsRowComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenLastCalledWith(OneTimePasswordCreatedDialog, {
       data: 'test-password',
     });
+  });
+
+  it('clears two-factor authentication when Clear Two-Factor Authentication is clicked', async () => {
+    const button = await loader.getHarness(MatButtonHarness.with({ text: /Clear Two-Factor Authentication/ }));
+    await button.click();
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(api.call).toHaveBeenCalledWith('user.unset_2fa_secret', [dummyUser.username]);
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Two-Factor Authentication settings cleared');
   });
 });

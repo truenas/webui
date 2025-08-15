@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import {
   FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -76,6 +74,14 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   ],
 })
 export class AppsSettingsComponent implements OnInit {
+  private dockerStore = inject(DockerStore);
+  private api = inject(ApiService);
+  slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
+  private errorHandler = inject(FormErrorHandlerService);
+  private fb = inject(FormBuilder);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+
   protected hasNvidiaCard$ = this.api.call('docker.nvidia_present');
   protected isFormLoading = signal(false);
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
@@ -108,15 +114,7 @@ export class AppsSettingsComponent implements OnInit {
     return this.form.value.secure_registry_mirrors.length + this.form.value.insecure_registry_mirrors.length;
   }
 
-  constructor(
-    private dockerStore: DockerStore,
-    private api: ApiService,
-    public slideInRef: SlideInRef<undefined, boolean>,
-    private errorHandler: FormErrorHandlerService,
-    private fb: FormBuilder,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

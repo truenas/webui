@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component, input,
-  OnChanges,
-  OnInit,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -74,6 +67,16 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class OtherOptionsSectionComponent implements OnInit, OnChanges {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
+  private cdr = inject(ChangeDetectorRef);
+  private systemGeneralService = inject(SystemGeneralService);
+  private dialogService = inject(DialogService);
+  private formatter = inject(IxFormatterService);
+  private api = inject(ApiService);
+  private datasetFormService = inject(DatasetFormService);
+
   readonly parent = input<Dataset>();
   readonly existing = input<Dataset>();
   readonly datasetPreset = input<DatasetPreset>();
@@ -150,18 +153,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   private defaultSpecialSmallBlockSizeOptions$ = of(specialSmallBlockSizeOptions);
 
   readonly helptext = helptextDatasetForm;
-
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private translate: TranslateService,
-    private store$: Store<AppState>,
-    private cdr: ChangeDetectorRef,
-    private systemGeneralService: SystemGeneralService,
-    private dialogService: DialogService,
-    private formatter: IxFormatterService,
-    private api: ApiService,
-    private datasetFormService: DatasetFormService,
-  ) {}
 
   get hasChecksumWarning(): boolean {
     return this.form.value.checksum === DatasetChecksum.Sha256

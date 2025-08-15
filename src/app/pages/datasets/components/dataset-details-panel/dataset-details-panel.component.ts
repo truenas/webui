@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
@@ -55,6 +53,12 @@ import { doesDatasetHaveShares, getDatasetLabel, isIocageMounted } from 'app/pag
   ],
 })
 export class DatasetDetailsPanelComponent {
+  private datasetStore = inject(DatasetTreeStore);
+  private router = inject(Router);
+  private slideIn = inject(SlideIn);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+
   readonly dataset = input.required<DatasetDetails>();
   readonly systemDataset = input<string>();
 
@@ -62,14 +66,6 @@ export class DatasetDetailsPanelComponent {
   protected readonly searchableElements = datasetDetailsPanelElements;
 
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
-
-  constructor(
-    private datasetStore: DatasetTreeStore,
-    private router: Router,
-    private slideIn: SlideIn,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-  ) { }
 
   protected readonly hasRoles = computed(() => {
     return this.dataset().type === DatasetType.Filesystem && !isIocageMounted(this.dataset());

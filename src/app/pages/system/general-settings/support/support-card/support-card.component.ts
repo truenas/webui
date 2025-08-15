@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -77,6 +74,16 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class SupportCardComponent implements OnInit {
+  protected api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private matDialog = inject(MatDialog);
+  private slideIn = inject(SlideIn);
+  private store$ = inject<Store<AppState>>(Store);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
+
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly Role = Role;
   protected readonly searchableElements = supportCardElements;
@@ -94,18 +101,6 @@ export class SupportCardComponent implements OnInit {
   get licenseButtonText(): string {
     return this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
   }
-
-  constructor(
-    protected api: ApiService,
-    private loader: LoaderService,
-    private matDialog: MatDialog,
-    private slideIn: SlideIn,
-    private store$: Store<AppState>,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {

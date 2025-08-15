@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
@@ -43,21 +43,19 @@ type TicketLicensedData = ReturnType<FileTicketLicensedComponent['form']['getRaw
   providedIn: 'root',
 })
 export class FeedbackService {
+  private httpClient = inject(HttpClient);
+  private api = inject(ApiService);
+  private store$ = inject<Store<AppState>>(Store);
+  private systemGeneralService = inject(SystemGeneralService);
+  private sentryService = inject(SentryConfigurationService);
+  private fileUpload = inject(UploadService);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  private window = inject<Window>(WINDOW);
+
   private readonly hostname = 'https://feedback.ui.truenas.com';
   private isFeedbackAllowed: boolean | undefined;
-
-  constructor(
-    private httpClient: HttpClient,
-    private api: ApiService,
-    private store$: Store<AppState>,
-    private systemGeneralService: SystemGeneralService,
-    private sentryService: SentryConfigurationService,
-    private fileUpload: UploadService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private dialogService: DialogService,
-    @Inject(WINDOW) private window: Window,
-  ) {}
 
   createReview(data: ReviewData): Observable<unknown> {
     return this.prepareReview(data).pipe(

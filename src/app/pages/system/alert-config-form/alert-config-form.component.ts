@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -55,6 +52,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AlertConfigFormComponent implements OnInit {
+  private api = inject(ApiService);
+  dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  protected translate = inject(TranslateService);
+  private snackbarService = inject(SnackbarService);
+  private formBuilder = inject(FormBuilder);
+
   protected readonly requiredRoles = [Role.AlertWrite];
 
   noResponseConfig = {
@@ -85,15 +89,6 @@ export class AlertConfigFormComponent implements OnInit {
     }),
   );
 
-  constructor(
-    private api: ApiService,
-    public dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    protected translate: TranslateService,
-    private snackbarService: SnackbarService,
-    private formBuilder: FormBuilder,
-  ) {}
-
   ngOnInit(): void {
     this.isFormLoading.set(true);
 
@@ -116,9 +111,7 @@ export class AlertConfigFormComponent implements OnInit {
                 level: cls.level,
                 policy: AlertPolicy.Immediately,
               }));
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               this.form.controls[cls.id].controls.level.defaultValue = cls.level;
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               this.form.controls[cls.id].controls.policy.defaultValue = AlertPolicy.Immediately;
             });
           });

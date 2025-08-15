@@ -79,6 +79,7 @@ describe('EmailFormComponent', () => {
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.CommunityEdition,
       }),
+      mockAuth(),
       mockWindow({
         open: jest.fn(),
         location: {
@@ -99,7 +100,6 @@ describe('EmailFormComponent', () => {
         removeEventListener: jest.fn(),
       }),
       mockProvider(SlideInRef, slideInRef),
-      mockAuth(),
     ],
   });
 

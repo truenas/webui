@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -41,6 +39,14 @@ import { DatasetService } from 'app/services/dataset/dataset.service';
   ],
 })
 export class ReplicationRestoreDialog {
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private formBuilder = inject(FormBuilder);
+  private datasetService = inject(DatasetService);
+  private dialogRef = inject<MatDialogRef<ReplicationRestoreDialog>>(MatDialogRef);
+  private errorHandler = inject(FormErrorHandlerService);
+  private parentTaskId = inject(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   form = this.formBuilder.group({
@@ -50,16 +56,6 @@ export class ReplicationRestoreDialog {
 
   readonly treeNodeProvider = this.datasetService.getDatasetNodeProvider();
   readonly helptext = helptextReplication;
-
-  constructor(
-    private api: ApiService,
-    private loader: LoaderService,
-    private formBuilder: FormBuilder,
-    private datasetService: DatasetService,
-    private dialogRef: MatDialogRef<ReplicationRestoreDialog>,
-    private errorHandler: FormErrorHandlerService,
-    @Inject(MAT_DIALOG_DATA) private parentTaskId: number,
-  ) {}
 
   onSubmit(): void {
     this.api.call('replication.restore', [this.parentTaskId, this.form.value])

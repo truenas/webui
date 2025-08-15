@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import {
@@ -9,9 +9,10 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
@@ -43,12 +44,39 @@ const fakeRebootInfo: RebootInfoState = {
   otherNodeRebootInfo: null,
 };
 
-describe('TopbarComponent', () => {
-  let spectator: Spectator<TopbarComponent>;
-  let loader: HarnessLoader;
-  const updateRunningStatus$ = new EventEmitter<'true' | 'false'>();
+interface ComponentOptions {
+  isExperimentalBuild?: boolean;
+  updateJob?: Job[];
+  updateRunningStatus$?: EventEmitter<'true' | 'false'>;
+  matDialog?: Partial<MatDialog>;
+}
 
-  const createComponent = createComponentFactory({
+function createTopbarComponent(options: ComponentOptions = {}): {
+  factory: () => Spectator<TopbarComponent>;
+  mockConfigSignal: ReturnType<typeof signal<TruenasConnectConfig | null>>;
+} {
+  const {
+    isExperimentalBuild = false,
+    updateJob = [
+      {
+        state: JobState.Running,
+        arguments: [] as unknown[],
+      } as Job,
+    ],
+    updateRunningStatus$ = new EventEmitter<'true' | 'false'>(),
+    matDialog = {
+      open: jest.fn(() => ({
+        componentInstance: {
+          setMessage: jest.fn(),
+        },
+        afterClosed: () => of({}),
+      })),
+    },
+  } = options;
+
+  const mockConfigSignal = signal<TruenasConnectConfig | null>(null);
+
+  const factory = createComponentFactory({
     component: TopbarComponent,
     declarations: [
       MockComponents(
@@ -68,17 +96,12 @@ describe('TopbarComponent', () => {
         updateRunningNoticeSent: new EventEmitter<string>(),
       }),
       mockProvider(UiSearchProvider),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => ({
-          componentInstance: {
-            setMessage: jest.fn(),
-          },
-          afterClosed: () => of({}),
-        })),
-      }),
-      mockApi(),
+      mockProvider(MatDialog, matDialog),
+      mockApi([
+        mockCall('system.experimental', isExperimentalBuild),
+      ]),
       mockProvider(TruenasConnectService, {
-        config: () => ({}),
+        config: mockConfigSignal,
       }),
       provideMockStore({
         selectors: [
@@ -88,12 +111,7 @@ describe('TopbarComponent', () => {
           },
           {
             selector: selectUpdateJob,
-            value: [
-              {
-                state: JobState.Running,
-                arguments: [] as unknown[],
-              } as Job,
-            ],
+            value: updateJob,
           },
           {
             selector: selectGeneralConfig,
@@ -108,7 +126,21 @@ describe('TopbarComponent', () => {
     ],
   });
 
+  return { factory, mockConfigSignal };
+}
+
+describe('TopbarComponent', () => {
+  let spectator: Spectator<TopbarComponent>;
+  let loader: HarnessLoader;
+  let mockConfigSignal: ReturnType<typeof signal<TruenasConnectConfig | null>>;
+  const updateRunningStatus$ = new EventEmitter<'true' | 'false'>();
+
+  const { factory: createComponent, mockConfigSignal: configSignal } = createTopbarComponent({
+    updateRunningStatus$,
+  });
+
   beforeEach(() => {
+    mockConfigSignal = configSignal;
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
@@ -143,6 +175,107 @@ describe('TopbarComponent', () => {
         title: 'Update in Progress',
         message: 'A system update is in progress. It might have been launched in another window or by an external source like TrueCommand.',
       },
+    });
+  });
+
+  describe('hasTncConfig', () => {
+    const baseTncConfig: Partial<TruenasConnectConfig> = {
+      tnc_base_url: 'https://tnc.example.com',
+      account_service_base_url: 'https://account.example.com',
+      leca_service_base_url: 'https://leca.example.com',
+    };
+
+    it('returns falsy when config is null or undefined', () => {
+      mockConfigSignal.set(null);
+      expect(spectator.component.hasTncConfig()).toBeFalsy();
+    });
+
+    it('returns falsy when ips and interfaces_ips are both empty', () => {
+      mockConfigSignal.set({
+        ...baseTncConfig,
+        ips: [],
+        interfaces_ips: [],
+      } as TruenasConnectConfig);
+      expect(spectator.component.hasTncConfig()).toBeFalsy();
+    });
+
+    it('returns falsy when missing required URLs even with IPs', () => {
+      mockConfigSignal.set({
+        ips: ['192.168.1.1'],
+        interfaces_ips: [],
+        tnc_base_url: '',
+        account_service_base_url: '',
+        leca_service_base_url: '',
+      } as TruenasConnectConfig);
+      expect(spectator.component.hasTncConfig()).toBeFalsy();
+    });
+
+    it('returns truthy when ips array has values and all required URLs are present', () => {
+      mockConfigSignal.set({
+        ...baseTncConfig,
+        ips: ['192.168.1.1'],
+        interfaces_ips: [],
+      } as TruenasConnectConfig);
+      expect(spectator.component.hasTncConfig()).toBeTruthy();
+    });
+
+    it('returns truthy when interfaces_ips array has values and all required URLs are present', () => {
+      mockConfigSignal.set({
+        ...baseTncConfig,
+        ips: [],
+        interfaces_ips: ['10.0.0.1'],
+      } as TruenasConnectConfig);
+      expect(spectator.component.hasTncConfig()).toBeTruthy();
+    });
+
+    it('returns truthy when both ips and interfaces_ips arrays have values', () => {
+      mockConfigSignal.set({
+        ...baseTncConfig,
+        ips: ['192.168.1.1'],
+        interfaces_ips: ['10.0.0.1'],
+      } as TruenasConnectConfig);
+      expect(spectator.component.hasTncConfig()).toBeTruthy();
+    });
+
+    it('returns truthy when only interfaces_ips has values (backward compatibility)', () => {
+      mockConfigSignal.set({
+        ...baseTncConfig,
+        ips: [],
+        interfaces_ips: ['10.0.0.1', '10.0.0.2'],
+      } as TruenasConnectConfig);
+      expect(spectator.component.hasTncConfig()).toBeTruthy();
+    });
+  });
+
+  describe('feedback button', () => {
+    it('should not be disabled when not experimental build', () => {
+      expect(spectator.component.isExperimentalBuild()).toBe(false);
+
+      const feedbackButton = spectator.query('[ixTest="leave-feedback"]');
+      expect(feedbackButton).not.toHaveAttribute('disabled');
+    });
+  });
+});
+
+describe('TopbarComponent - Experimental Build', () => {
+  let spectator: Spectator<TopbarComponent>;
+
+  const { factory: createComponent } = createTopbarComponent({
+    isExperimentalBuild: true,
+    updateJob: [],
+    matDialog: {},
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+  });
+
+  describe('feedback button', () => {
+    it('should be disabled when experimental build', () => {
+      expect(spectator.component.isExperimentalBuild()).toBe(true);
+
+      const feedbackButton = spectator.query('[ixTest="leave-feedback"]');
+      expect(feedbackButton).toHaveAttribute('disabled', 'disabled');
     });
   });
 });

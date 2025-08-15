@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -54,10 +52,17 @@ import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems
   ],
 })
 export class SubsystemsListComponent {
+  protected emptyService = inject(EmptyService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private searchDirectives = inject(UiSearchDirectivesService);
+
   readonly isMobileView = input<boolean>();
   readonly isLoading = input(false);
   readonly toggleShowMobileDetails = output<boolean>();
+  readonly subsystemSelected = output<NvmeOfSubsystemDetails>();
   readonly dataProvider = input.required<ArrayDataProvider<NvmeOfSubsystemDetails>>();
+  // eslint-disable-next-line @angular-eslint/no-output-native
   readonly search = output<string>();
   protected readonly emptyConfig = nvmeOfEmptyConfig;
   protected readonly EmptyType = EmptyType;
@@ -94,12 +99,7 @@ export class SubsystemsListComponent {
     ariaLabels: (row) => [row.name, this.translate.instant('Subsystem')],
   });
 
-  constructor(
-    protected emptyService: EmptyService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private searchDirectives: UiSearchDirectivesService,
-  ) {
+  constructor() {
     setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);
   }
 
@@ -110,6 +110,9 @@ export class SubsystemsListComponent {
         this.dataProvider().expandedRow = null;
         this.cdr.markForCheck();
       }
+    }
+    if (subsys) {
+      this.subsystemSelected.emit(subsys);
     }
   }
 

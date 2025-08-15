@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, effect,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { MatCard, MatCardHeader, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -38,6 +36,10 @@ import { StatusViewComponent } from './status-view/status-view.component';
   ],
 })
 export class EnclosurePageComponent {
+  private store = inject(EnclosureStore);
+  private translate = inject(TranslateService);
+  private router = inject(Router);
+
   readonly enclosure = this.store.selectedEnclosure;
   readonly enclosures = this.store.enclosures;
   readonly selectedView = this.store.selectedView;
@@ -64,10 +66,4 @@ export class EnclosurePageComponent {
 
     this.router.navigate(['/system', 'viewenclosure', enclosure.id, 'mini']);
   });
-
-  constructor(
-    private store: EnclosureStore,
-    private translate: TranslateService,
-    private router: Router,
-  ) {}
 }

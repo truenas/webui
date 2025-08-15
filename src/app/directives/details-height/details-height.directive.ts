@@ -1,6 +1,4 @@
-import {
-  Directive, ElementRef, HostListener, Inject, OnDestroy, OnInit, OnChanges,
-} from '@angular/core';
+import { Directive, ElementRef, HostListener, OnDestroy, OnInit, OnChanges, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -20,6 +18,11 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   selector: '[ixDetailsHeight]',
 })
 export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
+  private window = inject<Window>(WINDOW);
+  private element = inject<ElementRef<HTMLElement>>(ElementRef);
+  private layoutService = inject(LayoutService);
+  private store$ = inject<Store<AppState>>(Store);
+
   private hasConsoleFooter = false;
   private headerHeight = headerHeight;
   private footerHeight = footerHeight;
@@ -31,13 +34,6 @@ export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
 
   private resizeObserver: ResizeObserver | null = null;
   private scrollAnimationFrame: number | null = null;
-
-  constructor(
-    @Inject(WINDOW) private window: Window,
-    private element: ElementRef<HTMLElement>,
-    private layoutService: LayoutService,
-    private store$: Store<AppState>,
-  ) {}
 
   ngOnInit(): void {
     this.setupResizeObserver();

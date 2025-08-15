@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
@@ -40,14 +40,14 @@ const initialState: DatasetAclEditorState = {
   providedIn: 'root',
 })
 export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState> {
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private router: Router,
-    private translate: TranslateService,
-    private storageService: StorageService,
-  ) {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private router = inject(Router);
+  private translate = inject(TranslateService);
+  private storageService = inject(StorageService);
+
+  constructor() {
     super(initialState);
   }
 
@@ -275,7 +275,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       options: {
         recursive: options.recursive,
         traverse: options.traverse,
-        validate_effective_acl: options.validateEffectiveAcl,
+        validate_effective_acl: true, // Always validate for security - UI option removed
       },
       user: options.owner,
       group: options.ownerGroup,

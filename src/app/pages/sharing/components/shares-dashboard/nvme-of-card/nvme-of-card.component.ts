@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -76,6 +74,17 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class NvmeOfCardComponent implements OnInit {
+  private slideIn = inject(SlideIn);
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+  private store$ = inject<Store<ServicesState>>(Store);
+  private nvmeOfStore = inject(NvmeOfStore);
+  private matDialog = inject(MatDialog);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private router = inject(Router);
+
   requiredRoles = [Role.SharingNvmeTargetWrite];
   protected readonly isLoading = this.nvmeOfStore.isLoading;
   protected readonly emptyConfig = nvmeOfEmptyConfig;
@@ -152,19 +161,6 @@ export class NvmeOfCardComponent implements OnInit {
     uniqueRowTag: (row) => 'nvmeof-subsys-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Subsystem')],
   });
-
-  constructor(
-    private slideIn: SlideIn,
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-    private store$: Store<ServicesState>,
-    private nvmeOfStore: NvmeOfStore,
-    private matDialog: MatDialog,
-    private api: ApiService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private router: Router,
-  ) {}
 
   ngOnInit(): void {
     this.nvmeOfStore.initialize();

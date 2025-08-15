@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -10,6 +8,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, finalize, forkJoin, map, Observable, shareReplay, switchMap,
@@ -32,6 +31,9 @@ import {
   SaveConfigDialogMessages,
 } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import {
+  DynamicMarkdownComponent,
+} from 'app/pages/system/update/components/dynamic-markdown/dynamic-markdown.component';
+import {
   UpdateProfileCard,
 } from 'app/pages/system/update/components/update-profile-card/update-profile-card.component';
 import { systemUpdateElements } from 'app/pages/system/update/update.elements';
@@ -39,6 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -52,23 +55,32 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     TestDirective,
     TranslateModule,
     RequiresRolesDirective,
-    UiSearchDirective,
-    TestDirective,
-    TranslateModule,
     NgxSkeletonLoaderModule,
     MatButton,
     IxIconComponent,
     ReactiveFormsModule,
     PageHeaderComponent,
     UpdateProfileCard,
+    MarkdownModule,
+    DynamicMarkdownComponent,
   ],
 })
 export class UpdateComponent implements OnInit {
+  private router = inject(Router);
+  private translate = inject(TranslateService);
+  private matDialog = inject(MatDialog);
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private sysGenService = inject(SystemGeneralService);
+  private store$ = inject<Store<AppState>>(Store);
+
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly manualUpdateUrl = 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/#performing-a-manual-update';
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   protected isLoading = signal(true);
   protected profileChoices = signal<UpdateProfileChoices | null>(null);
@@ -116,6 +128,11 @@ export class UpdateComponent implements OnInit {
     return this.newVersion()?.manifest?.changelog.replace(/\n/g, '\n');
   });
 
+  protected readonly releaseNotesContext = computed(() => ({
+    isHaLicensed: this.isHaLicensed(),
+    isEnterprise: this.isEnterprise(),
+  }));
+
   protected readonly standbySystemVersion = toSignal(this.systemInfo$.pipe(
     filter((info) => Boolean(info?.remote_info?.version)),
     map((info) => info.remote_info.version),
@@ -124,17 +141,6 @@ export class UpdateComponent implements OnInit {
   protected isUpdateInProgress$ = this.store$.select(selectUpdateJob).pipe(
     map((jobs) => jobs.length > 0),
   );
-
-  constructor(
-    private router: Router,
-    private translate: TranslateService,
-    private matDialog: MatDialog,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private sysGenService: SystemGeneralService,
-    private store$: Store<AppState>,
-  ) {}
 
   ngOnInit(): void {
     this.loadUpdateInfo();

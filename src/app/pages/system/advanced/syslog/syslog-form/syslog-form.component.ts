@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -59,6 +57,14 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   ],
 })
 export class SyslogFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private store$ = inject<Store<AppState>>(Store);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  slideInRef = inject<SlideInRef<SyslogConfig, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   protected isFormLoading = signal(false);
@@ -97,15 +103,7 @@ export class SyslogFormComponent implements OnInit {
 
   private syslogConfig: SyslogConfig;
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private store$: Store<AppState>,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private formErrorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<SyslogConfig, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

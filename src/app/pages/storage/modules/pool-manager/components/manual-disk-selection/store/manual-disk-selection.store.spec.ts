@@ -1,5 +1,4 @@
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
-import { UUID } from 'angular2-uuid';
 import { TestScheduler } from 'rxjs/testing';
 import { TiB } from 'app/constants/bytes.constant';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
@@ -56,7 +55,8 @@ describe('ManualDiskSelectionStore', () => {
   });
 
   it('adds a new vdev', () => {
-    jest.spyOn(UUID, 'UUID')
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    jest.spyOn(require('uuid'), 'v4')
       .mockReturnValueOnce('first_vdev');
     spectator.service.addVdev();
     testScheduler.run(({ expectObservable }) => {

@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, computed, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -37,6 +35,9 @@ import { createTable } from 'app/modules/ix-table/utils';
   ],
 })
 export class SmbOpenFilesComponent implements OnChanges {
+  private translate = inject(TranslateService);
+  protected emptyService = inject(EmptyService);
+
   lock = input<SmbLockInfo>();
   files = computed<SmbOpenInfo[]>(() => {
     return Object.values(this.lock()?.opens || []);
@@ -63,11 +64,6 @@ export class SmbOpenFilesComponent implements OnChanges {
     uniqueRowTag: (row) => `smb-open-file-${row.username}-${row.uid}`,
     ariaLabels: (row) => [row.username, this.translate.instant('SMB Open File')],
   });
-
-  constructor(
-    private translate: TranslateService,
-    protected emptyService: EmptyService,
-  ) {}
 
   private createProvider(): void {
     this.dataProvider = new AsyncDataProvider(of(this.files()));

@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
@@ -46,6 +41,16 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
   ],
 })
 export class CloudSyncProviderComponent implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(FormBuilder);
+  private slideInRef = inject<SlideInRef<unknown, unknown>>(SlideInRef);
+  private cdr = inject(ChangeDetectorRef);
+  private dialogService = inject(DialogService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private translate = inject(TranslateService);
+  private cloudCredentialService = inject(CloudCredentialService);
+  private snackbarService = inject(SnackbarService);
+
   readonly save = output<CloudSyncCredential>();
   readonly loading = output<boolean>();
 
@@ -59,18 +64,6 @@ export class CloudSyncProviderComponent implements OnInit {
   private existingCredential: CloudSyncCredential;
 
   readonly helptext = helptext;
-
-  constructor(
-    private api: ApiService,
-    private formBuilder: FormBuilder,
-    private slideInRef: SlideInRef<unknown, unknown>,
-    private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
-    private formErrorHandler: FormErrorHandlerService,
-    private translate: TranslateService,
-    private cloudCredentialService: CloudCredentialService,
-    private snackbarService: SnackbarService,
-  ) {}
 
   get areActionsDisabled(): boolean {
     return this.isLoading || this.form.invalid || !this.form.controls.exist_credential.value;

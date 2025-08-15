@@ -1,6 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, OnInit, signal,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -59,6 +57,15 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class PrivilegeFormComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private errorHandler = inject(FormErrorHandlerService);
+  private store$ = inject<Store<AppState>>(Store);
+  private dialog = inject(DialogService);
+  private userService = inject(UserService);
+  slideInRef = inject<SlideInRef<Privilege | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.PrivilegeWrite];
 
   protected isLoading = signal(false);
@@ -123,16 +130,7 @@ export class PrivilegeFormComponent implements OnInit {
     );
   };
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private translate: TranslateService,
-    private api: ApiService,
-    private errorHandler: FormErrorHandlerService,
-    private store$: Store<AppState>,
-    private dialog: DialogService,
-    private userService: UserService,
-    public slideInRef: SlideInRef<Privilege | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

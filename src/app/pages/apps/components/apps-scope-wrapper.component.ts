@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
@@ -24,10 +24,10 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppsScopeWrapperComponent implements OnDestroy {
-  constructor(
-    private appsFilterStore: AppsFilterStore,
-    private dockerService: DockerStore,
-  ) {
+  private appsFilterStore = inject(AppsFilterStore);
+  private dockerService = inject(DockerStore);
+
+  constructor() {
     this.dockerService.initialize();
     this.dockerService.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
     this.dockerService.dockerConfigEventUpdates().pipe(untilDestroyed(this)).subscribe();

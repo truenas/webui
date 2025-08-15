@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
@@ -44,6 +41,15 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class BootPoolAttachDialog implements OnInit {
+  private fb = inject(FormBuilder);
+  private dialogService = inject(DialogService);
+  private dialogRef = inject<MatDialogRef<BootPoolAttachDialog>>(MatDialogRef);
+  private translate = inject(TranslateService);
+  protected api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
+  private snackbar = inject(SnackbarService);
+  private errorHandler = inject(FormErrorHandlerService);
+
   isFormLoading = false;
   protected helptextSystemBootenv = helptextSystemBootenv;
 
@@ -61,17 +67,6 @@ export class BootPoolAttachDialog implements OnInit {
   };
 
   protected readonly Role = Role;
-
-  constructor(
-    private fb: FormBuilder,
-    private dialogService: DialogService,
-    private dialogRef: MatDialogRef<BootPoolAttachDialog>,
-    private translate: TranslateService,
-    protected api: ApiService,
-    private cdr: ChangeDetectorRef,
-    private snackbar: SnackbarService,
-    private errorHandler: FormErrorHandlerService,
-  ) {}
 
   ngOnInit(): void {
     this.setupWarningForExportedPools();

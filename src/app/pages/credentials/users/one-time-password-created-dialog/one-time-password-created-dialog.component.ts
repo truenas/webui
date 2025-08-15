@@ -32,14 +32,12 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class OneTimePasswordCreatedDialog {
+  private clipboard = inject(Clipboard);
+  private snackbar = inject(SnackbarService);
+  private translate = inject(TranslateService);
+
   password = signal(inject<string>(MAT_DIALOG_DATA));
   passwordControl = new FormControl<string>(this.password());
-
-  constructor(
-    private clipboard: Clipboard,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-  ) {}
 
   onCopyPressed(): void {
     const copied = this.clipboard.copy(this.password());

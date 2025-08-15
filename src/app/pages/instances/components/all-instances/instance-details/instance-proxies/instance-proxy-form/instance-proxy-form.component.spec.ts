@@ -53,8 +53,8 @@ describe('InstanceProxyFormComponent', () => {
       await form.fillForm({
         'Host Port': '2000',
         'Host Protocol': 'TCP',
-        'Instance Port': '3000',
-        'Instance Protocol': 'UDP',
+        'Container Port': '3000',
+        'Container Protocol': 'UDP',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -108,8 +108,8 @@ describe('InstanceProxyFormComponent', () => {
       expect(values).toEqual({
         'Host Port': '5000',
         'Host Protocol': 'TCP',
-        'Instance Port': '6000',
-        'Instance Protocol': 'UDP',
+        'Container Port': '6000',
+        'Container Protocol': 'UDP',
       });
     });
 
@@ -118,8 +118,8 @@ describe('InstanceProxyFormComponent', () => {
       await form.fillForm({
         'Host Port': '5001',
         'Host Protocol': 'UDP',
-        'Instance Port': '6001',
-        'Instance Protocol': 'UDP',
+        'Container Port': '6001',
+        'Container Protocol': 'UDP',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

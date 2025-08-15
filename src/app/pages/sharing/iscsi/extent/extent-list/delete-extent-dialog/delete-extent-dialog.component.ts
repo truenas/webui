@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -40,6 +38,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class DeleteExtentDialog {
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private formBuilder = inject(FormBuilder);
+  extent = inject<IscsiExtent>(MAT_DIALOG_DATA);
+  private dialogRef = inject<MatDialogRef<DeleteExtentDialog>>(MatDialogRef);
+
   protected readonly requiredRoles = [
     Role.SharingIscsiExtentWrite,
     Role.SharingIscsiWrite,
@@ -50,15 +55,6 @@ export class DeleteExtentDialog {
     remove: [false],
     force: [false],
   });
-
-  constructor(
-    private api: ApiService,
-    private loader: LoaderService,
-    private errorHandler: ErrorHandlerService,
-    private formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public extent: IscsiExtent,
-    private dialogRef: MatDialogRef<DeleteExtentDialog>,
-  ) { }
 
   get isFile(): boolean {
     return this.extent.type === IscsiExtentType.File;

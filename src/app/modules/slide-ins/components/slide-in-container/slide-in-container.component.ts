@@ -1,14 +1,5 @@
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  HostBinding,
-  HostListener,
-  Inject,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, HostListener, ViewChild, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   debounceTime,
@@ -29,6 +20,9 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SlideInContainerComponent implements AfterViewInit {
+  private cdr = inject(ChangeDetectorRef);
+  private window = inject<Window>(WINDOW);
+
   @ViewChild(CdkPortalOutlet, { static: true }) private readonly portalOutlet!: CdkPortalOutlet;
 
   private readonly whenHidden$ = new Subject<void>();
@@ -52,11 +46,6 @@ export class SlideInContainerComponent implements AfterViewInit {
       }
     }
   }
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-    @Inject(WINDOW) private window: Window,
-  ) {}
 
   ngAfterViewInit(): void {
     this.resizeSubject$.pipe(

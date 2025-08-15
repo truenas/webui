@@ -179,8 +179,8 @@ describe('InstanceWizardComponent', () => {
       await proxyForm.fillForm({
         'Host Port': 3000,
         'Host Protocol': 'TCP',
-        'Instance Port': 2000,
-        'Instance Protocol': 'UDP',
+        'Container Port': 2000,
+        'Container Protocol': 'UDP',
       });
 
       // TODO: Fix this to use IxCheckboxHarness

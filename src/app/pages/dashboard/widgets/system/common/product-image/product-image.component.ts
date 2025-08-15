@@ -1,9 +1,5 @@
 import { NgClass } from '@angular/common';
-import {
-  Component, ChangeDetectionStrategy, input,
-  computed,
-  HostBinding,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, HostBinding, inject } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -25,6 +21,8 @@ import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/p
   ],
 })
 export class ProductImageComponent {
+  private router = inject(Router);
+
   @HostBinding('class.truenas')
   isEnterprise = input.required<boolean>();
 
@@ -49,8 +47,6 @@ export class ProductImageComponent {
     const isHaLicensed = this.isHaLicensed();
     return isEnterprise && !isIxHardware && !isHaLicensed;
   });
-
-  constructor(private router: Router) { }
 
   goToEnclosure(): void {
     if (!this.hasEnclosureSupport()) {

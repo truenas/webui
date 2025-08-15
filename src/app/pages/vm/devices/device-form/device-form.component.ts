@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -73,6 +71,21 @@ const specifyCustom = T('Specify custom');
   ],
 })
 export class DeviceFormComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+  private networkService = inject(NetworkService);
+  private filesystemService = inject(FilesystemService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  slideInRef = inject<SlideInRef<{
+    virtualMachineId?: number;
+    device?: VmDevice;
+  } | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.VmDeviceWrite];
 
   isLoading = false;
@@ -127,6 +140,7 @@ export class DeviceFormComponent implements OnInit {
     bind: [''],
     password: [''],
     web: [true],
+    web_port: [null as number | null, [Validators.min(5900), Validators.max(65535)]],
   });
 
   usbForm = this.formBuilder.group({
@@ -231,19 +245,9 @@ export class DeviceFormComponent implements OnInit {
 
   private virtualMachineId: number;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private api: ApiService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private networkService: NetworkService,
-    private filesystemService: FilesystemService,
-    private formErrorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    public slideInRef: SlideInRef<{ virtualMachineId?: number; device?: VmDevice } | undefined, boolean>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.typeSpecificForm.dirty);
     });

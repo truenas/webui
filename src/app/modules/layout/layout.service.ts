@@ -1,6 +1,4 @@
-import {
-  Inject, Injectable,
-} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
@@ -11,11 +9,9 @@ import { WINDOW } from 'app/helpers/window.helper';
   providedIn: 'root',
 })
 export class LayoutService {
-  readonly hasCustomPageHeader$ = new BehaviorSubject<boolean>(false);
+  private window = inject<Window>(WINDOW);
 
-  constructor(
-    @Inject(WINDOW) private window: Window,
-  ) {}
+  readonly hasCustomPageHeader$ = new BehaviorSubject<boolean>(false);
 
   getContentContainer(): HTMLElement | null {
     return this.window.document.querySelector('.rightside-content-hold');

@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
@@ -33,6 +30,9 @@ import {
   ],
 })
 export class UnlockSummaryDialog {
+  dialogRef = inject<MatDialogRef<UnlockSummaryDialog>>(MatDialogRef);
+  private dialogService = inject(DialogService);
+
   title: string = helptextUnlock.unlockDatasetDialog.title;
   errorsMessage: string = helptextUnlock.unlockDatasetDialog.errorsMessage;
   unlockMessage: string = helptextUnlock.unlockDatasetDialog.unlockMessage;
@@ -47,11 +47,6 @@ export class UnlockSummaryDialog {
   final = false;
   data = {} as DatasetUnlockParams;
   parent: DatasetUnlockComponent;
-
-  constructor(
-    public dialogRef: MatDialogRef<UnlockSummaryDialog>,
-    private dialogService: DialogService,
-  ) {}
 
   submit(): void {
     this.dialogRef.close(true);

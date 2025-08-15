@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -25,12 +23,11 @@ const noLinksRoutes = ['/credentials', '/reportsdashboard', '/system'];
   ],
 })
 export class BreadcrumbComponent implements OnInit {
+  private router = inject(Router);
+  private routePartsService = inject(RoutePartsService);
+  private cdr = inject(ChangeDetectorRef);
+
   breadcrumbs: RoutePart[];
-  constructor(
-    private router: Router,
-    private routePartsService: RoutePartsService,
-    private cdr: ChangeDetectorRef,
-  ) { }
 
   ngOnInit(): void {
     this.breadcrumbs = this.getBreadcrumbs();

@@ -1,7 +1,4 @@
-import {
-  Component, ChangeDetectionStrategy, input,
-  computed,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -38,6 +35,12 @@ import { RedirectService } from 'app/services/redirect.service';
   ],
 })
 export class AppControlsComponent {
+  private translate = inject(TranslateService);
+  private redirect = inject(RedirectService);
+  private snackbar = inject(SnackbarService);
+  private appService = inject(ApplicationsService);
+  private router = inject(Router);
+
   app = input.required<LoadingState<App>>();
   appState = AppState;
 
@@ -53,14 +56,6 @@ export class AppControlsComponent {
     const main = this.mainPortal();
     return this.portalEntries().filter((entry) => entry !== main);
   });
-
-  constructor(
-    private translate: TranslateService,
-    private redirect: RedirectService,
-    private snackbar: SnackbarService,
-    private appService: ApplicationsService,
-    private router: Router,
-  ) {}
 
   onRestartApp(app: App): void {
     this.appService.restartApplication(app.name)

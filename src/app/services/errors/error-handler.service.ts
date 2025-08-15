@@ -1,7 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import {
-  ErrorHandler, Injectable, Injector, NgZone,
-} from '@angular/core';
+import { ErrorHandler, Injectable, Injector, NgZone, inject } from '@angular/core';
 import { NavigationError } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import * as Sentry from '@sentry/angular';
@@ -19,6 +17,11 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   providedIn: 'root',
 })
 export class ErrorHandlerService extends Sentry.SentryErrorHandler implements ErrorHandler {
+  private injector = inject(Injector);
+  private translate = inject(TranslateService);
+  private errorParser = inject(ErrorParserService);
+  private zone = inject(NgZone);
+
   private dialogService: DialogService;
 
   private isSentryAllowed = true;
@@ -40,12 +43,7 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
     return this.dialogService;
   }
 
-  constructor(
-    private injector: Injector,
-    private translate: TranslateService,
-    private errorParser: ErrorParserService,
-    private zone: NgZone,
-  ) {
+  constructor() {
     super({
       logErrors: false,
     });
@@ -130,7 +128,7 @@ export class ErrorHandlerService extends Sentry.SentryErrorHandler implements Er
 
       const errorReport = this.errorParser.parseError(error);
       return this.dialog.error(errorReport || this.genericError);
-    } catch (handlerError) {
+    } catch {
       return this.dialog.error(this.errorHandlingError);
     }
   }

@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
@@ -32,12 +29,13 @@ export interface SessionExpiringDialogOptions {
   ],
 })
 export class SessionExpiringDialog {
+  private dialogRef = inject<MatDialogRef<SessionExpiringDialog>>(MatDialogRef);
+
   options: SessionExpiringDialogOptions;
 
-  constructor(
-    private dialogRef: MatDialogRef<SessionExpiringDialog>,
-    @Inject(MAT_DIALOG_DATA) options: SessionExpiringDialogOptions,
-  ) {
+  constructor() {
+    const options = inject<SessionExpiringDialogOptions>(MAT_DIALOG_DATA);
+
     this.options = { ...options };
   }
 

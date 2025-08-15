@@ -1,7 +1,5 @@
 import { KeyValue, KeyValuePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, Inject, signal, TrackByFunction,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, TrackByFunction, inject } from '@angular/core';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -42,6 +40,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class BootPoolDeleteDialog {
+  private fb = inject(FormBuilder);
+  private api = inject(ApiService);
+  private dialogRef = inject<MatDialogRef<BootPoolDeleteDialog>>(MatDialogRef);
+  private errorHandler = inject(ErrorHandlerService);
+  bootenvs = inject<BootEnvironment[]>(MAT_DIALOG_DATA);
+
   protected readonly requiredRoles = [Role.BootEnvWrite];
 
   form = this.fb.group({
@@ -61,13 +65,7 @@ export class BootPoolDeleteDialog {
 
   readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<BootEnvironment>>> = (_, entry) => entry.key;
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private dialogRef: MatDialogRef<BootPoolDeleteDialog>,
-    private errorHandler: ErrorHandlerService,
-    @Inject(MAT_DIALOG_DATA) public bootenvs: BootEnvironment[],
-  ) {
+  constructor() {
     this.bootenvs.forEach((bootenv) => {
       this.bulkItems.set(bootenv.id, { state: BulkListItemState.Initial, item: bootenv });
     });

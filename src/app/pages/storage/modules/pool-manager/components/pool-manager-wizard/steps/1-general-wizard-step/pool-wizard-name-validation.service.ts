@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   AbstractControl, ValidationErrors,
 } from '@angular/forms';
@@ -14,11 +14,10 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   providedIn: 'root',
 })
 export class PoolWizardNameValidationService {
-  constructor(
-    private api: ApiService,
-    private translate: TranslateService,
-    private errorParser: ErrorParserService,
-  ) { }
+  private api = inject(ApiService);
+  private translate = inject(TranslateService);
+  private errorParser = inject(ErrorParserService);
+
 
   private errorMessage = this.translate.instant('Invalid pool name (please refer to <a href="https://openzfs.github.io/openzfs-docs/man/8/zpool-create.8.html#DESCRIPTION" target="_blank">the documentation</a> for valid rules for pool name)');
 

@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -20,9 +18,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class TrueCommandStatusComponent {
-  protected isManagedByTruecommand$ = this.api.call('truenas.managed_by_truecommand');
+  private api = inject(ApiService);
 
-  constructor(
-    private api: ApiService,
-  ) {}
+  protected isManagedByTruecommand$ = this.api.call('truenas.managed_by_truecommand');
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
@@ -27,12 +27,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class CustomTransfersDialog {
+  private dialogRef = inject<MatDialogRef<CustomTransfersDialog>>(MatDialogRef);
+
   readonly helptext = helptextCloudSync;
   readonly transfers = new FormControl(null as number | null, [Validators.required, Validators.min(0)]);
-
-  constructor(
-    private dialogRef: MatDialogRef<CustomTransfersDialog>,
-  ) { }
 
   onSave(): void {
     this.dialogRef.close(this.transfers.value);

@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  output,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, OnInit, inject } from '@angular/core';
 import {
   AbstractControl,
   FormArray,
@@ -72,6 +66,8 @@ interface AllTrustedDomainsIdmapFieldsInterface {
   ],
 })
 export class TrustedDomainsConfigComponent implements OnInit {
+  private fb = inject(FormBuilder);
+
   readonly enableTrustedDomains = input.required<boolean>();
   trustedDomainsChanged = output<[enableTrustedDomains: boolean, trustedDomains: DomainIdmap[]]>();
   readonly isValid = output<boolean>();
@@ -95,10 +91,6 @@ export class TrustedDomainsConfigComponent implements OnInit {
   protected get trustedDomainsArray(): FormArray {
     return this.form.controls.trustedDomains;
   }
-
-  constructor(
-    private fb: FormBuilder,
-  ) {}
 
   ngOnInit(): void {
     this.initializeFormOnEdit();

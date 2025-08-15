@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -80,6 +78,22 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class NfsFormComponent implements OnInit {
+  private api = inject(ApiService);
+  private formBuilder = inject(FormBuilder);
+  private userService = inject(UserService);
+  private translate = inject(TranslateService);
+  private filesystemService = inject(FilesystemService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private datasetService = inject(DatasetService);
+  private store$ = inject<Store<ServicesState>>(Store);
+  slideInRef = inject<SlideInRef<{
+    existingNfsShare?: NfsShare;
+    defaultNfsShare?: NfsShare;
+  } | undefined, boolean>>(SlideInRef);
+
+  private validatorsService = inject(IxValidatorsService);
+
   existingNfsShare: NfsShare | undefined;
   defaultNfsShare: NfsShare | undefined;
 
@@ -141,19 +155,7 @@ export class NfsFormComponent implements OnInit {
     },
   ] as Option[]);
 
-  constructor(
-    private api: ApiService,
-    private formBuilder: FormBuilder,
-    private userService: UserService,
-    private translate: TranslateService,
-    private filesystemService: FilesystemService,
-    private formErrorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
-    private datasetService: DatasetService,
-    private store$: Store<ServicesState>,
-    public slideInRef: SlideInRef<{ existingNfsShare?: NfsShare; defaultNfsShare?: NfsShare } | undefined, boolean>,
-    private validatorsService: IxValidatorsService,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

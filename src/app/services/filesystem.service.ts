@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import uniqBy from 'lodash-es/uniqBy';
 import {
   catchError, forkJoin, map, Observable, of, throwError,
@@ -26,9 +26,8 @@ export interface ProviderOptions {
 
 @Injectable({ providedIn: 'root' })
 export class FilesystemService {
-  constructor(
-    private api: ApiService,
-  ) {}
+  private api = inject(ApiService);
+
 
   getTopLevelDatasetsNodes(): Observable<ExplorerNodeData[]> {
     return this.getTreeNodeProvider({
@@ -116,7 +115,7 @@ export class FilesystemService {
       this.api.call('filesystem.listdir', [searchNode.data.path, [], this.queryOptions]).pipe(
         catchError((error: unknown) => {
           const apiError = extractApiErrorDetails(error);
-          if (apiError?.reason.match(/\[ENOENT] Directory \/dev\/zvol.* does not exist/)) {
+          if (/\[ENOENT] Directory \/dev\/zvol.* does not exist/.exec(apiError?.reason)) {
             return of([]);
           }
 

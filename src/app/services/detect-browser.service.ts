@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { WINDOW } from 'app/helpers/window.helper';
 
 /**
@@ -8,9 +8,8 @@ import { WINDOW } from 'app/helpers/window.helper';
   providedIn: 'root',
 })
 export class DetectBrowserService {
-  constructor(
-    @Inject(WINDOW) private window: Window,
-  ) {}
+  private window = inject<Window>(WINDOW);
+
 
   isMacOs(): boolean {
     return this.window.navigator.userAgent.includes('Macintosh');
@@ -19,8 +18,8 @@ export class DetectBrowserService {
   matchesBrowser(name: string): boolean {
     const appName = this.window.navigator.appName;
     const ua = this.window.navigator.userAgent;
-    const browserVersion = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
-    const versionMatch = ua.match(/version\/([.\d]+)/i);
+    const browserVersion = /(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i.exec(ua);
+    const versionMatch = /version\/([.\d]+)/i.exec(ua);
     if (browserVersion && versionMatch !== null) {
       browserVersion[2] = versionMatch[1];
     }

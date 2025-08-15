@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { EnclosureDiskStatus, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
@@ -20,15 +18,13 @@ import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.e
   ],
 })
 export class DisksOverviewComponent {
+  private enclosureStore = inject(EnclosureStore);
+
   readonly selectedView = this.enclosureStore.selectedView;
   readonly selectedEnclosure = this.enclosureStore.selectedEnclosure;
   readonly selectedEnclosureSlots = this.enclosureStore.selectedEnclosureSlots;
 
   protected readonly EnclosureView = EnclosureView;
-
-  constructor(
-    private enclosureStore: EnclosureStore,
-  ) {}
 
   readonly poolsInfo = computed(() => {
     const slots = this.selectedEnclosureSlots();
@@ -40,7 +36,7 @@ export class DisksOverviewComponent {
   });
 
   readonly expanders = computed(() => {
-    return [...Object.values(this.selectedEnclosure()?.elements?.[EnclosureElementType.SasExpander] || {})];
+    return Object.values(this.selectedEnclosure()?.elements?.[EnclosureElementType.SasExpander] || {});
   });
 
   readonly unhealthyPoolsInfo = computed(() => {

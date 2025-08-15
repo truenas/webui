@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import UiElementsJson from 'app/../assets/ui-searchable-elements.json';
 import { Observable } from 'rxjs';
@@ -11,6 +11,10 @@ import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.s
   providedIn: 'root',
 })
 export class GlobalSearchSectionsProvider {
+  private translate = inject(TranslateService);
+  private searchProvider = inject(UiSearchProvider);
+  private window = inject<Window>(WINDOW);
+
   readonly recentSearchesMaximumToSave = 15;
   readonly globalSearchInitialLimit = 6;
   readonly globalSearchMaximumLimit = 25;
@@ -20,12 +24,6 @@ export class GlobalSearchSectionsProvider {
     { label: this.translate.instant('Help'), value: GlobalSearchSection.Help },
     { label: this.translate.instant('Recent Searches'), value: GlobalSearchSection.RecentSearches },
   ];
-
-  constructor(
-    private translate: TranslateService,
-    private searchProvider: UiSearchProvider,
-    @Inject(WINDOW) private window: Window,
-  ) {}
 
   getUiSectionResults(searchTerm: string): Observable<UiSearchableElement[]> {
     return this.searchProvider.search(searchTerm, this.globalSearchMaximumLimit);

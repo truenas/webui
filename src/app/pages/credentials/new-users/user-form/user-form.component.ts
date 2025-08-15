@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, viewChild, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { tooltips } from '@codemirror/view';
@@ -62,6 +59,15 @@ import { AppState } from 'app/store';
   ],
 })
 export class UserFormComponent implements OnInit {
+  private formBuilder = inject(NonNullableFormBuilder);
+  slideInRef = inject<SlideInRef<User | undefined, User>>(SlideInRef);
+  private userFormStore = inject(UserFormStore);
+  private errorHandler = inject(ErrorHandlerService);
+  private store$ = inject<Store<AppState>>(Store);
+  private dialog = inject(DialogService);
+  private translate = inject(TranslateService);
+  private snackbar = inject(SnackbarService);
+
   protected isStigMode = this.userFormStore.isStigMode;
   protected editingUser = signal<User>(this.slideInRef.getData());
 
@@ -127,16 +133,7 @@ export class UserFormComponent implements OnInit {
     return '';
   }
 
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    public slideInRef: SlideInRef<User | undefined, User>,
-    private userFormStore: UserFormStore,
-    private errorHandler: ErrorHandlerService,
-    private store$: Store<AppState>,
-    private dialog: DialogService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty || this.authSection().form.dirty || this.allowedAccessSection().form.dirty
         || this.additionalDetailsSection().form.dirty);

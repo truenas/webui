@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -26,15 +26,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ShutdownComponent implements OnInit {
-  constructor(
-    protected api: ApiService,
-    private wsManager: WebSocketHandlerService,
-    private errorHandler: ErrorHandlerService,
-    protected router: Router,
-    private route: ActivatedRoute,
-    private location: Location,
-    private authService: AuthService,
-  ) {}
+  protected api = inject(ApiService);
+  private wsManager = inject(WebSocketHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
+  protected router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private location = inject(Location);
+  private authService = inject(AuthService);
+
 
   ngOnInit(): void {
     const reason = this.route.snapshot.queryParamMap.get('reason') || 'Unknown Reason';

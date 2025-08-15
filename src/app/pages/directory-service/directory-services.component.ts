@@ -1,7 +1,7 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, viewChild, inject,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -20,7 +20,7 @@ import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/director
 import { Role } from 'app/enums/role.enum';
 import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
-import { isLdapCredentialPlain } from 'app/interfaces/directoryservice-credentials.interface';
+import { credentialTypeLabels } from 'app/interfaces/directoryservice-credentials.interface';
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -29,10 +29,11 @@ import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -76,6 +77,16 @@ interface DataCard {
   ],
 })
 export class DirectoryServicesComponent implements OnInit {
+  private api = inject(ApiService);
+  private slideIn = inject(SlideIn);
+  private dialog = inject(DialogService);
+  private matDialog = inject(MatDialog);
+  private loader = inject(LoaderService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
+  private searchDirectives = inject(UiSearchDirectivesService);
+
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = directoryServicesElements;
 
@@ -100,17 +111,8 @@ export class DirectoryServicesComponent implements OnInit {
     icon: iconMarker('mdi-account-box'),
   };
 
-  constructor(
-    private api: ApiService,
-    private slideIn: SlideIn,
-    private dialog: DialogService,
-    private matDialog: MatDialog,
-    private loader: LoaderService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-  ) {
+  constructor() {
+    setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);
   }
 
   ngOnInit(): void {
@@ -216,13 +218,19 @@ export class DirectoryServicesComponent implements OnInit {
 
           items.push(
             {
+              label: this.translate.instant(helptextDashboard.ldap.serverUrls),
+              value: ldapConfig.server_urls?.join(', ') || null,
+            },
+            {
               label: this.translate.instant(helptextDashboard.ldap.baseDN),
               value: ldapConfig.basedn || null,
             },
             {
-              label: this.translate.instant(helptextDashboard.ldap.bindDN),
-              value: isLdapCredentialPlain(directoryServicesConfig?.credential)
-                ? directoryServicesConfig.credential.binddn
+              label: this.translate.instant(helptextDashboard.ldap.credentialType),
+              value: directoryServicesConfig?.credential
+                ? this.translate.instant(
+                  credentialTypeLabels[directoryServicesConfig.credential.credential_type],
+                )
                 : null,
             },
           );
@@ -360,5 +368,13 @@ export class DirectoryServicesComponent implements OnInit {
       .subscribe(() => {
         this.refreshCards();
       });
+  }
+
+  private handlePendingGlobalSearchElement(): void {
+    const pendingHighlightElement = this.searchDirectives.pendingUiHighlightElement;
+
+    if (pendingHighlightElement) {
+      this.searchDirectives.get(pendingHighlightElement)?.highlight(pendingHighlightElement);
+    }
   }
 }

@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
-import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { ErrorTemplateComponent } from 'app/modules/dialog/components/multi-error-dialog/error-template/error-template.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -26,8 +25,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class MultiErrorDialog {
-  constructor(
-    public dialogRef: MatDialogRef<MultiErrorDialog>,
-    @Inject(MAT_DIALOG_DATA) public errors: ErrorReport[],
-  ) {}
+  dialogRef = inject<MatDialogRef<MultiErrorDialog>>(MatDialogRef);
+  errors = inject(MAT_DIALOG_DATA);
 }

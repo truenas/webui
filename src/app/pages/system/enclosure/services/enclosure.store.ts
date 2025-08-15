@@ -1,4 +1,4 @@
-import { computed, Injectable } from '@angular/core';
+import { computed, Injectable, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { produce } from 'immer';
@@ -38,6 +38,10 @@ const initialState: EnclosureState = {
 @UntilDestroy()
 @Injectable()
 export class EnclosureStore extends ComponentStore<EnclosureState> {
+  private api = inject(ApiService);
+  private errorHandler = inject(ErrorHandlerService);
+  private theme = inject(ThemeService);
+
   readonly isLoading = computed(() => this.state().isLoading);
   readonly selectedSlot = computed(() => {
     const selectedSlotNumber = this.state().selectedSlotNumber;
@@ -101,11 +105,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     ].filter(Boolean).length > 1;
   });
 
-  constructor(
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private theme: ThemeService,
-  ) {
+  constructor() {
     super(initialState);
   }
 

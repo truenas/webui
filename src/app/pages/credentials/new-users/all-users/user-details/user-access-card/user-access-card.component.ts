@@ -1,6 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input,
-  output,
+  ChangeDetectionStrategy, Component, computed, input, output, inject,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -57,6 +56,17 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   ],
 })
 export class UserAccessCardComponent {
+  private translate = inject(TranslateService);
+  private api = inject(ApiService);
+  private loader = inject(LoaderService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private slideIn = inject(SlideIn);
+  private downloadService = inject(DownloadService);
+  private urlOptions = inject(UrlOptionsService);
+  private authService = inject(AuthService);
+
   user = input.required<User>();
   reloadUsers = output();
 
@@ -99,19 +109,6 @@ export class UserAccessCardComponent {
     const user = this.user();
     return !user.locked && (!user.builtin || user.username === 'root');
   });
-
-  constructor(
-    private translate: TranslateService,
-    private api: ApiService,
-    private loader: LoaderService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private slideIn: SlideIn,
-    private downloadService: DownloadService,
-    private urlOptions: UrlOptionsService,
-    private authService: AuthService,
-  ) {}
 
   protected get auditLink(): string {
     return this.urlOptions.buildUrl('/system/audit', {
@@ -164,5 +161,25 @@ export class UserAccessCardComponent {
       .pipe(untilDestroyed(this)).subscribe(() => {
         this.reloadUsers.emit();
       });
+  }
+
+  protected onClearTwoFactorAuth(): void {
+    const username = this.user().username;
+    this.dialogService.confirm({
+      title: this.translate.instant('Clear Two-Factor Authentication'),
+      message: this.translate.instant('Are you sure you want to clear two-factor authentication settings for "{user}" user?', { user: username }),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Clear'),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.api.call('user.unset_2fa_secret', [username]).pipe(
+        this.loader.withLoader(),
+        this.errorHandler.withErrorHandler(),
+      )),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.snackbar.success(this.translate.instant('Two-Factor Authentication settings cleared'));
+      this.reloadUsers.emit();
+    });
   }
 }

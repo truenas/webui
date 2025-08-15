@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,6 +19,14 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 
 @Injectable()
 export class EulaEffects {
+  private actions$ = inject(Actions);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
+  private store$ = inject<Store<AppState>>(Store);
+  private authService = inject(AuthService);
+
   checkEula$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     filterAsync(() => this.store$.select(selectIsEnterprise).pipe(filter(Boolean))),
@@ -47,14 +55,4 @@ export class EulaEffects {
       switchMap(() => this.api.call('truenas.accept_eula')),
     );
   }
-
-  constructor(
-    private actions$: Actions,
-    private api: ApiService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
-    private store$: Store<AppState>,
-    private authService: AuthService,
-  ) { }
 }

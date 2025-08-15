@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, computed, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -50,6 +48,12 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SourceSectionComponent implements OnChanges {
+  private api = inject(ApiService);
+  private formBuilder = inject(NonNullableFormBuilder);
+  private taskService = inject(TaskService);
+  private translate = inject(TranslateService);
+  private propertiesOverrideValidator = inject(PropertiesOverrideValidatorService);
+
   readonly replication = input<ReplicationTask>();
   readonly direction = input<Direction>();
   readonly nodeProvider = input<TreeNodeProvider>();
@@ -94,14 +98,6 @@ export class SourceSectionComponent implements OnChanges {
 
   protected readonly helptext = helptextReplication;
   protected readonly CronPresetValue = CronPresetValue;
-
-  constructor(
-    private api: ApiService,
-    private formBuilder: NonNullableFormBuilder,
-    private taskService: TaskService,
-    private translate: TranslateService,
-    private propertiesOverrideValidator: PropertiesOverrideValidatorService,
-  ) {}
 
   ngOnChanges(): void {
     if (this.replication()) {

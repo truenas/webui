@@ -5,6 +5,32 @@
 }
 
 mat-hint {
-  display: flex;
   font-size: 12px;
+
+  &.stig-info {
+    color: var(--orange);
+    font-weight: 500;
+  }
+}
+
+mat-error {
+  display: block;
+  font-size: 12px;
+  margin-top: 5px;
+  
+  .link-button {
+    display: inline;
+  }
+}
+
+.link-button {
+  color: var(--primary);
+  cursor: pointer;
+  display: inline;
+  margin-left: 5px;
+  text-decoration: underline;
+
+  &:hover {
+    color: var(--primary-dark);
+  }
 }

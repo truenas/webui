@@ -1,7 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { sortBy, uniqBy } from 'lodash-es';
@@ -28,6 +26,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SimilarIssuesComponent implements OnChanges {
+  private feedbackService = inject(FeedbackService);
+
   readonly query = input.required<string>();
 
   protected similarIssues$ = new BehaviorSubject<SimilarIssue[]>([]);
@@ -36,9 +36,7 @@ export class SimilarIssuesComponent implements OnChanges {
 
   protected readonly jiraHostname = 'https://ixsystems.atlassian.net';
 
-  constructor(
-    private feedbackService: FeedbackService,
-  ) {
+  constructor() {
     this.listenForQueryChanges();
   }
 

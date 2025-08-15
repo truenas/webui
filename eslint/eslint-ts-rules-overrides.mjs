@@ -8,14 +8,21 @@ export const ruleOverrides = {
     ignoreArrowShorthand: true,
   }],
   "@typescript-eslint/prefer-reduce-type-parameter": ["off"],
+  "@stylistic/no-multiple-empty-lines": ["error", {
+    "max": 2,
+  }],
   "@stylistic/quotes": ["error", "single", {avoidEscape: true}],
   "@typescript-eslint/dot-notation": ["error", {allowIndexSignaturePropertyAccess: true}],
   "@typescript-eslint/restrict-template-expressions": ["error", {allowNumber: true, allowAny: true}],
   "@typescript-eslint/no-extraneous-class": ["off"],
+  "@typescript-eslint/no-unsafe-assignment": ["off"], // TODO: should be enabled
+  "@typescript-eslint/no-unsafe-call": ["off"], // TODO: should be enabled
+  "@typescript-eslint/no-unsafe-member-access": ["off"], // TODO:s hould be enabled
   "@typescript-eslint/no-unsafe-return": ["off"],
   "@typescript-eslint/no-unused-vars": "off",
   "@typescript-eslint/no-unnecessary-type-parameters": "off",
   "@typescript-eslint/no-misused-promises": ["error", {checksVoidReturn: false}],
+  "@typescript-eslint/no-misused-spread": ["off"], // TODO: should be enabled
   "@typescript-eslint/no-empty-function": ["off"],
 
   "@angular-eslint/component-class-suffix": ["off"],
@@ -46,22 +53,17 @@ export const ruleOverrides = {
   "sonarjs/no-duplicate-string": ["off"],
   "sonarjs/no-hardcoded-credentials": ["off"],
   "sonarjs/no-hardcoded-ip": ["off"],
+  "sonarjs/no-hardcoded-passwords": ["off"], // catches in .spec.ts files
   "sonarjs/no-redundant-assignments": ["off"],
   "sonarjs/pseudo-random": ["off"],
   "sonarjs/todo-tag": ["off"],
+  "sonarjs/unused-import": ["off"],
   "sonarjs/xml-parser-xxe": ["off"],
 
   "@smarttools/rxjs/no-ignored-takewhile-value": ["off"],
 
   // Fix compatibility issues with ESLint 9
   "@typescript-eslint/no-unused-expressions": ["error", {
-    allowShortCircuit: false,
-    allowTernary: false
-  }],
-  "sonarjs/no-empty-function": ["error", {
-    allow: []
-  }],
-  "sonarjs/no-unused-expressions": ["error", {
     allowShortCircuit: false,
     allowTernary: false
   }],

@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component, viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -68,6 +64,17 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class ReplicationWizardComponent {
+  private api = inject(ApiService);
+  private replicationService = inject(ReplicationService);
+  private errorHandler = inject(ErrorHandlerService);
+  private dialogService = inject(DialogService);
+  private cdr = inject(ChangeDetectorRef);
+  private translate = inject(TranslateService);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
+  private authService = inject(AuthService);
+  slideInRef = inject<SlideInRef<undefined, ReplicationTask | undefined>>(SlideInRef);
+
   protected whatAndWhere = viewChild.required(ReplicationWhatAndWhereComponent);
   protected when = viewChild.required(ReplicationWhenComponent);
 
@@ -83,18 +90,7 @@ export class ReplicationWizardComponent {
   createdSnapshotTasks: PeriodicSnapshotTask[] = [];
   createdReplication: ReplicationTask | undefined;
 
-  constructor(
-    private api: ApiService,
-    private replicationService: ReplicationService,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-    private loader: LoaderService,
-    private snackbar: SnackbarService,
-    private authService: AuthService,
-    public slideInRef: SlideInRef<undefined, ReplicationTask | undefined>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(Boolean(this.whatAndWhere()?.form?.dirty || this.when()?.form?.dirty));
     });
@@ -137,10 +133,10 @@ export class ReplicationWizardComponent {
 
   onSubmit(): void {
     this.isLoading = true;
-
     this.createdSnapshots = [];
     this.createdSnapshotTasks = [];
     this.createdReplication = undefined;
+    this.cdr.markForCheck();
 
     const values = this.preparePayload();
 
@@ -151,6 +147,7 @@ export class ReplicationWizardComponent {
         this.snackbar.success(this.translate.instant('Replication task created.'));
         this.isLoading = false;
         this.createdReplication = createdReplication;
+        this.cdr.markForCheck();
       }),
       switchMap((createdReplication) => {
         if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
@@ -169,9 +166,13 @@ export class ReplicationWizardComponent {
         return EMPTY;
       }),
       untilDestroyed(this),
-    ).subscribe((createdReplication) => {
-      this.cdr.markForCheck();
-      this.slideInRef.close({ response: createdReplication });
+    ).subscribe({
+      next: (createdReplication) => {
+        this.slideInRef.close({ response: createdReplication });
+      },
+      error: (err: unknown) => {
+        this.handleError(err);
+      },
     });
   }
 
@@ -214,7 +215,9 @@ export class ReplicationWizardComponent {
   }
 
   private getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Observable<Record<string, string[]>> {
-    return this.api.call('replication.target_unmatched_snapshots', payload);
+    return this.api.call('replication.target_unmatched_snapshots', payload).pipe(
+      catchError(() => of({})), // Will not block the creation process if this request fails
+    );
   }
 
   private createPeriodicSnapshotTask(payload: PeriodicSnapshotTaskCreate): Observable<PeriodicSnapshotTask> {
@@ -388,6 +391,8 @@ export class ReplicationWizardComponent {
   }
 
   handleError(error: unknown): void {
+    this.isLoading = false;
+    this.cdr.markForCheck();
     this.errorHandler.showErrorModal(error);
     this.rollBack();
   }
@@ -450,26 +455,21 @@ export class ReplicationWizardComponent {
       replicationPayload.transport,
       replicationPayload.ssh_credentials,
     ]).pipe(
-      catchError(() => {
-        return this.createReplication(replicationPayload);
-      }),
       switchMap((unmatchedSnapshots) => {
-        const hasBadSnapshots = Object.values(unmatchedSnapshots)
-          .some((snapshots: string[]) => snapshots.length > 0);
+        const hasBadSnapshots = Object.values(unmatchedSnapshots).some((snapshots: string[]) => snapshots.length > 0);
         if (hasBadSnapshots) {
           return this.dialogService.confirm({
             title: this.translate.instant(helptextReplicationWizard.clearSnapshotDialogTitle),
             message: this.translate.instant(helptextReplicationWizard.clearSnapshotDialogContent),
           }).pipe(
             switchMap((dialogResult) => {
-              replicationPayload.allow_from_scratch = dialogResult;
-              return this.createReplication(replicationPayload);
+              const payloadWithAllowFromScratch = { ...replicationPayload, allow_from_scratch: dialogResult };
+              return this.createReplication(payloadWithAllowFromScratch);
             }),
           );
         }
         return this.createReplication(replicationPayload);
       }),
-
     );
   }
 }

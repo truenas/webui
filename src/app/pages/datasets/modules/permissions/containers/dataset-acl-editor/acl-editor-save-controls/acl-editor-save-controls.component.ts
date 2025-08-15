@@ -1,20 +1,15 @@
-import {
-  ChangeDetectionStrategy, Component, input, OnInit,
-} from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 
 @UntilDestroy()
@@ -33,6 +28,11 @@ import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/st
   ],
 })
 export class AclEditorSaveControlsComponent implements OnInit {
+  private formBuilder = inject(FormBuilder);
+  private store = inject(DatasetAclEditorStore);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+
   readonly canBeSaved = input(false);
   readonly ownerValues = input.required<{
     owner: string;
@@ -44,28 +44,15 @@ export class AclEditorSaveControlsComponent implements OnInit {
   protected saveParameters = this.formBuilder.nonNullable.group({
     recursive: [false],
     traverse: [false],
-    validate_effective_acl: [true],
   });
 
   protected readonly helptext = helptextAcl;
   protected readonly Role = Role;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private store: DatasetAclEditorStore,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private api: ApiService,
-  ) {}
-
   ngOnInit(): void {
     this.setRecursiveCheckboxWarning();
   }
 
-  // TODO: Move here and in other places to global store.
-  protected readonly hasValidateAclCheckbox = toSignal(this.api.call('directoryservices.status').pipe(
-    map((state) => state.status !== DirectoryServiceStatus.Disabled),
-  ));
 
   protected onSavePressed(): void {
     const saveParameters = this.saveParameters.getRawValue();
@@ -73,7 +60,6 @@ export class AclEditorSaveControlsComponent implements OnInit {
     this.store.saveAcl({
       recursive: saveParameters.recursive,
       traverse: saveParameters.recursive && saveParameters.traverse,
-      validateEffectiveAcl: saveParameters.validate_effective_acl,
       owner: this.ownerValues().owner,
       ownerGroup: this.ownerValues().ownerGroup,
       applyOwner: this.ownerValues().applyOwner,

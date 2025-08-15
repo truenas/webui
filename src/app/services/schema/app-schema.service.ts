@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   Validators, AbstractControl, FormGroup, ValidatorFn,
 } from '@angular/forms';
@@ -72,10 +72,9 @@ interface ToggleFieldHiddenOrDisabledValue {
   providedIn: 'root',
 })
 export class AppSchemaService {
-  constructor(
-    protected filesystemService: FilesystemService,
-    private urlValidationService: UrlValidationService,
-  ) {}
+  protected filesystemService = inject(FilesystemService);
+  private urlValidationService = inject(UrlValidationService);
+
 
   transformNode(chartSchemaNode: ChartSchemaNode, isNew: boolean, isParentImmutable: boolean): DynamicFormSchemaNode[] {
     const schema = chartSchemaNode.schema;
@@ -431,7 +430,10 @@ export class AppSchemaService {
       altDefault = false;
     }
 
-    const defaultValue = isNew && schema.default !== undefined ? schema.default : altDefault;
+    // For hidden fields with default values, always use the default value from schema
+    // For new apps, use schema default if available
+    const shouldUseSchemaDefault = (schema.hidden || isNew) && schema.default !== undefined;
+    const defaultValue = shouldUseSchemaDefault ? schema.default : altDefault;
     const newFormControl = new CustomUntypedFormControl(
       defaultValue,
       this.buildSchemaControlValidator(defaultValue, schema),

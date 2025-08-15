@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
@@ -7,6 +7,8 @@ import { EditableComponent } from 'app/modules/forms/editable/editable.component
   providedIn: 'root',
 })
 export class EditableService implements OnDestroy {
+  private window = inject<Window>(WINDOW);
+
   private editables = new Set<EditableComponent>();
   private listenersInitialized = false;
 
@@ -16,10 +18,6 @@ export class EditableService implements OnDestroy {
 
   private keydownHandler = this.handleKeydown.bind(this);
   private mousedownHandler = this.handleMousedown.bind(this);
-
-  constructor(
-    @Inject(WINDOW) private window: Window,
-  ) {}
 
   ngOnDestroy(): void {
     this.removeDocumentListeners();
@@ -89,6 +87,10 @@ export class EditableService implements OnDestroy {
 
     const target = event.target as HTMLElement;
     const clickedWithin = this.getAll().filter((editable) => editable.isElementWithin(target));
-    this.tryToCloseAllExcept(clickedWithin);
+
+    // Defer closing to allow inputs to handle blur events
+    setTimeout(() => {
+      this.tryToCloseAllExcept(clickedWithin);
+    });
   }
 }

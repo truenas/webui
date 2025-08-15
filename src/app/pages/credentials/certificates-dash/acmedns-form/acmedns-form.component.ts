@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { UntypedFormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -60,6 +58,13 @@ interface DnsAuthenticatorList {
   ],
 })
 export class AcmednsFormComponent implements OnInit {
+  private translate = inject(TranslateService);
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandlerService = inject(FormErrorHandlerService);
+  private api = inject(ApiService);
+  slideInRef = inject<SlideInRef<DnsAuthenticator | undefined, boolean>>(SlideInRef);
+
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   get isNew(): boolean {
@@ -97,14 +102,7 @@ export class AcmednsFormComponent implements OnInit {
   authenticatorOptions$: Observable<Option[]>;
   private editingAcmedns: DnsAuthenticator | undefined;
 
-  constructor(
-    private translate: TranslateService,
-    private formBuilder: FormBuilder,
-    private errorHandler: ErrorHandlerService,
-    private formErrorHandlerService: FormErrorHandlerService,
-    private api: ApiService,
-    public slideInRef: SlideInRef<DnsAuthenticator | undefined, boolean>,
-  ) {
+  constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

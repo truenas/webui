@@ -1,7 +1,5 @@
 import { CdkAccordion, CdkAccordionItem } from '@angular/cdk/accordion';
-import {
-  ChangeDetectionStrategy, Component, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   NfsAdvancedFlag, nfsAdvancedFlagLabels,
@@ -39,14 +37,12 @@ interface PermissionDetails {
   ],
 })
 export class ViewNfsPermissionsComponent implements OnChanges {
+  private translate = inject(TranslateService);
+
   readonly acl = input.required<NfsAcl>();
 
   permissionItems: PermissionItem[] = [];
   permissionDetails: PermissionDetails[] = [];
-
-  constructor(
-    private translate: TranslateService,
-  ) {}
 
   ngOnChanges(): void {
     this.transformAcl();

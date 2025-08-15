@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -71,6 +69,17 @@ import { LicenseService } from 'app/services/license.service';
   ],
 })
 export class TargetFormComponent implements OnInit {
+  protected iscsiService = inject(IscsiService);
+  private translate = inject(TranslateService);
+  private formBuilder = inject(FormBuilder);
+  private errorHandler = inject(FormErrorHandlerService);
+  private cdr = inject(ChangeDetectorRef);
+  private api = inject(ApiService);
+  private fcService = inject(FibreChannelService);
+  private license = inject(LicenseService);
+  private targetNameValidationService = inject(TargetNameValidationService);
+  slideInRef = inject<SlideInRef<IscsiTarget | undefined, IscsiTarget>>(SlideInRef);
+
   get isNew(): boolean {
     return !this.editingTarget;
   }
@@ -157,18 +166,9 @@ export class TargetFormComponent implements OnInit {
     host_id: new FormControl(null as number | null, [Validators.required]),
   });
 
-  constructor(
-    protected iscsiService: IscsiService,
-    private translate: TranslateService,
-    private formBuilder: FormBuilder,
-    private errorHandler: FormErrorHandlerService,
-    private cdr: ChangeDetectorRef,
-    private api: ApiService,
-    private fcService: FibreChannelService,
-    private license: LicenseService,
-    private targetNameValidationService: TargetNameValidationService,
-    public slideInRef: SlideInRef<IscsiTarget | undefined, IscsiTarget>,
-  ) {
+  constructor() {
+    const slideInRef = this.slideInRef;
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });

@@ -1,6 +1,4 @@
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, inject } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -33,6 +31,9 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
   ],
 })
 export class IxIconGroupComponent implements ControlValueAccessor {
+  protected controlDirective = inject(NgControl);
+  private cdr = inject(ChangeDetectorRef);
+
   readonly options = input.required<IconGroupOption[]>();
   readonly label = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
@@ -42,10 +43,7 @@ export class IxIconGroupComponent implements ControlValueAccessor {
   protected isDisabled = false;
   protected value: IconGroupOption['value'];
 
-  constructor(
-    protected controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     this.controlDirective.valueAccessor = this;
   }
 

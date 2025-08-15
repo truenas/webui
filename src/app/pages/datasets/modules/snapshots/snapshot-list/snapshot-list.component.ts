@@ -1,10 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import {
-  Component,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  OnInit,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -93,6 +88,15 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
   ],
 })
 export class SnapshotListComponent implements OnInit {
+  protected emptyService = inject(EmptyService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
+  private matDialog = inject(MatDialog);
+  private store$ = inject<Store<AppState>>(Store);
+  private slideIn = inject(SlideIn);
+  private route = inject(ActivatedRoute);
+
   protected readonly requiredRoles = [Role.SnapshotDelete];
   filterString = '';
   dataProvider = new ArrayDataProvider<ZfsSnapshotUi>();
@@ -191,16 +195,7 @@ export class SnapshotListComponent implements OnInit {
     return this.selectedSnapshots.some((snapshot) => snapshot.selected);
   }
 
-  constructor(
-    protected emptyService: EmptyService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private matDialog: MatDialog,
-    private store$: Store<AppState>,
-    private slideIn: SlideIn,
-    private route: ActivatedRoute,
-  ) {
+  constructor() {
     this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
   }
 

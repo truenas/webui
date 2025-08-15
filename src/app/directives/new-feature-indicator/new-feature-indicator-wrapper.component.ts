@@ -1,7 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import {
-  ChangeDetectionStrategy, Component, input, TemplateRef,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, TemplateRef, inject } from '@angular/core';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NewFeatureIndicator } from 'app/directives/new-feature-indicator/new-feature-indicator.interface';
 import { NewFeatureIndicatorService } from 'app/directives/new-feature-indicator/new-feature-indicator.service';
@@ -23,12 +21,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class NewFeatureIndicatorWrapperComponent {
+  private indicatorService = inject(NewFeatureIndicatorService);
+
   readonly template = input.required<TemplateRef<unknown>>();
   readonly indicator = input.required<NewFeatureIndicator>();
-
-  constructor(
-    private indicatorService: NewFeatureIndicatorService,
-  ) { }
 
   onHidden(): void {
     this.indicatorService.markIndicatorAsShown(this.indicator());

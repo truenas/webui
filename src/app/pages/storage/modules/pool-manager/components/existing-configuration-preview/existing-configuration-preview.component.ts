@@ -1,7 +1,5 @@
 import { KeyValuePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, inject } from '@angular/core';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
@@ -53,6 +51,8 @@ const defaultCategory: PoolManagerTopologyCategory = {
   ],
 })
 export class ExistingConfigurationPreviewComponent implements OnChanges {
+  private cdr = inject(ChangeDetectorRef);
+
   readonly name = input.required<string>();
   readonly topology = input.required<PoolTopology>();
   readonly size = input<number>();
@@ -63,10 +63,6 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
   protected readonly vdevTypeLabels = vdevTypeLabels;
   protected poolTopology: PoolManagerTopology;
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-  ) {}
 
   ngOnChanges(simpleChanges: IxSimpleChanges<ExistingConfigurationPreviewComponent>): void {
     if (simpleChanges.topology.currentValue) {

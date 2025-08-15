@@ -1,7 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component, Inject, input, output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import {
   AbstractControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
@@ -61,6 +58,16 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class FileTicketLicensedComponent {
+  private formBuilder = inject(NonNullableFormBuilder);
+  private translate = inject(TranslateService);
+  private validatorsService = inject(IxValidatorsService);
+  private feedbackService = inject(FeedbackService);
+  private router = inject(Router);
+  private imageValidator = inject(ImageValidatorService);
+  private formErrorHandler = inject(FormErrorHandlerService);
+  private window = inject<Window>(WINDOW);
+  private api = inject(ApiService);
+
   readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
   readonly isLoading = input<boolean>();
 
@@ -107,17 +114,7 @@ export class FileTicketLicensedComponent {
     attach_debug: helptext.attachDebug.tooltip,
   };
 
-  constructor(
-    private formBuilder: NonNullableFormBuilder,
-    private translate: TranslateService,
-    private validatorsService: IxValidatorsService,
-    private feedbackService: FeedbackService,
-    private router: Router,
-    private imageValidator: ImageValidatorService,
-    private formErrorHandler: FormErrorHandlerService,
-    @Inject(WINDOW) private window: Window,
-    private api: ApiService,
-  ) {
+  constructor() {
     this.getSystemFileSizeLimit();
   }
 
