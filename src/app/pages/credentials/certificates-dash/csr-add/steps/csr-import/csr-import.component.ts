@@ -12,6 +12,7 @@ import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/pa
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/utils/get-certificate-preview.utils';
+import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates-dash/utils/normalize-certificate.utils';
 
 @UntilDestroy()
 @Component({
@@ -73,8 +74,8 @@ export class CsrImportComponent implements SummaryProvider {
     const values = this.form.getRawValue();
 
     return {
-      CSR: values.CSR,
-      privatekey: values.privatekey?.trim() || null,
+      CSR: normalizeCertificateNewlines(values.CSR) || '',
+      privatekey: normalizeCertificateNewlines(values.privatekey),
       passphrase: values.passphrase?.trim() || null,
     };
   }
