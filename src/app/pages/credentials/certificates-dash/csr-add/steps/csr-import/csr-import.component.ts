@@ -4,7 +4,6 @@ import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { pick } from 'lodash-es';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -71,8 +70,12 @@ export class CsrImportComponent implements SummaryProvider {
   }
 
   getPayload(): Omit<CsrImportComponent['form']['value'], 'passphrase2'> {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
-    return pick(values, ['CSR', 'privatekey', 'passphrase']);
+    return {
+      CSR: values.CSR,
+      privatekey: values.privatekey?.trim() || null,
+      passphrase: values.passphrase?.trim() || null,
+    };
   }
 }
