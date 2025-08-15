@@ -67,47 +67,34 @@ jobs:
           script: |
             try {
               const username = context.payload.pull_request.user.login;
-              console.log(`Checking team membership for user: ${username}`);
-              console.log(`PR number: ${context.payload.pull_request.number}`);
+              console.log(`Checking repository access for user: ${username}`);
               
-              // First, let's try to list teams to debug
-              console.log('Attempting to list organization teams...');
-              try {
-                const { data: teams } = await github.rest.teams.list({
-                  org: 'truenas',
-                  per_page: 100
-                });
-                console.log(`Found ${teams.length} teams`);
-                teams.forEach(team => {
-                  console.log(`Team: ${team.name} (slug: ${team.slug})`);
-                });
-              } catch (listError) {
-                console.log(`Cannot list teams: ${listError.message}`);
-              }
-              
-              const { data: membership } = await github.rest.teams.getMembershipForUserInOrg({
-                org: 'truenas',
-                team_slug: 'ux-team',
+              // Check if user has write access to the repository
+              const { data: permissionLevel } = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
                 username: username
               });
               
-              console.log(`Membership response:`, JSON.stringify(membership, null, 2));
-              console.log(`Membership state: ${membership.state}`);
-              console.log(`Membership role: ${membership.role}`);
+              console.log(`User ${username} has permission: ${permissionLevel.permission}`);
               
-              const isMember = membership.state === 'active';
-              console.log(`Is member: ${isMember}`);
+              // Users with write or admin access are considered team members
+              const hasWriteAccess = ['write', 'admin'].includes(permissionLevel.permission);
+              console.log(`Has write access: ${hasWriteAccess}`);
               
-              return isMember ? 'true' : 'false';
+              return hasWriteAccess ? 'true' : 'false';
             } catch (error) {
-              console.log(`Error checking team membership: ${error.message}`);
-              console.log(`Error status: ${error.status}`);
+              console.log(`Error checking permissions: ${error.message}`);
               
-              // The error might be because GITHUB_TOKEN doesn't have org:read permission
-              // Let's try an alternative approach
-              console.log('Trying alternative approach via CODEOWNERS check...');
+              // If we can't check permissions, check if it's the PR author's association
+              const association = context.payload.pull_request.author_association;
+              console.log(`PR author association: ${association}`);
               
-              return 'false';
+              // MEMBER, OWNER, and COLLABORATOR associations indicate team members
+              const isTeamMember = ['MEMBER', 'OWNER', 'COLLABORATOR'].includes(association);
+              console.log(`Is team member based on association: ${isTeamMember}`);
+              
+              return isTeamMember ? 'true' : 'false';
             }
       - name: Output result
         run: |
