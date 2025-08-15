@@ -13,9 +13,8 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { injectParams } from 'ngxtension/inject-params';
 import {
-  combineLatest, filter, forkJoin, Observable, switchMap,
+  combineLatest, filter, forkJoin, map, Observable, switchMap,
 } from 'rxjs';
 import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
 import { AppState } from 'app/enums/app-state.enum';
@@ -104,7 +103,7 @@ export class InstalledAppsListComponent implements OnInit {
   private loader = inject(LoaderService);
   private layoutService = inject(LayoutService);
 
-  readonly appId = injectParams('appId');
+  readonly appId = toSignal(this.activatedRoute.params.pipe(map((params) => params['appId'])));
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
@@ -297,7 +296,7 @@ export class InstalledAppsListComponent implements OnInit {
     ).subscribe({
       next: ([,, apps]) => {
         this.sortChanged(this.sortingInfo, apps);
-        this.selectAppForDetails(this.appId());
+        this.selectAppForDetails(this.appId() as string);
         this.cdr.markForCheck();
       },
     });
