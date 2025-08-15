@@ -70,6 +70,21 @@ jobs:
               console.log(`Checking team membership for user: ${username}`);
               console.log(`PR number: ${context.payload.pull_request.number}`);
               
+              // First, let's try to list teams to debug
+              console.log('Attempting to list organization teams...');
+              try {
+                const { data: teams } = await github.rest.teams.list({
+                  org: 'truenas',
+                  per_page: 100
+                });
+                console.log(`Found ${teams.length} teams`);
+                teams.forEach(team => {
+                  console.log(`Team: ${team.name} (slug: ${team.slug})`);
+                });
+              } catch (listError) {
+                console.log(`Cannot list teams: ${listError.message}`);
+              }
+              
               const { data: membership } = await github.rest.teams.getMembershipForUserInOrg({
                 org: 'truenas',
                 team_slug: 'ux-team',
@@ -86,7 +101,7 @@ jobs:
               return isMember ? 'true' : 'false';
             } catch (error) {
               console.log(`Error checking team membership: ${error.message}`);
-              console.log(`Error details:`, error);
+              console.log(`Error status: ${error.status}`);
               
               // The error might be because GITHUB_TOKEN doesn't have org:read permission
               // Let's try an alternative approach
