@@ -1,16 +1,18 @@
 import { AsyncPipe, TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
+  ActivatedRoute,
   Router,
   RouterLink,
 } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { injectParams } from 'ngxtension/inject-params';
 import {
   BehaviorSubject,
+  map,
 } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -41,10 +43,11 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 })
 export class CategoryViewComponent implements OnInit, OnDestroy {
   protected router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
   private applicationsStore = inject(AppsStore);
   private appsFilterStore = inject(AppsFilterStore);
 
-  protected readonly category = injectParams('category');
+  protected readonly category = toSignal(this.activatedRoute.params.pipe(map((params) => params['category'] as string)));
   pageTitle$ = new BehaviorSubject('Category');
   apps$ = this.appsFilterStore.filteredApps$;
   isLoading$ = this.applicationsStore.isLoading$;

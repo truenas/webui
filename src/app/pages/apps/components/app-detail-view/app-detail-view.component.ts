@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, signal, computed, effect, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -9,7 +10,6 @@ import {
 import { LightboxModule } from 'ng-gallery/lightbox';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { injectParams } from 'ngxtension/inject-params';
 import {
   map, filter, switchMap,
 } from 'rxjs';
@@ -52,8 +52,8 @@ export class AppDetailViewComponent implements OnInit {
   private router = inject(Router);
 
   readonly app = signal<AvailableApp | null>(null);
-  readonly appId = injectParams('appId');
-  readonly train = injectParams('train');
+  readonly appId = toSignal(this.activatedRoute.params.pipe(map((params) => params['appId'])));
+  readonly train = toSignal(this.activatedRoute.params.pipe(map((params) => params['train'])));
   readonly isLoading = signal(true);
   readonly imagePlaceholder = appImagePlaceholder;
   readonly items = signal<GalleryItem[]>([]);
