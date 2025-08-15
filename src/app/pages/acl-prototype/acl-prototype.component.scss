@@ -90,12 +90,18 @@ mat-card h3 {
 
   // Split Layout: 2/1 ratio with main content on left, sticky sidebar on right
   .content-layout {
-    display: grid;
-    gap: 32px;
-    grid-template-columns: 2fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
 
-    @media (max-width: 1024px) {
-      grid-template-columns: 1fr;
+    > div {
+      &:first-child {
+        flex: 2;
+      }
+
+      &:last-child {
+        flex: 1;
+      }
     }
   }
 
@@ -556,6 +562,10 @@ mat-card h3 {
   .selected-preset mat-chip {
     font-size: 12px;
     height: 24px;
+  }
+
+  mat-chip {
+    background-color: var(--fg2);
   }
 
   .selected-preset span {
