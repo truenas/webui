@@ -173,7 +173,13 @@ describe('CloudSyncTaskCardComponent', () => {
       CloudSyncFormComponent,
       {
         wide: true,
-        data: cloudsyncTasks[0],
+        data: expect.objectContaining({
+          id: 3,
+          description: 'custom-cloudsync',
+          enabled: false,
+          direction: 'PULL',
+          // The data will have additional transformed fields like frequency_sort_key, etc.
+        }),
       },
     );
   });
