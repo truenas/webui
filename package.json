@@ -28,7 +28,7 @@
     "strict-null-checks": "node_modules/typescript/bin/tsc --project tsconfig.strictNullChecks.json",
     "test": "jest",
     "test:changed": "node scripts/test_changed.js",
-    "test:pr": "yarn run check-env && echo 'Setting up temporary environment file...\\n' && yarn run ui remote -i 'headless.local' && jest --coverage --maxWorkers=2",
+    "test:pr": "yarn run check-env && echo 'Setting up temporary environment file...\\n' && yarn run ui remote -i 'headless.local' && jest --coverage",
     "test:watch": "jest --watch",
     "translations": "yarn extract && yarn extract-ui-search-elements && yarn validate-translations",
     "ui": "cd $(git rev-parse --show-toplevel) && tsx ./scripts/ui/ui.ts",
