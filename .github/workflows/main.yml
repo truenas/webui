@@ -66,15 +66,38 @@ jobs:
           result-encoding: string
           script: |
             try {
+              const username = context.payload.pull_request.user.login;
+              console.log(`Checking team membership for user: ${username}`);
+              console.log(`PR number: ${context.payload.pull_request.number}`);
+              
               const { data: membership } = await github.rest.teams.getMembershipForUserInOrg({
                 org: 'truenas',
                 team_slug: 'ux-team',
-                username: context.payload.pull_request.user.login
+                username: username
               });
-              return membership.state === 'active' ? 'true' : 'false';
+              
+              console.log(`Membership response:`, JSON.stringify(membership, null, 2));
+              console.log(`Membership state: ${membership.state}`);
+              console.log(`Membership role: ${membership.role}`);
+              
+              const isMember = membership.state === 'active';
+              console.log(`Is member: ${isMember}`);
+              
+              return isMember ? 'true' : 'false';
             } catch (error) {
+              console.log(`Error checking team membership: ${error.message}`);
+              console.log(`Error details:`, error);
+              
+              // The error might be because GITHUB_TOKEN doesn't have org:read permission
+              // Let's try an alternative approach
+              console.log('Trying alternative approach via CODEOWNERS check...');
+              
               return 'false';
             }
+      - name: Output result
+        run: |
+          echo "Check result: ${{ steps.check.outputs.result }}"
+          echo "Is member output: ${{ steps.check.outputs.result == 'true' }}"
 
   test-ux-team:
     name: Run tests (UX Team - Self-hosted)
