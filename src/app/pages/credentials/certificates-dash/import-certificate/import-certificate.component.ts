@@ -25,6 +25,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates-dash/utils/normalize-certificate.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -114,11 +115,14 @@ export class ImportCertificateComponent {
   }
 
   private getPayload(): CertificateCreate {
+    const values = this.form.getRawValue();
+
     return {
-      ...omit(this.form.getRawValue(), ['passphrase2']),
+      ...omit(values, ['passphrase2']),
       create_type: CertificateCreateType.Import,
-      passphrase: this.form.controls.passphrase.value || null,
-      privatekey: this.form.controls.privatekey.value || undefined,
+      certificate: normalizeCertificateNewlines(values.certificate) || '',
+      privatekey: normalizeCertificateNewlines(values.privatekey) || undefined,
+      passphrase: values.passphrase || null,
     };
   }
 }
