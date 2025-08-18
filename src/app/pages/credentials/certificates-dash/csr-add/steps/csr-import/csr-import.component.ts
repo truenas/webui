@@ -70,12 +70,12 @@ export class CsrImportComponent implements SummaryProvider {
     return summary;
   }
 
-  getPayload(): Omit<CsrImportComponent['form']['value'], 'passphrase2'> {
+  getPayload(): { CSR: string; privatekey: string | null; passphrase: string | null } {
     const values = this.form.getRawValue();
 
     return {
       CSR: normalizeCertificateNewlines(values.CSR) || '',
-      privatekey: normalizeCertificateNewlines(values.privatekey),
+      privatekey: normalizeCertificateNewlines(values.privatekey) || null,
       passphrase: values.passphrase?.trim() || null,
     };
   }
