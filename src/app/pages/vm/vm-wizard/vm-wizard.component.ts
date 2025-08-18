@@ -14,7 +14,7 @@ import { catchError, defaultIfEmpty } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
+import { VmDeviceType, VmDisplayType, VmNicType, VmOs } from 'app/enums/vm.enum';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -239,7 +239,10 @@ export class VmWizardComponent implements OnInit {
     }
 
     if (this.osForm.enable_display) {
-      requests.push(this.getDisplayRequest(vm));
+      requests.push(this.getSpiceDisplayRequest(vm));
+    }
+    if (this.osForm.enable_vnc) {
+      requests.push(this.getVncDisplayRequest(vm));
     }
 
     if (this.gpuForm.gpus.length) {
@@ -308,17 +311,37 @@ export class VmWizardComponent implements OnInit {
     );
   }
 
-  private getDisplayRequest(vm: VirtualMachine): Observable<VmDevice | null> {
+  private getSpiceDisplayRequest(vm: VirtualMachine): Observable<VmDevice | null> {
     return this.api.call('vm.port_wizard').pipe(
       switchMap((port) => {
         return this.makeDeviceRequest(vm.id, {
           attributes: {
             dtype: VmDeviceType.Display,
             port: port.port,
+            web_port: null,
             bind: this.osForm.bind,
             password: this.osForm.password,
+            resolution: '1920x1080',
             web: true,
-            type: this.osForm.display_type,
+            type: VmDisplayType.Spice,
+          },
+        });
+      }),
+    );
+  }
+
+  private getVncDisplayRequest(vm: VirtualMachine): Observable<VmDevice | null> {
+    return this.api.call('vm.port_wizard').pipe(
+      switchMap((port) => {
+        return this.makeDeviceRequest(vm.id, {
+          attributes: {
+            dtype: VmDeviceType.Display,
+            port: port.port,
+            bind: this.osForm.vnc_bind,
+            password: this.osForm.vnc_password,
+            resolution: '1920x1080',
+            web: false,
+            type: VmDisplayType.Vnc,
           },
         });
       }),

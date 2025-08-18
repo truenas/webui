@@ -82,6 +82,7 @@ describe('VmWizardComponent', () => {
           UEFI: 'UEFI',
         }),
         mockCall('vm.device.bind_choices', {
+          '0.0.0.0': '0.0.0.0',
           '10.10.16.82': '10.10.16.82',
         }),
         mockCall('vm.cpu_model_choices', {
@@ -339,6 +340,8 @@ describe('VmWizardComponent', () => {
         bind: '0.0.0.0',
         password: '12345678',
         port: 13669,
+        web_port: null,
+        resolution: '1920x1080',
         type: VmDisplayType.Spice,
         web: true,
       },
