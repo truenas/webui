@@ -14,6 +14,8 @@ import {
   finalize, forkJoin, map, Observable, of, switchMap,
   tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import {
@@ -72,6 +74,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     IxCheckboxComponent,
     AddSubsystemHostsComponent,
     AddSubsystemNamespacesComponent,
+    RequiresRolesDirective,
     AddSubsystemPortsComponent,
     DetailsItemComponent,
     DetailsTableComponent,
@@ -90,6 +93,7 @@ export class AddSubsystemComponent {
   private matDialog = inject(MatDialog);
 
   protected isLoading = signal(false);
+  requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected form = this.formBuilder.group({
     name: ['', Validators.required],
