@@ -1,11 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, catchError, filter, Observable, of, repeat, Subject, switchMap, take,
 } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
+import { VmDisplayType } from 'app/enums/vm.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
@@ -17,6 +18,7 @@ import {
   VmDisplayWebUriParams,
   VmDisplayWebUriParamsOptions,
 } from 'app/interfaces/virtual-machine.interface';
+import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -24,6 +26,7 @@ import { StopVmDialogComponent, StopVmDialogData } from 'app/pages/vm/vm-list/st
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
+@UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class VmService {
   private api = inject(ApiService);
@@ -125,7 +128,35 @@ export class VmService {
     this.api.call('vm.get_display_devices', [vm.id])
       .pipe(this.loader.withLoader(), take(1))
       .subscribe({
-        next: () => this.openDisplayWebUri(vm.id),
+        next: (devices: VmDisplayDevice[]) => {
+          const spiceDevice = devices.find((device) => device.attributes.type === VmDisplayType.Spice);
+          const vncDevices = devices.filter((device) => device.attributes.type === VmDisplayType.Vnc);
+
+          if (spiceDevice?.attributes.web) {
+            this.openDisplayWebUri(vm.id);
+          } else if (vncDevices.length > 0) {
+            const vncConnections = vncDevices.map((device) => `${device.attributes.bind}:${device.attributes.port}`).join(', ');
+            this.dialogService.info(
+              this.translate.instant('VNC Display Available'),
+              this.translate.instant('Connect using a VNC client to: {connections}', { connections: vncConnections }),
+              true,
+            );
+          } else if (spiceDevice && !spiceDevice.attributes.web) {
+            this.dialogService.info(
+              this.translate.instant('SPICE Display Available'),
+              this.translate.instant(
+                'Web access is disabled. Connect using a SPICE client to: {connection}',
+                { connection: `${spiceDevice.attributes.bind}:${spiceDevice.attributes.port}` },
+              ),
+              true,
+            );
+          } else {
+            this.dialogService.warn(
+              this.translate.instant('No Display Available'),
+              this.translate.instant('No display devices are configured for this VM.'),
+            );
+          }
+        },
         error: (error: unknown) => this.errorHandler.showErrorModal(error),
       });
   }

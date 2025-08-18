@@ -71,7 +71,7 @@
 
   <ix-checkbox
     formControlName="enable_display"
-    [label]="'Enable Display' | translate"
+    [label]="'Enable SPICE Display' | translate"
     [tooltip]="helptext.enable_display_tooltip | translate"
   ></ix-checkbox>
 
@@ -91,6 +91,34 @@
       [required]="true"
       [tooltip]="helptext.password_tooltip | translate"
     ></ix-input>
+  }
+
+  <ix-checkbox
+    formControlName="enable_vnc"
+    [label]="'Enable VNC' | translate"
+    [tooltip]="helptext.enable_vnc_tooltip | translate"
+  ></ix-checkbox>
+
+  @if (form.value.enable_vnc) {
+    <ix-select
+      formControlName="vnc_bind"
+      [label]="'VNC Bind' | translate"
+      [options]="bindOptions$"
+      [required]="true"
+      [tooltip]="helptext.vnc_bind_tooltip | translate"
+    ></ix-select>
+
+    <ix-input
+      formControlName="vnc_password"
+      type="password"
+      [label]="'VNC Password' | translate"
+      [required]="true"
+      [tooltip]="helptext.vnc_password_tooltip | translate"
+    ></ix-input>
+
+    <div class="vnc-warning">
+      <p><strong>{{ 'Note' | translate }}:</strong> {{ 'VNC requires a separate client application and cannot be accessed through the web browser.' | translate }}</p>
+    </div>
   }
 
   <ix-form-actions>

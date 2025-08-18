@@ -15,8 +15,14 @@ export const helptextVmWizard = {
   autostart_tooltip: T('Set to start this VM when the system boots.'),
   enableSecureBoot: T('Enabling secure boot may be a requirement for some operating systems like Windows 11.'),
   enableTrustedPlatformModule: T('Enable Trusted Platform Module (TPM) for enhanced security features. TPM provides hardware-based cryptographic security functions and may be required by some operating systems like Windows 11.'),
-  enable_display_tooltip: T('Enable a Display (Virtual Network Computing) remote\
- connection. Requires <i>UEFI</i> booting.'),
+  enable_display_tooltip: T('Enable a SPICE display for web-based and client remote\
+ connections. Requires <i>UEFI</i> booting.'),
+  enable_vnc_tooltip: T('Enable a VNC display for client-only remote connections.\
+ Requires VNC client software. Cannot be accessed through web browser.'),
+  vnc_password_tooltip: T('VNC password (maximum 8 characters). Required for VNC connections.'),
+  vnc_bind_tooltip: T('Select an IP address for VNC connections. Leave as 0.0.0.0 to bind to all interfaces.'),
+  vnc_port_tooltip: T('Port for VNC connections. Leave empty to auto-assign an available port.'),
+  vnc_resolution_tooltip: T('Default screen resolution for VNC display.'),
   display_bind_tooltip: T('Select an IP address to use for remote SPICE sessions.\
  Note: this setting only applies if you are using a SPICE client other than the TrueNAS WebUI.'),
   vcpus_warning: T('The product of vCPUs, cores and threads must not exceed {maxVcpus} on this system.'),
