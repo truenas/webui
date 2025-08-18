@@ -121,7 +121,7 @@ export class ImportCertificateComponent {
       ...omit(values, ['passphrase2']),
       create_type: CertificateCreateType.Import,
       certificate: normalizeCertificateNewlines(values.certificate) || '',
-      privatekey: normalizeCertificateNewlines(values.privatekey) || undefined,
+      privatekey: normalizeCertificateNewlines(values.privatekey) || null,
       passphrase: values.passphrase || null,
     };
   }
