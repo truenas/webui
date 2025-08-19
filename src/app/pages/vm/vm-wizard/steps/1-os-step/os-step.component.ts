@@ -69,12 +69,9 @@ export class OsStepComponent implements SummaryProvider {
     trusted_platform_module: [false],
     shutdown_timeout: [90, [Validators.min(0)]],
     autostart: [true],
-    enable_display: [true],
-    bind: ['0.0.0.0', [Validators.required]],
-    password: ['', Validators.required],
-    enable_vnc: [false],
-    vnc_bind: ['0.0.0.0'],
-    vnc_password: ['', [Validators.maxLength(8)]],
+    enable_vnc: [true],
+    vnc_bind: ['0.0.0.0', [Validators.required]],
+    vnc_password: ['', [Validators.required, Validators.maxLength(8)]],
   });
 
   readonly helptext = helptextVmWizard;
@@ -86,29 +83,21 @@ export class OsStepComponent implements SummaryProvider {
   readonly bindOptions$ = this.api.call('vm.device.bind_choices').pipe(choicesToOptions());
 
   constructor() {
-    // Handle SPICE display controls
-    this.form.controls.enable_display.valueChanges.pipe(untilDestroyed(this)).subscribe((isEnabled) => {
-      if (isEnabled) {
-        this.form.controls.password.enable();
-        this.form.controls.bind.enable();
-      } else {
-        this.form.controls.password.disable();
-        this.form.controls.bind.disable();
-      }
-    });
-
     // Handle VNC display controls
     this.form.controls.enable_vnc.valueChanges.pipe(untilDestroyed(this)).subscribe((isEnabled) => {
       if (isEnabled) {
         this.form.controls.vnc_password.setValidators([Validators.required, Validators.maxLength(8)]);
+        this.form.controls.vnc_bind.setValidators([Validators.required]);
         this.form.controls.vnc_bind.enable();
         this.form.controls.vnc_password.enable();
       } else {
         this.form.controls.vnc_password.clearValidators();
+        this.form.controls.vnc_bind.clearValidators();
         this.form.controls.vnc_bind.disable();
         this.form.controls.vnc_password.disable();
       }
       this.form.controls.vnc_password.updateValueAndValidity();
+      this.form.controls.vnc_bind.updateValueAndValidity();
     });
   }
 
