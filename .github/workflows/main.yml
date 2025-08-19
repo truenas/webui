@@ -51,13 +51,90 @@ jobs:
       - name: Run linter
         run: yarn lint
 
-  test:
-    name: Run tests
-    needs: [install]
+  check-ux-team:
+    name: Check UX Team Membership
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    outputs:
+      is_member: ${{ steps.check.outputs.result }}
+    steps:
+      - name: Check membership
+        id: check
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            try {
+              const username = context.payload.pull_request.user.login;
+              console.log(`Checking repository access for user: ${username}`);
+              
+              // Check if user has write access to the repository
+              const { data: permissionLevel } = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                username: username
+              });
+              
+              console.log(`User ${username} has permission: ${permissionLevel.permission}`);
+              
+              // Users with write or admin access are considered team members
+              const hasWriteAccess = ['write', 'admin'].includes(permissionLevel.permission);
+              console.log(`Has write access: ${hasWriteAccess}`);
+              
+              return hasWriteAccess ? 'true' : 'false';
+            } catch (error) {
+              console.log(`Error checking permissions: ${error.message}`);
+              
+              // If we can't check permissions, check if it's the PR author's association
+              const association = context.payload.pull_request.author_association;
+              console.log(`PR author association: ${association}`);
+              
+              // MEMBER, OWNER, and COLLABORATOR associations indicate team members
+              const isTeamMember = ['MEMBER', 'OWNER', 'COLLABORATOR'].includes(association);
+              console.log(`Is team member based on association: ${isTeamMember}`);
+              
+              return isTeamMember ? 'true' : 'false';
+            }
+      - name: Output result
+        run: |
+          echo "Check result: ${{ steps.check.outputs.result }}"
+          echo "Is member output: ${{ steps.check.outputs.result == 'true' }}"
+
+  test-ux-team:
+    name: Run tests (UX Team - Self-hosted)
+    needs: [install, check-ux-team]
+    if: needs.check-ux-team.outputs.is_member == 'true'
     strategy:
       fail-fast: false
-      matrix:
-        shard: [1, 2]
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install
+        uses: ./.github/actions/prepare
+      - name: Run tests
+        run: yarn test:pr --maxWorkers=20
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+         name: coverage
+         path: coverage/webui/coverage-final.json
+      - name: Upload test data
+        uses: actions/upload-artifact@v4
+        with:
+         name: coverage-junit
+         path: coverage/webui/junit.xml
+
+  test:
+    name: Run tests (Standard)
+    needs: [install, check-ux-team]
+    if: |
+      always() && 
+      needs.install.result == 'success' && 
+      (github.event_name != 'pull_request' || needs.check-ux-team.outputs.is_member != 'true')
+    strategy:
+      fail-fast: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -65,55 +142,44 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare
       - name: Run tests
-        run: yarn test:pr --shard=${{ matrix.shard }}/${{ strategy.job-total }}
-      - name: Save shard coverage
-        run: |
-          mv coverage/webui/coverage-final.json coverage/coverage-${{matrix.shard}}.json
-          mv coverage/webui/junit.xml coverage/junit-${{matrix.shard}}.xml
-          rm -rf coverage/webui
+        run: yarn test:pr --maxWorkers=2
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
-         name: coverage-${{ matrix.shard }}
-         path: coverage/coverage-${{matrix.shard}}.json
+         name: coverage
+         path: coverage/webui/coverage-final.json
       - name: Upload test data
         uses: actions/upload-artifact@v4
         with:
-         name: coverage-junit-${{ matrix.shard }}
-         path: coverage/junit-${{matrix.shard}}.xml
+         name: coverage-junit
+         path: coverage/webui/junit.xml
 
   report-coverage:
     name: Collect coverage
     runs-on: ubuntu-latest
     if: ${{ !cancelled() }}
-    needs: [test]
+    needs: [test, test-ux-team]
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Collect coverage and test data from shards
+      - name: Download coverage and test data
         uses: actions/download-artifact@v4
         with:
-          pattern: 'coverage-*'
+          pattern: 'coverage*'
           path: coverage
           merge-multiple: true
-      - name: Merge Code Coverage
-        run: npx -y nyc merge coverage/ coverage/merged-coverage.json
-      - name: Merge Test Data
-        run: npx -y junit-report-merger coverage/merged-junit.xml "coverage/junit-*.xml"
-      - name: Remove shard data
-        run: rm -rf coverage/coverage-*.json coverage/junit-*.xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           name: webui
           token: ${{ env.CODECOV_TOKEN }}
-          files: coverage/merged-coverage.json
+          files: coverage/coverage-final.json
           fail_ci_if_error: true
       - name: Upload extra test data to Codecov
         if: ${{ !cancelled() }}
         uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: coverage/merged-junit.xml
+          file: coverage/junit.xml
