@@ -238,9 +238,6 @@ export class VmWizardComponent implements OnInit {
       requests.push(this.getCdromRequest(vm));
     }
 
-    if (this.osForm.enable_display) {
-      requests.push(this.getSpiceDisplayRequest(vm));
-    }
     if (this.osForm.enable_vnc) {
       requests.push(this.getVncDisplayRequest(vm));
     }
@@ -308,25 +305,6 @@ export class VmWizardComponent implements OnInit {
     return this.gpuService.addIsolatedGpuPciIds(gpusIds).pipe(
       defaultIfEmpty([]),
       switchMap(() => this.vmGpuService.updateVmGpus(vm, gpusIds)),
-    );
-  }
-
-  private getSpiceDisplayRequest(vm: VirtualMachine): Observable<VmDevice | null> {
-    return this.api.call('vm.port_wizard').pipe(
-      switchMap((port) => {
-        return this.makeDeviceRequest(vm.id, {
-          attributes: {
-            dtype: VmDeviceType.Display,
-            port: port.port,
-            web_port: null,
-            bind: this.osForm.bind,
-            password: this.osForm.password,
-            resolution: '1920x1080',
-            web: true,
-            type: VmDisplayType.Spice,
-          },
-        });
-      }),
     );
   }
 

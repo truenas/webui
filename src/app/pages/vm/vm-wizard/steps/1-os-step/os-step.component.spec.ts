@@ -51,8 +51,8 @@ describe('OsStepComponent', () => {
       'Boot Method': 'UEFI',
       'Shutdown Timeout': 90,
       'Start on Boot': true,
-      'Enable SPICE Display': true,
-      Password: '12345678910',
+      'Enable Display (VNC)': true,
+      Password: '12345678',
       Bind: '10.10.16.82',
     });
   }
@@ -68,15 +68,12 @@ describe('OsStepComponent', () => {
       bootloader: VmBootloader.Uefi,
       shutdown_timeout: 90,
       autostart: true,
-      enable_display: true,
-      bind: '10.10.16.82',
-      password: '12345678910',
+      enable_vnc: true,
+      vnc_bind: '10.10.16.82',
+      vnc_password: '12345678',
       hyperv_enlightenments: false,
       enable_secure_boot: true,
       trusted_platform_module: false,
-      enable_vnc: false,
-      vnc_bind: '0.0.0.0',
-      vnc_password: '',
     });
   });
 
@@ -112,14 +109,14 @@ describe('OsStepComponent', () => {
   });
 
   describe('VNC Display', () => {
-    it('enables VNC fields when Enable VNC is checked', async () => {
+    it('enables VNC fields when Enable Display (VNC) is checked', async () => {
       await form.fillForm({
-        'Enable VNC': true,
+        'Enable Display (VNC)': true,
       });
 
       const formValues = await form.getValues();
       expect(formValues).toMatchObject({
-        'Enable VNC': true,
+        'Enable Display (VNC)': true,
       });
 
       // VNC fields should be accessible
@@ -127,15 +124,15 @@ describe('OsStepComponent', () => {
       expect(spectator.component.form.controls.vnc_password.enabled).toBe(true);
     });
 
-    it('disables VNC fields when Enable VNC is unchecked', async () => {
+    it('disables VNC fields when Enable Display (VNC) is unchecked', async () => {
       await form.fillForm({
-        'Enable VNC': true,
-        'VNC Bind': '10.10.16.82',
-        'VNC Password': 'vncpass',
+        'Enable Display (VNC)': true,
+        Bind: '10.10.16.82',
+        Password: 'vncpass',
       });
 
       await form.fillForm({
-        'Enable VNC': false,
+        'Enable Display (VNC)': false,
       });
 
       // VNC fields should be disabled
@@ -145,8 +142,8 @@ describe('OsStepComponent', () => {
 
     it('validates VNC password with 8-character limit', async () => {
       await form.fillForm({
-        'Enable VNC': true,
-        'VNC Password': '123456789', // 9 characters - should be invalid
+        'Enable Display (VNC)': true,
+        Password: '123456789', // 9 characters - should be invalid
       });
 
       expect(spectator.component.form.controls.vnc_password.invalid).toBe(true);
@@ -155,8 +152,8 @@ describe('OsStepComponent', () => {
 
     it('accepts VNC password with 8 characters or less', async () => {
       await form.fillForm({
-        'Enable VNC': true,
-        'VNC Password': '12345678', // 8 characters - should be valid
+        'Enable Display (VNC)': true,
+        Password: '12345678', // 8 characters - should be valid
       });
 
       expect(spectator.component.form.controls.vnc_password.valid).toBe(true);
@@ -164,31 +161,25 @@ describe('OsStepComponent', () => {
 
     it('requires VNC password when VNC is enabled', async () => {
       await form.fillForm({
-        'Enable VNC': true,
-        'VNC Password': '', // Empty password - should be invalid
+        'Enable Display (VNC)': true,
+        Password: '', // Empty password - should be invalid
       });
 
       expect(spectator.component.form.controls.vnc_password.invalid).toBe(true);
       expect(spectator.component.form.controls.vnc_password.hasError('required')).toBe(true);
     });
 
-    it('allows both SPICE and VNC to be enabled simultaneously', async () => {
+    it('shows VNC form values when enabled', async () => {
       await form.fillForm({
-        'Enable SPICE Display': true,
-        Password: '12345678910',
+        'Enable Display (VNC)': true,
+        Password: 'vncpass',
         Bind: '10.10.16.82',
-        'Enable VNC': true,
-        'VNC Password': 'vncpass',
-        'VNC Bind': '0.0.0.0',
       });
 
       expect(spectator.component.form.value).toMatchObject({
-        enable_display: true,
         enable_vnc: true,
-        password: '12345678910',
         vnc_password: 'vncpass',
-        bind: '10.10.16.82',
-        vnc_bind: '0.0.0.0',
+        vnc_bind: '10.10.16.82',
       });
     });
 
@@ -196,20 +187,14 @@ describe('OsStepComponent', () => {
       await form.fillForm({
         'Guest Operating System': 'Linux',
         Name: 'vnc-test-vm',
-        'Enable SPICE Display': true,
-        Password: 'spicepass',
+        'Enable Display (VNC)': true,
+        Password: 'vncpass',
         Bind: '10.10.16.82',
-        'Enable VNC': true,
-        'VNC Password': 'vncpass',
-        'VNC Bind': '10.10.16.82',
       });
 
       expect(spectator.component.form.value).toMatchObject({
         os: VmOs.Linux,
         name: 'vnc-test-vm',
-        enable_display: true,
-        password: 'spicepass',
-        bind: '10.10.16.82',
         enable_vnc: true,
         vnc_password: 'vncpass',
         vnc_bind: '10.10.16.82',

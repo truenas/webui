@@ -158,6 +158,7 @@ describe('VmWizardComponent', () => {
     await form.fillForm({
       'Guest Operating System': 'Windows',
       Name: 'test',
+      'Enable Display (VNC)': true,
       Password: '12345678',
     });
     await nextButton.click();
@@ -340,10 +341,9 @@ describe('VmWizardComponent', () => {
         bind: '0.0.0.0',
         password: '12345678',
         port: 13669,
-        web_port: null,
         resolution: '1920x1080',
-        type: VmDisplayType.Spice,
-        web: true,
+        type: VmDisplayType.Vnc,
+        web: false,
       },
     }]);
     expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(
