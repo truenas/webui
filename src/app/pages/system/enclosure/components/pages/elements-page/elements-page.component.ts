@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardHeader, MatCardContent } from '@angular/material/card';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { injectParams } from 'ngxtension/inject-params';
+import { map } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { enclosureElementTypeLabels, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -32,11 +34,12 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
 })
 export class ElementsPageComponent {
   private translate = inject(TranslateService);
+  private activatedRoute = inject(ActivatedRoute);
   private store = inject(EnclosureStore);
 
-  protected readonly currentView = injectParams<EnclosureElementType>((params) => {
-    return params.view as EnclosureElementType;
-  });
+  protected readonly currentView = toSignal(
+    this.activatedRoute.params.pipe(map((params) => params['view'] as EnclosureElementType)),
+  );
 
   protected readonly title = computed(() => {
     const view = enclosureElementTypeLabels.has(this.currentView())
