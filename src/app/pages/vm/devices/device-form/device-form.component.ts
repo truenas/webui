@@ -184,6 +184,7 @@ export class DeviceFormComponent implements OnInit {
     resolution: ['1920x1080'],
     port: [null as number | null],
     web: [true],
+    web_port: [null as number | null],
   });
 
   usbForm = this.formBuilder.group({

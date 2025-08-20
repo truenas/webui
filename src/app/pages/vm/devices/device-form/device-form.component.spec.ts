@@ -677,6 +677,7 @@ describe('DeviceFormComponent', () => {
           'Port (optional)': '5900',
           Resolution: '1024x768',
           'Web Interface': true,
+          'Web Port': '',
         });
       });
     });
