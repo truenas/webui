@@ -42,15 +42,23 @@ export const helptextDevice = {
   rootpwd_tooltip: T('Enter a password for the <i>rancher</i> user. This\
  is used to log in to the VM from the serial shell.'),
 
-  port_tooltip: T('Can be set to <i>0</i>, left empty for TrueNAS to\
- assign a port when the VM is started, or set to a\
- fixed, preferred port number.'),
+  port_tooltip: T('Display server port for remote desktop client connections.'),
+
+  web_port_tooltip: T('Web console port for browser-based access to the VM display.'),
 
   wait_placeholder: T('Delay VM Boot Until SPICE Connects'),
   wait_tooltip: T('Wait to start VM until SPICE client connects.'),
 
-  resolution_tooltip: T('Select a screen resolution to use for SPICE sessions.'),
-  bind_tooltip: T('Select an IP address to use for SPICE sessions.'),
-  password_tooltip: T('Enter a SPICE password to automatically pass to the SPICE session.'),
+  enable_display_tooltip: T('Enable a SPICE display for web-based and client remote\
+ connections. Requires <i>UEFI</i> booting.'),
+  enable_vnc_tooltip: T('Enable a VNC display for client-only remote connections.\
+ Requires VNC client software. Cannot be accessed through web browser.'),
+  vnc_password_tooltip: T('VNC password (maximum 8 characters). Required for VNC connections.'),
+  vnc_bind_tooltip: T('Select an IP address for VNC connections. Leave as 0.0.0.0 to bind to all interfaces.'),
+  vnc_port_tooltip: T('Port for VNC connections. Leave empty to auto-assign an available port.'),
+  vnc_resolution_tooltip: T('Default screen resolution for VNC display.'),
+  resolution_tooltip: T('Select a screen resolution for the display.'),
+  bind_tooltip: T('Select an IP address to bind to for display connections.'),
+  password_tooltip: T('Enter a password for display authentication.'),
   web_tooltip: T('Set to enable connecting to the SPICE web interface.'),
 };

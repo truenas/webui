@@ -64,7 +64,13 @@ export const vmDiskModeLabels = new Map<VmDiskMode, string>([
 
 export enum VmDisplayType {
   Spice = 'SPICE',
+  Vnc = 'VNC',
 }
+
+export const vmDisplayTypeLabels = new Map<VmDisplayType, string>([
+  [VmDisplayType.Spice, T('SPICE')],
+  [VmDisplayType.Vnc, T('VNC')],
+]);
 
 export enum VmNicType {
   E1000 = 'E1000',
