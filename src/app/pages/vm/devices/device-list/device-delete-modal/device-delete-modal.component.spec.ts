@@ -8,7 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VmDeviceType } from 'app/enums/vm.enum';
+import { VmDeviceType, VmDisplayType } from 'app/enums/vm.enum';
 import { VmDevice, VmDiskDevice, VmRawFileDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -178,14 +178,14 @@ describe('DeviceDeleteModalComponent', () => {
   });
 
   describe('for other device', () => {
-    const fakeRawFile = {
+    const fakeOtherDevice = {
       id: 6,
       attributes: {
-        dtype: undefined,
+        dtype: VmDeviceType.Nic,
       },
-    } as unknown as VmRawFileDevice;
+    } as VmDevice;
 
-    const createComponent = createComponentWithData(fakeRawFile);
+    const createComponent = createComponentWithData(fakeOtherDevice);
 
     beforeEach(() => {
       spectator = createComponent();
@@ -223,10 +223,119 @@ describe('DeviceDeleteModalComponent', () => {
           await submitButton.click();
 
           expect(api.call).toHaveBeenCalledWith('vm.device.delete', [
-            fakeRawFile.id,
+            fakeOtherDevice.id,
             expectedValues,
           ]);
         });
+      });
+    });
+  });
+
+  describe('display device type labels', () => {
+    const spiceDisplayDevice = {
+      id: 10,
+      attributes: {
+        dtype: VmDeviceType.Display,
+        type: VmDisplayType.Spice,
+      },
+    } as VmDevice;
+
+    const vncDisplayDevice = {
+      id: 11,
+      attributes: {
+        dtype: VmDeviceType.Display,
+        type: VmDisplayType.Vnc,
+      },
+    } as VmDevice;
+
+    const nicDevice = {
+      id: 12,
+      attributes: {
+        dtype: VmDeviceType.Nic,
+      },
+    } as VmDevice;
+
+    const displayDeviceWithoutType = {
+      id: 13,
+      attributes: {
+        dtype: VmDeviceType.Display,
+        type: undefined,
+      },
+    } as VmDevice;
+
+    describe('for SPICE display device', () => {
+      const createComponent = createComponentWithData(spiceDisplayDevice);
+
+      beforeEach(() => {
+        spectator = createComponent();
+      });
+
+      afterEach(() => {
+        spectator.fixture.destroy();
+      });
+
+      it('shows correct label for SPICE display device', () => {
+        const component = spectator.component;
+        const label = component.getDeviceTypeLabel();
+
+        expect(label).toBe('Display (SPICE)');
+      });
+    });
+
+    describe('for VNC display device', () => {
+      const createComponent = createComponentWithData(vncDisplayDevice);
+
+      beforeEach(() => {
+        spectator = createComponent();
+      });
+
+      afterEach(() => {
+        spectator.fixture.destroy();
+      });
+
+      it('shows correct label for VNC display device', () => {
+        const component = spectator.component;
+        const label = component.getDeviceTypeLabel();
+
+        expect(label).toBe('Display (VNC)');
+      });
+    });
+
+    describe('for non-display device', () => {
+      const createComponent = createComponentWithData(nicDevice);
+
+      beforeEach(() => {
+        spectator = createComponent();
+      });
+
+      afterEach(() => {
+        spectator.fixture.destroy();
+      });
+
+      it('shows correct label for non-display device', () => {
+        const component = spectator.component;
+        const label = component.getDeviceTypeLabel();
+
+        expect(label).toBe('NIC');
+      });
+    });
+
+    describe('for display device without type', () => {
+      const createComponent = createComponentWithData(displayDeviceWithoutType);
+
+      beforeEach(() => {
+        spectator = createComponent();
+      });
+
+      afterEach(() => {
+        spectator.fixture.destroy();
+      });
+
+      it('shows fallback label for display device without type', () => {
+        const component = spectator.component;
+        const label = component.getDeviceTypeLabel();
+
+        expect(label).toBe('Display');
       });
     });
   });

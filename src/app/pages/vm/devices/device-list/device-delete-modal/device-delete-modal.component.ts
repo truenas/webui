@@ -10,7 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { VmDeviceType } from 'app/enums/vm.enum';
+import { VmDeviceType, vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { VmDevice, VmDeviceDelete, VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -138,5 +138,19 @@ export class DeviceDeleteModalComponent implements OnInit {
 
   private getZvolName(disk: VmDiskDevice): string {
     return disk.attributes.path.split('/').pop() || '';
+  }
+
+  getDeviceTypeLabel(): string {
+    if (this.device.attributes.dtype === VmDeviceType.Display) {
+      // For display devices, include the protocol type (SPICE/VNC)
+      const displayType = this.device.attributes.type;
+      if (displayType) {
+        const baseLabel = vmDeviceTypeLabels.get(this.device.attributes.dtype) ?? this.device.attributes.dtype;
+        return this.translate.instant(baseLabel) + ` (${displayType})`;
+      }
+    }
+
+    const deviceLabel = vmDeviceTypeLabels.get(this.device.attributes.dtype) ?? this.device.attributes.dtype;
+    return this.translate.instant(deviceLabel);
   }
 }
