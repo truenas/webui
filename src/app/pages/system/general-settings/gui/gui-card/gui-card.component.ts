@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -15,6 +16,7 @@ import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { allThemes } from 'app/modules/theme/theme.constants';
 import { guiCardElements } from 'app/pages/system/general-settings/gui/gui-card/gui-card.elements';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { AppState } from 'app/store';
@@ -58,6 +60,14 @@ export class GuiCardComponent {
     waitForPreferences,
     toLoadingState(),
   );
+
+  private preferencesSignal = toSignal(this.preferences$);
+
+  protected themeLabel = computed(() => {
+    const preferences = this.preferencesSignal();
+    const theme = preferences?.value?.userTheme;
+    return allThemes.find((themeItem) => themeItem.name === theme)?.label;
+  });
 
   readonly helptext = helptext;
 
