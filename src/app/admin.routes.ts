@@ -105,10 +105,6 @@ export const adminRoutes: Routes = [
         path: 'system/audit',
         loadChildren: () => import('./pages/audit/audit.routes').then((module) => module.auditRoutes),
       },
-      {
-        path: 'containers',
-        loadChildren: () => import('app/pages/instances/instances.routes').then((module) => module.instancesRoutes),
-      },
     ],
   },
 ];

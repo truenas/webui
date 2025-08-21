@@ -9,7 +9,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectHasEnclosureSupport,
   selectIsEnterprise,
-  selectLicenseFeatures,
   selectSystemInfo,
   waitForSystemInfo,
 } from 'app/store/system-info/system-info.selectors';
@@ -61,11 +60,4 @@ export class LicenseService {
   );
 
   readonly hasKmip$ = this.store$.select(selectIsEnterprise);
-
-  readonly shouldShowContainers$ = combineLatest([
-    this.store$.select(selectIsEnterprise),
-    this.store$.select(selectLicenseFeatures),
-  ]).pipe(map((
-    [isEnterprise, licenseFeatures]: [boolean, LicenseFeature[]],
-  ) => !isEnterprise || licenseFeatures.includes(LicenseFeature.Jails)));
 }

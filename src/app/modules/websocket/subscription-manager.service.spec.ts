@@ -188,7 +188,7 @@ describe('SubscriptionManagerService', () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     jest.spyOn(require('uuid'), 'v4').mockReturnValue('1');
 
-    spectator.service.subscribe('virt.instance.metrics').subscribe({
+    spectator.service.subscribe('vm.query').subscribe({
       next: () => {},
       error: (error: unknown) => {
         expect(error).toMatchObject({
@@ -218,7 +218,7 @@ describe('SubscriptionManagerService', () => {
       jsonrpc: '2.0',
       method: 'notify_unsubscribed',
       params: {
-        collection: 'virt.instance.metrics',
+        collection: 'vm.query',
         error: {
           error: 22,
           errname: ApiErrorName.Validation,

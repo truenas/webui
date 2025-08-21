@@ -10,7 +10,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import { VirtualizationGpuType, VirtualizationNicType } from 'app/enums/virtualization.enum';
 import {
   Acl,
   AclQueryParams,
@@ -268,20 +267,6 @@ import {
   VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
   VmDisplayWebUriParams, VmPortWizardResult,
 } from 'app/interfaces/virtual-machine.interface';
-import {
-  VirtualizationDevice,
-
-  VirtualizationGlobalConfig, VirtualizationImage,
-  VirtualizationImageParams,
-  VirtualizationInstance,
-  VirtualizationNetwork,
-  AvailableUsb,
-  AvailableGpus, VirtualizationVolume,
-  VirtualizationVolumeUpdate,
-  VirtualizationPciChoices,
-  CreateVirtualizationVolume,
-  VirtualizationImportIsoParams,
-} from 'app/interfaces/virtualization.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
@@ -903,34 +888,6 @@ export interface ApiCallDirectory {
   'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
 
-  // Virt
-  'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
-  'virt.instance.set_bootable_disk': { params: [instanceId: string, diskId: string]; response: boolean };
-  'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
-  'virt.instance.device_update': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
-  'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: true };
-  'virt.instance.device_list': { params: [instanceId: string]; response: VirtualizationDevice[] };
-  'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: Record<string, VirtualizationImage> };
-
-  'virt.device.disk_choices': { params: []; response: Choices };
-  'virt.device.gpu_choices': {
-    params: [gpuType: VirtualizationGpuType];
-    response: AvailableGpus;
-  };
-  'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
-  'virt.device.nic_choices': { params: [nicType: VirtualizationNicType]; response: Record<string, string> };
-  'virt.device.pci_choices': { params: []; response: VirtualizationPciChoices };
-
-  'virt.global.bridge_choices': { params: []; response: Choices };
-  'virt.global.config': { params: []; response: VirtualizationGlobalConfig };
-  'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
-  'virt.global.pool_choices': { params: []; response: Choices };
-
-  'virt.volume.create': { params: [CreateVirtualizationVolume]; response: VirtualizationVolume };
-  'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
-  'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
-  'virt.volume.delete': { params: [id: string]; response: true };
-  'virt.volume.import_iso': { params: [VirtualizationImportIsoParams]; response: VirtualizationVolume };
 
   // VM
   'vm.bootloader_options': { params: void; response: Choices };

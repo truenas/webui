@@ -18,9 +18,6 @@ import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface'
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import {
-  VirtualizationGlobalConfig, VirtualizationInstance, VirtualizationMetrics,
-} from 'app/interfaces/virtualization.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
 export interface ApiEventDirectory {
@@ -45,9 +42,6 @@ export interface ApiEventDirectory {
   'tn_connect.config': { response: TruenasConnectConfig };
   'truecommand.config': { response: TrueCommandConfig };
   'user.query': { response: User };
-  'virt.global.config': { response: VirtualizationGlobalConfig };
-  'virt.instance.metrics': { response: VirtualizationMetrics };
-  'virt.instance.query': { response: VirtualizationInstance };
   'vm.query': { response: VirtualMachine };
   'zfs.pool.scan': { response: PoolScan };
   'pool.snapshot.query': { response: ZfsSnapshot };
