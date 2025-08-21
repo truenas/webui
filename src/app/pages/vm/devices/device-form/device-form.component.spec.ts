@@ -53,7 +53,10 @@ describe('DeviceFormComponent', () => {
       mockApi([
         mockCall('vm.device.create'),
         mockCall('vm.device.update'),
-        mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]),
+        mockCall('vm.get_display_devices', [
+          { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Spice } },
+          { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc } },
+        ] as VmDisplayDevice[]),
         mockCall('vm.device.bind_choices', {
           '0.0.0.0': '0.0.0.0',
           '::': '::',
@@ -618,7 +621,7 @@ describe('DeviceFormComponent', () => {
   });
 
   describe('Display', () => {
-    const existingDisplay = {
+    const existingSpiceDisplay = {
       id: 1,
       attributes: {
         dtype: VmDeviceType.Display,
@@ -634,13 +637,29 @@ describe('DeviceFormComponent', () => {
       vm: 45,
     } as VmDisplayDevice;
 
-    describe('edits display', () => {
+    const existingVncDisplay = {
+      id: 2,
+      attributes: {
+        dtype: VmDeviceType.Display,
+        bind: '192.168.1.100',
+        password: 'vncpass',
+        web: false,
+        web_port: null,
+        type: VmDisplayType.Vnc,
+        resolution: '1920x1080',
+        port: 5901,
+      },
+      order: 1003,
+      vm: 45,
+    } as VmDisplayDevice;
+
+    describe('edits SPICE display', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
             mockProvider(SlideInRef, {
               ...slideInRef,
-              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingDisplay })),
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingSpiceDisplay })),
             }),
           ],
         });
@@ -656,7 +675,7 @@ describe('DeviceFormComponent', () => {
           Bind: '0.0.0.0',
           'Device Order': '1002',
           Password: '12345678910',
-          Port: '5900',
+          'Port (optional)': '5900',
           Resolution: '1024x768',
           'Web Interface': true,
           'Web Port': '5901',
@@ -700,10 +719,271 @@ describe('DeviceFormComponent', () => {
       });
 
       it('hides Display type option when VM already has 2 or more displays (proxy for having 1 display of each type)', async () => {
-        spectator.inject(MockApiService).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
+        spectator.inject(MockApiService).mockCall('vm.get_display_devices', [
+          { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Spice } },
+          { attributes: { dtype: VmDeviceType.Display, type: VmDisplayType.Vnc } },
+        ] as VmDisplayDevice[]);
         const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Type' }));
         expect(api.call).toHaveBeenCalledWith('vm.get_display_devices', [46]);
         expect(await typeSelect.getOptionLabels()).not.toContain('Display');
+      });
+    });
+
+    describe('edits VNC display', () => {
+      beforeEach(async () => {
+        spectator = createComponent({
+          providers: [
+            mockProvider(SlideInRef, {
+              ...slideInRef,
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingVncDisplay })),
+            }),
+          ],
+        });
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        api = spectator.inject(ApiService);
+      });
+
+      it('shows values for an existing VNC display device', async () => {
+        const values = await form.getValues();
+        expect(values).toMatchObject({
+          'Device Order': '1003',
+          Password: 'vncpass',
+          'Port (optional)': '5901',
+        });
+
+        // Verify Web Interface is disabled for VNC
+        expect(values).not.toHaveProperty('Web Interface');
+        expect(values).not.toHaveProperty('Web Port');
+      });
+
+      it('updates an existing VNC display device', async () => {
+        await form.fillForm({
+          Bind: '0.0.0.0',
+          Password: 'newpass',
+        });
+
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.update', [2, {
+          attributes: {
+            dtype: VmDeviceType.Display,
+            type: VmDisplayType.Vnc,
+            bind: '0.0.0.0',
+            password: 'newpass',
+            resolution: '1920x1080',
+            port: 5901,
+            web: false,
+            web_port: null,
+          },
+          order: 1003,
+          vm: 45,
+        }]);
+      });
+
+      it('validates VNC password length (8 character limit)', async () => {
+        await form.fillForm({
+          Password: '123456789', // 9 characters - should be invalid for VNC
+        });
+
+        expect(spectator.component.displayForm.controls.password.invalid).toBe(true);
+        expect(spectator.component.displayForm.controls.password.hasError('maxlength')).toBe(true);
+      });
+    });
+
+    describe('adds new display devices', () => {
+      const createComponentForAdding = createComponentFactory({
+        component: DeviceFormComponent,
+        imports: [
+          ReactiveFormsModule,
+        ],
+        providers: [
+          mockApi([
+            mockCall('vm.device.create'),
+            mockCall('vm.device.update'),
+            mockCall('vm.get_display_devices', []), // No existing display devices
+            mockCall('vm.device.bind_choices', {
+              '0.0.0.0': '0.0.0.0',
+              '::': '::',
+            }),
+            mockCall('vm.resolution_choices', {
+              '640x480': '640x480',
+              '800x600': '800x600',
+              '1024x768': '1024x768',
+              '1920x1080': '1920x1080',
+            }),
+            mockCall('vm.device.usb_passthrough_choices', {}),
+            mockCall('vm.device.passthrough_device_choices', {}),
+            mockCall('vm.random_mac', '00:a0:98:30:09:90'),
+            mockCall('vm.device.nic_attach_choices', {}),
+            mockCall('vm.device.disk_choices', {}),
+            mockCall('vm.device.usb_controller_choices', {}),
+            mockCall('system.advanced.config', {} as AdvancedConfig),
+          ]),
+          mockAuth(),
+          mockProvider(DialogService),
+          mockProvider(SlideIn),
+          mockProvider(FilesystemService),
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: jest.fn(() => ({ virtualMachineId: 45 })),
+          }),
+          mockProvider(VmService, {
+            hasVirtualizationSupport$: of(true),
+          }),
+        ],
+      });
+
+      beforeEach(async () => {
+        spectator = createComponentForAdding();
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        api = spectator.inject(ApiService);
+      });
+
+      it('adds a new SPICE display device', async () => {
+        await form.fillForm({
+          Type: 'Display',
+          'Display Type': 'SPICE',
+          Bind: '0.0.0.0',
+          Password: 'spicepass',
+          Resolution: '1024x768',
+          'Web Interface': true,
+          'Device Order': 1004,
+        });
+
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.create', [{
+          attributes: {
+            dtype: VmDeviceType.Display,
+            type: VmDisplayType.Spice,
+            bind: '0.0.0.0',
+            password: 'spicepass',
+            resolution: '1024x768',
+            port: null,
+            web: true,
+            web_port: null,
+          },
+          order: 1004,
+          vm: 45,
+        }]);
+      });
+
+      it('adds a new VNC display device', async () => {
+        await form.fillForm({
+          Type: 'Display',
+          'Display Type': 'VNC',
+          Bind: '0.0.0.0',
+          Password: 'vncpass',
+          Resolution: '1920x1080',
+          'Device Order': 1005,
+        });
+
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.create', [{
+          attributes: {
+            dtype: VmDeviceType.Display,
+            type: VmDisplayType.Vnc,
+            bind: '0.0.0.0',
+            password: 'vncpass',
+            resolution: '1920x1080',
+            port: null,
+            web: false,
+            web_port: null,
+          },
+          order: 1005,
+          vm: 45,
+        }]);
+      });
+    });
+
+    describe('display type switching', () => {
+      const createComponentForSwitching = createComponentFactory({
+        component: DeviceFormComponent,
+        imports: [
+          ReactiveFormsModule,
+        ],
+        providers: [
+          mockApi([
+            mockCall('vm.device.create'),
+            mockCall('vm.device.update'),
+            mockCall('vm.get_display_devices', []), // No existing display devices
+            mockCall('vm.device.bind_choices', {
+              '0.0.0.0': '0.0.0.0',
+              '::': '::',
+            }),
+            mockCall('vm.resolution_choices', {
+              '640x480': '640x480',
+              '800x600': '800x600',
+              '1024x768': '1024x768',
+              '1920x1080': '1920x1080',
+            }),
+            mockCall('vm.device.usb_passthrough_choices', {}),
+            mockCall('vm.device.passthrough_device_choices', {}),
+            mockCall('vm.random_mac', '00:a0:98:30:09:90'),
+            mockCall('vm.device.nic_attach_choices', {}),
+            mockCall('vm.device.disk_choices', {}),
+            mockCall('vm.device.usb_controller_choices', {}),
+            mockCall('system.advanced.config', {} as AdvancedConfig),
+          ]),
+          mockAuth(),
+          mockProvider(DialogService),
+          mockProvider(SlideIn),
+          mockProvider(FilesystemService),
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: jest.fn(() => ({ virtualMachineId: 45 })),
+          }),
+          mockProvider(VmService, {
+            hasVirtualizationSupport$: of(true),
+          }),
+        ],
+      });
+
+      beforeEach(async () => {
+        spectator = createComponentForSwitching();
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+      });
+
+      it('disables web interface when switching from SPICE to VNC', async () => {
+        await form.fillForm({
+          Type: 'Display',
+          'Display Type': 'SPICE',
+          'Web Interface': true,
+        });
+
+        // Switch to VNC
+        await form.fillForm({ 'Display Type': 'VNC' });
+        spectator.detectChanges();
+
+        // Web Interface should be disabled and hidden
+        expect(spectator.component.displayForm.controls.web.value).toBe(false);
+        expect(spectator.component.displayForm.controls.web.disabled).toBe(true);
+
+        const values = await form.getValues();
+        expect(values).not.toHaveProperty('Web Interface');
+      });
+
+      it('enables web interface when switching from VNC to SPICE', async () => {
+        await form.fillForm({
+          Type: 'Display',
+          'Display Type': 'VNC',
+        });
+
+        // Switch to SPICE
+        await form.fillForm({ 'Display Type': 'SPICE' });
+        spectator.detectChanges();
+
+        // Web Interface should be enabled and visible
+        expect(spectator.component.displayForm.controls.web.enabled).toBe(true);
+
+        const values = await form.getValues();
+        expect(values).toHaveProperty('Web Interface');
       });
     });
   });

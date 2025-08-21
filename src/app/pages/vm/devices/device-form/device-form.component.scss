@@ -14,3 +14,37 @@
     margin-bottom: 8px;
   }
 }
+
+.display-type-info {
+  margin-bottom: 16px;
+  margin-top: 24px;
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    margin-bottom: 6px;
+    opacity: 0.6;
+    text-transform: uppercase;
+  }
+
+  p {
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
+.display-type-prompt {
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+  margin: 24px 0;
+  padding: 16px;
+  text-align: center;
+
+  .muted {
+    font-style: italic;
+    margin: 0;
+    opacity: 0.6;
+  }
+}

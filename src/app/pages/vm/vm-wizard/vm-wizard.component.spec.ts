@@ -82,6 +82,7 @@ describe('VmWizardComponent', () => {
           UEFI: 'UEFI',
         }),
         mockCall('vm.device.bind_choices', {
+          '0.0.0.0': '0.0.0.0',
           '10.10.16.82': '10.10.16.82',
         }),
         mockCall('vm.cpu_model_choices', {
@@ -157,6 +158,7 @@ describe('VmWizardComponent', () => {
     await form.fillForm({
       'Guest Operating System': 'Windows',
       Name: 'test',
+      'Enable Display (VNC)': true,
       Password: '12345678',
     });
     await nextButton.click();
@@ -339,8 +341,9 @@ describe('VmWizardComponent', () => {
         bind: '0.0.0.0',
         password: '12345678',
         port: 13669,
-        type: VmDisplayType.Spice,
-        web: true,
+        resolution: '1920x1080',
+        type: VmDisplayType.Vnc,
+        web: false,
       },
     }]);
     expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(
