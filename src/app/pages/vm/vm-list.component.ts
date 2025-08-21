@@ -11,7 +11,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import {
-  VmBootloader, VmDeviceType, VmState, vmTimeNames,
+  VmBootloader, VmDeviceType, VmDisplayType, VmState, vmTimeNames,
 } from 'app/enums/vm.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
@@ -232,13 +232,19 @@ export class VmListComponent implements OnInit {
     if (this.systemGeneralService.isEnterprise && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
       return false;
     }
-    for (const device of devices) {
-      if (devices && device.attributes.dtype === VmDeviceType.Display) {
-        return device.attributes.port;
-      }
+
+    const displayDevices = devices.filter((device) => device.attributes.dtype === VmDeviceType.Display);
+    if (displayDevices.length === 0) {
+      return false;
     }
 
-    return false;
+    // Show ports for all display devices (SPICE and VNC)
+    const ports = displayDevices.map((device) => {
+      const type = device.attributes.type === VmDisplayType.Spice ? 'SPICE' : 'VNC';
+      return `${type}:${device.attributes.port}`;
+    });
+
+    return ports.join(', ');
   }
 
   protected columnsChange(columns: typeof this.columns): void {

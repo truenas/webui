@@ -6,7 +6,7 @@
     class="device-delete-modal-content"
   >
     <p
-      [innerHTML]="'Delete <b>{deviceType} {device}</b>' | translate: { device: device.id, deviceType: device.dtype }"
+      [innerHTML]="'Delete <b>{deviceType} {device}</b>' | translate: { device: device.id, deviceType: getDeviceTypeLabel() }"
     ></p>
 
     @if (device.attributes.dtype === VmDeviceType.Disk) {

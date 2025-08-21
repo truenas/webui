@@ -14,6 +14,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import {
   VmDeviceType, vmDeviceTypeLabels, VmDiskMode, vmDiskModeLabels, VmNicType, vmNicTypeLabels,
+  VmDisplayType,
 } from 'app/enums/vm.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -100,6 +101,48 @@ export class DeviceFormComponent implements OnInit {
     return !this.existingDevice;
   }
 
+  getCurrentDisplayType(): VmDisplayType | null {
+    if (!this.isNew && this.existingDevice?.attributes?.dtype === VmDeviceType.Display) {
+      return this.existingDevice.attributes.type;
+    }
+    return this.displayForm.value.type || null;
+  }
+
+  getCurrentDisplayTypeLabel(): string {
+    const displayType = this.getCurrentDisplayType();
+    if (displayType === VmDisplayType.Spice) {
+      return 'SPICE';
+    }
+    if (displayType === VmDisplayType.Vnc) {
+      return 'VNC';
+    }
+    return 'Unknown';
+  }
+
+  private updateDisplayFormForType(displayType: VmDisplayType | null): void {
+    if (displayType === VmDisplayType.Vnc) {
+      // VNC-specific: disable web interface, set maxLength for password
+      this.displayForm.controls.web.patchValue(false);
+      this.displayForm.controls.web.disable();
+      this.displayForm.controls.web_port.disable();
+      this.displayForm.controls.bind.setValidators([Validators.required]);
+      this.displayForm.controls.password.setValidators([Validators.required, Validators.maxLength(8)]);
+    } else if (displayType === VmDisplayType.Spice) {
+      // SPICE: enable web interface, remove maxLength restriction
+      this.displayForm.controls.web.enable();
+      this.displayForm.controls.bind.setValidators([Validators.required]);
+      this.displayForm.controls.password.setValidators([Validators.required]);
+    } else {
+      // No display type selected: clear validators for bind and password
+      this.displayForm.controls.bind.clearValidators();
+      this.displayForm.controls.password.clearValidators();
+    }
+
+    // Update validation state
+    this.displayForm.controls.bind.updateValueAndValidity();
+    this.displayForm.controls.password.updateValueAndValidity();
+  }
+
   existingDevice: VmDevice;
   protected slideInData: { virtualMachineId?: number; device?: VmDevice } | undefined;
 
@@ -135,11 +178,13 @@ export class DeviceFormComponent implements OnInit {
   });
 
   displayForm = this.formBuilder.group({
-    port: [null as number | null],
-    resolution: [''],
+    type: [null as VmDisplayType | null, Validators.required],
     bind: [''],
     password: [''],
+    resolution: ['1920x1080'],
+    port: [null as number | null],
     web: [true],
+    web_port: [null as number | null],
   });
 
   usbForm = this.formBuilder.group({
@@ -153,6 +198,7 @@ export class DeviceFormComponent implements OnInit {
 
   readonly helptext = helptextDevice;
   readonly VmDeviceType = VmDeviceType;
+  readonly VmDisplayType = VmDisplayType;
   readonly usbDeviceOptions$ = this.api.call('vm.device.usb_passthrough_choices').pipe(
     map((usbDevices) => {
       const options = Object.entries(usbDevices).map(([id, device]) => {
@@ -184,6 +230,7 @@ export class DeviceFormComponent implements OnInit {
   readonly resolutions$ = this.api.call('vm.resolution_choices').pipe(choicesToOptions());
   readonly nicOptions$ = this.api.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
   readonly nicTypes$ = of(mapToOptions(vmNicTypeLabels, this.translate));
+  readonly displayTypes$ = new BehaviorSubject<{ label: string; value: VmDisplayType }[]>([]);
 
   readonly passthroughProvider = new SimpleAsyncComboboxProvider(
     this.api.call('vm.device.passthrough_device_choices').pipe(
@@ -263,6 +310,16 @@ export class DeviceFormComponent implements OnInit {
       }
     });
 
+    // Handle display type changes for new devices
+    if (this.isNew) {
+      this.displayForm.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe((displayType) => {
+        this.updateDisplayFormForType(displayType);
+      });
+
+      // Initialize display form with no validators since no type is selected
+      this.updateDisplayFormForType(null);
+    }
+
     if (this.slideInData?.virtualMachineId) {
       this.virtualMachineId = this.slideInData.virtualMachineId;
       this.setVirtualMachineId();
@@ -299,7 +356,17 @@ export class DeviceFormComponent implements OnInit {
         this.nicForm.patchValue(this.existingDevice.attributes);
         break;
       case VmDeviceType.Display:
-        this.displayForm.patchValue(this.existingDevice.attributes);
+        this.displayForm.patchValue({
+          type: this.existingDevice.attributes.type,
+          bind: this.existingDevice.attributes.bind,
+          password: this.existingDevice.attributes.password,
+          resolution: this.existingDevice.attributes.resolution,
+          port: this.existingDevice.attributes.port,
+          web: this.existingDevice.attributes.web,
+          web_port: this.existingDevice.attributes.web_port,
+        });
+        // Configure form for the specific display type
+        this.updateDisplayFormForType(this.existingDevice.attributes.type);
         break;
       case VmDeviceType.Disk:
         this.diskForm.patchValue({
@@ -420,6 +487,21 @@ export class DeviceFormComponent implements OnInit {
       } as VmDeviceUpdate['attributes'];
     }
 
+    // Handle display device attributes
+    if (this.typeControl.value === VmDeviceType.Display) {
+      const displayValues = this.displayForm.value;
+      return {
+        dtype: VmDeviceType.Display,
+        type: displayValues.type,
+        bind: displayValues.bind,
+        password: displayValues.password,
+        resolution: displayValues.resolution,
+        port: displayValues.port,
+        web: displayValues.type === VmDisplayType.Spice ? displayValues.web : false,
+        web_port: displayValues.type === VmDisplayType.Spice ? displayValues.web_port : null,
+      } as VmDeviceUpdate['attributes'];
+    }
+
     return values as VmDeviceUpdate['attributes'];
   }
 
@@ -430,12 +512,50 @@ export class DeviceFormComponent implements OnInit {
     this.api.call('vm.get_display_devices', [this.virtualMachineId])
       .pipe(untilDestroyed(this))
       .subscribe((devices) => {
-        if (devices.length < 2) {
+        const spiceDevices = devices.filter((device) => device.attributes.type === VmDisplayType.Spice);
+        const vncDevices = devices.filter((device) => device.attributes.type === VmDisplayType.Vnc);
+
+        // If editing an existing device, allow the current device type
+        if (this.existingDevice && this.existingDevice.attributes.dtype === VmDeviceType.Display) {
+          const currentType = this.existingDevice.attributes.type;
+          const availableTypes = [
+            { label: 'SPICE', value: VmDisplayType.Spice },
+            { label: 'VNC', value: VmDisplayType.Vnc },
+          ].filter((type) => type.value === currentType
+            || (type.value === VmDisplayType.Spice && spiceDevices.length === 0)
+            || (type.value === VmDisplayType.Vnc && vncDevices.length === 0));
+          this.displayTypes$.next(availableTypes);
           return;
         }
 
-        const optionsWithoutDisplay = this.deviceTypeOptions.filter((option) => option.value !== VmDeviceType.Display);
-        this.deviceTypes$.next(optionsWithoutDisplay);
+        // For new devices, show available display types
+        const availableTypes = [
+          { label: 'SPICE', value: VmDisplayType.Spice },
+          { label: 'VNC', value: VmDisplayType.Vnc },
+        ].filter((type) => (type.value === VmDisplayType.Spice && spiceDevices.length === 0)
+          || (type.value === VmDisplayType.Vnc && vncDevices.length === 0));
+
+        this.displayTypes$.next(availableTypes);
+
+        // Auto-select display type if only one is available
+        if (availableTypes.length === 1 && this.isNew) {
+          const singleAvailableType = availableTypes[0].value;
+          this.displayForm.patchValue({ type: singleAvailableType });
+          this.displayForm.controls.type.markAsTouched();
+          this.displayForm.controls.type.updateValueAndValidity();
+          this.updateDisplayFormForType(singleAvailableType);
+        }
+
+        // Hide display option from device type dropdown if no display types are available
+        if (availableTypes.length === 0) {
+          const optionsWithoutDisplay = this.deviceTypeOptions.filter(
+            (option) => option.value !== VmDeviceType.Display,
+          );
+          this.deviceTypes$.next(optionsWithoutDisplay);
+        } else {
+          // Ensure display option is available in device type dropdown
+          this.deviceTypes$.next(this.deviceTypeOptions);
+        }
       });
   }
 }
