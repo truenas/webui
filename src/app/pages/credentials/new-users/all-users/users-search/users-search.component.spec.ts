@@ -49,13 +49,25 @@ describe('UsersSearchComponent', () => {
       ...mockUserApiDataProvider,
       currentPage$: new BehaviorSubject([
         {
-          id: 1, username: 'root', builtin: true, local: false,
+          id: 1, username: 'root', builtin: true, local: false, full_name: 'Root User',
         } as User,
         {
-          id: 2, username: 'user1', builtin: false, local: true,
+          id: 2, username: 'localuser1', builtin: false, local: true, full_name: 'Local User 1',
         } as User,
         {
-          id: 3, username: 'aduser', builtin: false, local: false,
+          id: 3, username: 'localuser2', builtin: false, local: true, full_name: 'Local User 2',
+        } as User,
+        {
+          id: 4, username: 'daemon', builtin: true, local: false, full_name: 'Daemon User',
+        } as User,
+        {
+          id: 5, username: 'www', builtin: true, local: false, full_name: 'Web Server User',
+        } as User,
+        {
+          id: 6, username: 'aduser1', builtin: false, local: false, full_name: 'AD User 1',
+        } as User,
+        {
+          id: 7, username: 'aduser2', builtin: false, local: false, full_name: 'AD User 2',
         } as User,
       ]),
       additionalUsername: '',
@@ -424,6 +436,154 @@ describe('UsersSearchComponent', () => {
         label: 'Show Active Directory',
         query: [['local', '=', false]],
       });
+    });
+  });
+
+  describe('Search Mode Switching - Default States', () => {
+    it('shows default local users on page load, switches to all users in Advanced, then back to local users in Basic', async () => {
+      const searchInput = await loader.getHarness(SearchInputHarness);
+
+      // Verify component starts in Basic mode
+      expect(await searchInput.isInAdvancedMode()).toBe(false);
+
+      // Component doesn't call setParams on initialization in test, so trigger user type change
+      (component as unknown as { onUserTypeChange: (types: string[]) => void })
+        .onUserTypeChange(['local']);
+
+      // Verify initial Basic mode applies local user filtering
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [
+          [
+            'OR',
+            [
+              [
+                ['local', '=', true],
+                ['builtin', '=', false],
+              ],
+              ['username', '=', 'root'],
+            ],
+          ],
+        ],
+        {},
+      ]);
+
+      // Reset mock to track new calls
+      jest.clearAllMocks();
+
+      // Switch to Advanced mode
+      await searchInput.toggleMode();
+      expect(await searchInput.isInAdvancedMode()).toBe(true);
+
+      // Verify Advanced mode shows all users (no filtering applied)
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([]);
+      expect(mockDataProvider.load).toHaveBeenCalled();
+
+      // Reset mock to track new calls
+      jest.clearAllMocks();
+
+      // Switch back to Basic mode
+      await searchInput.toggleMode();
+      expect(await searchInput.isInAdvancedMode()).toBe(false);
+
+      // Verify Basic mode again applies local user filtering
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [
+          [
+            'OR',
+            [
+              [
+                ['local', '=', true],
+                ['builtin', '=', false],
+              ],
+              ['username', '=', 'root'],
+            ],
+          ],
+        ],
+        {},
+      ]);
+    });
+  });
+
+  describe('Search Mode Switching - Query Clearing', () => {
+    it('clears search queries when switching modes and maintains correct default filtering', async () => {
+      const searchInput = await loader.getHarness(SearchInputHarness);
+
+      // 1. Enter basic search query
+      await searchInput.setValue('localuser');
+      const searchButton = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      await searchButton.click();
+
+      // Verify basic search filtering is applied
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [
+          [
+            'OR',
+            [
+              ['username', '~', '(?i)localuser'],
+              [
+                ['full_name', '~', '(?i)localuser'],
+                [
+                  'OR',
+                  [
+                    [
+                      ['local', '=', true],
+                      ['builtin', '=', false],
+                    ],
+                    ['username', '=', 'root'],
+                  ],
+                ],
+              ],
+            ],
+          ],
+        ],
+        {},
+      ]);
+
+      // Reset mock to track new calls
+      jest.clearAllMocks();
+
+      // 2. Switch to Advanced mode
+      await searchInput.toggleMode();
+
+      // Verify Advanced mode is active and shows all users (search input may have default query)
+      expect(await searchInput.isInAdvancedMode()).toBe(true);
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([]);
+      expect(mockDataProvider.load).toHaveBeenCalled();
+
+      // Reset mock to track new calls
+      jest.clearAllMocks();
+
+      // 3. Enter advanced query
+      const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
+      await advancedModeHarness.setValue('Username = "root"');
+      await searchButton.click();
+
+      // Verify advanced filtering is applied (implementation will depend on the advanced search parsing)
+      expect(mockDataProvider.setParams).toHaveBeenCalled();
+
+      // Reset mock to track new calls
+      jest.clearAllMocks();
+
+      // 4. Switch back to Basic mode
+      await searchInput.toggleMode();
+
+      // Verify back in Basic mode and default local users filtering is restored
+      expect(await searchInput.isInAdvancedMode()).toBe(false);
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [
+          [
+            'OR',
+            [
+              [
+                ['local', '=', true],
+                ['builtin', '=', false],
+              ],
+              ['username', '=', 'root'],
+            ],
+          ],
+        ],
+        {},
+      ]);
     });
   });
 });
