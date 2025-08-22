@@ -136,6 +136,20 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.sidenavService.setSidenav(this.sideNavs?.first);
+    this.disableSidenavFocusTrap();
+  }
+
+  private disableSidenavFocusTrap(): void {
+    this.sideNavs?.forEach((sidenav) => {
+      const sidenavWithFocusTrap = sidenav as unknown as { _focusTrap?: { enabled: boolean } };
+      if (sidenavWithFocusTrap._focusTrap) {
+        sidenavWithFocusTrap._focusTrap.enabled = false;
+      }
+    });
+
+    // Also remove any focus trap anchors from DOM
+    const focusTrapAnchors = document.querySelectorAll('.cdk-focus-trap-anchor');
+    focusTrapAnchors.forEach((anchor) => anchor.remove());
   }
 
   ngOnDestroy(): void {

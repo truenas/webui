@@ -70,8 +70,6 @@
     [style.flex-basis]="'calc(100% - ' + sidenavWidth + ')'"
     [style.margin-left]="sidenavWidth"
   >
-    <ix-topbar></ix-topbar>
-
     <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpenSecondaryMenu">
       <ix-secondary-menu
         [subMenuItems]="subs"
@@ -79,6 +77,9 @@
         (toggleMenu)="toggleMenu()"
       ></ix-secondary-menu>
     </div>
+
+    <ix-topbar></ix-topbar>
+
     <div class="overlay" [class.isdark]="isOpenSecondaryMenu" (click)="toggleMenu()"></div>
 
     <!-- App content -->
