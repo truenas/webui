@@ -18,6 +18,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
+import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('AllowedAddressesComponent', () => {
   let spectator: Spectator<AllowedAddressesFormComponent>;
@@ -48,6 +49,9 @@ describe('AllowedAddressesComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(SlideInRef, componentRef),
+      mockProvider(SystemGeneralService, {
+        handleUiServiceRestart: jest.fn(() => of(true)),
+      }),
       provideMockStore(),
       mockAuth(),
     ],
@@ -125,6 +129,100 @@ describe('AllowedAddressesComponent', () => {
       expect(warning.message()).toBe(
         'Make sure to add your current IP address to the list. Otherwise you will lose access to TrueNAS UI.',
       );
+    });
+  });
+
+  describe('SystemGeneralService integration', () => {
+    it('should call SystemGeneralService.handleUiServiceRestart when saving changes', async () => {
+      const systemGeneralService = spectator.inject(SystemGeneralService);
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ 'IP Address/Subnet': '2.2.2.2' });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
+    });
+
+    it('should not call SystemGeneralService.handleUiServiceRestart when no changes are made', async () => {
+      const systemGeneralService = spectator.inject(SystemGeneralService);
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(systemGeneralService.handleUiServiceRestart).not.toHaveBeenCalled();
+    });
+
+    it('should call SystemGeneralService.handleUiServiceRestart after system.general.update succeeds', async () => {
+      const systemGeneralService = spectator.inject(SystemGeneralService);
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ 'IP Address/Subnet': '3.3.3.3' });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('system.general.update', [
+        { ui_allowlist: ['3.3.3.3'] },
+      ]);
+      expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
+    });
+
+    it('should close slide-in after successful restart handling', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ 'IP Address/Subnet': '4.4.4.4' });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(componentRef.close).toHaveBeenCalledWith({ response: true });
+    });
+
+    it('should handle form validation and submission correctly', async () => {
+      const systemGeneralService = spectator.inject(SystemGeneralService);
+      const form = await loader.getHarness(IxFormHarness);
+
+      // Test with a valid IP address format
+      await form.fillForm({ 'IP Address/Subnet': '10.0.0.1/24' });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('system.general.update', [
+        { ui_allowlist: ['10.0.0.1/24'] },
+      ]);
+      expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
+    });
+
+    it('should show success message and handle restart flow', async () => {
+      const systemGeneralService = spectator.inject(SystemGeneralService);
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ 'IP Address/Subnet': '5.5.5.5' });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      // Verify the flow: update -> restart -> close
+      expect(api.call).toHaveBeenCalledWith('system.general.update', [
+        { ui_allowlist: ['5.5.5.5'] },
+      ]);
+      expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
+      expect(componentRef.close).toHaveBeenCalledWith({ response: true });
+    });
+
+    it('should handle restart cancellation gracefully', async () => {
+      const systemGeneralService = spectator.inject(SystemGeneralService);
+      // Mock restart to return false (user cancelled)
+      (systemGeneralService.handleUiServiceRestart as jest.Mock) = jest.fn(() => of(true));
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ 'IP Address/Subnet': '6.6.6.6' });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      // Even if restart is cancelled, the form should still close successfully
+      expect(systemGeneralService.handleUiServiceRestart).toHaveBeenCalled();
+      expect(componentRef.close).toHaveBeenCalledWith({ response: true });
     });
   });
 });

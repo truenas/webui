@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -7,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, map, switchMap, tap,
+  filter, map, switchMap, tap, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -34,6 +35,7 @@ import {
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -71,10 +73,13 @@ export class AllowedAddressesCardComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private firstTimeWarning = inject(FirstTimeWarningService);
+  private systemGeneralService = inject(SystemGeneralService);
   protected emptyService = inject(EmptyService);
 
   protected readonly searchableElements = allowedAddressesCardElements;
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
+  protected isDeleting = signal(false);
+  protected isDeleting$ = toObservable(this.isDeleting);
   dataProvider: AsyncDataProvider<AllowedAddressRow>;
 
   columns = createTable<AllowedAddressRow>([
@@ -89,6 +94,7 @@ export class AllowedAddressesCardComponent implements OnInit {
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.promptDeleteAllowedAddress(row),
           requiredRoles: [Role.SystemGeneralWrite],
+          disabled: () => this.isDeleting$,
         },
       ],
     }),
@@ -133,20 +139,36 @@ export class AllowedAddressesCardComponent implements OnInit {
   }
 
   private deleteAllowedAddress(row: AllowedAddressRow): void {
+    this.isDeleting.set(true);
+
+    // Get current data once to avoid observable loop
     this.dataProvider.currentPage$.pipe(
-      switchMap((currentPage) => {
-        const updatedAddresses = currentPage.filter((ip) => ip.address !== row.address).map((ip) => ip.address);
+      take(1),
+      switchMap((currentPage: AllowedAddressRow[]) => {
+        const updatedAddresses = currentPage
+          .filter((ip: AllowedAddressRow) => ip.address !== row.address)
+          .map((ip: AllowedAddressRow) => ip.address);
         return this.api.call('system.general.update', [{ ui_allowlist: updatedAddresses }]);
+      }),
+      tap(() => {
+        this.store$.dispatch(generalConfigUpdated());
+      }),
+      switchMap(() => this.systemGeneralService.handleUiServiceRestart()),
+      tap(() => {
+        this.getAllowedAddresses();
       }),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.store$.dispatch(generalConfigUpdated());
-        this.getAllowedAddresses();
+        this.isDeleting.set(false);
       },
-      error: (error: unknown) => this.errorHandler.showErrorModal(error),
+      error: (error: unknown) => {
+        this.isDeleting.set(false);
+        this.errorHandler.showErrorModal(error);
+      },
     });
   }
+
 
   private getAllowedAddresses(): void {
     this.dataProvider.load();

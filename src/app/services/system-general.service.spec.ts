@@ -1,8 +1,11 @@
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { ProductType } from 'app/enums/product-type.enum';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from './system-general.service';
 
 describe('SystemGeneralService', () => {
@@ -22,8 +25,15 @@ describe('SystemGeneralService', () => {
         mockCall('system.general.timezone_choices', { 'America/New_York': 'Eastern Time' }),
         mockCall('system.general.ui_certificate_choices', {}),
         mockCall('system.general.ui_httpsprotocols_choices', {}),
+        mockCall('system.general.ui_restart', null),
         mockJob('directoryservices.cache_refresh', fakeSuccessfulJob()),
       ]),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: jest.fn(() => (source$: unknown) => source$),
+      }),
     ],
   });
 
@@ -141,6 +151,88 @@ describe('SystemGeneralService', () => {
       spectator.service.updateDone();
 
       expect(emitSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('handleUiServiceRestart', () => {
+    it('should show confirmation dialog and restart UI service when user confirms', () => {
+      const dialogService = spectator.inject(DialogService);
+      const errorHandlerService = spectator.inject(ErrorHandlerService);
+
+      (dialogService.confirm as jest.Mock) = jest.fn(() => of(true));
+
+      spectator.service.handleUiServiceRestart().subscribe();
+
+      expect(dialogService.confirm).toHaveBeenCalledWith({
+        title: 'Restart Web Service',
+        message: 'The web service must restart for the protocol changes to take effect. The UI will be temporarily unavailable. Restart the service?',
+      });
+      expect(api.call).toHaveBeenCalledWith('system.general.ui_restart');
+      expect(errorHandlerService.withErrorHandler).toHaveBeenCalled();
+    });
+
+    it('should show confirmation dialog but not restart UI service when user cancels', () => {
+      const dialogService = spectator.inject(DialogService);
+
+      (dialogService.confirm as jest.Mock) = jest.fn(() => of(false));
+
+      let result: boolean;
+      spectator.service.handleUiServiceRestart().subscribe((value) => {
+        result = value;
+      });
+
+      expect(dialogService.confirm).toHaveBeenCalledWith({
+        title: 'Restart Web Service',
+        message: 'The web service must restart for the protocol changes to take effect. The UI will be temporarily unavailable. Restart the service?',
+      });
+      expect(api.call).not.toHaveBeenCalledWith('system.general.ui_restart');
+      expect(result).toBe(true);
+    });
+
+    it('should return Observable<true> regardless of user choice', () => {
+      const dialogService = spectator.inject(DialogService);
+
+      // Test when user confirms
+      (dialogService.confirm as jest.Mock) = jest.fn(() => of(true));
+      let result1: boolean;
+      spectator.service.handleUiServiceRestart().subscribe((value) => {
+        result1 = value;
+      });
+      expect(result1).toBe(true);
+
+      // Test when user cancels
+      (dialogService.confirm as jest.Mock) = jest.fn(() => of(false));
+      let result2: boolean;
+      spectator.service.handleUiServiceRestart().subscribe((value) => {
+        result2 = value;
+      });
+      expect(result2).toBe(true);
+    });
+
+    it('should handle errors with error handler when API call fails', () => {
+      const dialogService = spectator.inject(DialogService);
+      const errorHandlerService = spectator.inject(ErrorHandlerService);
+
+      (dialogService.confirm as jest.Mock) = jest.fn(() => of(true));
+
+      spectator.service.handleUiServiceRestart().subscribe();
+
+      expect(errorHandlerService.withErrorHandler).toHaveBeenCalled();
+    });
+
+    it('should use correct helptext for dialog title and message', () => {
+      const dialogService = spectator.inject(DialogService);
+
+      (dialogService.confirm as jest.Mock) = jest.fn(() => of(false));
+
+      spectator.service.handleUiServiceRestart().subscribe();
+
+      expect(dialogService.confirm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: expect.stringContaining('Restart Web Service'),
+          message: expect.stringContaining('web service must restart'),
+        }),
+      );
     });
   });
 });
