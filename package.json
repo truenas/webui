@@ -217,8 +217,8 @@
     ],
     "*.scss": "stylelint --fix"
   },
-  "devDependencies": {},
   "optionalDependencies": {
     "lmdb": "^3.3.0"
-  }
+  },
+  "packageManager": "yarn@4.9.2"
 }

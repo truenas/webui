@@ -2,7 +2,8 @@
 from node:22-bookworm as uibuilder
 COPY ./ /src-ui
 WORKDIR /src-ui
-RUN yarn install --frozen-lockfile
+RUN corepack enable
+RUN yarn install --immutable
 RUN yarn build:prod
 
 FROM debian:stable-slim
