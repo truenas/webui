@@ -85,6 +85,7 @@
             ixTest="back"
           >{{ 'Back' | translate }}</button>
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-button
             matStepperNext
             color="primary"

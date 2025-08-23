@@ -10,6 +10,7 @@ import {
   startWith,
   switchMap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import {
   hasShellAccess, hasSshAccess, hasTrueNasAccess, isEmptyHomeDirectory,
@@ -53,6 +54,7 @@ import { AppState } from 'app/store';
     TestDirective,
     AuthSectionComponent,
     AdditionalDetailsSectionComponent,
+    RequiresRolesDirective,
   ],
   providers: [
     UserFormStore,
@@ -82,6 +84,7 @@ export class UserFormComponent implements OnInit {
   protected readonly tooltips = tooltips;
   protected readonly Role = Role;
   protected readonly fakeTooltip = '';
+  protected readonly requiredRoles = [Role.AccountWrite];
 
   protected form = this.formBuilder.group({
     username: ['', [
