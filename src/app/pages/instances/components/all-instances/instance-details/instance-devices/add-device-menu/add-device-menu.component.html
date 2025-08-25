@@ -50,19 +50,5 @@
         {{ 'Add Trusted Platform Module' | translate }}
       </button>
     }
-
-    @if (isVm()) {
-      <h4 class="menu-header">{{ 'PCI Passthrough' | translate }}</h4>
-
-      <button
-        mat-menu-item
-        [ixTest]="['add-pci-passthrough']"
-        [matTooltip]="isInstanceStopped() ? '' : ('Container must be stopped to add devices.' | translate)"
-        [disabled]="!isInstanceStopped()"
-        (click)="addPciPassthrough()"
-      >
-        {{ 'Add Device' | translate }}
-      </button>
-    }
   </mat-menu>
 }

@@ -31,8 +31,6 @@ describe('InstanceToolsComponent', () => {
           id: 'my-instance',
           status: VirtualizationStatus.Running,
           type: VirtualizationType.Vm,
-          vnc_enabled: true,
-          vnc_port: 5900,
         } as VirtualizationInstance,
       },
     });
@@ -59,47 +57,16 @@ describe('InstanceToolsComponent', () => {
     });
   });
 
-  describe('console', () => {
-    it('shows a link to console for VMs', async () => {
-      const consoleLink = await loader.getHarness(MatButtonHarness.with({ text: 'Serial Console' }));
+  it('disables shell when container is stopped', async () => {
+    spectator.setInput('instance', {
+      id: 'my-instance',
+      status: VirtualizationStatus.Stopped,
+      type: VirtualizationType.Container,
+    } as VirtualizationInstance);
 
-      expect(consoleLink).toBeTruthy();
-      expect(await (await consoleLink.host()).getAttribute('href')).toBe('/containers/view/my-instance/console');
-    });
+    const shellLink = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="open-shell"]' }));
+    expect(await shellLink.isDisabled()).toBe(true);
   });
 
-  describe('vnc', () => {
-    it('shows a link to  VNC', async () => {
-      const vncLink = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="open-vnc"]' }));
-      expect(vncLink).toBeTruthy();
-
-      expect(await (await vncLink.host()).getAttribute('href')).toBe('vnc://truenas.com:5900');
-    });
-
-    it('shows vnc link as disabled when instance is not running', async () => {
-      spectator.setInput('instance', {
-        id: 'my-instance',
-        status: VirtualizationStatus.Stopped,
-        type: VirtualizationType.Vm,
-        vnc_enabled: true,
-        vnc_port: 5900,
-      } as VirtualizationInstance);
-
-      const vncLink = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="open-vnc"]' }));
-      expect(await vncLink.isDisabled()).toBe(true);
-    });
-
-    it('hides vnc link when vnc is not enabled', async () => {
-      spectator.setInput('instance', {
-        id: 'my-instance',
-        status: VirtualizationStatus.Stopped,
-        type: VirtualizationType.Vm,
-        vnc_enabled: false,
-        vnc_port: 5900,
-      } as VirtualizationInstance);
-
-      const vncLink = await loader.getHarnessOrNull(MatButtonHarness.with({ selector: '[ixTest="open-vnc"]' }));
-      expect(vncLink).toBeNull();
-    });
-  });
+  // VM-specific VNC and Serial Console tools were removed for containers-only
 });

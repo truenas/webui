@@ -3,16 +3,14 @@ import {
   FormArray, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
-  ImageOs, imageOsLabels, VirtualizationStatus, VirtualizationType,
+  VirtualizationStatus,
 } from 'app/enums/virtualization.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import {
   InstanceEnvVariablesFormGroup,
@@ -20,9 +18,7 @@ import {
   VirtualizationInstance,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -35,7 +31,6 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { defaultVncPort } from 'app/pages/instances/instances.constants';
 
 @UntilDestroy()
 @Component({
@@ -51,8 +46,6 @@ import { defaultVncPort } from 'app/pages/instances/instances.constants';
     IxFieldsetComponent,
     IxListComponent,
     IxListItemComponent,
-    MatTooltip,
-    IxComboboxComponent,
   ],
   templateUrl: './instance-edit-form.component.html',
   styleUrls: ['./instance-edit-form.component.scss'],
@@ -74,17 +67,9 @@ export class InstanceEditFormComponent {
   title: string;
   editingInstance: VirtualizationInstance;
   poolOptions$ = this.api.call('virt.global.pool_choices').pipe(choicesToOptions());
-  readonly imageOsProvider = new SimpleAsyncComboboxProvider(of(mapToOptions(imageOsLabels, this.translate)));
 
   protected readonly instancesHelptext = instancesHelptext;
 
-  get isVm(): boolean {
-    return this.editingInstance.type === VirtualizationType.Vm;
-  }
-
-  get isContainer(): boolean {
-    return this.editingInstance.type === VirtualizationType.Container;
-  }
 
   get isStopped(): boolean {
     return this.editingInstance.status === VirtualizationStatus.Stopped;
@@ -94,11 +79,6 @@ export class InstanceEditFormComponent {
     autostart: [false],
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
-    enable_vnc: [false],
-    vnc_port: [defaultVncPort as number | null, [Validators.min(5900), Validators.max(65535)]],
-    vnc_password: [null as string | null],
-    secure_boot: [false],
-    image_os: ['' as ImageOs | null],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
@@ -114,11 +94,6 @@ export class InstanceEditFormComponent {
       cpu: this.editingInstance.cpu,
       autostart: this.editingInstance.autostart,
       memory: this.editingInstance.memory,
-      enable_vnc: this.editingInstance.vnc_enabled,
-      vnc_port: this.editingInstance.vnc_port,
-      vnc_password: this.editingInstance.vnc_password,
-      secure_boot: this.editingInstance.secure_boot,
-      image_os: this.editingInstance?.image?.os as ImageOs,
     });
 
     this.setVncControls();
@@ -164,28 +139,12 @@ export class InstanceEditFormComponent {
   private getSubmissionPayload(): UpdateVirtualizationInstance {
     const values = this.form.getRawValue();
 
-    let payload = {
+    const payload = {
       autostart: values.autostart,
       cpu: values.cpu,
       memory: values.memory || null,
-      enable_vnc: values.enable_vnc,
-      vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
-      vnc_password: values.enable_vnc ? values.vnc_password : null,
-      ...(this.isContainer ? { environment: this.environmentVariablesPayload } : null),
+      environment: this.environmentVariablesPayload,
     } as UpdateVirtualizationInstance;
-
-    if (payload.enable_vnc) {
-      payload = {
-        ...payload,
-        vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
-        vnc_password: values.enable_vnc ? values.vnc_password : null,
-      };
-    }
-
-    if (this.isVm) {
-      payload.secure_boot = values.secure_boot;
-      payload.image_os = values.image_os;
-    }
 
     return payload;
   }
@@ -203,18 +162,5 @@ export class InstanceEditFormComponent {
   }
 
   private setVncControls(): void {
-    this.form.controls.enable_vnc.valueChanges.pipe(untilDestroyed(this)).subscribe((vncEnabled) => {
-      if (vncEnabled) {
-        this.form.controls.vnc_port.enable();
-      } else {
-        this.form.controls.vnc_port.disable();
-      }
-    });
-
-    if (!this.isStopped) {
-      this.form.controls.enable_vnc.disable();
-      this.form.controls.vnc_password.disable();
-      this.form.controls.vnc_port.disable();
-    }
   }
 }

@@ -84,6 +84,10 @@ export class AllInstancesHeaderComponent {
   protected onManageVolumes(): void {
     this.matDialog.open(VolumesDialog, {
       minWidth: '80vw',
+      data: {
+        selectionMode: false,
+        config: this.config(),
+      },
     });
   }
 

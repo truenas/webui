@@ -106,13 +106,13 @@ describe('InstanceGeneralInfoComponent', () => {
 
   it('renders details in card', () => {
     const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
-    expect(chartExtra).toHaveLength(6);
+    expect(chartExtra).toHaveLength(5);
     expect(chartExtra[0]).toHaveText('Autostart: Yes');
     expect(chartExtra[1]).toHaveText('Base Image: Almalinux 8 amd64 (20241030_23:38)');
     expect(chartExtra[2]).toHaveText('CPU: 525');
     expect(chartExtra[3]).toHaveText('Memory: 125 MiB');
     expect(chartExtra[4]).toHaveText('Pool: dozer');
-    expect(chartExtra[5]).toHaveText('Secure Boot: Yes');
+    // Secure Boot field removed for containers
   });
 
   it('renders correct values when CPU or Memory limit is not set', () => {

@@ -59,25 +59,9 @@ describe('InstanceDetailsComponent', () => {
   });
 
   it('shows details sub-components related to a selected container', () => {
-    const expectedComponents = [
-      InstanceGeneralInfoComponent,
-      InstanceDevicesComponent,
-      InstanceDisksComponent,
-      InstanceNicsComponent,
-      InstanceProxiesComponent,
-      InstanceIdmapComponent,
-      InstanceToolsComponent,
-    ];
-
-    expectedComponents.forEach((component) => {
-      expect(spectator.query(component as Type<unknown>)).toExist();
-    });
-  });
-
-  it('shows details sub-components related to a selected VM', () => {
     spectator.setInput('instance', {
       name: 'my-instance',
-      type: VirtualizationType.Vm,
+      type: VirtualizationType.Container,
     } as VirtualizationInstance);
 
     const expectedComponents = [
@@ -86,19 +70,12 @@ describe('InstanceDetailsComponent', () => {
       InstanceDisksComponent,
       InstanceNicsComponent,
       InstanceToolsComponent,
-    ];
-
-    expectedComponents.forEach((component) => {
-      expect(spectator.query(component as Type<unknown>)).toExist();
-    });
-
-    const notExpectedComponents = [
       InstanceProxiesComponent,
       InstanceIdmapComponent,
     ];
 
-    notExpectedComponents.forEach((component) => {
-      expect(spectator.query(component as Type<unknown>)).not.toExist();
+    expectedComponents.forEach((component) => {
+      expect(spectator.query(component as Type<unknown>)).toExist();
     });
   });
 });

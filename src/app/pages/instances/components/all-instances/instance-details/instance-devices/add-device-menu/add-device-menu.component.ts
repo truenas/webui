@@ -13,7 +13,6 @@ import {
   VirtualizationDeviceType,
   VirtualizationGpuType,
   VirtualizationStatus,
-  VirtualizationType,
 } from 'app/enums/virtualization.enum';
 import { Option } from 'app/interfaces/option.interface';
 import {
@@ -100,10 +99,6 @@ export class AddDeviceMenuComponent {
     return this.availableUsbDevices().length > 0
       || Object.keys(this.availableGpuDevices()).length > 0
       || this.canAddTpm();
-  });
-
-  protected readonly isVm = computed(() => {
-    return this.instancesStore.selectedInstance()?.type === VirtualizationType.Vm;
   });
 
   protected addUsb(usb: AvailableUsb): void {

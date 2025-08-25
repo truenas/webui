@@ -11,7 +11,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import {
-  diskIoBusLabels, VirtualizationDeviceType, VirtualizationStatus, VirtualizationType,
+  diskIoBusLabels, VirtualizationDeviceType,
 } from 'app/enums/virtualization.enum';
 import { VirtualizationDisk, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -65,13 +65,6 @@ export class InstanceDisksComponent {
   protected readonly disksDisabledMessage = this.translate.instant(
     'VM disks cannot be managed while the instance is running.',
   );
-
-  protected readonly isVmRunning = computed(() => {
-    return this.instance().status === VirtualizationStatus.Running && this.instance().type === VirtualizationType.Vm;
-  });
-
-  protected readonly isVm = computed(() => this.instance().type === VirtualizationType.Vm);
-  protected readonly isContainer = computed(() => this.instance().type === VirtualizationType.Container);
 
   protected readonly visibleDisks = computed(() => this.devicesStore.devices().filter(
     (device): device is VirtualizationDisk => device.dev_type === VirtualizationDeviceType.Disk && !!device.source,

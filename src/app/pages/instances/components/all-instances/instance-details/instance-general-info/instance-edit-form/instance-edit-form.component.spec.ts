@@ -94,11 +94,6 @@ describe('InstanceEditFormComponent', () => {
         Autostart: false,
         'CPU Configuration': '1-3',
         'Memory Size': '2 GiB',
-        'Enable VNC': true,
-        'VNC Port': '9001',
-        'VNC Password': '',
-        'Secure Boot': true,
-        'OS Type': 'FreeBSD',
       });
     });
 
@@ -107,9 +102,6 @@ describe('InstanceEditFormComponent', () => {
         Autostart: true,
         'CPU Configuration': '2-5',
         'Memory Size': '1 GiB',
-        'VNC Port': 9000,
-        'VNC Password': 'testing',
-        'Secure Boot': false,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -119,11 +111,7 @@ describe('InstanceEditFormComponent', () => {
         autostart: true,
         cpu: '2-5',
         memory: GiB,
-        enable_vnc: true,
-        vnc_port: 9000,
-        image_os: 'FreeBSD',
-        vnc_password: 'testing',
-        secure_boot: false,
+        environment: {},
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -142,22 +130,6 @@ describe('InstanceEditFormComponent', () => {
     });
   });
 
-  it('marks Enable VNC as disabled when instance is not stopped', async () => {
-    spectator = createComponent({
-      providers: [
-        mockProvider(SlideInRef, {
-          getData: () => ({
-            ...mockInstance,
-            status: VirtualizationStatus.Running,
-          }),
-          requireConfirmationWhen: jest.fn(),
-          close: jest.fn(),
-        }),
-      ],
-    });
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
-
-    expect(await (await form.getControl('Enable VNC')).isDisabled()).toBe(true);
-  });
+  // VNC controls were removed since this is now containers-only
+  // This test is no longer relevant
 });

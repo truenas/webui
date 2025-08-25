@@ -8,8 +8,6 @@
       mat-button
       ixTest="add-disk"
       [matTooltip]="disksDisabledMessage"
-      [matTooltipDisabled]="!isVmRunning() || isContainer()"
-      [disabled]="isVmRunning()"
       (click)="addDisk()"
     >
       {{ 'Add' | translate }}
@@ -17,7 +15,7 @@
   </mat-card-header>
 
   <mat-card-content>
-    @if (isVm() && instance().root_disk_size; as rootDiskSize) {
+    @if (instance().root_disk_size; as rootDiskSize) {
       <div class="root-disk-size">
         <span class="label">{{ 'Root Disk' | translate }}:</span>
         <span class="value">
@@ -31,12 +29,10 @@
         <span
           class="action"
           [matTooltip]="disksDisabledMessage"
-          [matTooltipDisabled]="!isVmRunning()"
         >
           <a
             ixTest="change-disk-setup"
-            [class.disabled]="isVmRunning()"
-            [attr.tabindex]="isVmRunning() ? -1 : 0"
+            [attr.tabindex]="0"
             (keydown.enter)="showRootDiskIncreaseDialog()"
             (click)="showRootDiskIncreaseDialog()"
           >
@@ -46,7 +42,7 @@
       </div>
     }
 
-    @if (isVm() && visibleDisks()?.length > 0) {
+    @if (visibleDisks()?.length > 0) {
       <div class="root-disk-size">
         <span class="label">{{ 'Boot From' | translate }}:</span>
         <span class="value">
@@ -65,13 +61,11 @@
           <span
             class="action"
             [matTooltip]="disksDisabledMessage"
-            [matTooltipDisabled]="!isVmRunning()"
           >
             <a
               class="action"
               ixTest="change-primary-boot-disk"
-              [class.disabled]="isVmRunning()"
-              [attr.tabindex]="isVmRunning() ? -1 : 0"
+              [attr.tabindex]="0"
               (keydown.enter)="showChangeBootFromDiskDialog()"
               (click)="showChangeBootFromDiskDialog()"
             >
@@ -92,19 +86,11 @@
           } @else {
             <div>
               {{ disk.source }}
-
-              @if (isVm() && disk.io_bus) {
-                ({{ disk.io_bus | mapValue: diskIoBusLabels}})
-              }
             </div>
           }
 
-          <div
-            [matTooltip]="disksDisabledMessage"
-            [matTooltipDisabled]="!isVmRunning() || isContainer()"
-          >
+          <div [matTooltip]="disksDisabledMessage">
             <ix-device-actions-menu
-              [isDisabled]="isVmRunning()"
               [device]="disk"
               (edit)="editDisk(disk)"
             ></ix-device-actions-menu>

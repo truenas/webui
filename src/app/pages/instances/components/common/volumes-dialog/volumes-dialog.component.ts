@@ -157,6 +157,8 @@ export class VolumesDialog implements OnInit {
     this.api.call('virt.volume.query'),
   );
 
+  protected showIsoManagement = computed(() => true);
+
   constructor() {
     const options = inject<VolumesDialogOptions>(MAT_DIALOG_DATA);
 

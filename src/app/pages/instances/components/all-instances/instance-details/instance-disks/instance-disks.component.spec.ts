@@ -5,13 +5,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { GiB } from 'app/constants/bytes.constant';
-import { VirtualizationDeviceType, VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationDisk, VirtualizationInstance, VirtualizationProxy } from 'app/interfaces/virtualization.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import {
-  ChangeRootDiskSetupComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/change-root-disk-setup/change-root-disk-setup.component';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
@@ -116,68 +112,5 @@ describe('InstanceDisksComponent', () => {
     });
   });
 
-  describe('vm', () => {
-    const vm = {
-      id: 'my-instance',
-      type: VirtualizationType.Vm,
-      root_disk_size: 10 * GiB,
-    } as VirtualizationInstance;
-    beforeEach(() => {
-      spectator.setInput('instance', vm);
-    });
-
-    it('opens disk form when Add is pressed', async () => {
-      const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
-      await addButton.click();
-
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-        InstanceDiskFormComponent,
-        { data: { disk: undefined, instance: vm } },
-      );
-    });
-
-    it('opens disk for for edit when actions menu emits (edit)', () => {
-      const actionsMenu = spectator.query(DeviceActionsMenuComponent)!;
-      actionsMenu.edit.emit();
-
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-        InstanceDiskFormComponent,
-        { data: { disk: disks[0], instance: vm } },
-      );
-    });
-
-    it('shows root disk size', () => {
-      const rootDisk = spectator.query('.root-disk-size');
-
-      expect(rootDisk).toHaveText('Root Disk: 10 GiB');
-    });
-
-    it('opens dialog to increase root disk size when Increase link is pressed', () => {
-      const link = spectator.query('.root-disk-size .action a')!;
-      expect(link).toHaveText('Change');
-
-      spectator.click(link);
-
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ChangeRootDiskSetupComponent, {
-        data: vm,
-      });
-      expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated).toHaveBeenCalled();
-    });
-
-    it('disables Add button & hides devices actions buttons when VM is running', async () => {
-      const runningInstance = {
-        id: 'my-instance',
-        type: VirtualizationType.Vm,
-        status: VirtualizationStatus.Running,
-      } as VirtualizationInstance;
-
-      spectator.setInput('instance', runningInstance);
-
-      const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
-      expect(await addButton.isDisabled()).toBe(true);
-
-      const actionsMenu = spectator.query(DeviceActionsMenuComponent)!;
-      expect(actionsMenu.isDisabled).toBe(true);
-    });
-  });
+  // VM-specific tests removed - this component now only handles containers
 });

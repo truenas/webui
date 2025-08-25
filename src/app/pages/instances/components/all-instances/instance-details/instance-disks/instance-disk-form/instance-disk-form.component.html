@@ -8,36 +8,17 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <!-- TODO: Code is similar to the form in instance wizard -->
-        @if (isVm) {
-          <div class="image-field">
-            <ix-input
-              class="input"
-              formControlName="source"
-              [readonly]="true"
-              [label]="'Volume' | translate"
-              [required]="true"
-            ></ix-input>
-
-            <button
-              mat-button
-              ixTest="browse-isos"
-              type="button"
-              (click)="onSelectVolume()"
-            >{{ 'Select Volume' | translate }}</button>
-          </div>
-        } @else {
-          <ix-explorer
-            formControlName="source"
-            [rootNodes]="slashRootNode"
-            [label]="'Source' | translate"
-            [required]="true"
-            [nodeProvider]="datasetProvider"
-          >
-            @if (isNew()) {
-              <ix-explorer-create-dataset></ix-explorer-create-dataset>
-            }
-          </ix-explorer>
-        }
+        <ix-explorer
+          formControlName="source"
+          [rootNodes]="slashRootNode"
+          [label]="'Source' | translate"
+          [required]="true"
+          [nodeProvider]="datasetProvider"
+        >
+          @if (isNew()) {
+            <ix-explorer-create-dataset></ix-explorer-create-dataset>
+          }
+        </ix-explorer>
 
         @if (form.controls.io_bus.enabled) {
           <ix-select
