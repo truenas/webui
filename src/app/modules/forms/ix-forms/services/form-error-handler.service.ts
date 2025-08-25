@@ -7,7 +7,6 @@ import {
 } from 'app/helpers/api.helper';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { EditableService } from 'app/modules/forms/editable/services/editable.service';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -15,7 +14,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class FormErrorHandlerService {
   private errorHandler = inject(ErrorHandlerService);
   private formService = inject(IxFormService);
-  private editableService = inject(EditableService);
   private document = inject<Document>(DOCUMENT);
 
   private isFocusedOnError = false;
@@ -153,19 +151,6 @@ export class FormErrorHandlerService {
       console.warn(`getElementByControlName Could not find element for ${field}.`);
       this.needToShowError = true;
       return;
-    }
-
-    const isElementWithinDom = this.document.body.contains(element);
-    if (!isElementWithinDom) {
-      // Is it part of an editable field?
-      const editables = this.editableService.findEditablesWithControl(control);
-      if (!editables.length) {
-        console.warn(`getElementByControlName Element for ${field} is not within DOM.`);
-        this.needToShowError = true;
-        return;
-      }
-
-      editables.forEach((editable) => editable.open());
     }
 
     if (!this.isFocusedOnError) {

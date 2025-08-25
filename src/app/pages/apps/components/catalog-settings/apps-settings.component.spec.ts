@@ -81,6 +81,11 @@ describe('AppsSettingsComponent', () => {
     ],
   });
 
+  beforeEach(() => {
+    // Mock scrollIntoView since it's not available in test environment
+    Element.prototype.scrollIntoView = jest.fn();
+  });
+
   describe('system has no nvidia card', () => {
     beforeEach(() => {
       hasNvidiaCard = false;

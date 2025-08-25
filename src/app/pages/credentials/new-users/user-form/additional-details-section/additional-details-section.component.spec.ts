@@ -105,6 +105,11 @@ describe('AdditionalDetailsSectionComponent', () => {
     ],
   });
 
+  beforeEach(() => {
+    // Mock scrollIntoView since it's not available in test environment
+    Element.prototype.scrollIntoView = jest.fn();
+  });
+
   describe('sudo commands fields', () => {
     beforeEach(() => {
       spectator = createComponent({
