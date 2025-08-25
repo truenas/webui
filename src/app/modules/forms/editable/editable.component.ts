@@ -1,8 +1,10 @@
 import { CdkObserveContent } from '@angular/cdk/observers';
 import { DOCUMENT } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChildren, ElementRef, input, OnDestroy, OnInit, output, signal, viewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChildren, ElementRef, input, OnDestroy, OnInit, output, signal, viewChild, inject, afterNextRender, Injector } from '@angular/core';
 import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { fromEvent, Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
 import { EditableService } from 'app/modules/forms/editable/services/editable.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -44,8 +46,11 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private editableService = inject(EditableService);
   private document = inject(DOCUMENT);
+  private injector = inject(Injector);
+  private destroy$ = new Subject<void>();
+  private clickOutsideSubscription?: Subscription;
+  private previouslyFocusedElement?: HTMLElement;
 
-  private clickOutsideListener?: (event: Event) => void;
 
   readonly emptyValue = input(this.translate.instant('Not Set'));
 
@@ -95,6 +100,8 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.editableService.deregister(this);
     this.removeClickOutsideListener();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**
@@ -131,20 +138,22 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   open(): void {
+    // Store the currently focused element for restoration later
+    this.previouslyFocusedElement = this.document.activeElement as HTMLElement;
     this.editableService.tryToCloseAll();
     this.isOpen.set(true);
     this.addClickOutsideListener();
 
-    setTimeout(() => {
+    afterNextRender(() => {
       this.elementRef.nativeElement.querySelector<HTMLElement>(focusableElements)?.focus();
-      const editSlot = this.elementRef.nativeElement.querySelector('.edit-slot') as HTMLElement;
+      const editSlot = this.elementRef.nativeElement.querySelector<HTMLElement>('.edit-slot');
       if (editSlot) {
         editSlot.scrollIntoView({
           behavior: 'smooth',
-          block: 'end',
+          block: 'center',
         });
       }
-    });
+    }, { injector: this.injector });
   }
 
   hasControl(control: AbstractControl): boolean {
@@ -161,6 +170,12 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.closed.emit();
     this.removeClickOutsideListener();
 
+    // Restore focus to the previously focused element
+    if (this.previouslyFocusedElement && this.document.body.contains(this.previouslyFocusedElement)) {
+      this.previouslyFocusedElement.focus();
+    }
+    this.previouslyFocusedElement = undefined;
+
     setTimeout(() => {
       this.checkVisibleValue();
     });
@@ -171,24 +186,21 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private addClickOutsideListener(): void {
+    // Remove existing listener to prevent duplicates
     this.removeClickOutsideListener();
 
-    this.clickOutsideListener = (event: Event) => {
-      const target = event.target as HTMLElement;
-      if (!this.isElementWithin(target)) {
-        this.tryToClose();
-      }
-    };
-
-    setTimeout(() => {
-      this.document.addEventListener('click', this.clickOutsideListener, { capture: true });
-    });
+    this.clickOutsideSubscription = fromEvent(this.document, 'click', { capture: true })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event: Event) => {
+        const target = event.target as HTMLElement;
+        if (!this.isElementWithin(target)) {
+          this.tryToClose();
+        }
+      });
   }
 
   private removeClickOutsideListener(): void {
-    if (this.clickOutsideListener) {
-      this.document.removeEventListener('click', this.clickOutsideListener, { capture: true });
-      this.clickOutsideListener = undefined;
-    }
+    this.clickOutsideSubscription?.unsubscribe();
+    this.clickOutsideSubscription = undefined;
   }
 }
