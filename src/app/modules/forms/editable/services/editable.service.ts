@@ -17,7 +17,6 @@ export class EditableService implements OnDestroy {
   }
 
   private keydownHandler = this.handleKeydown.bind(this);
-  private mousedownHandler = this.handleMousedown.bind(this);
 
   ngOnDestroy(): void {
     this.removeDocumentListeners();
@@ -63,12 +62,10 @@ export class EditableService implements OnDestroy {
 
   private setupDocumentListeners(): void {
     this.window.document.addEventListener('keydown', this.keydownHandler, true);
-    this.window.document.addEventListener('mousedown', this.mousedownHandler, true);
   }
 
   private removeDocumentListeners(): void {
     this.window.document.removeEventListener('keydown', this.keydownHandler, true);
-    this.window.document.removeEventListener('mousedown', this.mousedownHandler, true);
   }
 
   private handleKeydown(event: KeyboardEvent): void {
@@ -79,18 +76,6 @@ export class EditableService implements OnDestroy {
       if (!event.defaultPrevented) {
         this.tryToCloseAll();
       }
-    });
-  }
-
-  private handleMousedown(event: MouseEvent): void {
-    if (!this.hasOpenEditables) return;
-
-    const target = event.target as HTMLElement;
-    const clickedWithin = this.getAll().filter((editable) => editable.isElementWithin(target));
-
-    // Defer closing to allow inputs to handle blur events
-    setTimeout(() => {
-      this.tryToCloseAllExcept(clickedWithin);
     });
   }
 }
