@@ -2,10 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
+import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
+import { TranslateModule } from '@ngx-translate/core';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
-import { EditableService } from 'app/modules/forms/editable/services/editable.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 
@@ -14,13 +14,19 @@ describe('EditableComponent', () => {
   let loader: HarnessLoader;
   let editable: EditableHarness;
 
+  beforeAll(() => {
+    // Mock scrollIntoView for all tests
+    Object.defineProperty(Element.prototype, 'scrollIntoView', {
+      value: jest.fn(),
+      writable: true,
+    });
+  });
+
   const createHost = createHostFactory({
     component: EditableComponent,
     imports: [
       ReactiveFormsModule,
-    ],
-    providers: [
-      mockProvider(EditableService),
+      TranslateModule.forRoot(),
     ],
   });
 
@@ -115,12 +121,44 @@ describe('EditableComponent', () => {
       const input = await editable.getHarness(IxInputHarness);
       expect(await (await input.getMatInputHarness()).isFocused()).toBe(true);
     }));
-  });
 
-  describe('interactions', () => {
-    it('registers component with editable service on init', () => {
-      expect(spectator.inject(EditableService).register).toHaveBeenCalledWith(expect.any(EditableComponent));
+    it('scrolls edit slot into view when opening', fakeAsync(async () => {
+      const scrollIntoViewSpy = jest.spyOn(Element.prototype, 'scrollIntoView');
+
+      await editable.open();
+      tick();
+
+      expect(scrollIntoViewSpy).toHaveBeenCalledWith({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }));
+
+    it('stores previously focused element when opening', async () => {
+      const focusedElement = document.createElement('input');
+      document.body.appendChild(focusedElement);
+      focusedElement.focus();
+
+      await editable.open();
+
+      expect(spectator.component.previouslyFocusedElement).toBe(focusedElement);
+
+      document.body.removeChild(focusedElement);
     });
+
+    it('restores focus to previously focused element when closing', fakeAsync(async () => {
+      const focusedElement = document.createElement('input');
+      document.body.appendChild(focusedElement);
+      focusedElement.focus();
+
+      await editable.open();
+      spectator.component.tryToClose();
+      tick();
+
+      expect(document.activeElement).toBe(focusedElement);
+
+      document.body.removeChild(focusedElement);
+    }));
   });
 
   describe('tryToClose', () => {
@@ -161,6 +199,98 @@ describe('EditableComponent', () => {
       const innerElement = spectator.query<HTMLElement>('.edit-trigger');
 
       expect(spectator.component.isElementWithin(innerElement)).toBe(true);
+    });
+  });
+
+  describe('click outside functionality', () => {
+    it('closes editable when clicking outside', fakeAsync(async () => {
+      await editable.open();
+      expect(await editable.isOpen()).toBe(true);
+
+      // Simulate click outside by mocking isElementWithin
+      jest.spyOn(spectator.component, 'isElementWithin').mockReturnValue(false);
+      const clickEvent = new MouseEvent('click', { bubbles: true });
+      Object.defineProperty(clickEvent, 'target', { value: document.createElement('div') });
+
+      document.dispatchEvent(clickEvent);
+      tick();
+
+      expect(await editable.isOpen()).toBe(false);
+    }));
+
+    it('does not close when clicking inside the editable', fakeAsync(async () => {
+      await editable.open();
+      expect(await editable.isOpen()).toBe(true);
+
+      // Simulate click inside by mocking isElementWithin
+      jest.spyOn(spectator.component, 'isElementWithin').mockReturnValue(true);
+      const clickEvent = new MouseEvent('click', { bubbles: true });
+      Object.defineProperty(clickEvent, 'target', { value: document.createElement('div') });
+
+      document.dispatchEvent(clickEvent);
+      tick();
+
+      expect(await editable.isOpen()).toBe(true);
+    }));
+
+    it('removes click outside listener when closing', fakeAsync(async () => {
+      const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
+
+      await editable.open();
+      spectator.component.tryToClose();
+      tick();
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function), { capture: true });
+    }));
+
+    it('removes click outside listener on destroy', () => {
+      const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
+
+      spectator.component.ngOnDestroy();
+
+      expect(removeEventListenerSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('keyboard functionality', () => {
+    it('closes editable when Escape key is pressed', fakeAsync(async () => {
+      await editable.open();
+      expect(await editable.isOpen()).toBe(true);
+
+      const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+      document.dispatchEvent(escapeEvent);
+      tick();
+
+      expect(await editable.isOpen()).toBe(false);
+    }));
+
+    it('does not close when other keys are pressed', fakeAsync(async () => {
+      await editable.open();
+      expect(await editable.isOpen()).toBe(true);
+
+      const enterEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
+      document.dispatchEvent(enterEvent);
+      tick();
+
+      expect(await editable.isOpen()).toBe(true);
+    }));
+
+    it('removes keydown listener when closing', fakeAsync(async () => {
+      const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
+
+      await editable.open();
+      spectator.component.tryToClose();
+      tick();
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function), { capture: true });
+    }));
+
+    it('removes keydown listener on destroy', () => {
+      const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
+
+      spectator.component.ngOnDestroy();
+
+      expect(removeEventListenerSpy).toHaveBeenCalled();
     });
   });
 });

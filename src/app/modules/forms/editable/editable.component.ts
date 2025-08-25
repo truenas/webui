@@ -1,12 +1,11 @@
 import { CdkObserveContent } from '@angular/cdk/observers';
 import { DOCUMENT } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChildren, ElementRef, input, OnDestroy, OnInit, output, signal, viewChild, inject, afterNextRender, Injector } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChildren, ElementRef, input, OnDestroy, output, signal, viewChild, inject, afterNextRender, Injector } from '@angular/core';
 import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { fromEvent, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
-import { EditableService } from 'app/modules/forms/editable/services/editable.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -41,14 +40,14 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     CdkObserveContent,
   ],
 })
-export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
+export class EditableComponent implements AfterViewInit, OnDestroy {
   private translate = inject(TranslateService);
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
-  private editableService = inject(EditableService);
   private document = inject(DOCUMENT);
   private injector = inject(Injector);
   private destroy$ = new Subject<void>();
   private clickOutsideSubscription?: Subscription;
+  private keydownSubscription?: Subscription;
   private previouslyFocusedElement?: HTMLElement;
 
 
@@ -89,17 +88,13 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   });
 
-  ngOnInit(): void {
-    this.editableService.register(this);
-  }
-
   ngAfterViewInit(): void {
     this.checkVisibleValue();
   }
 
   ngOnDestroy(): void {
-    this.editableService.deregister(this);
     this.removeClickOutsideListener();
+    this.removeKeydownListener();
     this.destroy$.next();
     this.destroy$.complete();
   }
@@ -140,9 +135,9 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   open(): void {
     // Store the currently focused element for restoration later
     this.previouslyFocusedElement = this.document.activeElement as HTMLElement;
-    this.editableService.tryToCloseAll();
     this.isOpen.set(true);
     this.addClickOutsideListener();
+    this.addKeydownListener();
 
     afterNextRender(() => {
       this.elementRef.nativeElement.querySelector<HTMLElement>(focusableElements)?.focus();
@@ -169,6 +164,7 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isOpen.set(false);
     this.closed.emit();
     this.removeClickOutsideListener();
+    this.removeKeydownListener();
 
     // Restore focus to the previously focused element
     if (this.previouslyFocusedElement && this.document.body.contains(this.previouslyFocusedElement)) {
@@ -199,8 +195,29 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
       });
   }
 
+  private addKeydownListener(): void {
+    this.removeKeydownListener();
+
+    this.keydownSubscription = fromEvent(this.document, 'keydown', { capture: true })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event: KeyboardEvent) => {
+        this.handleKeydown(event);
+      });
+  }
+
+  private handleKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      this.tryToClose();
+    }
+  }
+
   private removeClickOutsideListener(): void {
     this.clickOutsideSubscription?.unsubscribe();
     this.clickOutsideSubscription = undefined;
+  }
+
+  private removeKeydownListener(): void {
+    this.keydownSubscription?.unsubscribe();
+    this.keydownSubscription = undefined;
   }
 }

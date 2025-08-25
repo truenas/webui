@@ -9,8 +9,6 @@ import { ApiErrorDetails, ApiTraceFrame } from 'app/interfaces/api-error.interfa
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EditableComponent } from 'app/modules/forms/editable/editable.component';
-import { EditableService } from 'app/modules/forms/editable/services/editable.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -68,9 +66,6 @@ describe('FormErrorHandlerService', () => {
           message: error.reason,
           stackTrace: error.trace?.formatted,
         } as ErrorReport)),
-      }),
-      mockProvider(EditableService, {
-        findEditablesWithControl: jest.fn(() => [] as EditableComponent[]),
       }),
       mockProvider(IxFormService, {
         getControlNames: jest.fn(() => Object.keys(formGroup.controls)),
@@ -150,21 +145,6 @@ describe('FormErrorHandlerService', () => {
       spectator.service.handleValidationErrors(callError, formGroup);
 
       expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(callError);
-    });
-
-    it('attempts to find and open editable with the control if is it not found normally', () => {
-      jest.spyOn(documentMock.body, 'contains').mockReturnValueOnce(false);
-      const editable = {
-        open: jest.fn() as EditableComponent['open'],
-      } as EditableComponent;
-
-      jest.spyOn(spectator.inject(EditableService), 'findEditablesWithControl').mockReturnValue([editable]);
-
-      spectator.service.handleValidationErrors(callError, formGroup);
-
-      expect(spectator.inject(EditableService).findEditablesWithControl)
-        .toHaveBeenCalledWith(formGroup.controls.test_control_1);
-      expect(editable.open).toHaveBeenCalled();
     });
 
     it('shows error dialog with original error when control is not found', () => {
