@@ -122,11 +122,16 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
       '.mat-datepicker-content',
     ];
 
-    if (
-      allowedOverlaySelectors.some((sel) => document.querySelector(sel)?.contains(target))
-      || document.querySelector('.mat-mdc-dialog-container')
-    ) {
-      return true;
+    try {
+      if (
+        allowedOverlaySelectors.some((sel) => document.querySelector(sel)?.contains(target))
+        || document.querySelector('.mat-mdc-dialog-container')
+      ) {
+        return true;
+      }
+    } catch (error) {
+      console.warn('Error checking overlay selectors:', error);
+      return false;
     }
 
     return false;
@@ -167,8 +172,15 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
     this.removeKeydownListener();
 
     // Restore focus to the previously focused element
-    if (this.previouslyFocusedElement && this.document.body.contains(this.previouslyFocusedElement)) {
-      this.previouslyFocusedElement.focus();
+    if (this.previouslyFocusedElement) {
+      try {
+        if (this.document.contains(this.previouslyFocusedElement)
+          && this.previouslyFocusedElement.isConnected) {
+          this.previouslyFocusedElement.focus();
+        }
+      } catch (error) {
+        console.warn('Failed to restore focus:', error);
+      }
     }
     this.previouslyFocusedElement = undefined;
 
@@ -178,7 +190,7 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   }
 
   private canClose(): boolean {
-    return this.controls().every((control) => control?.errors === null || Object.keys(control?.errors)?.length === 0);
+    return this.controls().every((control) => !control?.errors || Object.keys(control.errors).length === 0);
   }
 
   private addClickOutsideListener(): void {
@@ -212,8 +224,10 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   }
 
   private removeClickOutsideListener(): void {
-    this.clickOutsideSubscription?.unsubscribe();
-    this.clickOutsideSubscription = undefined;
+    if (this.clickOutsideSubscription) {
+      this.clickOutsideSubscription.unsubscribe();
+      this.clickOutsideSubscription = undefined;
+    }
   }
 
   private removeKeydownListener(): void {
