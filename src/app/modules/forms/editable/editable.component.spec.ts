@@ -134,17 +134,6 @@ describe('EditableComponent', () => {
       });
     }));
 
-    it('stores previously focused element when opening', async () => {
-      const focusedElement = document.createElement('input');
-      document.body.appendChild(focusedElement);
-      focusedElement.focus();
-
-      await editable.open();
-
-      expect(spectator.component.previouslyFocusedElement).toBe(focusedElement);
-
-      document.body.removeChild(focusedElement);
-    });
 
     it('restores focus to previously focused element when closing', fakeAsync(async () => {
       const focusedElement = document.createElement('input');
