@@ -1,4 +1,5 @@
 import { CdkObserveContent } from '@angular/cdk/observers';
+import { DOCUMENT } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChildren, ElementRef, input, OnDestroy, OnInit, output, signal, viewChild, inject } from '@angular/core';
 import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -42,6 +43,9 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   private translate = inject(TranslateService);
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private editableService = inject(EditableService);
+  private document = inject(DOCUMENT);
+
+  private clickOutsideListener?: (event: Event) => void;
 
   readonly emptyValue = input(this.translate.instant('Not Set'));
 
@@ -90,6 +94,7 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.editableService.deregister(this);
+    this.removeClickOutsideListener();
   }
 
   /**
@@ -128,10 +133,17 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
   open(): void {
     this.editableService.tryToCloseAll();
     this.isOpen.set(true);
+    this.addClickOutsideListener();
 
     setTimeout(() => {
-      // Find next focusable element and focus it
       this.elementRef.nativeElement.querySelector<HTMLElement>(focusableElements)?.focus();
+      const editSlot = this.elementRef.nativeElement.querySelector('.edit-slot') as HTMLElement;
+      if (editSlot) {
+        editSlot.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+        });
+      }
     });
   }
 
@@ -147,6 +159,7 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.isOpen.set(false);
     this.closed.emit();
+    this.removeClickOutsideListener();
 
     setTimeout(() => {
       this.checkVisibleValue();
@@ -155,5 +168,27 @@ export class EditableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private canClose(): boolean {
     return this.controls().every((control) => control?.errors === null || Object.keys(control?.errors)?.length === 0);
+  }
+
+  private addClickOutsideListener(): void {
+    this.removeClickOutsideListener();
+
+    this.clickOutsideListener = (event: Event) => {
+      const target = event.target as HTMLElement;
+      if (!this.isElementWithin(target)) {
+        this.tryToClose();
+      }
+    };
+
+    setTimeout(() => {
+      this.document.addEventListener('click', this.clickOutsideListener, { capture: true });
+    });
+  }
+
+  private removeClickOutsideListener(): void {
+    if (this.clickOutsideListener) {
+      this.document.removeEventListener('click', this.clickOutsideListener, { capture: true });
+      this.clickOutsideListener = undefined;
+    }
   }
 }
