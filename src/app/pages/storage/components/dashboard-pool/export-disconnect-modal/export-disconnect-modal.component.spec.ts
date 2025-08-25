@@ -171,12 +171,12 @@ describe('ExportDisconnectModalComponent', () => {
   async function submitForm(): Promise<void> {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Confirm Export/Disconnect': true,
+      'Confirm Disconnect/Delete': true,
       'Delete saved configurations from TrueNAS?': true,
       'Destroy data on this pool?': false,
     });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export/Disconnect' }));
+    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disconnect/Delete' }));
     await submitButton.click();
   }
 
@@ -198,7 +198,7 @@ describe('ExportDisconnectModalComponent', () => {
         const values = await form.getValues();
 
         expect(values).toEqual({
-          'Confirm Export/Disconnect': false,
+          'Confirm Disconnect/Delete': false,
           'Delete saved configurations from TrueNAS?': true,
           'Destroy data on this pool?': false,
         });
@@ -209,7 +209,7 @@ describe('ExportDisconnectModalComponent', () => {
       it('sends an update payload to websocket', async () => {
         await submitForm();
 
-        expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been exported/disconnected successfully.');
+        expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been disconnected/deleted successfully.');
         expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.export', [
           fakeData.pool.id,
           {
@@ -240,7 +240,7 @@ describe('ExportDisconnectModalComponent', () => {
         await submitForm();
 
         expect(spectator.inject(DialogService).error).toHaveBeenCalledWith(expect.objectContaining({
-          title: 'Error exporting/disconnecting pool.',
+          title: 'Error disconnecting/deleting pool.',
           message: 'Unable to terminate processes which are using this pool: docker',
         }));
       });

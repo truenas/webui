@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync, flush, tick } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -22,6 +23,9 @@ import {
 import {
   PoolUsageCardComponent,
 } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
+import {
+  AutotrimDialog,
+} from 'app/pages/storage/components/dashboard-pool/storage-health-card/autotrim-dialog/autotrim-dialog.component';
 import { StorageHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/storage-health-card/storage-health-card.component';
 import {
   VDevsCardComponent,
@@ -80,18 +84,25 @@ describe('DashboardPoolComponent', () => {
     expect(spectator.query('.pool-name')).toHaveText('deadpool');
   });
 
-  it('opens an Export/Disconnect dialog when corresponding button is pressed', async () => {
-    const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export/Disconnect' }));
-    await exportButton.click();
+  it('opens a Disconnect/Delete dialog when Disconnect/Delete button is pressed', async () => {
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disconnect/Delete' }));
+    await deleteButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ExportDisconnectModalComponent, {
       data: pool,
     });
   });
 
-  it('expands a pool with confirmation when Expand button is pressed', async () => {
-    const expandButton = await loader.getHarness(MatButtonHarness.with({ text: 'Expand' }));
-    await expandButton.click();
+  it('expands a pool with confirmation when Expand Pool menu item is clicked', async () => {
+    // Find and click the Advanced Actions menu trigger
+    const menuTrigger = await loader.getHarness(MatButtonHarness.with({
+      selector: '[mat-icon-button]',
+    }));
+    await menuTrigger.click();
+
+    // Find the menu and click the Expand Pool item
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: 'Expand Pool' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: helptextVolumes.expandPoolDialog.title,
@@ -99,6 +110,22 @@ describe('DashboardPoolComponent', () => {
     });
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.expand', [pool.id]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+  });
+
+  it('opens Auto TRIM dialog when Auto TRIM menu item is clicked', async () => {
+    // Find and click the Advanced Actions menu trigger
+    const menuTrigger = await loader.getHarness(MatButtonHarness.with({
+      selector: '[mat-icon-button]',
+    }));
+    await menuTrigger.click();
+
+    // Find the menu and click the Auto TRIM item
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.clickItem({ text: 'Auto TRIM' });
+
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AutotrimDialog, {
+      data: pool,
+    });
   });
 
   it('shows an Upgrade button that upgrades pool with confirmation when pool is not upgraded', async () => {

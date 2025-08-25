@@ -1,5 +1,5 @@
 <h1 mat-dialog-title class="export-disconnect-modal-title">
-  {{ 'Export/disconnect pool: {pool}' | translate: { pool: pool.name } }}
+  {{ 'Disconnect/delete pool: {pool}' | translate: { pool: pool.name } }}
 </h1>
 
 @if (isFormLoading) {
@@ -133,7 +133,7 @@
       [color]="form.value.destroy ? 'warn' : 'primary'"
       [disabled]="form.invalid || isFormLoading"
     >
-      {{ 'Export/Disconnect' | translate }}
+      {{ 'Disconnect/Delete' | translate }}
     </button>
   </ix-form-actions>
 </form>

@@ -224,7 +224,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.isFormLoading = false;
     this.dialogRef.close(true);
 
-    const message = this.translate.instant('Pool «{pool}» has been exported/disconnected successfully.', {
+    const message = this.translate.instant('Pool «{pool}» has been disconnected/deleted successfully.', {
       pool: this.pool.name,
     });
     const destroyed = this.translate.instant('All data on that pool was destroyed.');
