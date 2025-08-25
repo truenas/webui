@@ -5,7 +5,7 @@ export const helptextNvmeOf = {
   rdmaTooltip: T('Once enabled one or more ports may be configured with RDMA selected as the transport. \
 Requires an Enterprise license, RDMA-capable system and network equipment.'),
   rdmaDisabledTooltip: T('Not enabled, because this system does not support RDMA.'),
-  anaDisabledTooltip: T('Not enabled, because this feature requires an Enterprise license.'),
+  anaDisabledTooltip: T('Not enabled, because this feature requires an HA license.'),
 
   dhchapKeyTooltip: T('DH-CHAP key to be used to authenticate the host.'),
   noDhText: T("Don't use DH key exchange."),
