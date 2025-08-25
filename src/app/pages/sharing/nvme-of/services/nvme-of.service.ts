@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import {
   combineLatest,
-  from, mergeMap, Observable, of, switchMap, tap, toArray,
+  from, mergeMap, Observable, of, switchMap, toArray,
 } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { catchError, map, shareReplay, take } from 'rxjs/operators';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
@@ -19,7 +19,7 @@ export class NvmeOfService {
 
   private maxConcurrentRequests = 15;
 
-  private cachedRdmaCapable: boolean | null = null;
+  private rdmaCapable$: Observable<boolean> | null = null;
 
   getSupportedTransports(): Observable<NvmeOfTransportType[]> {
     return combineLatest([
@@ -45,16 +45,18 @@ export class NvmeOfService {
   }
 
   isRdmaCapable(): Observable<boolean> {
-    if (this.cachedRdmaCapable === null) {
-      return this.api.call('rdma.capable_protocols').pipe(
+    if (!this.rdmaCapable$) {
+      this.rdmaCapable$ = this.api.call('rdma.capable_protocols').pipe(
         map((protocols) => protocols.includes(RdmaProtocolName.Nvmet)),
-        tap((rdmaCapable) => {
-          this.cachedRdmaCapable = rdmaCapable;
+        catchError(() => {
+          // If the API call fails, assume RDMA is not capable
+          return of(false);
         }),
+        shareReplay({ refCount: true, bufferSize: 1 }),
       );
     }
 
-    return of(this.cachedRdmaCapable);
+    return this.rdmaCapable$;
   }
 
   associatePorts(subsystem: { id: number }, ports: NvmeOfPort[]): Observable<unknown> {
