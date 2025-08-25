@@ -335,6 +335,23 @@ export class UsersSearchComponent implements OnInit {
   }
 
   protected onQueryChange(query: SearchQuery<User>): void {
+    const currentQuery = this.searchQuery();
+
+    // Detect any mode switch and reset to mode-specific defaults
+    if (currentQuery && currentQuery.isBasicQuery !== query.isBasicQuery) {
+      const targetMode = query.isBasicQuery ? 'basic' : 'advanced';
+
+      // Create empty query for the target mode to prevent preservation
+      const emptyQuery: SearchQuery<User> = query.isBasicQuery
+        ? { query: '', isBasicQuery: true }
+        : { filters: [], isBasicQuery: false };
+
+      this.searchQuery.set(emptyQuery);
+      this.resetToModeDefaults(targetMode);
+      this.updateBuiltinActiveState();
+      return; // Exit early since resetToModeDefaults handles the filtering
+    }
+
     if (!query.isBasicQuery) {
       const originalQuery = query as AdvancedSearchQuery<User>;
       query = this.removeConflictingFilters(originalQuery);
@@ -435,5 +452,18 @@ export class UsersSearchComponent implements OnInit {
     }
 
     this.userPresets.set(presets);
+  }
+
+  private resetToModeDefaults(targetMode: 'basic' | 'advanced'): void {
+    if (targetMode === 'basic') {
+      // Basic mode: show local users + root only
+      this.dataProvider().setParams([]);
+      this.selectedUserTypes = [UserType.Local];
+      this.onUserTypeChange(this.selectedUserTypes);
+    } else {
+      // Advanced mode: show ALL users (no filtering)
+      this.dataProvider().setParams([]);
+      this.dataProvider().load();
+    }
   }
 }
