@@ -3,6 +3,7 @@ import { firstValueFrom, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
+import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import {
   NvmeOfHost, NvmeOfPort, NvmeOfSubsystem, SubsystemPortAssociation,
 } from 'app/interfaces/nvme-of.interface';
@@ -20,7 +21,7 @@ describe('NvmeOfService', () => {
       mockApi([
         mockCall('nvmet.port_subsys.create'),
         mockCall('nvmet.host_subsys.create'),
-        mockCall('nvmet.global.rdma_enabled', true),
+        mockCall('rdma.capable_protocols', [RdmaProtocolName.Nvmet]),
         mockCall('nvmet.port_subsys.delete'),
       ]),
       mockProvider(LicenseService, {
@@ -96,12 +97,12 @@ describe('NvmeOfService', () => {
     });
   });
 
-  describe('isRdmaEnabled', () => {
-    it('should return whether RDMA is enabled and cache the result', async () => {
-      const first = await firstValueFrom(spectator.service.isRdmaEnabled());
-      const second = await firstValueFrom(spectator.service.isRdmaEnabled());
+  describe('isRdmaCapable', () => {
+    it('should return whether RDMA is capable and cache the result', async () => {
+      const first = await firstValueFrom(spectator.service.isRdmaCapable());
+      const second = await firstValueFrom(spectator.service.isRdmaCapable());
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.rdma_enabled');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rdma.capable_protocols');
       expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(1);
       expect(first).toBe(true);
       expect(second).toBe(true);
