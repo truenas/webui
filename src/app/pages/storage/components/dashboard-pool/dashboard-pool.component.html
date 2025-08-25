@@ -16,24 +16,47 @@
         }
 
         <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          [ixTest]="['export', pool()?.name]"
-          [ixUiSearch]="searchableElements.elements.exportDisconnect"
-          (click)="onExport()"
+          mat-icon-button
+          [matTooltip]="'Advanced Actions' | translate"
+          [matMenuTriggerFor]="advancedMenu"
+          [ixTest]="['advanced-actions', pool()?.name]"
         >
-          {{ 'Export/Disconnect' | translate }}
+          <ix-icon name="more_vert"></ix-icon>
         </button>
 
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
-          [ixTest]="['expand', pool()?.name]"
-          [ixUiSearch]="searchableElements.elements.expand"
-          (click)="onExpand()"
+          color="warn"
+          [ixTest]="['export', pool()?.name]"
+          [ixUiSearch]="searchableElements.elements.exportDisconnect"
+          (click)="onExport()"
         >
-          {{ 'Expand' | translate }}
+          {{ 'Disconnect/Delete' | translate }}
         </button>
+
+        <mat-menu #advancedMenu="matMenu">
+          <button
+            *ixRequiresRoles="requiredRoles"
+            mat-menu-item
+            [ixTest]="['expand', pool()?.name]"
+            [ixUiSearch]="searchableElements.elements.expand"
+            (click)="onExpand()"
+          >
+            <ix-icon name="trending_up"></ix-icon>
+            {{ 'Expand Pool' | translate }}
+          </button>
+
+          <button
+            *ixRequiresRoles="requiredRoles"
+            mat-menu-item
+            [ixTest]="['auto-trim', pool()?.name]"
+            (click)="onEditAutotrim()"
+          >
+            <ix-icon name="content_cut"></ix-icon>
+            {{ 'Auto TRIM' | translate }}
+          </button>
+        </mat-menu>
       </div>
     </div>
 

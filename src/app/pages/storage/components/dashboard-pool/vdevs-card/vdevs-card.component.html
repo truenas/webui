@@ -121,8 +121,13 @@
       }
 
       @if (noOtherVdevTypes()) {
-        <div class="vdev-line">
-          <b>{{ 'No other VDEV types.' | translate }}</b>
+        <div class="vdev-line empty-vdev-state">
+          <div class="empty-message">
+            {{ 'Pool configuration complete.' | translate }}
+          </div>
+          <div class="empty-description">
+            {{ 'Optional VDEV types like cache, log, or spare can improve performance.' | translate }}
+          </div>
         </div>
       }
     </div>
