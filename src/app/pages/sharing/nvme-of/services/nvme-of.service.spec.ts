@@ -98,14 +98,54 @@ describe('NvmeOfService', () => {
   });
 
   describe('isRdmaCapable', () => {
-    it('should return whether RDMA is capable and cache the result', async () => {
-      const first = await firstValueFrom(spectator.service.isRdmaCapable());
-      const second = await firstValueFrom(spectator.service.isRdmaCapable());
+    it('should return true when NVMET is in capable protocols', async () => {
+      const result = await firstValueFrom(spectator.service.isRdmaCapable());
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rdma.capable_protocols');
+      expect(result).toBe(true);
+    });
+
+    it('should return false when NVMET is not in capable protocols', async () => {
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('rdma.capable_protocols', [RdmaProtocolName.Nfs, RdmaProtocolName.Iser]);
+
+      // Create a new service instance to test with different mock data
+      const newSpectator = createService();
+      const result = await firstValueFrom(newSpectator.service.isRdmaCapable());
+
+      expect(result).toBe(false);
+    });
+
+    it('should return false when API call fails', async () => {
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('rdma.capable_protocols', new Error('API Error'));
+
+      // Create a new service instance to test error handling
+      const newSpectator = createService();
+      const result = await firstValueFrom(newSpectator.service.isRdmaCapable());
+
+      expect(result).toBe(false);
+    });
+
+    it('should cache the result and not make multiple API calls', async () => {
+      const first = await firstValueFrom(spectator.service.isRdmaCapable());
+      const second = await firstValueFrom(spectator.service.isRdmaCapable());
+      const third = await firstValueFrom(spectator.service.isRdmaCapable());
+
       expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(1);
       expect(first).toBe(true);
       expect(second).toBe(true);
+      expect(third).toBe(true);
+    });
+
+    it('should return false when capable_protocols returns empty array', async () => {
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('rdma.capable_protocols', []);
+
+      const newSpectator = createService();
+      const result = await firstValueFrom(newSpectator.service.isRdmaCapable());
+
+      expect(result).toBe(false);
     });
   });
 });
