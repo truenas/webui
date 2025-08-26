@@ -13,8 +13,9 @@ export const helptextSystemAdvanced = {
   systemDatasetTooltip: T('Store system logs on the system dataset. Unset to store system logs in <i>/var/</i> on the operating system device.'),
   syslogAuditTooltip: T('Check to enable Audit Logs'),
 
-  consoleMenuTooltip: T('Unset to add a login prompt to the system before\
- the console menu is shown.'),
+  consoleMenuTooltip: T('Select to display the TrueNAS console menu without authentication.\n\n\
+When unset, you must log in before accessing the console.\n\n\
+Note: If the administrative account Shell is not set to TrueNAS Console, you enter the Linux shell. Enter <code>cli --menu</code> to access the console menu.'),
 
   serialConsoleTooltip: T('Do not set this if the Serial Port is disabled.'),
 
