@@ -3,7 +3,7 @@
     <h3>{{ 'Notifications' | translate }}</h3>
 
     <div class="actions action-icon">
-      <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
+      <ix-basic-search [(query)]="filterString" (queryChange)="onListFiltered($event)"></ix-basic-search>
 
       <ix-table-columns-selector
         [columnPreferencesKey]="'smbNotificationList'"

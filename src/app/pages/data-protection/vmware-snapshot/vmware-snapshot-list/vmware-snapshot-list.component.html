@@ -1,5 +1,5 @@
 <ix-page-header>
-  <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
+  <ix-basic-search [(query)]="filterString" (queryChange)="onListFiltered($event)"></ix-basic-search>
   <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-vmware-snapshot" [color]="'primary'" (click)="doAdd()">
     {{ 'Add' | translate }}
   </button>

@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -15,7 +16,7 @@ import { Role } from 'app/enums/role.enum';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -44,7 +45,8 @@ import { IscsiService } from 'app/services/iscsi.service';
     MatCard,
     FakeProgressBarComponent,
     MatToolbarRow,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -80,7 +82,7 @@ export class InitiatorListComponent implements OnInit {
   ];
 
   isLoading = false;
-  filterString = '';
+  filterString = signal('');
   dataProvider: AsyncDataProvider<IscsiInitiatorGroup>;
 
   initiators: IscsiInitiatorGroup[] = [];
@@ -151,7 +153,7 @@ export class InitiatorListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider(initiators$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.filterString());
     });
   }
 
@@ -160,7 +162,7 @@ export class InitiatorListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: ['comment', 'initiators'],

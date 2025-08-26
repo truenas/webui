@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -15,7 +16,7 @@ import { Role } from 'app/enums/role.enum';
 import { ReportingExporter } from 'app/interfaces/reporting-exporters.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -47,7 +48,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatCard,
     FakeProgressBarComponent,
     MatToolbarRow,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -75,7 +77,7 @@ export class ReportingExporterListComponent implements OnInit {
   protected readonly requiredRoles = [Role.ReportingWrite];
   protected readonly searchableElements = reportingExportersElements;
 
-  filterString = '';
+  filterString = signal('');
   dataProvider = new ArrayDataProvider<ReportingExporter>();
 
   exporters: ReportingExporter[] = [];
@@ -166,7 +168,7 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({
       list: this.exporters,
       query,
@@ -179,7 +181,7 @@ export class ReportingExporterListComponent implements OnInit {
     this.api.call('reporting.exporters.query').pipe(untilDestroyed(this)).subscribe({
       next: (exporters: ReportingExporter[]) => {
         this.exporters = exporters;
-        this.onListFiltered(this.filterString);
+        this.onListFiltered(this.filterString());
         this.isLoading$.next(false);
         this.isNoData$.next(!this.exporters?.length);
         this.setDefaultSort();

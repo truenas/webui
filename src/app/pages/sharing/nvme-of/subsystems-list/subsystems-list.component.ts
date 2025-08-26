@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -9,7 +10,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -35,7 +36,8 @@ import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems
   imports: [
     MatCard,
     FakeProgressBarComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     TranslateModule,
     AsyncPipe,
     MatToolbarRow,
@@ -67,7 +69,7 @@ export class SubsystemsListComponent {
   protected readonly emptyConfig = nvmeOfEmptyConfig;
   protected readonly EmptyType = EmptyType;
 
-  filterString = '';
+  filterString = signal('');
 
   protected columns = createTable<NvmeOfSubsystemDetails>([
     templateColumn({
@@ -117,7 +119,7 @@ export class SubsystemsListComponent {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.search.emit(query);
   }
 

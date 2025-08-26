@@ -1,7 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, signal,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -23,7 +24,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -67,7 +68,8 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -105,7 +107,7 @@ export class CloudSyncListComponent implements OnInit {
   protected readonly EmptyType = EmptyType;
 
   cloudSyncTasks: CloudSyncTaskUi[] = [];
-  filterString = '';
+  filterString = signal('');
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
   readonly jobState = JobState;
   protected readonly requiredRoles = [Role.CloudSyncWrite];
@@ -197,7 +199,7 @@ export class CloudSyncListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.filterString());
     });
   }
 
@@ -334,7 +336,7 @@ export class CloudSyncListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['description'] });
   }
 

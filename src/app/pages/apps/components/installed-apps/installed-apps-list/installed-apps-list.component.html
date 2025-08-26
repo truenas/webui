@@ -18,11 +18,10 @@
     [loading]="isLoading()"
   ></ix-fake-progress-bar>
 
-  <ix-search-input1
-    [maxLength]="100"
-    [value]="filterString"
-    (search)="onSearch($event)"
-  ></ix-search-input1>
+  <ix-basic-search
+    [(query)]="filterString"
+    (queryChange)="onSearch($event)"
+  ></ix-basic-search>
 </div>
 
 @if ((dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading())) {

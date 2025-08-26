@@ -13,7 +13,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -35,7 +35,7 @@ describe('SnapshotListComponent', () => {
     component: SnapshotListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
-      SearchInput1Component,
+      BasicSearchComponent,
       ReactiveFormsModule,
       IxTableDetailsRowDirective,
     ],
@@ -161,9 +161,9 @@ describe('SnapshotListComponent', () => {
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
-    spectator.triggerEventHandler('ix-search-input1', 'search', 'test-dataset');
+    spectator.triggerEventHandler('ix-basic-search', 'queryChange', 'test-dataset');
 
-    expect(component.filterString).toBe('test-dataset');
+    expect(component.filterString()).toBe('test-dataset');
 
     expect(setFilterSpy).toHaveBeenCalledWith({
       list: component.snapshots,
@@ -195,7 +195,7 @@ describe('SnapshotListComponent', () => {
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
-    spectator.triggerEventHandler('ix-search-input1', 'search', 'test-dataset');
+    spectator.triggerEventHandler('ix-basic-search', 'queryChange', 'test-dataset');
 
     expect(setFilterSpy).toHaveBeenCalledTimes(2);
     expect(setFilterSpy).toHaveBeenNthCalledWith(1, {
@@ -242,7 +242,7 @@ describe('SnapshotListComponent', () => {
 
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
-    spectator.triggerEventHandler('ix-search-input1', 'search', 'dozer/boom');
+    spectator.triggerEventHandler('ix-basic-search', 'queryChange', 'dozer/boom');
 
     expect(setFilterSpy).toHaveBeenCalledTimes(1);
     expect(setFilterSpy).toHaveBeenCalledWith({

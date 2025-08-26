@@ -1,7 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -23,7 +24,7 @@ import { SmbSharePurpose, SmbShare, ExternalSmbShareOptions } from 'app/interfac
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -65,7 +66,8 @@ import { selectService } from 'app/store/services/services.selectors';
     FakeProgressBarComponent,
     MatToolbarRow,
     ServiceStateButtonComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     MatAnchor,
     TestDirective,
     IxTableColumnsSelectorComponent,
@@ -103,7 +105,7 @@ export class SmbListComponent implements OnInit {
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
-  filterString = '';
+  filterString = signal('');
   dataProvider: AsyncDataProvider<SmbShare>;
 
   smbShares: SmbShare[] = [];
@@ -228,7 +230,7 @@ export class SmbListComponent implements OnInit {
     this.dataProvider.load();
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.filterString());
     });
   }
 
@@ -253,7 +255,7 @@ export class SmbListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: !this.smbShares.length ? [] : Object.keys(this.smbShares[0]) as (keyof SmbShare)[],

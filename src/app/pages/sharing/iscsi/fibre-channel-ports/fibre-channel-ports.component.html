@@ -4,10 +4,10 @@
     <h3>{{ 'Fibre Channel Ports' | translate }}</h3>
 
     <div class="actions">
-      <ix-search-input1
-        [value]="searchQuery()"
-        (search)="onSearch($event)"
-      ></ix-search-input1>
+      <ix-basic-search
+        [(query)]="searchQuery"
+        (queryChange)="onSearch($event)"
+      ></ix-basic-search>
     </div>
   </mat-toolbar-row>
   <mat-card-content>

@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnInit, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
@@ -14,7 +15,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextKerberosRealms } from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -43,7 +44,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./kerberos-realms-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -75,7 +77,7 @@ export class KerberosRealmsListComponent implements OnInit {
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = kerberosRealmsListElements;
 
-  filterString = '';
+  filterString = signal('');
   dataProvider: AsyncDataProvider<KerberosRealmRow>;
   kerberosRealsm: KerberosRealmRow[] = [];
   columns = createTable<KerberosRealmRow>([
@@ -155,7 +157,7 @@ export class KerberosRealmsListComponent implements OnInit {
     this.setDefaultSort();
     this.getKerberosRealms();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.filterString());
     });
   }
 
@@ -179,7 +181,7 @@ export class KerberosRealmsListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: ['realm', 'kdc_string', 'admin_server_string', 'kpasswd_server_string'],

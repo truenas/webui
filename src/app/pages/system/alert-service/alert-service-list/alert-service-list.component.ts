@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -16,7 +17,7 @@ import { Role } from 'app/enums/role.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -45,7 +46,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatCard,
     UiSearchDirective,
     MatToolbarRow,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -73,7 +75,7 @@ export class AlertServiceListComponent implements OnInit {
   protected readonly searchableElements = alertServiceListElements;
 
   dataProvider: AsyncDataProvider<AlertService>;
-  filterString = '';
+  filterString = signal('');
 
   columns = createTable<AlertService>([
     textColumn({
@@ -134,7 +136,7 @@ export class AlertServiceListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<AlertService>(alertServices$);
     this.getAlertServices();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.filterString());
     });
   }
 
@@ -146,7 +148,7 @@ export class AlertServiceListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({ list: this.alertServices, query, columnKeys: ['name', 'level'] });
   }
 

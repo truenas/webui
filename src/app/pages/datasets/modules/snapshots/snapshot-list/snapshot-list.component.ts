@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -25,7 +25,7 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -70,7 +70,8 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
     ReactiveFormsModule,
     IxSlideToggleComponent,
     TranslateModule,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     MatButton,
     RequiresRolesDirective,
     TestDirective,
@@ -98,7 +99,7 @@ export class SnapshotListComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   protected readonly requiredRoles = [Role.SnapshotDelete];
-  filterString = '';
+  filterString = signal('');
   dataProvider = new ArrayDataProvider<ZfsSnapshotUi>();
   snapshots: ZfsSnapshotUi[] = [];
   showExtraColumnsControl = new FormControl<boolean>(false);
@@ -138,7 +139,7 @@ export class SnapshotListComponent implements OnInit {
           snapshotToSelect.selected = checked;
         }
         this.dataProvider.setRows([]);
-        this.onListFiltered(this.filterString);
+        this.onListFiltered(this.filterString());
       },
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
@@ -147,7 +148,7 @@ export class SnapshotListComponent implements OnInit {
         ).subscribe((snapshots) => {
           snapshots.forEach((snapshot) => snapshot.selected = checked);
           this.dataProvider.setRows([]);
-          this.onListFiltered(this.filterString);
+          this.onListFiltered(this.filterString());
         });
       },
       cssClass: 'checkboxs-column',
@@ -181,8 +182,8 @@ export class SnapshotListComponent implements OnInit {
   });
 
   get pageTitle(): string {
-    if (this.filterString.length) {
-      return this.translate.instant('Snapshots') + ': ' + this.filterString;
+    if (this.filterString().length) {
+      return this.translate.instant('Snapshots') + ': ' + this.filterString();
     }
     return this.translate.instant('Snapshots');
   }
@@ -196,7 +197,7 @@ export class SnapshotListComponent implements OnInit {
   }
 
   constructor() {
-    this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
+    this.filterString.set(this.route.snapshot.paramMap.get('dataset') || '');
   }
 
   ngOnInit(): void {
@@ -234,7 +235,7 @@ export class SnapshotListComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.filterString());
       this.cdr.markForCheck();
     });
   }
@@ -299,7 +300,7 @@ export class SnapshotListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
 
     const datasetParam = this.route.snapshot.paramMap.get('dataset');
 

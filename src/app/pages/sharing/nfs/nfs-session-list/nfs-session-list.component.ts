@@ -1,5 +1,6 @@
 import { NgTemplateOutlet, AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,7 +10,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -34,7 +35,8 @@ import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/n
     PageHeaderComponent,
     MatButtonToggleGroup,
     MatButtonToggle,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     NgTemplateOutlet,
     MatButton,
     TestDirective,
@@ -58,7 +60,7 @@ export class NfsSessionListComponent implements OnInit {
   protected readonly activeNfsType = signal<NfsType>(NfsType.Nfs3);
   protected readonly searchableElements = nfsSessionListElements;
 
-  filterString = '';
+  filterString = signal('');
   sessions: Nfs3Session[] | Nfs4Session['info'][] = [];
   readonly NfsType = NfsType;
 
@@ -131,8 +133,8 @@ export class NfsSessionListComponent implements OnInit {
   nfs3ProviderRequest$ = this.api.call('nfs.get_nfs3_clients', []).pipe(
     tap((sessions) => {
       this.sessions = sessions;
-      if (this.filterString) {
-        this.onListFiltered(this.filterString);
+      if (this.filterString()) {
+        this.onListFiltered(this.filterString());
       }
     }),
     untilDestroyed(this),
@@ -144,8 +146,8 @@ export class NfsSessionListComponent implements OnInit {
     map((sessions) => sessions.map((session) => session.info)),
     tap((sessions) => {
       this.sessions = sessions;
-      if (this.filterString) {
-        this.onListFiltered(this.filterString);
+      if (this.filterString()) {
+        this.onListFiltered(this.filterString());
       }
     }),
     untilDestroyed(this),
@@ -158,7 +160,7 @@ export class NfsSessionListComponent implements OnInit {
 
     combineLatest([this.nfs3DataProvider.emptyType$, this.nfs4DataProvider.emptyType$])
       .pipe(untilDestroyed(this)).subscribe(() => {
-        this.onListFiltered(this.filterString);
+        this.onListFiltered(this.filterString());
       });
   }
 
@@ -185,7 +187,7 @@ export class NfsSessionListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query?.toString()?.toLowerCase();
+    this.filterString.set(query?.toString()?.toLowerCase());
 
     if (this.activeNfsType() === NfsType.Nfs3) {
       this.filterNfs3Data();
@@ -208,7 +210,7 @@ export class NfsSessionListComponent implements OnInit {
   private filterNfs3Data(): void {
     this.nfs3DataProvider.setFilter({
       list: this.sessions as Nfs3Session[],
-      query: this.filterString,
+      query: this.filterString(),
       columnKeys: ['export', 'ip'],
     });
   }
@@ -216,7 +218,7 @@ export class NfsSessionListComponent implements OnInit {
   private filterNfs4Data(): void {
     this.nfs4DataProvider.setFilter({
       list: this.sessions as Nfs4Session['info'][],
-      query: this.filterString,
+      query: this.filterString(),
       columnKeys: ['name', 'clientid', 'address', 'status', 'seconds from last renew'],
     });
   }

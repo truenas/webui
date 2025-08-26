@@ -7,10 +7,10 @@
       [count]="+(dataProvider.currentPageCount$ | async)"
     ></ix-service-state-button>
     <div class="actions action-icon">
-      <ix-search-input1
-        [value]="filterString"
-        (search)="onListFiltered($event)"
-      ></ix-search-input1>
+      <ix-basic-search
+        [(query)]="filterString"
+        (queryChange)="onListFiltered($event)"
+      ></ix-basic-search>
 
       <a mat-button ixTest="smb-sessions" routerLink="/sharing/smb/status/sessions">
         {{ 'SMB Sessions' | translate }}

@@ -1,7 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -23,7 +24,7 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -66,7 +67,8 @@ import { VmService } from 'app/services/vm.service';
     WithLoadingStateDirective,
     IxIconComponent,
     MatTooltip,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -102,7 +104,7 @@ export class VmListComponent implements OnInit {
   protected readonly searchableElements = vmListElements;
 
   vmMachines: VirtualMachine[] = [];
-  filterString = '';
+  filterString = signal('');
   dataProvider: AsyncDataProvider<VirtualMachine>;
   protected memWarning = helptextVmWizard.memory_warning;
   protected hasVirtualizationSupport$ = this.vmService.hasVirtualizationSupport$;
@@ -193,7 +195,7 @@ export class VmListComponent implements OnInit {
     this.createDataProvider();
     this.subscribeToVmEvents();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.filterString());
     });
   }
 
@@ -282,7 +284,7 @@ export class VmListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 

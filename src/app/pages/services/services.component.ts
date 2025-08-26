@@ -15,7 +15,7 @@ import { serviceNames } from 'app/enums/service-name.enum';
 import { serviceStatusLabels } from 'app/enums/service-status.enum';
 import { ServiceRow } from 'app/interfaces/service.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
@@ -45,7 +45,7 @@ import { waitForServices } from 'app/store/services/services.selectors';
   styleUrls: ['./services.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SearchInput1Component,
+    BasicSearchComponent,
     MatCard,
     UiSearchDirective,
     IxTableComponent,

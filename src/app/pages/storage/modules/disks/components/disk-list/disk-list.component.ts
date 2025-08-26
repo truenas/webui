@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -18,7 +19,7 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -56,7 +57,8 @@ interface DiskUi extends Disk {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     IxTableColumnsSelectorComponent,
     UiSearchDirective,
     MatButton,
@@ -87,7 +89,7 @@ export class DiskListComponent implements OnInit {
   protected readonly searchableElements = diskListElements;
 
   dataProvider: AsyncDataProvider<DiskUi>;
-  filterString = '';
+  filterString = signal('');
 
   columns = createTable<DiskUi>([
     checkboxColumn({
@@ -98,7 +100,7 @@ export class DiskListComponent implements OnInit {
           diskToSelect.selected = checked;
         }
         this.dataProvider.setRows([]);
-        this.onListFiltered(this.filterString);
+        this.onListFiltered(this.filterString());
       },
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
@@ -107,7 +109,7 @@ export class DiskListComponent implements OnInit {
         ).subscribe((disks) => {
           disks.forEach((disk) => disk.selected = checked);
           this.dataProvider.setRows([]);
-          this.onListFiltered(this.filterString);
+          this.onListFiltered(this.filterString());
         });
       },
     }),
@@ -275,7 +277,7 @@ export class DiskListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({ list: this.disks, query, columnKeys: ['name', 'pool', 'serial', 'size'] });
   }
 

@@ -7,6 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -17,7 +18,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -34,7 +35,8 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     FakeProgressBarComponent,
     InstanceRowComponent,
     MatCheckboxModule,

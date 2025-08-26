@@ -4,9 +4,10 @@
     <h3>{{ 'Subsystems' | translate }}</h3>
 
     <div class="actions action-icon">
-      <ix-search-input1
-        (search)="onListFiltered($event)"
-      ></ix-search-input1>
+      <ix-basic-search
+        [(query)]="filterString"
+        (queryChange)="onListFiltered($event)"
+      ></ix-basic-search>
     </div>
   </mat-toolbar-row>
   <mat-card-content>

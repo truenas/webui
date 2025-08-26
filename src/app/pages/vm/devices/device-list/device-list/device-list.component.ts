@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -12,7 +13,7 @@ import { Role } from 'app/enums/role.enum';
 import { VmDeviceType, vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -46,7 +47,8 @@ import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-
   standalone: true,
   imports: [
     PageHeaderComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -77,7 +79,7 @@ export class DeviceListComponent implements OnInit {
   protected readonly requiredRoles = [Role.VmDeviceWrite];
 
   dataProvider: AsyncDataProvider<VmDevice>;
-  filterString = '';
+  filterString = signal('');
   devices: VmDevice[] = [];
 
   columns = createTable<VmDevice>([
@@ -113,7 +115,7 @@ export class DeviceListComponent implements OnInit {
     this.setDefaultSort();
     this.loadDevices();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.filterString());
     });
   }
 
@@ -172,7 +174,7 @@ export class DeviceListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({
       list: this.devices,
       query,

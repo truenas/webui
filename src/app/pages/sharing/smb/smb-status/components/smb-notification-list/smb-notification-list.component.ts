@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -9,7 +10,7 @@ import { tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbNotificationInfo } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -30,7 +31,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
   imports: [
     MatCard,
     MatToolbarRow,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     IxTableColumnsSelectorComponent,
     MatButton,
     TestDirective,
@@ -50,7 +52,7 @@ export class SmbNotificationListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
 
-  filterString = '';
+  filterString = signal('');
   dataProvider: AsyncDataProvider<SmbNotificationInfo>;
   notifications: SmbNotificationInfo[] = [];
 
@@ -68,8 +70,8 @@ export class SmbNotificationListComponent implements OnInit {
     const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Notifications]).pipe(
       tap((shares: SmbNotificationInfo[]) => {
         this.notifications = shares;
-        if (this.filterString) {
-          this.onListFiltered(this.filterString);
+        if (this.filterString()) {
+          this.onListFiltered(this.filterString());
         }
       }),
       untilDestroyed(this),
@@ -78,7 +80,7 @@ export class SmbNotificationListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<SmbNotificationInfo>(smbStatus$);
     this.loadData();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.filterString());
     });
   }
 
@@ -87,7 +89,7 @@ export class SmbNotificationListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query?.toString()?.toLowerCase();
+    this.filterString.set(query?.toString()?.toLowerCase());
     this.dataProvider.setFilter({
       query,
       columnKeys: ['path', 'filter', 'subdir_filter', 'creation_time'],

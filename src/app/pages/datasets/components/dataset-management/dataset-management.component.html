@@ -13,10 +13,11 @@
         ></ix-fake-progress-bar>
       }
       <div class="item-search">
-        <ix-search-input1
-          [disabled]="!dataSource.data.length"
-          (search)="onSearch($event)"
-        ></ix-search-input1>
+        <!-- TODO -->
+        <!-- [(query)]="searchQuery" -->
+        <ix-basic-search
+          (queryChange)="onSearch($event)"
+        ></ix-basic-search>
       </div>
 
       <div

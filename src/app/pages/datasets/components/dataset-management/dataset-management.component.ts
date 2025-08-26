@@ -33,7 +33,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -65,7 +65,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     EmptyComponent,
     FakeProgressBarComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
     DatasetNodeComponent,
     IxIconComponent,
     RouterLink,

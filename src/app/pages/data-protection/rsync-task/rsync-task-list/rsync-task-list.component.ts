@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -17,7 +18,7 @@ import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -61,7 +62,8 @@ import { TaskService } from 'app/services/task.service';
   providers: [CrontabExplanationPipe],
   imports: [
     PageHeaderComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -97,7 +99,7 @@ export class RsyncTaskListComponent implements OnInit {
   protected readonly EmptyType = EmptyType;
 
   dataProvider: AsyncDataProvider<RsyncTask>;
-  filterString = '';
+  filterString = signal('');
 
   columns = createTable<RsyncTask>([
     textColumn({
@@ -203,18 +205,18 @@ export class RsyncTaskListComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
+    this.filterString.set(this.route.snapshot.paramMap.get('dataset') || '');
 
     const request$ = this.api.call('rsynctask.query');
     this.dataProvider = new AsyncDataProvider(request$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.filterString());
     });
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['path', 'desc'] });
   }
 

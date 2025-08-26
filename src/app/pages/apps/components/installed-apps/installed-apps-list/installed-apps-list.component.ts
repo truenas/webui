@@ -1,7 +1,8 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
-import { Component, ChangeDetectionStrategy, output, input, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, output, input, OnInit, ChangeDetectorRef, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
@@ -26,7 +27,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
@@ -69,7 +70,8 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
   imports: [
     InstalledAppsListBulkActionsComponent,
     FakeProgressBarComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
+    FormsModule,
     IxIconComponent,
     MatSort,
     AsyncPipe,
@@ -112,7 +114,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   dataSource: App[] = [];
   selectedApp: App | undefined;
-  filterString = '';
+  filterString = signal('');
   appJobs = new Map<string, Job<void, AppStartQueryParams>>();
   selection = new SelectionModel<string>(true, []);
   sortingInfo: Sort = {
@@ -134,7 +136,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   get filteredApps(): App[] {
     return this.dataSource
-      .filter((app) => app?.name?.toLocaleLowerCase().includes(this.filterString.toLocaleLowerCase()));
+      .filter((app) => app?.name?.toLocaleLowerCase().includes(this.filterString().toLocaleLowerCase()));
   }
 
   get allAppsChecked(): boolean {
@@ -210,7 +212,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   onSearch(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
 
     if (!this.filteredApps.length) {
       this.showLoadStatus(EmptyType.NoSearchResults);

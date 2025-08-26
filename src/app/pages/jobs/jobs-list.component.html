@@ -18,11 +18,10 @@
     >{{ 'Failed' | translate }}</mat-button-toggle>
   </mat-button-toggle-group>
 
-  <ix-search-input1
-    [value]="filterString"
-    [disabled]="!!(isLoading$ | async)"
-    (search)="onListFiltered($event)"
-  ></ix-search-input1>
+  <ix-basic-search
+    [(query)]="filterString"
+    (queryChange)="onListFiltered($event)"
+  ></ix-basic-search>
 </ix-page-header>
 
 <ix-table

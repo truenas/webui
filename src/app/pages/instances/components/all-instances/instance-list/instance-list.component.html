@@ -13,11 +13,10 @@
     [loading]="isLoading()"
   ></ix-fake-progress-bar>
 
-  <ix-search-input1
-    [maxLength]="100"
-    [value]="searchQuery()"
-    (search)="onSearch($event)"
-  ></ix-search-input1>
+  <ix-basic-search
+    [(query)]="searchQuery"
+    (queryChange)="onSearch($event)"
+  ></ix-basic-search>
 </div>
 
 @if (instances() !== undefined && !filteredInstances().length && !isLoading()) {

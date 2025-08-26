@@ -8,7 +8,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { TreeVirtualScrollViewComponent } from 'app/modules/ix-tree/components/tree-virtual-scroll-view/tree-virtual-scroll-view.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
@@ -30,7 +30,7 @@ describe('DatasetsManagementComponent', () => {
   const createComponent = createRoutingFactory({
     component: DatasetsManagementComponent,
     imports: [
-      SearchInput1Component,
+      BasicSearchComponent,
       MockComponent(EmptyComponent),
       FakeProgressBarComponent,
     ],
