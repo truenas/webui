@@ -72,8 +72,10 @@ export class TruenasConnectStatusModalComponent {
       case TruenasConnectStatus.CertConfigurationFailure:
       case TruenasConnectStatus.CertRenewalFailure:
         return TncStatus.Failed;
+      case TruenasConnectStatus.Disabled:
       default:
-        return TncStatus.Disabled;
+        // Show "Get Connected" button for disabled state instead of dead-end "disabled" message
+        return TncStatus.Waiting;
     }
   });
 
