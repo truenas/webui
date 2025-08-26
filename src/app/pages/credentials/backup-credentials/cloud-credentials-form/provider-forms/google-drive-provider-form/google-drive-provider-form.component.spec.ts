@@ -27,9 +27,6 @@ describe('GoogleDriveProviderFormComponent', () => {
   });
 
   beforeEach(async () => {
-    // Mock scrollIntoView since it's not available in test environment
-    Element.prototype.scrollIntoView = jest.fn();
-
     spectator = createComponent();
     spectator.component.provider = {
       credentials_oauth: 'http://truenas.com/oauth',

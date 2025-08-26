@@ -19,9 +19,6 @@ describe('S3ProviderFormComponent', () => {
   });
 
   beforeEach(async () => {
-    // Mock scrollIntoView since it's not available in test environment
-    Element.prototype.scrollIntoView = jest.fn();
-
     spectator = createComponent();
     form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
     details = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, DetailsTableHarness);

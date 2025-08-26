@@ -61,9 +61,6 @@ describe('AddSubsystemComponent', () => {
   });
 
   beforeEach(async () => {
-    // Mock scrollIntoView since it's not available in test environment
-    Element.prototype.scrollIntoView = jest.fn();
-
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     stepper = await loader.getHarness(MatStepperHarness);
