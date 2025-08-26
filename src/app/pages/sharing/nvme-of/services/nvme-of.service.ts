@@ -1,10 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import {
   combineLatest,
-  from, mergeMap, Observable, of, switchMap, tap, toArray,
+  from, mergeMap, Observable, of, switchMap, toArray,
 } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { catchError, map, shareReplay, take } from 'rxjs/operators';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
+import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LicenseService } from 'app/services/license.service';
@@ -18,22 +19,22 @@ export class NvmeOfService {
 
   private maxConcurrentRequests = 15;
 
-  private cachedRdmaEnabled: boolean | null = null;
+  private rdmaCapable$: Observable<boolean> | null = null;
 
   getSupportedTransports(): Observable<NvmeOfTransportType[]> {
     return combineLatest([
       this.license.hasFibreChannel$,
-      this.isRdmaEnabled(),
+      this.isRdmaCapable(),
     ])
       .pipe(
-        map(([hasFibreChannel, isRdmaEnabled]) => {
+        map(([hasFibreChannel, isRdmaCapable]) => {
           const transports = [NvmeOfTransportType.Tcp];
 
           if (hasFibreChannel) {
             transports.push(NvmeOfTransportType.FibreChannel);
           }
 
-          if (isRdmaEnabled) {
+          if (isRdmaCapable) {
             transports.push(NvmeOfTransportType.Rdma);
           }
 
@@ -43,16 +44,19 @@ export class NvmeOfService {
       );
   }
 
-  isRdmaEnabled(): Observable<boolean> {
-    if (this.cachedRdmaEnabled === null) {
-      return this.api.call('nvmet.global.rdma_enabled').pipe(
-        tap((rdmaEnabled) => {
-          this.cachedRdmaEnabled = rdmaEnabled;
+  isRdmaCapable(): Observable<boolean> {
+    if (!this.rdmaCapable$) {
+      this.rdmaCapable$ = this.api.call('rdma.capable_protocols').pipe(
+        map((protocols) => protocols.includes(RdmaProtocolName.Nvmet)),
+        catchError(() => {
+          // If the API call fails, assume RDMA is not capable
+          return of(false);
         }),
+        shareReplay({ refCount: true, bufferSize: 1 }),
       );
     }
 
-    return of(this.cachedRdmaEnabled);
+    return this.rdmaCapable$;
   }
 
   associatePorts(subsystem: { id: number }, ports: NvmeOfPort[]): Observable<unknown> {

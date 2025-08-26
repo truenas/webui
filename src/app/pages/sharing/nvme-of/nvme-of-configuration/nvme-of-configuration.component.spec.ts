@@ -46,7 +46,7 @@ describe('NvmeOfConfigurationComponent', () => {
         ],
       }),
       mockProvider(NvmeOfService, {
-        isRdmaEnabled: jest.fn(() => of(true)),
+        isRdmaCapable: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
     ],
@@ -91,7 +91,7 @@ describe('NvmeOfConfigurationComponent', () => {
   });
 
   it('disables RDMA control if RDMA support is missing from the system', async () => {
-    spectator.inject(NvmeOfService).isRdmaEnabled.mockReturnValue(of(false));
+    spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(false));
     spectator.component.ngOnInit();
 
     const controls = await form.getDisabledState();

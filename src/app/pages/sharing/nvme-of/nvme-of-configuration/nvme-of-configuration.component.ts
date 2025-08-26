@@ -77,15 +77,15 @@ export class NvmeOfConfigurationComponent implements OnInit {
 
     forkJoin([
       this.api.call('nvmet.global.config'),
-      this.nvmeOfService.isRdmaEnabled(),
+      this.nvmeOfService.isRdmaCapable(),
     ]).pipe(
       this.errorHandler.withErrorHandler(),
       finalize(() => this.isLoading.set(false)),
       untilDestroyed(this),
-    ).subscribe(([config, isRdmaEnabled]) => {
+    ).subscribe(([config, isRdmaCapable]) => {
       this.form.patchValue(config);
 
-      if (!isRdmaEnabled) {
+      if (!isRdmaCapable) {
         this.form.controls.rdma.disable();
       }
 
