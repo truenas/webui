@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatDialogTitle, MatDialogContent, MatDialogActions,
@@ -39,7 +39,7 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
   styleUrl: './truenas-connect-status-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TruenasConnectStatusModalComponent implements OnInit {
+export class TruenasConnectStatusModalComponent {
   protected tnc = inject(TruenasConnectService);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
@@ -76,29 +76,6 @@ export class TruenasConnectStatusModalComponent implements OnInit {
         return TncStatus.Disabled;
     }
   });
-
-  ngOnInit(): void {
-    this.enableServiceIfDisabled();
-  }
-
-  private enableServiceIfDisabled(): void {
-    if (this.tnc.config()?.status === TruenasConnectStatus.Disabled) {
-      this.isLoading.set(true);
-      this.tnc.enableService()
-        .pipe(
-          catchError((_: unknown) => {
-            this.dialog.error({
-              title: this.translate.instant('Error'),
-              message: this.translate.instant('Failed to enable TrueNAS Connect service'),
-            });
-            return EMPTY;
-          }),
-          finalize(() => this.isLoading.set(false)),
-          untilDestroyed(this),
-        )
-        .subscribe();
-    }
-  }
 
   protected open(): void {
     const baseUrl = this.tnc.config()?.tnc_base_url;

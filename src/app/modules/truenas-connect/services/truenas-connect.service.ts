@@ -45,20 +45,32 @@ export class TruenasConnectService {
   }
 
   disableService(): Observable<TruenasConnectConfig> {
-    if (!this.config()) {
+    const currentConfig = this.config();
+    if (!currentConfig) {
       throw new Error('Truenas Connect config is not available');
     }
-    return this.api.call('tn_connect.update', [{ enabled: false }])
+    return this.api.call('tn_connect.update', [{
+      enabled: false,
+      ips: currentConfig.ips || [],
+      interfaces: currentConfig.interfaces || [],
+      use_all_interfaces: currentConfig.use_all_interfaces ?? true,
+    }])
       .pipe(
         this.errorHandler.withErrorHandler(),
       );
   }
 
   enableService(): Observable<TruenasConnectConfig> {
-    if (!this.config()) {
+    const currentConfig = this.config();
+    if (!currentConfig) {
       throw new Error('Truenas Connect config is not available');
     }
-    return this.api.call('tn_connect.update', [{ enabled: true }])
+    return this.api.call('tn_connect.update', [{
+      enabled: true,
+      ips: currentConfig.ips || [],
+      interfaces: currentConfig.interfaces || [],
+      use_all_interfaces: currentConfig.use_all_interfaces ?? true,
+    }])
       .pipe(
         this.errorHandler.withErrorHandler(),
       );
