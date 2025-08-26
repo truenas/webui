@@ -1,5 +1,5 @@
 import { AsyncPipe, DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, HostListener, OnDestroy, Renderer2, ChangeDetectorRef, NgZone, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, HostListener, OnDestroy, Renderer2, NgZone, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -47,7 +47,6 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   private store$ = inject(Store);
   private renderer = inject(Renderer2);
   private document = inject<Document>(DOCUMENT);
-  private cdr = inject(ChangeDetectorRef);
   private ngZone = inject(NgZone);
 
   readonly isPanelOpen$ = this.store$.select(selectIsPanelOpen);

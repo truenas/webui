@@ -15,7 +15,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['configure', 'ip-address']"
-        [disabled]="dataProvider.isLoading$ | async"
+        [disabled]="(dataProvider.isLoading$ | async) || isDeleting()"
         [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigure()"
       >
@@ -38,7 +38,7 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
-      [isLoading]="!!(dataProvider.isLoading$ | async)"
+      [isLoading]="!!((dataProvider.isLoading$ | async) || isDeleting())"
     ></tbody>
   </ix-table>
 </mat-card>

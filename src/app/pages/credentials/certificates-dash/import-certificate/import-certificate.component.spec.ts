@@ -103,7 +103,7 @@ describe('ImportCertificateComponent', () => {
       name: 'test-cert-no-private-key',
       add_to_trusted_store: false,
       certificate: '--BEING CERTIFICATE--',
-      privatekey: undefined,
+      privatekey: null,
       passphrase: null,
       create_type: CertificateCreateType.Import,
     }]);

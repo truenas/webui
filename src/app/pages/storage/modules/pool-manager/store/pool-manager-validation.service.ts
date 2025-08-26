@@ -59,6 +59,8 @@ export class PoolManagerValidationService {
         errors.push(...this.validateMinVdevsLimit(existingPool, topology));
         if (!existingPool) {
           errors.push(...this.validateNewPoolVdevs(topology));
+        } else {
+          errors.push(...this.validateAddVdevs(topology));
         }
 
         return uniqBy(errors, 'text')
@@ -284,6 +286,44 @@ export class PoolManagerValidationService {
         severity: PoolCreationSeverity.Warning,
         step: PoolCreationWizardStep.Data,
       });
+    }
+
+    return errors;
+  }
+
+  private validateAddVdevs(topology: PoolManagerTopology): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+    const nonEmptyTopologyCategories = this.filterNonEmptyCategories(topology);
+
+    nonEmptyTopologyCategories.forEach(([topologyCategoryType, topologyCategory]) => {
+      errors.push(...this.validateAddVdevRedundancy(topologyCategory, topologyCategoryType));
+    });
+
+    return errors;
+  }
+
+  private validateAddVdevRedundancy(
+    topologyCategory: PoolManagerTopologyCategory,
+    topologyCategoryType: VDevType,
+  ): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+    const hasVdevs = topologyCategory.vdevs.length >= 1;
+    const hasStripeLayout = topologyCategory.layout === CreateVdevLayout.Stripe;
+
+    if (hasVdevs && hasStripeLayout) {
+      if (topologyCategoryType === VDevType.Special) {
+        errors.push({
+          text: this.translate.instant(helptextPoolCreation.addVdevStripeSpecialWarning),
+          severity: PoolCreationSeverity.ErrorWarning,
+          step: PoolCreationWizardStep.Metadata,
+        });
+      } else if (topologyCategoryType === VDevType.Dedup) {
+        errors.push({
+          text: this.translate.instant(helptextPoolCreation.addVdevStripeDedupWarning),
+          severity: PoolCreationSeverity.ErrorWarning,
+          step: PoolCreationWizardStep.Dedup,
+        });
+      }
     }
 
     return errors;

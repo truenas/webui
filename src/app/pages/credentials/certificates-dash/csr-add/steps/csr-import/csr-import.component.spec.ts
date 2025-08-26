@@ -59,4 +59,66 @@ describe('CsrImportComponent', () => {
       },
     ]);
   });
+
+  it('converts empty strings to null in getPayload()', async () => {
+    await form.fillForm({
+      'Signing Request': csr,
+      'Private Key': '',
+      Passphrase: '',
+      'Confirm Passphrase': '',
+    });
+
+    expect(spectator.component.getPayload()).toEqual({
+      CSR: csr,
+      passphrase: null,
+      privatekey: null,
+    });
+  });
+
+  it('returns summary without passphrase when passphrase is empty', async () => {
+    await form.fillForm({
+      'Signing Request': csr,
+      'Private Key': 'ABHDDJJKEY',
+      Passphrase: '',
+      'Confirm Passphrase': '',
+    });
+
+    expect(spectator.component.getSummary()).toEqual([
+      {
+        label: 'Signing Request',
+        value: 'ABCDEF......654321',
+      },
+    ]);
+  });
+
+  it('handles whitespace-only strings by converting to null', async () => {
+    await form.fillForm({
+      'Signing Request': csr,
+      'Private Key': '   ',
+      Passphrase: ' \t ',
+      'Confirm Passphrase': ' \t ',
+    });
+
+    const payload = spectator.component.getPayload();
+    expect(payload.passphrase).toBeNull();
+    expect(payload.privatekey).toBeNull();
+  });
+
+  it('preserves non-empty values correctly', async () => {
+    const privateKey = '-----BEGIN PRIVATE KEY-----\ntest\n-----END PRIVATE KEY-----';
+    const passphrase = 'my-secure-passphrase';
+
+    await form.fillForm({
+      'Signing Request': csr,
+      'Private Key': privateKey,
+      Passphrase: passphrase,
+      'Confirm Passphrase': passphrase,
+    });
+
+    expect(spectator.component.getPayload()).toEqual({
+      CSR: csr,
+      passphrase,
+      privatekey: privateKey,
+    });
+  });
 });

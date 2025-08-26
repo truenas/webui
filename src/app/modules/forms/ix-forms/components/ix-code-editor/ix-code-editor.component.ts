@@ -51,6 +51,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   readonly tooltip = input<TranslatedString>();
   readonly language = input<CodeEditorLanguage>();
   readonly placeholder = input<TranslatedString>('');
+  readonly defaultValue = input<string>();
 
   afterViewInit$ = new BehaviorSubject<boolean>(false);
 
@@ -163,7 +164,10 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   onTouch: () => void = (): void => {};
 
   writeValue(val: string): void {
-    this.value$.next(val);
+    const valueToUse = (val === null || val === '') && this.defaultValue()
+      ? this.defaultValue()
+      : val || '';
+    this.value$.next(valueToUse);
   }
 
   updateValue(val: string): void {

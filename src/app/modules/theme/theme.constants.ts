@@ -2,7 +2,7 @@ import { Theme } from 'app/interfaces/theme.interface';
 
 export const defaultTheme: Theme = {
   name: 'ix-dark',
-  label: 'iX Dark',
+  label: 'Dark',
   labelSwatch: 'blue',
   description: 'TrueNAS default theme',
   accentColors: ['blue', 'magenta', 'orange', 'cyan', 'yellow', 'violet', 'red', 'green', 'pink', 'aqua', 'tomato', 'teal', 'slategray', 'salmon'],
@@ -38,7 +38,7 @@ export const allThemes: Theme[] = [
   defaultTheme,
   {
     name: 'ix-blue',
-    label: 'iX Blue',
+    label: 'Blue',
     labelSwatch: 'blue',
     description: 'Official iX System Colors on light',
     accentColors: ['blue', 'orange', 'cyan', 'violet', 'yellow', 'magenta', 'red', 'green', 'pink', 'aqua', 'tomato', 'teal', 'slategray', 'salmon'],

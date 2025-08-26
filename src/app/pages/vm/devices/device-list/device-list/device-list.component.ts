@@ -194,6 +194,15 @@ export class DeviceListComponent implements OnInit {
   }
 
   private getDeviceTypeLabel(device: VmDevice): string {
+    if (device.attributes.dtype === VmDeviceType.Display) {
+      // For display devices, include the protocol type (SPICE/VNC)
+      const displayType = device.attributes.type;
+      if (displayType) {
+        const baseLabel = vmDeviceTypeLabels.get(device.attributes.dtype) ?? device.attributes.dtype;
+        return this.translate.instant(baseLabel) + ` (${displayType})`;
+      }
+    }
+
     const deviceLabel = vmDeviceTypeLabels.get(device.attributes.dtype) ?? device.attributes.dtype;
     return this.translate.instant(deviceLabel);
   }

@@ -30,12 +30,16 @@
           } @else if (item.type === MenuItemType.SlideOut) {
             <a
               tabindex="0"
+              role="button"
               matTooltipPosition="right"
               [ixTest]="getItemName(item)"
               [name]="getItemName(item)"
+              [attr.aria-expanded]="isHighlighted === item.state"
+              [attr.aria-label]="(item.name | translate) + ' submenu'"
               [matTooltip]="(isSidenavCollapsed() && item.tooltip) ? (item.tooltip | translate) : null"
               (click)="toggleMenu(item.state, item.sub || [])"
-              (keyup.enter)="toggleMenu(item.state, item.sub || [])"
+              (keydown.enter)="toggleMenu(item.state, item.sub || [])"
+              (keydown.space)="$event.preventDefault(); toggleMenu(item.state, item.sub || [])"
               >
               <ix-icon [name]="item.icon"></ix-icon>
               <span>{{ item.name | translate }}</span>

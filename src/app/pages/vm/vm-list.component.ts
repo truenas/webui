@@ -14,7 +14,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { Role } from 'app/enums/role.enum';
 import {
-  VmBootloader, VmDeviceType, VmState, vmTimeNames,
+  VmBootloader, VmDeviceType, VmDisplayType, VmState, vmTimeNames,
 } from 'app/enums/vm.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
@@ -124,6 +124,7 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('Running'),
       requiredRoles: this.requiredRoles,
       getValue: (row) => row.status.state === VmState.Running,
+      sortBy: (row) => (row.status.state === VmState.Running ? 1 : 0),
       onRowToggle: (row, checked, toggle) => this.handleVmStatusToggle(row, checked, toggle),
     }),
     toggleColumn({
@@ -153,6 +154,7 @@ export class VmListComponent implements OnInit {
       getValue: (row) => {
         return this.fileSizePipe.transform(row.memory * MiB);
       },
+      sortBy: (row) => row.memory,
     }),
     textColumn({
       title: this.translate.instant('Boot Loader Type'),
@@ -169,6 +171,7 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('Display Port'),
       hidden: true,
       getValue: (row) => this.getDisplayPort(row),
+      sortBy: (row) => this.getDisplayPortSortValue(row),
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -179,6 +182,7 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('Shutdown Timeout'),
       hidden: true,
       getValue: (row) => `${row.shutdown_timeout} seconds`,
+      sortBy: (row) => row.shutdown_timeout,
     }),
   ], {
     uniqueRowTag: (row) => 'virtual-machine-' + row.name,
@@ -260,13 +264,41 @@ export class VmListComponent implements OnInit {
     if (this.systemGeneralService.isEnterprise && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
       return false;
     }
-    for (const device of devices) {
-      if (devices && device.attributes.dtype === VmDeviceType.Display) {
-        return device.attributes.port;
-      }
+
+    const displayDevices = devices.filter((device) => device.attributes.dtype === VmDeviceType.Display);
+    if (displayDevices.length === 0) {
+      return false;
     }
 
-    return false;
+    // Show ports for all display devices (SPICE and VNC)
+    const ports = displayDevices.map((device) => {
+      const type = device.attributes.type === VmDisplayType.Spice ? 'SPICE' : 'VNC';
+      return `${type}:${device.attributes.port}`;
+    });
+
+    return ports.join(', ');
+  }
+
+  getDisplayPortSortValue(vm: VirtualMachine): number {
+    if (!vm.display_available) {
+      return Number.MAX_SAFE_INTEGER; // N/A items should sort to the end
+    }
+    const devices = vm.devices as VmDisplayDevice[];
+    if (!devices || devices.length === 0) {
+      return Number.MAX_SAFE_INTEGER - 1; // No devices should sort near the end
+    }
+    if (this.systemGeneralService.isEnterprise && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
+      return Number.MAX_SAFE_INTEGER - 2; // Enterprise limitations should sort near the end
+    }
+
+    const displayDevices = devices.filter((device) => device.attributes.dtype === VmDeviceType.Display);
+    if (displayDevices.length === 0) {
+      return Number.MAX_SAFE_INTEGER - 3; // No display devices should sort near the end
+    }
+
+    // Sort by the lowest port number if multiple display devices exist
+    const ports = displayDevices.map((device) => device.attributes.port);
+    return Math.min(...ports);
   }
 
   protected columnsChange(columns: typeof this.columns): void {

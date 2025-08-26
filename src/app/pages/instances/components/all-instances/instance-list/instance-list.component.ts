@@ -6,13 +6,12 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { injectParams } from 'ngxtension/inject-params';
-import { distinctUntilChanged, tap } from 'rxjs';
+import { distinctUntilChanged, map, tap } from 'rxjs';
 import { containersEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -47,11 +46,12 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 
 export class InstanceListComponent {
   private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
   private instancesStore = inject(VirtualizationInstancesStore);
   private searchDirectives = inject(UiSearchDirectivesService);
   private layoutService = inject(LayoutService);
 
-  readonly instanceId = injectParams('id');
+  readonly instanceId = toSignal(this.activatedRoute.params.pipe(map((params) => params['id'])));
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
@@ -98,7 +98,7 @@ export class InstanceListComponent {
     toObservable(this.instanceId).pipe(
       distinctUntilChanged(),
       tap((instanceId) => {
-        this.instancesStore.selectInstance(instanceId);
+        this.instancesStore.selectInstance(instanceId as string);
       }),
       untilDestroyed(this),
     ).subscribe();
