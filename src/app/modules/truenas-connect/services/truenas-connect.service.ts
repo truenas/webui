@@ -44,16 +44,31 @@ export class TruenasConnectService {
       });
   }
 
+  private validateNetworkConfig(ips: string[], interfaces: string[], useAllInterfaces: boolean): boolean {
+    // If no specific IPs or interfaces are configured, must use all interfaces
+    if (ips.length === 0 && interfaces.length === 0) {
+      return true; // Force use_all_interfaces to true
+    }
+    return useAllInterfaces;
+  }
+
   disableService(): Observable<TruenasConnectConfig> {
     const currentConfig = this.config();
     if (!currentConfig) {
       throw new Error('Truenas Connect config is not available');
     }
+    const ips = currentConfig.ips || [];
+    const interfaces = currentConfig.interfaces || [];
+    const useAllInterfaces = this.validateNetworkConfig(
+      ips,
+      interfaces,
+      currentConfig.use_all_interfaces ?? true,
+    );
     return this.api.call('tn_connect.update', [{
       enabled: false,
-      ips: currentConfig.ips || [],
-      interfaces: currentConfig.interfaces || [],
-      use_all_interfaces: currentConfig.use_all_interfaces ?? true,
+      ips,
+      interfaces,
+      use_all_interfaces: useAllInterfaces,
     }])
       .pipe(
         this.errorHandler.withErrorHandler(),
@@ -65,11 +80,18 @@ export class TruenasConnectService {
     if (!currentConfig) {
       throw new Error('Truenas Connect config is not available');
     }
+    const ips = currentConfig.ips || [];
+    const interfaces = currentConfig.interfaces || [];
+    const useAllInterfaces = this.validateNetworkConfig(
+      ips,
+      interfaces,
+      currentConfig.use_all_interfaces ?? true,
+    );
     return this.api.call('tn_connect.update', [{
       enabled: true,
-      ips: currentConfig.ips || [],
-      interfaces: currentConfig.interfaces || [],
-      use_all_interfaces: currentConfig.use_all_interfaces ?? true,
+      ips,
+      interfaces,
+      use_all_interfaces: useAllInterfaces,
     }])
       .pipe(
         this.errorHandler.withErrorHandler(),

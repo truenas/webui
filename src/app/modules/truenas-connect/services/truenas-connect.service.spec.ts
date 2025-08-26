@@ -312,4 +312,88 @@ describe('TruenasConnectService', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('tn_connect.config');
     expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('tn_connect.config');
   });
+
+  it('should force use_all_interfaces to true when both ips and interfaces are empty for enableService', () => {
+    const configWithEmptyArrays = {
+      ...config,
+      ips: [] as string[],
+      interfaces: [] as string[],
+      use_all_interfaces: false, // Start with false
+    };
+    spectator.service.config.set(configWithEmptyArrays);
+    spectator.service.enableService().subscribe();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      'tn_connect.update',
+      [{
+        enabled: true,
+        ips: [],
+        interfaces: [],
+        use_all_interfaces: true, // Should be forced to true
+      }],
+    );
+  });
+
+  it('should force use_all_interfaces to true when both ips and interfaces are empty for disableService', () => {
+    const configWithEmptyArrays = {
+      ...config,
+      ips: [] as string[],
+      interfaces: [] as string[],
+      use_all_interfaces: false, // Start with false
+    };
+    spectator.service.config.set(configWithEmptyArrays);
+    spectator.service.disableService().subscribe();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      'tn_connect.update',
+      [{
+        enabled: false,
+        ips: [],
+        interfaces: [],
+        use_all_interfaces: true, // Should be forced to true
+      }],
+    );
+  });
+
+  it('should preserve use_all_interfaces when ips array has values', () => {
+    const configWithIps = {
+      ...config,
+      ips: ['192.168.1.100'],
+      interfaces: [] as string[],
+      use_all_interfaces: false, // Should be preserved
+    };
+    spectator.service.config.set(configWithIps);
+    spectator.service.enableService().subscribe();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      'tn_connect.update',
+      [{
+        enabled: true,
+        ips: ['192.168.1.100'],
+        interfaces: [],
+        use_all_interfaces: false, // Should remain false
+      }],
+    );
+  });
+
+  it('should preserve use_all_interfaces when interfaces array has values', () => {
+    const configWithInterfaces = {
+      ...config,
+      ips: [] as string[],
+      interfaces: ['eth0'],
+      use_all_interfaces: false, // Should be preserved
+    };
+    spectator.service.config.set(configWithInterfaces);
+    spectator.service.enableService().subscribe();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      'tn_connect.update',
+      [{
+        enabled: true,
+        ips: [],
+        interfaces: ['eth0'],
+        use_all_interfaces: false, // Should remain false
+      }],
+    );
+  });
 });
