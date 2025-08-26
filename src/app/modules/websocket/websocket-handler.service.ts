@@ -328,6 +328,7 @@ export class WebSocketHandlerService {
     }
     this.shutDownInProgress = false;
     this.wsStatus.setConnectionStatus(true);
+    this.isConnectionLive$.next(true);
 
     performance.mark('WS Connected');
     performance.measure('Establishing WS connection', 'WS Init', 'WS Connected');
