@@ -10,8 +10,16 @@
       ></ix-icon>
     </div>
 
-    <ix-basic-search [(query)]="filterString" (queryChange)="onListFiltered($event)"></ix-basic-search>
-    <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
+    <ix-basic-search
+      [(query)]="filterString"
+      (queryChange)="onListFiltered($event)"
+    ></ix-basic-search>
+
+    <ix-table-columns-selector
+      [columnPreferencesKey]="'vmList'"
+      [columns]="columns"
+      (columnsChange)="columnsChange($event)"
+      ></ix-table-columns-selector>
 
     <button
       *ixRequiresRoles="requiredRoles"
