@@ -8,9 +8,10 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, catchError, finalize, of, switchMap,
+  EMPTY, catchError, finalize, of, switchMap, Observable,
 } from 'rxjs';
 import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -88,9 +89,22 @@ export class TruenasConnectStatusModalComponent {
 
   protected connect(): void {
     this.isConnecting.set(true);
-    const generateToken$ = this.tnc.config()?.status === TruenasConnectStatus.ClaimTokenMissing ? this.tnc.generateToken() : of('');
-    generateToken$
+
+    // Enable service first if it's disabled
+    let enableIfNeeded$: Observable<TruenasConnectConfig> = of(this.tnc.config());
+    if (this.tnc.config()?.status === TruenasConnectStatus.Disabled) {
+      enableIfNeeded$ = this.tnc.enableService();
+    }
+
+    enableIfNeeded$
       .pipe(
+        // NOW check if we need token generation based on current status
+        switchMap(() => {
+          if (this.tnc.config()?.status === TruenasConnectStatus.ClaimTokenMissing) {
+            return this.tnc.generateToken();
+          }
+          return of('');
+        }),
         switchMap(() => {
           return this.tnc.connect();
         }),

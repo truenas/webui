@@ -20,7 +20,9 @@ describe('TruenasConnectService', () => {
   const config: TruenasConnectConfig = {
     id: 1,
     ips: [''],
+    interfaces: [],
     interfaces_ips: [],
+    use_all_interfaces: true,
     enabled: true,
     tnc_base_url: 'https://tnc-test.ixsystems.com',
     account_service_base_url: 'https://account-service-test.ixsystems.com',
@@ -74,7 +76,12 @@ describe('TruenasConnectService', () => {
     spectator.service.disableService().subscribe();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'tn_connect.update',
-      [{ enabled: false }],
+      [{
+        enabled: false,
+        ips: [''],
+        interfaces: [],
+        use_all_interfaces: true,
+      }],
     );
     expect(errorHandler.withErrorHandler).toHaveBeenCalled();
   });
@@ -90,7 +97,12 @@ describe('TruenasConnectService', () => {
     spectator.service.enableService().subscribe();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'tn_connect.update',
-      [{ enabled: true }],
+      [{
+        enabled: true,
+        ips: [''],
+        interfaces: [],
+        use_all_interfaces: true,
+      }],
     );
     expect(errorHandler.withErrorHandler).toHaveBeenCalled();
   });
