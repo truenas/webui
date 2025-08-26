@@ -48,6 +48,9 @@
     "node": ">=22.17.1"
   },
   "private": true,
+  "resolutions": {
+    "mermaid": "^11.10.1"
+  },
   "dependencies": {
     "@angular-devkit/core": "~20.1.6",
     "@angular/animations": "~20.1.6",
