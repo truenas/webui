@@ -5,7 +5,6 @@ import {
   MAT_DIALOG_DATA, MatDialog, MatDialogRef,
 } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -22,9 +21,6 @@ import {
 import {
   NewVolumeDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/new-volume-dialog/new-volume-dialog.component';
-import {
-  UploadIsoButtonComponent,
-} from 'app/pages/instances/components/common/volumes-dialog/upload-iso-button/upload-iso-button.component';
 import {
   VolumesDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
@@ -55,9 +51,6 @@ describe('VolumesDialogComponent', () => {
 
   const createComponent = createComponentFactory({
     component: VolumesDialog,
-    imports: [
-      MockComponent(UploadIsoButtonComponent),
-    ],
     providers: [
       mockApi([
         mockCall('virt.volume.query', volumes),
@@ -100,11 +93,6 @@ describe('VolumesDialogComponent', () => {
       ]);
     });
 
-    it('allows ISO to be uploaded', () => {
-      const uploadButton = spectator.query(UploadIsoButtonComponent);
-
-      expect(uploadButton).toBeTruthy();
-    });
 
     it('allows volume to be removed', async () => {
       const table = await loader.getHarness(IxTableHarness);
