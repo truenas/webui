@@ -58,7 +58,9 @@ export class SlideInContainerComponent implements AfterViewInit {
     ).subscribe(() => this.updateWidth());
 
     // Start with hidden state (already set by default)
-    // Then trigger entrance animation after DOM is ready
+    // Double requestAnimationFrame ensures proper rendering sequence:
+    // 1st frame: DOM updates and layout calculations complete
+    // 2nd frame: Style/transform changes can safely trigger CSS transitions
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         this.slideIn();
