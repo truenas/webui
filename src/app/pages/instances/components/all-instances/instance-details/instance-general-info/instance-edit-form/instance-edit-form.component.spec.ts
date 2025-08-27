@@ -33,10 +33,7 @@ describe('InstanceEditFormComponent', () => {
     memory: 2 * GiB,
     environment: {},
     type: VirtualizationType.Vm,
-    vnc_enabled: true,
-    vnc_port: 9001,
     status: VirtualizationStatus.Stopped,
-    vnc_password: null,
     secure_boot: true,
     image: {
       os: 'FreeBSD',
@@ -66,9 +63,6 @@ describe('InstanceEditFormComponent', () => {
                 cpu: '2-5',
                 memory: GiB,
                 environment: {},
-                enable_vnc: true,
-                vnc_port: 9000,
-                vnc_password: 'testing',
               },
             })),
           ),
@@ -122,9 +116,6 @@ describe('InstanceEditFormComponent', () => {
           cpu: '2-5',
           memory: GiB,
           environment: {},
-          enable_vnc: true,
-          vnc_port: 9000,
-          vnc_password: 'testing',
         },
       });
     });

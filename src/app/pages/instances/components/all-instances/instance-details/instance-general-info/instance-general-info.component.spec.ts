@@ -48,11 +48,8 @@ const instance = {
   root_disk_size: null,
   aliases: {} as VirtualizationAlias,
   raw: null,
-  vnc_enabled: true,
-  vnc_password: '123456',
   secure_boot: true,
   root_disk_io_bus: DiskIoBus.Nvme,
-  vnc_port: 9000,
   storage_pool: 'dozer',
 } as VirtualizationInstance;
 

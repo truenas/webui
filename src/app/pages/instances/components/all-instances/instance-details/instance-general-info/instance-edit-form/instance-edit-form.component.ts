@@ -96,8 +96,6 @@ export class InstanceEditFormComponent {
       memory: this.editingInstance.memory,
     });
 
-    this.setVncControls();
-
     Object.keys(this.editingInstance.environment || {}).forEach((key) => {
       this.addEnvironmentVariable(key, this.editingInstance.environment[key]);
     });
@@ -159,8 +157,5 @@ export class InstanceEditFormComponent {
       }
       return env;
     }, {});
-  }
-
-  private setVncControls(): void {
   }
 }
