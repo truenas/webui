@@ -77,9 +77,14 @@ export class SlideIn {
           slideInRef: undefined,
         };
 
-        this.handleOverlayEvents(cdkOverlayRef, slideInInstance);
-        this.createContentPortal(slideInInstance);
-        this.updateSlideInInstances(slideInInstance);
+        // Ensure overlay is attached before creating content portal
+        // This prevents race condition where content might render before overlay is ready
+        requestAnimationFrame(() => {
+          this.createContentPortal(slideInInstance);
+          this.updateSlideInInstances(slideInInstance);
+          // Only handle overlay events after slideInRef is created
+          this.handleOverlayEvents(cdkOverlayRef, slideInInstance);
+        });
 
         return close$;
       }),
@@ -126,8 +131,15 @@ export class SlideIn {
   }
 
   private handleOverlayEvents<D, R>(overlay: OverlayRef, instance: SlideInInstance<D, R>): void {
-    overlay.backdropClick().pipe(untilDestroyed(this)).subscribe(() => {
-      instance.slideInRef.close({ response: false as R, error: undefined });
+    overlay.backdropClick().pipe(
+      // Add a small delay to prevent immediate close on open
+      delay(100),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      // Only close if slideInRef exists (fully initialized)
+      if (instance.slideInRef) {
+        instance.slideInRef.close({ response: false as R, error: undefined });
+      }
     });
   }
 
@@ -171,10 +183,13 @@ export class SlideIn {
     close$.pipe(
       switchMap(() => containerRef.instance.slideOut()),
       tap(() => {
-        cdkOverlayRef.dispose();
-        this.slideInInstances.set(
-          this.slideInInstances().filter((slideInItem) => slideInItem.slideInId !== slideInId),
-        );
+        // Ensure overlay is disposed after animation completes
+        requestAnimationFrame(() => {
+          cdkOverlayRef.dispose();
+          this.slideInInstances.set(
+            this.slideInInstances().filter((slideInItem) => slideInItem.slideInId !== slideInId),
+          );
+        });
       }),
       switchMap(() => this.animateInTopComponent()),
       untilDestroyed(this),
@@ -219,11 +234,23 @@ export class SlideIn {
       close: (response: SlideInResponse<R>): void => {
         (!response?.response ? this.canCloseSlideIn(slideInInstance.needConfirmation) : of(true)).pipe(
           filter(Boolean),
+          take(1), // Ensure we only process once
           untilDestroyed(this),
         ).subscribe({
           next: () => {
-            slideInInstance.close$.next(response);
-            slideInInstance.close$.complete();
+            // Ensure close$ is not already completed
+            if (!slideInInstance.close$.closed) {
+              slideInInstance.close$.next(response);
+              slideInInstance.close$.complete();
+            }
+          },
+          error: (error: unknown) => {
+            console.error('Error closing slide-in:', error);
+            // Force close on error
+            if (!slideInInstance.close$.closed) {
+              slideInInstance.close$.next(response);
+              slideInInstance.close$.complete();
+            }
           },
         });
       },
