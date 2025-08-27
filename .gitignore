@@ -9,6 +9,15 @@ yarn-error.log
 # dependencies
 /node_modules
 
+# Yarn 4
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
 # IDEs and editors
 /.idea
 .project
