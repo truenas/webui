@@ -39,7 +39,7 @@
           </h4>
         }
 
-        @if (status()?.error) {
+        @if (status()?.error && !isNetworkActivityDisabled()) {
           <h4>
             {{ status()?.error }}
           </h4>
@@ -80,6 +80,10 @@
 
     @if (isRebootRequired()) {
       <h4 class="hint">{{ 'An update is already applied. Please restart the system.' | translate }}</h4>
+    }
+
+    @if (isNetworkActivityDisabled()) {
+      <h4 class="hint">{{ 'Network activity has been administratively disabled for update operation. Please use Manual Update.' | translate }}</h4>
     }
 
     @if (changelog() || newVersion()?.release_notes_url) {
