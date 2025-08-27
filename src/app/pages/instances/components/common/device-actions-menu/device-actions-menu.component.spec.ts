@@ -76,7 +76,7 @@ describe('DeviceActionsMenuComponent', () => {
 
       selectedInstance.set({
         id: 'my-instance',
-        type: VirtualizationType.Vm,
+        type: VirtualizationType.Container,
         status: VirtualizationStatus.Running,
       } as VirtualizationInstance);
 

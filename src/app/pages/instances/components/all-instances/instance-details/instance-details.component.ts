@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { instanceDetailsElements } from 'app/pages/instances/components/all-instances/instance-details/instance-details.elements';
 import {
@@ -44,5 +43,4 @@ export class InstanceDetailsComponent {
   instance = input.required<VirtualizationInstance>();
 
   protected readonly searchableElements = instanceDetailsElements;
-  protected readonly VirtualizationType = VirtualizationType;
 }

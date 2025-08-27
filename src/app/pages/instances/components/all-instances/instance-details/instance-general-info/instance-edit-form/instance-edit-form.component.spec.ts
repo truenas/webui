@@ -32,7 +32,7 @@ describe('InstanceEditFormComponent', () => {
     cpu: '1-3',
     memory: 2 * GiB,
     environment: {},
-    type: VirtualizationType.Vm,
+    type: VirtualizationType.Container,
     status: VirtualizationStatus.Stopped,
     secure_boot: true,
     image: {

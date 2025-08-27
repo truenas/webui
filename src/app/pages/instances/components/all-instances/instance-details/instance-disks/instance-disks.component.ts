@@ -18,7 +18,6 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ChangeBootFromDiskComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/change-boot-from-disk/change-boot-from-disk.component';
 import {
   ChangeRootDiskSetupComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/change-root-disk-setup/change-root-disk-setup.component';
@@ -94,19 +93,6 @@ export class InstanceDisksComponent {
         ...this.instance(),
         root_disk_size: newRootDiskSize * GiB,
       }));
-  }
-
-  protected showChangeBootFromDiskDialog(): void {
-    this.matDialog.open(ChangeBootFromDiskComponent, {
-      data: {
-        instance: this.instance(),
-        visibleDisks: this.visibleDisks(),
-        primaryBootDisk: this.primaryBootDisk(),
-      },
-    })
-      .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.devicesStore.loadDevices());
   }
 
   private openDiskForm(disk?: VirtualizationDisk): void {

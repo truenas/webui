@@ -30,7 +30,7 @@ describe('InstanceToolsComponent', () => {
         instance: {
           id: 'my-instance',
           status: VirtualizationStatus.Running,
-          type: VirtualizationType.Vm,
+          type: VirtualizationType.Container,
         } as VirtualizationInstance,
       },
     });
@@ -67,6 +67,4 @@ describe('InstanceToolsComponent', () => {
     const shellLink = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="open-shell"]' }));
     expect(await shellLink.isDisabled()).toBe(true);
   });
-
-  // VM-specific VNC and Serial Console tools were removed for containers-only
 });

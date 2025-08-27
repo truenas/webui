@@ -9,12 +9,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import {
-  DiskIoBus,
-  diskIoBusLabels,
   VirtualizationDeviceType,
-  VirtualizationType,
 } from 'app/enums/virtualization.enum';
-import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import {
   VirtualizationDisk,
@@ -27,7 +23,6 @@ import {
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -58,7 +53,6 @@ interface InstanceDiskFormOptions {
     IxFieldsetComponent,
     FormActionsComponent,
     MatButton,
-    IxSelectComponent,
     TestDirective,
     ExplorerCreateDatasetComponent,
   ],
@@ -74,7 +68,6 @@ export class InstanceDiskFormComponent implements OnInit {
 
   private existingDisk = signal<VirtualizationDisk | null>(null);
 
-  protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
   protected readonly isLoading = signal(false);
 
   readonly datasetProvider = this.filesystem.getFilesystemNodeProvider({ datasetsOnly: true });
@@ -82,7 +75,6 @@ export class InstanceDiskFormComponent implements OnInit {
   protected form = this.formBuilder.nonNullable.group({
     source: ['', Validators.required],
     destination: ['', Validators.required],
-    io_bus: [DiskIoBus.Nvme, Validators.required],
   });
 
   protected readonly slashRootNode = [slashRootNode];
@@ -97,9 +89,6 @@ export class InstanceDiskFormComponent implements OnInit {
     return this.slideInRef.getData().instance;
   }
 
-  protected get isVm(): boolean {
-    return this.instance.type === VirtualizationType.Vm;
-  }
 
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -114,14 +103,7 @@ export class InstanceDiskFormComponent implements OnInit {
       this.form.patchValue({
         source: disk.source || '',
         destination: disk.destination || '',
-        io_bus: disk.io_bus || null,
       });
-    }
-
-    if (this.isVm) {
-      this.form.controls.destination.disable();
-    } else {
-      this.form.controls.io_bus.disable();
     }
   }
 

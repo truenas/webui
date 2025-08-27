@@ -30,7 +30,7 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 const instance = {
   id: 'demo',
   name: 'Demo',
-  type: VirtualizationType.Vm,
+  type: VirtualizationType.Container,
   status: VirtualizationStatus.Running,
   cpu: '525',
   autostart: true,
@@ -109,7 +109,6 @@ describe('InstanceGeneralInfoComponent', () => {
     expect(chartExtra[2]).toHaveText('CPU: 525');
     expect(chartExtra[3]).toHaveText('Memory: 125 MiB');
     expect(chartExtra[4]).toHaveText('Pool: dozer');
-    // Secure Boot field removed for containers
   });
 
   it('renders correct values when CPU or Memory limit is not set', () => {

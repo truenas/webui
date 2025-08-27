@@ -127,7 +127,7 @@ describe('AddDeviceMenuComponent', () => {
       selectedInstance.set({
         id: 'my-instance',
         status: VirtualizationStatus.Stopped,
-        type: VirtualizationType.Vm,
+        type: VirtualizationType.Container,
       });
 
       const menuItems = await menu.getItems({ text: 'Add Trusted Platform Module' });
@@ -138,7 +138,7 @@ describe('AddDeviceMenuComponent', () => {
       selectedInstance.set({
         id: 'my-instance',
         status: VirtualizationStatus.Stopped,
-        type: VirtualizationType.Vm,
+        type: VirtualizationType.Container,
       });
 
       const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
@@ -155,7 +155,7 @@ describe('AddDeviceMenuComponent', () => {
       selectedInstance.set({
         id: 'my-instance',
         status: VirtualizationStatus.Running,
-        type: VirtualizationType.Vm,
+        type: VirtualizationType.Container,
       });
 
       const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
@@ -180,7 +180,5 @@ describe('AddDeviceMenuComponent', () => {
       const menuItems = await menu.getItems({ text: 'Add Device' });
       expect(menuItems).toHaveLength(0);
     });
-
-    // PCI Passthrough (Add Device) tests removed - not available for containers
   });
 });
