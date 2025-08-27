@@ -899,7 +899,7 @@
   "Add Widget": "添加小部件",
   "Add Zvol": "添加 Zvol",
   "Adding, removing, or changing hardware components.": "添加，移除，或者更换硬件组件。",
-  "Additional      <a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "要包含的附加<a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" target=\"_blank\">rsync(1)</a>选项。通过按<code> Enter </code>分隔条目。<br>注意： \"*\"字符必须以反斜杠 (\\\\*.txt) 进行转义，或在单引号 ('*.txt') 内使用。",
+  "Additional      <a href=\"https://download.samba.org/pub/rsync/rsync.1\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "要包含的附加<a href=\"https://download.samba.org/pub/rsync/rsync.1\" target=\"_blank\">rsync(1)</a>选项。通过按<code> Enter </code>分隔条目。<br>注意： \"*\"字符必须以反斜杠 (\\\\*.txt) 进行转义，或在单引号 ('*.txt') 内使用。",
   "Additional Details": "其他详细信息",
   "Additional Domains": "附加域",
   "Additional domains to search. Separate entries by  pressing <code>Enter</code>. Adding search domains can cause slow DNS  lookups.": "要搜索的其他域。通过按 <code>Enter</code> 分隔条目。添加搜索域可能会导致 DNS 查找速度变慢。",

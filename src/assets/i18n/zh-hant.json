@@ -4465,7 +4465,7 @@
   "Add Volume": "新增磁碟區",
   "Add Widget": "新增小工具",
   "Add Zvol": "新增 Zvol",
-  "Additional      <a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "",
+  "Additional      <a href=\"https://download.samba.org/pub/rsync/rsync.1\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "",
   "Additional Domains": "附加網域",
   "Address": "位址",
   "Admin Server": "管理伺服器",

@@ -52,7 +52,7 @@ export const helptextRsyncForm = {
                 transfer when all transferred files are renamed\
                 into place.'),
   rsyncExtraTooltip: T('Additional \
-     <a href="https://rsync.samba.org/ftp/rsync/rsync.html" target="_blank">rsync(1)</a> \
+     <a href="https://download.samba.org/pub/rsync/rsync.1" target="_blank">rsync(1)</a> \
      options to include. Separate entries by pressing <code>Enter</code>.<br> \
      Note: The "*" character must be escaped with a backslash (\\*.txt) or used \
      inside single quotes (\'*.txt\').'),
