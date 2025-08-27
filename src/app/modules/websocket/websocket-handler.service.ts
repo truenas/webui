@@ -303,6 +303,9 @@ export class WebSocketHandlerService {
     this.wsStatus.setConnectionStatus(false);
     this.isConnectionLive$.next(false);
 
+    // Clear the cached responses$ observable so it gets recreated with the new connection
+    this._responses$ = undefined;
+
     // Clean up pending calls when connection closes
     this.activeCalls = 0;
     this.pendingCalls.clear();
@@ -328,6 +331,7 @@ export class WebSocketHandlerService {
     }
     this.shutDownInProgress = false;
     this.wsStatus.setConnectionStatus(true);
+    this.isConnectionLive$.next(true);
 
     performance.mark('WS Connected');
     performance.measure('Establishing WS connection', 'WS Init', 'WS Connected');
