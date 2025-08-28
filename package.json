@@ -48,6 +48,9 @@
     "node": ">=22.17.1"
   },
   "private": true,
+  "resolutions": {
+    "mermaid": "^11.10.1"
+  },
   "dependencies": {
     "@angular-devkit/core": "~20.1.6",
     "@angular/animations": "~20.1.6",
@@ -216,8 +219,15 @@
     ],
     "*.scss": "stylelint --fix"
   },
-  "devDependencies": {},
   "optionalDependencies": {
     "lmdb": "^3.3.0"
+  },
+  "packageManager": "yarn@4.9.2",
+  "devDependencies": {
+    "@angular-eslint/template-parser": "~20.2.0",
+    "@markuplint/ml-core": "~4.13.1",
+    "@typescript-eslint/types": "~8.41.0",
+    "@typescript-eslint/utils": "~8.41.0",
+    "prettier": "~3.6.2"
   }
 }

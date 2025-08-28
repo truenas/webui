@@ -5087,7 +5087,7 @@
   "Add Widget": "Přidat widget",
   "Add Zvol": "Přidat ZFS svazek",
   "Adding, removing, or changing hardware components.": "Přidání, odebrání nebo změna hardwarových komponent.",
-  "Additional      <a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "",
+  "Additional      <a href=\"https://download.samba.org/pub/rsync/rsync.1\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "",
   "Additional Domains": "Další domény",
   "Address": "Adresa",
   "Admin Password": "Heslo administrátora",

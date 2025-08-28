@@ -1,5 +1,5 @@
 @let target = dataProvider.expandedRow;
-@let showDetails = !masterList.filterString || target.name.toLowerCase().includes(masterList.filterString.toLowerCase());
+@let showDetails = !masterList.filterString || target.name.toLowerCase().includes(masterList.filterString().toLowerCase());
 
 <ix-master-detail-view
   #masterDetailView="masterDetailViewContext"

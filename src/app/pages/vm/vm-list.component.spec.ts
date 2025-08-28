@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -66,6 +67,15 @@ describe('VmListComponent', () => {
       mockApi([
         mockCall('vm.query', virtualMachines),
       ]),
+      provideMockStore({
+        initialState: {
+          preferences: {
+            preferences: {
+              vmList: {},
+            },
+          },
+        },
+      }),
       mockProvider(SystemGeneralService, {
         isEnterprise: () => false,
       }),

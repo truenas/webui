@@ -5703,7 +5703,7 @@
   "0=Disabled, blank=inherit": "0=Disabilitato, blank=ereditato",
   "20 characters is the maximum length.": "la massima lunghezza consentita è di 20 caratteri.",
   "A User Access Token for <a href=\"https://developer.box.com/\"  target=\"_blank\">Box</a>. An  <a href=\"https://developer.box.com/guides/authentication/tokens/access-tokens/\"  target=\"_blank\">access token</a> enables Box to verify a request  belongs to an authorized session. Example token:  <i>T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl</i>.": "",
-  "Additional      <a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "",
+  "Additional      <a href=\"https://download.samba.org/pub/rsync/rsync.1\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "",
   "Auth Token from alternate authentication - optional <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">(rclone documentation)</a>.": "",
   "Authentication URL for the server. This is the OS_AUTH_URL from an <a href=\"https://rclone.org/swift/#configuration-from-an-openstack-credentials-file\" target=\"_blank\">OpenStack credentials file</a>.": "",
   "AuthVersion - optional - set to (1,2,3) if your auth URL has no version <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">(rclone documentation)</a>.": "",
