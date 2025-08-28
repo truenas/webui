@@ -93,13 +93,13 @@ describe('EnclosureMockService - Real-time Updates', () => {
           id: 'enclosure-mock-dashboard',
           enabled: true,
           methodName: 'webui.enclosure.dashboard',
-          response: { result: [] },
+          response: { type: 'success', result: [] },
         },
         {
           id: 'enclosure-mock-is-ix-hardware',
           enabled: true,
           methodName: 'truenas.is_ix_hardware',
-          response: { result: true },
+          response: { type: 'success', result: true },
         },
       ];
 
@@ -145,10 +145,10 @@ describe('EnclosureMockService - Real-time Updates', () => {
       store$.overrideSelector(selectEnclosureMockConfig, config2);
       store$.overrideSelector(selectMockConfigs, [
         {
-          id: 'enclosure-mock-dashboard', enabled: true, methodName: 'webui.enclosure.dashboard', response: { result: [] },
+          id: 'enclosure-mock-dashboard', enabled: true, methodName: 'webui.enclosure.dashboard', response: { type: 'success', result: [] },
         },
         {
-          id: 'enclosure-mock-is-ix-hardware', enabled: true, methodName: 'truenas.is_ix_hardware', response: { result: true },
+          id: 'enclosure-mock-is-ix-hardware', enabled: true, methodName: 'truenas.is_ix_hardware', response: { type: 'success', result: true },
         },
       ]);
       store$.refreshState();

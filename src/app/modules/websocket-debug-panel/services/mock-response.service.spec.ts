@@ -7,7 +7,7 @@ import {
   CollectionUpdateMessage, IncomingMessage, RequestMessage, SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
 import {
-  MockConfig, MockEvent, MockSuccessResponse, MockErrorResponse,
+  MockConfig, MockEvent, MockErrorResponse,
   isSuccessResponse,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { selectEnabledMockConfigs } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
