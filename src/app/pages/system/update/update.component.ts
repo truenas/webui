@@ -11,10 +11,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  filter, finalize, forkJoin, map, Observable, shareReplay, switchMap,
+  catchError, filter, finalize, forkJoin, map, Observable, of, shareReplay, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { Role } from 'app/enums/role.enum';
 import { UpdateCode } from 'app/enums/system-update.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
@@ -38,6 +39,7 @@ import {
 } from 'app/pages/system/update/components/update-profile-card/update-profile-card.component';
 import { systemUpdateElements } from 'app/pages/system/update/update.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ApiCallError } from 'app/services/errors/error.classes';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -112,6 +114,10 @@ export class UpdateComponent implements OnInit {
 
   protected readonly isRebootRequired = computed(() => this.status()?.code === UpdateCode.RebootRequired);
 
+  protected readonly isNetworkActivityDisabled = computed(() => {
+    return this.status()?.code === UpdateCode.NetworkActivityDisabled;
+  });
+
   private readonly systemInfo$ = this.api.call('webui.main.dashboard.sys_info').pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
   );
@@ -150,20 +156,39 @@ export class UpdateComponent implements OnInit {
     this.isLoading.set(true);
 
     forkJoin([
-      this.api.call('update.profile_choices'),
-      this.api.call('update.status'),
-      this.api.call('update.config'),
+      this.api.call('update.profile_choices').pipe(
+        catchError((error: unknown) => this.handleApiError(error)),
+      ),
+      this.api.call('update.status').pipe(
+        catchError((error: unknown) => this.handleApiError(error)),
+      ),
+      this.api.call('update.config').pipe(
+        catchError((error: unknown) => this.handleApiError(error)),
+      ),
     ])
       .pipe(
-        this.errorHandler.withErrorHandler(),
         finalize(() => this.isLoading.set(false)),
         untilDestroyed(this),
       )
       .subscribe(([profileChoices, updateStatus, updateConfig]) => {
-        this.profileChoices.set(profileChoices);
-        this.status.set(updateStatus);
-        this.config.set(updateConfig);
+        if (profileChoices) {
+          this.profileChoices.set(profileChoices);
+        }
+        if (updateStatus) {
+          this.status.set(updateStatus);
+        }
+        if (updateConfig) {
+          this.config.set(updateConfig);
+        }
       });
+  }
+
+  private handleApiError(error: unknown): Observable<null> {
+    if (error instanceof ApiCallError && error.error?.data?.errname === ApiErrorName.NoNetwork) {
+      return of(null);
+    }
+    this.errorHandler.showErrorModal(error);
+    return of(null);
   }
 
   protected manualUpdate(): void {
