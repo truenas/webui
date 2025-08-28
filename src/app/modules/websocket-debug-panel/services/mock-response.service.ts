@@ -7,7 +7,7 @@ import {
 import { first, take } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import {
-  CollectionUpdateMessage, IncomingMessage, RequestMessage, SuccessfulResponse,
+  CollectionUpdateMessage, ErrorResponse, IncomingMessage, RequestMessage, SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
 import { WebSocketDebugError } from 'app/modules/websocket-debug-panel/interfaces/error.types';
 import {
@@ -114,11 +114,20 @@ export class MockResponseService implements OnDestroy {
     // Track this as a mocked call response
     this.mockedCallIds.add(message.id);
 
-    const mockResponse: SuccessfulResponse = {
-      jsonrpc: '2.0',
-      id: message.id,
-      result: config.response.result,
-    };
+    let mockResponse: SuccessfulResponse | ErrorResponse;
+    if (config.response.type === 'error') {
+      mockResponse = {
+        jsonrpc: '2.0',
+        id: message.id,
+        error: config.response.error,
+      } as ErrorResponse;
+    } else {
+      mockResponse = {
+        jsonrpc: '2.0',
+        id: message.id,
+        result: config.response.result,
+      } as SuccessfulResponse;
+    }
 
     // Apply delay if specified
     const responseDelay = config.response.delay || 0;

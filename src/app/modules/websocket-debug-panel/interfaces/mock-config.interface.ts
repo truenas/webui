@@ -7,8 +7,21 @@ export interface MockConfig {
   events?: MockEvent[];
 }
 
-export interface MockResponse {
+export type MockResponse = MockSuccessResponse | MockErrorResponse;
+
+export interface MockSuccessResponse {
+  type: 'success';
   result: unknown;
+  delay?: number;
+}
+
+export interface MockErrorResponse {
+  type: 'error';
+  error: {
+    code: number;
+    message: string;
+    data?: unknown;
+  };
   delay?: number;
 }
 

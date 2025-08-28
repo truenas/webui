@@ -7,7 +7,7 @@ import {
   CollectionUpdateMessage, IncomingMessage, RequestMessage, SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
 import {
-  MockConfig, MockEvent,
+  MockConfig, MockEvent, MockSuccessResponse, MockErrorResponse,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { selectEnabledMockConfigs } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { MockResponseService } from './mock-response.service';
@@ -29,6 +29,7 @@ describe('MockResponseService', () => {
     methodName: 'test.method',
     enabled: true,
     response: {
+      type: 'success',
       result: { data: 'test' },
     },
   };
@@ -121,7 +122,7 @@ describe('MockResponseService', () => {
       expect(response).toEqual({
         jsonrpc: '2.0',
         id: mockRequest.id,
-        result: mockConfig.response.result,
+        result: (mockConfig.response as MockSuccessResponse).result,
       } as SuccessfulResponse);
     });
 
@@ -167,7 +168,7 @@ describe('MockResponseService', () => {
       expect(responses[0]).toMatchObject({
         jsonrpc: '2.0',
         id: mockRequest.id,
-        result: mockConfig.response.result,
+        result: (mockConfig.response as MockSuccessResponse).result,
       });
 
       const eventMessage = responses[1] as CollectionUpdateMessage;
@@ -206,6 +207,38 @@ describe('MockResponseService', () => {
       };
 
       expect(service.isMockedResponse(response)).toBe(false);
+    });
+
+    it('should generate mock error response', async () => {
+      const errorConfig: MockConfig = {
+        id: 'mock-error',
+        methodName: 'test.method',
+        enabled: true,
+        response: {
+          type: 'error',
+          error: {
+            code: -32601,
+            message: 'Method not found',
+            data: { details: 'Additional error info' },
+          },
+        } as MockErrorResponse,
+      };
+
+      const response$ = service.responses$.pipe(take(1));
+      const responsePromise = firstValueFrom(response$);
+
+      service.generateMockResponse(mockRequest, errorConfig);
+
+      const response = await responsePromise;
+      expect(response).toEqual({
+        jsonrpc: '2.0',
+        id: mockRequest.id,
+        error: {
+          code: -32601,
+          message: 'Method not found',
+          data: { details: 'Additional error info' },
+        },
+      });
     });
 
     it('should identify mocked collection update events', async () => {

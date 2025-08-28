@@ -63,7 +63,12 @@
             ></mat-slide-toggle>
 
             <div class="config-info">
-              <div class="method-name">{{ config.methodName }}</div>
+              <div class="method-name">
+                {{ config.methodName }}
+                <span class="response-type" [class.error-type]="config.response?.type === 'error'">
+                  [{{ getResponseTypeLabel(config) }}]
+                </span>
+              </div>
               <div class="config-type">{{ getConfigDescription(config) }}</div>
             </div>
 
