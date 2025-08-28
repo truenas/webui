@@ -1411,7 +1411,7 @@
   "Add Widget": "ウィジェットを追加",
   "Add Zvol": "Zvolを追加",
   "Adding, removing, or changing hardware components.": "ハードウェアコンポーネントの追加、削除、変更。",
-  "Additional      <a href=\"https://download.samba.org/pub/rsync/rsync.1\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "追加の <a href=\"https://download.samba.org/pub/rsync/rsync.1\" target=\"_blank\">rsync(1)</a> オプションを追加します。 <code>エンター</code> キーを押してエントリを区切ります。<br>     注意:  \"*\" 文字は、バックスラッシュでエスケープするか (\\\\*.txt) 、一重引用符 ('*.txt') 内で使用する必要があります。",
+  "Additional      <a href=\"https://download.samba.org/pub/rsync/rsync.1\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "追加の <a href=\"https://download.samba.org/pub/rsync/rsync.1\" target=\"_blank\">rsync(1)</a> オプションを含めます。 <code>エンター</code> キーを押してエントリを区切ります。<br>     注意:  \"*\" 文字は、バックスラッシュでエスケープするか (\\*.txt) 、シングルクォート ('*.txt') で囲む必要があります。",
   "Additional Details": "その他の詳細",
   "Additional Domains": "追加のドメイン",
   "Additional domains to search. Separate entries by  pressing <code>Enter</code>. Adding search domains can cause slow DNS  lookups.": "検索対象の追加ドメイン。 <code>エンター</code> を押してエントリーを区切ります。 検索ドメインを追加すると、DNS検索に時間がかかることがあります。",
