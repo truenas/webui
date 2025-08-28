@@ -114,7 +114,7 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare
       - name: Run tests
-        run: yarn test:pr --maxWorkers=20
+        run: yarn test:pr --maxWorkers=50
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
