@@ -139,6 +139,7 @@ export class InstanceDiskFormComponent implements OnInit {
         data: {
           selectionMode: true,
           config: null,
+          showIsoManagement: this.instance.type === VirtualizationType.Vm,
         },
       })
       .afterClosed()
