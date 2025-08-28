@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -70,7 +70,7 @@ export class TunableListComponent implements OnInit {
   protected readonly searchableElements = tunableListElements;
 
   dataProvider: AsyncDataProvider<Tunable>;
-  filterString = '';
+  filterString = signal('');
   tunables: Tunable[] = [];
   columns = createTable<Tunable>([
     textColumn({
@@ -122,7 +122,7 @@ export class TunableListComponent implements OnInit {
     this.setDefaultSort();
     this.getTunables();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.filterString());
     });
   }
 
@@ -179,7 +179,7 @@ export class TunableListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: ['var', 'value', 'comment'],

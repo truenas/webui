@@ -11,7 +11,7 @@
   }
 
   <ix-basic-search
-    [(query)]="filterString"
+    [query]="filterString()"
     (queryChange)="onListFiltered($event)"
   ></ix-basic-search>
 

@@ -5,7 +5,7 @@
 
     <div class="actions">
       <ix-basic-search
-        [(query)]="searchQuery"
+        [query]="searchQuery()"
         (queryChange)="onSearch($event)"
       ></ix-basic-search>
     </div>

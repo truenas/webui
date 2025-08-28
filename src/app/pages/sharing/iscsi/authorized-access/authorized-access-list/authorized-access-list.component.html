@@ -3,7 +3,7 @@
   <mat-toolbar-row>
     <h3>{{ 'Authorized Access' | translate }}</h3>
     <div class="actions action-icon">
-      <ix-basic-search [(query)]="filterString" (queryChange)="onListFiltered($event)"></ix-basic-search>
+      <ix-basic-search [query]="filterString()" (queryChange)="onListFiltered($event)"></ix-basic-search>
 
       <ix-table-columns-selector
         [columnPreferencesKey]="'authorizedAccessList'"

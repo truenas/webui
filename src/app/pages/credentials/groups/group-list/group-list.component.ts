@@ -181,7 +181,6 @@ export class GroupListComponent implements OnInit {
     ).subscribe({
       next: (groups) => {
         this.groups = groups;
-        this.filterString.set('');
         this.onListFiltered(this.filterString());
         this.cdr.markForCheck();
       },

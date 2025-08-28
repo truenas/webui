@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -66,7 +66,7 @@ export class VmwareSnapshotListComponent implements OnInit {
   protected readonly searchableElements = vmwareSnapshotListElements;
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
 
-  filterString = '';
+  filterString = signal('');
 
   protected snapshots: VmwareSnapshot[] = [];
   dataProvider: AsyncDataProvider<VmwareSnapshot>;
@@ -104,12 +104,12 @@ export class VmwareSnapshotListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<VmwareSnapshot>(snapshots$);
     this.getSnapshotsData();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.filterString());
     });
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['hostname', 'datastore', 'filesystem', 'username'] });
   }
 

@@ -1,6 +1,6 @@
 <div class="item-search">
   <ix-basic-search
-    [(query)]="searchQuery"
+    [query]="searchQuery()"
     (queryChange)="onSearch($event)"
   ></ix-basic-search>
 </div>

@@ -9,7 +9,7 @@
 
     <div class="item-search">
       <ix-basic-search
-        [(query)]="filterString"
+        [query]="filterString()"
         (queryChange)="onSearch($event)"
       ></ix-basic-search>
     </div>

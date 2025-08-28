@@ -8,7 +8,7 @@
     ></ix-service-state-button>
     <div class="actions action-icon">
       <ix-basic-search
-        [(query)]="filterString"
+        [query]="filterString()"
         (queryChange)="onListFiltered($event)"
       ></ix-basic-search>
 

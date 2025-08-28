@@ -19,7 +19,7 @@
   ></ix-fake-progress-bar>
 
   <ix-basic-search
-    [(query)]="filterString"
+    [query]="filterString()"
     (queryChange)="onSearch($event)"
   ></ix-basic-search>
 </div>

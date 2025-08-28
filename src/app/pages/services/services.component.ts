@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -98,7 +98,7 @@ export class ServicesComponent implements OnInit {
   });
 
   dataProvider = new ArrayDataProvider<ServiceRow>();
-  filterString = '';
+  filterString = signal('');
   services: ServiceRow[];
   protected readonly serviceStatusLabels = serviceStatusLabels;
 
@@ -123,7 +123,7 @@ export class ServicesComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({
       list: this.services,
       query,
@@ -148,7 +148,7 @@ export class ServicesComponent implements OnInit {
     ).subscribe({
       next: (services) => {
         this.services = services;
-        this.onListFiltered(this.filterString);
+        this.onListFiltered(this.filterString());
         this.loading = false;
         this.error = false;
         this.cdr.markForCheck();

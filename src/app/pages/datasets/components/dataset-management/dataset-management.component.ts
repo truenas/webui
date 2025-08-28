@@ -4,8 +4,8 @@ import {
   BreakpointObserver,
 } from '@angular/cdk/layout';
 import { CdkTreeNodePadding, FlatTreeControl } from '@angular/cdk/tree';
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TrackByFunction, HostBinding, computed, viewChild, inject } from '@angular/core';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TrackByFunction, HostBinding, computed, viewChild, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import {
@@ -24,7 +24,7 @@ import {
   map,
   switchMap,
 } from 'rxjs/operators';
-import { datasetEmptyConfig } from 'app/constants/empty-configs';
+import { datasetEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -81,6 +81,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TreeNodeDefDirective,
     RouterLinkActive,
     TreeNodeToggleDirective,
+    NgTemplateOutlet,
   ],
 })
 export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -101,6 +102,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   protected readonly requiredRoles = [Role.DatasetWrite];
   protected readonly searchableElements = datasetManagementElements;
+  protected readonly filterString = signal('');
 
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
@@ -129,6 +131,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
           action: () => this.datasetStore.loadDatasets(),
         },
       };
+    }
+
+    if (this.filterString()?.length && !this.dataSource.filteredData.length) {
+      return noSearchResultsConfig;
     }
 
     return {
@@ -230,6 +236,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   protected onSearch(query: string): void {
+    this.filterString.set(query);
     this.dataSource.filter(query);
   }
 

@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute } from '@angular/router';
@@ -180,7 +180,7 @@ export class DatasetQuotasListComponent implements OnInit {
   quotas: DatasetQuota[] = [];
   datasetId: string;
   invalidQuotas: DatasetQuota[] = [];
-  filterString = '';
+  filterString = signal('');
   emptyType: EmptyType = EmptyType.NoPageData;
   isLoading = false;
   showAllQuotas = false;
@@ -233,7 +233,7 @@ export class DatasetQuotasListComponent implements OnInit {
             this.quotas = quotas;
           }
 
-          this.onListFiltered(this.filterString);
+          this.onListFiltered(this.filterString());
           this.checkInvalidQuotas();
         },
         error: (error: unknown) => {
@@ -277,7 +277,7 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query;
+    this.filterString.set(query);
     this.dataProvider.setFilter({ list: this.quotas, query, columnKeys: ['name', 'id', 'quota', 'obj_quota'] });
 
     if (!this.dataProvider.totalRows) {
