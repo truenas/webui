@@ -19,7 +19,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { JobEventBuilderComponent } from 'app/modules/websocket-debug-panel/components/mock-config/job-event-builder/job-event-builder.component';
 import {
-  MockConfig, MockEvent, MockErrorResponse, MockSuccessResponse,
+  MockConfig, MockEvent,
+  isErrorResponse, isSuccessResponse,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { updateMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 
@@ -87,24 +88,25 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const configValue = this.config();
     if (configValue) {
-      const isError = configValue.response?.type === 'error';
+      const response = configValue.response;
+      const isError = response && isErrorResponse(response);
       this.form.patchValue({
         methodName: configValue.methodName,
         messagePattern: configValue.messagePattern || '',
-        responseType: configValue.response?.type || 'success',
-        responseResult: !isError
-          ? this.stringifyJson((configValue.response as MockSuccessResponse)?.result)
+        responseType: response?.type || 'success',
+        responseResult: response && isSuccessResponse(response)
+          ? this.stringifyJson(response.result)
           : '',
         errorCode: isError
-          ? (configValue.response as MockErrorResponse).error.code
+          ? response.error.code
           : 0,
         errorMessage: isError
-          ? (configValue.response as MockErrorResponse).error.message
+          ? response.error.message
           : '',
         errorData: isError
-          ? this.stringifyJson((configValue.response as MockErrorResponse).error.data)
+          ? this.stringifyJson(response.error.data)
           : '',
-        responseDelay: configValue.response?.delay ?? 0,
+        responseDelay: response?.delay ?? 0,
         events: configValue.events || [],
       });
     } else {

@@ -8,6 +8,7 @@ import {
 } from 'app/interfaces/api-message.interface';
 import {
   MockConfig, MockEvent, MockSuccessResponse, MockErrorResponse,
+  isSuccessResponse,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { selectEnabledMockConfigs } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { MockResponseService } from './mock-response.service';
@@ -122,7 +123,7 @@ describe('MockResponseService', () => {
       expect(response).toEqual({
         jsonrpc: '2.0',
         id: mockRequest.id,
-        result: (mockConfig.response as MockSuccessResponse).result,
+        result: isSuccessResponse(mockConfig.response) ? mockConfig.response.result : null,
       } as SuccessfulResponse);
     });
 
@@ -168,7 +169,7 @@ describe('MockResponseService', () => {
       expect(responses[0]).toMatchObject({
         jsonrpc: '2.0',
         id: mockRequest.id,
-        result: (mockConfig.response as MockSuccessResponse).result,
+        result: isSuccessResponse(mockConfig.response) ? mockConfig.response.result : null,
       });
 
       const eventMessage = responses[1] as CollectionUpdateMessage;

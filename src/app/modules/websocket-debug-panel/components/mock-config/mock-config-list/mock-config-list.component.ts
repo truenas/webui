@@ -11,7 +11,8 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MockConfigFormComponent } from 'app/modules/websocket-debug-panel/components/mock-config/mock-config-form/mock-config-form.component';
 import { WebSocketDebugError } from 'app/modules/websocket-debug-panel/interfaces/error.types';
 import {
-  MockConfig, MockErrorResponse, MockSuccessResponse,
+  MockConfig,
+  isErrorResponse, isSuccessResponse,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import {
   addMockConfig, deleteMockConfig, toggleMockConfig, exportMockConfigs,
@@ -208,15 +209,13 @@ export class MockConfigListComponent {
     }
 
     // Handle different response types
-    if (config.response?.type === 'error') {
-      const errorResponse = config.response as MockErrorResponse;
-      parts.push(`Error: ${errorResponse.error?.message || 'Unknown error'}`);
-      if (errorResponse.error?.code) {
-        parts.push(`Code: ${errorResponse.error.code}`);
+    if (config.response && isErrorResponse(config.response)) {
+      parts.push(`Error: ${config.response.error?.message || 'Unknown error'}`);
+      if (config.response.error?.code) {
+        parts.push(`Code: ${config.response.error.code}`);
       }
-    } else {
-      const successResponse = config.response as MockSuccessResponse;
-      const responsePreview = this.getResponsePreview(successResponse?.result);
+    } else if (config.response && isSuccessResponse(config.response)) {
+      const responsePreview = this.getResponsePreview(config.response.result);
       if (responsePreview) {
         parts.push(responsePreview);
       }
