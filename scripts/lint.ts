@@ -4,10 +4,17 @@ import { spawn } from 'child_process';
 import { existsSync, statSync, readdirSync } from 'fs';
 import { resolve, relative, join, extname } from 'path';
 
+// File extension constants for better maintainability
+const typescriptExtensions = ['.ts', '.tsx'];
+const javascriptExtensions = ['.js', '.jsx'];
+const styleExtensions = ['.scss'];
+const allSupportedExtensions = [...typescriptExtensions, ...javascriptExtensions, ...styleExtensions];
+const ignoredDirectories = ['node_modules', '.git', 'dist', 'coverage', '.angular'];
+
 // Parse command line arguments
 const args: string[] = process.argv.slice(2);
 const isFixMode: boolean = args.includes('--fix');
-const fileArgs: string[] = args.filter((arg) => arg !== '--fix' && !arg.startsWith('--'));
+const pathArguments: string[] = args.filter((arg) => arg !== '--fix' && !arg.startsWith('--'));
 
 // Recursively get all files in a directory with specific extensions
 function getFilesRecursively(dir: string, extensions: string[]): string[] {
@@ -21,8 +28,8 @@ function getFilesRecursively(dir: string, extensions: string[]): string[] {
         const fullPath = join(currentPath, entry.name);
 
         if (entry.isDirectory()) {
-          // Skip node_modules and other common directories to ignore
-          if (!['node_modules', '.git', 'dist', 'coverage', '.angular'].includes(entry.name)) {
+          // Skip ignored directories
+          if (!ignoredDirectories.includes(entry.name)) {
             walk(fullPath);
           }
         } else if (entry.isFile()) {
@@ -32,8 +39,9 @@ function getFilesRecursively(dir: string, extensions: string[]): string[] {
           }
         }
       }
-    } catch {
-      console.warn(`Warning: Unable to read directory: ${currentPath}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.warn(`Warning: Unable to read directory '${currentPath}': ${errorMessage}`);
     }
   }
 
@@ -68,41 +76,60 @@ function processPath(filePath: string): string[] {
     if (stats.isFile()) {
       // Return single file if it's a TypeScript or SCSS file
       const ext = extname(absolutePath).toLowerCase();
-      if (['.ts', '.tsx', '.js', '.jsx', '.scss'].includes(ext)) {
+      if (allSupportedExtensions.includes(ext)) {
         return [relativePath];
       }
       console.warn(`Warning: File ${filePath} is not a TypeScript or SCSS file`);
       return [];
     }
     if (stats.isDirectory()) {
-      // Get all TypeScript and SCSS files in the directory
-      const allFiles = getFilesRecursively(absolutePath, ['.ts', '.tsx', '.js', '.jsx', '.scss']);
+      // Get all supported files in the directory
+      const allFiles = getFilesRecursively(absolutePath, allSupportedExtensions);
       return allFiles.map((file) => relative(projectRoot, file));
     }
     console.warn(`Warning: Path is neither a file nor a directory: ${filePath}`);
     return [];
-  } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-    console.warn(`Warning: Error processing path ${filePath}:`, errorMessage);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.warn(`Warning: Error processing path '${filePath}': ${errorMessage}`);
     return [];
   }
 }
 
-// Process all file arguments
-const validFiles: string[] = fileArgs.flatMap(processPath);
+// Process all path arguments
+const discoveredFiles: string[] = pathArguments.flatMap(processPath);
 
-// Separate TypeScript/JavaScript files from SCSS files
-const tsJsFiles = validFiles.filter((file) => file.endsWith('.ts') || file.endsWith('.tsx') || file.endsWith('.js') || file.endsWith('.jsx'));
-const scssFiles = validFiles.filter((file) => file.endsWith('.scss'));
+// Single-pass partition to separate TypeScript/JavaScript files from SCSS files
+interface FilePartition {
+  scriptFiles: string[];
+  styleFiles: string[];
+}
+
+function partitionFilesByType(files: string[]): FilePartition {
+  const partition: FilePartition = { scriptFiles: [], styleFiles: [] };
+
+  for (const file of files) {
+    const ext = extname(file).toLowerCase();
+    if (typescriptExtensions.includes(ext) || javascriptExtensions.includes(ext)) {
+      partition.scriptFiles.push(file);
+    } else if (styleExtensions.includes(ext)) {
+      partition.styleFiles.push(file);
+    }
+  }
+
+  return partition;
+}
+
+const { scriptFiles, styleFiles } = partitionFilesByType(discoveredFiles);
 
 // Determine what files to lint
-const hasFileArgs: boolean = validFiles.length > 0;
+const hasSpecificFilesToLint: boolean = discoveredFiles.length > 0;
 const eslintArgs: string[] = ['eslint'];
 const stylelintArgs: string[] = ['stylelint'];
 
-if (hasFileArgs && tsJsFiles.length > 0) {
-  eslintArgs.push(...tsJsFiles);
-} else if (!hasFileArgs) {
+if (hasSpecificFilesToLint && scriptFiles.length > 0) {
+  eslintArgs.push(...scriptFiles);
+} else if (!hasSpecificFilesToLint) {
   eslintArgs.push('.');
 }
 
@@ -112,12 +139,12 @@ if (isFixMode) {
 }
 
 // For stylelint, only run if we have SCSS files or no specific files were provided
-const shouldRunEslint: boolean = !hasFileArgs || tsJsFiles.length > 0;
-const shouldRunStylelint: boolean = !hasFileArgs || scssFiles.length > 0;
+const shouldRunEslint: boolean = !hasSpecificFilesToLint || scriptFiles.length > 0;
+const shouldRunStylelint: boolean = !hasSpecificFilesToLint || styleFiles.length > 0;
 
-if (hasFileArgs && scssFiles.length > 0) {
-  stylelintArgs.push(...scssFiles);
-} else if (!hasFileArgs) {
+if (hasSpecificFilesToLint && styleFiles.length > 0) {
+  stylelintArgs.push(...styleFiles);
+} else if (!hasSpecificFilesToLint) {
   stylelintArgs.push('src/**/*.scss');
 }
 
@@ -146,30 +173,31 @@ async function main(): Promise<void> {
   try {
     // Run ESLint if needed
     if (shouldRunEslint) {
-      const eslintTargetDesc = hasFileArgs
-        ? `${tsJsFiles.length} TypeScript/JavaScript file(s)`
+      const eslintTargetDescription = hasSpecificFilesToLint
+        ? `${scriptFiles.length} TypeScript/JavaScript file(s)`
         : 'all TypeScript/JavaScript files';
-      console.info(`Running ESLint on: ${eslintTargetDesc}`);
+      console.info(`Running ESLint on: ${eslintTargetDescription}`);
       await runCommand('npx', eslintArgs, { TIMING: '30' });
     }
 
     // Run Stylelint if needed
     if (shouldRunStylelint) {
-      const stylelintTargetDesc = hasFileArgs && scssFiles.length > 0
-        ? `${scssFiles.length} SCSS file(s)`
+      const stylelintTargetDescription = hasSpecificFilesToLint && styleFiles.length > 0
+        ? `${styleFiles.length} SCSS file(s)`
         : 'all SCSS files';
-      console.info(`Running Stylelint on: ${stylelintTargetDesc}`);
+      console.info(`Running Stylelint on: ${stylelintTargetDescription}`);
       await runCommand('npx', stylelintArgs);
     }
 
     // Handle case where no files were found
-    if (hasFileArgs && !shouldRunEslint && !shouldRunStylelint) {
+    if (hasSpecificFilesToLint && !shouldRunEslint && !shouldRunStylelint) {
       console.warn('⚠️  No TypeScript or SCSS files found to lint');
     } else {
       console.info('✅ Linting completed successfully');
     }
-  } catch (error) {
-    console.error('❌ Linting failed:', error.message);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('❌ Linting failed:', errorMessage);
     process.exit(1);
   }
 }
