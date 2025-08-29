@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, signal,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -69,7 +68,6 @@ import { AppState } from 'app/store';
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    FormsModule,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -107,7 +105,7 @@ export class CloudSyncListComponent implements OnInit {
   protected readonly EmptyType = EmptyType;
 
   cloudSyncTasks: CloudSyncTaskUi[] = [];
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
   readonly jobState = JobState;
   protected readonly requiredRoles = [Role.CloudSyncWrite];
@@ -199,7 +197,7 @@ export class CloudSyncListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -336,7 +334,7 @@ export class CloudSyncListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['description'] });
   }
 

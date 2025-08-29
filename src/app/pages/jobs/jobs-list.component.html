@@ -19,7 +19,7 @@
   </mat-button-toggle-group>
 
   <ix-basic-search
-    [query]="filterString()"
+    [query]="searchQuery()"
     (queryChange)="onListFiltered($event)"
   ></ix-basic-search>
 </ix-page-header>

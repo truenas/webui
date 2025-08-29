@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -32,7 +31,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
     MatCard,
     MatToolbarRow,
     BasicSearchComponent,
-    FormsModule,
     IxTableColumnsSelectorComponent,
     MatButton,
     TestDirective,
@@ -52,7 +50,7 @@ export class SmbShareListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
 
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<SmbShareInfo>;
   shares: SmbShareInfo[] = [];
 
@@ -80,8 +78,8 @@ export class SmbShareListComponent implements OnInit {
     const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Shares]).pipe(
       tap((shares: SmbShareInfo[]) => {
         this.shares = shares;
-        if (this.filterString()) {
-          this.onListFiltered(this.filterString());
+        if (this.searchQuery()) {
+          this.onListFiltered(this.searchQuery());
         }
       }),
       untilDestroyed(this),
@@ -90,7 +88,7 @@ export class SmbShareListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<SmbShareInfo>(smbStatus$);
     this.loadData();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -99,7 +97,7 @@ export class SmbShareListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString.set(query?.toString()?.toLowerCase());
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: ['session_id', 'service', 'machine', 'connected_at'],

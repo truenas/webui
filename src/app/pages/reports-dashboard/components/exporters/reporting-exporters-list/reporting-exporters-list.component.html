@@ -3,7 +3,7 @@
   <mat-toolbar-row>
     <h3>{{ 'Reporting Exporters' | translate }}</h3>
     <div class="actions action-icon">
-      <ix-basic-search [query]="filterString()" (queryChange)="onListFiltered($event)"></ix-basic-search>
+      <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button

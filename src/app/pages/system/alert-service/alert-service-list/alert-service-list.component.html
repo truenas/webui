@@ -3,7 +3,7 @@
     <h3 class="card-title">{{ 'Alert Services' | translate }}</h3>
 
     <div>
-      <ix-basic-search [query]="filterString()" (queryChange)="onListFiltered($event)"></ix-basic-search>
+      <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
 
       <ix-table-columns-selector
         [columnPreferencesKey]="'alertServiceList'"

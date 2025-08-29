@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle';
@@ -65,7 +64,6 @@ interface BootEnvironmentUi extends BootEnvironment {
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    FormsModule,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -95,7 +93,7 @@ export class BootEnvironmentListComponent implements OnInit {
   protected readonly requiredRoles = [Role.BootEnvWrite];
   protected readonly searchableElements = bootListElements;
   protected dataProvider: AsyncDataProvider<BootEnvironmentUi>;
-  protected readonly filterString = signal('');
+  protected readonly searchQuery = signal('');
   private bootenvs: BootEnvironmentUi[] = [];
 
   columns = createTable<BootEnvironmentUi>([
@@ -107,7 +105,7 @@ export class BootEnvironmentListComponent implements OnInit {
           bootEnvToSelect.selected = checked;
         }
         this.dataProvider.setRows([]);
-        this.onListFiltered(this.filterString());
+        this.onListFiltered(this.searchQuery());
       },
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
@@ -116,7 +114,7 @@ export class BootEnvironmentListComponent implements OnInit {
         ).subscribe((bootEnvs) => {
           bootEnvs.forEach((bootEnv) => bootEnv.selected = checked);
           this.dataProvider.setRows([]);
-          this.onListFiltered(this.filterString());
+          this.onListFiltered(this.searchQuery());
         });
       },
       cssClass: 'checkboxs-column',
@@ -218,7 +216,7 @@ export class BootEnvironmentListComponent implements OnInit {
     this.refresh();
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -320,7 +318,7 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.bootenvs, query, columnKeys: ['id'] });
   }
 

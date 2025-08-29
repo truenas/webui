@@ -71,7 +71,7 @@ export class VDevsListComponent implements OnInit {
   showMobileDetails = output<boolean>();
   showDetails = output<{ poolId: number; guid: string }>();
 
-  filterString = signal('');
+  searchQuery = signal('');
   protected isLoading$ = this.vDevsStore.isLoading$;
   protected selectedNode$ = this.vDevsStore.selectedNode$;
 
@@ -101,8 +101,8 @@ export class VDevsListComponent implements OnInit {
     }
   }
 
-  protected onSearch(query: string): void {
-    this.filterString.set(query);
+  protected onListFiltered(query: string): void {
+    this.searchQuery.set(query);
     this.dataSource.filter(query);
   }
 

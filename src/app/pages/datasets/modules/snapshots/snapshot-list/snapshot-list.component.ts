@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, inject, signal } from '@angular/core';
-import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -71,7 +71,6 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
     IxSlideToggleComponent,
     TranslateModule,
     BasicSearchComponent,
-    FormsModule,
     MatButton,
     RequiresRolesDirective,
     TestDirective,
@@ -99,7 +98,7 @@ export class SnapshotListComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   protected readonly requiredRoles = [Role.SnapshotDelete];
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider = new ArrayDataProvider<ZfsSnapshotUi>();
   snapshots: ZfsSnapshotUi[] = [];
   showExtraColumnsControl = new FormControl<boolean>(false);
@@ -139,7 +138,7 @@ export class SnapshotListComponent implements OnInit {
           snapshotToSelect.selected = checked;
         }
         this.dataProvider.setRows([]);
-        this.onListFiltered(this.filterString());
+        this.onListFiltered(this.searchQuery());
       },
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
@@ -148,7 +147,7 @@ export class SnapshotListComponent implements OnInit {
         ).subscribe((snapshots) => {
           snapshots.forEach((snapshot) => snapshot.selected = checked);
           this.dataProvider.setRows([]);
-          this.onListFiltered(this.filterString());
+          this.onListFiltered(this.searchQuery());
         });
       },
       cssClass: 'checkboxs-column',
@@ -182,8 +181,8 @@ export class SnapshotListComponent implements OnInit {
   });
 
   get pageTitle(): string {
-    if (this.filterString().length) {
-      return this.translate.instant('Snapshots') + ': ' + this.filterString();
+    if (this.searchQuery().length) {
+      return this.translate.instant('Snapshots') + ': ' + this.searchQuery();
     }
     return this.translate.instant('Snapshots');
   }
@@ -197,7 +196,7 @@ export class SnapshotListComponent implements OnInit {
   }
 
   constructor() {
-    this.filterString.set(this.route.snapshot.paramMap.get('dataset') || '');
+    this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
   }
 
   ngOnInit(): void {
@@ -235,7 +234,7 @@ export class SnapshotListComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
       this.cdr.markForCheck();
     });
   }
@@ -300,8 +299,7 @@ export class SnapshotListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
-
+    this.searchQuery.set(query);
     const datasetParam = this.route.snapshot.paramMap.get('dataset');
 
     if (datasetParam && query === datasetParam) {

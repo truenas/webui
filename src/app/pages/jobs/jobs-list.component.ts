@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -51,7 +50,6 @@ import { jobsListElements } from 'app/pages/jobs/jobs-list.elements';
     MatButtonToggleGroup,
     MatButtonToggle,
     BasicSearchComponent,
-    FormsModule,
     IxTableComponent,
     UiSearchDirective,
     IxTableEmptyDirective,
@@ -78,7 +76,7 @@ export class JobsListComponent implements OnInit {
   protected readonly error$ = this.store$.select(selectJobState).pipe(map((state) => state.error));
   protected jobs: Job[] = [];
   protected dataProvider = new ArrayDataProvider<Job>();
-  protected filterString = signal('');
+  protected searchQuery = signal('');
   protected selectedIndex: JobTab = 0;
   private selector$ = new BehaviorSubject<typeof selectAllNonTransientJobs>(selectAllNonTransientJobs);
   protected selectedJobs$ = this.selector$.pipe(switchMap((selector) => this.store$.select(selector)));
@@ -131,7 +129,7 @@ export class JobsListComponent implements OnInit {
   ngOnInit(): void {
     this.selectedJobs$.pipe(untilDestroyed(this)).subscribe((jobs) => {
       this.jobs = jobs;
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
       this.setDefaultSort();
       this.cdr.markForCheck();
     });
@@ -154,7 +152,7 @@ export class JobsListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.jobs, query, columnKeys: ['method', 'description'] });
   }
 

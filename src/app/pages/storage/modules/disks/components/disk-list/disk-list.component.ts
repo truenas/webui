@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -58,7 +57,6 @@ interface DiskUi extends Disk {
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    FormsModule,
     IxTableColumnsSelectorComponent,
     UiSearchDirective,
     MatButton,
@@ -89,7 +87,7 @@ export class DiskListComponent implements OnInit {
   protected readonly searchableElements = diskListElements;
 
   dataProvider: AsyncDataProvider<DiskUi>;
-  filterString = signal('');
+  searchQuery = signal('');
 
   columns = createTable<DiskUi>([
     checkboxColumn({
@@ -100,7 +98,7 @@ export class DiskListComponent implements OnInit {
           diskToSelect.selected = checked;
         }
         this.dataProvider.setRows([]);
-        this.onListFiltered(this.filterString());
+        this.onListFiltered(this.searchQuery());
       },
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
@@ -109,7 +107,7 @@ export class DiskListComponent implements OnInit {
         ).subscribe((disks) => {
           disks.forEach((disk) => disk.selected = checked);
           this.dataProvider.setRows([]);
-          this.onListFiltered(this.filterString());
+          this.onListFiltered(this.searchQuery());
         });
       },
     }),
@@ -202,7 +200,10 @@ export class DiskListComponent implements OnInit {
       return {
         ...this.emptyService.defaultEmptyConfig(type),
         button: {
-          action: () => this.onListFiltered(''),
+          action: () => {
+            this.searchQuery.set('');
+            this.onListFiltered('');
+          },
           label: this.translate.instant('Reset'),
         },
       };
@@ -277,7 +278,7 @@ export class DiskListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.disks, query, columnKeys: ['name', 'pool', 'serial', 'size'] });
   }
 

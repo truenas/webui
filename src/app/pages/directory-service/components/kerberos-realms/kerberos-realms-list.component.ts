@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
@@ -45,7 +44,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BasicSearchComponent,
-    FormsModule,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -77,7 +75,7 @@ export class KerberosRealmsListComponent implements OnInit {
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = kerberosRealmsListElements;
 
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<KerberosRealmRow>;
   kerberosRealsm: KerberosRealmRow[] = [];
   columns = createTable<KerberosRealmRow>([
@@ -157,7 +155,7 @@ export class KerberosRealmsListComponent implements OnInit {
     this.setDefaultSort();
     this.getKerberosRealms();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -181,7 +179,7 @@ export class KerberosRealmsListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: ['realm', 'kdc_string', 'admin_server_string', 'kpasswd_server_string'],

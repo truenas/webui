@@ -70,7 +70,7 @@ export class TunableListComponent implements OnInit {
   protected readonly searchableElements = tunableListElements;
 
   dataProvider: AsyncDataProvider<Tunable>;
-  filterString = signal('');
+  searchQuery = signal('');
   tunables: Tunable[] = [];
   columns = createTable<Tunable>([
     textColumn({
@@ -122,7 +122,7 @@ export class TunableListComponent implements OnInit {
     this.setDefaultSort();
     this.getTunables();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -179,7 +179,7 @@ export class TunableListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: ['var', 'value', 'comment'],

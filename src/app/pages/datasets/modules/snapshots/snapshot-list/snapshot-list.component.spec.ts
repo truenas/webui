@@ -163,7 +163,7 @@ describe('SnapshotListComponent', () => {
 
     spectator.triggerEventHandler('ix-basic-search', 'queryChange', 'test-dataset');
 
-    expect(component.filterString()).toBe('test-dataset');
+    expect(component.searchQuery()).toBe('test-dataset');
 
     expect(setFilterSpy).toHaveBeenCalledWith({
       list: component.snapshots,

@@ -4,7 +4,7 @@
     <h3>{{ 'NFS' | translate }}</h3>
     <div class="actions action-icon">
       <ix-basic-search
-        [query]="filterString()"
+        [query]="searchQuery()"
         (queryChange)="onListFiltered($event)"
       ></ix-basic-search>
 

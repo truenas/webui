@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -68,7 +67,6 @@ import { VmService } from 'app/services/vm.service';
     IxIconComponent,
     MatTooltip,
     BasicSearchComponent,
-    FormsModule,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -104,7 +102,7 @@ export class VmListComponent implements OnInit {
   protected readonly searchableElements = vmListElements;
 
   vmMachines: VirtualMachine[] = [];
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<VirtualMachine>;
   protected memWarning = helptextVmWizard.memory_warning;
   protected hasVirtualizationSupport$ = this.vmService.hasVirtualizationSupport$;
@@ -199,7 +197,7 @@ export class VmListComponent implements OnInit {
     this.createDataProvider();
     this.subscribeToVmEvents();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -310,7 +308,7 @@ export class VmListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 

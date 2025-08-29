@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -51,7 +50,6 @@ export interface ContainerImageUi extends ContainerImage {
     TranslateModule,
     PageHeaderComponent,
     BasicSearchComponent,
-    FormsModule,
     MatButton,
     RequiresRolesDirective,
     TestDirective,
@@ -78,7 +76,7 @@ export class DockerImagesListComponent implements OnInit {
 
   dataProvider: AsyncDataProvider<ContainerImageUi>;
   containerImages: ContainerImageUi[] = [];
-  filterString = signal('');
+  searchQuery = signal('');
   columns = createTable<ContainerImageUi>([
     checkboxColumn({
       propertyName: 'selected',
@@ -88,7 +86,7 @@ export class DockerImagesListComponent implements OnInit {
           imageToSelect.selected = checked;
         }
         this.dataProvider.setRows([]);
-        this.onListFiltered(this.filterString());
+        this.onListFiltered(this.searchQuery());
       },
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
@@ -97,7 +95,7 @@ export class DockerImagesListComponent implements OnInit {
         ).subscribe((images) => {
           images.forEach((image) => image.selected = checked);
           this.dataProvider.setRows([]);
-          this.onListFiltered(this.filterString());
+          this.onListFiltered(this.searchQuery());
         });
       },
       cssClass: 'checkboxs-column',
@@ -148,7 +146,7 @@ export class DockerImagesListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider(containerImages$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -166,7 +164,7 @@ export class DockerImagesListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: ['repo_tags'],

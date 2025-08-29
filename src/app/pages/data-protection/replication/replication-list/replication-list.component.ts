@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -69,7 +68,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    FormsModule,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -102,7 +100,7 @@ export class ReplicationListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
 
   replicationTasks: ReplicationTask[] = [];
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<ReplicationTask>;
   readonly jobState = JobState;
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
@@ -196,7 +194,7 @@ export class ReplicationListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
     this.getReplicationTasks();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -292,7 +290,7 @@ export class ReplicationListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 

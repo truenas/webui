@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -37,7 +36,6 @@ import { SubSystemNameCellComponent } from 'app/pages/sharing/nvme-of/subsystems
     MatCard,
     FakeProgressBarComponent,
     BasicSearchComponent,
-    FormsModule,
     TranslateModule,
     AsyncPipe,
     MatToolbarRow,
@@ -69,7 +67,7 @@ export class SubsystemsListComponent {
   protected readonly emptyConfig = nvmeOfEmptyConfig;
   protected readonly EmptyType = EmptyType;
 
-  filterString = signal('');
+  searchQuery = signal('');
 
   protected columns = createTable<NvmeOfSubsystemDetails>([
     templateColumn({
@@ -119,7 +117,7 @@ export class SubsystemsListComponent {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.search.emit(query);
   }
 

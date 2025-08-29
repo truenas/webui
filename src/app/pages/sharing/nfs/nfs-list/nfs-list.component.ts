@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -57,7 +56,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     FakeProgressBarComponent,
     MatToolbarRow,
     BasicSearchComponent,
-    FormsModule,
     MatAnchor,
     TestDirective,
     IxTableColumnsSelectorComponent,
@@ -92,7 +90,7 @@ export class NfsListComponent implements OnInit {
   protected readonly emptyConfig = nfsCardEmptyConfig;
   protected readonly EmptyType = EmptyType;
 
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<NfsShare>;
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
@@ -188,7 +186,7 @@ export class NfsListComponent implements OnInit {
     this.setDefaultSort();
     this.refresh();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -212,7 +210,7 @@ export class NfsListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: !this.nfsShares.length ? [] : Object.keys(this.nfsShares[0]) as (keyof NfsShare)[],

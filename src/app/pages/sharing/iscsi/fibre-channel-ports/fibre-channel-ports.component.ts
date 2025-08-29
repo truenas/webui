@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, signal, OnInit, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -58,7 +57,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     MatCardContent,
     MatToolbarRow,
     BasicSearchComponent,
-    FormsModule,
     TranslateModule,
     UiSearchDirective,
     AsyncPipe,
@@ -154,7 +152,7 @@ export class FibreChannelPortsComponent implements OnInit {
       ).subscribe();
   }
 
-  onSearch(query: string): void {
+  protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({
       query,

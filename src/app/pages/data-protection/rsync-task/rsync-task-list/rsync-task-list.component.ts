@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -63,7 +62,6 @@ import { TaskService } from 'app/services/task.service';
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    FormsModule,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -99,7 +97,7 @@ export class RsyncTaskListComponent implements OnInit {
   protected readonly EmptyType = EmptyType;
 
   dataProvider: AsyncDataProvider<RsyncTask>;
-  filterString = signal('');
+  searchQuery = signal('');
 
   columns = createTable<RsyncTask>([
     textColumn({
@@ -205,18 +203,18 @@ export class RsyncTaskListComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.filterString.set(this.route.snapshot.paramMap.get('dataset') || '');
+    this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
 
     const request$ = this.api.call('rsynctask.query');
     this.dataProvider = new AsyncDataProvider(request$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['path', 'desc'] });
   }
 

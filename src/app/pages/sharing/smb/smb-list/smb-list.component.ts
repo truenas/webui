@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -67,7 +66,6 @@ import { selectService } from 'app/store/services/services.selectors';
     MatToolbarRow,
     ServiceStateButtonComponent,
     BasicSearchComponent,
-    FormsModule,
     MatAnchor,
     TestDirective,
     IxTableColumnsSelectorComponent,
@@ -105,7 +103,7 @@ export class SmbListComponent implements OnInit {
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<SmbShare>;
 
   smbShares: SmbShare[] = [];
@@ -230,7 +228,7 @@ export class SmbListComponent implements OnInit {
     this.dataProvider.load();
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -255,7 +253,7 @@ export class SmbListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: !this.smbShares.length ? [] : Object.keys(this.smbShares[0]) as (keyof SmbShare)[],

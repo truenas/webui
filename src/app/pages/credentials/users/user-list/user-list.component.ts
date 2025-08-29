@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
@@ -47,7 +46,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BasicSearchComponent,
-    FormsModule,
     MatSlideToggle,
     TestDirective,
     UiSearchDirective,
@@ -126,7 +124,7 @@ export class OldUserListComponent implements OnInit {
   );
 
   hideBuiltinUsers = true;
-  filterString = signal('');
+  searchQuery = signal('');
   users: User[] = [];
 
   protected get emptyConfigService(): EmptyService {
@@ -157,7 +155,7 @@ export class OldUserListComponent implements OnInit {
     ).subscribe({
       next: (users) => {
         this.users = users;
-        this.onListFiltered(this.filterString());
+        this.onListFiltered(this.searchQuery());
       },
       error: () => {
         this.users = [];
@@ -179,7 +177,7 @@ export class OldUserListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.users, query, columnKeys: ['username', 'full_name', 'uid'] });
   }
 

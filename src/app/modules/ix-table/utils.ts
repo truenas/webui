@@ -33,14 +33,14 @@ export function filterTableRows<T>(filter: TableFilter<T>): T[] {
     list = [], query = '', columnKeys = [], preprocessMap, exact = false,
   } = filter;
 
-  const filterString = query.toLowerCase();
+  const searchQuery = query.toLowerCase();
   return list.filter((item) => {
     return columnKeys.some((columnKey) => {
       let value = get(item, columnKey) as string | undefined;
 
       if ((columnKey as string) === 'size' && typeof value === 'number') {
         const margin = value * 0.05;
-        const parsedQuerySize = convertStringDiskSizeToBytes(filterString) as number;
+        const parsedQuerySize = convertStringDiskSizeToBytes(searchQuery) as number;
 
         return (value >= parsedQuerySize - margin && value <= parsedQuerySize + margin);
       }
@@ -50,7 +50,7 @@ export function filterTableRows<T>(filter: TableFilter<T>): T[] {
       }
 
       const valueString = value?.toString()?.toLowerCase();
-      return exact ? valueString === filterString : valueString?.includes(filterString);
+      return exact ? valueString === searchQuery : valueString?.includes(searchQuery);
     });
   });
 }

@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -48,7 +47,6 @@ import { TaskService } from 'app/services/task.service';
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    FormsModule,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -80,7 +78,7 @@ export class CronListComponent implements OnInit {
   protected readonly searchableElements = cronElements;
 
   cronjobs: CronjobRow[] = [];
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<CronjobRow>;
   columns = createTable<CronjobRow>([
     textColumn({
@@ -150,7 +148,7 @@ export class CronListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<CronjobRow>(cronjobs$);
     this.getCronJobs();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -207,7 +205,7 @@ export class CronListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['user'] });
   }
 

@@ -66,7 +66,7 @@ export class VmwareSnapshotListComponent implements OnInit {
   protected readonly searchableElements = vmwareSnapshotListElements;
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
 
-  filterString = signal('');
+  searchQuery = signal('');
 
   protected snapshots: VmwareSnapshot[] = [];
   dataProvider: AsyncDataProvider<VmwareSnapshot>;
@@ -104,12 +104,12 @@ export class VmwareSnapshotListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<VmwareSnapshot>(snapshots$);
     this.getSnapshotsData();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['hostname', 'datastore', 'filesystem', 'username'] });
   }
 

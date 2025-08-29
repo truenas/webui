@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -49,7 +48,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FakeProgressBarComponent,
     MatToolbarRow,
     BasicSearchComponent,
-    FormsModule,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -77,7 +75,7 @@ export class ReportingExporterListComponent implements OnInit {
   protected readonly requiredRoles = [Role.ReportingWrite];
   protected readonly searchableElements = reportingExportersElements;
 
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider = new ArrayDataProvider<ReportingExporter>();
 
   exporters: ReportingExporter[] = [];
@@ -168,7 +166,7 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       list: this.exporters,
       query,
@@ -181,7 +179,7 @@ export class ReportingExporterListComponent implements OnInit {
     this.api.call('reporting.exporters.query').pipe(untilDestroyed(this)).subscribe({
       next: (exporters: ReportingExporter[]) => {
         this.exporters = exporters;
-        this.onListFiltered(this.filterString());
+        this.onListFiltered(this.searchQuery());
         this.isLoading$.next(false);
         this.isNoData$.next(!this.exporters?.length);
         this.setDefaultSort();

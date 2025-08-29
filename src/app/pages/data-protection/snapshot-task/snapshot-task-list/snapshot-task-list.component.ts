@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -57,7 +56,6 @@ import { TaskService } from 'app/services/task.service';
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    FormsModule,
     MatButton,
     TestDirective,
     RouterLink,
@@ -92,7 +90,7 @@ export class SnapshotTaskListComponent implements OnInit {
   protected readonly searchableElements = snapshotTaskListElements;
 
   snapshotTasks: PeriodicSnapshotTaskUi[] = [];
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
   protected readonly emptyConfig = snapshotTaskEmptyConfig;
   protected readonly EmptyType = EmptyType;
@@ -180,7 +178,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   constructor() {
-    this.filterString.set(this.route.snapshot.paramMap.get('dataset') || '');
+    this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
   }
 
   ngOnInit(): void {
@@ -195,10 +193,10 @@ export class SnapshotTaskListComponent implements OnInit {
 
     this.getSnapshotTasks();
 
-    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.onListFiltered(this.filterString()));
+    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.onListFiltered(this.searchQuery()));
 
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -213,7 +211,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.snapshotTasks, query, columnKeys: ['dataset', 'naming_schema'] });
   }
 

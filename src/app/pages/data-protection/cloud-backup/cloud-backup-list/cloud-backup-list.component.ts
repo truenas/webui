@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, output, signal, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -57,7 +56,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     AsyncPipe,
     BasicSearchComponent,
-    FormsModule,
     EmptyComponent,
   ],
 })
@@ -172,7 +170,7 @@ export class CloudBackupListComponent {
     });
   }
 
-  onSearch(query: string): void {
+  protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider().setFilter({ query, columnKeys: ['description'] });
   }

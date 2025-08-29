@@ -2,7 +2,6 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
 import { Component, ChangeDetectionStrategy, output, input, OnInit, ChangeDetectorRef, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
@@ -71,7 +70,6 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     InstalledAppsListBulkActionsComponent,
     FakeProgressBarComponent,
     BasicSearchComponent,
-    FormsModule,
     IxIconComponent,
     MatSort,
     AsyncPipe,
@@ -114,7 +112,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   dataSource: App[] = [];
   selectedApp: App | undefined;
-  filterString = signal('');
+  searchQuery = signal('');
   appJobs = new Map<string, Job<void, AppStartQueryParams>>();
   selection = new SelectionModel<string>(true, []);
   sortingInfo: Sort = {
@@ -136,7 +134,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   get filteredApps(): App[] {
     return this.dataSource
-      .filter((app) => app?.name?.toLocaleLowerCase().includes(this.filterString().toLocaleLowerCase()));
+      .filter((app) => app?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase()));
   }
 
   get allAppsChecked(): boolean {
@@ -211,8 +209,8 @@ export class InstalledAppsListComponent implements OnInit {
     }
   }
 
-  onSearch(query: string): void {
-    this.filterString.set(query);
+  protected onListFiltered(query: string): void {
+    this.searchQuery.set(query);
 
     if (!this.filteredApps.length) {
       this.showLoadStatus(EmptyType.NoSearchResults);
@@ -493,7 +491,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private resetSearch(): void {
-    this.onSearch('');
+    this.onListFiltered('');
   }
 
   private redirectToInstalledAppsWithoutDetails(): void {

@@ -11,8 +11,8 @@
       }
       <div class="item-search">
         <ix-basic-search
-          [query]="filterString()"
-          (queryChange)="onSearch($event)"
+          [query]="searchQuery()"
+          (queryChange)="onListFiltered($event)"
         ></ix-basic-search>
       </div>
 
@@ -43,7 +43,7 @@
       >
         <div class="tree-inner">
 
-          @if (filterString() && !dataSource.filteredData.length && !isLoading) {
+          @if (searchQuery() && !dataSource.filteredData.length && !isLoading) {
             <ng-container [ngTemplateOutlet]="empty"></ng-container>
           } @else {
             <ix-tree-virtual-scroll-view
@@ -111,7 +111,7 @@
     </div>
 
     @let dataset = selectedDataset$ | async;
-    @let showDetails = !filterString() || dataset.name.toLowerCase().includes(filterString().toLowerCase());
+    @let showDetails = !searchQuery() || dataset.name.toLowerCase().includes(searchQuery().toLowerCase());
 
     @if (dataset && showDetails) {
       <div

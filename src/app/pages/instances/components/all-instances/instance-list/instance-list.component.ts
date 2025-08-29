@@ -7,7 +7,6 @@ import {
   signal,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -36,7 +35,6 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   imports: [
     TranslateModule,
     BasicSearchComponent,
-    FormsModule,
     FakeProgressBarComponent,
     InstanceRowComponent,
     MatCheckboxModule,
@@ -110,10 +108,6 @@ export class InstanceListComponent {
     });
   }
 
-  onSearch(query: string): void {
-    this.searchQuery.set(query);
-  }
-
   toggleAllChecked(checked: boolean): void {
     if (checked) {
       this.filteredInstances().forEach((instance) => this.selection.select(instance.id));
@@ -132,6 +126,10 @@ export class InstanceListComponent {
 
   resetSelection(): void {
     this.selection.clear();
+  }
+
+  protected onListFiltered(query: string): void {
+    this.searchQuery.set(query);
   }
 
   private handlePendingGlobalSearchElement(): void {

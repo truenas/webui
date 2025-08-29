@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -47,7 +46,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     UiSearchDirective,
     MatToolbarRow,
     BasicSearchComponent,
-    FormsModule,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -75,7 +73,7 @@ export class AlertServiceListComponent implements OnInit {
   protected readonly searchableElements = alertServiceListElements;
 
   dataProvider: AsyncDataProvider<AlertService>;
-  filterString = signal('');
+  searchQuery = signal('');
 
   columns = createTable<AlertService>([
     textColumn({
@@ -136,7 +134,7 @@ export class AlertServiceListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<AlertService>(alertServices$);
     this.getAlertServices();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -148,7 +146,7 @@ export class AlertServiceListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.alertServices, query, columnKeys: ['name', 'level'] });
   }
 

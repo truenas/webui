@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, signal, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -43,7 +42,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    FormsModule,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -70,7 +68,7 @@ export class JbofListComponent implements OnInit {
   protected readonly requiredRoles = [Role.JbofWrite];
   protected readonly searchableElements = jbofListElements;
 
-  filterString = signal('');
+  searchQuery = signal('');
   jbofs: Jbof[] = [];
   protected canAddJbof = signal(false);
 
@@ -120,7 +118,7 @@ export class JbofListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider(request$);
     this.getJbofs();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -171,7 +169,7 @@ export class JbofListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['mgmt_username', 'description'] });
   }
 }

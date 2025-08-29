@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -48,7 +47,6 @@ import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-
   imports: [
     PageHeaderComponent,
     BasicSearchComponent,
-    FormsModule,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -79,7 +77,7 @@ export class DeviceListComponent implements OnInit {
   protected readonly requiredRoles = [Role.VmDeviceWrite];
 
   dataProvider: AsyncDataProvider<VmDevice>;
-  filterString = signal('');
+  searchQuery = signal('');
   devices: VmDevice[] = [];
 
   columns = createTable<VmDevice>([
@@ -115,7 +113,7 @@ export class DeviceListComponent implements OnInit {
     this.setDefaultSort();
     this.loadDevices();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -174,7 +172,7 @@ export class DeviceListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       list: this.devices,
       query,

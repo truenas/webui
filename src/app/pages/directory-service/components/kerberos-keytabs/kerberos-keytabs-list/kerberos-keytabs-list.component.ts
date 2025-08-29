@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
@@ -42,7 +41,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BasicSearchComponent,
-    FormsModule,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -74,7 +72,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = kerberosKeytabsListElements;
 
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<KerberosKeytab>;
   kerberosRealsm: KerberosKeytab[] = [];
   columns = createTable<KerberosKeytab>([
@@ -132,7 +130,7 @@ export class KerberosKeytabsListComponent implements OnInit {
     this.setDefaultSort();
     this.getKerberosKeytabs();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -156,7 +154,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 }

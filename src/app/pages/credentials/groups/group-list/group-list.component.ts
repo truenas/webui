@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
@@ -49,7 +48,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BasicSearchComponent,
-    FormsModule,
     MatSlideToggle,
     TestDirective,
     UiSearchDirective,
@@ -113,7 +111,7 @@ export class GroupListComponent implements OnInit {
   });
 
   hideBuiltinGroups = true;
-  filterString = signal('');
+  searchQuery = signal('');
   groups: Group[] = [];
 
   isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
@@ -156,7 +154,7 @@ export class GroupListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.groups, query, columnKeys: ['group', 'gid'] });
   }
 
@@ -181,7 +179,7 @@ export class GroupListComponent implements OnInit {
     ).subscribe({
       next: (groups) => {
         this.groups = groups;
-        this.onListFiltered(this.filterString());
+        this.onListFiltered(this.searchQuery());
         this.cdr.markForCheck();
       },
       error: () => {

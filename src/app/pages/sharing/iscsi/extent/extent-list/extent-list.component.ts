@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -47,7 +46,6 @@ import { IscsiService } from 'app/services/iscsi.service';
     FakeProgressBarComponent,
     MatToolbarRow,
     BasicSearchComponent,
-    FormsModule,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -80,7 +78,7 @@ export class ExtentListComponent implements OnInit {
   ];
 
   isLoading = false;
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<IscsiExtent>;
 
   extents: IscsiExtent[] = [];
@@ -155,7 +153,7 @@ export class ExtentListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider(extents$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -174,7 +172,7 @@ export class ExtentListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 

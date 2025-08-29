@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -35,7 +34,6 @@ import { SmbOpenFilesComponent } from 'app/pages/sharing/smb/smb-status/componen
     MatCard,
     MatToolbarRow,
     BasicSearchComponent,
-    FormsModule,
     IxTableColumnsSelectorComponent,
     MatButton,
     TestDirective,
@@ -57,7 +55,7 @@ export class SmbLockListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
 
-  filterString = signal('');
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<SmbLockInfo>;
   locks: SmbLockInfo[] = [];
   files: SmbOpenInfo[] = [];
@@ -91,8 +89,8 @@ export class SmbLockListComponent implements OnInit {
     const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Locks]).pipe(
       tap((locks: SmbLockInfo[]) => {
         this.locks = locks;
-        if (this.filterString()) {
-          this.onListFiltered(this.filterString());
+        if (this.searchQuery()) {
+          this.onListFiltered(this.searchQuery());
         }
       }),
       untilDestroyed(this),
@@ -101,7 +99,7 @@ export class SmbLockListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider(smbStatus$);
     this.loadData();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -110,7 +108,7 @@ export class SmbLockListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString.set(query?.toString()?.toLowerCase());
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['filename', 'service_path'] });
   }
 

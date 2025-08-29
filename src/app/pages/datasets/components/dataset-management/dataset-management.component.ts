@@ -102,7 +102,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   protected readonly requiredRoles = [Role.DatasetWrite];
   protected readonly searchableElements = datasetManagementElements;
-  protected readonly filterString = signal('');
+  protected readonly searchQuery = signal('');
 
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
@@ -133,7 +133,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       };
     }
 
-    if (this.filterString()?.length && !this.dataSource.filteredData.length) {
+    if (this.searchQuery()?.length && !this.dataSource.filteredData.length) {
       return noSearchResultsConfig;
     }
 
@@ -235,9 +235,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.treeWidthChange$.next(event);
   }
 
-  protected onSearch(query: string): void {
-    this.filterString.set(query);
+  protected onListFiltered(query: string): void {
+    this.searchQuery.set(query);
     this.dataSource.filter(query);
+    this.cdr.markForCheck();
   }
 
   protected closeMobileDetails(): void {

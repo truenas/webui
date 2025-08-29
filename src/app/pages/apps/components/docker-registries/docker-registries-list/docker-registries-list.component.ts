@@ -69,7 +69,7 @@ export class DockerRegistriesListComponent implements OnInit {
   protected readonly searchableElements = dockerRegistriesListElements;
 
   dataProvider: AsyncDataProvider<DockerRegistry>;
-  filterString = signal('');
+  searchQuery = signal('');
   protected isLoggedIntoDockerHub = signal(false);
 
   columns = createTable<DockerRegistry>([
@@ -125,7 +125,7 @@ export class DockerRegistriesListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: ['name', 'username', 'uri'],

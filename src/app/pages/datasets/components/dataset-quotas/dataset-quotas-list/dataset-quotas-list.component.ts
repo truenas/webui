@@ -180,7 +180,7 @@ export class DatasetQuotasListComponent implements OnInit {
   quotas: DatasetQuota[] = [];
   datasetId: string;
   invalidQuotas: DatasetQuota[] = [];
-  filterString = signal('');
+  searchQuery = signal('');
   emptyType: EmptyType = EmptyType.NoPageData;
   isLoading = false;
   showAllQuotas = false;
@@ -233,7 +233,7 @@ export class DatasetQuotasListComponent implements OnInit {
             this.quotas = quotas;
           }
 
-          this.onListFiltered(this.filterString());
+          this.onListFiltered(this.searchQuery());
           this.checkInvalidQuotas();
         },
         error: (error: unknown) => {
@@ -277,7 +277,7 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.quotas, query, columnKeys: ['name', 'id', 'quota', 'obj_quota'] });
 
     if (!this.dataProvider.totalRows) {
