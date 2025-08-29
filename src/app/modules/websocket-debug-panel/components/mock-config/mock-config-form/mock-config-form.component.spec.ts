@@ -310,6 +310,24 @@ describe('MockConfigFormComponent', () => {
         }),
       );
     });
+
+    it('should not submit when JSON fields have invalid JSON', () => {
+      const submittedSpy = jest.spyOn(spectator.component['submitted'], 'emit');
+
+      spectator.component['form'].patchValue({
+        methodName: 'test.method',
+        responseType: 'error',
+        isCallError: true,
+        errorCode: -32001,
+        errorMessage: 'Test error',
+        callErrorExtra: '{invalid json}', // Invalid JSON
+      });
+
+      spectator.component['onSubmit']();
+
+      expect(submittedSpy).not.toHaveBeenCalled();
+      expect(spectator.component['form'].invalid).toBe(true);
+    });
   });
 
   describe('CallError specific behavior', () => {
@@ -459,7 +477,8 @@ describe('MockConfigFormComponent', () => {
       });
 
       const control = spectator.component['form'].controls.responseResult;
-      expect(control.errors).toEqual({ invalidJson: true });
+      expect(control.errors?.['invalidJson']).toBeDefined();
+      expect(control.errors?.['invalidJson'].message).toContain('Invalid JSON format');
     });
 
     it('should validate invalid JSON in callErrorTrace field', () => {
@@ -470,17 +489,74 @@ describe('MockConfigFormComponent', () => {
       });
 
       const control = spectator.component['form'].controls.callErrorTrace;
-      expect(control.errors).toEqual({ invalidJson: true });
+      expect(control.errors?.['invalidJson']).toBeDefined();
+      expect(control.errors?.['invalidJson'].message).toContain('Invalid JSON format');
+    });
+
+    it('should validate invalid JSON in callErrorExtra field', () => {
+      spectator.component['form'].patchValue({
+        responseType: 'error',
+        isCallError: true,
+        callErrorExtra: '{bad json',
+      });
+
+      const control = spectator.component['form'].controls.callErrorExtra;
+      expect(control.errors?.['invalidJson']).toBeDefined();
+      expect(control.errors?.['invalidJson'].message).toContain('Invalid JSON format');
+    });
+
+    it('should validate invalid JSON in errorData field', () => {
+      spectator.component['form'].patchValue({
+        responseType: 'error',
+        isCallError: false,
+        errorData: 'invalid: json: data',
+      });
+
+      const control = spectator.component['form'].controls.errorData;
+      expect(control.errors?.['invalidJson']).toBeDefined();
+      expect(control.errors?.['invalidJson'].message).toContain('Invalid JSON format');
+    });
+
+    it('should allow valid JSON in callErrorExtra field', () => {
+      spectator.component['form'].patchValue({
+        callErrorExtra: '{"valid": "json"}',
+      });
+
+      const control = spectator.component['form'].controls.callErrorExtra;
+      expect(control.errors).toBeNull();
+    });
+
+    it('should allow valid JSON in errorData field', () => {
+      spectator.component['form'].patchValue({
+        errorData: '{"error": {"nested": true}}',
+      });
+
+      const control = spectator.component['form'].controls.errorData;
+      expect(control.errors).toBeNull();
     });
 
     it('should allow empty JSON fields', () => {
       spectator.component['form'].patchValue({
         responseResult: '',
         callErrorTrace: '',
+        callErrorExtra: '',
+        errorData: '',
       });
 
       expect(spectator.component['form'].controls.responseResult.errors).toBeNull();
       expect(spectator.component['form'].controls.callErrorTrace.errors).toBeNull();
+      expect(spectator.component['form'].controls.callErrorExtra.errors).toBeNull();
+      expect(spectator.component['form'].controls.errorData.errors).toBeNull();
+    });
+
+    it('should show specific JSON parsing error in message', () => {
+      spectator.component['form'].patchValue({
+        responseResult: '{"unclosed": ',
+      });
+
+      const control = spectator.component['form'].controls.responseResult;
+      expect(control.errors?.['invalidJson']).toBeDefined();
+      expect(control.errors?.['invalidJson'].message).toContain('Unexpected end of JSON input');
     });
 
     it('should stringify non-string values in stringifyJson', () => {

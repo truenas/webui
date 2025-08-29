@@ -96,13 +96,13 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
     responseResult: ['', this.jsonValidator],
     errorCode: [0],
     errorMessage: [''],
-    errorData: [''],
+    errorData: ['', this.jsonValidator],
     // CallError specific fields
     isCallError: [false],
     callErrorErrname: [''],
     callErrorCode: [0], // Integer error code (e.g., 22 for EINVAL)
     callErrorReason: [''],
-    callErrorExtra: [''],
+    callErrorExtra: ['', this.jsonValidator],
     callErrorTrace: ['', this.jsonValidator],
     responseDelay: [0, [Validators.min(0)]],
     events: [[] as MockEvent[]],
@@ -298,8 +298,12 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
     try {
       JSON.parse(value);
       return null;
-    } catch {
-      return { invalidJson: true };
+    } catch (error) {
+      return {
+        invalidJson: {
+          message: `Invalid JSON format: ${(error as Error).message}`,
+        },
+      };
     }
   }
 
