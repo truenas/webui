@@ -425,6 +425,32 @@ describe('MockConfigFormComponent', () => {
     });
   });
 
+  describe('computed properties', () => {
+    it('should return true for isErrorMode when responseType is error', () => {
+      spectator.component['form'].patchValue({ responseType: 'error' });
+
+      expect(spectator.component['isErrorMode']).toBe(true);
+    });
+
+    it('should return false for isErrorMode when responseType is success', () => {
+      spectator.component['form'].patchValue({ responseType: 'success' });
+
+      expect(spectator.component['isErrorMode']).toBe(false);
+    });
+
+    it('should return true for isCallErrorMode when isCallError is true', () => {
+      spectator.component['form'].patchValue({ isCallError: true });
+
+      expect(spectator.component['isCallErrorMode']).toBe(true);
+    });
+
+    it('should return false for isCallErrorMode when isCallError is false', () => {
+      spectator.component['form'].patchValue({ isCallError: false });
+
+      expect(spectator.component['isCallErrorMode']).toBe(false);
+    });
+  });
+
   describe('JSON validation and handling', () => {
     it('should validate invalid JSON in responseResult field', () => {
       spectator.component['form'].patchValue({
@@ -470,7 +496,7 @@ describe('MockConfigFormComponent', () => {
     });
 
     it('should handle values that cannot be stringified', () => {
-      const circular: any = {};
+      const circular: Record<string, unknown> = {};
       circular.self = circular;
       const result = spectator.component['stringifyJson'](circular);
       expect(result).toBe('[object Object]');
@@ -621,9 +647,9 @@ describe('MockConfigFormComponent', () => {
 
   describe('ngOnDestroy', () => {
     it('should complete destroy$ subject on component destroy', () => {
-      const destroySubject = spectator.component['destroy$'];
-      const nextSpy = jest.spyOn(destroySubject, 'next');
-      const completeSpy = jest.spyOn(destroySubject, 'complete');
+      const destroySubject$ = spectator.component['destroy$'];
+      const nextSpy = jest.spyOn(destroySubject$, 'next');
+      const completeSpy = jest.spyOn(destroySubject$, 'complete');
 
       spectator.component.ngOnDestroy();
 

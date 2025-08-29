@@ -23,7 +23,7 @@
         [required]="true"
       ></ix-radio-group>
 
-      @if (form.value.responseType === 'error') {
+      @if (isErrorMode) {
         <ix-checkbox
           ixTest="is-call-error-checkbox"
           formControlName="isCallError"
@@ -31,7 +31,7 @@
         ></ix-checkbox>
       }
 
-      @if (form.value.responseType === 'success') {
+      @if (!isErrorMode) {
         <ix-code-editor
           ixTest="response-data-textarea"
           formControlName="responseResult"
@@ -41,7 +41,7 @@
         ></ix-code-editor>
       }
 
-      @if (form.value.responseType === 'error') {
+      @if (isErrorMode) {
         <ix-combobox
           ixTest="error-code-input"
           formControlName="errorCode"
@@ -59,7 +59,7 @@
           [hint]="'Human-readable error message' | translate"
         ></ix-input>
         
-        @if (form.value.isCallError) {
+        @if (isCallErrorMode) {
           <ix-select
             ixTest="call-error-errname-select"
             formControlName="callErrorErrname"

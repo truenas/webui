@@ -157,8 +157,8 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
     // Toggle validators based on response type
     this.form.controls.responseType.valueChanges
       .pipe(takeUntil(this.destroy$))
-      .subscribe((type) => {
-        if (type === 'error') {
+      .subscribe(() => {
+        if (this.isErrorMode) {
           this.form.controls.responseResult.clearValidators();
           this.form.controls.errorCode.setValidators([Validators.required]);
           this.form.controls.errorMessage.setValidators(Validators.required);
@@ -330,6 +330,14 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
 
   protected get isEditMode(): boolean {
     return !!this.config();
+  }
+
+  protected get isErrorMode(): boolean {
+    return this.form.controls.responseType.value === 'error';
+  }
+
+  protected get isCallErrorMode(): boolean {
+    return this.form.controls.isCallError.value === true;
   }
 
   private generateDefaultTrace(): string {
