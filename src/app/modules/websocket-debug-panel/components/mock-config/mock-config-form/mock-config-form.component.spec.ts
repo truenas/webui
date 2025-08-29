@@ -425,6 +425,175 @@ describe('MockConfigFormComponent', () => {
     });
   });
 
+  describe('JSON validation and handling', () => {
+    it('should validate invalid JSON in responseResult field', () => {
+      spectator.component['form'].patchValue({
+        responseType: 'success',
+        responseResult: '{invalid json}',
+      });
+
+      const control = spectator.component['form'].controls.responseResult;
+      expect(control.errors).toEqual({ invalidJson: true });
+    });
+
+    it('should validate invalid JSON in callErrorTrace field', () => {
+      spectator.component['form'].patchValue({
+        responseType: 'error',
+        isCallError: true,
+        callErrorTrace: 'not valid json',
+      });
+
+      const control = spectator.component['form'].controls.callErrorTrace;
+      expect(control.errors).toEqual({ invalidJson: true });
+    });
+
+    it('should allow empty JSON fields', () => {
+      spectator.component['form'].patchValue({
+        responseResult: '',
+        callErrorTrace: '',
+      });
+
+      expect(spectator.component['form'].controls.responseResult.errors).toBeNull();
+      expect(spectator.component['form'].controls.callErrorTrace.errors).toBeNull();
+    });
+
+    it('should stringify non-string values in stringifyJson', () => {
+      const obj = { test: 'value', nested: { key: 123 } };
+      const result = spectator.component['stringifyJson'](obj);
+      expect(result).toBe(JSON.stringify(obj, null, 2));
+    });
+
+    it('should handle string values in stringifyJson', () => {
+      const str = 'already a string';
+      const result = spectator.component['stringifyJson'](str);
+      expect(result).toBe(str);
+    });
+
+    it('should handle values that cannot be stringified', () => {
+      const circular: any = {};
+      circular.self = circular;
+      const result = spectator.component['stringifyJson'](circular);
+      expect(result).toBe('[object Object]');
+    });
+
+    it('should parse invalid JSON as string in parseJson', () => {
+      const invalidJson = 'not json';
+      const result = spectator.component['parseJson'](invalidJson);
+      expect(result).toBe(invalidJson);
+    });
+
+    it('should handle empty string in parseJson', () => {
+      const result = spectator.component['parseJson']('');
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('CallError submission handling', () => {
+    it('should build CallError data with empty trace field', () => {
+      spectator.component.ngOnInit();
+      const submittedSpy = jest.spyOn(spectator.component['submitted'], 'emit');
+
+      spectator.component['form'].patchValue({
+        methodName: 'test.method',
+        responseType: 'error',
+        isCallError: true,
+        errorCode: -32001,
+        errorMessage: 'Test error',
+        callErrorErrname: 'ETEST',
+        callErrorCode: 99,
+        callErrorReason: 'Test reason',
+        callErrorTrace: '', // Empty trace
+        callErrorExtra: '{"extra": "data"}',
+      });
+
+      spectator.component['onSubmit']();
+
+      expect(submittedSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          response: expect.objectContaining({
+            type: 'error',
+            error: expect.objectContaining({
+              data: expect.objectContaining({
+                trace: {
+                  class: 'CallError',
+                  formatted: 'No stack trace available',
+                  frames: [],
+                },
+              }),
+            }),
+          }),
+        }),
+      );
+    });
+
+    it('should build CallError data with parsed trace', () => {
+      spectator.component.ngOnInit();
+      const submittedSpy = jest.spyOn(spectator.component['submitted'], 'emit');
+
+      const validTrace = {
+        class: 'CallError',
+        formatted: 'Test trace',
+        frames: [{ method: 'test' }],
+      };
+
+      spectator.component['form'].patchValue({
+        methodName: 'test.method',
+        responseType: 'error',
+        isCallError: true,
+        errorCode: -32001,
+        errorMessage: 'Test error',
+        callErrorErrname: 'ETEST',
+        callErrorCode: 99,
+        callErrorReason: 'Test reason',
+        callErrorTrace: JSON.stringify(validTrace),
+        callErrorExtra: null,
+      });
+
+      spectator.component['onSubmit']();
+
+      expect(submittedSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          response: expect.objectContaining({
+            type: 'error',
+            error: expect.objectContaining({
+              data: expect.objectContaining({
+                trace: validTrace,
+                extra: null,
+              }),
+            }),
+          }),
+        }),
+      );
+    });
+
+    it('should build non-CallError error data', () => {
+      spectator.component.ngOnInit();
+      const submittedSpy = jest.spyOn(spectator.component['submitted'], 'emit');
+
+      spectator.component['form'].patchValue({
+        methodName: 'test.method',
+        responseType: 'error',
+        isCallError: false,
+        errorCode: -32600,
+        errorMessage: 'Generic error',
+        errorData: '{"custom": "error data"}',
+      });
+
+      spectator.component['onSubmit']();
+
+      expect(submittedSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          response: expect.objectContaining({
+            type: 'error',
+            error: expect.objectContaining({
+              data: { custom: 'error data' },
+            }),
+          }),
+        }),
+      );
+    });
+  });
+
   describe('form validation', () => {
     it('should require methodName field', () => {
       const methodNameControl = spectator.component['form'].controls.methodName;
@@ -447,6 +616,19 @@ describe('MockConfigFormComponent', () => {
 
       delayControl.setValue(1000);
       expect(delayControl.hasError('min')).toBe(false);
+    });
+  });
+
+  describe('ngOnDestroy', () => {
+    it('should complete destroy$ subject on component destroy', () => {
+      const destroySubject = spectator.component['destroy$'];
+      const nextSpy = jest.spyOn(destroySubject, 'next');
+      const completeSpy = jest.spyOn(destroySubject, 'complete');
+
+      spectator.component.ngOnDestroy();
+
+      expect(nextSpy).toHaveBeenCalled();
+      expect(completeSpy).toHaveBeenCalled();
     });
   });
 });
