@@ -5,13 +5,15 @@ import {
   Observable, Subject, Subscription, timer,
 } from 'rxjs';
 import { first, take } from 'rxjs/operators';
-import { CollectionChangeType } from 'app/enums/api.enum';
+import { CollectionChangeType, JsonRpcErrorCode } from 'app/enums/api.enum';
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import {
-  CollectionUpdateMessage, IncomingMessage, RequestMessage, SuccessfulResponse,
+  CollectionUpdateMessage, ErrorResponse, IncomingMessage, RequestMessage, SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
 import { WebSocketDebugError } from 'app/modules/websocket-debug-panel/interfaces/error.types';
 import {
-  MockConfig, MockEvent,
+  MockConfig, MockEvent, MockErrorResponse, MockSuccessResponse,
+  isErrorResponse,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { selectEnabledMockConfigs } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 
@@ -114,11 +116,9 @@ export class MockResponseService implements OnDestroy {
     // Track this as a mocked call response
     this.mockedCallIds.add(message.id);
 
-    const mockResponse: SuccessfulResponse = {
-      jsonrpc: '2.0',
-      id: message.id,
-      result: config.response.result,
-    };
+    const mockResponse = isErrorResponse(config.response)
+      ? this.generateErrorResponse(message, config.response)
+      : this.generateSuccessResponse(message, config.response);
 
     // Apply delay if specified
     const responseDelay = config.response.delay || 0;
@@ -205,6 +205,26 @@ export class MockResponseService implements OnDestroy {
         this.eventSubscriptions.delete(key);
       }
     });
+  }
+
+  private generateSuccessResponse(message: RequestMessage, response: MockSuccessResponse): SuccessfulResponse {
+    return {
+      jsonrpc: '2.0',
+      id: message.id,
+      result: response.result,
+    };
+  }
+
+  private generateErrorResponse(message: RequestMessage, response: MockErrorResponse): ErrorResponse {
+    return {
+      jsonrpc: '2.0',
+      id: message.id,
+      error: {
+        code: response.error.code as JsonRpcErrorCode,
+        message: response.error.message,
+        data: response.error.data as ApiErrorDetails | undefined,
+      },
+    };
   }
 
   isMockedResponse(message: IncomingMessage): boolean {

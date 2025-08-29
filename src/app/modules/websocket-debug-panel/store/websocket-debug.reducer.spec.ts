@@ -174,14 +174,14 @@ describe('WebSocketDebugReducer', () => {
       id: 'config-1',
       enabled: true,
       methodName: 'test.method',
-      response: { result: { success: true } },
+      response: { type: 'success', result: { success: true } },
     };
 
     const mockConfig2: MockConfig = {
       id: 'config-2',
       enabled: false,
       methodName: 'another.method',
-      response: { result: null },
+      response: { type: 'success', result: null },
     };
 
     it('should add mock config', () => {
@@ -355,7 +355,7 @@ describe('WebSocketDebugReducer', () => {
           id: 'config-1',
           enabled: true,
           methodName: 'test',
-          response: { result: {} },
+          response: { type: 'success', result: {} },
         }],
         isPanelOpen: true,
         activeTab: 'enclosure',
@@ -378,7 +378,7 @@ describe('WebSocketDebugReducer', () => {
         id: 'non-existent',
         enabled: true,
         methodName: 'test',
-        response: { result: {} },
+        response: { type: 'success', result: {} },
       };
 
       const action = WebSocketDebugActions.updateMockConfig({ config: updatedConfig });
@@ -394,7 +394,7 @@ describe('WebSocketDebugReducer', () => {
           id: 'existing',
           enabled: true,
           methodName: 'test',
-          response: { result: {} },
+          response: { type: 'success', result: {} },
         }],
       };
 
@@ -411,7 +411,7 @@ describe('WebSocketDebugReducer', () => {
           id: 'existing',
           enabled: true,
           methodName: 'test',
-          response: { result: {} },
+          response: { type: 'success', result: {} },
         }],
       };
 

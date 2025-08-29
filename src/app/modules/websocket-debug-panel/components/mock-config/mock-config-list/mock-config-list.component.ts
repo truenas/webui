@@ -10,7 +10,10 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MockConfigFormComponent } from 'app/modules/websocket-debug-panel/components/mock-config/mock-config-form/mock-config-form.component';
 import { WebSocketDebugError } from 'app/modules/websocket-debug-panel/interfaces/error.types';
-import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
+import {
+  MockConfig,
+  isErrorResponse, isSuccessResponse,
+} from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import {
   addMockConfig, deleteMockConfig, toggleMockConfig, exportMockConfigs,
 } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
@@ -120,12 +123,28 @@ export class MockConfigListComponent {
           );
         }
 
-        // Validate each config has required properties
-        const validConfigs = configs.filter((config: unknown): config is MockConfig => {
-          return typeof config === 'object' && config !== null
-            && 'methodName' in config && typeof config.methodName === 'string'
-            && 'response' in config && typeof config.response === 'object';
-        });
+        // Validate each config has required properties and handle backward compatibility
+        const validConfigs = configs
+          .filter((config: unknown): config is Record<string, unknown> => {
+            return typeof config === 'object' && config !== null
+              && 'methodName' in config && typeof config.methodName === 'string'
+              && 'response' in config && typeof config.response === 'object';
+          })
+          .map((config): MockConfig => {
+            const response = config.response as Record<string, unknown>;
+            // Handle backward compatibility for configs without 'type' field
+            if (!response.type) {
+              return {
+                ...config,
+                response: {
+                  type: 'success' as const,
+                  result: response.result ?? null,
+                  delay: response.delay as number | undefined,
+                },
+              } as MockConfig;
+            }
+            return config as unknown as MockConfig;
+          });
 
         if (validConfigs.length === 0) {
           throw new WebSocketDebugError(
@@ -177,6 +196,10 @@ export class MockConfigListComponent {
     return parts.length > 0 ? parts.join(' • ') : 'Empty response';
   }
 
+  protected getResponseTypeLabel(config: MockConfig): string {
+    return config.response?.type === 'error' ? 'Error' : 'Success';
+  }
+
   private buildDescriptionParts(config: MockConfig): string[] {
     const parts: string[] = [];
     const hasEvents = config.events && config.events.length > 0;
@@ -185,9 +208,17 @@ export class MockConfigListComponent {
       parts.push(`${config.events.length} events`);
     }
 
-    const responsePreview = this.getResponsePreview(config.response?.result);
-    if (responsePreview) {
-      parts.push(responsePreview);
+    // Handle different response types
+    if (config.response && isErrorResponse(config.response)) {
+      parts.push(`Error: ${config.response.error?.message || 'Unknown error'}`);
+      if (config.response.error?.code) {
+        parts.push(`Code: ${config.response.error.code}`);
+      }
+    } else if (config.response && isSuccessResponse(config.response)) {
+      const responsePreview = this.getResponsePreview(config.response.result);
+      if (responsePreview) {
+        parts.push(responsePreview);
+      }
     }
 
     if (config.response?.delay) {

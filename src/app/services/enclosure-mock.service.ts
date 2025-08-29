@@ -75,6 +75,7 @@ export class EnclosureMockService implements OnDestroy {
         enabled: true,
         methodName: 'webui.enclosure.dashboard',
         response: {
+          type: 'success',
           result: this.mockGenerator.webuiDashboardEnclosureResponse(),
         },
       },
@@ -83,6 +84,7 @@ export class EnclosureMockService implements OnDestroy {
         enabled: true,
         methodName: 'truenas.is_ix_hardware',
         response: {
+          type: 'success',
           result: true,
         },
       },
