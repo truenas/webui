@@ -20,9 +20,30 @@ export interface MockErrorResponse {
   error: {
     code: number; // Allow any number for flexibility in mocking
     message: string;
-    data?: unknown;
+    data?: unknown; // Support CallError structure or any other data
   };
   delay?: number;
+}
+
+// CallError specific data structure (matches ApiErrorDetails)
+export interface CallErrorData {
+  errname?: string; // e.g., 'EINVAL', 'EACCES'
+  error?: number; // Error code
+  reason?: string; // Human-readable reason
+  extra?: unknown; // Additional error details (often validation errors)
+  trace?: {
+    class: string;
+    formatted: string;
+    frames: {
+      argspec: string[];
+      filename: string;
+      line: string;
+      lineno: number;
+      locals: Record<string, string>;
+      method: string;
+    }[];
+  };
+  message?: string | null;
 }
 
 // Type guards for MockResponse types
@@ -32,6 +53,12 @@ export function isSuccessResponse(response: MockResponse): response is MockSucce
 
 export function isErrorResponse(response: MockResponse): response is MockErrorResponse {
   return response.type === 'error';
+}
+
+export function isCallErrorData(data: unknown): data is CallErrorData {
+  if (!data || typeof data !== 'object') return false;
+  const obj = data as Record<string, unknown>;
+  return 'errname' in obj || 'reason' in obj || 'extra' in obj;
 }
 
 export interface MockEvent {

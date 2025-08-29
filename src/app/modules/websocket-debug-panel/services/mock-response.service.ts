@@ -222,7 +222,7 @@ export class MockResponseService implements OnDestroy {
       error: {
         code: response.error.code as JsonRpcErrorCode,
         message: response.error.message,
-        data: response.error.data as ApiErrorDetails | undefined,
+        data: response.error.data as unknown as ApiErrorDetails | undefined,
       },
     };
   }
