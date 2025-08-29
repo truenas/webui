@@ -68,6 +68,12 @@ describe('MockConfigFormComponent', () => {
         errorCode: 0,
         errorMessage: '',
         errorData: '',
+        isCallError: false,
+        callErrorErrname: '',
+        callErrorCode: 0,
+        callErrorReason: '',
+        callErrorExtra: '',
+        callErrorTrace: '',
         responseDelay: 0,
         events: [],
       });
@@ -85,6 +91,12 @@ describe('MockConfigFormComponent', () => {
         errorCode: 0,
         errorMessage: '',
         errorData: '',
+        isCallError: false,
+        callErrorErrname: '',
+        callErrorCode: 0,
+        callErrorReason: '',
+        callErrorExtra: '',
+        callErrorTrace: '',
         responseDelay: 500,
         events: [
           {
@@ -121,6 +133,66 @@ describe('MockConfigFormComponent', () => {
         errorCode: 0,
         errorMessage: '',
         errorData: '',
+        isCallError: false,
+        callErrorErrname: '',
+        callErrorCode: 0,
+        callErrorReason: '',
+        callErrorExtra: '',
+        callErrorTrace: '',
+        responseDelay: 0,
+        events: [],
+      });
+    });
+
+    it('should handle CallError configuration', () => {
+      const callErrorConfig: MockConfig = {
+        id: 'test-call-error',
+        enabled: true,
+        methodName: 'test.callerror',
+        response: {
+          type: 'error',
+          error: {
+            code: -32001,
+            message: 'Call error occurred',
+            data: {
+              errname: 'EINVAL',
+              error: 22,
+              reason: 'Invalid input provided',
+              extra: { field: 'test_field', error: 'required' },
+              trace: {
+                class: 'ValidationError',
+                formatted: 'Mock traceback',
+                frames: [{
+                  argspec: ['self'],
+                  filename: 'test.py',
+                  line: 'test line',
+                  lineno: 1,
+                  locals: {},
+                  method: 'test',
+                }],
+              },
+            },
+          },
+        },
+      };
+
+      spectator.setInput('config', callErrorConfig);
+      spectator.component['ngOnInit']();
+
+      expect(spectator.component['form'].value).toEqual({
+        methodName: 'test.callerror',
+        messagePattern: '',
+        responseType: 'error',
+        responseResult: '',
+        errorCode: -32001,
+        errorMessage: 'Call error occurred',
+        errorData: '',
+        isCallError: true,
+        callErrorErrname: 'EINVAL',
+        callErrorCode: 22,
+        callErrorReason: 'Invalid input provided',
+        callErrorExtra: '{\n  "field": "test_field",\n  "error": "required"\n}',
+        callErrorTrace: '{\n  "class": "ValidationError",\n  "formatted": "Mock traceback",\n  "frames": [\n    {\n      "argspec": [\n        "self"\n      ],\n      "filename": "test.py",\n      "line": "test line",\n      "lineno": 1,\n      "locals": {},\n      "method": "test"\n    }\n  ]\n}',
         responseDelay: 0,
         events: [],
       });
@@ -237,6 +309,78 @@ describe('MockConfigFormComponent', () => {
           events: undefined,
         }),
       );
+    });
+  });
+
+  describe('CallError specific behavior', () => {
+    it('should generate default trace when CallError is enabled', () => {
+      // Initialize the component to set up watchers
+      spectator.component.ngOnInit();
+
+      // Initially set as non-CallError
+      spectator.component['form'].patchValue({
+        responseType: 'error',
+        errorCode: -32600,
+        isCallError: false,
+      });
+
+      // Toggle isCallError to true
+      spectator.component['form'].patchValue({
+        isCallError: true,
+      });
+
+      // Should have generated a default trace
+      const traceValue = spectator.component['form'].value.callErrorTrace;
+      expect(traceValue).toBeTruthy();
+      expect(typeof traceValue).toBe('string');
+
+      // Verify it's valid JSON with correct structure
+      const trace = JSON.parse(traceValue as string);
+      expect(trace).toBeDefined();
+      expect(trace.class).toBe('CallError');
+      expect(trace.formatted).toBeDefined();
+      expect(trace.frames).toBeDefined();
+      expect(Array.isArray(trace.frames)).toBe(true);
+      expect(trace.frames.length).toBeGreaterThan(0);
+    });
+
+    it('should set isCallError when error code is -32001', () => {
+      // Initialize the component to set up watchers
+      spectator.component.ngOnInit();
+
+      spectator.component['form'].patchValue({
+        responseType: 'error',
+        errorCode: -32001,
+      });
+
+      expect(spectator.component['form'].value.isCallError).toBe(true);
+    });
+
+    it('should set default CallError values when enabled', () => {
+      // Initialize the component to set up watchers
+      spectator.component.ngOnInit();
+
+      // Enable CallError mode
+      spectator.component['form'].patchValue({
+        responseType: 'error',
+        isCallError: true,
+      });
+
+      const formValue = spectator.component['form'].value;
+
+      // Check that default values are set
+      expect(formValue.errorCode).toBe(-32001);
+      expect(formValue.callErrorErrname).toBe('EINVAL');
+      expect(formValue.callErrorCode).toBe(22);
+      expect(formValue.callErrorReason).toBe('Invalid argument provided');
+      expect(formValue.errorMessage).toBe('Invalid argument');
+      expect(formValue.callErrorTrace).toBeTruthy();
+
+      // Verify trace contains CallError
+      const trace = JSON.parse(formValue.callErrorTrace as string);
+      expect(trace.class).toBe('CallError');
+      expect(trace.formatted).toContain('CallError');
+      expect(trace.formatted).toContain('EINVAL');
     });
   });
 
