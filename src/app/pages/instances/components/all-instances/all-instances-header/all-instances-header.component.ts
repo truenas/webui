@@ -6,7 +6,8 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { VirtualizationGlobalState } from 'app/enums/virtualization.enum';
+import { VirtualizationGlobalState, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationVolume } from 'app/interfaces/virtualization.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -22,6 +23,7 @@ import {
 } from 'app/pages/instances/components/all-instances/all-instances-header/virtualization-state/virtualization-state.component';
 import {
   VolumesDialog,
+  VolumesDialogOptions,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import {
   VirtualizationConfigStore,
@@ -82,8 +84,15 @@ export class AllInstancesHeaderComponent {
   }
 
   protected onManageVolumes(): void {
-    this.matDialog.open(VolumesDialog, {
+    this.matDialog.open<VolumesDialog, VolumesDialogOptions, VirtualizationVolume>(VolumesDialog, {
       minWidth: '80vw',
+      data: {
+        selectionMode: false,
+        config: this.config(),
+        showIsoManagement: this.instanceStore?.instances()?.filter(
+          (instance) => instance.type === VirtualizationType.Vm,
+        ).length > 0,
+      },
     });
   }
 
