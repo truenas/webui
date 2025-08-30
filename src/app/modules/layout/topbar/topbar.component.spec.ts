@@ -190,16 +190,16 @@ describe('TopbarComponent', () => {
       expect(spectator.component.hasTncConfig()).toBeFalsy();
     });
 
-    it('returns falsy when ips and interfaces_ips are both empty', () => {
+    it('returns truthy when all required URLs are present (regardless of IP configuration)', () => {
       mockConfigSignal.set({
         ...baseTncConfig,
         ips: [],
         interfaces_ips: [],
       } as TruenasConnectConfig);
-      expect(spectator.component.hasTncConfig()).toBeFalsy();
+      expect(spectator.component.hasTncConfig()).toBeTruthy();
     });
 
-    it('returns falsy when missing required URLs even with IPs', () => {
+    it('returns falsy when missing required URLs', () => {
       mockConfigSignal.set({
         ips: ['192.168.1.1'],
         interfaces_ips: [],
@@ -210,40 +210,34 @@ describe('TopbarComponent', () => {
       expect(spectator.component.hasTncConfig()).toBeFalsy();
     });
 
-    it('returns truthy when ips array has values and all required URLs are present', () => {
+    it('returns falsy when tnc_base_url is missing', () => {
       mockConfigSignal.set({
-        ...baseTncConfig,
-        ips: ['192.168.1.1'],
+        account_service_base_url: 'https://account.example.com',
+        leca_service_base_url: 'https://leca.example.com',
+        ips: [],
         interfaces_ips: [],
       } as TruenasConnectConfig);
-      expect(spectator.component.hasTncConfig()).toBeTruthy();
+      expect(spectator.component.hasTncConfig()).toBeFalsy();
     });
 
-    it('returns truthy when interfaces_ips array has values and all required URLs are present', () => {
+    it('returns falsy when account_service_base_url is missing', () => {
       mockConfigSignal.set({
-        ...baseTncConfig,
+        tnc_base_url: 'https://tnc.example.com',
+        leca_service_base_url: 'https://leca.example.com',
         ips: [],
-        interfaces_ips: ['10.0.0.1'],
+        interfaces_ips: [],
       } as TruenasConnectConfig);
-      expect(spectator.component.hasTncConfig()).toBeTruthy();
+      expect(spectator.component.hasTncConfig()).toBeFalsy();
     });
 
-    it('returns truthy when both ips and interfaces_ips arrays have values', () => {
+    it('returns falsy when leca_service_base_url is missing', () => {
       mockConfigSignal.set({
-        ...baseTncConfig,
-        ips: ['192.168.1.1'],
-        interfaces_ips: ['10.0.0.1'],
-      } as TruenasConnectConfig);
-      expect(spectator.component.hasTncConfig()).toBeTruthy();
-    });
-
-    it('returns truthy when only interfaces_ips has values (backward compatibility)', () => {
-      mockConfigSignal.set({
-        ...baseTncConfig,
+        tnc_base_url: 'https://tnc.example.com',
+        account_service_base_url: 'https://account.example.com',
         ips: [],
-        interfaces_ips: ['10.0.0.1', '10.0.0.2'],
+        interfaces_ips: [],
       } as TruenasConnectConfig);
-      expect(spectator.component.hasTncConfig()).toBeTruthy();
+      expect(spectator.component.hasTncConfig()).toBeFalsy();
     });
   });
 

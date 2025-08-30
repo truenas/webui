@@ -16,6 +16,8 @@ export interface TruenasConnectConfig extends TruenasConnectUpdate {
   certificate: number;
   interfaces_ips: string[];
   ips: string[];
+  interfaces: string[];
+  use_all_interfaces: boolean;
   tnc_base_url: string;
   account_service_base_url: string;
   leca_service_base_url: string;
@@ -24,4 +26,7 @@ export interface TruenasConnectConfig extends TruenasConnectUpdate {
 
 export interface TruenasConnectUpdate {
   enabled: boolean;
+  ips: string[];
+  interfaces: string[];
+  use_all_interfaces: boolean;
 }

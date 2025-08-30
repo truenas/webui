@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatDialogTitle, MatDialogContent, MatDialogActions,
@@ -8,9 +8,10 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, catchError, finalize, of, switchMap,
+  EMPTY, catchError, finalize, of, switchMap, Observable,
 } from 'rxjs';
 import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -39,7 +40,7 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
   styleUrl: './truenas-connect-status-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TruenasConnectStatusModalComponent implements OnInit {
+export class TruenasConnectStatusModalComponent {
   protected tnc = inject(TruenasConnectService);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
@@ -72,33 +73,12 @@ export class TruenasConnectStatusModalComponent implements OnInit {
       case TruenasConnectStatus.CertConfigurationFailure:
       case TruenasConnectStatus.CertRenewalFailure:
         return TncStatus.Failed;
+      case TruenasConnectStatus.Disabled:
       default:
-        return TncStatus.Disabled;
+        // Show "Get Connected" button for disabled state instead of dead-end "disabled" message
+        return TncStatus.Waiting;
     }
   });
-
-  ngOnInit(): void {
-    this.enableServiceIfDisabled();
-  }
-
-  private enableServiceIfDisabled(): void {
-    if (this.tnc.config()?.status === TruenasConnectStatus.Disabled) {
-      this.isLoading.set(true);
-      this.tnc.enableService()
-        .pipe(
-          catchError((_: unknown) => {
-            this.dialog.error({
-              title: this.translate.instant('Error'),
-              message: this.translate.instant('Failed to enable TrueNAS Connect service'),
-            });
-            return EMPTY;
-          }),
-          finalize(() => this.isLoading.set(false)),
-          untilDestroyed(this),
-        )
-        .subscribe();
-    }
-  }
 
   protected open(): void {
     const baseUrl = this.tnc.config()?.tnc_base_url;
@@ -109,9 +89,22 @@ export class TruenasConnectStatusModalComponent implements OnInit {
 
   protected connect(): void {
     this.isConnecting.set(true);
-    const generateToken$ = this.tnc.config()?.status === TruenasConnectStatus.ClaimTokenMissing ? this.tnc.generateToken() : of('');
-    generateToken$
+
+    // Enable service first if it's disabled
+    let enableIfNeeded$: Observable<TruenasConnectConfig> = of(this.tnc.config());
+    if (this.tnc.config()?.status === TruenasConnectStatus.Disabled) {
+      enableIfNeeded$ = this.tnc.enableService();
+    }
+
+    enableIfNeeded$
       .pipe(
+        // NOW check if we need token generation based on current status
+        switchMap(() => {
+          if (this.tnc.config()?.status === TruenasConnectStatus.ClaimTokenMissing) {
+            return this.tnc.generateToken();
+          }
+          return of('');
+        }),
         switchMap(() => {
           return this.tnc.connect();
         }),
