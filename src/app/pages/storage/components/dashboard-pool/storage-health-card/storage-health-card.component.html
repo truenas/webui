@@ -60,15 +60,12 @@
       }
     </div>
 
-    <div class="details-item" [ixUiSearch]="searchableElements.elements.autoTrim">
-      <div class="label">{{ 'Auto TRIM' | translate }}:</div>
-      <div class="value">
-        {{ pool().autotrim.value === 'on' ? ('On' | translate) : ('Off' | translate) }}
+    @if (pool().autotrim.value === AutoTrimValue.On) {
+      <div class="details-item" [ixUiSearch]="searchableElements.elements.autoTrim">
+        <div class="label">{{ 'Auto TRIM' | translate }}:</div>
+        <div class="value">{{ 'On' | translate }}</div>
       </div>
-      <a *ixRequiresRoles="[Role.PoolWrite]" class="action" ixTest="edit-auto-trim" (click)="onEditAutotrim()">
-        {{ 'Edit Auto TRIM' | translate }}
-      </a>
-    </div>
+    }
 
     @if (scan()?.function) {
       @if (wasScanInitiated()) {
