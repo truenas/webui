@@ -6,7 +6,7 @@
 </div>
 
 @if (!(dataProvider()?.currentPageCount$ | async) && !(dataProvider().isLoading$ | async)) {
-  <ix-empty [conf]="emptyConfig"></ix-empty>
+  <ix-empty [conf]="emptyConfig()"></ix-empty>
 } @else {
   <ix-table
     class="backups"

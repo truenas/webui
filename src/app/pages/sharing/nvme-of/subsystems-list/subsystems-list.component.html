@@ -11,12 +11,12 @@
     </div>
   </mat-toolbar-row>
   <mat-card-content>
-    @if ((dataProvider().emptyType$ | async) === EmptyType.NoPageData && !(dataProvider().currentPageCount$ | async)) {
-      <ix-empty [conf]="emptyConfig"></ix-empty>
+    @if (!(dataProvider()?.currentPageCount$ | async) && !(dataProvider().isLoading$ | async)) {
+      <ix-empty [conf]="emptyConfig()"></ix-empty>
     } @else {
       <ix-table
         [ix-table-empty]="!(dataProvider().currentPageCount$ | async)"
-        [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
+        [emptyConfig]="emptyConfig()"
       >
         <thead
           ix-table-head

@@ -1,11 +1,12 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, output, inject, signal, computed } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { nvmeOfEmptyConfig } from 'app/constants/empty-configs';
+import { noSearchResultsConfig, nvmeOfEmptyConfig } from 'app/constants/empty-configs';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -64,10 +65,17 @@ export class SubsystemsListComponent {
   readonly dataProvider = input.required<ArrayDataProvider<NvmeOfSubsystemDetails>>();
   // eslint-disable-next-line @angular-eslint/no-output-native
   readonly search = output<string>();
-  protected readonly emptyConfig = nvmeOfEmptyConfig;
   protected readonly EmptyType = EmptyType;
 
   searchQuery = signal('');
+
+  protected readonly emptyConfig = computed<EmptyConfig>(() => {
+    if (this.searchQuery()?.length) {
+      return noSearchResultsConfig;
+    }
+
+    return nvmeOfEmptyConfig;
+  });
 
   protected columns = createTable<NvmeOfSubsystemDetails>([
     templateColumn({

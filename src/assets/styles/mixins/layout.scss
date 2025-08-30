@@ -178,7 +178,7 @@ $scrollbar-offset: 20px;
   }
 
   .sticky-header {
-    overflow: hidden;
+    overflow: visible;
     position: sticky;
     top: 51px;
     z-index: 1;

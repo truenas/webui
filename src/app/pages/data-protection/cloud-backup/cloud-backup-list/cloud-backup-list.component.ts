@@ -1,16 +1,17 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, output, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, output, signal, inject, computed } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
-import { cloudBackupTaskEmptyConfig } from 'app/constants/empty-configs';
+import { cloudBackupTaskEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -73,12 +74,19 @@ export class CloudBackupListComponent {
   readonly dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
   readonly cloudBackups = input<CloudBackup[]>([]);
   readonly isMobileView = input<boolean>(false);
-  protected readonly emptyConfig = cloudBackupTaskEmptyConfig;
 
   readonly toggleShowMobileDetails = output<boolean>();
   readonly searchQuery = signal<string>('');
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = cloudBackupListElements;
+
+  protected readonly emptyConfig = computed<EmptyConfig>(() => {
+    if (this.searchQuery()?.length) {
+      return noSearchResultsConfig;
+    }
+
+    return cloudBackupTaskEmptyConfig;
+  });
 
   columns = createTable<CloudBackup>([
     textColumn({
