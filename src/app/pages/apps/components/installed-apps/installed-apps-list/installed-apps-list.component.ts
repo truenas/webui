@@ -405,8 +405,8 @@ export class InstalledAppsListComponent implements OnInit {
 
   sortChanged(sort: Sort, apps?: App[]): void {
     this.sortingInfo = sort;
-
-    this.dataSource = (apps || this.dataSource).sort((a, b) => {
+    const sourceArray = apps && apps.length > 0 ? apps : this.dataSource;
+    this.dataSource = [...sourceArray].sort((a, b) => {
       const isAsc = sort.direction === SortDirection.Asc;
 
       switch (sort.active as SortableField) {

@@ -7,9 +7,31 @@ export interface MockConfig {
   events?: MockEvent[];
 }
 
-export interface MockResponse {
+export type MockResponse = MockSuccessResponse | MockErrorResponse;
+
+export interface MockSuccessResponse {
+  type: 'success';
   result: unknown;
   delay?: number;
+}
+
+export interface MockErrorResponse {
+  type: 'error';
+  error: {
+    code: number; // Allow any number for flexibility in mocking
+    message: string;
+    data?: unknown;
+  };
+  delay?: number;
+}
+
+// Type guards for MockResponse types
+export function isSuccessResponse(response: MockResponse): response is MockSuccessResponse {
+  return response.type === 'success';
+}
+
+export function isErrorResponse(response: MockResponse): response is MockErrorResponse {
+  return response.type === 'error';
 }
 
 export interface MockEvent {

@@ -227,4 +227,34 @@ describe('InstalledAppsListComponent', () => {
       ],
     ]);
   });
+
+  it('handles sortChanged with empty apps array correctly', () => {
+    const component = spectator.component;
+    const originalDataSource = [...apps];
+    component.dataSource = originalDataSource;
+
+    // Call sortChanged with empty array - should use existing dataSource
+    component.sortChanged({ active: 'application', direction: 'asc' }, []);
+
+    expect(component.dataSource).toHaveLength(2);
+    expect(component.dataSource[0].name).toBe('test-app-1');
+    expect(component.dataSource[1].name).toBe('test-app-2');
+  });
+
+  it('handles sortChanged with valid apps array correctly', () => {
+    const component = spectator.component;
+    const newApps = [{
+      id: 'ix-new-app',
+      name: 'new-app',
+      metadata: { name: 'new-app', train: 'test' },
+      state: AppState.Running,
+      upgrade_available: false,
+    }] as App[];
+
+    // Call sortChanged with valid array - should use the provided apps
+    component.sortChanged({ active: 'application', direction: 'asc' }, newApps);
+
+    expect(component.dataSource).toHaveLength(1);
+    expect(component.dataSource[0].name).toBe('new-app');
+  });
 });

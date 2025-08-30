@@ -53,16 +53,19 @@
         {{ 'Import Zvols' | translate }}
       </button>
     </div>
-    <div>
-      <ix-upload-iso (uploaded)="onImageUploaded()"></ix-upload-iso>
-      <button
-        mat-button
-        [ixTest]="['import-iso']"
-        (click)="importIso()"
-      >
-        <ix-icon name="mdi-database"></ix-icon>
-        {{ 'Import ISO' | translate }}
-      </button>
-    </div>
+
+    @if (options().showIsoManagement) {
+      <div>
+        <ix-upload-iso (uploaded)="onImageUploaded()"></ix-upload-iso>
+        <button
+          mat-button
+          [ixTest]="['import-iso']"
+          (click)="importIso()"
+        >
+          <ix-icon name="mdi-database"></ix-icon>
+          {{ 'Import ISO' | translate }}
+        </button>
+      </div>
+    }
   </div>
 </mat-dialog-content>

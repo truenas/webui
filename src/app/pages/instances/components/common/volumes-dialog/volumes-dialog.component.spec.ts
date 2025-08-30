@@ -16,6 +16,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { IxImportIsoDialogComponent } from 'app/pages/instances/components/common/volumes-dialog/import-iso-dialog/import-iso-dialog.component';
 import {
   ImportZvolsDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/import-zvol-dialog/import-zvols-dialog.component';
@@ -100,10 +101,10 @@ describe('VolumesDialogComponent', () => {
       ]);
     });
 
-    it('allows ISO to be uploaded', () => {
+    it('does not show ISO upload when showIsoManagement is false by default', () => {
       const uploadButton = spectator.query(UploadIsoButtonComponent);
 
-      expect(uploadButton).toBeTruthy();
+      expect(uploadButton).toBeFalsy();
     });
 
     it('allows volume to be removed', async () => {
@@ -159,6 +160,65 @@ describe('VolumesDialogComponent', () => {
       await selectButton.click();
 
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(volumes[0]);
+    });
+  });
+
+  describe('showIsoManagement visibility', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: { showIsoManagement: false },
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('hides ISO management controls when showIsoManagement is false', async () => {
+      const uploadButton = spectator.query(UploadIsoButtonComponent);
+      expect(uploadButton).toBeFalsy();
+
+      const importButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Import ISO' }));
+      expect(importButtons).toHaveLength(0);
+    });
+  });
+
+  describe('showIsoManagement enabled', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: { showIsoManagement: true },
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('shows ISO management controls when showIsoManagement is true', async () => {
+      const uploadButton = spectator.query(UploadIsoButtonComponent);
+      expect(uploadButton).toBeTruthy();
+
+      const importButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Import ISO' }));
+      expect(importButtons).toHaveLength(1);
+    });
+
+    it('allows ISO import when showIsoManagement is true', async () => {
+      const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import ISO' }));
+      await importButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+        IxImportIsoDialogComponent,
+        expect.objectContaining({
+          minWidth: '500px',
+          data: {
+            config: undefined,
+          },
+        }),
+      );
     });
   });
 });

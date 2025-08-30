@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 
 export enum ImageOs {
   Linux = 'Linux',
@@ -36,21 +35,6 @@ export const diskIoBusLabels = new Map<DiskIoBus, string>([
   [DiskIoBus.VirtioBlk, 'Virtio-BLK'],
   [DiskIoBus.VirtioScsi, 'Virtio-SCSI'],
 ]);
-
-export const virtualizationTypeIcons = [
-  {
-    value: VirtualizationType.Container,
-    icon: iconMarker('mdi-linux'),
-    label: T('Container'),
-    description: T('Linux Only'),
-  },
-  {
-    value: VirtualizationType.Vm,
-    icon: iconMarker('mdi-laptop'),
-    label: T('VM'),
-    description: T('Any OS'),
-  },
-];
 
 export enum VirtualizationStatus {
   Running = 'RUNNING',

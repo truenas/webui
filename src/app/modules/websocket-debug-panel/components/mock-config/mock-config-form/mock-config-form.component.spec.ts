@@ -24,6 +24,7 @@ describe('MockConfigFormComponent', () => {
     methodName: 'test.method',
     messagePattern: 'test pattern',
     response: {
+      type: 'success',
       result: { success: true },
       delay: 500,
     },
@@ -62,7 +63,11 @@ describe('MockConfigFormComponent', () => {
       expect(spectator.component['form'].value).toEqual({
         methodName: '',
         messagePattern: '',
+        responseType: 'success',
         responseResult: '',
+        errorCode: 0,
+        errorMessage: '',
+        errorData: '',
         responseDelay: 0,
         events: [],
       });
@@ -75,7 +80,11 @@ describe('MockConfigFormComponent', () => {
       expect(spectator.component['form'].value).toEqual({
         methodName: 'test.method',
         messagePattern: 'test pattern',
+        responseType: 'success',
         responseResult: '{\n  "success": true\n}',
+        errorCode: 0,
+        errorMessage: '',
+        errorData: '',
         responseDelay: 500,
         events: [
           {
@@ -96,6 +105,7 @@ describe('MockConfigFormComponent', () => {
         enabled: false,
         methodName: 'minimal.method',
         response: {
+          type: 'success',
           result: null,
         },
       };
@@ -106,7 +116,11 @@ describe('MockConfigFormComponent', () => {
       expect(spectator.component['form'].value).toEqual({
         methodName: 'minimal.method',
         messagePattern: '',
+        responseType: 'success',
         responseResult: '',
+        errorCode: 0,
+        errorMessage: '',
+        errorData: '',
         responseDelay: 0,
         events: [],
       });
@@ -136,6 +150,7 @@ describe('MockConfigFormComponent', () => {
         methodName: 'new.method',
         messagePattern: 'new pattern',
         response: {
+          type: 'success',
           result: { newResult: true },
           delay: 1000,
         },

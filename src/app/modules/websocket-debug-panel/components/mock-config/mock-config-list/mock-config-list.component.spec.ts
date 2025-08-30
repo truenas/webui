@@ -17,13 +17,13 @@ describe('MockConfigListComponent', () => {
       enabled: true,
       methodName: 'test.method1',
       messagePattern: 'pattern1',
-      response: { result: { success: true }, delay: 100 },
+      response: { type: 'success', result: { success: true }, delay: 100 },
     },
     {
       id: 'config-2',
       enabled: false,
       methodName: 'test.method2',
-      response: { result: null },
+      response: { type: 'success', result: null },
       events: [
         {
           delay: 1000,
@@ -98,7 +98,7 @@ describe('MockConfigListComponent', () => {
         id: 'config-3',
         enabled: true,
         methodName: 'test.method3',
-        response: { result: {} },
+        response: { type: 'success', result: {} },
       };
       expect(spectator.component['getConfigDescription'](configWithoutPattern))
         .toBe('{}');
@@ -156,7 +156,7 @@ describe('MockConfigListComponent', () => {
         id: 'new-config',
         enabled: true,
         methodName: 'new.method',
-        response: { result: {} },
+        response: { type: 'success', result: {} },
       };
 
       spectator.component['onFormSubmit'](newConfig);
@@ -197,13 +197,13 @@ describe('MockConfigListComponent', () => {
           id: 'imported-1',
           enabled: true,
           methodName: 'imported.method1',
-          response: { result: {} },
+          response: { type: 'success', result: {} },
         },
         {
           id: 'imported-2',
           enabled: false,
           methodName: 'imported.method2',
-          response: { result: {} },
+          response: { type: 'success', result: {} },
         },
       ];
 

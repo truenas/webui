@@ -19,14 +19,14 @@ describe('WebSocketDebugEffects', () => {
       id: 'config-1',
       enabled: true,
       methodName: 'test.method',
-      response: { result: { success: true } },
+      response: { type: 'success', result: { success: true } },
     },
     {
       id: 'config-2',
       enabled: false,
       methodName: 'another.method',
       messagePattern: 'pattern',
-      response: { result: null, delay: 1000 },
+      response: { type: 'success', result: null, delay: 1000 },
     },
   ];
 
@@ -158,7 +158,7 @@ describe('WebSocketDebugEffects', () => {
           id: 'new-config',
           enabled: true,
           methodName: 'new.method',
-          response: { result: {} },
+          response: { type: 'success', result: {} },
         },
       });
 

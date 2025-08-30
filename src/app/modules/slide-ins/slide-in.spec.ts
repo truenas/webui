@@ -35,6 +35,12 @@ describe('SlideIn Service', () => {
   });
 
   beforeEach(() => {
+    // Mock requestAnimationFrame to execute immediately in tests
+    jest.spyOn(global, 'requestAnimationFrame').mockImplementation((callback) => {
+      callback(0);
+      return 0;
+    });
+
     containerRefMock = {
       instance: {
         detachPortal: jest.fn(),
@@ -60,6 +66,11 @@ describe('SlideIn Service', () => {
     }) as OverlayPositionBuilder);
   });
 
+  afterEach(() => {
+    // Restore the original requestAnimationFrame
+    jest.restoreAllMocks();
+  });
+
   it('should open SlideInContainerComponent and render MockSlideInComponent inside it', () => {
     spectator.service.open(MockSlideInComponent).subscribe({
       complete: () => {
@@ -72,6 +83,7 @@ describe('SlideIn Service', () => {
         component: SlideInContainerComponent,
       }),
     );
+
     expect(containerRefMock.instance.attachPortal).toHaveBeenCalledWith(
       expect.objectContaining({
         component: MockSlideInComponent,
@@ -79,20 +91,16 @@ describe('SlideIn Service', () => {
     );
   });
 
-  // eslint-disable-next-line jest/no-done-callback
-  it('should close slide-in when close method is called', (done) => {
+  it('should close slide-in when close method is called', () => {
     const injectorCreateSpy = jest.spyOn(Injector, 'create');
+    let responseReceived = false;
     spectator.service.open(MockSlideInComponent).subscribe({
       next: (response) => {
-        try {
-          expect(response.response).toBe('test');
-
-          done();
-        } catch (err) {
-          done(err);
-        }
+        expect(response.response).toBe('test');
+        responseReceived = true;
       },
     });
+
     const injectorArgs = injectorCreateSpy.mock.calls[0][0];
     const slideInRef = (
       (injectorArgs.providers.find(
@@ -103,24 +111,22 @@ describe('SlideIn Service', () => {
     slideInRef.close({ response: 'test' });
     whenHidden$.next();
     whenVisible$.next();
+
     expect(overlayRefMock.dispose).toHaveBeenCalled();
     expect(spectator.service.openSlideIns()).toBe(0);
+    expect(responseReceived).toBe(true);
   });
 
-  // eslint-disable-next-line jest/no-done-callback
-  it('should swap slide-in when swap method is called and respond to the same observable', (done) => {
+  it('should swap slide-in when swap method is called and respond to the same observable', () => {
     const injectorCreateSpy = jest.spyOn(Injector, 'create');
+    let responseReceived = false;
     spectator.service.open(MockSlideInComponent).subscribe({
       next: (response) => {
-        try {
-          expect(response.response).toBe('test2');
-
-          done();
-        } catch (err) {
-          done(err);
-        }
+        expect(response.response).toBe('test2');
+        responseReceived = true;
       },
     });
+
     const injectorArgs = injectorCreateSpy.mock.calls[0][0];
     const slideInRef = (
       (injectorArgs.providers.find(
@@ -133,9 +139,11 @@ describe('SlideIn Service', () => {
     slideInRef.close({ response: 'test2' });
     whenHidden$.next();
     whenVisible$.next();
+
     expect(containerRefMock.instance.attachPortal).toHaveBeenCalled();
     expect(overlayRefMock.dispose).toHaveBeenCalled();
     expect(spectator.service.openSlideIns()).toBe(0);
+    expect(responseReceived).toBe(true);
   });
 
   describe('debug panel integration', () => {

@@ -2,8 +2,10 @@ export enum ApiErrorName {
   NotAuthenticated = 'ENOTAUTHENTICATED',
   NoAccess = 'EACCES',
   NoMemory = 'ENOMEM',
+  NoNetwork = 'ENONET',
   AlreadyExists = 'EEXIST',
   Again = 'EAGAIN',
+  Fault = 'EFAULT',
   Validation = 'EINVAL',
 }
 
