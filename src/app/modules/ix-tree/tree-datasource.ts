@@ -26,6 +26,10 @@ export class TreeDataSource<T, F, K = F> extends DataSource<F> {
     this.flatNodes();
   }
 
+  get filteredData(): T[] {
+    return this._filteredData.value;
+  }
+
   private flatNodes(): void {
     this._flattenedData.next(this.treeFlattener.flattenNodes(
       this.filterValue ? this._filteredData.value : this.data,

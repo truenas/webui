@@ -10,7 +10,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
@@ -51,7 +51,7 @@ describe('DeviceListComponent', () => {
     component: DeviceListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
-      SearchInput1Component,
+      BasicSearchComponent,
       IxTableDetailsRowDirective,
       IxTableCellDirective,
     ],

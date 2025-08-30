@@ -13,7 +13,7 @@
 
 @if (pool) {
   @let selectedNode = selectedNode$ | async;
-  @let showDetails = !masterList.filterString || selectedNode.disk.toLowerCase().includes(masterList.filterString.toLowerCase());
+  @let showDetails = !masterList.searchQuery() || selectedNode.disk.toLowerCase().includes(masterList.searchQuery().toLowerCase());
 
   <ix-master-detail-view
     #masterDetailView="masterDetailViewContext"

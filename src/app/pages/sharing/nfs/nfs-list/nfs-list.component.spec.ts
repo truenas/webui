@@ -10,7 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTableColumnsSelectorComponent,
@@ -49,7 +49,7 @@ describe('NfsListComponent', () => {
   const createComponent = createComponentFactory({
     component: NfsListComponent,
     imports: [
-      SearchInput1Component,
+      BasicSearchComponent,
       IxTableColumnsSelectorComponent,
       FakeProgressBarComponent,
     ],

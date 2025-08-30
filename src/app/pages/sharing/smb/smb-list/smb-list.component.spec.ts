@@ -16,7 +16,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTableColumnsSelectorComponent,
@@ -59,7 +59,7 @@ describe('SmbListComponent', () => {
   const createComponent = createComponentFactory({
     component: SmbListComponent,
     imports: [
-      SearchInput1Component,
+      BasicSearchComponent,
       IxTableColumnsSelectorComponent,
       FakeProgressBarComponent,
     ],

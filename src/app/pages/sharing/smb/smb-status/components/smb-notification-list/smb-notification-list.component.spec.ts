@@ -6,7 +6,7 @@ import { createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { SmbNotificationInfo } from 'app/interfaces/smb-status.interface';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTableColumnsSelectorComponent,
@@ -35,7 +35,7 @@ describe('SmbNotificationListComponent', () => {
   const createComponent = createComponentFactory({
     component: SmbNotificationListComponent,
     imports: [
-      SearchInput1Component,
+      BasicSearchComponent,
       IxTableColumnsSelectorComponent,
     ],
     providers: [

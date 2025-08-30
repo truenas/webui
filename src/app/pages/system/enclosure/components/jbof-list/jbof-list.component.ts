@@ -14,7 +14,7 @@ import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interfa
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -41,7 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -68,7 +68,7 @@ export class JbofListComponent implements OnInit {
   protected readonly requiredRoles = [Role.JbofWrite];
   protected readonly searchableElements = jbofListElements;
 
-  filterString = '';
+  searchQuery = signal('');
   jbofs: Jbof[] = [];
   protected canAddJbof = signal(false);
 
@@ -118,7 +118,7 @@ export class JbofListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider(request$);
     this.getJbofs();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -169,7 +169,7 @@ export class JbofListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['mgmt_username', 'description'] });
   }
 }

@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,7 +16,7 @@ import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.in
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -55,7 +55,7 @@ import { TaskService } from 'app/services/task.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
     MatButton,
     TestDirective,
     RouterLink,
@@ -90,7 +90,7 @@ export class SnapshotTaskListComponent implements OnInit {
   protected readonly searchableElements = snapshotTaskListElements;
 
   snapshotTasks: PeriodicSnapshotTaskUi[] = [];
-  filterString = '';
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
   protected readonly emptyConfig = snapshotTaskEmptyConfig;
   protected readonly EmptyType = EmptyType;
@@ -178,7 +178,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   constructor() {
-    this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
+    this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
   }
 
   ngOnInit(): void {
@@ -193,10 +193,10 @@ export class SnapshotTaskListComponent implements OnInit {
 
     this.getSnapshotTasks();
 
-    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.onListFiltered(this.filterString));
+    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.onListFiltered(this.searchQuery()));
 
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -211,7 +211,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.snapshotTasks, query, columnKeys: ['dataset', 'naming_schema'] });
   }
 

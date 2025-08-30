@@ -76,13 +76,17 @@ export class ZfsInfoCardComponent {
   readonly isMirror = computed(() => this.topologyItem().type === TopologyItemType.Mirror);
   readonly isRaidz = computed(() => raidzItems.includes(this.topologyItem().type));
 
-  readonly isRaidzParent = computed(() => raidzItems.includes(this.topologyParentItem().type));
+  readonly isRaidzParent = computed(() => {
+    const parent = this.topologyParentItem();
+    return parent && raidzItems.includes(parent.type);
+  });
 
   readonly isDraidOrMirrorParent = computed(() => {
-    return [
+    const parent = this.topologyParentItem();
+    return parent && [
       TopologyItemType.Mirror,
       TopologyItemType.Draid,
-    ].includes(this.topologyParentItem().type);
+    ].includes(parent.type);
   });
 
   readonly isDisk = computed(() => isTopologyDisk(this.topologyItem()));

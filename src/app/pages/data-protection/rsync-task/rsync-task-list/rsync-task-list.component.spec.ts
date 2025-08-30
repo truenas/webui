@@ -13,7 +13,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTableColumnsSelectorComponent,
@@ -82,7 +82,7 @@ describe('RsyncTaskListComponent', () => {
     component: RsyncTaskListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
-      SearchInput1Component,
+      BasicSearchComponent,
       IxTableColumnsSelectorComponent,
     ],
     providers: [

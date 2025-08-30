@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -10,7 +10,7 @@ import { Role } from 'app/enums/role.enum';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -38,7 +38,7 @@ import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-ce
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -66,7 +66,7 @@ export class VmwareSnapshotListComponent implements OnInit {
   protected readonly searchableElements = vmwareSnapshotListElements;
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
 
-  filterString = '';
+  searchQuery = signal('');
 
   protected snapshots: VmwareSnapshot[] = [];
   dataProvider: AsyncDataProvider<VmwareSnapshot>;
@@ -104,12 +104,12 @@ export class VmwareSnapshotListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<VmwareSnapshot>(snapshots$);
     this.getSnapshotsData();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.searchQuery());
     });
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['hostname', 'datastore', 'filesystem', 'username'] });
   }
 

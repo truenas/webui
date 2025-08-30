@@ -64,7 +64,6 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected readonly searchableElements = acmeDnsAuthenticatorListElements;
 
-  filterString = '';
   dataProvider: AsyncDataProvider<DnsAuthenticator>;
   authenticators: DnsAuthenticator[] = [];
   columns = createTable<DnsAuthenticator>([

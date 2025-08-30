@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, OnInit, output, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -12,7 +12,7 @@ import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -41,7 +41,7 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/
     MatCard,
     FakeProgressBarComponent,
     MatToolbarRow,
-    SearchInput1Component,
+    BasicSearchComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -77,7 +77,7 @@ export class TargetListComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  filterString = '';
+  searchQuery = signal('');
 
   columns = createTable<IscsiTarget>([
     textColumn({
@@ -127,7 +127,7 @@ export class TargetListComponent implements OnInit {
     this.setDefaultSort();
     this.dataProvider().load();
     this.dataProvider().emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -162,7 +162,7 @@ export class TargetListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query;
+    this.searchQuery.set(query);
     this.dataProvider().setFilter({ query, columnKeys: ['name'] });
   }
 }

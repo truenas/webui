@@ -1,5 +1,4 @@
-import { Injectable, inject } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { Injectable } from '@angular/core';
 import {
   errorsConfig, loadingConfig, noItemsConfig, noSearchResultsConfig,
 } from 'app/constants/empty-configs';
@@ -10,9 +9,6 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
   providedIn: 'root',
 })
 export class EmptyService {
-  private translate = inject(TranslateService);
-
-
   defaultEmptyConfig(type?: EmptyType | null): EmptyConfig {
     switch (type) {
       case EmptyType.Loading:

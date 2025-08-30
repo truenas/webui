@@ -82,6 +82,8 @@ export class NvmeOfComponent implements OnInit {
       propertyName: 'name',
     });
 
+    this.dataProvider.setEmptyType(EmptyType.NoPageData);
+
     effect(() => {
       const subsystems = this.subsystems();
       const isLoading = this.isLoading();

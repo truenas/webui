@@ -21,7 +21,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTableColumnsSelectorComponent,
@@ -118,7 +118,7 @@ describe('ReplicationListComponent', () => {
     component: ReplicationListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
-      SearchInput1Component,
+      BasicSearchComponent,
       IxTableDetailsRowDirective,
       IxTableDetailsRowComponent,
       IxTableColumnsSelectorComponent,

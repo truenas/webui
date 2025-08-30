@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -12,7 +12,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
@@ -49,7 +49,7 @@ import { jobsListElements } from 'app/pages/jobs/jobs-list.elements';
     PageHeaderComponent,
     MatButtonToggleGroup,
     MatButtonToggle,
-    SearchInput1Component,
+    BasicSearchComponent,
     IxTableComponent,
     UiSearchDirective,
     IxTableEmptyDirective,
@@ -76,7 +76,7 @@ export class JobsListComponent implements OnInit {
   protected readonly error$ = this.store$.select(selectJobState).pipe(map((state) => state.error));
   protected jobs: Job[] = [];
   protected dataProvider = new ArrayDataProvider<Job>();
-  protected filterString = '';
+  protected searchQuery = signal('');
   protected selectedIndex: JobTab = 0;
   private selector$ = new BehaviorSubject<typeof selectAllNonTransientJobs>(selectAllNonTransientJobs);
   protected selectedJobs$ = this.selector$.pipe(switchMap((selector) => this.store$.select(selector)));
@@ -129,7 +129,7 @@ export class JobsListComponent implements OnInit {
   ngOnInit(): void {
     this.selectedJobs$.pipe(untilDestroyed(this)).subscribe((jobs) => {
       this.jobs = jobs;
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.searchQuery());
       this.setDefaultSort();
       this.cdr.markForCheck();
     });
@@ -152,7 +152,7 @@ export class JobsListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.jobs, query, columnKeys: ['method', 'description'] });
   }
 

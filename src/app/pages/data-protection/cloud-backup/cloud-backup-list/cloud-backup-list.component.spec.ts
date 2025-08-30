@@ -11,7 +11,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
@@ -64,7 +64,7 @@ describe('CloudBackupListComponent', () => {
   const createComponent = createComponentFactory({
     component: CloudBackupListComponent,
     imports: [
-      SearchInput1Component,
+      BasicSearchComponent,
     ],
     providers: [
       mockAuth(),

@@ -10,7 +10,7 @@ import {
   NvmeOfSubsystemDetails,
 } from 'app/interfaces/nvme-of.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -57,7 +57,7 @@ describe('SubsystemsListComponent', () => {
     component: SubsystemsListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
-      SearchInput1Component,
+      BasicSearchComponent,
     ],
     providers: [
       mockProvider(EmptyService),

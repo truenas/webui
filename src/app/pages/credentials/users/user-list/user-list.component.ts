@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
@@ -14,7 +14,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -45,7 +45,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SearchInput1Component,
+    BasicSearchComponent,
     MatSlideToggle,
     TestDirective,
     UiSearchDirective,
@@ -124,7 +124,7 @@ export class OldUserListComponent implements OnInit {
   );
 
   hideBuiltinUsers = true;
-  filterString = '';
+  searchQuery = signal('');
   users: User[] = [];
 
   protected get emptyConfigService(): EmptyService {
@@ -155,7 +155,7 @@ export class OldUserListComponent implements OnInit {
     ).subscribe({
       next: (users) => {
         this.users = users;
-        this.onListFiltered(this.filterString);
+        this.onListFiltered(this.searchQuery());
       },
       error: () => {
         this.users = [];
@@ -177,7 +177,7 @@ export class OldUserListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.users, query, columnKeys: ['username', 'full_name', 'uid'] });
   }
 

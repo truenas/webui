@@ -8,7 +8,7 @@ import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -50,7 +50,7 @@ describe('GroupListComponent', () => {
     component: GroupListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
-      SearchInput1Component,
+      BasicSearchComponent,
       IxTableDetailsRowDirective,
     ],
     declarations: [

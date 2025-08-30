@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -12,7 +12,7 @@ import { Role } from 'app/enums/role.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -49,7 +49,7 @@ export interface ContainerImageUi extends ContainerImage {
   imports: [
     TranslateModule,
     PageHeaderComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
     MatButton,
     RequiresRolesDirective,
     TestDirective,
@@ -76,7 +76,7 @@ export class DockerImagesListComponent implements OnInit {
 
   dataProvider: AsyncDataProvider<ContainerImageUi>;
   containerImages: ContainerImageUi[] = [];
-  filterString = '';
+  searchQuery = signal('');
   columns = createTable<ContainerImageUi>([
     checkboxColumn({
       propertyName: 'selected',
@@ -86,7 +86,7 @@ export class DockerImagesListComponent implements OnInit {
           imageToSelect.selected = checked;
         }
         this.dataProvider.setRows([]);
-        this.onListFiltered(this.filterString);
+        this.onListFiltered(this.searchQuery());
       },
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
@@ -95,7 +95,7 @@ export class DockerImagesListComponent implements OnInit {
         ).subscribe((images) => {
           images.forEach((image) => image.selected = checked);
           this.dataProvider.setRows([]);
-          this.onListFiltered(this.filterString);
+          this.onListFiltered(this.searchQuery());
         });
       },
       cssClass: 'checkboxs-column',
@@ -146,7 +146,7 @@ export class DockerImagesListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider(containerImages$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -164,7 +164,7 @@ export class DockerImagesListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: ['repo_tags'],

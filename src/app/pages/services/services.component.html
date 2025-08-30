@@ -1,9 +1,8 @@
 <ix-page-header>
-  <ix-search-input1
-    [value]="filterString"
-    [disabled]="loading"
-    (search)="onListFiltered($event)"
-  ></ix-search-input1>
+  <ix-basic-search
+    [query]="searchQuery()"
+    (queryChange)="onListFiltered($event)"
+  ></ix-basic-search>
 </ix-page-header>
 
 <mat-card [ixUiSearch]="searchableElements.elements.services">

@@ -16,7 +16,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -73,7 +73,7 @@ describe('InstalledAppsListComponent', () => {
     ],
     declarations: [
       EmptyComponent,
-      SearchInput1Component,
+      BasicSearchComponent,
       MockDeclaration(AppDetailsPanelComponent),
     ],
     providers: [
@@ -141,7 +141,7 @@ describe('InstalledAppsListComponent', () => {
   it('shows an empty list when there are no search results', () => {
     expect(spectator.query(EmptyComponent)).not.toExist();
 
-    spectator.query(SearchInput1Component)!.search.emit('test-app-3');
+    spectator.query(BasicSearchComponent)!.queryChange.emit('test-app-3');
     spectator.detectChanges();
 
     const appRows = spectator.queryAll(AppRowComponent);

@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -12,7 +12,7 @@ import { Role } from 'app/enums/role.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -42,7 +42,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -70,7 +70,7 @@ export class TunableListComponent implements OnInit {
   protected readonly searchableElements = tunableListElements;
 
   dataProvider: AsyncDataProvider<Tunable>;
-  filterString = '';
+  searchQuery = signal('');
   tunables: Tunable[] = [];
   columns = createTable<Tunable>([
     textColumn({
@@ -122,7 +122,7 @@ export class TunableListComponent implements OnInit {
     this.setDefaultSort();
     this.getTunables();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -179,7 +179,7 @@ export class TunableListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: ['var', 'value', 'comment'],

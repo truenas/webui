@@ -1,14 +1,12 @@
 <div class="item-search">
-  <ix-search-input1
-    [maxLength]="100"
-    [disabled]="!cloudBackups().length"
-    [value]="searchQuery()"
-    (search)="onSearch($event)"
-  ></ix-search-input1>
+  <ix-basic-search
+    [query]="searchQuery()"
+    (queryChange)="onListFiltered($event)"
+  ></ix-basic-search>
 </div>
 
 @if (!(dataProvider()?.currentPageCount$ | async) && !(dataProvider().isLoading$ | async)) {
-  <ix-empty [conf]="emptyConfig"></ix-empty>
+  <ix-empty [conf]="emptyConfig()"></ix-empty>
 } @else {
   <ix-table
     class="backups"

@@ -17,7 +17,7 @@ import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-n
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -59,7 +59,7 @@ describe('ServicesComponent', () => {
     imports: [
       FormsModule,
       MockComponent(PageHeaderComponent),
-      SearchInput1Component,
+      BasicSearchComponent,
     ],
     declarations: [
       ServiceStatusCellComponent,
