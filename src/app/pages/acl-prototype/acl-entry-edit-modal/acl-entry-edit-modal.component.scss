@@ -1,0 +1,60 @@
+ix-fieldset {
+  border: 1px solid var(--lines);
+}
+
+.acl-entry-edit-modal {
+  min-width: 500px;
+  width: 100%;
+
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin: 24px 0;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 0 24px;
+
+    .permissions-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
+
+  .required-notice {
+    align-items: center;
+    background-color: var(--mdc-theme-primary-container);
+    border-radius: 4px;
+    color: var(--mdc-theme-on-primary-container);
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+
+    ix-icon {
+      color: var(--mdc-theme-primary);
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding: 16px 24px;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .acl-entry-edit-modal {
+    min-width: unset;
+
+    .modal-actions {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

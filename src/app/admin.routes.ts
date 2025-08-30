@@ -109,6 +109,11 @@ export const adminRoutes: Routes = [
         path: 'containers',
         loadChildren: () => import('app/pages/instances/instances.routes').then((module) => module.instancesRoutes),
       },
+      {
+        path: 'acl-prototype',
+        loadComponent: () => import('./pages/acl-prototype/acl-prototype.component').then((module) => module.AclPrototypeComponent),
+        data: { title: T('POSIX ACL Editor Prototype'), breadcrumb: T('POSIX ACL Editor Prototype') },
+      },
     ],
   },
 ];
