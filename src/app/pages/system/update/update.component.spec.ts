@@ -8,11 +8,12 @@ import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { UpdateCode } from 'app/enums/system-update.enum';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import {
@@ -33,6 +34,8 @@ import {
   UpdateProfileCard,
 } from 'app/pages/system/update/components/update-profile-card/update-profile-card.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ApiCallError } from 'app/services/errors/error.classes';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -111,6 +114,10 @@ describe('UpdateComponent', () => {
       }),
       mockProvider(SystemGeneralService, {
         updateRunningNoticeSent: new EventEmitter<void>(),
+      }),
+      mockProvider(ErrorHandlerService, {
+        showErrorModal: jest.fn(() => of(true)),
+        withErrorHandler: jest.fn(() => (source$: unknown) => source$),
       }),
     ],
   });
@@ -309,6 +316,184 @@ describe('UpdateComponent', () => {
       });
 
       expect(router.navigate).toHaveBeenCalledWith(['/system/update/manualupdate']);
+    });
+  });
+
+  describe('when network activity is disabled', () => {
+    it('shows network activity disabled message', () => {
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('update.status', {
+        code: UpdateCode.NetworkActivityDisabled,
+        error: null,
+        status: null,
+      } as UpdateStatus);
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      const networkDisabledMessage = spectator.query(byText('Network activity has been administratively disabled for update operation. Please use Manual Update.'));
+      expect(networkDisabledMessage).toBeTruthy();
+    });
+
+    it('does not show error field when network activity is disabled', () => {
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('update.status', {
+        code: UpdateCode.NetworkActivityDisabled,
+        error: 'Some error message that should not be shown',
+        status: null,
+      } as UpdateStatus);
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      const errorElement = spectator.query(byText('Some error message that should not be shown'));
+      expect(errorElement).toBeFalsy();
+    });
+  });
+
+  describe('API error handling', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('does not show error dialog for ENONET errors', () => {
+      const api = spectator.inject(ApiService);
+      const errorHandler = spectator.inject(ErrorHandlerService);
+
+      const enonetError = new ApiCallError({
+        code: -32001,
+        message: 'Network error',
+        data: {
+          errname: ApiErrorName.NoNetwork,
+          error: 60,
+          extra: null,
+          reason: 'Network is disabled',
+          trace: null,
+        },
+      });
+
+      // Override the API call to throw an ENONET error for profile_choices
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'update.profile_choices') {
+          return throwError(() => enonetError);
+        }
+        if (method === 'update.status') {
+          return of({
+            code: UpdateCode.Normal,
+            status: null,
+            error: null,
+          } as UpdateStatus);
+        }
+        if (method === 'update.config') {
+          return of(updateConfig);
+        }
+        if (method === 'webui.main.dashboard.sys_info') {
+          return of({ version: '22.12.3' } as SystemInfo);
+        }
+        return throwError(() => new Error(`Unmocked call: ${method}`));
+      });
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      expect(errorHandler.showErrorModal).not.toHaveBeenCalled();
+    });
+
+    it('shows error dialog for other API errors', () => {
+      const api = spectator.inject(ApiService);
+      const errorHandler = spectator.inject(ErrorHandlerService);
+
+      const validationError = new ApiCallError({
+        code: -32001,
+        message: 'Validation error',
+        data: {
+          errname: ApiErrorName.Validation,
+          error: 22,
+          extra: null,
+          reason: 'Invalid parameter',
+          trace: null,
+        },
+      });
+
+      // Override the API call to throw an error for profile_choices
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'update.profile_choices') {
+          return throwError(() => validationError);
+        }
+        if (method === 'update.status') {
+          return of({
+            code: UpdateCode.Normal,
+            status: null,
+            error: null,
+          } as UpdateStatus);
+        }
+        if (method === 'update.config') {
+          return of(updateConfig);
+        }
+        if (method === 'webui.main.dashboard.sys_info') {
+          return of({ version: '22.12.3' } as SystemInfo);
+        }
+        return throwError(() => new Error(`Unmocked call: ${method}`));
+      });
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      expect(errorHandler.showErrorModal).toHaveBeenCalledWith(validationError);
+    });
+
+    it('handles multiple API errors correctly', () => {
+      const api = spectator.inject(ApiService);
+      const errorHandler = spectator.inject(ErrorHandlerService);
+
+      const enonetError = new ApiCallError({
+        code: -32001,
+        message: 'Network error',
+        data: {
+          errname: ApiErrorName.NoNetwork,
+          error: 60,
+          extra: null,
+          reason: 'Network is disabled',
+          trace: null,
+        },
+      });
+
+      const validationError = new ApiCallError({
+        code: -32001,
+        message: 'Validation error',
+        data: {
+          errname: ApiErrorName.Validation,
+          error: 22,
+          extra: null,
+          reason: 'Invalid parameter',
+          trace: null,
+        },
+      });
+
+      // Override the API call to throw different errors
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'update.profile_choices') {
+          return throwError(() => enonetError);
+        }
+        if (method === 'update.status') {
+          return throwError(() => validationError);
+        }
+        if (method === 'update.config') {
+          return of(updateConfig);
+        }
+        if (method === 'webui.main.dashboard.sys_info') {
+          return of({ version: '22.12.3' } as SystemInfo);
+        }
+        return throwError(() => new Error(`Unmocked call: ${method}`));
+      });
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      // ENONET error should not trigger error dialog
+      // Validation error should trigger error dialog
+      expect(errorHandler.showErrorModal).toHaveBeenCalledTimes(1);
+      expect(errorHandler.showErrorModal).toHaveBeenCalledWith(validationError);
     });
   });
 });

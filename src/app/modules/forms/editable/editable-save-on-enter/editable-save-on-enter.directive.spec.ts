@@ -18,6 +18,9 @@ describe('EditableSaveOnEnterDirective', () => {
   });
 
   beforeEach(async () => {
+    // Mock scrollIntoView since it's not available in test environment
+    Element.prototype.scrollIntoView = jest.fn();
+
     spectator = createHost(
       `
       <ix-editable>
@@ -38,7 +41,9 @@ describe('EditableSaveOnEnterDirective', () => {
 
     await editableHarness.open();
 
-    spectator.keyboard.pressEnter('input');
+    const input = spectator.query('input') as HTMLInputElement;
+    const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+    input.dispatchEvent(enterEvent);
 
     expect(spectator.component.tryToClose).toHaveBeenCalled();
   });

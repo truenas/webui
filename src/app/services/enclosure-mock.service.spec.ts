@@ -4,6 +4,7 @@ import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/moc
 import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
 import { MockEnclosureGenerator } from 'app/core/testing/mock-enclosure/mock-enclosure-generator.utils';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
+import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import {
   addMockConfig,
   deleteMockConfig,
@@ -92,6 +93,7 @@ describe('EnclosureMockService', () => {
             enabled: true,
             methodName: 'webui.enclosure.dashboard',
             response: {
+              type: 'success',
               result: [{ id: 'test-enclosure' }],
             },
           },
@@ -105,6 +107,7 @@ describe('EnclosureMockService', () => {
             enabled: true,
             methodName: 'truenas.is_ix_hardware',
             response: {
+              type: 'success',
               result: true,
             },
           },
@@ -115,12 +118,12 @@ describe('EnclosureMockService', () => {
     it('should dispatch updateMockConfig when configs already exist', () => {
       jest.clearAllMocks();
 
-      const existingConfigs = [
+      const existingConfigs: MockConfig[] = [
         {
-          id: 'enclosure-mock-dashboard', enabled: false, methodName: 'webui.enclosure.dashboard', response: { result: [] as unknown[] },
+          id: 'enclosure-mock-dashboard', enabled: false, methodName: 'webui.enclosure.dashboard', response: { type: 'success' as const, result: [] as unknown[] },
         },
         {
-          id: 'enclosure-mock-is-ix-hardware', enabled: false, methodName: 'truenas.is_ix_hardware', response: { result: false },
+          id: 'enclosure-mock-is-ix-hardware', enabled: false, methodName: 'truenas.is_ix_hardware', response: { type: 'success' as const, result: false },
         },
       ];
 

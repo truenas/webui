@@ -77,6 +77,10 @@ export class InstanceListComponent {
       .filter((instance) => !!instance);
   }
 
+  get hasCheckedInstances(): boolean {
+    return this.checkedInstances.length > 0;
+  }
+
   readonly isSelectedInstanceVisible = computed(() => {
     return this.filteredInstances()?.some((instance) => instance.id === this.selectedInstance()?.id);
   });

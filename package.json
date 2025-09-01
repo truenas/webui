@@ -35,7 +35,7 @@
     "auth-url": "tsx ./scripts/playwright-helpers/generate-token.ts",
     "validate-translations": "node scripts/validate_translations.js",
     "check-sentry": "node -e \"const t = process.env.SENTRY_AUTH_TOKEN; console.log(t ? t.slice(-4) : 'SENTRY_AUTH_TOKEN is missing')\"",
-    "sentry:sourcemaps": "export SENTRY_ALLOW_FAILURE=\"true\" && sentry-cli sourcemaps inject --org ixsystems --project webui-scale ./dist && sentry-cli --url https://sentry.ixsystems.com/ sourcemaps upload --org ixsystems --project webui-scale ./dist"
+    "sentry:sourcemaps": "SENTRY_ALLOW_FAILURE=\"true\" sentry-cli sourcemaps inject --org ixsystems --project webui-scale ./dist && SENTRY_ALLOW_FAILURE=\"true\" sentry-cli --url https://sentry.ixsystems.com/ sourcemaps upload --org ixsystems --project webui-scale ./dist"
   },
   "repository": {
     "type": "git",
@@ -48,6 +48,9 @@
     "node": ">=22.17.1"
   },
   "private": true,
+  "resolutions": {
+    "mermaid": "^11.10.1"
+  },
   "dependencies": {
     "@angular-devkit/core": "~20.1.6",
     "@angular/animations": "~20.1.6",
@@ -216,8 +219,15 @@
     ],
     "*.scss": "stylelint --fix"
   },
-  "devDependencies": {},
   "optionalDependencies": {
     "lmdb": "^3.3.0"
+  },
+  "packageManager": "yarn@4.9.2",
+  "devDependencies": {
+    "@angular-eslint/template-parser": "~20.2.0",
+    "@markuplint/ml-core": "~4.13.1",
+    "@typescript-eslint/types": "~8.41.0",
+    "@typescript-eslint/utils": "~8.41.0",
+    "prettier": "~3.6.2"
   }
 }

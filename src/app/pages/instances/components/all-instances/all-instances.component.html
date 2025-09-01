@@ -27,6 +27,7 @@
     @if (instance) {
       <ix-instance-details
         [instance]="instance"
+        [class.detail-disabled]="masterList.hasCheckedInstances"
       ></ix-instance-details>
     }
   </ng-container>

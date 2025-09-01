@@ -40,6 +40,7 @@ describe('AllInstancesHeaderComponent', () => {
     providers: [
       mockProvider(VirtualizationInstancesStore, {
         initialize: jest.fn(),
+        instances: signal([]),
       }),
       mockProvider(VirtualizationConfigStore, storeMock),
       mockProvider(SlideIn, {

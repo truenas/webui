@@ -602,7 +602,7 @@
   "Add Widget": "위젯 추가",
   "Add Zvol": "ZVOL 추가",
   "Adding, removing, or changing hardware components.": "하드웨어 구성요소를 추가하거나, 제거하거나, 변경합니다.",
-  "Additional      <a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "불러들일 추가적인 <a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" target=\"_blank\">rsync(1)</a> 선택사항입니다. <code>Enter</code>키를 눌러 항목을 구분합니다.<br />참고: \"*\" 문자는 반드시 역슬래시를 붙이거나(\\*.txt) 작은 따옴표로 감싸야('*.txt') 합니다.",
+  "Additional      <a href=\"https://download.samba.org/pub/rsync/rsync.1\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "불러들일 추가적인 <a href=\"https://download.samba.org/pub/rsync/rsync.1\" target=\"_blank\">rsync(1)</a> 선택사항입니다. <code>Enter</code>키를 눌러 항목을 구분합니다.<br />참고: \"*\" 문자는 반드시 역슬래시를 붙이거나(\\*.txt) 작은 따옴표로 감싸야('*.txt') 합니다.",
   "Additional Details": "추가적인 세부사항",
   "Additional Domains": "추가 도메인",
   "Additional domains to search. Separate entries by  pressing <code>Enter</code>. Adding search domains can cause slow DNS  lookups.": "검색할 추가 도메인입니다. <code>Enter</code>키를 눌러 항목을 구분합니다. 검색 도메인을 추가하면 DNS 조회가 느려질 수 있습니다.",
