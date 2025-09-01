@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -9,7 +9,7 @@ import { tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -33,7 +33,7 @@ import { SmbOpenFilesComponent } from 'app/pages/sharing/smb/smb-status/componen
   imports: [
     MatCard,
     MatToolbarRow,
-    SearchInput1Component,
+    BasicSearchComponent,
     IxTableColumnsSelectorComponent,
     MatButton,
     TestDirective,
@@ -55,7 +55,7 @@ export class SmbLockListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
 
-  filterString = '';
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<SmbLockInfo>;
   locks: SmbLockInfo[] = [];
   files: SmbOpenInfo[] = [];
@@ -89,8 +89,8 @@ export class SmbLockListComponent implements OnInit {
     const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Locks]).pipe(
       tap((locks: SmbLockInfo[]) => {
         this.locks = locks;
-        if (this.filterString) {
-          this.onListFiltered(this.filterString);
+        if (this.searchQuery()) {
+          this.onListFiltered(this.searchQuery());
         }
       }),
       untilDestroyed(this),
@@ -99,7 +99,7 @@ export class SmbLockListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider(smbStatus$);
     this.loadData();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -108,7 +108,7 @@ export class SmbLockListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query?.toString()?.toLowerCase();
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['filename', 'service_path'] });
   }
 

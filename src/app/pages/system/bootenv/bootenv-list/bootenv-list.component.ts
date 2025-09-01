@@ -17,7 +17,7 @@ import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -63,7 +63,7 @@ interface BootEnvironmentUi extends BootEnvironment {
   ],
   imports: [
     PageHeaderComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -93,7 +93,7 @@ export class BootEnvironmentListComponent implements OnInit {
   protected readonly requiredRoles = [Role.BootEnvWrite];
   protected readonly searchableElements = bootListElements;
   protected dataProvider: AsyncDataProvider<BootEnvironmentUi>;
-  protected readonly filterString = signal('');
+  protected readonly searchQuery = signal('');
   private bootenvs: BootEnvironmentUi[] = [];
 
   columns = createTable<BootEnvironmentUi>([
@@ -105,7 +105,7 @@ export class BootEnvironmentListComponent implements OnInit {
           bootEnvToSelect.selected = checked;
         }
         this.dataProvider.setRows([]);
-        this.onListFiltered(this.filterString());
+        this.onListFiltered(this.searchQuery());
       },
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
@@ -114,7 +114,7 @@ export class BootEnvironmentListComponent implements OnInit {
         ).subscribe((bootEnvs) => {
           bootEnvs.forEach((bootEnv) => bootEnv.selected = checked);
           this.dataProvider.setRows([]);
-          this.onListFiltered(this.filterString());
+          this.onListFiltered(this.searchQuery());
         });
       },
       cssClass: 'checkboxs-column',
@@ -216,7 +216,7 @@ export class BootEnvironmentListComponent implements OnInit {
     this.refresh();
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString());
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -318,7 +318,7 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString.set(query);
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.bootenvs, query, columnKeys: ['id'] });
   }
 

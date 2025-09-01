@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -15,7 +15,7 @@ import { serviceNames } from 'app/enums/service-name.enum';
 import { serviceStatusLabels } from 'app/enums/service-status.enum';
 import { ServiceRow } from 'app/interfaces/service.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
@@ -45,7 +45,7 @@ import { waitForServices } from 'app/store/services/services.selectors';
   styleUrls: ['./services.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SearchInput1Component,
+    BasicSearchComponent,
     MatCard,
     UiSearchDirective,
     IxTableComponent,
@@ -98,7 +98,7 @@ export class ServicesComponent implements OnInit {
   });
 
   dataProvider = new ArrayDataProvider<ServiceRow>();
-  filterString = '';
+  searchQuery = signal('');
   services: ServiceRow[];
   protected readonly serviceStatusLabels = serviceStatusLabels;
 
@@ -123,7 +123,7 @@ export class ServicesComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       list: this.services,
       query,
@@ -148,7 +148,7 @@ export class ServicesComponent implements OnInit {
     ).subscribe({
       next: (services) => {
         this.services = services;
-        this.onListFiltered(this.filterString);
+        this.onListFiltered(this.searchQuery());
         this.loading = false;
         this.error = false;
         this.cdr.markForCheck();
