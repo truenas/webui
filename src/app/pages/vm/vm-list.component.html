@@ -10,7 +10,11 @@
       ></ix-icon>
     </div>
 
-    <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
+    <ix-basic-search
+      [query]="searchQuery()"
+      (queryChange)="onListFiltered($event)"
+    ></ix-basic-search>
+
     <ix-table-columns-selector
       [columnPreferencesKey]="'vmList'"
       [columns]="columns"

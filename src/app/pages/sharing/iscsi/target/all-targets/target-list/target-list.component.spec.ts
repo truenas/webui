@@ -9,7 +9,7 @@ import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
@@ -42,7 +42,7 @@ describe('TargetListComponent', () => {
   const createComponent = createComponentFactory({
     component: TargetListComponent,
     imports: [
-      SearchInput1Component,
+      BasicSearchComponent,
       IxTableColumnsSelectorComponent,
       FakeProgressBarComponent,
     ],

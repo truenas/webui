@@ -178,7 +178,7 @@ $scrollbar-offset: 20px;
   }
 
   .sticky-header {
-    overflow: hidden;
+    overflow: visible;
     position: sticky;
     top: 51px;
     z-index: 1;
@@ -198,6 +198,7 @@ $scrollbar-offset: 20px;
     display: flex;
     flex: 1;
     flex-direction: column;
+    min-height: 100%;
     overflow: auto;
   }
 

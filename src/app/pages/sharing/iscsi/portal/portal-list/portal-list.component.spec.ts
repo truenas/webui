@@ -13,7 +13,7 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTableColumnsSelectorComponent,
@@ -54,7 +54,7 @@ describe('PortalListComponent', () => {
   const createComponent = createRoutingFactory({
     component: PortalListComponent,
     imports: [
-      SearchInput1Component,
+      BasicSearchComponent,
       IxTableColumnsSelectorComponent,
       FakeProgressBarComponent,
     ],

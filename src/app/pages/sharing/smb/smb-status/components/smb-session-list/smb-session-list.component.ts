@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -9,7 +9,7 @@ import { tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbSession } from 'app/interfaces/smb-status.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -30,7 +30,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   imports: [
     MatCard,
     MatToolbarRow,
-    SearchInput1Component,
+    BasicSearchComponent,
     IxTableColumnsSelectorComponent,
     MatButton,
     TestDirective,
@@ -50,7 +50,7 @@ export class SmbSessionListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);
 
-  filterString = '';
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<SmbSession>;
   sessions: SmbSession[] = [];
 
@@ -82,8 +82,8 @@ export class SmbSessionListComponent implements OnInit {
     const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Sessions]).pipe(
       tap((sessions: SmbSession[]) => {
         this.sessions = sessions;
-        if (this.filterString) {
-          this.onListFiltered(this.filterString);
+        if (this.searchQuery()) {
+          this.onListFiltered(this.searchQuery());
         }
       }),
       untilDestroyed(this),
@@ -92,7 +92,7 @@ export class SmbSessionListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<SmbSession>(smbStatus$);
     this.loadData();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -101,7 +101,7 @@ export class SmbSessionListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query?.toString()?.toLowerCase();
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({
       query,
       columnKeys: ['server_id', 'hostname', 'remote_machine', 'username', 'groupname', 'uid', 'gid', 'session_dialect'],
