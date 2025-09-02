@@ -9,7 +9,7 @@ import {
   mockProvider,
 } from '@ngneat/spectator/jest';
 import { of, throwError } from 'rxjs';
-import { TncStatus, TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -277,23 +277,23 @@ describe('TruenasConnectStatusModalComponent', () => {
     expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Connection Failed...');
   });
 
-  it('should display the status as DISABLED', () => {
+  it('should display disabled status as WAITING (shows Get Connected button)', () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Disabled }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').innerHTML).toBe(TncStatus.Disabled);
+    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting, and other features.');
   });
 
-  it('should automatically re-enable service when status is DISABLED', () => {
+  it('should not automatically enable service when dialog opens (removed behavior)', () => {
     // Update the config to disabled state
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Disabled, enabled: false }));
 
     const service = spectator.inject(TruenasConnectService);
     const enableSpy = jest.spyOn(service, 'enableService');
 
-    // Create a new component instance which should trigger ngOnInit
-    spectator.component.ngOnInit();
+    spectator.detectChanges();
 
-    expect(enableSpy).toHaveBeenCalled();
+    // Service should NOT be automatically enabled when dialog opens
+    expect(enableSpy).not.toHaveBeenCalled();
   });
 
   it('should show "Retry Connection" button in failed state and retry process', async () => {
@@ -406,24 +406,24 @@ describe('TruenasConnectStatusModalComponent', () => {
     expect(statusElement?.textContent).toContain('TrueNAS Connect - Status Healthy');
   });
 
-  it('should display disabled status correctly', () => {
+  it('should display disabled status as waiting (no longer shows DISABLED)', () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Disabled }));
     spectator.detectChanges();
 
-    const statusElement = spectator.query('[ixTest="tnc-status"]');
+    // Disabled status now maps to waiting which shows different content
+    const statusElement = spectator.query('[ixTest="tnc-status-reason"]');
     expect(statusElement).toBeTruthy();
-    expect(statusElement?.textContent).toContain('DISABLED');
+    expect(statusElement?.textContent).toContain('Power Up your TrueNAS Experience!');
   });
 
-  it('should not auto-enable service when status is not DISABLED', () => {
+  it('should not auto-enable service when status is configured', () => {
     // Reset config to Configured status
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
 
     const service = spectator.inject(TruenasConnectService);
     const enableSpy = jest.spyOn(service, 'enableService');
 
-    // Call ngOnInit on existing component
-    spectator.component.ngOnInit();
+    spectator.detectChanges();
 
     expect(enableSpy).not.toHaveBeenCalled();
   });
@@ -432,13 +432,13 @@ describe('TruenasConnectStatusModalComponent', () => {
     // Set config to null
     config.set(null);
 
-    // Should not throw error when calling ngOnInit
-    expect(() => spectator.component.ngOnInit()).not.toThrow();
+    // Should not throw error when rendering with null config
+    expect(() => spectator.detectChanges()).not.toThrow();
 
     // Should not call enableService when config is null
     const service = spectator.inject(TruenasConnectService);
     const enableSpy = jest.spyOn(service, 'enableService');
-    spectator.component.ngOnInit();
+    spectator.detectChanges();
     expect(enableSpy).not.toHaveBeenCalled();
   });
 
@@ -446,9 +446,9 @@ describe('TruenasConnectStatusModalComponent', () => {
     config.update((conf) => ({ ...conf, status: undefined as TruenasConnectStatus }));
     spectator.detectChanges();
 
-    // Should display Disabled status in the DOM
-    const statusElement = spectator.query('[ixTest="tnc-status"]');
+    // Undefined status maps to waiting (default case)
+    const statusElement = spectator.query('[ixTest="tnc-status-reason"]');
     expect(statusElement).toBeTruthy();
-    expect(statusElement!.textContent).toContain('DISABLED');
+    expect(statusElement!.textContent).toContain('Power Up your TrueNAS Experience!');
   });
 });
