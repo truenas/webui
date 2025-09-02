@@ -69,6 +69,25 @@ describe('PortFormComponent', () => {
     });
   });
 
+  it('uses default port 4420 when no port is specified', async () => {
+    await form.fillForm({
+      'Transport Type': 'TCP',
+      Address: '10.220.8.1',
+    });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.port.create', [{
+      addr_trtype: NvmeOfTransportType.Tcp,
+      addr_traddr: '10.220.8.1',
+      addr_trsvcid: 4420,
+    }]);
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
+      response: newPort,
+    });
+  });
+
   it('only shows supported transports in the Transport Type select', async () => {
     expect(spectator.inject(NvmeOfService).getSupportedTransports).toHaveBeenCalled();
 
@@ -84,6 +103,31 @@ describe('PortFormComponent', () => {
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.port.transport_address_choices', [NvmeOfTransportType.Rdma]);
+  });
+
+  it('shows empty port field when creating a new port', async () => {
+    const formValues = await form.getValues();
+    expect(formValues).toEqual(expect.objectContaining({
+      Port: '',
+    }));
+  });
+
+  it('applies default only for TCP/RDMA, not for other transport types', async () => {
+    // Test that when submitting with empty port and transport type is RDMA
+    await form.fillForm({
+      'Transport Type': 'RDMA',
+      Address: '10.220.8.1',
+    });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    // Should apply default port 4420 for RDMA
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.port.create', [{
+      addr_trtype: NvmeOfTransportType.Rdma,
+      addr_traddr: '10.220.8.1',
+      addr_trsvcid: 4420,
+    }]);
   });
 
   describe('edits', () => {
@@ -121,6 +165,23 @@ describe('PortFormComponent', () => {
         addr_trtype: NvmeOfTransportType.Tcp,
         addr_traddr: '10.220.8.1',
         addr_trsvcid: 20000,
+      }]);
+    });
+
+    it('applies default port when updating with empty port field', async () => {
+      await form.fillForm({
+        'Transport Type': 'TCP',
+        Port: '',
+        Address: '10.220.8.1',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.port.update', [23, {
+        addr_trtype: NvmeOfTransportType.Tcp,
+        addr_traddr: '10.220.8.1',
+        addr_trsvcid: 4420,
       }]);
     });
   });
