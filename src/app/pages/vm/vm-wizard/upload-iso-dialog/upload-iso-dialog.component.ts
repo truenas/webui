@@ -128,6 +128,7 @@ export class UploadIsoDialogComponent implements OnDestroy {
       if (this.cancelUpload) {
         this.cancelUpload();
         this.cancelUpload = null;
+        this.snackbar.success(this.translate.instant('Upload cancelled'));
       }
       if (this.uploadSubscription) {
         this.uploadSubscription.unsubscribe();
