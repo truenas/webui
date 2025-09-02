@@ -1,18 +1,17 @@
 import { HttpEventType, HttpProgressEvent, HttpResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  catchError, of, tap,
+  catchError, of, Subject, Subscription, takeUntil, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   ExplorerCreateDatasetComponent,
@@ -20,6 +19,7 @@ import {
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -46,7 +46,7 @@ import { UploadService } from 'app/services/upload.service';
     ExplorerCreateDatasetComponent,
   ],
 })
-export class UploadIsoDialogComponent {
+export class UploadIsoDialogComponent implements OnDestroy {
   private formBuilder = inject(FormBuilder);
   private filesystemService = inject(FilesystemService);
   private errorHandler = inject(ErrorHandlerService);
@@ -54,7 +54,7 @@ export class UploadIsoDialogComponent {
   private dialogRef = inject<MatDialogRef<UploadIsoDialogComponent, string | null>>(MatDialogRef);
   private uploadService = inject(UploadService);
   private loader = inject(LoaderService);
-  private dialogService = inject(DialogService);
+  private snackbar = inject(SnackbarService);
 
   form = this.formBuilder.nonNullable.group({
     path: [mntPath],
@@ -65,22 +65,90 @@ export class UploadIsoDialogComponent {
   readonly helptext = helptextVmWizard;
   protected readonly requiredRoles = [Role.VmWrite];
 
+  private destroy$ = new Subject<void>();
+  private uploadSubscription: Subscription | null = null;
+  private loaderCloseSubscription: Subscription | null = null;
+  private cancelUpload: (() => void) | null = null;
+
+  ngOnDestroy(): void {
+    // Cancel any ongoing upload and cleanup when component is destroyed
+    if (this.cancelUpload) {
+      this.cancelUpload();
+      this.cancelUpload = null;
+    }
+    if (this.uploadSubscription) {
+      this.uploadSubscription.unsubscribe();
+      this.uploadSubscription = null;
+    }
+    if (this.loaderCloseSubscription) {
+      this.loaderCloseSubscription.unsubscribe();
+      this.loaderCloseSubscription = null;
+    }
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.loader.close();
+  }
+
   onSubmit(): void {
     const { path, files } = this.form.getRawValue();
     const file = files[0];
     const uploadPath = `${path}/${file.name}`;
 
-    this.loader.open();
+    // Cancel any existing upload before starting new one
+    if (this.cancelUpload) {
+      this.cancelUpload();
+      this.cancelUpload = null;
+    }
+    if (this.uploadSubscription) {
+      this.uploadSubscription.unsubscribe();
+      this.uploadSubscription = null;
+    }
+    if (this.loaderCloseSubscription) {
+      this.loaderCloseSubscription.unsubscribe();
+      this.loaderCloseSubscription = null;
+    }
 
-    this.uploadService.upload({
+    // Ensure loader is closed before starting new upload
+    this.loader.close();
+
+    const loaderClosed$ = this.loader.open();
+
+    const { observable: observable$, cancel } = this.uploadService.upload({
       file,
       method: 'filesystem.put',
       params: [uploadPath, { mode: 493 }],
-    })
+    });
+
+    this.cancelUpload = cancel;
+
+    // Cancel upload if loader is closed manually
+    this.loaderCloseSubscription = loaderClosed$.pipe(
+      takeUntil(this.destroy$),
+    ).subscribe(() => {
+      if (this.cancelUpload) {
+        this.cancelUpload();
+        this.cancelUpload = null;
+      }
+      if (this.uploadSubscription) {
+        this.uploadSubscription.unsubscribe();
+        this.uploadSubscription = null;
+      }
+    });
+
+    this.uploadSubscription = observable$
       .pipe(
         tap((event: HttpProgressEvent) => {
           if (event instanceof HttpResponse) {
+            // Clean up subscriptions before closing loader to avoid triggering cancellation
+            if (this.loaderCloseSubscription) {
+              this.loaderCloseSubscription.unsubscribe();
+              this.loaderCloseSubscription = null;
+            }
             this.loader.close();
+            this.uploadSubscription = null;
+            this.cancelUpload = null;
+            // Show success message and close dialog
+            this.snackbar.success(this.translate.instant('ISO uploaded successfully'));
             this.dialogRef.close(uploadPath);
           }
 
@@ -92,11 +160,23 @@ export class UploadIsoDialogComponent {
           }
         }),
         catchError((error: unknown) => {
+          // Clean up subscriptions before closing loader
+          if (this.loaderCloseSubscription) {
+            this.loaderCloseSubscription.unsubscribe();
+            this.loaderCloseSubscription = null;
+          }
           this.loader.close();
+          this.uploadSubscription = null;
+          this.cancelUpload = null;
+          // Don't show error for aborted requests
+          if (error instanceof DOMException && error.name === 'AbortError') {
+            return of(null);
+          }
+          // Show error modal and keep dialog open for retry
           this.errorHandler.showErrorModal(error);
           return of(error);
         }),
-        untilDestroyed(this),
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }

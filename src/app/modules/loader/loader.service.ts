@@ -36,7 +36,10 @@ export class LoaderService {
       width: '200px',
       height: '200px',
     });
-    this.dialogRef.componentInstance.setTitle(title);
+
+    if (this.dialogRef.componentInstance) {
+      this.dialogRef.componentInstance.setTitle(title);
+    }
     return this.dialogRef.afterClosed();
   }
 
@@ -49,7 +52,7 @@ export class LoaderService {
   }
 
   setTitle(title: string): void {
-    if (!this.dialogRef) {
+    if (!this.dialogRef?.componentInstance) {
       return;
     }
 
