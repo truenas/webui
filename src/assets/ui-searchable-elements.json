@@ -4801,25 +4801,6 @@
       "System",
       "Advanced Settings",
       "Syslog",
-      "Syslog Transport"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "syslog-transport",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Syslog",
       "Include Audit Logs"
     ],
     "synonyms": [],
