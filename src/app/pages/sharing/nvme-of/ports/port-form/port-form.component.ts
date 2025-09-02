@@ -23,6 +23,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 
@@ -72,7 +73,7 @@ export class PortFormComponent implements OnInit {
 
   protected form = this.formBuilder.group({
     addr_trtype: [NvmeOfTransportType.Tcp],
-    addr_trsvcid: [null as number | string, Validators.required],
+    addr_trsvcid: [null as number | string],
     addr_traddr: ['', Validators.required],
   });
 
@@ -92,6 +93,10 @@ export class PortFormComponent implements OnInit {
     return this.form.value.addr_trtype === NvmeOfTransportType.FibreChannel;
   }
 
+  get portPlaceholder(): TranslatedString {
+    return (this.isFibreChannel ? '' : '4420') as TranslatedString;
+  }
+
   ngOnInit(): void {
     const existingPort = this.slideInRef.getData();
 
@@ -106,6 +111,11 @@ export class PortFormComponent implements OnInit {
     this.isLoading.set(true);
 
     const payload = this.form.getRawValue();
+
+    // Use default port 4420 if no port was specified (only for TCP/RDMA, not for Fibre Channel)
+    if (!payload.addr_trsvcid && !this.isFibreChannel) {
+      payload.addr_trsvcid = 4420;
+    }
 
     const request$ = this.isNew()
       ? this.api.call('nvmet.port.create', [payload])

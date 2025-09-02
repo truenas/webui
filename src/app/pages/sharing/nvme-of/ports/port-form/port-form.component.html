@@ -18,7 +18,7 @@
           formControlName="addr_trsvcid"
           [label]="'Port' | translate"
           [type]="isFibreChannel ? 'text' : 'number'"
-          [required]="true"
+          [placeholder]="portPlaceholder"
         ></ix-input>
 
         <ix-select
