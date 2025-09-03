@@ -271,7 +271,7 @@ export class SshConnectionFormComponent implements OnInit {
       };
     }
 
-    return this.api.call('keychaincredential.setup_ssh_connection', [params]).pipe(
+    return this.keychainCredentialService.addSshConnection(params).pipe(
       catchError((error: unknown) => {
         const apiError = extractApiErrorDetails(error);
         if (apiError?.errname?.includes(sslCertificationError) || apiError?.reason?.includes(sslCertificationError)) {
@@ -285,7 +285,7 @@ export class SshConnectionFormComponent implements OnInit {
             switchMap((retry) => {
               if (retry) {
                 params.semi_automatic_setup.verify_ssl = false;
-                return this.api.call('keychaincredential.setup_ssh_connection', [params]);
+                return this.keychainCredentialService.addSshConnection(params);
               }
               return throwError(() => error);
             }),
