@@ -34,6 +34,7 @@ import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -43,6 +44,7 @@ import { KerberosRealmsListComponent } from 'app/pages/directory-service/compone
 import { LeaveDomainDialog } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import { directoryServicesElements } from 'app/pages/directory-service/directory-services.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 
 interface DataCard {
   title: TranslatedString;
@@ -86,6 +88,8 @@ export class DirectoryServicesComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private searchDirectives = inject(UiSearchDirectivesService);
+  private systemGeneralService = inject(SystemGeneralService);
+  private snackbarService = inject(SnackbarService);
 
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = directoryServicesElements;
@@ -367,6 +371,27 @@ export class DirectoryServicesComponent implements OnInit {
       )
       .subscribe(() => {
         this.refreshCards();
+      });
+  }
+
+  protected onRebuildCachePressed(): void {
+    this.dialog
+      .jobDialog(this.systemGeneralService.refreshDirServicesCache())
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: ({ description }) => {
+          this.snackbarService.success(
+            this.translate.instant(description || 'Directory Service cache has been rebuilt.'),
+          );
+        },
+        error: (error: unknown) => {
+          this.dialog.error({
+            title: this.translate.instant('Error'),
+            message: this.translate.instant('Failed to rebuild directory service cache.'),
+          });
+          console.error('Failed to rebuild directory service cache:', error);
+        },
       });
   }
 
