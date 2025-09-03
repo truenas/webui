@@ -57,6 +57,7 @@ describe('SshConnectionFormComponent', () => {
           { id: 1, name: 'key1' },
           { id: 2, name: 'key2' },
         ]),
+        addSshConnection: jest.fn(() => of(existingConnection)),
       }),
       mockProvider(DialogService),
       mockProvider(MatDialogRef),
@@ -155,7 +156,7 @@ describe('SshConnectionFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
+      expect(spectator.inject(KeychainCredentialService).addSshConnection).toHaveBeenCalledWith({
         setup_type: SshConnectionsSetupMethod.Manual,
         connection_name: 'New',
         private_key: {
@@ -169,7 +170,7 @@ describe('SshConnectionFormComponent', () => {
           remote_host_key: 'ssh-rsaNew',
           username: 'john',
         },
-      }]);
+      });
       expect(closeSlideInRef).toHaveBeenCalledWith({ response: existingConnection });
     });
 
@@ -192,7 +193,7 @@ describe('SshConnectionFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
+      expect(spectator.inject(KeychainCredentialService).addSshConnection).toHaveBeenCalledWith({
         connection_name: 'Update',
         setup_type: SshConnectionsSetupMethod.SemiAutomatic,
         private_key: {
@@ -208,7 +209,7 @@ describe('SshConnectionFormComponent', () => {
           admin_username: 'admin',
           sudo: true,
         },
-      }]);
+      });
     });
 
     it('gets remote host key and puts it in corresponding textarea when Discover Remote Host Key is pressed', async () => {
@@ -246,7 +247,7 @@ describe('SshConnectionFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenCalledWith('keychaincredential.setup_ssh_connection', [{
+      expect(spectator.inject(KeychainCredentialService).addSshConnection).toHaveBeenCalledWith({
         connection_name: 'Test',
         setup_type: SshConnectionsSetupMethod.SemiAutomatic,
         private_key: {
@@ -262,7 +263,7 @@ describe('SshConnectionFormComponent', () => {
           admin_username: 'root',
           sudo: false,
         },
-      }]);
+      });
     });
   });
 });
