@@ -28,11 +28,11 @@
           *ixRequiresRoles="requiredRoles"
           mat-button
           color="warn"
-          [ixTest]="['export', pool()?.name]"
-          [ixUiSearch]="searchableElements.elements.exportDisconnect"
-          (click)="onExport()"
+          [ixTest]="['disconnect', pool()?.name]"
+          [ixUiSearch]="searchableElements.elements.disconnect"
+          (click)="onDisconnect()"
         >
-          {{ 'Disconnect/Delete' | translate }}
+          {{ 'Disconnect' | translate }}
         </button>
 
         <mat-menu #advancedMenu="matMenu">

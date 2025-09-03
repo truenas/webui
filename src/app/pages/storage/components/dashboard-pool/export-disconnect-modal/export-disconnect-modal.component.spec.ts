@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import {
-  createComponentFactory, mockProvider, Spectator, SpectatorFactory,
+  createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { Observable, of, throwError } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
@@ -14,214 +14,298 @@ import {
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
+import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import {
   ServicesToBeRestartedDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/services-need-to-be-restarted-dialog/services-to-be-restarted-dialog.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailedJobError } from 'app/services/errors/error.classes';
-import { ExportDisconnectModalComponent } from './export-disconnect-modal.component';
+import { DisconnectOption, ExportDisconnectModalComponent } from './export-disconnect-modal.component';
 
-const fakeData = {
-  pool: {
-    id: 9999,
-    name: 'fakePool',
-    status: PoolStatus.Healthy,
-  } as Pool,
-  attachments: [
-    { type: 'type1', attachments: ['partA,partB', 'part1,part2,part3'] },
-    { type: 'type2', attachments: ['partX,partY', 'part4,part5,part6'] },
-  ] as DatasetAttachment[],
-  processes: [
-    { name: 'process name 1' } as Process,
-    { pid: 'pid1', cmdline: 'cmdline1' },
-    { name: 'process name 2' },
-    { pid: 'pid2', cmdline: 'cmdline2' },
-  ] as Process[],
-};
+const fakePool = {
+  id: 9999,
+  name: 'fakePool',
+  status: PoolStatus.Healthy,
+} as Pool;
 
-const warningPoolDetach = 'Back up critical data';
-const warningUnknownState = 'is in the database but not connected to the machine';
-const warningSysDataset = 'This pool contains the system dataset';
+const fakeSystemConfig = {
+  pool: 'fakeSystemPool',
+} as SystemDatasetConfig;
 
-const expectedAttachmentLines = [
-  'type1: partA partB part1 part2 part3',
-  'type2: partX partY part4 part5 part6',
-];
+const fakeOtherPools = [
+  { id: 1, name: 'otherPool1' },
+  { id: 2, name: 'otherPool2' },
+] as Pool[];
 
-const expectedProcessLines = [
-  'process name 1 process name 2',
-  'pid1 - cmdline1  pid2 - cmdline2',
-];
+const fakeUnknownPool = {
+  id: 8888,
+  name: 'unknownPool',
+  status: PoolStatus.Unknown,
+} as Pool;
+
+const fakeAttachments = [
+  { type: 'SMB', attachments: ['share1,share2', 'share3'] },
+  { type: 'NFS', attachments: ['export1,export2'] },
+  { type: 'iSCSI', attachments: ['target1', 'target2,target3'] },
+  { type: 'Apps', attachments: ['nextcloud,plex', 'jellyfin'] },
+] as PoolAttachment[];
+
+const fakeProcesses = [
+  { name: 'nginx', pid: 1234, cmdline: '/usr/sbin/nginx' },
+  { name: 'postgres', pid: 5678, cmdline: '/usr/bin/postgres' },
+  { name: '', pid: 9999, cmdline: '/some/unknown/process' }, // Empty name makes it unknown
+] as Process[];
+
 
 describe('ExportDisconnectModalComponent', () => {
   let spectator: Spectator<ExportDisconnectModalComponent>;
   let loader: HarnessLoader;
 
-  function createComponentWithData(
-    data: { pool: Pool; attachments: PoolAttachment[]; processes: Process[] },
-  ): SpectatorFactory<ExportDisconnectModalComponent> {
-    return createComponentFactory({
-      component: ExportDisconnectModalComponent,
-      imports: [
-        ReactiveFormsModule,
-      ],
-      providers: [
-        mockApi([
-          mockCall('pool.attachments', data.attachments),
-          mockCall('pool.processes', data.processes),
-          mockCall('systemdataset.config', { pool: 'fakeSystemPool' } as SystemDatasetConfig),
-          mockJob('pool.export'),
-        ]),
-        mockProvider(DialogService, {
-          jobDialog: jest.fn(() => ({
-            afterClosed: () => of(null),
-          })),
-        }),
-        mockProvider(MatDialogRef),
-        mockProvider(MatDialog, {
-          open: jest.fn(() => ({
-            afterClosed: () => of(false),
-          }) as unknown as MatDialogRef<JobProgressDialogRef<unknown>>),
-        }),
-        mockAuth(),
-        mockProvider(SnackbarService),
-      ],
-      componentProviders: [
-        { provide: MAT_DIALOG_DATA, useFactory: () => data.pool },
-      ],
-    });
-  }
+  const createComponent = createComponentFactory({
+    component: ExportDisconnectModalComponent,
+    imports: [
+      ReactiveFormsModule,
+    ],
+    providers: [
+      mockApi([
+        mockCall('pool.attachments', fakeAttachments),
+        mockCall('pool.processes', fakeProcesses),
+        mockCall('systemdataset.config', fakeSystemConfig),
+        mockCall('pool.query', fakeOtherPools),
+        mockCall('pool.dataset.query', []),
+        mockJob('pool.export'),
+      ]),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
+        error: jest.fn(),
+      }),
+      mockProvider(MatDialogRef),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(false),
+        }) as unknown as MatDialogRef<JobProgressDialogRef<unknown>>),
+      }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: Observable<unknown>) => source$),
+      }),
+      mockProvider(DatasetTreeStore, {
+        resetDatasets: jest.fn(),
+      }),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$),
+        showErrorModal: jest.fn(),
+      }),
+      mockAuth(),
+      mockProvider(SnackbarService, {
+        success: jest.fn(),
+      }),
+    ],
+    componentProviders: [
+      { provide: MAT_DIALOG_DATA, useValue: fakePool },
+    ],
+  });
 
-  describe('warnings block', () => {
-    [
-      {
-        data: fakeData,
-        expectedWarnings: [warningPoolDetach],
-      },
-      {
-        data: { ...fakeData, pool: { ...fakeData.pool, status: PoolStatus.Unknown } },
-        expectedWarnings: [warningUnknownState],
-      },
-      {
-        data: { ...fakeData, pool: { ...fakeData.pool, name: 'fakeSystemPool' } },
-        expectedWarnings: [warningPoolDetach, warningSysDataset],
-      },
-    ].forEach(({ expectedWarnings, data }) => {
-      describe(`For status = '${data.pool.status}', name = '${data.pool.name}'`, () => {
-        const createComponent = createComponentWithData(data);
+  beforeEach(async () => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-        beforeEach(() => {
-          spectator = createComponent();
-          loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        });
+    // Wait for component initialization and data loading
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
 
-        afterEach(() => {
-          spectator.fixture.destroy();
-        });
+    // Wait for the selected content to be visible
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+  });
 
-        it('warnings block should contain pool name', () => {
-          expect(spectator.query('.warnings-block')).toContainText(data.pool.name);
-        });
+  afterEach(() => {
+    spectator.fixture.destroy();
+  });
 
-        expectedWarnings.forEach((expectedText) => {
-          it(`contains ${expectedText}`, () => {
-            expect(spectator.query('.warnings-block')).toContainText(expectedText);
-          });
-        });
-      });
-    });
+  it('should display the pool name in the title', () => {
+    expect(spectator.query('.export-disconnect-modal-title')).toContainText('Disconnect Pool: fakePool');
+  });
+
+  it('should start with Export option selected by default', () => {
+    expect(spectator.component.selectedOption()).toBe(DisconnectOption.Export);
+    expect(spectator.query('.export-option')).toHaveClass('selected');
+  });
+
+  it('should allow selecting Delete option', () => {
+    spectator.click('.delete-option');
+    expect(spectator.component.selectedOption()).toBe(DisconnectOption.Delete);
+    expect(spectator.query('.delete-option')).toHaveClass('selected');
+  });
+
+  it('should show export warning when Export is selected', () => {
+    expect(spectator.query('.export-warning')).toContainText('Back up critical data before exporting');
+  });
+
+  it('should show delete warning when Delete is selected', () => {
+    spectator.click('.delete-option');
+    spectator.detectChanges();
+    expect(spectator.query('.delete-warning')).toContainText('All data will be deleted from the pool');
+  });
+
+  it('should show unknown status warning for pools with unknown status', () => {
+    // Set the pool to unknown status and trigger the warning display
+    spectator.component.pool = fakeUnknownPool;
+    spectator.component.showUnknownStatusDetachWarning = true;
+
+    // Need to re-trigger selectedOption to show the selected content
+    spectator.component.selectOption(spectator.component.selectedOption());
+    spectator.detectChanges();
+
+    expect(spectator.query('.unknown-status-warning')).toContainText('is in the database but not connected to the machine');
   });
 
   describe('pool summary', () => {
-    const createComponent = createComponentWithData(fakeData);
-
     beforeEach(() => {
-      spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      // Expand the pool summary panel to make content visible
+      const panels = spectator.queryAll('mat-expansion-panel-header');
+      const summaryPanel = panels.find((panel) => panel.textContent?.includes('These services and processes depend on this pool'));
+      if (summaryPanel) {
+        spectator.click(summaryPanel);
+        spectator.detectChanges();
+      }
     });
 
-    afterEach(() => {
-      spectator.fixture.destroy();
+    it('should display pool summary when attachments or processes exist', () => {
+      expect(spectator.query('.expansion-panel')).toExist();
+      expect(spectator.query('mat-panel-title')).toContainText('These services and processes depend on this pool');
     });
 
-    it('must contain pool name', () => {
-      expect(spectator.query('.pool-summary')).toContainText(fakeData.pool.name);
+    it('should display attachments section', () => {
+      expect(spectator.query('.attachments')).toContainText('These services depend on pool fakePool');
+      expect(spectator.query('.attachments')).toContainText('SMB');
+      expect(spectator.query('.attachments')).toContainText('share1');
+      expect(spectator.query('.attachments')).toContainText('share2');
+      expect(spectator.query('.attachments')).toContainText('share3');
+      expect(spectator.query('.attachments')).toContainText('NFS');
+      expect(spectator.query('.attachments')).toContainText('export1');
+      expect(spectator.query('.attachments')).toContainText('export2');
+      expect(spectator.query('.attachments')).toContainText('iSCSI');
+      expect(spectator.query('.attachments')).toContainText('target1');
+      expect(spectator.query('.attachments')).toContainText('Apps');
+      expect(spectator.query('.attachments')).toContainText('nextcloud');
+      expect(spectator.query('.attachments')).toContainText('plex');
+      expect(spectator.query('.attachments')).toContainText('jellyfin');
     });
 
-    it('must contain attachments', () => {
-      expectedAttachmentLines.forEach((expectedLine) => {
-        expect(spectator.query('.pool-summary')).toHaveText(expectedLine);
-      });
+    it('should display known processes section', () => {
+      expect(spectator.query('.known-processes')).toContainText('These running processes are using fakePool');
+      expect(spectator.query('.known-processes')).toContainText('nginx');
+      expect(spectator.query('.known-processes')).toContainText('postgres');
     });
 
-    it('must contain processes', () => {
-      expectedProcessLines.forEach((expectedLine) => {
-        expect(spectator.query('.pool-summary')).toHaveText(expectedLine);
-      });
+    it('should display unknown processes section', () => {
+      expect(spectator.query('.unknown-processes')).toContainText('These unknown processes are using the pool');
+      expect(spectator.query('.unknown-processes')).toContainText('9999');
+      expect(spectator.query('.unknown-processes')).toContainText('/some/unknown/process');
+      expect(spectator.query('.process-will-be-terminated')).toContainText('WARNING:  These unknown processes will be terminated while exporting the pool.');
     });
   });
 
-  async function submitForm(): Promise<void> {
+
+  async function submitExportForm(): Promise<void> {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Confirm Disconnect/Delete': true,
       'Delete saved configurations from TrueNAS?': true,
-      'Destroy data on this pool?': false,
+      'Confirm Export Pool': true,
     });
 
-    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disconnect/Delete' }));
+    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disconnect' }));
     await submitButton.click();
   }
 
-  describe('form', () => {
-    const createComponent = createComponentWithData(fakeData);
+  async function submitDeleteForm(): Promise<void> {
+    spectator.click('.delete-option');
+    spectator.detectChanges();
 
-    beforeEach(() => {
-      spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    // Wait for the name input to become available after selecting delete
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Remove all related configurations': true,
+      'Confirm Delete Pool': true,
+      'Enter fakePool below to confirm': 'fakePool',
     });
 
-    afterEach(() => {
-      spectator.fixture.destroy();
-    });
+    const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disconnect' }));
+    await submitButton.click();
+  }
 
-    describe('when opened', () => {
-      it('shows initial state of checkboxes', async () => {
-        const form = await loader.getHarness(IxFormHarness);
-        const values = await form.getValues();
+  describe('form interactions', () => {
+    it('shows initial state of checkboxes for export', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      const values = await form.getValues();
 
-        expect(values).toEqual({
-          'Confirm Disconnect/Delete': false,
-          'Delete saved configurations from TrueNAS?': true,
-          'Destroy data on this pool?': false,
-        });
+      expect(values).toEqual({
+        'Delete saved configurations from TrueNAS?': true,
+        'Confirm Export Pool': false,
       });
     });
 
-    describe('when filled and submitted', () => {
-      it('sends an update payload to websocket', async () => {
-        await submitForm();
+    it('shows additional name input field for delete option', async () => {
+      spectator.click('.delete-option');
+      spectator.detectChanges();
 
-        expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been disconnected/deleted successfully.');
-        expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.export', [
-          fakeData.pool.id,
-          {
-            cascade: true,
-            destroy: false,
-            restart_services: false,
-          },
-        ]);
+      // Wait for the name input to become available after selecting delete
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+
+      const form = await loader.getHarness(IxFormHarness);
+      const values = await form.getValues();
+
+      expect(values).toEqual({
+        'Remove all related configurations': true,
+        'Confirm Delete Pool': false,
+        'Enter fakePool below to confirm': '',
       });
     });
 
-    describe('unstoppable processes', () => {
+    it('sends correct export payload when export form is submitted', async () => {
+      await submitExportForm();
+
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been disconnected/deleted successfully.');
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.export', [
+        fakePool.id,
+        {
+          cascade: true,
+          destroy: false,
+          restart_services: false,
+        },
+      ]);
+    });
+
+    it('sends correct delete payload when delete form is submitted', async () => {
+      await submitDeleteForm();
+
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been disconnected/deleted successfully. All data on that pool was destroyed.');
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.export', [
+        fakePool.id,
+        {
+          cascade: true,
+          destroy: true,
+          restart_services: false,
+        },
+      ]);
+    });
+
+    describe('error handling', () => {
       it('shows an error dialog when there are unstoppable processes', async () => {
         const dialog = spectator.inject(DialogService);
         jest.spyOn(dialog, 'jobDialog').mockReturnValue({
@@ -237,22 +321,20 @@ describe('ExportDisconnectModalComponent', () => {
           }) as Observable<Job>,
         } as JobProgressDialogRef<unknown>);
 
-        await submitForm();
+        await submitExportForm();
 
         expect(spectator.inject(DialogService).error).toHaveBeenCalledWith(expect.objectContaining({
           title: 'Error disconnecting/deleting pool.',
           message: 'Unable to terminate processes which are using this pool: docker',
         }));
       });
-    });
 
-    describe('services to be restarted', () => {
-      beforeEach(() => {
+      it('shows services restart dialog when services need to be restarted', async () => {
         const dialog = spectator.inject(DialogService);
-        jest.spyOn(dialog, 'jobDialog').mockReturnValueOnce({
+        jest.spyOn(dialog, 'jobDialog').mockReturnValue({
           afterClosed: () => throwError(() => {
             return new FailedJobError({
-              error: 'Unstoppable processes',
+              error: 'Control services error',
               exc_info: {
                 extra: {
                   code: 'control_services',
@@ -263,10 +345,8 @@ describe('ExportDisconnectModalComponent', () => {
             } as Job);
           }) as Observable<Job>,
         } as JobProgressDialogRef<unknown>);
-      });
 
-      it('shows a warning when there are processes that can be stopped', async () => {
-        await submitForm();
+        await submitExportForm();
 
         expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ServicesToBeRestartedDialogComponent, {
           data: {
@@ -277,15 +357,31 @@ describe('ExportDisconnectModalComponent', () => {
         });
       });
 
-      it('calls pool.export with `restart_services` = true when warning dialog is shown and user confirms', async () => {
+      it('calls pool.export with restart_services=true when user confirms service restart', async () => {
+        const dialog = spectator.inject(DialogService);
+        jest.spyOn(dialog, 'jobDialog').mockReturnValueOnce({
+          afterClosed: () => throwError(() => {
+            return new FailedJobError({
+              error: 'Control services error',
+              exc_info: {
+                extra: {
+                  code: 'control_services',
+                  restart_services: ['cifs', 'iscsi'],
+                  stop_services: ['docker'],
+                } as Record<string, unknown>,
+              },
+            } as Job);
+          }) as Observable<Job>,
+        } as JobProgressDialogRef<unknown>);
+
         jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
           afterClosed: () => of(true),
         } as unknown as MatDialogRef<ServicesToBeRestartedDialogComponent>);
 
-        await submitForm();
+        await submitExportForm();
 
         expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('pool.export', [
-          fakeData.pool.id,
+          fakePool.id,
           {
             cascade: true,
             destroy: false,

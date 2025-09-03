@@ -17,10 +17,6 @@ core files, encryption keys for pools, and Samba 4 metadata such as the user/gro
 permissions. Exporting this pool will transfer the system dataset to another available pool. If the only \
 available pool is encrypted, that pool will no longer be able to be locked. When no other pools exist, \
 the system dataset transfers back to the TrueNAS operating system device.'),
-    warning: T('WARNING: Disconnecting/deleting pool <i>{pool}</i>.\
- Data on the pool will not be available after export.\
- Data on the pool disks can be destroyed by setting the <b>Destroy data</b> option.\
- Back up critical data <b>before</b> disconnecting/deleting the pool.'),
     unknownState: T('The pool <i>{pool}</i>is in the database but not connected to the machine. If it was exported by \
     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />'),
     destroy: {

@@ -173,6 +173,9 @@ html .ix-dark {
 
   --mat-sort-arrow-color: var(--fg2);
 
+  --mat-expansion-header-expanded-state-height: 40px;
+  --mat-expansion-header-collapsed-state-height: 40px;
+
   .mat-mdc-slide-toggle {
     --mat-switch-label-text-color: var(--fg2);
   }

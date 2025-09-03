@@ -2,10 +2,21 @@
 
 :host {
   display: block;
-  width: 550px;
+  width: 650px;
 
   @media (max-width: $breakpoint-tablet) {
     width: inherit;
+  }
+
+  &::ng-deep {
+    .mat-expanded .mat-expansion-panel-header span.mat-expansion-indicator {
+      top: 5px;
+    }
+
+    fieldset {
+      border: 1px solid var(--lines) !important;
+      margin-bottom: 24px !important;
+    }
   }
 }
 
@@ -15,4 +26,203 @@
 
 .export-disconnect-modal-title {
   overflow-wrap: break-word;
+}
+
+.system-dataset-warning {
+  margin-top: 15px;
+}
+
+// Disconnect Options Section
+.disconnect-options {
+  background-color: var(--bg2);
+  padding-bottom: 15px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  h4 {
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+}
+
+.option-cards {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.option-card {
+  background-color: var(--bg1);
+  border: 2px solid var(--alt-bg2);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 120px;
+  padding: 16px;
+  text-align: center;
+
+  h3 {
+    font-weight: bold;
+    margin: 0 0 8px;
+  }
+
+  p {
+    font-size: 14px;
+    margin: 0;
+    opacity: 0.7;
+  }
+
+  &.export-option {
+    &.selected,
+    &:hover {
+      border-color: var(--primary);
+
+      h3 {
+        color: var(--primary);
+      }
+    }
+  }
+
+  &.delete-option {
+    &.selected,
+    &:hover {
+      border-color: var(--red);
+
+      h3 {
+        color: var(--red);
+      }
+    }
+  }
+
+  &.delete-option,
+  &.export-option {
+    &.selected,
+    &:hover {
+      p {
+        color: var(--fg2);
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// Selected Content Section
+.selected-content {
+  margin-top: 12px;
+}
+
+// Warnings Section
+.warnings-section {
+  margin-bottom: 24px;
+}
+
+.warning-text {
+  color: var(--orange);
+  font-weight: bold;
+}
+
+// Expansion Panels
+.expansion-panel {
+  margin-bottom: 16px;
+
+  &::ng-deep {
+    .mat-expansion-panel-header {
+      background-color: var(--bg1);
+      font-weight: 500;
+      padding: 0 16px 3px;
+
+      &:hover,
+      &:focus {
+        background-color: var(--bg1) !important;
+      }
+    }
+
+    .mat-expansion-panel-body {
+      background-color: var(--bg1);
+      margin-top: 8px;
+      padding: 8px 16px;
+    }
+  }
+
+  .process-will-be-terminated {
+    margin: 15px 0 5px;
+  }
+
+  .expansion-content {
+    h4 {
+      font-size: 14px;
+      font-weight: 500;
+      margin: 0 0 12px;
+    }
+
+    ul {
+      margin: 8px 0;
+      padding-left: 20px;
+
+      li {
+        margin-bottom: 4px;
+      }
+    }
+
+    .encrypted-pool-warning {
+      align-items: center;
+      border: 1px solid var(--red);
+      border-radius: 4px;
+      display: flex;
+      font-size: 14px;
+      gap: 12px;
+      margin: 16px 0;
+      padding: 12px 16px;
+
+      .warning-icon {
+        color: var(--red);
+        flex-shrink: 0;
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 2px;
+      }
+
+      .warning-content {
+        line-height: 1.4;
+
+        strong {
+          color: var(--red);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+// Form Actions
+ix-form-actions {
+  ::ng-deep {
+    .form-actions {
+      padding-top: 16px;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: $breakpoint-tablet) {
+  :host {
+    width: 100%;
+  }
+
+  .option-cards {
+    gap: 12px;
+    grid-template-columns: 1fr;
+  }
+
+  .option-card {
+    min-height: 100px;
+    padding: 16px;
+  }
 }

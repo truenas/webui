@@ -84,8 +84,8 @@ describe('DashboardPoolComponent', () => {
     expect(spectator.query('.pool-name')).toHaveText('deadpool');
   });
 
-  it('opens a Disconnect/Delete dialog when Disconnect/Delete button is pressed', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disconnect/Delete' }));
+  it('opens a Disconnect dialog when Disconnect button is pressed', async () => {
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Disconnect' }));
     await deleteButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ExportDisconnectModalComponent, {

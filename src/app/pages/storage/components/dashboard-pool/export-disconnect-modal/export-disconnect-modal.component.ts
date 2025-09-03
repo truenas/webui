@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -6,16 +6,20 @@ import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialog,
 } from '@angular/material/dialog';
+import {
+  MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
+} from '@angular/material/expansion';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { isFailedJobError } from 'app/helpers/api.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { isServicesToBeRestartedInfo, ServicesToBeRestartedInfo } from 'app/interfaces/pool-export.interface';
@@ -39,6 +43,11 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/services-need-to-be-restarted-dialog/services-to-be-restarted-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
+export enum DisconnectOption {
+  Export = 'export',
+  Delete = 'delete',
+}
+
 @UntilDestroy()
 @Component({
   selector: 'ix-export-disconnect-modal',
@@ -55,6 +64,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxInputComponent,
     FormActionsComponent,
     MatButton,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
@@ -88,25 +100,28 @@ export class ExportDisconnectModalComponent implements OnInit {
   );
 
   showSysDatasetWarning: boolean;
-  showPoolDetachWarning: boolean;
   showUnknownStatusDetachWarning: boolean;
-  showDestroy: boolean;
+  selectedOption = signal<DisconnectOption | null>(null);
 
-  confirmLabelText = this.translate.instant(helptextVolumes.exportDialog.confirm);
+
+  attachments: PoolAttachment[] = [];
+  processes: Process[] = [];
   process = {
     knownProcesses: [] as Process[],
     unknownProcesses: [] as Process[],
   };
 
-  attachments: PoolAttachment[] = [];
-  processes: Process[] = [];
   systemConfig: SystemDatasetConfig;
+  otherPools: Pool[] = [];
+  destinationPool: Pool | null = null;
+  poolEncryptionStatus: Record<string, boolean> = {};
 
   isFormLoading = false;
   form = this.fb.nonNullable.group({
     destroy: [false],
     cascade: [true],
     confirm: [false, [Validators.requiredTrue]],
+    useBootDevice: [false],
     nameInput: ['', [
       this.validatorsService.validateOnCondition(
         (control: AbstractControl) => control.parent?.get('destroy')?.value,
@@ -123,7 +138,18 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   protected readonly Role = Role;
 
+  get exportOption(): DisconnectOption {
+    return DisconnectOption.Export;
+  }
+
+  get deleteOption(): DisconnectOption {
+    return DisconnectOption.Delete;
+  }
+
   ngOnInit(): void {
+    // Auto-select Export pool by default
+    this.selectOption(DisconnectOption.Export);
+
     if (this.pool.status === PoolStatus.Unknown) {
       this.prepareForm();
       return;
@@ -240,16 +266,21 @@ export class ExportDisconnectModalComponent implements OnInit {
       this.api.call('pool.attachments', [this.pool.id]),
       this.api.call('pool.processes', [this.pool.id]),
       this.api.call('systemdataset.config'),
+      this.api.call('pool.query'),
     ])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe(([attachments, processes, systemConfig]) => {
+      .subscribe(([attachments, processes, systemConfig, allPools]) => {
         this.attachments = attachments;
         this.processes = processes;
+        this.organizeProcesses(processes);
         this.systemConfig = systemConfig;
+        this.otherPools = allPools.filter((pool) => pool.id !== this.pool.id);
+        this.loadPoolEncryptionStatus(allPools);
+        this.determineDestinationPool();
         this.prepareForm();
         this.cdr.markForCheck();
       });
@@ -257,34 +288,94 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   private prepareForm(): void {
     this.showSysDatasetWarning = this.pool.name === this.systemConfig?.pool;
-    this.showPoolDetachWarning = this.pool.status !== PoolStatus.Unknown;
     this.showUnknownStatusDetachWarning = this.pool.status === PoolStatus.Unknown;
-    this.showDestroy = this.pool.status !== PoolStatus.Unknown;
-
-    this.confirmLabelText = this.pool.status === PoolStatus.Unknown
-      ? (this.translate.instant(helptextVolumes.exportDialog.confirm)
-        + ' ' + this.translate.instant(helptextVolumes.exportDialog.unknownStatusAltText)) as TranslatedString
-      : this.translate.instant(helptextVolumes.exportDialog.confirm);
-
-    this.processes.forEach((process) => {
-      if (process.service) {
-        return;
-      }
-
-      if (process.name && process.name !== '') {
-        this.process.knownProcesses.push(process);
-      } else {
-        this.process.unknownProcesses.push(process);
-      }
-    });
 
     this.form.controls.destroy.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe(() => this.resetNameInputValidState());
   }
 
+  selectOption(option: DisconnectOption | null): void {
+    this.selectedOption.set(option);
+    if (option) {
+      this.form.patchValue({
+        destroy: option === DisconnectOption.Delete,
+        confirm: false,
+      });
+      this.resetNameInputValidState();
+    }
+    this.cdr.markForCheck();
+  }
+
+  get isExportSelected(): boolean {
+    return this.selectedOption() === DisconnectOption.Export;
+  }
+
+  get isDeleteSelected(): boolean {
+    return this.selectedOption() === DisconnectOption.Delete;
+  }
+
+  get hasOtherPools(): boolean {
+    return this.otherPools.length > 0;
+  }
+
+  get shouldShowSystemDatasetWarning(): boolean {
+    return this.showSysDatasetWarning && this.isExportSelected;
+  }
+
+  get isDestinationPoolEncrypted(): boolean {
+    return this.destinationPool ? (this.poolEncryptionStatus[this.destinationPool.name] || false) : false;
+  }
+
+  canProceed(): boolean {
+    return this.selectedOption() !== null && this.form.valid && !this.isFormLoading;
+  }
+
+  private loadPoolEncryptionStatus(pools: Pool[]): void {
+    // Query the root dataset of each pool to determine if it's encrypted
+    const datasetQueries = pools.map((pool) => this.api.call('pool.dataset.query', [[['pool', '=', pool.name], ['type', '=', 'FILESYSTEM']], { extra: { retrieve_children: false } }]).pipe(
+      map((datasets: Dataset[]) => ({
+        poolName: pool.name,
+        encrypted: datasets.length > 0 && datasets[0].encrypted,
+      })),
+    ));
+
+    forkJoin(datasetQueries).pipe(
+      this.errorHandler.withErrorHandler(),
+      untilDestroyed(this),
+    ).subscribe((results) => {
+      this.poolEncryptionStatus = {};
+      results.forEach(({ poolName, encrypted }) => {
+        this.poolEncryptionStatus[poolName] = encrypted;
+      });
+      this.cdr.markForCheck();
+    });
+  }
+
+  private determineDestinationPool(): void {
+    if (this.otherPools.length === 0) {
+      this.destinationPool = null;
+      return;
+    }
+
+    // Prefer pools that are not the system dataset pool
+    const nonSystemPools = this.otherPools.filter((pool) => pool.name !== this.systemConfig?.pool);
+    if (nonSystemPools.length > 0) {
+      this.destinationPool = nonSystemPools[0];
+    } else {
+      this.destinationPool = this.otherPools[0];
+    }
+  }
+
   private resetNameInputValidState(): void {
     this.form.controls.nameInput.reset();
     this.form.controls.nameInput.setErrors(null);
+  }
+
+  private organizeProcesses(processes: Process[]): void {
+    this.process = {
+      knownProcesses: processes.filter((process) => process.name && process.name.trim() !== ''),
+      unknownProcesses: processes.filter((process) => !process.name || process.name.trim() === ''),
+    };
   }
 }

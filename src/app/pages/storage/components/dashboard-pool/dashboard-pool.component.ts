@@ -92,7 +92,7 @@ export class DashboardPoolComponent implements OnChanges {
     }
   }
 
-  onExport(): void {
+  onDisconnect(): void {
     this.matDialog
       .open(ExportDisconnectModalComponent, {
         data: this.pool(),
