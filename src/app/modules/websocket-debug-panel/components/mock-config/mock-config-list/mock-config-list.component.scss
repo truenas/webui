@@ -83,6 +83,17 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+
+      .response-type {
+        color: var(--green);
+        font-size: 12px;
+        font-weight: normal;
+        margin-left: 8px;
+
+        &.error-type {
+          color: var(--red);
+        }
+      }
     }
 
     .config-type {

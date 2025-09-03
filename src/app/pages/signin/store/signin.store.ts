@@ -88,8 +88,8 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
     tap(() => {
-      this.setState(initialState);
-      this.setLoadingState(true);
+      // Set initial state with loading already true to avoid double emission
+      this.setState({ ...initialState, isLoading: true });
     }),
     switchMap(() => this.updateService.hardRefreshIfNeeded()),
     switchMap(() => forkJoin([

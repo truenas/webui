@@ -37,4 +37,7 @@ export const helptextPoolCreation = {
   raidz3Tooltip: T('Uses three disks for parity while all other disks store data. RAIDZ3 requires at least five disks. RAIDZ is a traditional ZFS data protection scheme. \nChoose RAIDZ over dRAID when managing a smaller set of drives, where simplicity of setup and predictable disk usage are primary considerations.'),
 
   dRaidChildrenExplanation: T('The number of children must at the minimum accomodate the total number of disks required for the previous configuration options including parity drives.'),
+
+  addVdevStripeSpecialWarning: T('Adding a stripe metadata VDEV introduces a single point of failure to your pool.'),
+  addVdevStripeDedupWarning: T('Adding a stripe dedup VDEV introduces a single point of failure to your pool.'),
 };

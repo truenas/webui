@@ -387,4 +387,162 @@ describe('PoolManagerValidationService', () => {
       });
     });
   });
+
+  describe('add-vdev special stripe redundancy warning', () => {
+    let spectator: SpectatorService<PoolManagerValidationService>;
+    let testScheduler: TestScheduler;
+
+    const mockName$ = of('Pool');
+    const mockTopology$ = of({
+      [VDevType.Special]: {
+        hasCustomDiskSelection: false,
+        layout: CreateVdevLayout.Stripe,
+        vdevs: [
+          [
+            {
+              identifier: '{serial_lunid}8HG29G5H_5000cca2700430f8',
+              name: 'sdc',
+              subsystem: 'scsi',
+              number: 2080,
+              serial: '8HG29G5H',
+              lunid: '5000cca2700430f8',
+              enclosure: {
+                number: 0,
+                slot: 1,
+              },
+              devname: 'sdc',
+            },
+          ],
+        ],
+      },
+    });
+    const mockEnclosureSettings$ = of({
+      limitToSingleEnclosure: null,
+      dispersalStrategy: DispersalStrategy.None,
+    });
+    const mockHasMultipleEnclosuresAfterFirstStep$ = of(false);
+    const mockNameErrors$ = of(null);
+
+    const createService = createServiceFactory({
+      service: PoolManagerValidationService,
+      providers: [
+        mockProvider(PoolManagerStore, {
+          name$: mockName$,
+          nameErrors$: mockNameErrors$,
+          enclosureSettings$: mockEnclosureSettings$,
+          topology$: mockTopology$,
+          hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
+        }),
+        mockProvider(AddVdevsStore, {
+          pool$: of({ name: 'existing-pool' } as Pool),
+        }),
+        provideMockStore({
+          selectors: [
+            {
+              selector: selectHasEnclosureSupport,
+              value: true,
+            },
+          ],
+        }),
+      ],
+    });
+
+    beforeEach(() => {
+      spectator = createService();
+      testScheduler = getTestScheduler();
+    });
+
+    it('displays warning when adding stripe special vdev to existing pool', () => {
+      testScheduler.run(({ expectObservable }) => {
+        expectObservable(spectator.service.getPoolCreationErrors()).toBe('a', {
+          a: [
+            {
+              severity: PoolCreationSeverity.ErrorWarning,
+              step: PoolCreationWizardStep.Metadata,
+              text: 'Adding a stripe metadata VDEV introduces a single point of failure to your pool.',
+            },
+          ],
+        });
+      });
+    });
+  });
+
+  describe('add-vdev dedup stripe redundancy warning', () => {
+    let spectator: SpectatorService<PoolManagerValidationService>;
+    let testScheduler: TestScheduler;
+
+    const mockName$ = of('Pool');
+    const mockTopology$ = of({
+      [VDevType.Dedup]: {
+        hasCustomDiskSelection: false,
+        layout: CreateVdevLayout.Stripe,
+        vdevs: [
+          [
+            {
+              identifier: '{serial_lunid}8HG29G5H_5000cca2700430f8',
+              name: 'sdc',
+              subsystem: 'scsi',
+              number: 2080,
+              serial: '8HG29G5H',
+              lunid: '5000cca2700430f8',
+              enclosure: {
+                number: 0,
+                slot: 1,
+              },
+              devname: 'sdc',
+            },
+          ],
+        ],
+      },
+    });
+    const mockEnclosureSettings$ = of({
+      limitToSingleEnclosure: null,
+      dispersalStrategy: DispersalStrategy.None,
+    });
+    const mockHasMultipleEnclosuresAfterFirstStep$ = of(false);
+    const mockNameErrors$ = of(null);
+
+    const createService = createServiceFactory({
+      service: PoolManagerValidationService,
+      providers: [
+        mockProvider(PoolManagerStore, {
+          name$: mockName$,
+          nameErrors$: mockNameErrors$,
+          enclosureSettings$: mockEnclosureSettings$,
+          topology$: mockTopology$,
+          hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
+        }),
+        mockProvider(AddVdevsStore, {
+          pool$: of({ name: 'existing-pool' } as Pool),
+        }),
+        provideMockStore({
+          selectors: [
+            {
+              selector: selectHasEnclosureSupport,
+              value: true,
+            },
+          ],
+        }),
+      ],
+    });
+
+    beforeEach(() => {
+      spectator = createService();
+      testScheduler = getTestScheduler();
+    });
+
+    it('displays warning when adding stripe dedup vdev to existing pool', () => {
+      testScheduler.run(({ expectObservable }) => {
+        expectObservable(spectator.service.getPoolCreationErrors()).toBe('a', {
+          a: [
+            {
+              severity: PoolCreationSeverity.ErrorWarning,
+              step: PoolCreationWizardStep.Dedup,
+              text: 'Adding a stripe dedup VDEV introduces a single point of failure to your pool.',
+            },
+          ],
+        });
+      });
+    });
+  });
 });

@@ -15,7 +15,7 @@ import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 describe('NvmeOfConfigurationComponent', () => {
   let spectator: Spectator<NvmeOfConfigurationComponent>;
@@ -40,13 +40,13 @@ describe('NvmeOfConfigurationComponent', () => {
       provideMockStore({
         selectors: [
           {
-            selector: selectIsEnterprise,
+            selector: selectIsHaLicensed,
             value: true,
           },
         ],
       }),
       mockProvider(NvmeOfService, {
-        isRdmaEnabled: jest.fn(() => of(true)),
+        isRdmaCapable: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
     ],
@@ -91,7 +91,7 @@ describe('NvmeOfConfigurationComponent', () => {
   });
 
   it('disables RDMA control if RDMA support is missing from the system', async () => {
-    spectator.inject(NvmeOfService).isRdmaEnabled.mockReturnValue(of(false));
+    spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(false));
     spectator.component.ngOnInit();
 
     const controls = await form.getDisabledState();
@@ -100,13 +100,14 @@ describe('NvmeOfConfigurationComponent', () => {
     });
   });
 
-  it('disables ANA for non enterprise systems', async () => {
-    spectator.inject(MockStore).overrideSelector(selectIsEnterprise, false);
+  it('disables ANA for systems without HA license', async () => {
+    spectator.inject(MockStore).overrideSelector(selectIsHaLicensed, false);
     spectator.inject(MockStore).refreshState();
+    spectator.component.ngOnInit();
 
     const controls = await form.getDisabledState();
     expect(controls).toMatchObject({
-      'Enable Asymmetric Namespace Access (ANA)': false,
+      'Enable Asymmetric Namespace Access (ANA)': true,
     });
   });
 });

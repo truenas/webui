@@ -24,6 +24,7 @@ export const serviceNames = new Map<ServiceName, string>([
 export enum RdmaProtocolName {
   Nfs = 'NFS',
   Iser = 'ISER',
+  Nvmet = 'NVMET',
 }
 
 export enum ServiceOperation {

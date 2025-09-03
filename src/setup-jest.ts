@@ -241,6 +241,9 @@ beforeEach(() => {
       unobserve: jest.fn(),
     })),
   });
+
+  // Mock scrollIntoView since it's not available in JSDOM test environment
+  Element.prototype.scrollIntoView = jest.fn();
 });
 
 // https://github.com/jsdom/jsdom/issues/3002

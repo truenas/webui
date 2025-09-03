@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -23,7 +23,7 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -66,7 +66,7 @@ import { VmService } from 'app/services/vm.service';
     WithLoadingStateDirective,
     IxIconComponent,
     MatTooltip,
-    SearchInput1Component,
+    BasicSearchComponent,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -102,7 +102,7 @@ export class VmListComponent implements OnInit {
   protected readonly searchableElements = vmListElements;
 
   vmMachines: VirtualMachine[] = [];
-  filterString = '';
+  searchQuery = signal('');
   dataProvider: AsyncDataProvider<VirtualMachine>;
   protected memWarning = helptextVmWizard.memory_warning;
   protected hasVirtualizationSupport$ = this.vmService.hasVirtualizationSupport$;
@@ -124,6 +124,7 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('Running'),
       requiredRoles: this.requiredRoles,
       getValue: (row) => row.status.state === VmState.Running,
+      sortBy: (row) => (row.status.state === VmState.Running ? 1 : 0),
       onRowToggle: (row, checked, toggle) => this.handleVmStatusToggle(row, checked, toggle),
     }),
     toggleColumn({
@@ -153,6 +154,7 @@ export class VmListComponent implements OnInit {
       getValue: (row) => {
         return this.fileSizePipe.transform(row.memory * MiB);
       },
+      sortBy: (row) => row.memory,
     }),
     textColumn({
       title: this.translate.instant('Boot Loader Type'),
@@ -169,6 +171,7 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('Display Port'),
       hidden: true,
       getValue: (row) => this.getDisplayPort(row),
+      sortBy: (row) => this.getDisplayPortSortValue(row),
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -179,6 +182,7 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('Shutdown Timeout'),
       hidden: true,
       getValue: (row) => `${row.shutdown_timeout} seconds`,
+      sortBy: (row) => row.shutdown_timeout,
     }),
   ], {
     uniqueRowTag: (row) => 'virtual-machine-' + row.name,
@@ -193,7 +197,7 @@ export class VmListComponent implements OnInit {
     this.createDataProvider();
     this.subscribeToVmEvents();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -275,6 +279,28 @@ export class VmListComponent implements OnInit {
     return ports.join(', ');
   }
 
+  getDisplayPortSortValue(vm: VirtualMachine): number {
+    if (!vm.display_available) {
+      return Number.MAX_SAFE_INTEGER; // N/A items should sort to the end
+    }
+    const devices = vm.devices as VmDisplayDevice[];
+    if (!devices || devices.length === 0) {
+      return Number.MAX_SAFE_INTEGER - 1; // No devices should sort near the end
+    }
+    if (this.systemGeneralService.isEnterprise && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
+      return Number.MAX_SAFE_INTEGER - 2; // Enterprise limitations should sort near the end
+    }
+
+    const displayDevices = devices.filter((device) => device.attributes.dtype === VmDeviceType.Display);
+    if (displayDevices.length === 0) {
+      return Number.MAX_SAFE_INTEGER - 3; // No display devices should sort near the end
+    }
+
+    // Sort by the lowest port number if multiple display devices exist
+    const ports = displayDevices.map((device) => device.attributes.port);
+    return Math.min(...ports);
+  }
+
   protected columnsChange(columns: typeof this.columns): void {
     this.columns = [...columns];
     this.cdr.detectChanges();
@@ -282,7 +308,7 @@ export class VmListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 

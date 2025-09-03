@@ -8,6 +8,9 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: '22.17.1'
+    - name: Enable Corepack for Yarn 4
+      shell: bash
+      run: corepack enable
     - name: Cache Jest cache
       uses: actions/cache@v4
       id: jest-cache
@@ -18,4 +21,4 @@ runs:
           ${{ runner.os }}-jest-
     - name: Install packages
       shell: bash
-      run: yarn install --frozen-lockfile
+      run: yarn install --immutable

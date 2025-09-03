@@ -180,6 +180,18 @@ html .ix-dark {
     --mat-switch-label-text-color: var(--fg2);
   }
 
+  .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) {
+    --mat-chip-elevated-container-color: var(--alt-bg1);
+  }
+
+  .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) .mdc-evolution-chip__text-label {
+    --mat-chip-label-text-color: var(--primary-txt);
+  }
+
+  .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) .mdc-evolution-chip__action--secondary {
+    --mat-chip-with-trailing-icon-trailing-icon-color: var(--primary-txt);
+  }
+
   .mat-mdc-radio-button .mat-internal-form-field {
     --mat-radio-label-text-color: var(--fg1);
   }

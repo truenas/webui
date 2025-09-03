@@ -41,20 +41,20 @@ describe('WebSocketDebug Selectors', () => {
       id: 'config-1',
       enabled: true,
       methodName: 'test.method',
-      response: { result: { success: true } },
+      response: { type: 'success', result: { success: true } },
     },
     {
       id: 'config-2',
       enabled: false,
       methodName: 'another.method',
       messagePattern: 'pattern',
-      response: { result: null, delay: 1000 },
+      response: { type: 'success', result: null, delay: 1000 },
     },
     {
       id: 'config-3',
       enabled: true,
       methodName: 'third.method',
-      response: { result: { data: 'test' } },
+      response: { type: 'success', result: { data: 'test' } },
     },
   ];
 

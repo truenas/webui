@@ -3,7 +3,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, H
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   debounceTime,
-  Observable, Subject, take,
+  Observable, of, Subject, take, timeout,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -37,6 +37,10 @@ export class SlideInContainerComponent implements AfterViewInit {
 
   @HostListener('transitionend', ['$event'])
   private onTransitionEnd(event: TransitionEvent): void {
+    // Only handle events that originated from this element, not from children
+    if (event.target !== event.currentTarget) {
+      return;
+    }
     if (event.propertyName === 'transform') {
       if (this.isVisible && !this.isHidden) {
         this.whenVisible$.next();
@@ -53,24 +57,43 @@ export class SlideInContainerComponent implements AfterViewInit {
       untilDestroyed(this),
     ).subscribe(() => this.updateWidth());
 
-    // Trigger entrance animation after view is initialized
-    setTimeout(() => {
-      this.slideIn();
+    // Start with hidden state (already set by default)
+    // Double requestAnimationFrame ensures proper rendering sequence:
+    // 1st frame: DOM updates and layout calculations complete
+    // 2nd frame: Style/transform changes can safely trigger CSS transitions
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        this.slideIn();
+      });
     });
   }
 
   slideOut(): Observable<void> {
+    // Set state immediately to prevent race conditions
     this.isVisible = false;
     this.isHidden = true;
     this.cdr.markForCheck();
-    return this.whenHidden$.pipe(take(1));
+
+    // Add timeout fallback in case transition doesn't fire
+    return this.whenHidden$.pipe(
+      take(1),
+      // Fallback after 300ms (150ms transition + buffer)
+      timeout({ first: 300, with: () => of(undefined) }),
+    );
   }
 
   slideIn(): Observable<void> {
+    // Set state immediately to prevent race conditions
     this.isVisible = true;
     this.isHidden = false;
     this.cdr.markForCheck();
-    return this.whenVisible$.pipe(take(1));
+
+    // Add timeout fallback in case transition doesn't fire
+    return this.whenVisible$.pipe(
+      take(1),
+      // Fallback after 300ms (150ms transition + buffer)
+      timeout({ first: 300, with: () => of(undefined) }),
+    );
   }
 
   @HostListener('window:resize')

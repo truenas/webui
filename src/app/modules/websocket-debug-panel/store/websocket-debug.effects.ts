@@ -7,7 +7,9 @@ import {
 import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { exportFilePrefix, storageKeys } from 'app/modules/websocket-debug-panel/constants';
-import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
+import {
+  MockConfig, MockResponse,
+} from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { safeGetItem, safeSetItem } from 'app/modules/websocket-debug-panel/utils/local-storage-utils';
 import * as WebSocketDebugActions from './websocket-debug.actions';
 import { selectMockConfigs, selectIsPanelOpen, selectEnclosureMockConfig } from './websocket-debug.selectors';
@@ -20,7 +22,24 @@ export class WebSocketDebugEffects {
   loadMockConfigs$ = createEffect(() => this.actions$.pipe(
     ofType(WebSocketDebugActions.loadMockConfigs),
     switchMap(() => {
-      const configs = safeGetItem<MockConfig[]>(storageKeys.MOCK_CONFIGS, []);
+      const rawConfigs = safeGetItem<MockConfig[]>(storageKeys.MOCK_CONFIGS, []);
+      // Handle backward compatibility: convert old configs without 'type' field
+      const configs = rawConfigs.map((config) => {
+        if (!config.response || !('type' in config.response)) {
+          // Old format: convert to new format with 'success' type
+          const oldResponse = config.response as unknown as Record<string, unknown> | undefined;
+          const newResponse: MockResponse = {
+            type: 'success',
+            result: oldResponse?.result ?? null,
+            delay: oldResponse?.delay as number | undefined,
+          };
+          return {
+            ...config,
+            response: newResponse,
+          };
+        }
+        return config;
+      });
       return [WebSocketDebugActions.mockConfigsLoaded({ configs })];
     }),
   ));
