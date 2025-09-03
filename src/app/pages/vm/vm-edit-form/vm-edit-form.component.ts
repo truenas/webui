@@ -7,6 +7,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   forkJoin, of, switchMap,
 } from 'rxjs';
+import { map, shareReplay } from 'rxjs/operators';
 import { MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -112,10 +113,26 @@ export class VmEditFormComponent implements OnInit {
 
   isLoading = false;
   timeOptions$ = of(mapToOptions(vmTimeNames, this.translate));
-  bootloaderOptions$ = this.api.call('vm.bootloader_options').pipe(choicesToOptions());
+  bootloaderOptions$ = this.api.call('vm.bootloader_options').pipe(
+    choicesToOptions(),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
   cpuModeOptions$ = of(mapToOptions(vmCpuModeLabels, this.translate));
-  cpuModelOptions$ = this.api.call('vm.cpu_model_choices').pipe(choicesToOptions());
-  gpuOptions$ = this.gpuService.getGpuOptions();
+  cpuModelOptions$ = this.api.call('vm.cpu_model_choices').pipe(
+    choicesToOptions(),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  // Single source of truth for GPU PCI choices
+  private cachedGpuPciChoices$ = this.gpuService.getRawGpuPciChoices().pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  // Derive GPU options from the cached source using the service's transformation
+  gpuOptions$ = this.cachedGpuPciChoices$.pipe(
+    map((choices) => this.gpuService.transformGpuChoicesToOptions(choices)),
+  );
 
   readonly helptext = helptextVmWizard;
   previouslySetGpuPciIds: string[] = [];
@@ -221,12 +238,13 @@ export class VmEditFormComponent implements OnInit {
   }
 
   private setupCriticalGpuPrevention(): void {
-    // Setup critical GPU prevention
+    // Setup critical GPU prevention with cached observable
     this.criticalGpus = this.criticalGpuPrevention.setupCriticalGpuPrevention(
       this.form.controls.gpus,
       this,
       this.translate.instant('Cannot Select GPU'),
       this.translate.instant('System critical GPUs cannot be used for VMs'),
+      this.cachedGpuPciChoices$,
     );
   }
 
