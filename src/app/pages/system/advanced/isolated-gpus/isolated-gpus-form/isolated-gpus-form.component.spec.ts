@@ -77,6 +77,23 @@ describe('IsolatedGpuPcisFormComponent', () => {
             disabled: false,
           },
         ]),
+        getRawGpuPciChoices: () => of({
+          'Fake HD Graphics [0000:00:01.0]': {
+            pci_slot: '0000:00:01.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+          'Intel Corporation HD Graphics 510 [0000:00:02.0]': {
+            pci_slot: '0000:00:02.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+          'Critical GPU [0000:00:03.0]': {
+            pci_slot: '0000:00:03.0',
+            uses_system_critical_devices: true,
+            critical_reason: 'Critical devices found: 0000:00:01.0, 0000:00:00.0',
+          },
+        }),
       }),
       mockProvider(IsolatedGpuValidatorService, {
         validateGpu: () => of(null),

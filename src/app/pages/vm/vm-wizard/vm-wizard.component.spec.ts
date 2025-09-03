@@ -118,6 +118,18 @@ describe('VmWizardComponent', () => {
           { label: 'GeForce GTX 1080 [0000:03:00.0]', value: '0000:03:00.0' },
           { label: 'GeForce GTX 1070 [0000:02:00.0]', value: '0000:02:00.0' },
         ]),
+        getRawGpuPciChoices: () => of({
+          'GeForce GTX 1080 [0000:03:00.0]': {
+            pci_slot: '0000:03:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+          'GeForce GTX 1070 [0000:02:00.0]': {
+            pci_slot: '0000:02:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+        }),
         addIsolatedGpuPciIds: jest.fn(() => of({})),
         getIsolatedGpuPciIds: jest.fn(() => of([
           '0000:02:00.0',
