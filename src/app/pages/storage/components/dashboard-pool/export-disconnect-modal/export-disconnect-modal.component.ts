@@ -35,7 +35,6 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import {
@@ -250,14 +249,16 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.isFormLoading = false;
     this.dialogRef.close(true);
 
-    const message = this.translate.instant('Pool «{pool}» has been disconnected/deleted successfully.', {
-      pool: this.pool.name,
-    });
-    const destroyed = this.translate.instant('All data on that pool was destroyed.');
-    if (!value.destroy) {
+    if (value.destroy) {
+      const message = this.translate.instant('Pool «{pool}» has been deleted successfully. All data on that pool was destroyed.', {
+        pool: this.pool.name,
+      });
       this.snackbar.success(message);
     } else {
-      this.snackbar.success(`${message} ${destroyed}` as TranslatedString);
+      const message = this.translate.instant('Pool «{pool}» has been exported successfully.', {
+        pool: this.pool.name,
+      });
+      this.snackbar.success(message);
     }
   }
 

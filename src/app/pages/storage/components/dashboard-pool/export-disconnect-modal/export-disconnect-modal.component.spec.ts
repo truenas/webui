@@ -280,7 +280,7 @@ describe('ExportDisconnectModalComponent', () => {
     it('sends correct export payload when export form is submitted', async () => {
       await submitExportForm();
 
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been disconnected/deleted successfully.');
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been exported successfully.');
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.export', [
         fakePool.id,
         {
@@ -294,7 +294,7 @@ describe('ExportDisconnectModalComponent', () => {
     it('sends correct delete payload when delete form is submitted', async () => {
       await submitDeleteForm();
 
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been disconnected/deleted successfully. All data on that pool was destroyed.');
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been deleted successfully. All data on that pool was destroyed.');
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.export', [
         fakePool.id,
         {

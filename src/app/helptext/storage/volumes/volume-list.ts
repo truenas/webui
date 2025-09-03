@@ -19,20 +19,12 @@ available pool is encrypted, that pool will no longer be able to be locked. When
 the system dataset transfers back to the TrueNAS operating system device.'),
     unknownState: T('The pool <i>{pool}</i>is in the database but not connected to the machine. If it was exported by \
     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />'),
-    destroy: {
-      label: T('Destroy data on this pool?'),
-      tooltip: T('Destroy the ZFS filesystem for pool data. This is a permanent operation. You will be \
-      unable to re-mount data from the exported pool.'),
-    },
     cascade: {
       label: T('Delete saved configurations from TrueNAS?'),
       tooltip: T('Delete all TrueNAS configurations that depend on the exported pool. Impacted configurations\
        may include services (listed above if applicable), applications, shares, and scheduled data protection tasks.'),
     },
     enterName: T('Enter <strong>{pool}</strong> below to confirm'),
-    confirm: T('Confirm Disconnect/Delete'),
-    unknownStatusAltText: T('(Remove pool from database)'),
-    saveButton: T('Disconnect/Delete'),
   },
 
   exporting: T('Exporting Pool'),
