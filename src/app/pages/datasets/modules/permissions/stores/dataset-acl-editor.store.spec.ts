@@ -95,6 +95,7 @@ describe('DatasetAclEditorStore', () => {
         ownerGroup: 'newgroup',
         applyOwner: true,
         applyGroup: true,
+        validateEffectiveAcl: true,
       };
 
       store.saveAcl(saveParams);
@@ -122,6 +123,7 @@ describe('DatasetAclEditorStore', () => {
         ownerGroup: 'newgroup',
         applyOwner: false,
         applyGroup: true,
+        validateEffectiveAcl: true,
       };
 
       store.saveAcl(saveParams);
@@ -151,6 +153,7 @@ describe('DatasetAclEditorStore', () => {
         ownerGroup: 'newgroup',
         applyOwner: true,
         applyGroup: false,
+        validateEffectiveAcl: true,
       };
 
       store.saveAcl(saveParams);
@@ -180,6 +183,7 @@ describe('DatasetAclEditorStore', () => {
         ownerGroup: 'newgroup',
         applyOwner: false,
         applyGroup: false,
+        validateEffectiveAcl: true,
       };
 
       store.saveAcl(saveParams);
@@ -209,6 +213,7 @@ describe('DatasetAclEditorStore', () => {
         ownerGroup: 'newgroup',
         applyOwner: true,
         applyGroup: true,
+        validateEffectiveAcl: true,
       };
 
       store.saveAcl(saveParams);
