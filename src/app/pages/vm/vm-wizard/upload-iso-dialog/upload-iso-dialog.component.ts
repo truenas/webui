@@ -2,7 +2,7 @@ import { HttpEventType, HttpProgressEvent, HttpResponse } from '@angular/common/
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -12,6 +12,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   ExplorerCreateDatasetComponent,
@@ -55,6 +56,7 @@ export class UploadIsoDialogComponent implements OnDestroy {
   private uploadService = inject(UploadService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
 
   form = this.formBuilder.nonNullable.group({
     path: [mntPath],
@@ -69,6 +71,8 @@ export class UploadIsoDialogComponent implements OnDestroy {
   private uploadSubscription: Subscription | null = null;
   private loaderCloseSubscription: Subscription | null = null;
   private cancelUpload: (() => void) | null = null;
+  private confirmationInProgress = false;
+  private matDialog = inject(MatDialog);
 
   ngOnDestroy(): void {
     // Cancel any ongoing upload and cleanup when component is destroyed
@@ -86,7 +90,21 @@ export class UploadIsoDialogComponent implements OnDestroy {
     }
     this.destroy$.next();
     this.destroy$.complete();
+    // Remove confirmation handler before closing
+    this.loader.removeConfirmationBeforeClose();
     this.loader.close();
+  }
+
+  private closeAllConfirmationDialogs(): void {
+    // Force close any open confirmation dialogs (but not the upload dialog itself)
+    const openDialogs = this.matDialog.openDialogs;
+    openDialogs.forEach((dialog) => {
+      // Only close dialogs that are not this upload dialog
+      if (dialog !== this.dialogRef) {
+        dialog.close();
+      }
+    });
+    this.confirmationInProgress = false;
   }
 
   onSubmit(): void {
@@ -121,10 +139,38 @@ export class UploadIsoDialogComponent implements OnDestroy {
 
     this.cancelUpload = cancel;
 
-    // Cancel upload if loader is closed manually
+    // Set up confirmation handler for when user tries to close the loader
+    this.loader.setConfirmationBeforeClose(() => {
+      // Prevent multiple confirmations or confirmations after upload is done
+      if (this.confirmationInProgress || !this.cancelUpload) {
+        return of(false);
+      }
+
+      this.confirmationInProgress = true;
+
+      return this.dialogService.confirm({
+        title: this.translate.instant('Cancel Upload'),
+        message: this.translate.instant('Are you sure you want to cancel the upload? This will stop the current upload process.'),
+        hideCheckbox: true,
+        buttonText: this.translate.instant('Cancel Upload'),
+        cancelText: this.translate.instant('Keep Uploading'),
+        hideCancel: false,
+      }).pipe(
+        tap(() => {
+          this.confirmationInProgress = false;
+          // If user confirmed cancellation, we'll let the normal flow handle it
+        }),
+      );
+    });
+
+    // Handle when loader is closed (either by cancel confirmation or programmatically)
     this.loaderCloseSubscription = loaderClosed$.pipe(
       takeUntil(this.destroy$),
     ).subscribe(() => {
+      // Remove the confirmation handler
+      this.loader.removeConfirmationBeforeClose();
+
+
       if (this.cancelUpload) {
         this.cancelUpload();
         this.cancelUpload = null;
@@ -140,14 +186,21 @@ export class UploadIsoDialogComponent implements OnDestroy {
       .pipe(
         tap((event: HttpProgressEvent) => {
           if (event instanceof HttpResponse) {
+            // Remove confirmation handler and force close any open confirmation dialogs
+            this.loader.removeConfirmationBeforeClose();
+            this.closeAllConfirmationDialogs();
+
             // Clean up subscriptions before closing loader to avoid triggering cancellation
             if (this.loaderCloseSubscription) {
               this.loaderCloseSubscription.unsubscribe();
               this.loaderCloseSubscription = null;
             }
+
             this.loader.close();
             this.uploadSubscription = null;
             this.cancelUpload = null;
+            this.confirmationInProgress = false;
+
             // Show success message and close dialog
             this.snackbar.success(this.translate.instant('ISO uploaded successfully'));
             this.dialogRef.close(uploadPath);
@@ -161,18 +214,28 @@ export class UploadIsoDialogComponent implements OnDestroy {
           }
         }),
         catchError((error: unknown) => {
-          // Clean up subscriptions before closing loader
+          // Immediately remove confirmation handler and force close any open confirmation dialogs
+          this.loader.removeConfirmationBeforeClose();
+          this.closeAllConfirmationDialogs();
+
+          // Force close the loader immediately to prevent any further interactions
+          this.loader.close();
+
+          // Clean up subscriptions
           if (this.loaderCloseSubscription) {
             this.loaderCloseSubscription.unsubscribe();
             this.loaderCloseSubscription = null;
           }
-          this.loader.close();
+
           this.uploadSubscription = null;
           this.cancelUpload = null;
+          this.confirmationInProgress = false;
+
           // Don't show error for aborted requests
           if (error instanceof DOMException && error.name === 'AbortError') {
             return of(null);
           }
+
           // Show error modal and keep dialog open for retry
           this.errorHandler.showErrorModal(error);
           return of(error);
