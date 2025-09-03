@@ -7,9 +7,9 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, switchMap,
+  finalize, merge, of, switchMap,
 } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 import { NvmeOfTransportType, nvmeOfTransportTypeLabels } from 'app/enums/nvme-of.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -76,12 +76,16 @@ export class PortFormComponent implements OnInit {
     addr_traddr: ['', Validators.required],
   });
 
-  protected addresses$ = this.form.controls.addr_trtype.valueChanges.pipe(
-    startWith(this.form.value.addr_trtype),
+  protected addresses$ = merge(
+    of(this.form.controls.addr_trtype.value),
+    this.form.controls.addr_trtype.valueChanges,
+  ).pipe(
+    distinctUntilChanged(),
     switchMap((type) => {
       return this.api.call('nvmet.port.transport_address_choices', [type]);
     }),
     choicesToOptions(),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   get isTcp(): boolean {
