@@ -71,7 +71,6 @@ export class UploadIsoDialogComponent implements OnDestroy {
   private uploadSubscription: Subscription | null = null;
   private loaderCloseSubscription: Subscription | null = null;
   private cancelUpload: (() => void) | null = null;
-  private confirmationInProgress = false;
   private matDialog = inject(MatDialog);
 
   ngOnDestroy(): void {
@@ -104,7 +103,6 @@ export class UploadIsoDialogComponent implements OnDestroy {
         dialog.close();
       }
     });
-    this.confirmationInProgress = false;
   }
 
   onSubmit(): void {
@@ -141,12 +139,10 @@ export class UploadIsoDialogComponent implements OnDestroy {
 
     // Set up confirmation handler for when user tries to close the loader
     this.loader.setConfirmationBeforeClose(() => {
-      // Prevent multiple confirmations or confirmations after upload is done
-      if (this.confirmationInProgress || !this.cancelUpload) {
+      // Prevent confirmations after upload is done
+      if (!this.cancelUpload) {
         return of(false);
       }
-
-      this.confirmationInProgress = true;
 
       return this.dialogService.confirm({
         title: this.translate.instant('Cancel Upload'),
@@ -155,12 +151,7 @@ export class UploadIsoDialogComponent implements OnDestroy {
         buttonText: this.translate.instant('Cancel Upload'),
         cancelText: this.translate.instant('Keep Uploading'),
         hideCancel: false,
-      }).pipe(
-        tap(() => {
-          this.confirmationInProgress = false;
-          // If user confirmed cancellation, we'll let the normal flow handle it
-        }),
-      );
+      });
     });
 
     // Handle when loader is closed (either by cancel confirmation or programmatically)
@@ -199,7 +190,6 @@ export class UploadIsoDialogComponent implements OnDestroy {
             this.loader.close();
             this.uploadSubscription = null;
             this.cancelUpload = null;
-            this.confirmationInProgress = false;
 
             // Show success message and close dialog
             this.snackbar.success(this.translate.instant('ISO uploaded successfully'));
@@ -229,10 +219,9 @@ export class UploadIsoDialogComponent implements OnDestroy {
 
           this.uploadSubscription = null;
           this.cancelUpload = null;
-          this.confirmationInProgress = false;
 
-          // Don't show error for aborted requests
-          if (error instanceof DOMException && error.name === 'AbortError') {
+          // Don't show error for aborted requests or network failures that might be user-initiated
+          if (error instanceof DOMException && (error.name === 'AbortError' || error.name === 'NetworkError')) {
             return of(null);
           }
 

@@ -133,16 +133,12 @@ export class LoaderService {
   private handleConfirmationClose(): void {
     // Check if handler is still active (not removed)
     if (this.onBeforeClose && this.handlersSetup) {
-      console.info('DEBUG: Showing confirmation dialog');
       this.onBeforeClose().subscribe((shouldClose) => {
-        console.info('DEBUG: Confirmation result:', shouldClose);
         if (shouldClose) {
           this.close();
         }
         // If shouldClose is false, do nothing (dialog stays open)
       });
-    } else {
-      console.info('DEBUG: Confirmation handler was removed, not showing dialog');
     }
   }
 
