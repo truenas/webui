@@ -15,7 +15,6 @@ import {
   delay,
   filter, Observable, of, share, Subject, switchMap,
   take,
-  tap,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
@@ -127,7 +126,31 @@ export class SlideIn {
     if (!topComponent) {
       return of(undefined);
     }
-    return topComponent.containerRef.instance.slideIn();
+
+    const container = topComponent.containerRef.instance;
+
+    // Fix for stacked slide-ins: When returning from a child slide-in to a parent,
+    // ensure the parent's container element has the correct visibility classes.
+    // Without this, the parent container may remain hidden after the child closes.
+    const hostElement = topComponent.containerRef.location.nativeElement as HTMLElement;
+    if (hostElement) {
+      // Reset any inline styles and ensure correct classes
+      hostElement.style.transform = '';
+      hostElement.classList.add('slide-in-visible');
+      hostElement.classList.remove('slide-in-hidden');
+    }
+
+    // Use double requestAnimationFrame to ensure DOM is ready before animating
+    return new Observable<void>((observer) => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          container.slideIn().subscribe(() => {
+            observer.next();
+            observer.complete();
+          });
+        });
+      });
+    });
   }
 
   private handleOverlayEvents<D, R>(overlay: OverlayRef, instance: SlideInInstance<D, R>): void {
@@ -182,13 +205,17 @@ export class SlideIn {
     const close$ = new Subject<R | undefined>();
     close$.pipe(
       switchMap(() => containerRef.instance.slideOut()),
-      tap(() => {
-        // Ensure overlay is disposed after animation completes
-        requestAnimationFrame(() => {
-          cdkOverlayRef.dispose();
-          this.slideInInstances.set(
-            this.slideInInstances().filter((slideInItem) => slideInItem.slideInId !== slideInId),
-          );
+      switchMap(() => {
+        // Dispose the overlay and update instances
+        return new Observable<void>((observer) => {
+          requestAnimationFrame(() => {
+            cdkOverlayRef.dispose();
+            this.slideInInstances.set(
+              this.slideInInstances().filter((slideInItem) => slideInItem.slideInId !== slideInId),
+            );
+            observer.next();
+            observer.complete();
+          });
         });
       }),
       switchMap(() => this.animateInTopComponent()),
