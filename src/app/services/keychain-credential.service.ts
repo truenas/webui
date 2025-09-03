@@ -24,7 +24,11 @@ export class KeychainCredentialService {
   addSshConnection(connection: SshConnectionSetup): Observable<KeychainSshCredentials> {
     return this.api.call('keychaincredential.setup_ssh_connection', [connection])
       .pipe(tap(() => {
-        this.refetchSshKeys.next();
+      // Only refetch if a new key was generated
+        const willGenerateNewKey = connection.private_key?.generate_key === true;
+        if (willGenerateNewKey) {
+          this.refetchSshKeys.next();
+        }
       }));
   }
 }
