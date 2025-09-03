@@ -22,33 +22,62 @@
           [required]="true"
         ></ix-select>
 
-        <ix-input
-          formControlName="syslogserver"
-          [label]="'Syslog Server' | translate"
-          [tooltip]="tooltips.syslogserver | translate"
-        ></ix-input>
+        <div formArrayName="syslogservers" role="group" [attr.aria-label]="'Syslog Servers List' | translate">
+          @for (server of syslogServersArray.controls; track server; let i = $index) {
+            <div class="server-group" [formGroupName]="i" [attr.aria-label]="('Syslog Server' | translate) + ' ' + (i + 1)">
+              <h4 [id]="'server-heading-' + i">{{ 'Syslog Server' | translate }} {{ i + 1 }}</h4>
+              <ix-input
+                formControlName="host"
+                [label]="'Host' | translate"
+                [tooltip]="tooltips.syslogserver | translate"
+              ></ix-input>
 
-        <ix-select
-          formControlName="syslog_transport"
-          [label]="'Syslog Transport' | translate"
-          [tooltip]="tooltips.syslog_transport | translate"
-          [options]="transportOptions$"
-        ></ix-select>
+              <ix-select
+                formControlName="transport"
+                [label]="'Transport' | translate"
+                [tooltip]="tooltips.syslog_transport | translate"
+                [options]="transportOptions$"
+              ></ix-select>
 
-        @if (isTlsTransport$ | async) {
-          <ix-select
-            formControlName="syslog_tls_certificate"
-            [label]="'Syslog TLS Certificate' | translate"
-            [tooltip]="tooltips.syslog_transport | translate"
-            [options]="certificateOptions$"
-          ></ix-select>
+              @if (server.value.transport === 'TLS') {
+                <ix-select
+                  formControlName="tls_certificate"
+                  [label]="'TLS Certificate' | translate"
+                  [tooltip]="tooltips.syslog_tls_certificate | translate"
+                  [options]="certificateOptions$"
+                ></ix-select>
+              }
 
-          <ix-select
-            formControlName="syslog_tls_certificate_authority"
-            [label]="'Syslog TLS Certificate Authority' | translate"
-            [options]="certificateAuthorityOptions$"
-            [required]="true"
-          ></ix-select>
+              @if (canRemoveServer) {
+                <button
+                  mat-button
+                  type="button"
+                  color="warn"
+                  [attr.aria-label]="('Remove Syslog Server' | translate) + ' ' + (i + 1)"
+                  (click)="removeServer(i)"
+                >
+                  {{ 'Remove Server' | translate }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        @if (canAddServer) {
+          <button
+            mat-button
+            type="button"
+            class="add-server-button"
+            [attr.aria-label]="'Add another syslog server' | translate"
+            (click)="addServer()"
+          >
+            {{ 'Add Syslog Server' | translate }}
+            <span class="server-limit-hint">({{ syslogServersArray.length }}/2)</span>
+          </button>
+        } @else {
+          <p class="server-limit-message" role="status" aria-live="polite">
+            {{ 'Maximum of 2 syslog servers allowed' | translate }}
+          </p>
         }
 
         <ix-checkbox

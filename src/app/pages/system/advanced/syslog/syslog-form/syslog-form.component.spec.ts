@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
@@ -20,6 +21,13 @@ describe('SyslogFormComponent', () => {
   let spectator: Spectator<SyslogFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  // Helper to check FormArray length since toHaveLength doesn't work with @ngneat/reactive-forms FormArray
+  const expectArrayLength = (array: { length: number }, expectedLength: number): void => {
+    // eslint-disable-next-line jest/prefer-to-have-length
+    expect(array.length).toBe(expectedLength);
+  };
+
   const createComponent = createComponentFactory({
     component: SyslogFormComponent,
     imports: [
@@ -30,9 +38,13 @@ describe('SyslogFormComponent', () => {
         mockCall('system.advanced.config', {
           fqdn_syslog: true,
           sysloglevel: SyslogLevel.Error,
-          syslogserver: 'existing.server.com',
-          syslog_transport: SyslogTransport.Udp,
-          syslog_tls_certificate: 2,
+          syslog_audit: false,
+          syslogservers: [
+            {
+              host: 'existing.server.com',
+              transport: SyslogTransport.Udp,
+            },
+          ],
         } as AdvancedConfig),
         mockCall('system.advanced.syslog_certificate_choices', {
           1: 'Certificate 1',
@@ -56,9 +68,13 @@ describe('SyslogFormComponent', () => {
         getData: jest.fn(() => ({
           fqdn_syslog: true,
           sysloglevel: SyslogLevel.Error,
-          syslogserver: 'existing.server.com',
-          syslog_transport: SyslogTransport.Udp,
-          syslog_tls_certificate: 2,
+          syslog_audit: false,
+          syslogservers: [
+            {
+              host: 'existing.server.com',
+              transport: SyslogTransport.Udp,
+            },
+          ],
         })),
       }),
       mockAuth(),
@@ -78,19 +94,17 @@ describe('SyslogFormComponent', () => {
     expect(values).toEqual({
       'Use FQDN for Logging': true,
       'Syslog Level': 'Error',
-      'Syslog Server': 'existing.server.com',
-      'Syslog Transport': 'UDP',
       'Include Audit Logs': false,
+      Host: 'existing.server.com',
+      Transport: 'UDP',
     });
   });
 
-  it('saves both advanced config and dataset config when form is submitted', async () => {
+  it('saves advanced config when form is submitted', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Use FQDN for Logging': false,
       'Syslog Level': 'Info',
-      'Syslog Server': 'new.server.com',
-      'Syslog Transport': SyslogTransport.Tcp,
       'Include Audit Logs': true,
     });
 
@@ -101,33 +115,156 @@ describe('SyslogFormComponent', () => {
       {
         fqdn_syslog: false,
         sysloglevel: SyslogLevel.Info,
-        syslogserver: 'new.server.com',
-        syslog_transport: SyslogTransport.Tcp,
         syslog_audit: true,
+        syslogservers: [
+          {
+            host: 'existing.server.com',
+            transport: SyslogTransport.Udp,
+            tls_certificate: null,
+          },
+        ],
       },
     ]);
   });
 
-  it('shows certificate fields when transport is TLS and saves it', async () => {
-    const form = await loader.getHarness(IxFormHarness);
+  it('filters out servers without host on save', async () => {
+    // Directly add an empty server to the form array
+    spectator.component.syslogServersArray.push(spectator.inject(FormBuilder).group({
+      host: [''],
+      transport: [SyslogTransport.Udp],
+      tls_certificate: [null as number | null],
+    }));
 
-    await form.fillForm(
-      {
-        'Syslog Transport': SyslogTransport.Tls,
-        'Syslog TLS Certificate': 'Certificate 2',
-        'Syslog TLS Certificate Authority': 'Authority 2',
-      },
-    );
+    // Submit with an empty second server
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
 
+    // Should only save servers with hosts
+    expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
+      expect.objectContaining({
+        syslogservers: [
+          {
+            host: 'existing.server.com',
+            transport: SyslogTransport.Udp,
+            tls_certificate: null,
+          },
+        ],
+      }),
+    ]);
+  });
+
+  it('handles TLS certificate as integer', async () => {
+    // Add a server with TLS and certificate
+    spectator.component.addServer();
+    spectator.component.syslogServersArray.at(1).patchValue({
+      host: 'tls.server.com',
+      transport: SyslogTransport.Tls,
+      tls_certificate: 2, // Already an integer from the select with converted options
+    });
+
+    // Submit the form
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    // Should keep certificate as integer
+    expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
+      expect.objectContaining({
+        syslogservers: expect.arrayContaining([
+          expect.objectContaining({
+            host: 'tls.server.com',
+            transport: SyslogTransport.Tls,
+            tls_certificate: 2, // Should be integer
+          }),
+        ]),
+      }),
+    ]);
+  });
+
+  it('can add and remove multiple syslog servers', () => {
+    // The form is already initialized in beforeEach -> createComponent
+    // which calls ngOnInit automatically
+
+    // Start with one server from mock data
+    expectArrayLength(spectator.component.syslogServersArray, 1);
+    expect(spectator.component.canAddServer).toBe(true);
+
+    // Click add server button
+    spectator.component.addServer();
+    expectArrayLength(spectator.component.syslogServersArray, 2);
+
+    // Fill in the second server
+    spectator.component.syslogServersArray.at(1).patchValue({
+      host: 'second.server.com',
+      transport: SyslogTransport.Tcp,
+    });
+
+    // Try to add a third server (should not work due to limit)
+    expect(spectator.component.canAddServer).toBe(false);
+
+    // Remove first server
+    spectator.component.removeServer(0);
+    expectArrayLength(spectator.component.syslogServersArray, 1);
+    expect(spectator.component.syslogServersArray.at(0).value.host).toBe('second.server.com');
+
+    // Can remove the last server too
+    expect(spectator.component.canRemoveServer).toBe(true);
+    spectator.component.removeServer(0);
+    expectArrayLength(spectator.component.syslogServersArray, 0);
+    expect(spectator.component.canRemoveServer).toBe(false);
+  });
+
+  it('shows TLS certificate field only when transport is TLS', () => {
+    // Add a new server
+    spectator.component.addServer();
+    const newServerGroup = spectator.component.syslogServersArray.at(1);
+
+    // Initially TLS certificate should not be required
+    expect(newServerGroup.controls.tls_certificate.hasError('required')).toBe(false);
+
+    // Change transport to TLS
+    newServerGroup.controls.transport.setValue(SyslogTransport.Tls);
+    newServerGroup.controls.tls_certificate.updateValueAndValidity();
+
+    // Now TLS certificate should be required
+    expect(newServerGroup.controls.tls_certificate.hasError('required')).toBe(true);
+
+    // Change back to UDP
+    newServerGroup.controls.transport.setValue(SyslogTransport.Udp);
+    newServerGroup.controls.tls_certificate.updateValueAndValidity();
+
+    // TLS certificate should no longer be required
+    expect(newServerGroup.controls.tls_certificate.hasError('required')).toBe(false);
+  });
+
+  it('allows configuration with no syslog servers', async () => {
+    // Remove the existing server
+    spectator.component.removeServer(0);
+    expectArrayLength(spectator.component.syslogServersArray, 0);
+
+    // Save with no servers
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
       expect.objectContaining({
-        syslog_transport: SyslogTransport.Tls,
-        syslog_tls_certificate: 2,
-        syslog_tls_certificate_authority: 2,
+        syslogservers: [],
       }),
     ]);
+  });
+
+  it('enforces remove button visibility based on server count', () => {
+    // With one server, can still remove it
+    expect(spectator.component.canRemoveServer).toBe(true);
+
+    // Add a second server
+    spectator.component.addServer();
+    expect(spectator.component.canRemoveServer).toBe(true);
+
+    // Remove both servers
+    spectator.component.removeServer(1);
+    expect(spectator.component.canRemoveServer).toBe(true);
+
+    spectator.component.removeServer(0);
+    expect(spectator.component.canRemoveServer).toBe(false);
   });
 });
