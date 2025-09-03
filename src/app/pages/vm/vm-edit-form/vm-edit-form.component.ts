@@ -92,7 +92,6 @@ export class VmEditFormComponent implements OnInit {
     shutdown_timeout: [null as number | null, Validators.min(0)],
     autostart: [false],
     hyperv_enlightenments: [false],
-    enable_secure_boot: [false],
     trusted_platform_module: [false],
     vcpus: [null as number | null, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
     cores: [null as number | null, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
@@ -165,8 +164,9 @@ export class VmEditFormComponent implements OnInit {
       min_memory: this.form.value.min_memory
         ? Math.round(this.form.value.min_memory / MiB)
         : null,
-    };
+    } as VirtualMachineUpdate & { gpus?: string[]; enable_secure_boot?: boolean };
     delete vmPayload.gpus;
+    delete vmPayload.enable_secure_boot;
 
     if (this.form.controls.cpu_mode.value !== VmCpuMode.Custom) {
       vmPayload.cpu_model = null;
