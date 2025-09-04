@@ -101,6 +101,7 @@
           mat-button
           type="button"
           ixTest="rebuild-cache"
+          [attr.aria-label]="'Rebuild Directory Service Cache' | translate"
           (click)="onRebuildCachePressed()"
         >
           {{ 'Rebuild Directory Service Cache' | translate }}

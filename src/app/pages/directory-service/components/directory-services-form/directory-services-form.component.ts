@@ -403,10 +403,14 @@ export class DirectoryServicesFormComponent implements OnInit {
   }
 
   protected onRebuildCachePressed(): void {
+    this.isLoading.set(true);
     this.dialogService
       .jobDialog(this.systemGeneralService.refreshDirServicesCache())
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        untilDestroyed(this),
+      )
       .subscribe({
         next: ({ description }) => {
           this.snackbarService.success(
