@@ -58,6 +58,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
 
   protected dataProvider: AuditApiDataProvider;
+  private isInitialLoad = true;
 
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
   protected readonly controllerTypeControl = new FormControl<ControllerType>(ControllerType.Active);
@@ -68,8 +69,24 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      this.dataProvider.selectedControllerType = this.controllerType();
-      this.dataProvider.isHaLicensed = Boolean(this.isHaLicensed());
+      if (!this.dataProvider) {
+        return; // DataProvider not yet initialized
+      }
+
+      const controllerType = this.controllerType();
+      const isHaLicensed = Boolean(this.isHaLicensed());
+
+      // Set the values on the data provider
+      this.dataProvider.selectedControllerType = controllerType;
+      this.dataProvider.isHaLicensed = isHaLicensed;
+
+      // Skip the initial load - let AuditSearchComponent handle it
+      if (this.isInitialLoad) {
+        this.isInitialLoad = false;
+        return;
+      }
+
+      // Only reload on actual changes after initial load
       this.dataProvider.load();
     });
   }
@@ -95,6 +112,6 @@ export class AuditComponent implements OnInit, OnDestroy {
       this.dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : auditEntries[0];
       this.cdr.markForCheck();
     });
-    this.dataProvider.load();
+    // Initial load is handled by the effect() when controller type and HA license status are set
   }
 }

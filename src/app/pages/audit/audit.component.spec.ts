@@ -158,6 +158,7 @@ describe('AuditComponent', () => {
 
   describe('details panel', () => {
     it('checks card title', () => {
+      spectator.detectChanges(); // Ensure the view is updated
       const title = spectator.query('h3');
       expect(title).toHaveText('Log Details');
     });
