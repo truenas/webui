@@ -136,10 +136,11 @@ describe('DirectoryServicesConfigFormComponent', () => {
       jest.spyOn(systemGeneralService, 'refreshDirServicesCache').mockReturnValue(of(mockJob));
       const mockDialogRef = {
         afterClosed: jest.fn(() => of({ description: 'Cache rebuilt successfully' })),
-      } as JobProgressDialogRef<unknown>;
+      } as unknown as JobProgressDialogRef<unknown>;
       jest.spyOn(dialogService, 'jobDialog').mockReturnValue(mockDialogRef);
 
-      (spectator.component as unknown as { onRebuildCachePressed(): void }).onRebuildCachePressed();
+      const rebuildButton = spectator.query('[ixTest="rebuild-cache"]') as HTMLButtonElement;
+      rebuildButton.click();
 
       expect(systemGeneralService.refreshDirServicesCache).toHaveBeenCalled();
       expect(dialogService.jobDialog).toHaveBeenCalled();
@@ -166,11 +167,12 @@ describe('DirectoryServicesConfigFormComponent', () => {
       jest.spyOn(systemGeneralService, 'refreshDirServicesCache').mockReturnValue(of(mockJob));
       const mockDialogRef = {
         afterClosed: jest.fn(() => throwError(() => new Error('Cache rebuild failed'))),
-      } as JobProgressDialogRef<unknown>;
+      } as unknown as JobProgressDialogRef<unknown>;
       jest.spyOn(dialogService, 'jobDialog').mockReturnValue(mockDialogRef);
       jest.spyOn(dialogService, 'error');
 
-      (spectator.component as unknown as { onRebuildCachePressed(): void }).onRebuildCachePressed();
+      const rebuildButton = spectator.query('[ixTest="rebuild-cache"]') as HTMLButtonElement;
+      rebuildButton.click();
 
       expect(dialogService.error).toHaveBeenCalledWith({
         title: 'Error',
@@ -197,10 +199,11 @@ describe('DirectoryServicesConfigFormComponent', () => {
       jest.spyOn(systemGeneralService, 'refreshDirServicesCache').mockReturnValue(of(mockJob));
       const mockDialogRef = {
         afterClosed: jest.fn(() => of({ description: null })),
-      } as JobProgressDialogRef<unknown>;
+      } as unknown as JobProgressDialogRef<unknown>;
       jest.spyOn(dialogService, 'jobDialog').mockReturnValue(mockDialogRef);
 
-      (spectator.component as unknown as { onRebuildCachePressed(): void }).onRebuildCachePressed();
+      const rebuildButton = spectator.query('[ixTest="rebuild-cache"]') as HTMLButtonElement;
+      rebuildButton.click();
 
       expect(snackbarService.success).toHaveBeenCalledWith('Directory Service cache has been rebuilt.');
     });
