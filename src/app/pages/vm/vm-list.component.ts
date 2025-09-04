@@ -107,7 +107,7 @@ export class VmListComponent implements OnInit {
   protected memWarning = helptextVmWizard.memory_warning;
   protected hasVirtualizationSupport$ = this.vmService.hasVirtualizationSupport$;
   protected availableMemory$ = this.vmService.getAvailableMemory().pipe(toLoadingState());
-  private vmMap = new Map<string | number, VirtualMachine>();
+  vmMap = new Map<string | number, VirtualMachine>();
 
   vmNotSupportedConfig: EmptyConfig = {
     large: true,
@@ -227,9 +227,20 @@ export class VmListComponent implements OnInit {
 
         switch (event.msg) {
           case CollectionChangeType.Added:
-          case CollectionChangeType.Changed:
-            this.vmMap.set(vmId, { ...this.vmMap.get(vmId), ...updatedVm });
+          case CollectionChangeType.Changed: {
+            const existingVm = this.vmMap.get(vmId);
+            if (existingVm) {
+              // Preserve critical properties like devices if they're not in the update
+              const mergedVm = { ...existingVm, ...updatedVm };
+              if (!updatedVm.devices && existingVm.devices) {
+                mergedVm.devices = existingVm.devices;
+              }
+              this.vmMap.set(vmId, mergedVm);
+            } else {
+              this.vmMap.set(vmId, updatedVm);
+            }
             break;
+          }
 
           case CollectionChangeType.Removed:
             this.vmMap.delete(vmId);
