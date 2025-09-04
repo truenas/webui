@@ -10,6 +10,7 @@ import {
 } from 'rxjs/operators';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { Device } from 'app/interfaces/device.interface';
+import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
@@ -42,17 +43,30 @@ export class GpuService {
   }
 
   getGpuOptions(): Observable<SelectOption[]> {
-    return this.api.call('system.advanced.get_gpu_pci_choices').pipe(
-      map((choices) => {
-        return Object.entries(choices).map(
-          ([label, choice]): SelectOption => ({
-            value: choice.pci_slot,
-            label: choice.uses_system_critical_devices ? `${label} (System Critical)` : label,
-            disabled: false,
-          }),
-        );
+    return this.getRawGpuPciChoices().pipe(
+      map((choices) => this.transformGpuChoicesToOptions(choices)),
+    );
+  }
+
+  /**
+   * Transform raw GPU choices to select options.
+   * Can be used with cached observables to avoid duplicate API calls.
+   */
+  transformGpuChoicesToOptions(choices: GpuPciChoices): SelectOption[] {
+    return Object.entries(choices).map(
+      ([label, choice]): SelectOption => ({
+        value: choice.pci_slot,
+        label: choice.uses_system_critical_devices ? `${label} (System Critical)` : label,
+        disabled: false,
       }),
     );
+  }
+
+  /**
+   * Get raw GPU PCI choices from the API.
+   */
+  getRawGpuPciChoices(): Observable<GpuPciChoices> {
+    return this.api.call('system.advanced.get_gpu_pci_choices');
   }
 
   getIsolatedGpuPciIds(): Observable<string[]> {

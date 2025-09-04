@@ -77,6 +77,55 @@ describe('GpuService', () => {
     });
   });
 
+  describe('getRawGpuPciChoices', () => {
+    it('calls the correct API endpoint and returns raw GPU PCI choices', async () => {
+      const choices = await firstValueFrom(spectator.service.getRawGpuPciChoices());
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.get_gpu_pci_choices');
+      expect(choices).toEqual({
+        'GeForce [0000:01:00.0]': {
+          pci_slot: '0000:01:00.0',
+          uses_system_critical_devices: false,
+          critical_reason: '',
+        },
+        'Radeon [0000:02:00.0]': {
+          pci_slot: '0000:02:00.0',
+          uses_system_critical_devices: false,
+          critical_reason: '',
+        },
+      });
+    });
+  });
+
+  describe('transformGpuChoicesToOptions', () => {
+    it('transforms raw GPU choices to select options', () => {
+      const rawChoices = {
+        'GPU 1': {
+          pci_slot: '0000:01:00.0',
+          uses_system_critical_devices: false,
+          critical_reason: '',
+        },
+        'GPU 2': {
+          pci_slot: '0000:02:00.0',
+          uses_system_critical_devices: true,
+          critical_reason: 'Critical devices',
+        },
+      };
+
+      const result = spectator.service.transformGpuChoicesToOptions(rawChoices);
+
+      expect(result).toEqual([
+        { value: '0000:01:00.0', label: 'GPU 1', disabled: false },
+        { value: '0000:02:00.0', label: 'GPU 2 (System Critical)', disabled: false },
+      ]);
+    });
+
+    it('handles empty GPU choices', () => {
+      const result = spectator.service.transformGpuChoicesToOptions({});
+      expect(result).toEqual([]);
+    });
+  });
+
   describe('getGpuOptions', () => {
     it('returns an observable with a list of options for GPU select', async () => {
       const store$ = spectator.inject(Store);
