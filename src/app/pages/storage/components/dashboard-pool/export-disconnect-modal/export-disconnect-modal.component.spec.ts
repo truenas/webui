@@ -175,11 +175,9 @@ describe('ExportDisconnectModalComponent', () => {
     it('should correctly identify last pool', () => {
       spectator.component.totalPoolCount = 1;
       expect(spectator.component.isLastPool).toBe(true);
-      expect(spectator.component.hasOtherPools).toBe(false);
 
       spectator.component.totalPoolCount = 3;
       expect(spectator.component.isLastPool).toBe(false);
-      expect(spectator.component.hasOtherPools).toBe(true);
     });
 
     it('should correctly determine HA warning conditions', () => {
@@ -226,22 +224,21 @@ describe('ExportDisconnectModalComponent', () => {
       spectator.detectChanges();
     });
 
-    it('should show system dataset warning for system dataset pool with multiple pools', () => {
+    it('should show system dataset warning when system dataset is on this pool', () => {
       spectator.component.totalPoolCount = 3; // Multiple pools exist
       spectator.detectChanges();
 
       // Verify conditions are met
-      expect(spectator.component.hasOtherPools).toBe(true);
       expect(spectator.component.shouldShowSystemDatasetWarning).toBe(true);
 
       // Look for the system dataset panel specifically by its title text
       const systemDatasetPanel = spectator.queryAll('.expansion-panel')
-        .find((panel) => panel.textContent.includes('System dataset will be moved to another pool'));
+        .find((panel) => panel.textContent.includes('System dataset will be moved off this pool'));
       expect(systemDatasetPanel).toExist();
-      expect(systemDatasetPanel).toContainText('moved to another pool to ensure system functionality');
+      expect(systemDatasetPanel).toContainText('moved off this pool to ensure system functionality');
     });
 
-    it('should show boot device warning for system dataset pool when last pool', () => {
+    it('should show system dataset warning regardless of pool count', () => {
       // Explicitly set up conditions from scratch to avoid test pollution
       spectator.component.totalPoolCount = 1; // Only this pool exists
       spectator.component.systemConfig = { pool: 'fakePool' } as SystemDatasetConfig;
@@ -255,13 +252,12 @@ describe('ExportDisconnectModalComponent', () => {
 
       // Verify conditions are met
       expect(spectator.component.shouldShowSystemDatasetWarning).toBe(true);
-      expect(spectator.component.hasOtherPools).toBe(false);
 
       // Look for the system dataset panel specifically by its title text
       const systemDatasetPanel = spectator.queryAll('.expansion-panel')
-        .find((panel) => panel.textContent.includes('System dataset will be moved to boot device'));
+        .find((panel) => panel.textContent.includes('System dataset will be moved off this pool'));
       expect(systemDatasetPanel).toExist();
-      expect(systemDatasetPanel).toContainText('moved to the boot device to ensure system functionality');
+      expect(systemDatasetPanel).toContainText('moved off this pool to ensure system functionality');
     });
   });
 
@@ -619,10 +615,10 @@ describe('ExportDisconnectModalComponent', () => {
       expect(singlePoolSpectator.query('.ha-warning-panel')).toContainText('Critical: High Availability will be disabled');
     });
 
-    it('should show boot device message for system dataset warning', () => {
+    it('should show system dataset warning message', () => {
       // Look specifically for the system dataset panel (not the HA warning panel)
       const systemDatasetPanel = singlePoolSpectator.queryAll('.expansion-panel')
-        .find((panel) => panel.textContent.includes('System dataset will be moved to boot device'));
+        .find((panel) => panel.textContent.includes('System dataset will be moved off this pool'));
       expect(systemDatasetPanel).toExist();
     });
   });

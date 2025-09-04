@@ -82,21 +82,13 @@
           <mat-expansion-panel class="expansion-panel">
             <mat-expansion-panel-header>
               <mat-panel-title>
-                @if (hasOtherPools) {
-                  {{ 'System dataset will be moved to another pool' | translate }}
-                } @else {
-                  {{ 'System dataset will be moved to boot device' | translate }}
-                }
+                {{ 'System dataset will be moved off this pool' | translate }}
               </mat-panel-title>
             </mat-expansion-panel-header>
 
             <div class="expansion-content">
               <p class="warning">
-                @if (hasOtherPools) {
-                  {{ 'The system dataset contains configuration files and other system data. When this pool is exported, these files will be moved to another pool to ensure system functionality.' | translate }}
-                } @else {
-                  {{ 'The system dataset contains configuration files and other system data. When this pool is exported, these files will be moved to the boot device to ensure system functionality.' | translate }}
-                }
+                {{ 'The system dataset contains configuration files and other system data. When this pool is exported, these files will be moved off this pool to ensure system functionality.' | translate }}
               </p>
 
               @if (shouldShowSystemDatasetWarning) {

@@ -322,10 +322,6 @@ export class ExportDisconnectModalComponent implements OnInit {
     return this.showSysDatasetWarning && this.isExportSelected;
   }
 
-  get hasOtherPools(): boolean {
-    return this.totalPoolCount > 1;
-  }
-
   get isLastPool(): boolean {
     return this.totalPoolCount <= 1;
   }
