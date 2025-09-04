@@ -165,6 +165,8 @@ describe('DirectoryServicesConfigFormComponent', () => {
       } as Job;
 
       jest.spyOn(systemGeneralService, 'refreshDirServicesCache').mockReturnValue(of(mockJob));
+
+      // Mock jobDialog to return a dialog ref that emits an error from afterClosed
       const mockDialogRef = {
         afterClosed: jest.fn(() => throwError(() => new Error('Cache rebuild failed'))),
       } as unknown as JobProgressDialogRef<unknown>;
