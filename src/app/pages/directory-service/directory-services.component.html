@@ -61,15 +61,6 @@
           >
             {{ 'Settings' | translate }}
           </button>
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-button
-            color="default"
-            [ixTest]="[card.title, 'rebuild-cache']"
-            (click)="onRebuildCachePressed()"
-          >
-            {{ 'Rebuild Directory Service Cache' | translate }}
-          </button>
           @if (card.showLeaveButton) {
             <button
               *ixRequiresRoles="requiredRoles"

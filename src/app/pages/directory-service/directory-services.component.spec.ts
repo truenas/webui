@@ -14,10 +14,8 @@ import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LeaveDomainDialog } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { DirectoryServicesComponent } from './directory-services.component';
 
 describe('DirectoryServicesComponent', () => {
@@ -55,20 +53,9 @@ describe('DirectoryServicesComponent', () => {
           });
         }),
       }),
-      mockProvider(DialogService, {
-        jobDialog: jest.fn(() => ({
-          afterClosed: () => of({ description: 'Cache rebuilt successfully' }),
-        })),
-        error: jest.fn(),
-      }),
+      mockProvider(DialogService),
       mockProvider(SlideIn),
       mockProvider(MatDialog),
-      mockProvider(SystemGeneralService, {
-        refreshDirServicesCache: jest.fn(() => of({})),
-      }),
-      mockProvider(SnackbarService, {
-        success: jest.fn(),
-      }),
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),
       }),
@@ -574,60 +561,6 @@ describe('DirectoryServicesComponent', () => {
 
       // Restore console.warn
       console.warn = originalWarn;
-    });
-  });
-
-  describe('Rebuild cache functionality', () => {
-    beforeEach(() => {
-      spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('should rebuild directory service cache when button is clicked', async () => {
-      await spectator.fixture.whenStable();
-
-      const rebuildCacheButton = await loader.getHarness(MatButtonHarness.with({
-        text: 'Rebuild Directory Service Cache',
-      }));
-      await rebuildCacheButton.click();
-
-      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(SystemGeneralService).refreshDirServicesCache).toHaveBeenCalled();
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cache rebuilt successfully');
-    });
-
-    it('should show error dialog when cache rebuild fails', async () => {
-      // Mock console.error to prevent test failure
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-
-      const errorObservable = {
-        pipe: jest.fn().mockReturnThis(),
-        subscribe: jest.fn(({ error }) => {
-          error(new Error('Failed to rebuild cache'));
-        }),
-      };
-
-      jest.spyOn(spectator.inject(DialogService), 'jobDialog').mockReturnValue({
-        afterClosed: jest.fn(() => errorObservable),
-      } as unknown as ReturnType<DialogService['jobDialog']>);
-
-      await spectator.fixture.whenStable();
-
-      const rebuildCacheButton = await loader.getHarness(MatButtonHarness.with({
-        text: 'Rebuild Directory Service Cache',
-      }));
-      await rebuildCacheButton.click();
-
-      expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
-        title: 'Error',
-        message: 'Failed to rebuild directory service cache.',
-      });
-
-      // Verify that console.error was called
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to rebuild directory service cache:', expect.any(Error));
-
-      // Restore console.error
-      consoleErrorSpy.mockRestore();
     });
   });
 });
