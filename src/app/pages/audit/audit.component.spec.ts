@@ -98,6 +98,27 @@ describe('AuditComponent', () => {
     expect(spectator.query(FakeProgressBarComponent)).toExist();
   });
 
+  it('prevents duplicate API calls when controller type changes', async () => {
+    // Clear previous calls
+    jest.clearAllMocks();
+
+    // Get the button group harness and change controller type
+    const buttonGroup = await loader.getHarness(IxButtonGroupHarness);
+    await buttonGroup.setValue('Standby');
+
+    // Count audit.query calls after controller type change
+    const auditQueryCalls = (api.call as jest.Mock).mock.calls.filter(
+      (call) => call[0] === 'audit.query',
+    );
+
+    // Should have exactly 2 calls (1 for count, 1 for data) - not duplicated
+    expect(auditQueryCalls).toHaveLength(2);
+
+    // Verify the call includes the remote_controller flag for Standby
+    const dataCall = auditQueryCalls.find((call) => !call[1][0]['query-options']?.count);
+    expect(dataCall?.[1][0]).toHaveProperty('remote_controller', true);
+  });
+
   describe('search', () => {
     it('searches by event, username and service when basic search is used', () => {
       const search = spectator.query(SearchInputComponent)!;
