@@ -11,15 +11,15 @@ import {
 } from '@angular/material/expansion';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { isFailedJobError } from 'app/helpers/api.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { isServicesToBeRestartedInfo, ServicesToBeRestartedInfo } from 'app/interfaces/pool-export.interface';
@@ -32,6 +32,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -41,6 +42,7 @@ import {
   ServicesToBeRestartedDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/services-need-to-be-restarted-dialog/services-to-be-restarted-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { selectIsHaEnabled } from 'app/store/ha-info/ha-info.selectors';
 
 export enum DisconnectOption {
   Export = 'export',
@@ -69,6 +71,7 @@ export enum DisconnectOption {
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
+    IxIconComponent,
   ],
 })
 export class ExportDisconnectModalComponent implements OnInit {
@@ -84,6 +87,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
+  private store = inject(Store);
   pool = inject<Pool>(MAT_DIALOG_DATA);
 
   readonly helptext = helptextVolumes;
@@ -111,16 +115,14 @@ export class ExportDisconnectModalComponent implements OnInit {
   };
 
   systemConfig: SystemDatasetConfig;
-  otherPools: Pool[] = [];
-  destinationPool: Pool | null = null;
-  poolEncryptionStatus: Record<string, boolean> = {};
+  totalPoolCount = 0;
+  isHaEnabled = false;
 
   isFormLoading = false;
   form = this.fb.nonNullable.group({
     destroy: [false],
     cascade: [true],
     confirm: [false, [Validators.requiredTrue]],
-    useBootDevice: [false],
     nameInput: ['', [
       this.validatorsService.validateOnCondition(
         (control: AbstractControl) => control.parent?.get('destroy')?.value,
@@ -268,20 +270,20 @@ export class ExportDisconnectModalComponent implements OnInit {
       this.api.call('pool.processes', [this.pool.id]),
       this.api.call('systemdataset.config'),
       this.api.call('pool.query'),
+      this.store.select(selectIsHaEnabled).pipe(take(1)),
     ])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe(([attachments, processes, systemConfig, allPools]) => {
+      .subscribe(([attachments, processes, systemConfig, allPools, isHaEnabled]) => {
         this.attachments = attachments;
         this.processes = processes;
         this.organizeProcesses(processes);
         this.systemConfig = systemConfig;
-        this.otherPools = allPools.filter((pool) => pool.id !== this.pool.id);
-        this.loadPoolEncryptionStatus(allPools);
-        this.determineDestinationPool();
+        this.totalPoolCount = allPools.length;
+        this.isHaEnabled = isHaEnabled;
         this.prepareForm();
         this.cdr.markForCheck();
       });
@@ -316,56 +318,24 @@ export class ExportDisconnectModalComponent implements OnInit {
     return this.selectedOption() === DisconnectOption.Delete;
   }
 
-  get hasOtherPools(): boolean {
-    return this.otherPools.length > 0;
-  }
-
   get shouldShowSystemDatasetWarning(): boolean {
     return this.showSysDatasetWarning && this.isExportSelected;
   }
 
-  get isDestinationPoolEncrypted(): boolean {
-    return this.destinationPool ? (this.poolEncryptionStatus[this.destinationPool.name] || false) : false;
+  get hasOtherPools(): boolean {
+    return this.totalPoolCount > 1;
+  }
+
+  get isLastPool(): boolean {
+    return this.totalPoolCount <= 1;
+  }
+
+  get shouldShowHaWarning(): boolean {
+    return this.isHaEnabled && this.isLastPool && this.isExportSelected;
   }
 
   canProceed(): boolean {
     return this.selectedOption() !== null && this.form.valid && !this.isFormLoading;
-  }
-
-  private loadPoolEncryptionStatus(pools: Pool[]): void {
-    // Query the root dataset of each pool to determine if it's encrypted
-    const datasetQueries = pools.map((pool) => this.api.call('pool.dataset.query', [[['pool', '=', pool.name], ['type', '=', 'FILESYSTEM']], { extra: { retrieve_children: false } }]).pipe(
-      map((datasets: Dataset[]) => ({
-        poolName: pool.name,
-        encrypted: datasets.length > 0 && datasets[0].encrypted,
-      })),
-    ));
-
-    forkJoin(datasetQueries).pipe(
-      this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
-    ).subscribe((results) => {
-      this.poolEncryptionStatus = {};
-      results.forEach(({ poolName, encrypted }) => {
-        this.poolEncryptionStatus[poolName] = encrypted;
-      });
-      this.cdr.markForCheck();
-    });
-  }
-
-  private determineDestinationPool(): void {
-    if (this.otherPools.length === 0) {
-      this.destinationPool = null;
-      return;
-    }
-
-    // Prefer pools that are not the system dataset pool
-    const nonSystemPools = this.otherPools.filter((pool) => pool.name !== this.systemConfig?.pool);
-    if (nonSystemPools.length > 0) {
-      this.destinationPool = nonSystemPools[0];
-    } else {
-      this.destinationPool = this.otherPools[0];
-    }
   }
 
   private resetNameInputValidState(): void {

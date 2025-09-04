@@ -6,6 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dial
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { Store } from '@ngrx/store';
 import { Observable, of, throwError } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import {
@@ -29,6 +30,7 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/services-need-to-be-restarted-dialog/services-to-be-restarted-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailedJobError } from 'app/services/errors/error.classes';
+import { selectIsHaEnabled } from 'app/store/ha-info/ha-info.selectors';
 import { DisconnectOption, ExportDisconnectModalComponent } from './export-disconnect-modal.component';
 
 const fakePool = {
@@ -41,9 +43,16 @@ const fakeSystemConfig = {
   pool: 'fakeSystemPool',
 } as SystemDatasetConfig;
 
-const fakeOtherPools = [
+// Includes the current pool being exported/deleted (fakePool with id: 9999)
+const fakeMultiplePools = [
   { id: 1, name: 'otherPool1' },
   { id: 2, name: 'otherPool2' },
+  { id: 9999, name: 'fakePool' }, // Current pool
+] as Pool[];
+
+// Only the current pool exists (last pool scenario)
+const fakeSinglePool = [
+  { id: 9999, name: 'fakePool' }, // Current pool only
 ] as Pool[];
 
 const fakeUnknownPool = {
@@ -80,7 +89,7 @@ describe('ExportDisconnectModalComponent', () => {
         mockCall('pool.attachments', fakeAttachments),
         mockCall('pool.processes', fakeProcesses),
         mockCall('systemdataset.config', fakeSystemConfig),
-        mockCall('pool.query', fakeOtherPools),
+        mockCall('pool.query', fakeMultiplePools),
         mockCall('pool.dataset.query', []),
         mockJob('pool.export'),
       ]),
@@ -109,6 +118,14 @@ describe('ExportDisconnectModalComponent', () => {
       mockAuth(),
       mockProvider(SnackbarService, {
         success: jest.fn(),
+      }),
+      mockProvider(Store, {
+        select: jest.fn((selector) => {
+          if (selector === selectIsHaEnabled) {
+            return of(false); // Default to non-HA
+          }
+          return of(null);
+        }),
       }),
     ],
     componentProviders: [
@@ -142,6 +159,48 @@ describe('ExportDisconnectModalComponent', () => {
     expect(spectator.query('.export-option')).toHaveClass('selected');
   });
 
+  describe('component getters', () => {
+    it('should correctly identify export selection', () => {
+      spectator.component.selectOption(DisconnectOption.Export);
+      expect(spectator.component.isExportSelected).toBe(true);
+      expect(spectator.component.isDeleteSelected).toBe(false);
+    });
+
+    it('should correctly identify delete selection', () => {
+      spectator.component.selectOption(DisconnectOption.Delete);
+      expect(spectator.component.isExportSelected).toBe(false);
+      expect(spectator.component.isDeleteSelected).toBe(true);
+    });
+
+    it('should correctly identify last pool', () => {
+      spectator.component.totalPoolCount = 1;
+      expect(spectator.component.isLastPool).toBe(true);
+      expect(spectator.component.hasOtherPools).toBe(false);
+
+      spectator.component.totalPoolCount = 3;
+      expect(spectator.component.isLastPool).toBe(false);
+      expect(spectator.component.hasOtherPools).toBe(true);
+    });
+
+    it('should correctly determine HA warning conditions', () => {
+      spectator.component.isHaEnabled = true;
+      spectator.component.totalPoolCount = 1;
+      spectator.component.selectOption(DisconnectOption.Export);
+      expect(spectator.component.shouldShowHaWarning).toBe(true);
+
+      spectator.component.selectOption(DisconnectOption.Delete);
+      expect(spectator.component.shouldShowHaWarning).toBe(false);
+
+      spectator.component.selectOption(DisconnectOption.Export);
+      spectator.component.totalPoolCount = 3;
+      expect(spectator.component.shouldShowHaWarning).toBe(false);
+
+      spectator.component.isHaEnabled = false;
+      spectator.component.totalPoolCount = 1;
+      expect(spectator.component.shouldShowHaWarning).toBe(false);
+    });
+  });
+
   it('should allow selecting Delete option', () => {
     spectator.click('.delete-option');
     expect(spectator.component.selectedOption()).toBe(DisconnectOption.Delete);
@@ -158,13 +217,119 @@ describe('ExportDisconnectModalComponent', () => {
     expect(spectator.query('.delete-warning')).toContainText('All data will be deleted from the pool');
   });
 
+  describe('system dataset warnings', () => {
+    beforeEach(() => {
+      // Set up system dataset on the current pool and select Export option
+      spectator.component.systemConfig = { pool: 'fakePool' } as SystemDatasetConfig;
+      spectator.component.showSysDatasetWarning = true;
+      spectator.component.selectOption(DisconnectOption.Export); // Required for shouldShowSystemDatasetWarning
+      spectator.detectChanges();
+    });
+
+    it('should show system dataset warning for system dataset pool with multiple pools', () => {
+      spectator.component.totalPoolCount = 3; // Multiple pools exist
+      spectator.detectChanges();
+
+      // Verify conditions are met
+      expect(spectator.component.hasOtherPools).toBe(true);
+      expect(spectator.component.shouldShowSystemDatasetWarning).toBe(true);
+
+      // Look for the system dataset panel specifically by its title text
+      const systemDatasetPanel = spectator.queryAll('.expansion-panel')
+        .find((panel) => panel.textContent.includes('System dataset will be moved to another pool'));
+      expect(systemDatasetPanel).toExist();
+      expect(systemDatasetPanel).toContainText('moved to another pool to ensure system functionality');
+    });
+
+    it('should show boot device warning for system dataset pool when last pool', () => {
+      // Explicitly set up conditions from scratch to avoid test pollution
+      spectator.component.totalPoolCount = 1; // Only this pool exists
+      spectator.component.systemConfig = { pool: 'fakePool' } as SystemDatasetConfig;
+      spectator.component.showSysDatasetWarning = true;
+      spectator.component.selectOption(DisconnectOption.Export);
+
+      // Force multiple change detection cycles to ensure everything is updated
+      spectator.detectChanges();
+      spectator.fixture.detectChanges();
+      spectator.detectChanges();
+
+      // Verify conditions are met
+      expect(spectator.component.shouldShowSystemDatasetWarning).toBe(true);
+      expect(spectator.component.hasOtherPools).toBe(false);
+
+      // Look for the system dataset panel specifically by its title text
+      const systemDatasetPanel = spectator.queryAll('.expansion-panel')
+        .find((panel) => panel.textContent.includes('System dataset will be moved to boot device'));
+      expect(systemDatasetPanel).toExist();
+      expect(systemDatasetPanel).toContainText('moved to the boot device to ensure system functionality');
+    });
+  });
+
+  describe('HA functionality', () => {
+    it('should load HA status from store during initialization', () => {
+      const mockStore$ = spectator.inject(Store);
+      expect(mockStore$.select).toHaveBeenCalledWith(selectIsHaEnabled);
+    });
+
+    it('should set totalPoolCount based on pool query response', () => {
+      expect(spectator.component.totalPoolCount).toBe(3); // fakeMultiplePools has 3 pools
+    });
+  });
+
+  describe('HA warnings', () => {
+    beforeEach(() => {
+      // Mock Store to return HA enabled
+      const mockStore$ = spectator.inject(Store);
+      jest.spyOn(mockStore$, 'select').mockReturnValue(of(true));
+    });
+
+    it('should show HA warning when HA is enabled and this is the last pool', () => {
+      spectator.component.totalPoolCount = 1; // Last pool
+      spectator.component.isHaEnabled = true;
+      spectator.component.selectOption(DisconnectOption.Export); // Required for shouldShowHaWarning
+      spectator.detectChanges();
+
+      expect(spectator.query('.ha-warning-panel')).toExist();
+      expect(spectator.query('.ha-warning-panel')).toContainText('Critical: High Availability will be disabled');
+      expect(spectator.query('.ha-warning')).toContainText('This is the last pool in your HA system');
+      expect(spectator.query('.ha-warning')).toContainText('redundancy will be lost');
+    });
+
+    it('should not show HA warning when HA is enabled but multiple pools exist', () => {
+      spectator.component.totalPoolCount = 3; // Multiple pools
+      spectator.component.isHaEnabled = true;
+      spectator.detectChanges();
+
+      expect(spectator.query('.ha-warning-panel')).not.toExist();
+    });
+
+    it('should not show HA warning when HA is disabled', () => {
+      spectator.component.totalPoolCount = 1; // Last pool
+      spectator.component.isHaEnabled = false;
+      spectator.detectChanges();
+
+      expect(spectator.query('.ha-warning-panel')).not.toExist();
+    });
+
+    it('should not show HA warning for delete option even if HA and last pool', () => {
+      spectator.component.totalPoolCount = 1; // Last pool
+      spectator.component.isHaEnabled = true;
+      spectator.click('.delete-option'); // Switch to delete
+      spectator.detectChanges();
+
+      expect(spectator.query('.ha-warning-panel')).not.toExist();
+    });
+  });
+
   it('should show unknown status warning for pools with unknown status', () => {
     // Set the pool to unknown status and trigger the warning display
     spectator.component.pool = fakeUnknownPool;
     spectator.component.showUnknownStatusDetachWarning = true;
+    spectator.component.showSysDatasetWarning = true; // Also needed for the system dataset panel to show
+    spectator.component.systemConfig = { pool: 'fakePool' } as SystemDatasetConfig;
 
     // Need to re-trigger selectedOption to show the selected content
-    spectator.component.selectOption(spectator.component.selectedOption());
+    spectator.component.selectOption(DisconnectOption.Export);
     spectator.detectChanges();
 
     expect(spectator.query('.unknown-status-warning')).toContainText('is in the database but not connected to the machine');
@@ -182,8 +347,11 @@ describe('ExportDisconnectModalComponent', () => {
     });
 
     it('should display pool summary when attachments or processes exist', () => {
-      expect(spectator.query('.expansion-panel')).toExist();
-      expect(spectator.query('mat-panel-title')).toContainText('These services and processes depend on this pool');
+      // Find the services panel specifically by its title text
+      const servicesPanel = spectator.queryAll('.expansion-panel')
+        .find((panel) => panel.textContent.includes('These services and processes depend on this pool'));
+      expect(servicesPanel).toExist();
+      expect(servicesPanel).toContainText('These services and processes depend on this pool');
     });
 
     it('should display attachments section', () => {
@@ -389,6 +557,73 @@ describe('ExportDisconnectModalComponent', () => {
           },
         ]);
       });
+    });
+  });
+
+  describe('Last pool scenario (single pool system)', () => {
+    let singlePoolSpectator: Spectator<ExportDisconnectModalComponent>;
+
+    const createSinglePoolComponent = createComponentFactory({
+      component: ExportDisconnectModalComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockApi([
+          mockCall('pool.attachments', []),
+          mockCall('pool.processes', []),
+          mockCall('systemdataset.config', { pool: 'fakePool' } as SystemDatasetConfig),
+          mockCall('pool.query', fakeSinglePool), // Only one pool
+          mockJob('pool.export'),
+        ]),
+        mockProvider(DialogService, {
+          jobDialog: jest.fn(() => ({ afterClosed: () => of(null) })),
+          error: jest.fn(),
+        }),
+        mockProvider(MatDialogRef),
+        mockProvider(MatDialog),
+        mockProvider(LoaderService, {
+          withLoader: jest.fn(() => (source$: Observable<unknown>) => source$),
+        }),
+        mockProvider(DatasetTreeStore, { resetDatasets: jest.fn() }),
+        mockProvider(ErrorHandlerService, {
+          withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$),
+          showErrorModal: jest.fn(),
+        }),
+        mockAuth(),
+        mockProvider(SnackbarService, { success: jest.fn() }),
+        mockProvider(Store, {
+          select: jest.fn((selector) => {
+            if (selector === selectIsHaEnabled) {
+              return of(true); // HA enabled for this test
+            }
+            return of(null);
+          }),
+        }),
+      ],
+      componentProviders: [
+        { provide: MAT_DIALOG_DATA, useValue: fakePool },
+      ],
+    });
+
+    beforeEach(async () => {
+      singlePoolSpectator = createSinglePoolComponent();
+      await singlePoolSpectator.fixture.whenStable();
+      singlePoolSpectator.detectChanges();
+    });
+
+    it('should show HA warning for last pool in HA system', () => {
+      expect(singlePoolSpectator.component.totalPoolCount).toBe(1);
+      expect(singlePoolSpectator.component.isLastPool).toBe(true);
+      expect(singlePoolSpectator.component.shouldShowHaWarning).toBe(true);
+
+      expect(singlePoolSpectator.query('.ha-warning-panel')).toExist();
+      expect(singlePoolSpectator.query('.ha-warning-panel')).toContainText('Critical: High Availability will be disabled');
+    });
+
+    it('should show boot device message for system dataset warning', () => {
+      // Look specifically for the system dataset panel (not the HA warning panel)
+      const systemDatasetPanel = singlePoolSpectator.queryAll('.expansion-panel')
+        .find((panel) => panel.textContent.includes('System dataset will be moved to boot device'));
+      expect(systemDatasetPanel).toExist();
     });
   });
 });

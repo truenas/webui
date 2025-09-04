@@ -55,56 +55,60 @@
               {{ 'All data will be deleted from the pool. Back up critical data before deleting your pool!' | translate }}
             </div>
           }
-
-          @if (shouldShowSystemDatasetWarning) {
-            <div class="warning system-dataset-warning">
-              <span [innerHTML]="helptext.exportDialog.warningSysDataset | translate"></span>
-            </div>
-          }
-
-          @if (showUnknownStatusDetachWarning) {
-            <div class="warning unknown-status-warning">
-              <span [innerHTML]="helptext.exportDialog.unknownState | translate: { pool: pool.name }"></span>
-            </div>
-          }
         </div>
 
-        @if (showSysDatasetWarning && isExportSelected) {
-          <mat-expansion-panel class="expansion-panel" [expanded]="hasOtherPools && destinationPool">
+        @if (shouldShowHaWarning) {
+          <mat-expansion-panel class="expansion-panel ha-warning-panel" [expanded]="true">
             <mat-expansion-panel-header>
               <mat-panel-title>
-                @if (hasOtherPools && destinationPool) {
-                  @if (isDestinationPoolEncrypted) {
-                    {{ 'System files will be moved to Encrypted Pool: {pool}' | translate: { pool: destinationPool.name } }}
-                  } @else {
-                    {{ 'System files will be moved to Pool: {pool}' | translate: { pool: destinationPool.name } }}
-                  }
+                <div class="warning-icon">
+                  <ix-icon name="warning"></ix-icon>
+                </div>
+                {{ 'Critical: High Availability will be disabled' | translate }}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="expansion-content">
+              <div class="ha-warning">
+                <p><strong>{{ 'This is the last pool in your HA system.' | translate }}</strong></p>
+                <p>{{ 'Exporting this pool will disable High Availability functionality because no pools will remain for failover operations. Your system will continue to operate, but redundancy will be lost until another pool is added.' | translate }}</p>
+                <p>{{ 'Please ensure you understand the implications before proceeding.' | translate }}</p>
+              </div>
+            </div>
+          </mat-expansion-panel>
+        }
+
+        @if (isExportSelected) {
+          <mat-expansion-panel class="expansion-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                @if (hasOtherPools) {
+                  {{ 'System dataset will be moved to another pool' | translate }}
                 } @else {
-                  {{ 'System files will be moved to boot device' | translate }}
+                  {{ 'System dataset will be moved to boot device' | translate }}
                 }
               </mat-panel-title>
             </mat-expansion-panel-header>
 
             <div class="expansion-content">
-              @if (hasOtherPools && destinationPool) {
-                <p>{{ 'Security keys, user permissions, and system debugging files will be automatically relocated to pool {pool}.' | translate: { pool: destinationPool.name } }}</p>
-
-                @if (isDestinationPoolEncrypted) {
-                  <div class="encrypted-pool-warning">
-                    <div class="warning-icon">⚠</div>
-                    <div class="warning-content">
-                      <strong>{{ 'Important:' | translate }}</strong>
-                      {{ 'While system files are stored on your encrypted pool {pool}, you will not be able to lock it. Check \'Use boot device instead\' to reenable locking.' | translate: { pool: destinationPool.name } }}
-                    </div>
-                  </div>
-
-                  <ix-checkbox
-                    formControlName="useBootDevice"
-                    [label]="'Use boot device instead' | translate"
-                  ></ix-checkbox>
+              <p class="warning">
+                @if (hasOtherPools) {
+                  {{ 'The system dataset contains configuration files and other system data. When this pool is exported, these files will be moved to another pool to ensure system functionality.' | translate }}
+                } @else {
+                  {{ 'The system dataset contains configuration files and other system data. When this pool is exported, these files will be moved to the boot device to ensure system functionality.' | translate }}
                 }
-              } @else {
-                <p>{{ 'The system dataset contains configuration files and other system data. When this pool is exported, these files will be moved to the boot device to ensure system functionality.' | translate }}</p>
+              </p>
+
+              @if (shouldShowSystemDatasetWarning) {
+                <div class="warning system-dataset-warning">
+                  <span [innerHTML]="helptext.exportDialog.warningSysDataset | translate"></span>
+                </div>
+              }
+
+              @if (showUnknownStatusDetachWarning) {
+                <div class="warning unknown-status-warning">
+                  <span [innerHTML]="helptext.exportDialog.unknownState | translate: { pool: pool.name }"></span>
+                </div>
               }
             </div>
           </mat-expansion-panel>

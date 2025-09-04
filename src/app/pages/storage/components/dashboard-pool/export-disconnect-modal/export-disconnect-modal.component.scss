@@ -13,15 +13,18 @@
       top: 5px;
     }
 
-    fieldset {
-      border: 1px solid var(--lines) !important;
-      margin-bottom: 24px !important;
+    mat-panel-title {
+      font-family: var(--font-family-header);
     }
   }
 }
 
 .export-disconnect-modal-content {
   overflow: auto !important;
+}
+
+.warnings-section .warning {
+  font-size: 14px;
 }
 
 .export-disconnect-modal-title {
@@ -32,15 +35,9 @@
   margin-top: 15px;
 }
 
-// Disconnect Options Section
 .disconnect-options {
-  background-color: var(--bg2);
-  padding-bottom: 15px;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-
   h4 {
+    font-family: var(--font-family-header);
     font-weight: bold;
     margin-bottom: 16px;
   }
@@ -69,6 +66,7 @@
   text-align: center;
 
   h3 {
+    font-family: var(--font-family-header);
     font-weight: bold;
     margin: 0 0 8px;
   }
@@ -80,9 +78,13 @@
   }
 
   &.export-option {
+    transition: 0.3s ease all;
+
     &.selected,
     &:hover {
+      background-color: color-mix(in srgb, var(--primary) 7%, transparent);
       border-color: var(--primary);
+      transition: 0.3s ease all;
 
       h3 {
         color: var(--primary);
@@ -91,9 +93,13 @@
   }
 
   &.delete-option {
+    transition: 0.3s ease all;
+
     &.selected,
     &:hover {
+      background-color: color-mix(in srgb, var(--red) 7%, transparent);
       border-color: var(--red);
+      transition: 0.3s ease all;
 
       h3 {
         color: var(--red);
@@ -113,24 +119,56 @@
   }
 }
 
-// Selected Content Section
 .selected-content {
   margin-top: 12px;
 }
 
-// Warnings Section
 .warnings-section {
   margin-bottom: 24px;
 }
 
 .warning-text {
-  color: var(--orange);
+  color: var(--yellow);
+  font-family: var(--font-family-header);
   font-weight: bold;
 }
 
-// Expansion Panels
 .expansion-panel {
   margin-bottom: 16px;
+
+  &.ha-warning-panel {
+    ::ng-deep {
+      .mat-expansion-panel-header {
+        border: 1px solid var(--red);
+      }
+
+      .warning-icon {
+        align-items: center;
+        display: flex;
+        margin-right: 5px;
+
+        ix-icon {
+          width: 15px;
+        }
+      }
+    }
+
+    .ha-warning {
+      p {
+        line-height: 1.5;
+        margin-bottom: 12px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        strong {
+          color: var(--red);
+          font-weight: 600;
+        }
+      }
+    }
+  }
 
   &::ng-deep {
     .mat-expansion-panel-header {
@@ -157,6 +195,7 @@
 
   .expansion-content {
     h4 {
+      font-family: var(--font-family-header);
       font-size: 14px;
       font-weight: 500;
       margin: 0 0 12px;
@@ -198,31 +237,5 @@
         }
       }
     }
-  }
-}
-
-// Form Actions
-ix-form-actions {
-  ::ng-deep {
-    .form-actions {
-      padding-top: 16px;
-    }
-  }
-}
-
-// Responsive Design
-@media (max-width: $breakpoint-tablet) {
-  :host {
-    width: 100%;
-  }
-
-  .option-cards {
-    gap: 12px;
-    grid-template-columns: 1fr;
-  }
-
-  .option-card {
-    min-height: 100px;
-    padding: 16px;
   }
 }
