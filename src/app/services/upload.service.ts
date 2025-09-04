@@ -1,11 +1,11 @@
 import {
-  HttpClient, HttpEvent, HttpProgressEvent, HttpRequest, HttpResponse,
+  HttpEvent, HttpEventType, HttpProgressEvent, HttpResponse,
 } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { map, switchMap, take } from 'rxjs/operators';
+import { switchMap, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
@@ -18,44 +18,99 @@ export interface UploadOptions<M extends ApiJobMethod = ApiJobMethod> {
   file: File;
   method: M;
   params?: unknown[];
+  onCancel?: () => void;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class UploadService {
-  protected http = inject(HttpClient);
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
   private store$ = inject<Store<AppState>>(Store);
 
-
   /**
-   * Reports progress.
-   * You need to filter for `(event) => event instanceof HttpResponse` to wait for response.
+   * Creates a cancellable upload with access to the underlying XMLHttpRequest
    */
-  upload(options: UploadOptions): Observable<HttpEvent<unknown>> {
-    return this.authService.getOneTimeToken().pipe(
+  upload(options: UploadOptions): {
+    observable: Observable<HttpEvent<unknown>>;
+    cancel: () => void;
+  } {
+    let xhr: XMLHttpRequest | null = null;
+
+    const observable$ = this.authService.getOneTimeToken().pipe(
       take(1),
-      map((token) => {
-        const endPoint = `/_upload?auth_token=${token}`;
-        const formData = new FormData();
-        formData.append('data', JSON.stringify({
-          method: options.method,
-          params: options.params || [],
-        }));
-        formData.append('file', options.file, options.file.name);
-        return new HttpRequest('POST', endPoint, formData, {
-          reportProgress: true,
+      switchMap((token) => {
+        return new Observable<HttpEvent<unknown>>((observer) => {
+          const endPoint = `/_upload?auth_token=${token}`;
+          const formData = new FormData();
+          formData.append('data', JSON.stringify({
+            method: options.method,
+            params: options.params || [],
+          }));
+          formData.append('file', options.file, options.file.name);
+
+          xhr = new XMLHttpRequest();
+
+          xhr.upload.addEventListener('progress', (event) => {
+            if (event.lengthComputable) {
+              observer.next({
+                type: HttpEventType.UploadProgress,
+                loaded: event.loaded,
+                total: event.total,
+              } as HttpProgressEvent);
+            }
+          });
+
+          xhr.addEventListener('load', () => {
+            if (xhr && xhr.status >= 200 && xhr.status < 300) {
+              try {
+                const responseText = xhr.responseText || '{}';
+                const response = responseText ? JSON.parse(responseText) : null;
+                observer.next(new HttpResponse({
+                  status: xhr.status,
+                  statusText: xhr.statusText,
+                  body: response,
+                }));
+                observer.complete();
+              } catch (error) {
+                observer.error(error);
+              }
+            } else {
+              observer.error(new Error(`HTTP ${xhr?.status}: ${xhr?.statusText}`));
+            }
+          });
+
+          xhr.addEventListener('error', () => {
+            observer.error(new Error(`Upload failed: ${xhr?.statusText || 'Unknown error'}`));
+          });
+
+          xhr.addEventListener('abort', () => {
+            observer.error(new DOMException('Upload cancelled', 'AbortError'));
+          });
+
+          xhr.open('POST', endPoint);
+          xhr.send(formData);
         });
       }),
-      switchMap((req) => this.http.request(req)),
     );
+
+    const cancel = (): void => {
+      if (xhr) {
+        xhr.abort();
+        xhr = null;
+      }
+      if (options.onCancel) {
+        options.onCancel();
+      }
+    };
+
+    return { observable: observable$, cancel };
   }
 
-  // TODO: This may be breaking levels of abstraction. Consider refactoring.
   uploadAsJob<M extends ApiJobMethod>(options: UploadOptions<M>): Observable<Job<ApiJobResponse<M>>> {
-    return this.upload(options)
+    const { observable: observable$ } = this.upload(options);
+    return observable$
       .pipe(
         switchMap((response: HttpResponse<{ job_id: number }> | HttpProgressEvent) => {
           if (response instanceof HttpResponse) {
