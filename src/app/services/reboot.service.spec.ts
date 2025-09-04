@@ -77,4 +77,30 @@ describe('RebootService', () => {
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     });
   });
+
+  describe('restart', () => {
+    it('navigates to restart page without reason when no reason provided', () => {
+      spectator.service.restart();
+
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(
+        ['/system-tasks/restart'],
+        {
+          skipLocationChange: true,
+          queryParams: undefined,
+        },
+      );
+    });
+
+    it('navigates to restart page with reason when reason is provided', () => {
+      spectator.service.restart('Test Reboot Reason');
+
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(
+        ['/system-tasks/restart'],
+        {
+          skipLocationChange: true,
+          queryParams: { reason: 'Test Reboot Reason' },
+        },
+      );
+    });
+  });
 });

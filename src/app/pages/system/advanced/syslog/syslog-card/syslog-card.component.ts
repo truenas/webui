@@ -5,7 +5,7 @@ import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
   Subject, distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap,
@@ -13,8 +13,9 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { SyslogLevel, SyslogTransport, syslogLevelLabels } from 'app/enums/syslog.enum';
+import { SyslogLevel, syslogLevelLabels } from 'app/enums/syslog.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { SyslogServer } from 'app/interfaces/advanced-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
@@ -29,11 +30,8 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 export interface SyslogConfig {
   fqdn_syslog: boolean;
   sysloglevel: SyslogLevel;
-  syslogserver: string;
-  syslog_transport: SyslogTransport;
   syslog_audit: boolean;
-  syslog_tls_certificate: number;
-  syslog_tls_certificate_authority: number;
+  syslogservers: SyslogServer[];
 }
 
 @UntilDestroy()
@@ -62,9 +60,27 @@ export class SyslogCardComponent {
   private store$ = inject<Store<AppState>>(Store);
   private slideIn = inject(SlideIn);
   private firstTimeWarning = inject(FirstTimeWarningService);
+  private translate = inject(TranslateService);
 
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = syslogCardElements;
+
+  protected formatSyslogServers(config: { syslogservers?: SyslogServer[] }): string {
+    if (!config.syslogservers || config.syslogservers.length === 0) {
+      return this.translate.instant('None');
+    }
+
+    return config.syslogservers
+      .map((server) => {
+        let serverStr = server.host;
+        if (server.transport) {
+          serverStr += ` (${server.transport})`;
+        }
+        return serverStr;
+      })
+      .join(', ');
+  }
+
   protected readonly requiredRoles = [Role.SystemAdvancedWrite];
 
   private syslogConfig: SyslogConfig;
@@ -77,20 +93,14 @@ export class SyslogCardComponent {
           const previousConfig: SyslogConfig = {
             fqdn_syslog: previous.fqdn_syslog,
             sysloglevel: previous.sysloglevel,
-            syslogserver: previous.syslogserver,
-            syslog_transport: previous.syslog_transport,
             syslog_audit: previous.syslog_audit,
-            syslog_tls_certificate: previous.syslog_tls_certificate,
-            syslog_tls_certificate_authority: previous.syslog_tls_certificate_authority,
+            syslogservers: previous.syslogservers || [],
           };
           const currentConfig: SyslogConfig = {
             fqdn_syslog: current.fqdn_syslog,
             sysloglevel: current.sysloglevel,
-            syslogserver: current.syslogserver,
-            syslog_transport: current.syslog_transport,
             syslog_audit: current.syslog_audit,
-            syslog_tls_certificate: current.syslog_tls_certificate,
-            syslog_tls_certificate_authority: current.syslog_tls_certificate_authority,
+            syslogservers: current.syslogservers || [],
           };
           return isEqual(previousConfig, currentConfig);
         }),
@@ -98,11 +108,8 @@ export class SyslogCardComponent {
           return {
             fqdn_syslog: config.fqdn_syslog,
             sysloglevel: config.sysloglevel,
-            syslogserver: config.syslogserver,
-            syslog_transport: config.syslog_transport,
             syslog_audit: config.syslog_audit,
-            syslog_tls_certificate: config.syslog_tls_certificate,
-            syslog_tls_certificate_authority: config.syslog_tls_certificate_authority,
+            syslogservers: config.syslogservers || [],
           };
         }),
       );

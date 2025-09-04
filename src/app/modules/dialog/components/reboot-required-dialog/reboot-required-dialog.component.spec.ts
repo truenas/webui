@@ -55,6 +55,7 @@ describe('RebootRequiredDialogComponent', () => {
         ],
       }),
       mockProvider(RebootService, {
+        restart: jest.fn(),
         restartRemote: jest.fn(() => of(undefined)),
       }),
       mockProvider(MatDialogRef),
@@ -95,5 +96,15 @@ describe('RebootRequiredDialogComponent', () => {
 
     expect(spectator.inject(RebootService).restartRemote).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+  });
+
+  it('reboots local node with translated reason when Reboot Active Controller is pressed', async () => {
+    const confirmCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Confirm' }));
+    await confirmCheckbox.setValue(true);
+
+    const rebootLocalButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reboot Active Controller' }));
+    await rebootLocalButton.click();
+
+    expect(spectator.inject(RebootService).restart).toHaveBeenCalledWith('Active Controller Update Reboot');
   });
 });

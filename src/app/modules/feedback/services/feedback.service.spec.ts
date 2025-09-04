@@ -72,7 +72,10 @@ describe('FeedbackService', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(UploadService, {
-        upload: jest.fn(() => of(new HttpResponse({ status: 200 }))),
+        upload: jest.fn(() => ({
+          observable: of(new HttpResponse({ status: 200 })),
+          cancel: jest.fn(),
+        })),
       }),
       mockProvider(SystemGeneralService, {
         getProductType: jest.fn(() => ProductType.Enterprise),

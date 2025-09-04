@@ -28,6 +28,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 @Component({
   selector: 'ix-custom-app-form',
   templateUrl: './custom-app-form.component.html',
+  styleUrls: ['./custom-app-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,

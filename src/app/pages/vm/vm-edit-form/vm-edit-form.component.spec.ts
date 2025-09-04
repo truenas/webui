@@ -41,7 +41,6 @@ describe('VmEditFormComponent', () => {
     pin_vcpus: false,
     cpu_mode: VmCpuMode.Custom,
     cpu_model: 'EPYC',
-    enable_secure_boot: true,
     memory: 257,
     min_memory: 256,
     nodeset: '0-1',
@@ -166,7 +165,6 @@ describe('VmEditFormComponent', () => {
       'Shutdown Timeout': '90',
       'Start on Boot': true,
       'Enable Hyper-V Enlightenments': false,
-      'Enable Secure Boot': true,
       'Enable Trusted Platform Module (TPM)': false,
 
       'Virtual CPUs': '1',
@@ -192,7 +190,6 @@ describe('VmEditFormComponent', () => {
       Description: 'New description',
       'Memory Size': '258 mb',
       'Minimum Memory Size': '257 mb',
-      'Enable Secure Boot': false,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -207,7 +204,6 @@ describe('VmEditFormComponent', () => {
       cpuset: '0-3,8-11',
       description: 'New description',
       ensure_display_device: true,
-      enable_secure_boot: false,
       hide_from_msr: false,
       hyperv_enlightenments: false,
       memory: 258,
@@ -246,7 +242,6 @@ describe('VmEditFormComponent', () => {
       cpuset: '0-3,8-11',
       description: 'New description',
       ensure_display_device: true,
-      enable_secure_boot: true,
       hide_from_msr: false,
       hyperv_enlightenments: false,
       memory: 258,

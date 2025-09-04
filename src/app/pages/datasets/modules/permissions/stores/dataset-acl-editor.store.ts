@@ -268,19 +268,27 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       }
 
       return omit(ace, 'id');
-    });
+    }) as (NfsAclItem[] | PosixAclItem[]);
 
-    return {
+    const setAcl: SetAcl = {
       dacl,
       options: {
         recursive: options.recursive,
         traverse: options.traverse,
         validate_effective_acl: true, // Always validate for security - UI option removed
       },
-      user: options.owner,
-      group: options.ownerGroup,
       acltype: editorState.acl.acltype,
       path: editorState.mountpoint,
-    } as SetAcl;
+    };
+
+    // Only include user/group in payload if the corresponding checkbox is checked
+    if (options.applyOwner) {
+      setAcl.user = options.owner;
+    }
+    if (options.applyGroup) {
+      setAcl.group = options.ownerGroup;
+    }
+
+    return setAcl;
   }
 }
