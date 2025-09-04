@@ -182,6 +182,9 @@ export class CloudBackupCardComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
+        if (job.state === JobState.Success) {
+          this.snackbar.success(this.translate.instant('Cloud Backup «{name}» completed successfully.', { name: row.description }));
+        }
         this.updateRowJob(row, job);
         this.cdr.markForCheck();
       },
@@ -218,6 +221,7 @@ export class CloudBackupCardComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        this.snackbar.success(this.translate.instant('Cloud Backup «{name}» deleted.', { name: row.description }));
         this.getCloudBackups();
       },
       error: (error: unknown) => {
