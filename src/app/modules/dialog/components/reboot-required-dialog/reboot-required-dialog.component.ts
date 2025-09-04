@@ -5,7 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { failoverDisabledReasonLabels } from 'app/enums/failover-disabled-reason.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -39,6 +39,7 @@ export class RebootRequiredDialog {
   private reboot = inject(RebootService);
   private fb = inject(NonNullableFormBuilder);
   private dialogRef = inject<MatDialogRef<RebootRequiredDialog>>(MatDialogRef);
+  private translate = inject(TranslateService);
 
   thisNodeRebootReasons = toSignal(this.store$.select(selectThisNodeRebootInfo).pipe(
     map((info) => info?.reboot_required_reasons || []),
@@ -60,7 +61,7 @@ export class RebootRequiredDialog {
   });
 
   rebootLocalNode(): void {
-    this.reboot.restart();
+    this.reboot.restart(this.translate.instant('Active Controller Update Reboot'));
   }
 
   rebootRemoteNode(): void {
