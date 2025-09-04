@@ -1,0 +1,9 @@
+@import 'scss-imports/variables';
+
+@media (max-width: $breakpoint-sm) {
+  :host ::ng-deep {
+    ix-code-editor .cm-editor {
+      max-height: 50vh;
+    }
+  }
+}
