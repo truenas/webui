@@ -365,7 +365,7 @@ export class FeedbackService {
         ticket: ticketId,
         filename: attachment.name,
       }],
-    }).pipe(
+    }).observable.pipe(
       filter((event) => event instanceof HttpResponse),
       take(1),
       map(() => true),
