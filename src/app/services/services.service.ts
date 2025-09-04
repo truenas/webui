@@ -19,6 +19,8 @@ export class ServicesService {
         return [Role.SharingIscsiWrite, Role.ServiceWrite];
       case ServiceName.Nfs:
         return [Role.SharingNfsWrite, Role.ServiceWrite];
+      case ServiceName.NvmeOf:
+        return [Role.SharingNvmeTargetWrite, Role.ServiceWrite];
       default:
         return [Role.ServiceWrite];
     }
