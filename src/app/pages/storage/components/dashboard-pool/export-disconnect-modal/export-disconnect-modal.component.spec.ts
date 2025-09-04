@@ -187,15 +187,15 @@ describe('ExportDisconnectModalComponent', () => {
       expect(spectator.component.shouldShowHaWarning).toBe(true);
 
       spectator.component.selectOption(DisconnectOption.Delete);
-      expect(spectator.component.shouldShowHaWarning).toBe(false);
+      expect(spectator.component.shouldShowHaWarning).toBe(true); // Now shows for both operations
 
       spectator.component.selectOption(DisconnectOption.Export);
       spectator.component.totalPoolCount = 3;
-      expect(spectator.component.shouldShowHaWarning).toBe(false);
+      expect(spectator.component.shouldShowHaWarning).toBe(false); // Multiple pools = no warning
 
       spectator.component.isHaEnabled = false;
       spectator.component.totalPoolCount = 1;
-      expect(spectator.component.shouldShowHaWarning).toBe(false);
+      expect(spectator.component.shouldShowHaWarning).toBe(false); // HA disabled = no warning
     });
   });
 
@@ -229,7 +229,7 @@ describe('ExportDisconnectModalComponent', () => {
       spectator.detectChanges();
 
       // Verify conditions are met
-      expect(spectator.component.shouldShowSystemDatasetWarning).toBe(true);
+      expect(spectator.component.showSysDatasetWarning).toBe(true);
 
       // Look for the system dataset panel specifically by its title text
       const systemDatasetPanel = spectator.queryAll('.expansion-panel')
@@ -251,9 +251,21 @@ describe('ExportDisconnectModalComponent', () => {
       spectator.detectChanges();
 
       // Verify conditions are met
-      expect(spectator.component.shouldShowSystemDatasetWarning).toBe(true);
+      expect(spectator.component.showSysDatasetWarning).toBe(true);
 
       // Look for the system dataset panel specifically by its title text
+      const systemDatasetPanel = spectator.queryAll('.expansion-panel')
+        .find((panel) => panel.textContent.includes('System dataset will be moved off this pool'));
+      expect(systemDatasetPanel).toExist();
+      expect(systemDatasetPanel).toContainText('moved off this pool to ensure system functionality');
+    });
+
+    it('should show system dataset warning for delete operation as well', () => {
+      spectator.component.totalPoolCount = 2;
+      spectator.component.selectOption(DisconnectOption.Delete); // Select delete instead of export
+      spectator.detectChanges();
+
+      // Verify the system dataset panel shows for delete operations too
       const systemDatasetPanel = spectator.queryAll('.expansion-panel')
         .find((panel) => panel.textContent.includes('System dataset will be moved off this pool'));
       expect(systemDatasetPanel).toExist();
@@ -282,7 +294,7 @@ describe('ExportDisconnectModalComponent', () => {
     it('should show HA warning when HA is enabled and this is the last pool', () => {
       spectator.component.totalPoolCount = 1; // Last pool
       spectator.component.isHaEnabled = true;
-      spectator.component.selectOption(DisconnectOption.Export); // Required for shouldShowHaWarning
+      spectator.component.selectOption(DisconnectOption.Export); // Select an option to show content
       spectator.detectChanges();
 
       expect(spectator.query('.ha-warning-panel')).toExist();
@@ -307,13 +319,14 @@ describe('ExportDisconnectModalComponent', () => {
       expect(spectator.query('.ha-warning-panel')).not.toExist();
     });
 
-    it('should not show HA warning for delete option even if HA and last pool', () => {
+    it('should show HA warning for delete option when HA and last pool', () => {
       spectator.component.totalPoolCount = 1; // Last pool
       spectator.component.isHaEnabled = true;
       spectator.click('.delete-option'); // Switch to delete
       spectator.detectChanges();
 
-      expect(spectator.query('.ha-warning-panel')).not.toExist();
+      expect(spectator.query('.ha-warning-panel')).toExist();
+      expect(spectator.query('.ha-warning-panel')).toContainText('Critical: High Availability will be disabled');
     });
   });
 

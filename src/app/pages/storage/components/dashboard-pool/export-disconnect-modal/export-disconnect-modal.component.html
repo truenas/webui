@@ -78,33 +78,31 @@
           </mat-expansion-panel>
         }
 
-        @if (isExportSelected) {
-          <mat-expansion-panel class="expansion-panel">
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                {{ 'System dataset will be moved off this pool' | translate }}
-              </mat-panel-title>
-            </mat-expansion-panel-header>
+        <mat-expansion-panel class="expansion-panel">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ 'System dataset will be moved off this pool' | translate }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
 
-            <div class="expansion-content">
-              <p class="warning">
-                {{ 'The system dataset contains configuration files and other system data. When this pool is exported, these files will be moved off this pool to ensure system functionality.' | translate }}
-              </p>
+          <div class="expansion-content">
+            <p class="warning">
+              {{ 'The system dataset contains configuration files and other system data. When this pool is exported, these files will be moved off this pool to ensure system functionality.' | translate }}
+            </p>
 
-              @if (shouldShowSystemDatasetWarning) {
-                <div class="warning system-dataset-warning">
-                  <span [innerHTML]="helptext.exportDialog.warningSysDataset | translate"></span>
-                </div>
-              }
+            @if (showSysDatasetWarning) {
+              <div class="warning system-dataset-warning">
+                <span [innerHTML]="helptext.exportDialog.warningSysDataset | translate"></span>
+              </div>
+            }
 
-              @if (showUnknownStatusDetachWarning) {
-                <div class="warning unknown-status-warning">
-                  <span [innerHTML]="helptext.exportDialog.unknownState | translate: { pool: pool.name }"></span>
-                </div>
-              }
-            </div>
-          </mat-expansion-panel>
-        }
+            @if (showUnknownStatusDetachWarning) {
+              <div class="warning unknown-status-warning">
+                <span [innerHTML]="helptext.exportDialog.unknownState | translate: { pool: pool.name }"></span>
+              </div>
+            }
+          </div>
+        </mat-expansion-panel>
 
         @if (attachments.length || process.knownProcesses.length || process.unknownProcesses.length) {
           <mat-expansion-panel class="expansion-panel">

@@ -318,16 +318,12 @@ export class ExportDisconnectModalComponent implements OnInit {
     return this.selectedOption() === DisconnectOption.Delete;
   }
 
-  get shouldShowSystemDatasetWarning(): boolean {
-    return this.showSysDatasetWarning && this.isExportSelected;
-  }
-
   get isLastPool(): boolean {
     return this.totalPoolCount <= 1;
   }
 
   get shouldShowHaWarning(): boolean {
-    return this.isHaEnabled && this.isLastPool && this.isExportSelected;
+    return this.isHaEnabled && this.isLastPool;
   }
 
   canProceed(): boolean {
