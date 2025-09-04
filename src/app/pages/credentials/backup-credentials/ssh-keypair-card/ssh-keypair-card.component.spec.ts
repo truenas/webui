@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
@@ -78,6 +78,7 @@ describe('SshKeypairCardComponent', () => {
       mockProvider(DownloadService),
       mockProvider(KeychainCredentialService, {
         getSshKeys: jest.fn(() => of(credentials)),
+        refetchSshKeys: new Subject<void>(),
       }),
       mockAuth(),
     ],

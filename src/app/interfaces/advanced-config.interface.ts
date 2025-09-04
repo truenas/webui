@@ -1,6 +1,12 @@
 import { SedUser } from 'app/enums/sed-user.enum';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 
+export interface SyslogServer {
+  host: string;
+  transport?: SyslogTransport;
+  tls_certificate?: number | null;
+}
+
 export interface AdvancedConfig {
   advancedmode: boolean;
   anonstats: boolean;
@@ -22,15 +28,12 @@ export interface AdvancedConfig {
   serialconsole: boolean;
   serialport: string;
   serialspeed: string;
-  syslog_tls_certificate: number;
-  syslog_transport: SyslogTransport;
   syslog_audit: boolean;
   sysloglevel: SyslogLevel;
-  syslogserver: string;
+  syslogservers: SyslogServer[];
   traceback: boolean;
   uploadcrash: boolean;
   sed_passwd: string;
-  syslog_tls_certificate_authority: number;
   kernel_extra_options: string;
   legacy_ui?: boolean;
 }

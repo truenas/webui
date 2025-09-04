@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute } from '@angular/router';
@@ -21,7 +21,7 @@ import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -60,7 +60,7 @@ interface QuotaData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     PageHeaderComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
     MatSlideToggle,
     TestDirective,
     RequiresRolesDirective,
@@ -180,7 +180,7 @@ export class DatasetQuotasListComponent implements OnInit {
   quotas: DatasetQuota[] = [];
   datasetId: string;
   invalidQuotas: DatasetQuota[] = [];
-  filterString = '';
+  searchQuery = signal('');
   emptyType: EmptyType = EmptyType.NoPageData;
   isLoading = false;
   showAllQuotas = false;
@@ -233,7 +233,7 @@ export class DatasetQuotasListComponent implements OnInit {
             this.quotas = quotas;
           }
 
-          this.onListFiltered(this.filterString);
+          this.onListFiltered(this.searchQuery());
           this.checkInvalidQuotas();
         },
         error: (error: unknown) => {
@@ -277,7 +277,7 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query;
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.quotas, query, columnKeys: ['name', 'id', 'quota', 'obj_quota'] });
 
     if (!this.dataProvider.totalRows) {

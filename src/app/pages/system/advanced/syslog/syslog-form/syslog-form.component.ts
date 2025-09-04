@@ -1,9 +1,8 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl, FormArray } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -11,14 +10,14 @@ import {
   EMPTY, of, Subscription,
 } from 'rxjs';
 import {
-  catchError, tap,
+  catchError, map, tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
-import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
+import { AdvancedConfigUpdate, SyslogServer } from 'app/interfaces/advanced-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -38,6 +37,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 @Component({
   selector: 'ix-syslog-form',
   templateUrl: 'syslog-form.component.html',
+  styleUrls: ['./syslog-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
@@ -53,7 +53,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
     MatButton,
     TestDirective,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class SyslogFormComponent implements OnInit {
@@ -73,14 +72,21 @@ export class SyslogFormComponent implements OnInit {
   readonly form = this.fb.group({
     fqdn_syslog: [false],
     sysloglevel: new FormControl(null as SyslogLevel | null),
-    syslogserver: [''],
-    syslog_transport: new FormControl(null as SyslogTransport | null),
-    syslog_tls_certificate: new FormControl(null as string | null),
-    syslog_tls_certificate_authority: new FormControl(null as string | null),
     syslog_audit: [false],
+    syslogservers: this.fb.array<SyslogServer>([]),
   });
 
-  readonly isTlsTransport$ = this.form.select((values) => values.syslog_transport === SyslogTransport.Tls);
+  get syslogServersArray(): FormArray<SyslogServer> {
+    return this.form.controls.syslogservers;
+  }
+
+  get canAddServer(): boolean {
+    return this.syslogServersArray.length < 2;
+  }
+
+  get canRemoveServer(): boolean {
+    return this.syslogServersArray.length > 0;
+  }
 
   readonly tooltips = {
     fqdn_syslog: helptext.fqdnTooltip,
@@ -96,6 +102,10 @@ export class SyslogFormComponent implements OnInit {
   readonly transportOptions$ = of(helptextSystemAdvanced.syslogTransport.options);
   readonly certificateOptions$ = this.api.call('system.advanced.syslog_certificate_choices').pipe(
     choicesToOptions(),
+    map((options) => options.map((option) => ({
+      ...option,
+      value: option.value ? parseInt(option.value as string, 10) : null,
+    }))),
   );
 
   readonly certificateAuthorityOptions$ = this.api.call('system.advanced.syslog_certificate_authority_choices')
@@ -111,30 +121,47 @@ export class SyslogFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.subscriptions.push(
-      this.form.controls.syslog_tls_certificate.enabledWhile(this.isTlsTransport$),
-    );
-
     this.loadForm();
+  }
+
+  addServer(): void {
+    if (this.canAddServer) {
+      const serverGroup = this.fb.group({
+        host: [''],
+        transport: [SyslogTransport.Udp],
+        tls_certificate: [null as number | null],
+      });
+
+      // Add conditional validation for TLS certificate
+      const subscription = serverGroup.controls.transport.valueChanges.pipe(
+        untilDestroyed(this),
+      ).subscribe((transport) => {
+        const tlsCertControl = serverGroup.controls.tls_certificate;
+        if (transport === SyslogTransport.Tls) {
+          tlsCertControl.setValidators([Validators.required]);
+        } else {
+          tlsCertControl.clearValidators();
+        }
+        tlsCertControl.updateValueAndValidity();
+      });
+
+      this.subscriptions.push(subscription);
+      this.syslogServersArray.push(serverGroup);
+    }
+  }
+
+  removeServer(index: number): void {
+    this.syslogServersArray.removeAt(index);
   }
 
   protected onSubmit(): void {
     const { ...values } = this.form.value;
-    let configUpdate: Partial<AdvancedConfigUpdate> = {
-      syslog_transport: values.syslog_transport || undefined,
+    const configUpdate: Partial<AdvancedConfigUpdate> = {
       fqdn_syslog: values.fqdn_syslog,
-      syslogserver: values.syslogserver,
       sysloglevel: values.sysloglevel || undefined,
       syslog_audit: values.syslog_audit,
+      syslogservers: values.syslogservers.filter((server: SyslogServer) => server.host),
     };
-
-    if (values.syslog_transport === SyslogTransport.Tls) {
-      configUpdate = {
-        ...configUpdate,
-        syslog_tls_certificate: parseInt(values.syslog_tls_certificate || ''),
-        syslog_tls_certificate_authority: parseInt(values.syslog_tls_certificate_authority || ''),
-      };
-    }
 
     this.isFormLoading.set(true);
     this.api.call('system.advanced.update', [configUpdate]).pipe(
@@ -155,9 +182,44 @@ export class SyslogFormComponent implements OnInit {
 
   private loadForm(): void {
     this.form.patchValue({
-      ...this.syslogConfig,
-      syslog_tls_certificate: String(this.syslogConfig.syslog_tls_certificate),
-      syslog_tls_certificate_authority: String(this.syslogConfig.syslog_tls_certificate_authority),
+      fqdn_syslog: this.syslogConfig.fqdn_syslog,
+      sysloglevel: this.syslogConfig.sysloglevel,
+      syslog_audit: this.syslogConfig.syslog_audit,
     });
+
+    // Clear existing servers and add from config
+    this.syslogServersArray.clear();
+
+    if (this.syslogConfig.syslogservers && this.syslogConfig.syslogservers.length > 0) {
+      this.syslogConfig.syslogservers.forEach((server) => {
+        const serverGroup = this.fb.group({
+          host: [server.host],
+          transport: [server.transport || SyslogTransport.Udp],
+          tls_certificate: [server.tls_certificate],
+        });
+
+        // Add conditional validation for TLS certificate
+        if (server.transport === SyslogTransport.Tls && !server.tls_certificate) {
+          serverGroup.controls.tls_certificate.setValidators([Validators.required]);
+        }
+
+        // Watch for transport changes
+        this.subscriptions.push(
+          serverGroup.controls.transport.valueChanges.pipe(
+            untilDestroyed(this),
+          ).subscribe((transport) => {
+            const tlsCertControl = serverGroup.controls.tls_certificate;
+            if (transport === SyslogTransport.Tls) {
+              tlsCertControl.setValidators([Validators.required]);
+            } else {
+              tlsCertControl.clearValidators();
+            }
+            tlsCertControl.updateValueAndValidity();
+          }),
+        );
+
+        this.syslogServersArray.push(serverGroup);
+      });
+    }
   }
 }

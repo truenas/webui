@@ -1,21 +1,22 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, output, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, output, signal, inject, computed } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
-import { cloudBackupTaskEmptyConfig } from 'app/constants/empty-configs';
+import { cloudBackupTaskEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -55,7 +56,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxTableHeadComponent,
     TranslateModule,
     AsyncPipe,
-    SearchInput1Component,
+    BasicSearchComponent,
     EmptyComponent,
   ],
 })
@@ -73,12 +74,19 @@ export class CloudBackupListComponent {
   readonly dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
   readonly cloudBackups = input<CloudBackup[]>([]);
   readonly isMobileView = input<boolean>(false);
-  protected readonly emptyConfig = cloudBackupTaskEmptyConfig;
 
   readonly toggleShowMobileDetails = output<boolean>();
   readonly searchQuery = signal<string>('');
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = cloudBackupListElements;
+
+  protected readonly emptyConfig = computed<EmptyConfig>(() => {
+    if (this.searchQuery()?.length) {
+      return noSearchResultsConfig;
+    }
+
+    return cloudBackupTaskEmptyConfig;
+  });
 
   columns = createTable<CloudBackup>([
     textColumn({
@@ -170,7 +178,7 @@ export class CloudBackupListComponent {
     });
   }
 
-  onSearch(query: string): void {
+  protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider().setFilter({ query, columnKeys: ['description'] });
   }

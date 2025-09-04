@@ -8,7 +8,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -45,7 +45,7 @@ describe('ReportingExportersListComponent', () => {
   const createComponent = createComponentFactory({
     component: ReportingExporterListComponent,
     imports: [
-      SearchInput1Component,
+      BasicSearchComponent,
       FakeProgressBarComponent,
     ],
     providers: [

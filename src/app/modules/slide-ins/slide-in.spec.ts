@@ -146,6 +146,98 @@ describe('SlideIn Service', () => {
     expect(responseReceived).toBe(true);
   });
 
+  it('should properly restore parent slide-in visibility when closing stacked child slide-in', () => {
+    // Mock container for testing visibility restoration
+    const mockNativeElement = {
+      style: { transform: 'translateX(100%)' },
+      classList: {
+        add: jest.fn(),
+        remove: jest.fn(),
+      },
+    };
+
+    // Override the containerRefMock to include location
+    const enhancedContainerMock = {
+      ...containerRefMock,
+      location: {
+        nativeElement: mockNativeElement,
+      },
+      hostView: { destroyed: false },
+    };
+
+    // Replace default container mock for this test
+    attachSpy.mockReturnValue(enhancedContainerMock);
+
+    // Spy on Injector.create before opening slide-ins
+    const injectorCreateSpy = jest.spyOn(Injector, 'create');
+
+    // Open first slide-in (parent)
+    spectator.service.open(MockSlideInComponent);
+    expect(spectator.service.openSlideIns()).toBe(1);
+
+    // Note: Parent's slideInRef is created but not used in this test
+    // We're testing the container restoration, not the slideInRef behavior
+
+    // Simulate opening a second slide-in (child) stacked on top
+    const parentSlideOutSpy = enhancedContainerMock.instance.slideOut as jest.Mock;
+
+    // Create a new overlay for the child
+    const childContainerMock = {
+      instance: {
+        detachPortal: jest.fn(),
+        makeWide: jest.fn(),
+        attachPortal: jest.fn(),
+        slideIn: jest.fn(() => whenVisible$.asObservable()),
+        slideOut: jest.fn(() => whenHidden$.asObservable()),
+      },
+    };
+
+    const childOverlayRef = {
+      attach: jest.fn(() => childContainerMock),
+      dispose: jest.fn(),
+      backdropClick: () => of(undefined),
+    };
+
+    const overlay = spectator.inject(Overlay);
+    (overlay.create as jest.Mock).mockReturnValueOnce(childOverlayRef as unknown as OverlayRef);
+
+    // Open child slide-in - this should trigger parent to slide out
+    spectator.service.open(MockSlideIn2Component);
+
+    // Simulate parent sliding out
+    whenHidden$.next();
+
+    expect(parentSlideOutSpy).toHaveBeenCalled();
+    expect(spectator.service.openSlideIns()).toBe(2);
+
+    // Get the child's slideInRef
+    const childInjectorArgs = injectorCreateSpy.mock.calls[1][0];
+    const childSlideInRef = (
+      (childInjectorArgs.providers.find(
+        (provider: ValueProvider) => provider.provide === SlideInRef,
+      )
+      ) as ValueProvider
+    ).useValue as SlideInRef<unknown, unknown>;
+
+    // Close child slide-in
+    childSlideInRef.close({ response: false });
+    whenHidden$.next(); // Child slides out
+
+    // After child is closed, parent container should be restored with correct classes
+    // This is the critical fix we're testing - ensuring parent visibility is restored
+    expect(mockNativeElement.style.transform).toBe('');
+    expect(mockNativeElement.classList.add).toHaveBeenCalledWith('slide-in-visible');
+    expect(mockNativeElement.classList.remove).toHaveBeenCalledWith('slide-in-hidden');
+
+    // Parent should slide back in
+    const parentSlideInSpy = enhancedContainerMock.instance.slideIn as jest.Mock;
+    whenVisible$.next(); // Trigger parent slide in completion
+    expect(parentSlideInSpy).toHaveBeenCalled();
+
+    // Verify child overlay is disposed
+    expect(childOverlayRef.dispose).toHaveBeenCalled();
+  });
+
   describe('debug panel integration', () => {
     let originalDebugPanel: typeof environment.debugPanel;
     let store$: Store;

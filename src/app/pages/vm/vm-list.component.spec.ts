@@ -12,7 +12,7 @@ import { CollectionChangeType } from 'app/enums/api.enum';
 import { VmBootloader, VmDeviceType, VmDisplayType, VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTableColumnsSelectorComponent,
@@ -97,7 +97,7 @@ describe('VmListComponent', () => {
     component: VmListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
-      SearchInput1Component,
+      BasicSearchComponent,
       IxTableColumnsSelectorComponent,
       FileSizePipe,
       IxTableDetailsRowDirective,

@@ -19,6 +19,7 @@ import { selectAdvancedConfig } from 'app/store/system-config/system-config.sele
 describe('SyslogCardComponent', () => {
   let spectator: Spectator<SyslogCardComponent>;
   let loader: HarnessLoader;
+
   const createComponent = createComponentFactory({
     component: SyslogCardComponent,
     imports: [
@@ -33,10 +34,14 @@ describe('SyslogCardComponent', () => {
             selector: selectAdvancedConfig,
             value: {
               fqdn_syslog: true,
-              syslogserver: '127.1.2.3',
               sysloglevel: SyslogLevel.Alert,
-              syslog_transport: SyslogTransport.Tcp,
               syslog_audit: false,
+              syslogservers: [
+                {
+                  host: '127.1.2.3',
+                  transport: SyslogTransport.Tcp,
+                },
+              ],
             } as AdvancedConfig,
           },
         ],
@@ -62,11 +67,11 @@ describe('SyslogCardComponent', () => {
     expect(itemTexts).toEqual([
       'Use FQDN for Logging: Enabled',
       'Syslog Level: Alert',
-      'Syslog Server: 127.1.2.3',
-      'Syslog Transport: TCP',
+      'Syslog Servers: 127.1.2.3 (TCP)',
       'Include Audit Logs: No',
     ]);
   });
+
 
   it('opens Syslog form when Configure button is pressed', async () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
@@ -79,13 +84,40 @@ describe('SyslogCardComponent', () => {
         data: {
           fqdn_syslog: true,
           syslog_audit: false,
-          syslog_tls_certificate: undefined,
-          syslog_tls_certificate_authority: undefined,
-          syslog_transport: 'TCP',
           sysloglevel: 'F_ALERT',
-          syslogserver: '127.1.2.3',
+          syslogservers: [
+            {
+              host: '127.1.2.3',
+              transport: 'TCP',
+            },
+          ],
         },
       },
     );
+  });
+
+  it('displays multiple syslog servers correctly', () => {
+    // Access protected method via bracket notation
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    const formatMethod = spectator.component['formatSyslogServers'];
+    const result = formatMethod.call(spectator.component, {
+      syslogservers: [
+        { host: 'server1.com', transport: SyslogTransport.Udp },
+        { host: 'server2.com', transport: SyslogTransport.Tls },
+      ],
+    });
+
+    expect(result).toBe('server1.com (UDP), server2.com (TLS)');
+  });
+
+  it('displays "None" when no syslog servers are configured', () => {
+    // Access protected method via bracket notation
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    const formatMethod = spectator.component['formatSyslogServers'];
+    const result = formatMethod.call(spectator.component, {
+      syslogservers: [],
+    });
+
+    expect(result).toBe('None');
   });
 });

@@ -1,6 +1,7 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, input, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, input, output, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import {
   ActivatedRoute, Router, RouterLink, RouterLinkActive,
@@ -12,7 +13,7 @@ import { VDevNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-da
 import {
   isTopologyDisk, isVdev, TopologyDisk,
 } from 'app/interfaces/storage.interface';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
@@ -39,8 +40,9 @@ import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.s
   imports: [
     TestDirective,
     RouterLink,
+    BasicSearchComponent,
     FakeProgressBarComponent,
-    SearchInput1Component,
+    FormsModule,
     RouterLinkActive,
     TopologyItemNodeComponent,
     IxIconComponent,
@@ -69,7 +71,7 @@ export class VDevsListComponent implements OnInit {
   showMobileDetails = output<boolean>();
   showDetails = output<{ poolId: number; guid: string }>();
 
-  filterString = '';
+  searchQuery = signal('');
   protected isLoading$ = this.vDevsStore.isLoading$;
   protected selectedNode$ = this.vDevsStore.selectedNode$;
 
@@ -99,8 +101,8 @@ export class VDevsListComponent implements OnInit {
     }
   }
 
-  protected onSearch(query: string): void {
-    this.filterString = query;
+  protected onListFiltered(query: string): void {
+    this.searchQuery.set(query);
     this.dataSource.filter(query);
   }
 
