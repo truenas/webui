@@ -149,7 +149,7 @@ describe('CloudBackupListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run «UA» Cloud Backup now?',
+      message: 'Run «UA» Cloud Backup Task now?',
       hideCheckbox: true,
     });
 
@@ -163,7 +163,7 @@ describe('CloudBackupListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Cloud Backup <b>"UA"</b>?',
+      message: 'Delete Cloud Backup Task <b>"UA"</b>?',
       buttonColor: 'warn',
       buttonText: 'Delete',
     });
