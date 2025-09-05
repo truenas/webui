@@ -135,7 +135,7 @@ interface VmNicAttributes {
   dtype: VmDeviceType.Nic;
 }
 
-interface VmDiskAttributes {
+export interface VmDiskAttributes {
   logical_sectorsize: number;
   path: string;
   physical_sectorsize: number;

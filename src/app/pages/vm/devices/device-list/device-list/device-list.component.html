@@ -60,6 +60,16 @@
         >
           {{ 'Details' | translate }}
         </a>
+        @if (isDiskDevice(device)) {
+          <a
+            mat-menu-item
+            [ixTest]="[device.id, 'export']"
+            [attr.aria-label]="'Export disk to image file' | translate"
+            (click)="onExportDisk(device)"
+          >
+            {{ 'Export to Image' | translate }}
+          </a>
+        }
       </mat-menu>
     </ng-template>
   </tbody>
