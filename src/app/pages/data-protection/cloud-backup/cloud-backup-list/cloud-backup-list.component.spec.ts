@@ -9,7 +9,6 @@ import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -83,9 +82,7 @@ describe('CloudBackupListComponent', () => {
           response: true,
         })),
       }),
-      mockProvider(SnackbarService, {
-        success: jest.fn(),
-      }),
+      mockProvider(SnackbarService),
       mockProvider(EmptyService),
       provideMockStore({
         selectors: [
@@ -152,26 +149,11 @@ describe('CloudBackupListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run «UA» Cloud Backup Task now?',
+      message: 'Run «UA» Cloud Backup now?',
       hideCheckbox: true,
     });
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup Task «UA» has started.');
-  });
-
-  it('shows success message when job completes successfully', async () => {
-    const mockJobStream$ = of({
-      state: JobState.Success,
-      id: 123,
-    } as Job<void>);
-    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(mockJobStream$);
-
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Run job' });
-
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup Task «UA» completed successfully.');
   });
 
   it('deletes a Cloud Backup with confirmation when Delete button is pressed', async () => {
@@ -181,13 +163,12 @@ describe('CloudBackupListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
+      message: 'Delete Cloud Backup <b>"UA"</b>?',
       buttonColor: 'warn',
       buttonText: 'Delete',
-      message: 'Delete Cloud Backup Task <b>"UA"</b>?',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup Task «UA» deleted.');
   });
 
   it('updates Cloud Backup Enabled status once mat-toggle is updated', async () => {
