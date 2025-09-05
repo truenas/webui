@@ -114,7 +114,7 @@ describe('AllUsersComponent', () => {
     const userDetails = spectator.query(UserDetailsComponent);
 
     expect(userDetails.user()).toBe(selectedUser);
-    expect(location.replaceState).toHaveBeenCalledWith('credentials/users-new?username=jane_smith');
+    expect(location.replaceState).toHaveBeenCalledWith('credentials/users?username=jane_smith');
   });
 
   it('does not update expanded row when no user is selected', () => {
@@ -146,6 +146,6 @@ describe('AllUsersComponent', () => {
     spectator.detectChanges();
 
     expect(userDetails.user()).toBe(newUser);
-    expect(location.replaceState).toHaveBeenCalledWith('credentials/users-new?username=new_test_user');
+    expect(location.replaceState).toHaveBeenCalledWith('credentials/users?username=new_test_user');
   });
 });
