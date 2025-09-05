@@ -218,9 +218,28 @@ describe('CloudSyncTaskCardComponent', () => {
       id: 1,
       state: JobState.Success,
       time_finished: { $date: new Date().getTime() },
-    } as Job;
+    } as Job<void>;
 
     jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of(successJob));
+    const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
+
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Run job' });
+
+    expect(snackbarSpy).toHaveBeenCalledWith(
+      'Cloud Sync Task «custom-cloudsync» completed successfully.',
+    );
+  });
+
+  it('shows success message when job finishes successfully', async () => {
+    const finishedJob = {
+      id: 1,
+      state: JobState.Finished,
+      time_finished: { $date: new Date().getTime() },
+    } as Job<void>;
+
+    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of(finishedJob));
     const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
 
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));

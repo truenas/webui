@@ -187,6 +187,27 @@ describe('CloudBackupCardComponent', () => {
     );
   });
 
+  it('shows success message when job finishes successfully', async () => {
+    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of({
+      id: 1,
+      state: JobState.Finished,
+    } as Job<void>));
+
+    const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
+
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Run job' });
+
+    // Wait for the observable to complete
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    expect(snackbarSpy).toHaveBeenCalledWith(
+      'Cloud Backup Task «test one» completed successfully.',
+    );
+  });
+
   it('deletes a Cloud Backup with confirmation when Delete button is pressed', async () => {
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
     await menu.open();
