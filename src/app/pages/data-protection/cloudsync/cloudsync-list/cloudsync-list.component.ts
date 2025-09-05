@@ -208,14 +208,14 @@ export class CloudSyncListComponent implements OnInit {
   protected runNow(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
-      message: this.translate.instant('Run «{name}» Cloud Sync now?', { name: row.description }),
+      message: this.translate.instant('Run «{name}» Cloud Sync Task now?', { name: row.description }),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
       tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
       switchMap(() => this.api.job('cloudsync.sync', [row.id])),
       tapOnce(() => this.snackbar.success(
-        this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
+        this.translate.instant('Cloud Sync Task «{name}» has started.', { name: row.description }),
       )),
       catchError((error: unknown) => {
         this.getCloudSyncTasks();
@@ -224,6 +224,9 @@ export class CloudSyncListComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe((job: Job) => {
+      if (job.state === JobState.Success || job.state === JobState.Finished) {
+        this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» completed successfully.', { name: row.description }));
+      }
       this.updateRowStateAndJob(row, job.state, job);
       this.cdr.markForCheck();
     });
@@ -261,7 +264,7 @@ export class CloudSyncListComponent implements OnInit {
       filter(Boolean),
       switchMap(() => this.api.job('cloudsync.sync', [row.id, { dry_run: true }])),
       tapOnce(() => this.snackbar.success(
-        this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
+        this.translate.instant('Cloud Sync Task «{name}» has started.', { name: row.description }),
       )),
       catchError((error: unknown) => {
         this.getCloudSyncTasks();
@@ -270,6 +273,9 @@ export class CloudSyncListComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe((job: Job) => {
+      if (job.state === JobState.Success || job.state === JobState.Finished) {
+        this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» dry run completed successfully.', { name: row.description }));
+      }
       this.updateRowStateAndJob(row, job.state, job);
       this.cdr.markForCheck();
     });
@@ -323,7 +329,7 @@ export class CloudSyncListComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.snackbar.success(
-          this.translate.instant('Cloud Sync «{name}» has been deleted.', { name: row.description }),
+          this.translate.instant('Cloud Sync Task «{name}» deleted.', { name: row.description }),
         );
         this.getCloudSyncTasks();
       },

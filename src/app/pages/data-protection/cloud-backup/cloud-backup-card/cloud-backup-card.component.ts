@@ -170,18 +170,21 @@ export class CloudBackupCardComponent implements OnInit {
   protected runNow(row: CloudBackup): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
-      message: this.translate.instant('Run «{name}» Cloud Backup now?', { name: row.description }),
+      message: this.translate.instant('Run «{name}» Cloud Backup Task now?', { name: row.description }),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
       tap(() => this.updateRowJob(row, { ...row.job, state: JobState.Running })),
       tapOnce(() => {
-        this.snackbar.success(this.translate.instant('Cloud Backup «{name}» has started.', { name: row.description }));
+        this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» has started.', { name: row.description }));
       }),
       switchMap(() => this.api.job('cloud_backup.sync', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
+        if (job.state === JobState.Success || job.state === JobState.Finished) {
+          this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» completed successfully.', { name: row.description }));
+        }
         this.updateRowJob(row, job);
         this.cdr.markForCheck();
       },
@@ -207,7 +210,7 @@ export class CloudBackupCardComponent implements OnInit {
   protected doDelete(row: CloudBackup): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
-      message: this.translate.instant('Delete Cloud Backup <b>"{name}"</b>?', {
+      message: this.translate.instant('Delete Cloud Backup Task <b>"{name}"</b>?', {
         name: row.description,
       }),
       buttonColor: 'warn',
@@ -218,6 +221,7 @@ export class CloudBackupCardComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» deleted.', { name: row.description }));
         this.getCloudBackups();
       },
       error: (error: unknown) => {
