@@ -133,7 +133,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   private inferUnits(label: string): string {
     // Figures out from the label what the unit is
-    let units = label;
+    let units;
     switch (true) {
       case label.toLowerCase().includes('percentage'):
       case label.includes('%'):
@@ -158,8 +158,20 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       case label.toLowerCase().includes('bits'):
         units = 'bits';
         break;
+      case label.toLowerCase().includes('load'):
+      case label.toLowerCase().includes('average'):
+        units = '';
+        break;
+      case label.toLowerCase().includes('count'):
+      case label.toLowerCase().includes('number'):
+        units = '';
+        break;
+      case label.toLowerCase().includes('processes'):
+        units = '';
+        break;
       default:
         console.warn('Could not infer units from ' + this.labelY());
+        units = label || '';
     }
 
     return units;
@@ -430,6 +442,13 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   ngAfterViewInit(): void {
     this.render();
+  }
+
+  resize(): void {
+    if (this.chart) {
+      // Simple resize - parent component handles width calculation
+      this.chart.resize();
+    }
   }
 
   ngOnDestroy(): void {
