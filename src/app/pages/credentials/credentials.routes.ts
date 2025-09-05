@@ -17,11 +17,6 @@ export const credentialsRoutes: Routes = [{
     {
       path: 'users',
       data: { title: T('Users'), breadcrumb: T('Users') },
-      loadChildren: () => import('app/pages/credentials/users/user.routes').then((module) => module.userRoutes),
-    },
-    {
-      path: 'users-new',
-      data: { title: T('Users (WIP)'), breadcrumb: T('Users (WIP)') },
       loadChildren: () => import('app/pages/credentials/new-users/user.routes').then((module) => module.userRoutes),
     },
     {
