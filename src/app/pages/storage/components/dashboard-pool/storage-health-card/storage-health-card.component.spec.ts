@@ -31,9 +31,6 @@ import {
   ActivePoolScanComponent,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/active-pool-scan/active-pool-scan.component';
 import {
-  AutotrimDialog,
-} from 'app/pages/storage/components/dashboard-pool/storage-health-card/autotrim-dialog/autotrim-dialog.component';
-import {
   DeduplicationStatsComponent,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/deduplication-stats/deduplication-stats.component';
 import {
@@ -219,12 +216,18 @@ describe('StorageHealthCardComponent', () => {
       expect(detailsItem.querySelector('.value')).toHaveText('On');
     });
 
-    it('shows an AutotrimDialog when Edit auto Trim is pressed', () => {
-      spectator.click(spectator.query(byText('Edit Auto TRIM'))!);
+    it('shows Auto TRIM when enabled', () => {
+      expect(spectator.query(byText('Auto TRIM:'))).toBeTruthy();
+    });
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AutotrimDialog, {
-        data: pool,
+    it('hides Auto TRIM when disabled', () => {
+      spectator.setInput('pool', {
+        ...pool,
+        autotrim: { value: 'off' },
       });
+      spectator.detectChanges();
+
+      expect(spectator.query(byText('Auto TRIM:'))).toBeFalsy();
     });
   });
 

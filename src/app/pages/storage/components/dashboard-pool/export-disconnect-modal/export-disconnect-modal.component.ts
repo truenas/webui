@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -6,11 +6,15 @@ import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialog,
 } from '@angular/material/dialog';
+import {
+  MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle,
+} from '@angular/material/expansion';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
@@ -28,16 +32,22 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import {
   ServicesToBeRestartedDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/services-need-to-be-restarted-dialog/services-to-be-restarted-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { selectIsHaEnabled } from 'app/store/ha-info/ha-info.selectors';
+
+export enum DisconnectOption {
+  Export = 'export',
+  Delete = 'delete',
+}
 
 @UntilDestroy()
 @Component({
@@ -55,9 +65,13 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxInputComponent,
     FormActionsComponent,
     MatButton,
+    MatExpansionPanel,
+    MatExpansionPanelHeader,
+    MatExpansionPanelTitle,
     TestDirective,
     RequiresRolesDirective,
     TranslateModule,
+    IxIconComponent,
   ],
 })
 export class ExportDisconnectModalComponent implements OnInit {
@@ -73,6 +87,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
+  private store = inject(Store);
   pool = inject<Pool>(MAT_DIALOG_DATA);
 
   readonly helptext = helptextVolumes;
@@ -88,19 +103,20 @@ export class ExportDisconnectModalComponent implements OnInit {
   );
 
   showSysDatasetWarning: boolean;
-  showPoolDetachWarning: boolean;
   showUnknownStatusDetachWarning: boolean;
-  showDestroy: boolean;
+  selectedOption = signal<DisconnectOption | null>(null);
 
-  confirmLabelText = this.translate.instant(helptextVolumes.exportDialog.confirm);
+
+  attachments: PoolAttachment[] = [];
+  processes: Process[] = [];
   process = {
     knownProcesses: [] as Process[],
     unknownProcesses: [] as Process[],
   };
 
-  attachments: PoolAttachment[] = [];
-  processes: Process[] = [];
   systemConfig: SystemDatasetConfig;
+  totalPoolCount = 0;
+  isHaEnabled = false;
 
   isFormLoading = false;
   form = this.fb.nonNullable.group({
@@ -123,7 +139,18 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   protected readonly Role = Role;
 
+  get exportOption(): DisconnectOption {
+    return DisconnectOption.Export;
+  }
+
+  get deleteOption(): DisconnectOption {
+    return DisconnectOption.Delete;
+  }
+
   ngOnInit(): void {
+    // Auto-select Export pool by default
+    this.selectOption(DisconnectOption.Export);
+
     if (this.pool.status === PoolStatus.Unknown) {
       this.prepareForm();
       return;
@@ -224,14 +251,16 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.isFormLoading = false;
     this.dialogRef.close(true);
 
-    const message = this.translate.instant('Pool «{pool}» has been exported/disconnected successfully.', {
-      pool: this.pool.name,
-    });
-    const destroyed = this.translate.instant('All data on that pool was destroyed.');
-    if (!value.destroy) {
+    if (value.destroy) {
+      const message = this.translate.instant('Pool «{pool}» has been deleted successfully. All data on that pool was destroyed.', {
+        pool: this.pool.name,
+      });
       this.snackbar.success(message);
     } else {
-      this.snackbar.success(`${message} ${destroyed}` as TranslatedString);
+      const message = this.translate.instant('Pool «{pool}» has been exported successfully.', {
+        pool: this.pool.name,
+      });
+      this.snackbar.success(message);
     }
   }
 
@@ -240,16 +269,21 @@ export class ExportDisconnectModalComponent implements OnInit {
       this.api.call('pool.attachments', [this.pool.id]),
       this.api.call('pool.processes', [this.pool.id]),
       this.api.call('systemdataset.config'),
+      this.api.call('pool.query'),
+      this.store.select(selectIsHaEnabled).pipe(take(1)),
     ])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe(([attachments, processes, systemConfig]) => {
+      .subscribe(([attachments, processes, systemConfig, allPools, isHaEnabled]) => {
         this.attachments = attachments;
         this.processes = processes;
+        this.organizeProcesses(processes);
         this.systemConfig = systemConfig;
+        this.totalPoolCount = allPools.length;
+        this.isHaEnabled = isHaEnabled;
         this.prepareForm();
         this.cdr.markForCheck();
       });
@@ -257,34 +291,54 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   private prepareForm(): void {
     this.showSysDatasetWarning = this.pool.name === this.systemConfig?.pool;
-    this.showPoolDetachWarning = this.pool.status !== PoolStatus.Unknown;
     this.showUnknownStatusDetachWarning = this.pool.status === PoolStatus.Unknown;
-    this.showDestroy = this.pool.status !== PoolStatus.Unknown;
-
-    this.confirmLabelText = this.pool.status === PoolStatus.Unknown
-      ? (this.translate.instant(helptextVolumes.exportDialog.confirm)
-        + ' ' + this.translate.instant(helptextVolumes.exportDialog.unknownStatusAltText)) as TranslatedString
-      : this.translate.instant(helptextVolumes.exportDialog.confirm);
-
-    this.processes.forEach((process) => {
-      if (process.service) {
-        return;
-      }
-
-      if (process.name && process.name !== '') {
-        this.process.knownProcesses.push(process);
-      } else {
-        this.process.unknownProcesses.push(process);
-      }
-    });
 
     this.form.controls.destroy.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe(() => this.resetNameInputValidState());
   }
 
+  selectOption(option: DisconnectOption | null): void {
+    this.selectedOption.set(option);
+    if (option) {
+      this.form.patchValue({
+        destroy: option === DisconnectOption.Delete,
+        confirm: false,
+      });
+      this.resetNameInputValidState();
+    }
+    this.cdr.markForCheck();
+  }
+
+  get isExportSelected(): boolean {
+    return this.selectedOption() === DisconnectOption.Export;
+  }
+
+  get isDeleteSelected(): boolean {
+    return this.selectedOption() === DisconnectOption.Delete;
+  }
+
+  get isLastPool(): boolean {
+    return this.totalPoolCount <= 1;
+  }
+
+  get shouldShowHaWarning(): boolean {
+    return this.isHaEnabled && this.isLastPool;
+  }
+
+  canProceed(): boolean {
+    return this.selectedOption() !== null && this.form.valid && !this.isFormLoading;
+  }
+
   private resetNameInputValidState(): void {
     this.form.controls.nameInput.reset();
     this.form.controls.nameInput.setErrors(null);
+  }
+
+  private organizeProcesses(processes: Process[]): void {
+    this.process = {
+      knownProcesses: processes.filter((process) => process.name && process.name.trim() !== ''),
+      unknownProcesses: processes.filter((process) => !process.name || process.name.trim() === ''),
+    };
   }
 }

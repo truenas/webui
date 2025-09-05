@@ -2,10 +2,20 @@
 
 :host {
   display: block;
-  width: 550px;
+  width: 650px;
 
   @media (max-width: $breakpoint-tablet) {
     width: inherit;
+  }
+
+  &::ng-deep {
+    .mat-expanded .mat-expansion-panel-header span.mat-expansion-indicator {
+      top: 5px;
+    }
+
+    mat-panel-title {
+      font-family: var(--font-family-header);
+    }
   }
 }
 
@@ -13,6 +23,219 @@
   overflow: auto !important;
 }
 
+.warnings-section .warning {
+  font-size: 14px;
+}
+
 .export-disconnect-modal-title {
   overflow-wrap: break-word;
+}
+
+.system-dataset-warning {
+  margin-top: 15px;
+}
+
+.disconnect-options {
+  h4 {
+    font-family: var(--font-family-header);
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+}
+
+.option-cards {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.option-card {
+  background-color: var(--bg1);
+  border: 2px solid var(--alt-bg2);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 120px;
+  padding: 16px;
+  text-align: center;
+
+  h3 {
+    font-family: var(--font-family-header);
+    font-weight: bold;
+    margin: 0 0 8px;
+  }
+
+  p {
+    font-size: 14px;
+    margin: 0;
+    opacity: 0.7;
+  }
+
+  &.export-option {
+    transition: 0.3s ease all;
+
+    &.selected,
+    &:hover {
+      background-color: color-mix(in srgb, var(--primary) 7%, transparent);
+      border-color: var(--primary);
+      transition: 0.3s ease all;
+
+      h3 {
+        color: var(--primary);
+      }
+    }
+  }
+
+  &.delete-option {
+    transition: 0.3s ease all;
+
+    &.selected,
+    &:hover {
+      background-color: color-mix(in srgb, var(--red) 7%, transparent);
+      border-color: var(--red);
+      transition: 0.3s ease all;
+
+      h3 {
+        color: var(--red);
+      }
+    }
+  }
+
+  &.delete-option,
+  &.export-option {
+    &.selected,
+    &:hover {
+      p {
+        color: var(--fg2);
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.selected-content {
+  margin-top: 12px;
+}
+
+.warnings-section {
+  margin-bottom: 24px;
+}
+
+.warning-text {
+  color: var(--yellow);
+  font-family: var(--font-family-header);
+  font-weight: bold;
+}
+
+.expansion-panel {
+  margin-bottom: 16px;
+
+  &.ha-warning-panel {
+    ::ng-deep {
+      .mat-expansion-panel-header {
+        border: 1px solid var(--red);
+      }
+
+      .warning-icon {
+        align-items: center;
+        display: flex;
+        margin-right: 5px;
+
+        ix-icon {
+          width: 15px;
+        }
+      }
+    }
+
+    .ha-warning {
+      p {
+        line-height: 1.5;
+        margin-bottom: 12px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        strong {
+          color: var(--red);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  &::ng-deep {
+    .mat-expansion-panel-header {
+      background-color: var(--bg1);
+      font-weight: 500;
+      padding: 0 16px 3px;
+
+      &:hover,
+      &:focus {
+        background-color: var(--bg1) !important;
+      }
+    }
+
+    .mat-expansion-panel-body {
+      background-color: var(--bg1);
+      margin-top: 8px;
+      padding: 8px 16px;
+    }
+  }
+
+  .process-will-be-terminated {
+    margin: 15px 0 5px;
+  }
+
+  .expansion-content {
+    h4 {
+      font-family: var(--font-family-header);
+      font-size: 14px;
+      font-weight: 500;
+      margin: 0 0 12px;
+    }
+
+    ul {
+      margin: 8px 0;
+      padding-left: 20px;
+
+      li {
+        margin-bottom: 4px;
+      }
+    }
+
+    .encrypted-pool-warning {
+      align-items: center;
+      border: 1px solid var(--red);
+      border-radius: 4px;
+      display: flex;
+      font-size: 14px;
+      gap: 12px;
+      margin: 16px 0;
+      padding: 12px 16px;
+
+      .warning-icon {
+        color: var(--red);
+        flex-shrink: 0;
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 2px;
+      }
+
+      .warning-content {
+        line-height: 1.4;
+
+        strong {
+          color: var(--red);
+          font-weight: 600;
+        }
+      }
+    }
+  }
 }
