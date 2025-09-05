@@ -152,20 +152,20 @@ export class CloudBackupListComponent {
   runNow(row: CloudBackup): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
-      message: this.translate.instant('Run «{name}» Cloud Backup now?', { name: row.description }),
+      message: this.translate.instant('Run «{name}» Cloud Backup Task now?', { name: row.description }),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
       tap(() => this.updateRowJob(row, { ...row.job, state: JobState.Running })),
       tapOnce(() => {
-        this.snackbar.success(this.translate.instant('Cloud Backup «{name}» has started.', { name: row.description }));
+        this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» has started.', { name: row.description }));
       }),
       switchMap(() => this.api.job('cloud_backup.sync', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
         if (job.state === JobState.Success) {
-          this.snackbar.success(this.translate.instant('Cloud Backup «{name}» completed successfully.', { name: row.description }));
+          this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» completed successfully.', { name: row.description }));
         }
         this.updateRowJob(row, job);
         // Update expanded row to call child ngOnChanges method & update snapshots list
@@ -199,7 +199,7 @@ export class CloudBackupListComponent {
       title: this.translate.instant('Confirmation'),
       buttonColor: 'warn',
       buttonText: this.translate.instant('Delete'),
-      message: this.translate.instant('Delete Cloud Backup <b>"{name}"</b>?', {
+      message: this.translate.instant('Delete Cloud Backup Task <b>"{name}"</b>?', {
         name: row.description,
       }),
     }).pipe(
@@ -208,7 +208,7 @@ export class CloudBackupListComponent {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.snackbar.success(this.translate.instant('Cloud Backup «{name}» deleted.', { name: row.description }));
+        this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» deleted.', { name: row.description }));
         this.dataProvider().load();
       },
       error: (error: unknown) => {

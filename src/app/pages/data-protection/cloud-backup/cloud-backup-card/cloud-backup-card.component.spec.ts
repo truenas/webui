@@ -159,7 +159,7 @@ describe('CloudBackupCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run «test one» Cloud Backup now?',
+      message: 'Run «test one» Cloud Backup Task now?',
       hideCheckbox: true,
     });
 
@@ -176,7 +176,8 @@ describe('CloudBackupCardComponent', () => {
     await menu.clickItem({ text: 'Run job' });
 
     expect(jobMock).toHaveBeenCalledWith('cloud_backup.sync', [1]);
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup «test one» completed successfully.');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup Task «test one» has started.');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup Task «test one» completed successfully.');
   });
 
   it('deletes a Cloud Backup with confirmation when Delete button is pressed', async () => {
@@ -186,13 +187,13 @@ describe('CloudBackupCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Cloud Backup <b>"test one"</b>?',
+      message: 'Delete Cloud Backup Task <b>"test one"</b>?',
       buttonColor: 'warn',
       buttonText: 'Delete',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup «test one» deleted.');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup Task «test one» deleted.');
   });
 
   it('updates Cloud Backup Enabled status once mat-toggle is updated', async () => {
@@ -210,7 +211,7 @@ describe('CloudBackupCardComponent', () => {
 
   it('sends only one update request when multiple mat-toggle is updated', async () => {
     jest.spyOn(spectator.component.dataProvider, 'load').mockImplementation();
-    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementationOnce((method) => {
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
       if (method === 'cloud_backup.update') {
         return of(null).pipe(delay(10));
       }

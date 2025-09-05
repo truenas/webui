@@ -176,14 +176,14 @@ describe('CloudSyncListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run «custom-cloudlist» Cloud Sync now?',
+      message: 'Run «custom-cloudlist» Cloud Sync Task now?',
       hideCheckbox: true,
     });
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [1]);
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has started.');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» has started.');
   });
 
   it('shows form to edit an existing CloudSync when Edit button is pressed', async () => {
@@ -219,7 +219,7 @@ describe('CloudSyncListComponent', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has been deleted.');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» deleted.');
   });
 
   it('shows dialog when Restore button is pressed', async () => {
@@ -252,6 +252,6 @@ describe('CloudSyncListComponent', () => {
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [1, { dry_run: true }]);
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has started.');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» has started.');
   });
 });

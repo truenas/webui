@@ -9,7 +9,8 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -125,6 +126,7 @@ describe('CloudSyncTaskCardComponent', () => {
         mockCall('cloudsync.query', cloudsyncTasks),
         mockCall('cloudsync.delete'),
         mockCall('cloudsync.update'),
+        mockJob('cloudsync.sync', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -202,11 +204,26 @@ describe('CloudSyncTaskCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run «custom-cloudsync» Cloud Sync now?',
+      message: 'Run «custom-cloudsync» Cloud Sync Task now?',
       hideCheckbox: true,
     });
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [3]);
+  });
+
+  it('shows success message when job completes successfully', async () => {
+    const mockJobStream$ = of({
+      state: JobState.Success,
+      id: 123,
+    } as Job<void>);
+    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(mockJobStream$);
+
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Run job' });
+
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudsync» has started.');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudsync» completed successfully.');
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
@@ -248,6 +265,7 @@ describe('CloudSyncTaskCardComponent', () => {
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudsync» deleted.');
   });
 
   it('updates CloudSync Task Enabled status once mat-toggle is updated', async () => {

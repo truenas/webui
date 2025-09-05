@@ -152,12 +152,12 @@ describe('CloudBackupListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run «UA» Cloud Backup now?',
+      message: 'Run «UA» Cloud Backup Task now?',
       hideCheckbox: true,
     });
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup «UA» has started.');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup Task «UA» has started.');
   });
 
   it('shows success message when job completes successfully', async () => {
@@ -171,7 +171,7 @@ describe('CloudBackupListComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Run job' });
 
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup «UA» completed successfully.');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup Task «UA» completed successfully.');
   });
 
   it('deletes a Cloud Backup with confirmation when Delete button is pressed', async () => {
@@ -181,13 +181,13 @@ describe('CloudBackupListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Cloud Backup <b>"UA"</b>?',
       buttonColor: 'warn',
       buttonText: 'Delete',
+      message: 'Delete Cloud Backup Task <b>"UA"</b>?',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup «UA» deleted.');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Backup Task «UA» deleted.');
   });
 
   it('updates Cloud Backup Enabled status once mat-toggle is updated', async () => {
