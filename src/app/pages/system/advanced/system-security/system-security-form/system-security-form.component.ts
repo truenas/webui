@@ -90,11 +90,11 @@ export class SystemSecurityFormComponent implements OnInit {
     ],
     min_password_length: [
       null as number | null,
-      [Validators.min(8), Validators.max(128), this.stigValidatorFn],
+      [Validators.min(8), Validators.max(128), Validators.required, this.stigValidatorFn],
     ],
     password_history_length: [
       null as number | null,
-      [Validators.min(1), Validators.max(10), this.stigValidatorFn],
+      [Validators.min(1), Validators.max(10), Validators.required, this.stigValidatorFn],
     ],
   });
 
