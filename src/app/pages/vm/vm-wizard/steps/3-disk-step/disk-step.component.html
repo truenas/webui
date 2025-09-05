@@ -4,6 +4,22 @@
     [options]="newOrExistingOptions$"
   ></ix-radio-group>
 
+  <ix-checkbox
+    formControlName="import_image"
+    [label]="'Import Image' | translate"
+    [tooltip]="'Import a disk image (qcow2, qed, raw, vdi, vhdx, vmdk) to the zvol' | translate"
+  ></ix-checkbox>
+
+  @if (isImportingImage) {
+    <ix-explorer
+      formControlName="image_source"
+      [label]="'Image Source' | translate"
+      [required]="true"
+      [nodeProvider]="treeNodeProvider"
+      [tooltip]="'Path to the disk image file to import. Supported formats: qcow2, qed, raw, vdi, vhdx, vmdk' | translate"
+    ></ix-explorer>
+  }
+
   <ix-select
     formControlName="hdd_type"
     [required]="true"

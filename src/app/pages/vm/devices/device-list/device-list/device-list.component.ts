@@ -10,7 +10,9 @@ import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmDeviceType, vmDeviceTypeLabels } from 'app/enums/vm.enum';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -29,6 +31,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
@@ -36,6 +39,7 @@ import {
   DeviceDeleteModalComponent,
 } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-details/device-details.component';
+import { ExportDiskDialogComponent } from 'app/pages/vm/devices/device-list/export-disk-dialog/export-disk-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -73,12 +77,15 @@ export class DeviceListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private matDialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
+  private dialogService = inject(DialogService);
+  private snackbar = inject(SnackbarService);
 
   protected readonly requiredRoles = [Role.VmDeviceWrite];
 
   dataProvider: AsyncDataProvider<VmDevice>;
   searchQuery = signal('');
   devices: VmDevice[] = [];
+  vmName = '';
 
   columns = createTable<VmDevice>([
     textColumn({
@@ -112,8 +119,19 @@ export class DeviceListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<VmDevice>(devices$);
     this.setDefaultSort();
     this.loadDevices();
+    this.loadVmName();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
+    });
+  }
+
+  loadVmName(): void {
+    this.api.call('vm.query', [[['id', '=', this.vmId]]]).pipe(
+      untilDestroyed(this),
+    ).subscribe((vms: VirtualMachine[]) => {
+      if (vms.length > 0) {
+        this.vmName = vms[0].name;
+      }
     });
   }
 
@@ -169,6 +187,59 @@ export class DeviceListComponent implements OnInit {
     this.matDialog.open(DeviceDetailsComponent, {
       data: device,
     });
+  }
+
+  onExportDisk(device: VmDevice): void {
+    const dialogRef = this.matDialog.open(ExportDiskDialogComponent, {
+      width: '600px',
+      data: {
+        device,
+        vmName: this.vmName || 'VM',
+      },
+    });
+
+    dialogRef.afterClosed()
+      .pipe(
+        filter((result) => !!result),
+        untilDestroyed(this),
+      )
+      .subscribe((result: { request: { source: string; destination: string }; destinationPath: string }) => {
+        const jobDialogRef = this.dialogService.jobDialog(
+          this.api.job('vm.device.convert', [result.request]),
+          {
+            title: this.translate.instant('Exporting Disk Image'),
+            description: this.translate.instant('Exporting {source} to {destination}', {
+              source: result.request.source,
+              destination: result.request.destination,
+            }),
+          },
+        );
+
+        jobDialogRef.afterClosed()
+          .pipe(untilDestroyed(this))
+          .subscribe({
+            next: (jobResult) => {
+              if (!jobResult?.error) {
+                this.snackbar.success(
+                  this.translate.instant('Disk image successfully exported to {path}', {
+                    path: result.destinationPath,
+                  }),
+                );
+              }
+            },
+            error: (error: unknown) => {
+              const errorMessage = error instanceof Error ? error.message : String(error);
+              this.dialogService.error({
+                title: this.translate.instant('Export Failed'),
+                message: errorMessage || this.translate.instant('An error occurred while exporting the disk image'),
+              });
+            },
+          });
+      });
+  }
+
+  isDiskDevice(device: VmDevice): device is VmDevice & { attributes: { dtype: VmDeviceType.Disk } } {
+    return device?.attributes?.dtype === VmDeviceType.Disk;
   }
 
   onListFiltered(query: string): void {
