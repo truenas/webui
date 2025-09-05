@@ -370,6 +370,7 @@ export class DirectoryServicesComponent implements OnInit {
       });
   }
 
+
   private handlePendingGlobalSearchElement(): void {
     const pendingHighlightElement = this.searchDirectives.pendingUiHighlightElement;
 
