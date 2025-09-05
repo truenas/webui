@@ -3,10 +3,10 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const allUsersElements = {
   hierarchy: [T('Credentials')],
-  anchorRouterLink: ['/credentials/users-new'],
+  anchorRouterLink: ['/credentials/users'],
   elements: {
     list: {
-      hierarchy: [T('Users (WIP)')],
+      hierarchy: [T('Users')],
       synonyms: [
         T('Local Users'),
         T('Users'),

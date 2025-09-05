@@ -59,7 +59,6 @@ export class NavigationService {
       state: 'credentials',
       sub: [
         { name: T('Users'), state: 'users' },
-        { name: T('Users (WIP)'), state: 'users-new' },
         { name: T('Groups'), state: 'groups' },
         { name: T('Directory Services'), state: 'directory-services' },
         { name: T('Backup Credentials'), state: 'backup-credentials' },
