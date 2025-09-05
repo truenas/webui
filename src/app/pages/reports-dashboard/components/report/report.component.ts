@@ -1,5 +1,5 @@
 import { KeyValuePipe } from '@angular/common';
-import { Component, OnChanges, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, input, viewChild, DOCUMENT, inject, effect } from '@angular/core';
+import { Component, OnChanges, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, input, viewChild, DOCUMENT, inject, effect } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -12,10 +12,10 @@ import {
 } from 'date-fns';
 import { cloneDeep } from 'lodash-es';
 import {
-  BehaviorSubject, Subscription, timer,
+  BehaviorSubject, Subscription, timer, fromEvent,
 } from 'rxjs';
 import {
-  delay, distinctUntilChanged, filter, skipWhile, throttleTime,
+  delay, distinctUntilChanged, filter, skipWhile, throttleTime, debounceTime,
 } from 'rxjs/operators';
 import { v4 as uuidv4 } from 'uuid';
 import { invalidDate } from 'app/constants/invalid-date';
@@ -74,7 +74,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
     FormatDateTimePipe,
   ],
 })
-export class ReportComponent implements OnInit, OnChanges {
+export class ReportComponent implements OnInit, OnChanges, OnDestroy {
   translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
   private formatDateTimePipe = inject(FormatDateTimePipe);
@@ -109,6 +109,7 @@ export class ReportComponent implements OnInit, OnChanges {
   fetchReport$ = new BehaviorSubject<FetchReportParams | null>(null);
   autoRefreshTimer: Subscription;
   autoRefreshEnabled: boolean;
+  private resizeSubscription: Subscription;
   isReady = false;
   data: ReportingData | undefined;
   chartId = `chart-${uuidv4()}`;
@@ -231,7 +232,7 @@ export class ReportComponent implements OnInit, OnChanges {
       delay(toggleMenuDuration),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.lineChart()?.chart?.resize();
+      this.resizeChart();
     });
 
     this.store$.pipe(
@@ -276,6 +277,13 @@ export class ReportComponent implements OnInit, OnChanges {
         this.cdr.markForCheck();
       }, 1000);
     }
+
+    // Setup viewport change detection for chart resizing
+    this.initViewportChangeDetection();
+  }
+
+  ngOnDestroy(): void {
+    this.resizeSubscription?.unsubscribe();
   }
 
   private formatTime(stamp: number): string {
@@ -539,5 +547,29 @@ export class ReportComponent implements OnInit, OnChanges {
       default:
         return 0;
     }
+  }
+
+  private initViewportChangeDetection(): void {
+    // Simple window resize detection
+    const win = this.document.defaultView || globalThis;
+    this.resizeSubscription = fromEvent(win, 'resize')
+      .pipe(
+        debounceTime(100),
+        filter(() => this.isReady),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.resizeChart();
+      });
+  }
+
+  private resizeChart(): void {
+    if (!this.lineChart()?.chart) return;
+
+    // Wait a tick to ensure DOM is updated
+    setTimeout(() => {
+      // Force chart to fit its container
+      this.lineChart().render(true); // Force re-render with update=true
+    }, 0);
   }
 }
