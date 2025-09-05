@@ -184,6 +184,7 @@ describe('CloudSyncListComponent', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» has started.');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» completed successfully.');
   });
 
   it('shows form to edit an existing CloudSync when Edit button is pressed', async () => {
@@ -253,5 +254,6 @@ describe('CloudSyncListComponent', () => {
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [1, { dry_run: true }]);
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» has started.');
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync Task «custom-cloudlist» dry run completed successfully.');
   });
 });
