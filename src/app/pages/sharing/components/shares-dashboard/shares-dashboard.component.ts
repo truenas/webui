@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { sharesEmptyConfig } from 'app/constants/empty-configs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -50,5 +51,5 @@ export class SharesDashboardComponent {
     },
   };
 
-  readonly pools = toSignal(this.api.call('pool.query'), { initialValue: null });
+  readonly pools = toSignal(this.api.call('pool.query', [[], { count: true }]) as unknown as Observable<number>, { initialValue: null });
 }
