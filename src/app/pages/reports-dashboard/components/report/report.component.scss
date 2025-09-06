@@ -35,14 +35,22 @@
 
   .chart-wrapper-outer {
     flex-grow: 1;
+    max-width: calc(90vw - 550px);
+    min-width: 50%;
+
+    @media (max-width: $breakpoint-md) {
+      max-width: 100%;
+      min-width: 100%;
+    }
   }
 
   .legend {
     display: flex;
+    flex: 1;
     flex-direction: column;
-    width: 420px;
+    flex-shrink: 0;
 
-    @media (max-width: $breakpoint-sm) {
+    @media (max-width: $breakpoint-md) {
       width: 100%;
     }
 
@@ -68,12 +76,8 @@
 table.legend-table {
   border-collapse: collapse;
   display: table;
-  margin-right: 36px;
-  width: 420px;
-
-  @media (max-width: $breakpoint-sm) {
-    width: 100%;
-  }
+  flex-shrink: 0;
+  width: 100%;
 }
 
 tr.header th {
@@ -606,11 +610,10 @@ p.value {
 .report .legend-wrapper.timestamps {
   align-items: flex-start;
   display: flex;
-  flex-wrap: wrap;
   gap: 8px;
   margin-top: 16px;
 
-  @media (max-width: $breakpoint-sm) {
+  @media (max-width: $breakpoint-md) {
     padding-left: 0;
     padding-right: 0;
   }
