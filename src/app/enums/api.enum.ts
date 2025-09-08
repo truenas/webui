@@ -7,6 +7,9 @@ export enum ApiErrorName {
   Again = 'EAGAIN',
   Fault = 'EFAULT',
   Validation = 'EINVAL',
+  ConnectionReset = 'ECONNRESET',
+  TimedOut = 'ETIMEDOUT',
+  NetworkUnreachable = 'ENETUNREACH',
 }
 
 export const apiErrorNames = new Map<ApiErrorName, string>([
