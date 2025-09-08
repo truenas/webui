@@ -392,6 +392,10 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   protected onRebuildCachePressed(): void {
+    if (this.isLoading()) {
+      return;
+    }
+
     this.isLoading.set(true);
     this.dialog
       .jobDialog(this.systemGeneralService.refreshDirServicesCache())
@@ -403,15 +407,15 @@ export class DirectoryServicesComponent implements OnInit {
       .subscribe({
         next: ({ description }) => {
           this.snackbarService.success(
-            this.translate.instant(description || 'Directory Service cache has been rebuilt.'),
+            this.translate.instant(description || helptextDashboard.rebuildCache.success),
           );
         },
         error: (error: unknown) => {
           const errorMessage = error instanceof Error && error.message
             ? error.message
-            : 'Failed to rebuild directory service cache.';
+            : helptextDashboard.rebuildCache.error;
           this.dialog.error({
-            title: this.translate.instant('Error'),
+            title: this.translate.instant(helptextDashboard.rebuildCache.errorTitle),
             message: this.translate.instant(errorMessage),
           });
           console.error('Failed to rebuild directory service cache:', error);
