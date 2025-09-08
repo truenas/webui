@@ -42,14 +42,6 @@
             </div>
           }
         }
-        @case (JobState.Success) {
-           <div class="job-time">
-              {{ 'Finished' | translate }}:
-              <strong>
-                {{ job().time_started?.$date ? (job().time_started.$date | formatDateTime) : '–' }}
-              </strong>
-            </div>
-        }
         @case (JobState.Waiting) {
           <div class="job-time">
             {{ 'Waiting' | translate }}:
@@ -57,6 +49,14 @@
               {{ job().time_started?.$date ? (job().time_started.$date | formatDateTime) : '–' }}
             </strong>
           </div>
+        }
+        @case (JobState.Success) {
+           <div class="job-time">
+              {{ 'Finished' | translate }}:
+              <strong>
+                {{ job().time_finished?.$date ? (job().time_finished.$date | formatDateTime) : '–' }}
+              </strong>
+            </div>
         }
         @case (JobState.Failed) {
           <div class="job-time">

@@ -77,7 +77,11 @@ export const selectFinishedJobs = createSelector(
   selectSuccessJobs,
   selectFailedJobs,
   (successJobs, failedJobs) => [...successJobs, ...failedJobs]
-    .sort((a, b) => b.time_finished.$date - a.time_finished.$date)
+    .sort((a, b) => {
+      const aTime = a.time_finished?.$date || 0;
+      const bTime = b.time_finished?.$date || 0;
+      return bTime - aTime;
+    })
     .slice(0, 5),
 );
 
