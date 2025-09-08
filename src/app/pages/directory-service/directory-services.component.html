@@ -76,6 +76,7 @@
               mat-menu-item
               [ixTest]="[card.title, 'rebuild-cache']"
               [attr.aria-label]="'Rebuild Directory Service Cache' | translate"
+              [disabled]="isLoading()"
               (click)="onRebuildCachePressed()"
             >
               <ix-icon name="refresh"></ix-icon>

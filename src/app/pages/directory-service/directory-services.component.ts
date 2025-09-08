@@ -407,9 +407,12 @@ export class DirectoryServicesComponent implements OnInit {
           );
         },
         error: (error: unknown) => {
+          const errorMessage = error instanceof Error && error.message
+            ? error.message
+            : 'Failed to rebuild directory service cache.';
           this.dialog.error({
             title: this.translate.instant('Error'),
-            message: this.translate.instant('Failed to rebuild directory service cache.'),
+            message: this.translate.instant(errorMessage),
           });
           console.error('Failed to rebuild directory service cache:', error);
         },
