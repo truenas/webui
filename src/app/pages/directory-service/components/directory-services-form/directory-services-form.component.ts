@@ -32,10 +32,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { ActiveDirectoryConfigComponent } from './active-directory-config/active-directory-config.component';
 import { CredentialConfigComponent } from './credential-config/credential-config.component';
 import { IpaConfigComponent } from './ipa-config/ipa-config.component';
@@ -77,8 +75,6 @@ export class DirectoryServicesFormComponent implements OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private validationService = inject(DirectoryServiceValidationService);
-  private systemGeneralService = inject(SystemGeneralService);
-  private snackbarService = inject(SnackbarService);
   slideInRef = inject<SlideInRef<DirectoryServicesConfig | undefined, boolean>>(SlideInRef);
 
   protected readonly previousConfig = signal<DirectoryServicesConfig | null>(null);
@@ -400,30 +396,5 @@ export class DirectoryServicesFormComponent implements OnInit {
 
   protected getCredentialPrevious(): DirectoryServiceCredential {
     return this.previousConfig()?.credential;
-  }
-
-  protected onRebuildCachePressed(): void {
-    this.isLoading.set(true);
-    this.dialogService
-      .jobDialog(this.systemGeneralService.refreshDirServicesCache())
-      .afterClosed()
-      .pipe(
-        finalize(() => this.isLoading.set(false)),
-        untilDestroyed(this),
-      )
-      .subscribe({
-        next: ({ description }) => {
-          this.snackbarService.success(
-            this.translate.instant(description || 'Directory Service cache has been rebuilt.'),
-          );
-        },
-        error: (error: unknown) => {
-          this.dialogService.error({
-            title: this.translate.instant('Error'),
-            message: this.translate.instant('Failed to rebuild directory service cache.'),
-          });
-          console.error('Failed to rebuild directory service cache:', error);
-        },
-      });
   }
 }
