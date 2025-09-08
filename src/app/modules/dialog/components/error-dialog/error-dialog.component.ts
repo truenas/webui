@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { switchMap, tap } from 'rxjs';
-import { IfNightlyDirective } from 'app/directives/if-nightly/if-nightly.directive';
 import { ErrorReport, ErrorReportAction, traceDetailLabel } from 'app/interfaces/error-report.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -31,7 +30,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     TranslateModule,
     TestDirective,
-    IfNightlyDirective,
   ],
 })
 export class ErrorDialog {
@@ -42,15 +40,10 @@ export class ErrorDialog {
   private router = inject(Router);
   protected error = inject<ErrorReport>(MAT_DIALOG_DATA);
 
-  protected isStackTraceOpen = signal(false);
   protected isDetailsOpen = signal(false);
   protected isTraceOpen = signal(false);
 
   protected readonly TRACE_LABEL = traceDetailLabel;
-
-  protected toggleStackTrace(): void {
-    this.isStackTraceOpen.set(!this.isStackTraceOpen());
-  }
 
   protected toggleDetails(): void {
     this.isDetailsOpen.set(!this.isDetailsOpen());

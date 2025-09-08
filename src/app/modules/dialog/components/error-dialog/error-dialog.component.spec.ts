@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
@@ -22,7 +22,6 @@ describe('ErrorDialog', () => {
   const baseError = {
     title: 'Fatal Error',
     message: 'An error occurred',
-    stackTrace: 'main() at line 1',
     logs: {
       id: 1,
     },
@@ -92,40 +91,6 @@ describe('ErrorDialog', () => {
     });
   });
 
-  describe('stacktrace', () => {
-    beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          {
-            provide: MAT_DIALOG_DATA,
-            useValue: baseError,
-          },
-        ],
-      });
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('shows stacktrace when View Stack Trace is clicked', () => {
-      const viewLink = spectator.query(byText('View Stack Trace'));
-      spectator.click(viewLink);
-
-      const stackTracePanel = spectator.query('.stack-trace-panel');
-      expect(stackTracePanel).toHaveClass('open');
-      expect(stackTracePanel).toHaveText('Error: main() at line 1');
-    });
-
-    it('does not show stacktrace button on non-nightly systems', () => {
-      const store$ = spectator.inject(MockStore);
-      store$.overrideSelector(selectSystemInfo, {
-        version: '25.12',
-      } as SystemInfo);
-      store$.refreshState();
-      spectator.detectChanges();
-
-      const viewLink = spectator.query(byText('View Stack Trace'));
-      expect(viewLink).not.toExist();
-    });
-  });
 
   describe('logs', () => {
     beforeEach(() => {
