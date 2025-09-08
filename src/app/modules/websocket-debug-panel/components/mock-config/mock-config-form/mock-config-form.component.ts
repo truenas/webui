@@ -87,6 +87,9 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
     { label: 'ENOMEM - No memory', value: ApiErrorName.NoMemory },
     { label: 'EEXIST - Already exists', value: ApiErrorName.AlreadyExists },
     { label: 'EAGAIN - Try again', value: ApiErrorName.Again },
+    { label: 'ECONNRESET - Connection reset', value: ApiErrorName.ConnectionReset },
+    { label: 'ETIMEDOUT - Connection timed out', value: ApiErrorName.TimedOut },
+    { label: 'ENETUNREACH - Network unreachable', value: ApiErrorName.NetworkUnreachable },
   ]);
 
   protected readonly form = this.fb.group({
@@ -210,6 +213,40 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
           if (Object.keys(updates).length > 0) {
             this.form.patchValue(updates);
           }
+        }
+      });
+
+    // Watch for errname changes to auto-set appropriate error code and reason
+    this.form.controls.callErrorErrname.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((errname) => {
+        if (!errname) return;
+        // Map error names to their typical error codes and default reasons
+        const errorDefaults: Record<string, { code: number; reason: string; message: string }> = {
+          [ApiErrorName.Validation]: { code: 22, reason: 'Invalid argument provided', message: 'Invalid argument' },
+          [ApiErrorName.NoAccess]: { code: 13, reason: 'Permission denied', message: 'Access denied' },
+          [ApiErrorName.NotAuthenticated]: { code: 1, reason: 'Not authenticated', message: 'Authentication required' },
+          [ApiErrorName.NoMemory]: { code: 12, reason: 'Out of memory', message: 'No memory available' },
+          [ApiErrorName.AlreadyExists]: { code: 17, reason: 'Resource already exists', message: 'Already exists' },
+          [ApiErrorName.Again]: { code: 11, reason: 'Resource temporarily unavailable', message: 'Try again' },
+          [ApiErrorName.ConnectionReset]: { code: 104, reason: 'Connection reset by peer', message: 'Connection reset' },
+          [ApiErrorName.TimedOut]: { code: 110, reason: 'Connection timed out', message: 'Connection timed out' },
+          [ApiErrorName.NetworkUnreachable]: { code: 101, reason: 'Network is unreachable', message: 'Network unreachable' },
+        };
+
+        const defaults = errorDefaults[errname];
+        if (defaults) {
+          const updates: Partial<typeof this.form.value> = {
+            callErrorCode: defaults.code,
+          };
+          // Only update reason and message if they're empty
+          if (!this.form.controls.callErrorReason.value) {
+            updates.callErrorReason = defaults.reason;
+          }
+          if (!this.form.controls.errorMessage.value) {
+            updates.errorMessage = defaults.message;
+          }
+          this.form.patchValue(updates);
         }
       });
   }

@@ -11,7 +11,8 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
   text-align: right;
 }
 
-.stack-trace-panel {
+.stack-trace-panel,
+.details-panel {
   border: 0;
   max-height: 0;
   overflow: hidden;
@@ -44,6 +45,79 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
   }
 }
 
+.details-panel {
+  .details-content {
+    background: var(--contrast-darker);
+    border: 1px solid var(--lines);
+    max-height: $opened-scroll-container-height;
+    overflow: auto;
+    padding: 1rem;
+  }
+
+  .details-table {
+    width: 100%;
+
+    tr {
+      vertical-align: top;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid var(--lines);
+      }
+    }
+
+    .detail-label {
+      color: var(--fg2);
+      font-weight: 600;
+      padding: 8px 16px 8px 0;
+      white-space: nowrap;
+      width: 1px;
+    }
+
+    .detail-value {
+      color: var(--fg1);
+      padding: 8px 0;
+      word-break: break-word;
+
+      // For long single-line values
+      &:has(> span) {
+        max-width: 600px;
+        overflow-wrap: break-word;
+      }
+
+      // For multi-line content like traces
+      pre {
+        background: var(--contrast-lightest);
+        border: 1px solid var(--lines);
+        border-radius: 4px;
+        font-family: var(--font-family-monospace);
+        font-size: 12px;
+        margin: 4px 0;
+        max-height: 300px;
+        overflow: auto;
+        padding: 8px;
+        white-space: pre-wrap;
+      }
+
+      .trace-toggle {
+        align-items: center;
+        color: var(--fg2);
+        cursor: pointer;
+        display: inline-flex;
+        gap: 4px;
+
+        &:hover {
+          color: var(--fg1);
+          text-decoration: underline;
+        }
+
+        ix-icon {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+}
+
 .scrolled-down {
   display: flex;
   flex-direction: column-reverse;
@@ -63,4 +137,23 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
 
 .err-message-wrapper {
   word-wrap: break-word;
+
+  .hint-text {
+    align-items: center;
+    color: var(--fg2);
+    display: inline-flex;
+    font-size: 13px;
+    font-style: italic;
+    gap: 6px;
+    margin-top: 8px;
+    opacity: 0.9;
+
+    .hint-icon {
+      color: var(--fg2);
+      flex-shrink: 0;
+      font-size: 14px;
+      opacity: 0.7;
+    }
+  }
 }
+

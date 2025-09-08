@@ -39,9 +39,9 @@
           </h4>
         }
 
-        @if (status()?.error && !isNetworkActivityDisabled()) {
+        @if (shouldShowError()) {
           <h4>
-            {{ status()?.error }}
+            {{ errorMessage() }}
           </h4>
         }
 
