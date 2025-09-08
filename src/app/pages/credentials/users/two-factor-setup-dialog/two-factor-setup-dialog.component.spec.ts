@@ -58,4 +58,18 @@ describe('FirstLoginDialogComponent', () => {
     await finishButton.click();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
+
+  it('closes dialog on first click of Finish button', async () => {
+    mockTwoFactorConfig$.next({ secret_configured: true });
+    spectator.detectChanges();
+
+    const finishButton = await loader.getHarness(MatButtonHarness.with({ text: 'Finish' }));
+    const dialogRef = spectator.inject(MatDialogRef);
+
+    expect(finishButton).toExist();
+
+    await finishButton.click();
+
+    expect(dialogRef.close).toHaveBeenCalledTimes(1);
+  });
 });

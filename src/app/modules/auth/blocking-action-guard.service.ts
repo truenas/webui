@@ -6,8 +6,9 @@ import {
 } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import {
-  Observable, of, switchMap, take,
+  Observable, of, switchMap, take, tap,
   combineLatest,
+  EMPTY,
 } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { PasswordChangeRequiredDialog } from 'app/pages/credentials/users/password-change-required-dialog/password-change-required-dialog.component';
@@ -23,6 +24,7 @@ export class BlockingActionGuardService implements CanActivateChild {
   private wsStatus = inject(WebSocketStatusService);
   private matDialog = inject(MatDialog);
 
+  private twoFactorDialogOpen = false;
 
   canActivateChild(_: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return this.wsStatus.isAuthenticated$.pipe(
@@ -48,23 +50,28 @@ export class BlockingActionGuardService implements CanActivateChild {
         isTwoFactorSetupRequired,
         isFullAdmin,
       ]) => {
-        let twoFactroDialog$: Observable<boolean> = of(true);
+        let twoFactorDialog$: Observable<boolean> = of(true);
         if (isTwoFactorSetupRequired) {
           if (this.isAdminUsingSystemSettings(isFullAdmin, state) || state.url.endsWith('/two-factor-auth')) {
-            twoFactroDialog$ = of(true);
+            twoFactorDialog$ = of(true);
+          } else if (this.twoFactorDialogOpen) {
+            twoFactorDialog$ = EMPTY;
           } else {
-            twoFactroDialog$ = this.openFullScreenDialog(TwoFactorSetupDialog);
+            this.twoFactorDialogOpen = true;
+            twoFactorDialog$ = this.openFullScreenDialog(TwoFactorSetupDialog).pipe(
+              tap(() => this.twoFactorDialogOpen = false),
+            );
           }
         }
 
         let passwordChangeRequired$: Observable<boolean> = of(true);
         if (isPasswordChangeRequired) {
           passwordChangeRequired$ = this.openFullScreenDialog(PasswordChangeRequiredDialog).pipe(
-            switchMap(() => twoFactroDialog$),
+            switchMap(() => twoFactorDialog$),
           );
         }
 
-        return passwordChangeRequired$ ?? (twoFactroDialog$ ?? of(true));
+        return passwordChangeRequired$ ?? (twoFactorDialog$ ?? of(true));
       }),
     );
   }
