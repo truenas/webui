@@ -96,16 +96,6 @@
         >
           {{ 'Save' | translate }}
         </button>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="button"
-          ixTest="rebuild-cache"
-          [attr.aria-label]="'Rebuild Directory Service Cache' | translate"
-          (click)="onRebuildCachePressed()"
-        >
-          {{ 'Rebuild Directory Service Cache' | translate }}
-        </button>
       </ix-form-actions>
     </form>
   </mat-card-content>

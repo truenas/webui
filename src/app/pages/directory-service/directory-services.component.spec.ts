@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { DirectoryServiceStatus, DirectoryServiceType, DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
@@ -94,10 +94,10 @@ describe('DirectoryServicesComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
 
-      const buttons = await loader.getAllHarnesses(MatButtonHarness.with({
-        text: 'Leave',
-      }));
-      expect(buttons).toHaveLength(1);
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const menuItems = await menu.getItems({ text: /Leave/ });
+      expect(menuItems).toHaveLength(1);
     });
 
     it('should not show Leave button for Active Directory when not healthy', async () => {
@@ -107,10 +107,10 @@ describe('DirectoryServicesComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
 
-      const buttons = await loader.getAllHarnesses(MatButtonHarness.with({
-        text: 'Leave',
-      }));
-      expect(buttons).toHaveLength(0);
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const menuItems = await menu.getItems({ text: /Leave/ });
+      expect(menuItems).toHaveLength(0);
     });
 
     it('should show Leave button for IPA when healthy', async () => {
@@ -128,10 +128,10 @@ describe('DirectoryServicesComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
 
-      const buttons = await loader.getAllHarnesses(MatButtonHarness.with({
-        text: 'Leave',
-      }));
-      expect(buttons).toHaveLength(1);
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const menuItems = await menu.getItems({ text: /Leave/ });
+      expect(menuItems).toHaveLength(1);
     });
 
     it('should not show Leave button for LDAP', async () => {
@@ -146,10 +146,10 @@ describe('DirectoryServicesComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       await spectator.fixture.whenStable();
 
-      const buttons = await loader.getAllHarnesses(MatButtonHarness.with({
-        text: 'Leave',
-      }));
-      expect(buttons).toHaveLength(0);
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const menuItems = await menu.getItems({ text: /Leave/ });
+      expect(menuItems).toHaveLength(0);
     });
   });
 
@@ -529,10 +529,10 @@ describe('DirectoryServicesComponent', () => {
       const dialogOpenSpy = jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue(dialogRef as MatDialogRef<unknown>);
       await spectator.fixture.whenStable();
 
-      const leaveButton = await loader.getHarness(MatButtonHarness.with({
-        text: 'Leave',
-      }));
-      await leaveButton.click();
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const leaveMenuItem = await menu.getItems({ text: /Leave/ });
+      await leaveMenuItem[0].click();
 
       expect(dialogOpenSpy).toHaveBeenCalledWith(LeaveDomainDialog);
     });
@@ -550,10 +550,10 @@ describe('DirectoryServicesComponent', () => {
 
       await spectator.fixture.whenStable();
 
-      const leaveButton = await loader.getHarness(MatButtonHarness.with({
-        text: 'Leave',
-      }));
-      await leaveButton.click();
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const leaveMenuItem = await menu.getItems({ text: /Leave/ });
+      await leaveMenuItem[0].click();
 
       // Verify that refreshCards was called by checking if the API calls were made
       expect(apiCallSpy).toHaveBeenCalledWith('directoryservices.status');
