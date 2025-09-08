@@ -99,6 +99,33 @@ describe('BlockingActionGuardService', () => {
     });
   });
 
+  it('prevents opening multiple two-factor dialogs simultaneously', async () => {
+    mockIsAuthenticated$.next(true);
+    mockIsTwoFactorSetupRequired$.next(true);
+
+    const routeSnapshot = {} as ActivatedRouteSnapshot;
+    const stateSnapshot = { url: '/dashboard' } as RouterStateSnapshot;
+
+    // First call should open dialog
+    const firstCall$ = spectator.service.canActivateChild(routeSnapshot, stateSnapshot);
+
+    // Second call while dialog is open should not open another dialog
+    spectator.service.canActivateChild(routeSnapshot, stateSnapshot);
+
+    await firstValueFrom(firstCall$);
+
+    // Should only be called once for the first dialog
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledTimes(1);
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(TwoFactorSetupDialog, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      disableClose: true,
+    });
+  });
+
   it('handles STIG first login for user to proceed with changing one-time password and setting up 2FA', async () => {
     mockIsAuthenticated$.next(true);
     mockIsTwoFactorSetupRequired$.next(true);
