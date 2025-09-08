@@ -67,11 +67,18 @@ export const selectWaitingJobs = createSelector(
   (jobs) => jobs.filter((job) => job.state === JobState.Waiting),
 );
 
-export const selectResultJobs = createSelector(
+export const selectOngoingJobs = createSelector(
+  selectRunningJobs,
+  selectWaitingJobs,
+  (runningJobs, waitingJobs) => [...runningJobs, ...waitingJobs],
+);
+
+export const selectFinishedJobs = createSelector(
   selectSuccessJobs,
   selectFailedJobs,
   (successJobs, failedJobs) => [...successJobs, ...failedJobs]
-    .sort((a, b) => b.time_finished.$date - a.time_finished.$date),
+    .sort((a, b) => b.time_finished.$date - a.time_finished.$date)
+    .slice(0, 5),
 );
 
 export const selectRunningJobsCount = createSelector(
@@ -94,12 +101,6 @@ export const selectWaitingJobsCount = createSelector(
   (jobs) => jobs.length,
 );
 
-export const selectJobsPanelSlice = createSelector(
-  selectRunningJobs,
-  selectWaitingJobs,
-  selectResultJobs,
-  (runningJobs, waitingJobs, resultJobs) => [...runningJobs, ...waitingJobs, ...resultJobs].slice(0, 10),
-);
 
 // TODO: Fix selector to return single item or rename selector.
 export const selectUpdateJob = createSelector(

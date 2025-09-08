@@ -56,6 +56,17 @@ const failedJob = {
     $date: 1632411439082,
   },
 } as Job;
+const successJob = {
+  id: 5,
+  method: 'filesystem.setacl',
+  state: JobState.Success,
+  time_started: {
+    $date: 1632411439080,
+  },
+  time_finished: {
+    $date: 1632411439083,
+  },
+} as Job;
 const transientRunningJob = {
   id: 4,
   method: 'cloudsync.sync',
@@ -82,7 +93,7 @@ describe('JobsPanelComponent', () => {
     imports: [
       StoreModule.forRoot({ [jobStateKey]: jobReducer }, {
         initialState: {
-          [jobStateKey]: adapter.setAll([runningJob, waitingJob, failedJob], jobsInitialState),
+          [jobStateKey]: adapter.setAll([runningJob, waitingJob, failedJob, successJob], jobsInitialState),
         },
       }),
       EffectsModule.forRoot([JobEffects]),
@@ -103,7 +114,7 @@ describe('JobsPanelComponent', () => {
       mockApi([
         mockCall('core.get_jobs', (query) => {
           if (query[0]?.[0][2] === JobState.Success) {
-            return [];
+            return [successJob];
           }
           return [runningJob, waitingJob, failedJob, transientRunningJob];
         }),
@@ -140,21 +151,27 @@ describe('JobsPanelComponent', () => {
     expect(jobPanel.runningBadgeCount).toHaveText('1');
     expect(jobPanel.waitingBadgeCount).toHaveText('1');
     expect(jobPanel.failedBadgeCount).toHaveText('1');
+    expect(spectator.query('.job-badge.success .job-badge-count')).toHaveText('1');
   });
 
   it('checks component body is present', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    const jobs = jobPanel.getJobItemComponents;
+    // Check ongoing jobs section (running + waiting)
+    const ongoingJobItems = spectator.queryAll('.jobs-list ix-job-item');
+    expect(ongoingJobItems).toHaveLength(2);
 
-    expect(jobs).toHaveLength(3);
-    expect(jobs[0].job()).toEqual(runningJob);
-    expect(jobs[1].job()).toEqual(waitingJob);
-    expect(jobs[2].job()).toEqual(failedJob);
-    expect(jobs[4]).toBeUndefined();
+    // Check finished jobs section (failed + success)
+    const finishedJobItems = spectator.queryAll('.finished-jobs-list ix-job-item');
+    expect(finishedJobItems).toHaveLength(2);
+
+    // Total job items should be 4
+    const allJobItems = spectator.queryAll('ix-job-item');
+    expect(allJobItems).toHaveLength(4);
   });
 
   it('aborts a job when abort button is pressed', () => {
+    jest.spyOn(console, 'warn').mockImplementation();
     spectator.inject(Store).dispatch(adminUiInitialized());
 
     const abortButton = spectator.query('.job-button-abort')!;
@@ -163,8 +180,8 @@ describe('JobsPanelComponent', () => {
     expect(api.call).toHaveBeenCalledWith('core.job_abort', [1]);
   });
 
-  it('checks redirect when "History" button is pressed', async () => {
-    const historyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Go to Jobs Page' }));
+  it('checks redirect when "View All Jobs" button is pressed', async () => {
+    const historyButton = await loader.getHarness(MatButtonHarness.with({ text: 'View All Jobs' }));
     await historyButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/jobs']);
@@ -185,5 +202,23 @@ describe('JobsPanelComponent', () => {
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Job completed successfully');
+  });
+
+  it('shows recently completed jobs section', () => {
+    spectator.inject(Store).dispatch(adminUiInitialized());
+
+    expect(spectator.query('div[mat-subheader]')).toHaveText('Recently Completed Jobs');
+    expect(spectator.query('.finished-jobs-list')).toExist();
+    expect(spectator.query('mat-divider.list-divider')).toExist();
+  });
+
+  it('displays finished jobs in the recently completed section', () => {
+    spectator.inject(Store).dispatch(adminUiInitialized());
+
+    const finishedJobsSection = spectator.query('.finished-jobs-list');
+    expect(finishedJobsSection).toExist();
+
+    const finishedJobItems = spectator.queryAll('.finished-jobs-list ix-job-item');
+    expect(finishedJobItems).toHaveLength(2); // 1 failed + 1 success
   });
 });
