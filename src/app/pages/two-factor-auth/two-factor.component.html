@@ -14,10 +14,10 @@
       } @else {
         <ix-warning
           [message]="global2FaMsg"
-          [color]="!globalTwoFactorEnabled || !userTwoFactorAuthConfigured ? 'orange' : 'green'"
+          [color]="!globalTwoFactorEnabled() || !userTwoFactorAuthConfigured() ? 'orange' : 'green'"
         ></ix-warning>
       }
-      @if (globalTwoFactorEnabled && !userTwoFactorAuthConfigured) {
+      @if (globalTwoFactorEnabled() && !userTwoFactorAuthConfigured()) {
         <p>
           {{ 'Two-Factor Authentication has been enabled on this system. You are required to setup your 2FA authentication. You will not be able to proceed without setting up 2FA for your account. Make sure to scan the QR code with your authenticator app in the end before logging out of the system or navigating away. Otherwise, you will be locked out of the system and will be unable to login after logging out.' | translate }}
         </p>
@@ -31,12 +31,12 @@
         [ixUiSearch]="searchableElements.elements.configure2FaSecret"
         (click)="renewSecretOrEnable2Fa()"
       >
-        {{ userTwoFactorAuthConfigured ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate) }}
+        {{ userTwoFactorAuthConfigured() ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate) }}
       </button>
     </div>
   </mat-card-actions>
 
-  @if (userTwoFactorAuthConfigured && (authService.userTwoFactorConfig$ | async); as qrInfo) {
+  @if (userTwoFactorAuthConfigured() && (authService.userTwoFactorConfig$ | async); as qrInfo) {
     <mat-card-actions>
       <ix-qr-viewer
         [qrInfo]="qrInfo?.provisioning_uri"

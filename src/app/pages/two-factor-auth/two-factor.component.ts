@@ -62,17 +62,17 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
 
   protected readonly searchableElements = twoFactorElements;
 
-  userTwoFactorAuthConfigured = false;
+  userTwoFactorAuthConfigured = signal(false);
   protected isDataLoading = signal(false);
   protected isFormLoading = signal(false);
-  globalTwoFactorEnabled: boolean;
+  globalTwoFactorEnabled = signal(false);
   showQrCodeWarning = false;
 
   protected get global2FaMsg(): string {
-    if (!this.globalTwoFactorEnabled) {
+    if (!this.globalTwoFactorEnabled()) {
       return this.translate.instant(helptext2fa.globallyDisabled);
     }
-    if (this.userTwoFactorAuthConfigured) {
+    if (this.userTwoFactorAuthConfigured()) {
       return this.translate.instant(helptext2fa.allSetUp);
     }
     return this.translate.instant(helptext2fa.enabledGloballyButNotForUser);
@@ -110,8 +110,8 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       .subscribe({
         next: ([userConfig, globalConfig]) => {
           this.isDataLoading.set(false);
-          this.userTwoFactorAuthConfigured = userConfig.secret_configured;
-          this.globalTwoFactorEnabled = globalConfig.enabled;
+          this.userTwoFactorAuthConfigured.set(userConfig.secret_configured);
+          this.globalTwoFactorEnabled.set(globalConfig.enabled);
         },
       });
   }
@@ -151,7 +151,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       switchMap((user) => this.api.call('user.renew_2fa_secret', [user.pw_name, { interval: 30, otp_digits: 6 }])),
       switchMap(() => this.authService.refreshUser()),
       tap(() => {
-        this.userTwoFactorAuthConfigured = true;
+        this.userTwoFactorAuthConfigured.set(true);
         this.showQrCodeWarning = true;
       }),
       untilDestroyed(this),
@@ -159,7 +159,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   }
 
   private getConfirmation(): Observable<boolean> {
-    if (this.userTwoFactorAuthConfigured) {
+    if (this.userTwoFactorAuthConfigured()) {
       return this.dialogService.confirm({
         title: this.translate.instant(helptext2fa.renewSecret.title),
         message: this.translate.instant(helptext2fa.renewSecret.message),
