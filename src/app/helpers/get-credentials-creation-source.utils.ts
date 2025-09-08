@@ -5,11 +5,13 @@ export function getCredentialsCreationSource(credentials: Credentials | null): s
     return '';
   }
 
-  if ([CredentialType.UnixSocket, CredentialType.LoginPassword, CredentialType.Token].includes(credentials.type)) {
+  if ([
+    CredentialType.UnixSocket,
+    CredentialType.LoginPassword,
+    CredentialType.Token,
+    CredentialType.ApiKey,
+  ].includes(credentials.type)) {
     return credentials.data?.username || '';
-  }
-  if (credentials.type === CredentialType.ApiKey) {
-    return credentials.data?.api_key || '';
   }
   return '';
 }

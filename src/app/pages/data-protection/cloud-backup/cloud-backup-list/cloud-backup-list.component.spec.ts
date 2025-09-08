@@ -9,6 +9,7 @@ import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -149,11 +150,53 @@ describe('CloudBackupListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run «UA» Cloud Backup now?',
+      message: 'Run «UA» Cloud Backup Task now?',
       hideCheckbox: true,
     });
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
+  });
+
+  it('shows success message when job completes successfully', async () => {
+    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of({
+      id: 1,
+      state: JobState.Success,
+    } as Job<void>));
+
+    const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
+
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Run job' });
+
+    // Wait for the observable to complete
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    expect(snackbarSpy).toHaveBeenCalledWith(
+      'Cloud Backup Task «UA» completed successfully.',
+    );
+  });
+
+  it('shows success message when job finishes successfully', async () => {
+    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of({
+      id: 1,
+      state: JobState.Finished,
+    } as Job<void>));
+
+    const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
+
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Run job' });
+
+    // Wait for the observable to complete
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    expect(snackbarSpy).toHaveBeenCalledWith(
+      'Cloud Backup Task «UA» completed successfully.',
+    );
   });
 
   it('deletes a Cloud Backup with confirmation when Delete button is pressed', async () => {
@@ -163,7 +206,7 @@ describe('CloudBackupListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Cloud Backup <b>"UA"</b>?',
+      message: 'Delete Cloud Backup Task <b>"UA"</b>?',
       buttonColor: 'warn',
       buttonText: 'Delete',
     });

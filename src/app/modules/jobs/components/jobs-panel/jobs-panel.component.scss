@@ -71,6 +71,10 @@ $component-header: 50px;
   .job-icon-running {
     color: var(--primary);
   }
+
+  .job-icon-success {
+    color: var(--green);
+  }
 }
 
 .jobs-list {
@@ -117,4 +121,12 @@ $component-header: 50px;
 .loading-indicator {
   margin: 48px 0 24px;
   padding: 0;
+}
+
+.list-divider {
+  margin: 16px 0;
+}
+
+.recent-header {
+  margin-bottom: 8px;
 }

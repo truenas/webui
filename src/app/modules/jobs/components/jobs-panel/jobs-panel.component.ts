@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { MatDivider } from '@angular/material/divider';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
@@ -25,8 +26,10 @@ import {
   selectRunningJobsCount,
   selectWaitingJobsCount,
   selectFailedJobsCount,
-  selectJobsPanelSlice,
   selectJob,
+  selectSuccessJobsCount,
+  selectOngoingJobs,
+  selectFinishedJobs,
 } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -49,6 +52,7 @@ import { FailedJobError } from 'app/services/errors/error.classes';
     JobItemComponent,
     MatDialogActions,
     MatButton,
+    MatDivider,
     TranslateModule,
     AsyncPipe,
     TestDirective,
@@ -69,7 +73,9 @@ export class JobsPanelComponent {
   runningJobsCount$ = this.store$.select(selectRunningJobsCount);
   waitingJobsCount$ = this.store$.select(selectWaitingJobsCount);
   failedJobsCount$ = this.store$.select(selectFailedJobsCount);
-  availableJobs$ = this.store$.select(selectJobsPanelSlice);
+  successJobsCount$ = this.store$.select(selectSuccessJobsCount);
+  ongoingJobs$ = this.store$.select(selectOngoingJobs);
+  finishedJobs$ = this.store$.select(selectFinishedJobs);
 
   onAbort(job: Job): void {
     this.dialog

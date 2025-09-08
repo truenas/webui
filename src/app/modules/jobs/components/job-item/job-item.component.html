@@ -50,6 +50,14 @@
             </strong>
           </div>
         }
+        @case (JobState.Success) {
+           <div class="job-time">
+              {{ 'Finished' | translate }}:
+              <strong>
+                {{ job().time_finished?.$date ? (job().time_finished.$date | formatDateTime) : '–' }}
+              </strong>
+            </div>
+        }
         @case (JobState.Failed) {
           <div class="job-time">
             {{ 'Stopped' | translate }}:
