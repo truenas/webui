@@ -58,6 +58,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
 
   protected dataProvider: AuditApiDataProvider;
+  private hasInitialized = false;
 
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
   protected readonly controllerTypeControl = new FormControl<ControllerType>(ControllerType.Active);
@@ -66,11 +67,38 @@ export class AuditComponent implements OnInit, OnDestroy {
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly searchableElements = auditElements;
 
+  /**
+   * Effect to handle controller type and HA license changes.
+   * Initial load is handled by AuditSearchComponent.loadParamsFromRoute()
+   * to avoid duplicate API calls with empty search parameters.
+   */
   constructor() {
     effect(() => {
-      this.dataProvider.selectedControllerType = this.controllerType();
-      this.dataProvider.isHaLicensed = Boolean(this.isHaLicensed());
-      this.dataProvider.load();
+      if (!this.dataProvider) {
+        return; // DataProvider not yet initialized
+      }
+
+      const controllerType = this.controllerType();
+      const isHaLicensed = this.isHaLicensed();
+
+      // Check if values actually changed from what's already set
+      const controllerTypeChanged = this.dataProvider.selectedControllerType !== controllerType;
+      const isHaLicensedChanged = this.dataProvider.isHaLicensed !== Boolean(isHaLicensed);
+
+      // Set the values on the data provider
+      this.dataProvider.selectedControllerType = controllerType;
+      this.dataProvider.isHaLicensed = Boolean(isHaLicensed);
+
+      // Skip the initial load - let AuditSearchComponent handle it
+      if (!this.hasInitialized) {
+        this.hasInitialized = true;
+        return;
+      }
+
+      // Only reload if values actually changed
+      if (controllerTypeChanged || isHaLicensedChanged) {
+        this.dataProvider.load();
+      }
     });
   }
 
@@ -82,6 +110,11 @@ export class AuditComponent implements OnInit, OnDestroy {
     this.dataProvider.unsubscribe();
   }
 
+  /**
+   * Creates and configures the data provider for audit entries.
+   * Note: Initial data loading is delegated to AuditSearchComponent
+   * to prevent duplicate API calls.
+   */
   private createDataProvider(): void {
     this.dataProvider = new AuditApiDataProvider(this.api);
     this.dataProvider.paginationStrategy = new PaginationServerSide();
@@ -95,6 +128,5 @@ export class AuditComponent implements OnInit, OnDestroy {
       this.dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : auditEntries[0];
       this.cdr.markForCheck();
     });
-    this.dataProvider.load();
   }
 }

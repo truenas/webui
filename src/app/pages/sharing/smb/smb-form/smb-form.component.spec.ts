@@ -110,7 +110,7 @@ describe('SmbFormComponent', () => {
     providers: [
       mockAuth(),
       mockApi([
-        mockCall('group.query', [{ group: 'test' }] as Group[]),
+        mockCall('group.query', [{ id: 1, group: 'test', builtin: false }] as Group[]),
         mockCall('sharing.smb.create', { ...existingShare }),
         mockCall('sharing.smb.update', { ...existingShare }),
         mockCall('sharing.smb.share_precheck', null),
@@ -121,6 +121,7 @@ describe('SmbFormComponent', () => {
           acl: true,
         } as FileSystemStat),
         mockCall('smb.config', { aapl_extensions: true } as SmbConfig),
+        mockCall('user.query', []),
         mockJob('service.control', fakeSuccessfulJob()),
       ]),
       mockProvider(SlideIn),
@@ -713,6 +714,204 @@ describe('SmbFormComponent', () => {
       );
 
       expect(manglingDialogCall).toBeUndefined();
+    });
+  });
+
+  describe('Time Machine share detection improvements', () => {
+    it('should detect new Time Machine share by purpose', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+      });
+
+      expect(spectator.component.isNewTimeMachineShare).toBe(true);
+    });
+
+    it('should detect new Time Machine share by field when purpose supports it', async () => {
+      await setupTest({
+        purpose: SmbSharePurpose.LegacyShare,
+      });
+
+      await form.fillForm({
+        Purpose: 'Legacy Share',
+        'Time Machine': true,
+      });
+
+      expect(spectator.component.isNewTimeMachineShare).toBe(true);
+    });
+
+    it('should not detect Time Machine for non-supporting purpose', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Default Share',
+      });
+
+      expect(spectator.component.isNewTimeMachineShare).toBe(false);
+    });
+
+    it('should detect change in Time Machine functionality for existing share', async () => {
+      const spectator2 = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              existingSmbShare: {
+                ...existingShare,
+                purpose: SmbSharePurpose.LegacyShare,
+                options: { timemachine: false } as LegacySmbShareOptions,
+              },
+            }),
+          }),
+        ],
+      });
+      const loader2 = TestbedHarnessEnvironment.loader(spectator2.fixture);
+      const form2 = await loader2.getHarness(IxFormHarness);
+
+      const advancedButton = await loader2.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      await form2.fillForm({
+        Purpose: 'Time Machine Share',
+      });
+
+      expect(spectator2.component.isNewTimeMachineShare).toBe(true);
+    });
+  });
+
+  describe('Path change detection with trailing slashes', () => {
+    it('should normalize trailing slashes when detecting path changes', async () => {
+      await setupTest({
+        path: '/mnt/pool123/ds222/',
+      });
+
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+
+      // Set path without trailing slash - should not be considered a change
+      await pathControl.setValue('/mnt/pool123/ds222');
+      expect(spectator.component.wasPathChanged).toBe(false);
+
+      // Set different path - should be considered a change
+      await pathControl.setValue('/mnt/pool123/ds223');
+      expect(spectator.component.wasPathChanged).toBe(true);
+
+      // Set same path with trailing slash - should not be considered a change
+      await pathControl.setValue('/mnt/pool123/ds222/');
+      expect(spectator.component.wasPathChanged).toBe(false);
+    });
+
+    it('should handle empty paths correctly', async () => {
+      await setupTest(); // No existing share
+
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      await pathControl.setValue('/mnt/pool123/new');
+
+      expect(spectator.component.wasPathChanged).toBe(false);
+    });
+  });
+
+  describe('ACL strip warning scope', () => {
+    it('should show ACL strip warning only for Legacy shares', async () => {
+      await setupTest({
+        purpose: SmbSharePurpose.LegacyShare,
+      });
+
+      await form.fillForm({
+        Purpose: 'Legacy Share',
+      });
+
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      await pathControl.setValue('/mnt/pool2/ds22');
+
+      const aclCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable ACL' }));
+      await (await aclCheckbox.getMatCheckboxHarness()).uncheck();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+        title: helptextSharingSmb.stripACLDialog.title,
+        message: helptextSharingSmb.stripACLDialog.message,
+        hideCheckbox: true,
+        buttonText: helptextSharingSmb.stripACLDialog.button,
+        hideCancel: true,
+      });
+    });
+
+    it('should not show ACL strip warning for non-Legacy shares', async () => {
+      await setupTest({
+        purpose: SmbSharePurpose.DefaultShare,
+      });
+
+      await form.fillForm({
+        Purpose: 'Default Share',
+      });
+
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      await pathControl.setValue('/mnt/pool2/ds22');
+
+      // Default shares don't have ACL checkbox, so this simulates the scenario
+      spectator.detectChanges();
+
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: helptextSharingSmb.stripACLDialog.title,
+        }),
+      );
+    });
+  });
+
+  describe('ACL configuration dialog scope', () => {
+    it('should process new shares without errors', async () => {
+      await setupTest(); // New share
+
+      // Verify form processes successfully for new shares
+      await form.fillForm({
+        Purpose: 'Default Share',
+      });
+
+      expect(spectator.component.isNew).toBe(true);
+    });
+
+    it('should recognize existing shares correctly', async () => {
+      await setupTest({
+        purpose: SmbSharePurpose.DefaultShare,
+      });
+
+      // Verify form recognizes this as an existing share
+      await form.fillForm({
+        Purpose: 'Default Share',
+      });
+
+      expect(spectator.component.isNew).toBe(false);
+    });
+  });
+
+  describe('Auto quota default value', () => {
+    it('should set auto_quota to 0 when Private Datasets purpose is selected', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Private Datasets Share',
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const formValues = await form.getValues();
+      expect(formValues['Auto Quota']).toBe('0');
+    });
+
+    it('should not override existing auto_quota value', async () => {
+      await setupTest({
+        purpose: SmbSharePurpose.PrivateDatasetsShare,
+        options: { auto_quota: 50 },
+      });
+
+      await form.fillForm({
+        Purpose: 'Private Datasets Share',
+      });
+
+      const formValues = await form.getValues();
+      expect(formValues['Auto Quota']).toBe('50');
     });
   });
 });
