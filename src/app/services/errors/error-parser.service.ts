@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { isObject } from 'lodash-es';
-import { apiErrorNames } from 'app/enums/api.enum';
+import { ApiErrorName, apiErrorNames } from 'app/enums/api.enum';
 import {
   isAbortedJobError,
   isApiCallError,
@@ -13,7 +13,7 @@ import {
 } from 'app/helpers/api.helper';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
-import { ErrorReport } from 'app/interfaces/error-report.interface';
+import { ErrorReport, ErrorDetails, traceDetailLabel } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { FailedJobError } from 'app/services/errors/error.classes';
 
@@ -92,7 +92,77 @@ export class ErrorParserService {
     return null;
   }
 
+  private extractErrorDetails(error: ApiErrorDetails): ErrorDetails[] {
+    const details: ErrorDetails[] = [];
+
+    // Add error name if present
+    if (error.errname) {
+      details.push({ label: 'Error Name', value: error.errname });
+    }
+
+    // Add error code if present
+    if (error.error !== undefined && error.error !== null) {
+      details.push({ label: 'Error Code', value: error.error });
+    }
+
+    // Add reason if present
+    if (error.reason) {
+      details.push({ label: 'Reason', value: error.reason });
+    }
+
+    // Add error class from trace if present
+    if (error.trace?.class) {
+      details.push({ label: 'Error Class', value: error.trace.class });
+    }
+
+    // Add extra data if present
+    if (error.extra !== undefined && error.extra !== null) {
+      if (typeof error.extra === 'object' && !Array.isArray(error.extra)) {
+        Object.entries(error.extra).forEach(([key, value]) => {
+          details.push({
+            label: key.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase()),
+            value: typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value),
+          });
+        });
+      } else {
+        details.push({ label: 'Extra', value: JSON.stringify(error.extra, null, 2) });
+      }
+    }
+
+    // Add formatted trace if present (usually contains stack trace)
+    if (error.trace?.formatted) {
+      details.push({ label: traceDetailLabel, value: error.trace.formatted });
+    }
+
+    return details;
+  }
+
   private parseApiError(error: ApiErrorDetails): ErrorReport {
+    // Handle network connectivity errors with specific messages
+    if (error.errname === ApiErrorName.ConnectionReset || error.errname === ApiErrorName.TimedOut) {
+      return {
+        title: this.translate.instant('Network Error'),
+        message: this.translate.instant('Network connection was closed or timed out. Try again later.'),
+        icon: 'ix-cloud-off',
+        details: this.extractErrorDetails(error),
+      };
+    }
+    if (error.errname === ApiErrorName.NetworkUnreachable) {
+      return {
+        title: this.translate.instant('Network Error'),
+        message: this.translate.instant('Network resource is not reachable, verify your network settings and health.'),
+        hint: this.translate.instant('Double check that your nameservers and gateway are properly configured.'),
+        icon: 'ix-cloud-off',
+        actions: [
+          {
+            label: this.translate.instant('Network Settings'),
+            route: '/system/network',
+          },
+        ],
+        details: this.extractErrorDetails(error),
+      };
+    }
+
     const title = apiErrorNames.has(error.errname)
       ? this.translate.instant(apiErrorNames.get(error.errname) || error.errname)
       : error.trace?.class || this.translate.instant('Error');
@@ -100,7 +170,8 @@ export class ErrorParserService {
     return {
       title,
       message: error.reason || error?.error?.toString(),
-      stackTrace: error.trace?.formatted || '',
+      stackTrace: error.trace?.formatted,
+      details: this.extractErrorDetails(error),
     };
   }
 

@@ -1,12 +1,70 @@
 <h1 mat-dialog-title class="err-title">
-  <ix-icon class="error-warning-icon" name="error"></ix-icon>
+  <ix-icon class="error-warning-icon" [name]="error.icon || 'error'"></ix-icon>
   {{ error.title | translate }}
 </h1>
 
 <div mat-dialog-content id="err-md-content" role="alertdialog">
   <div class="err-message-wrapper">
     <span [innerHTML]="error.message"></span>
+    @if (error.hint) {
+      <div class="hint-text">
+        <ix-icon name="info" class="hint-icon"></ix-icon>
+        <span>{{ error.hint | translate }}</span>
+      </div>
+    }
   </div>
+
+  @if (error.details && error.details.length > 0) {
+    <a
+      ixTest="view-details"
+      class="more-info"
+      (click)="toggleDetails()"
+    >
+      @if (isDetailsOpen()) {
+        <ix-icon name="remove_circle_outline"></ix-icon>
+      } @else {
+        <ix-icon name="add_circle_outline"></ix-icon>
+      }
+      <span>{{ 'View Details' | translate }}</span>
+    </a>
+
+    <div
+      class="details-panel"
+      [class.open]="isDetailsOpen()"
+    >
+      <div class="details-content">
+        <table class="details-table">
+          @for (detail of error.details; track detail.label) {
+            <tr>
+              <td class="detail-label">{{ detail.label }}:</td>
+              <td class="detail-value">
+                @if (detail.label === TRACE_LABEL) {
+                  @if (!isTraceOpen()) {
+                    <a class="trace-toggle" (click)="toggleTrace()">
+                      <ix-icon name="visibility"></ix-icon>
+                      <span>{{ 'Show' | translate }}</span>
+                    </a>
+                  } @else {
+                    <a class="trace-toggle" (click)="toggleTrace()">
+                      <ix-icon name="visibility_off"></ix-icon>
+                      <span>{{ 'Hide' | translate }}</span>
+                    </a>
+                    <pre>{{ detail.value }}</pre>
+                  }
+                } @else if (detail.value && detail.value.toString().includes('\n')) {
+                  <pre>{{ detail.value }}</pre>
+                } @else {
+                  {{ detail.value || 'N/A' }}
+                }
+              </td>
+            </tr>
+          }
+        </table>
+      </div>
+
+      <ix-copy-button [text]="getDetailsAsText()"></ix-copy-button>
+    </div>
+  }
 
   <ng-container *ixIfNightly>
     @if (error.stackTrace) {
@@ -53,6 +111,16 @@
       (click)="downloadLogs()"
     >
       {{ 'Download Logs' | translate }}
+    </button>
+  }
+
+  @for (action of error.actions; track action.label) {
+    <button
+      mat-button
+      [ixTest]="'action-' + action.label"
+      (click)="handleAction(action)"
+    >
+      {{ action.label | translate }}
     </button>
   }
 </div>

@@ -275,7 +275,10 @@ describe('UpdateComponent', () => {
       const mockedApi = spectator.inject(MockApiService);
       mockedApi.mockCall('update.status', {
         code: UpdateCode.Error,
-        error: 'Failed to check for updates',
+        error: {
+          errname: 'GENERIC_ERROR',
+          reason: 'Failed to check for updates',
+        },
         status: null,
       } as UpdateStatus);
 
@@ -339,7 +342,10 @@ describe('UpdateComponent', () => {
       const mockedApi = spectator.inject(MockApiService);
       mockedApi.mockCall('update.status', {
         code: UpdateCode.NetworkActivityDisabled,
-        error: 'Some error message that should not be shown',
+        error: {
+          errname: 'GENERIC_ERROR',
+          reason: 'Some error message that should not be shown',
+        },
         status: null,
       } as UpdateStatus);
 
@@ -494,6 +500,191 @@ describe('UpdateComponent', () => {
       // Validation error should trigger error dialog
       expect(errorHandler.showErrorModal).toHaveBeenCalledTimes(1);
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(validationError);
+    });
+
+    it('shows network error dialog for ECONNRESET errors', () => {
+      const api = spectator.inject(ApiService);
+      const errorHandler = spectator.inject(ErrorHandlerService);
+
+      const connectionResetError = new ApiCallError({
+        code: -32001,
+        message: 'Connection reset error',
+        data: {
+          errname: ApiErrorName.ConnectionReset,
+          error: 104,
+          extra: null,
+          reason: 'Connection reset by peer',
+          trace: null,
+        },
+      });
+
+      // Override the API call to throw a ECONNRESET error for update.status
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'update.profile_choices') {
+          return of(profileChoices);
+        }
+        if (method === 'update.status') {
+          return throwError(() => connectionResetError);
+        }
+        if (method === 'update.config') {
+          return of(updateConfig);
+        }
+        if (method === 'webui.main.dashboard.sys_info') {
+          return of({ version: '22.12.3' } as SystemInfo);
+        }
+        return throwError(() => new Error(`Unmocked call: ${method}`));
+      });
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      // The error handler should be called, which will internally show the network error dialog
+      expect(errorHandler.showErrorModal).toHaveBeenCalledWith(connectionResetError);
+    });
+
+    it('shows network error dialog for ETIMEDOUT errors', () => {
+      const api = spectator.inject(ApiService);
+      const errorHandler = spectator.inject(ErrorHandlerService);
+
+      const timedOutError = new ApiCallError({
+        code: -32001,
+        message: 'Connection timed out',
+        data: {
+          errname: ApiErrorName.TimedOut,
+          error: 110,
+          extra: null,
+          reason: 'Connection timed out',
+          trace: null,
+        },
+      });
+
+      // Override the API call to throw an ETIMEDOUT error for update.status
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'update.profile_choices') {
+          return of(profileChoices);
+        }
+        if (method === 'update.status') {
+          return throwError(() => timedOutError);
+        }
+        if (method === 'update.config') {
+          return of(updateConfig);
+        }
+        if (method === 'webui.main.dashboard.sys_info') {
+          return of({ version: '22.12.3' } as SystemInfo);
+        }
+        return throwError(() => new Error(`Unmocked call: ${method}`));
+      });
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      // The error handler should be called, which will internally show the network error dialog
+      expect(errorHandler.showErrorModal).toHaveBeenCalledWith(timedOutError);
+    });
+
+    it('shows custom error message for ECONNRESET in update.status response', () => {
+      const api = spectator.inject(ApiService);
+
+      // Override the API call to return ECONNRESET error in update.status response
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'update.profile_choices') {
+          return of(profileChoices);
+        }
+        if (method === 'update.status') {
+          return of({
+            code: UpdateCode.Error,
+            error: {
+              errname: ApiErrorName.ConnectionReset,
+              reason: 'Connection reset by peer',
+            },
+            status: null,
+          } as UpdateStatus);
+        }
+        if (method === 'update.config') {
+          return of(updateConfig);
+        }
+        if (method === 'webui.main.dashboard.sys_info') {
+          return of({ version: '22.12.3' } as SystemInfo);
+        }
+        return throwError(() => new Error(`Unmocked call: ${method}`));
+      });
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      // The custom error message should be displayed
+      const errorElement = spectator.query(byText('Network connection was closed or timed out. Try again later.'));
+      expect(errorElement).toBeTruthy();
+    });
+
+    it('shows custom error message for ETIMEDOUT in update.status response', () => {
+      const api = spectator.inject(ApiService);
+
+      // Override the API call to return ETIMEDOUT error in update.status response
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'update.profile_choices') {
+          return of(profileChoices);
+        }
+        if (method === 'update.status') {
+          return of({
+            code: UpdateCode.Error,
+            error: {
+              errname: ApiErrorName.TimedOut,
+              reason: 'Connection timed out',
+            },
+            status: null,
+          } as UpdateStatus);
+        }
+        if (method === 'update.config') {
+          return of(updateConfig);
+        }
+        if (method === 'webui.main.dashboard.sys_info') {
+          return of({ version: '22.12.3' } as SystemInfo);
+        }
+        return throwError(() => new Error(`Unmocked call: ${method}`));
+      });
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      // The custom error message should be displayed
+      const errorElement = spectator.query(byText('Network connection was closed or timed out. Try again later.'));
+      expect(errorElement).toBeTruthy();
+    });
+
+    it('shows custom error message for ENETUNREACH in update.status response', () => {
+      const api = spectator.inject(ApiService);
+
+      // Override the API call to return ENETUNREACH error in update.status response
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'update.profile_choices') {
+          return of(profileChoices);
+        }
+        if (method === 'update.status') {
+          return of({
+            code: UpdateCode.Error,
+            error: {
+              errname: ApiErrorName.NetworkUnreachable,
+              reason: 'Network is unreachable',
+            },
+            status: null,
+          } as UpdateStatus);
+        }
+        if (method === 'update.config') {
+          return of(updateConfig);
+        }
+        if (method === 'webui.main.dashboard.sys_info') {
+          return of({ version: '22.12.3' } as SystemInfo);
+        }
+        return throwError(() => new Error(`Unmocked call: ${method}`));
+      });
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
+      // The custom error message should be displayed
+      const errorElement = spectator.query(byText('Network resource is not reachable, verify your network settings and health.'));
+      expect(errorElement).toBeTruthy();
     });
   });
 });
