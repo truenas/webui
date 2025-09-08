@@ -797,7 +797,7 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (WIP)",
+      "Users",
       "Add User"
     ],
     "synonyms": [
@@ -807,7 +807,7 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/credentials/users-new"
+      "/credentials/users"
     ],
     "routerLink": null,
     "anchor": "add-user",
@@ -817,18 +817,17 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (WIP)"
+      "Users"
     ],
     "synonyms": [
       "Local Users",
-      "Users",
       "User List",
       "User Management"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/credentials/users-new"
+      "/credentials/users"
     ],
     "routerLink": null,
     "anchor": "users-list",
@@ -838,14 +837,14 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (WIP)",
+      "Users",
       "View API Keys"
     ],
     "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/credentials/users-new"
+      "/credentials/users"
     ],
     "routerLink": null,
     "anchor": "view-api-keys",
@@ -855,14 +854,14 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (WIP)",
+      "Users",
       "Add API Key"
     ],
     "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/credentials/users-new"
+      "/credentials/users"
     ],
     "routerLink": null,
     "anchor": "add-api-key",
@@ -872,14 +871,14 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (WIP)",
+      "Users",
       "Download Key"
     ],
     "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/credentials/users-new"
+      "/credentials/users"
     ],
     "routerLink": null,
     "anchor": "download-key",
@@ -889,7 +888,7 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (WIP)",
+      "Users",
       "Toggle Lock Status"
     ],
     "synonyms": [
@@ -901,7 +900,7 @@
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/credentials/users-new"
+      "/credentials/users"
     ],
     "routerLink": null,
     "anchor": "toggle-lock-status",
@@ -911,7 +910,7 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (WIP)",
+      "Users",
       "Toggle Lock Status"
     ],
     "synonyms": [
@@ -923,7 +922,7 @@
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/credentials/users-new"
+      "/credentials/users"
     ],
     "routerLink": null,
     "anchor": "toggle-lock-status",
@@ -933,14 +932,14 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (WIP)",
+      "Users",
       "Profile"
     ],
     "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/credentials/users-new"
+      "/credentials/users"
     ],
     "routerLink": null,
     "anchor": "profile",
@@ -950,14 +949,14 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (WIP)",
+      "Users",
       "Access Card"
     ],
     "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/credentials/users-new"
+      "/credentials/users"
     ],
     "routerLink": null,
     "anchor": "access-card",
@@ -967,14 +966,14 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (WIP)",
+      "Users",
       "Password Card"
     ],
     "synonyms": [],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/credentials/users-new"
+      "/credentials/users"
     ],
     "routerLink": null,
     "anchor": "password-card",
@@ -984,7 +983,7 @@
   {
     "hierarchy": [
       "Credentials",
-      "Users (WIP)",
+      "Users",
       "Generate One-Time Password"
     ],
     "synonyms": [],
@@ -993,7 +992,7 @@
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/credentials/users-new"
+      "/credentials/users"
     ],
     "routerLink": null,
     "anchor": "generate-one-time-password",
@@ -1043,72 +1042,6 @@
     ],
     "routerLink": null,
     "anchor": "api-keys",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Users",
-      "Show Built-in Users"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "users"
-    ],
-    "routerLink": null,
-    "anchor": "show-built-in-users",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Users",
-      "Add User"
-    ],
-    "synonyms": [
-      "New User",
-      "Create User",
-      "User",
-      "Add Local User"
-    ],
-    "requiredRoles": [
-      "ACCOUNT_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "users"
-    ],
-    "routerLink": null,
-    "anchor": "add-user",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Users"
-    ],
-    "synonyms": [
-      "Local Users",
-      "User List",
-      "User Management",
-      "Admins",
-      "Administrators"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "users"
-    ],
-    "routerLink": null,
-    "anchor": "users-list",
     "triggerAnchor": null,
     "section": "ui"
   },

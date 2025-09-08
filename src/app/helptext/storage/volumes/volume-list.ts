@@ -9,7 +9,7 @@ export const helptextVolumes = {
     unableToTerminate: T('Unable to terminate processes which are using this pool: '),
   },
 
-  exportError: T('Error disconnecting/deleting pool.'),
+  exportError: T('Error disconnecting pool.'),
 
   exportDialog: {
     warningSysDataset: T('This pool contains the system dataset that stores critical data like debugging \

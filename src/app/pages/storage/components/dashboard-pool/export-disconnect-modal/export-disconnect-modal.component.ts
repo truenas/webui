@@ -20,6 +20,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { isFailedJobError } from 'app/helpers/api.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
+import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { isServicesToBeRestartedInfo, ServicesToBeRestartedInfo } from 'app/interfaces/pool-export.interface';
@@ -117,6 +118,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   systemConfig: SystemDatasetConfig;
   totalPoolCount = 0;
   isHaEnabled = false;
+  failoverConfig: FailoverConfig;
 
   isFormLoading = false;
   form = this.fb.nonNullable.group({
@@ -161,6 +163,13 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   cancel(): void {
     this.dialogRef.close(false);
+  }
+
+  isLastPoolInHaSystem(): boolean {
+    return this.isHaEnabled
+      && this.failoverConfig
+      && !this.failoverConfig.disabled
+      && this.totalPoolCount === 1;
   }
 
   startExportDisconnectJob(): void {
@@ -269,21 +278,23 @@ export class ExportDisconnectModalComponent implements OnInit {
       this.api.call('pool.attachments', [this.pool.id]),
       this.api.call('pool.processes', [this.pool.id]),
       this.api.call('systemdataset.config'),
-      this.api.call('pool.query'),
+      this.api.call('pool.query', [[], { count: true }]),
       this.store.select(selectIsHaEnabled).pipe(take(1)),
+      this.api.call('failover.config'),
     ])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe(([attachments, processes, systemConfig, allPools, isHaEnabled]) => {
+      .subscribe(([attachments, processes, systemConfig, poolCount, isHaEnabled, failoverConfig]) => {
         this.attachments = attachments;
         this.processes = processes;
         this.organizeProcesses(processes);
         this.systemConfig = systemConfig;
-        this.totalPoolCount = allPools.length;
+        this.totalPoolCount = poolCount as unknown as number;
         this.isHaEnabled = isHaEnabled;
+        this.failoverConfig = failoverConfig;
         this.prepareForm();
         this.cdr.markForCheck();
       });
@@ -318,16 +329,15 @@ export class ExportDisconnectModalComponent implements OnInit {
     return this.selectedOption() === DisconnectOption.Delete;
   }
 
-  get isLastPool(): boolean {
-    return this.totalPoolCount <= 1;
-  }
-
-  get shouldShowHaWarning(): boolean {
-    return this.isHaEnabled && this.isLastPool;
-  }
-
   canProceed(): boolean {
-    return this.selectedOption() !== null && this.form.valid && !this.isFormLoading;
+    return this.selectedOption() !== null
+      && this.form.valid
+      && !this.isFormLoading
+      && !this.isLastPoolInHaSystem();
+  }
+
+  get dependencyCount(): number {
+    return this.attachments.length + this.process.knownProcesses.length + this.process.unknownProcesses.length;
   }
 
   private resetNameInputValidState(): void {

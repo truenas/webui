@@ -57,21 +57,23 @@
           }
         </div>
 
-        @if (shouldShowHaWarning) {
+        @if (isLastPoolInHaSystem()) {
           <mat-expansion-panel class="expansion-panel ha-warning-panel" [expanded]="true">
             <mat-expansion-panel-header>
               <mat-panel-title>
                 <div class="warning-icon">
                   <ix-icon name="warning"></ix-icon>
                 </div>
-                {{ 'Critical: High Availability will be disabled' | translate }}
+                {{ 'Critical: High Availability should be disabled' | translate }}
               </mat-panel-title>
             </mat-expansion-panel-header>
 
             <div class="expansion-content">
               <div class="ha-warning">
                 <p><strong>{{ 'This is the last pool in your HA system.' | translate }}</strong></p>
-                <p>{{ 'Exporting this pool will disable High Availability functionality because no pools will remain for failover operations. Your system will continue to operate, but redundancy will be lost until another pool is added.' | translate }}</p>
+                <p>{{ 'Removing this pool will leave no pools available for failover operations, effectively disabling High Availability functionality. Your system will continue to operate, but redundancy will be lost until another pool is added.' | translate }}</p>
+                <p><strong>{{ 'Action Required:' | translate }}</strong> {{ 'You must first disable High Availability before you can proceed with this operation.' | translate }}</p>
+                <p><em>{{ 'The disconnect button will remain disabled until HA is turned off.' | translate }}</em></p>
                 <p>{{ 'Please ensure you understand the implications before proceeding.' | translate }}</p>
               </div>
             </div>
@@ -108,7 +110,7 @@
           <mat-expansion-panel class="expansion-panel">
             <mat-expansion-panel-header>
               <mat-panel-title>
-                {{ 'These services and processes depend on this pool' | translate }}
+                {{ '{count} services and processes depend on this pool' | translate: { count: dependencyCount } }}
               </mat-panel-title>
             </mat-expansion-panel-header>
 
@@ -150,7 +152,7 @@
                   <ul>
                     @for (process of process.unknownProcesses; track process) {
                       <li>
-                        {{ process.pid || ('Unknown PID' | translate) }} -
+                        {{ process.pid }} -
                         {{ process.cmdline?.substring(0, 40) }}
                       </li>
                     }

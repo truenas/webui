@@ -14,6 +14,7 @@ import {
 } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -43,18 +44,6 @@ const fakeSystemConfig = {
   pool: 'fakeSystemPool',
 } as SystemDatasetConfig;
 
-// Includes the current pool being exported/deleted (fakePool with id: 9999)
-const fakeMultiplePools = [
-  { id: 1, name: 'otherPool1' },
-  { id: 2, name: 'otherPool2' },
-  { id: 9999, name: 'fakePool' }, // Current pool
-] as Pool[];
-
-// Only the current pool exists (last pool scenario)
-const fakeSinglePool = [
-  { id: 9999, name: 'fakePool' }, // Current pool only
-] as Pool[];
-
 const fakeUnknownPool = {
   id: 8888,
   name: 'unknownPool',
@@ -74,6 +63,20 @@ const fakeProcesses = [
   { name: '', pid: 9999, cmdline: '/some/unknown/process' }, // Empty name makes it unknown
 ] as Process[];
 
+const fakeFailoverConfig = {
+  id: 1,
+  disabled: false,
+  master: true,
+  timeout: 20,
+} as FailoverConfig;
+
+const fakeFailoverConfigDisabled = {
+  id: 1,
+  disabled: true,
+  master: true,
+  timeout: 20,
+} as FailoverConfig;
+
 
 describe('ExportDisconnectModalComponent', () => {
   let spectator: Spectator<ExportDisconnectModalComponent>;
@@ -89,8 +92,9 @@ describe('ExportDisconnectModalComponent', () => {
         mockCall('pool.attachments', fakeAttachments),
         mockCall('pool.processes', fakeProcesses),
         mockCall('systemdataset.config', fakeSystemConfig),
-        mockCall('pool.query', fakeMultiplePools),
+        mockCall('pool.query', () => 3 as unknown as Pool[]), // Mock count response
         mockCall('pool.dataset.query', []),
+        mockCall('failover.config', fakeFailoverConfigDisabled), // Default to disabled
         mockJob('pool.export'),
       ]),
       mockProvider(DialogService, {
@@ -98,6 +102,7 @@ describe('ExportDisconnectModalComponent', () => {
           afterClosed: () => of(null),
         })),
         error: jest.fn(),
+        warn: jest.fn(),
       }),
       mockProvider(MatDialogRef),
       mockProvider(MatDialog, {
@@ -172,30 +177,9 @@ describe('ExportDisconnectModalComponent', () => {
       expect(spectator.component.isDeleteSelected).toBe(true);
     });
 
-    it('should correctly identify last pool', () => {
-      spectator.component.totalPoolCount = 1;
-      expect(spectator.component.isLastPool).toBe(true);
-
-      spectator.component.totalPoolCount = 3;
-      expect(spectator.component.isLastPool).toBe(false);
-    });
-
-    it('should correctly determine HA warning conditions', () => {
-      spectator.component.isHaEnabled = true;
-      spectator.component.totalPoolCount = 1;
-      spectator.component.selectOption(DisconnectOption.Export);
-      expect(spectator.component.shouldShowHaWarning).toBe(true);
-
-      spectator.component.selectOption(DisconnectOption.Delete);
-      expect(spectator.component.shouldShowHaWarning).toBe(true); // Now shows for both operations
-
-      spectator.component.selectOption(DisconnectOption.Export);
-      spectator.component.totalPoolCount = 3;
-      expect(spectator.component.shouldShowHaWarning).toBe(false); // Multiple pools = no warning
-
-      spectator.component.isHaEnabled = false;
-      spectator.component.totalPoolCount = 1;
-      expect(spectator.component.shouldShowHaWarning).toBe(false); // HA disabled = no warning
+    it('should correctly calculate dependency count', () => {
+      // fakeAttachments has 4 items, fakeProcesses has 3 items
+      expect(spectator.component.dependencyCount).toBe(7);
     });
   });
 
@@ -280,7 +264,12 @@ describe('ExportDisconnectModalComponent', () => {
     });
 
     it('should set totalPoolCount based on pool query response', () => {
-      expect(spectator.component.totalPoolCount).toBe(3); // fakeMultiplePools has 3 pools
+      expect(spectator.component.totalPoolCount).toBe(3); // Mock count response
+    });
+
+    it('should load failover config during initialization', () => {
+      const api = spectator.inject(ApiService);
+      expect(api.call).toHaveBeenCalledWith('failover.config');
     });
   });
 
@@ -291,42 +280,169 @@ describe('ExportDisconnectModalComponent', () => {
       jest.spyOn(mockStore$, 'select').mockReturnValue(of(true));
     });
 
-    it('should show HA warning when HA is enabled and this is the last pool', () => {
+    it('should show HA warning panel only when failover is active and this is the last pool', () => {
       spectator.component.totalPoolCount = 1; // Last pool
       spectator.component.isHaEnabled = true;
-      spectator.component.selectOption(DisconnectOption.Export); // Select an option to show content
+      spectator.component.failoverConfig = fakeFailoverConfig; // Failover NOT disabled
+      spectator.component.selectOption(DisconnectOption.Export);
       spectator.detectChanges();
 
       expect(spectator.query('.ha-warning-panel')).toExist();
-      expect(spectator.query('.ha-warning-panel')).toContainText('Critical: High Availability will be disabled');
+      expect(spectator.query('.ha-warning-panel')).toContainText('Critical: High Availability should be disabled');
       expect(spectator.query('.ha-warning')).toContainText('This is the last pool in your HA system');
-      expect(spectator.query('.ha-warning')).toContainText('redundancy will be lost');
+      expect(spectator.query('.ha-warning')).toContainText('Action Required');
+      expect(spectator.query('.ha-warning')).toContainText('The disconnect button will remain disabled');
     });
 
-    it('should not show HA warning when HA is enabled but multiple pools exist', () => {
+    it('should not show HA warning panel when failover is disabled even if last pool', () => {
+      spectator.component.totalPoolCount = 1; // Last pool
+      spectator.component.isHaEnabled = true;
+      spectator.component.failoverConfig = fakeFailoverConfigDisabled; // Failover disabled
+      spectator.detectChanges();
+
+      expect(spectator.query('.ha-warning-panel')).not.toExist();
+    });
+
+    it('should not show HA warning panel when multiple pools exist', () => {
       spectator.component.totalPoolCount = 3; // Multiple pools
       spectator.component.isHaEnabled = true;
+      spectator.component.failoverConfig = fakeFailoverConfig; // Failover active
       spectator.detectChanges();
 
       expect(spectator.query('.ha-warning-panel')).not.toExist();
     });
 
-    it('should not show HA warning when HA is disabled', () => {
+    it('should not show HA warning panel when HA is disabled', () => {
       spectator.component.totalPoolCount = 1; // Last pool
       spectator.component.isHaEnabled = false;
+      spectator.component.failoverConfig = fakeFailoverConfig;
       spectator.detectChanges();
 
       expect(spectator.query('.ha-warning-panel')).not.toExist();
     });
+  });
 
-    it('should show HA warning for delete option when HA and last pool', () => {
-      spectator.component.totalPoolCount = 1; // Last pool
+  describe('HA failover blocking logic', () => {
+    it('should prevent form submission when HA is enabled, failover is not disabled, and this is the last pool', () => {
+      // Set up conditions for blocking
       spectator.component.isHaEnabled = true;
-      spectator.click('.delete-option'); // Switch to delete
-      spectator.detectChanges();
+      spectator.component.failoverConfig = fakeFailoverConfig; // Not disabled
+      spectator.component.totalPoolCount = 1;
 
-      expect(spectator.query('.ha-warning-panel')).toExist();
-      expect(spectator.query('.ha-warning-panel')).toContainText('Critical: High Availability will be disabled');
+      // Verify form submission is blocked
+      expect(spectator.component.canProceed()).toBe(false);
+    });
+
+    it('should allow form submission when HA is enabled but failover is administratively disabled', () => {
+      // Set up conditions - failover disabled
+      spectator.component.isHaEnabled = true;
+      spectator.component.failoverConfig = fakeFailoverConfigDisabled; // Disabled
+      spectator.component.totalPoolCount = 1;
+
+      // Set up form preconditions
+      spectator.component.selectOption(DisconnectOption.Export);
+      spectator.component.form.patchValue({ destroy: false, cascade: true, confirm: true });
+      spectator.component.isFormLoading = false;
+
+      // Form submission should be allowed
+      expect(spectator.component.canProceed()).toBe(true);
+    });
+
+    it('should allow form submission when HA is disabled even if this is the last pool', () => {
+      // Set up conditions - HA disabled
+      spectator.component.isHaEnabled = false;
+      spectator.component.failoverConfig = fakeFailoverConfig;
+      spectator.component.totalPoolCount = 1;
+
+      // Set up form preconditions
+      spectator.component.selectOption(DisconnectOption.Export);
+      spectator.component.form.patchValue({ destroy: false, cascade: true, confirm: true });
+      spectator.component.isFormLoading = false;
+
+      // Form submission should be allowed
+      expect(spectator.component.canProceed()).toBe(true);
+    });
+
+    it('should allow form submission when multiple pools exist even with HA enabled and failover active', () => {
+      // Set up conditions - multiple pools
+      spectator.component.isHaEnabled = true;
+      spectator.component.failoverConfig = fakeFailoverConfig; // Not disabled
+      spectator.component.totalPoolCount = 2; // Multiple pools
+
+      // Set up form preconditions
+      spectator.component.selectOption(DisconnectOption.Export);
+      spectator.component.form.patchValue({ destroy: false, cascade: true, confirm: true });
+      spectator.component.isFormLoading = false;
+
+      // Form submission should be allowed
+      expect(spectator.component.canProceed()).toBe(true);
+    });
+
+    describe('isLastPoolInHaSystem logic', () => {
+      it('should return true when all blocking conditions are met', () => {
+        spectator.component.isHaEnabled = true;
+        spectator.component.failoverConfig = fakeFailoverConfig; // Not disabled
+        spectator.component.totalPoolCount = 1;
+
+        // Test through public method canProceed instead
+        expect(spectator.component.canProceed()).toBe(false);
+      });
+
+      it('should return false when HA is disabled', () => {
+        spectator.component.isHaEnabled = false;
+        spectator.component.failoverConfig = fakeFailoverConfig;
+        spectator.component.totalPoolCount = 1;
+
+        // Set up form preconditions
+        spectator.component.selectOption(DisconnectOption.Export);
+        spectator.component.form.patchValue({ destroy: false, cascade: true, confirm: true });
+        spectator.component.isFormLoading = false;
+
+        // Form should be allowed when HA is disabled
+        expect(spectator.component.canProceed()).toBe(true);
+      });
+
+      it('should return false when failover is administratively disabled', () => {
+        spectator.component.isHaEnabled = true;
+        spectator.component.failoverConfig = fakeFailoverConfigDisabled;
+        spectator.component.totalPoolCount = 1;
+
+        // Set up form preconditions
+        spectator.component.selectOption(DisconnectOption.Export);
+        spectator.component.form.patchValue({ destroy: false, cascade: true, confirm: true });
+        spectator.component.isFormLoading = false;
+
+        // Form should be allowed when failover is disabled
+        expect(spectator.component.canProceed()).toBe(true);
+      });
+
+      it('should return false when multiple pools exist', () => {
+        spectator.component.isHaEnabled = true;
+        spectator.component.failoverConfig = fakeFailoverConfig;
+        spectator.component.totalPoolCount = 2;
+
+        // Set up form preconditions
+        spectator.component.selectOption(DisconnectOption.Export);
+        spectator.component.form.patchValue({ destroy: false, cascade: true, confirm: true });
+        spectator.component.isFormLoading = false;
+
+        // Form should be allowed with multiple pools
+        expect(spectator.component.canProceed()).toBe(true);
+      });
+
+      it('should return false when failover config is not available', () => {
+        spectator.component.isHaEnabled = true;
+        spectator.component.failoverConfig = undefined;
+        spectator.component.totalPoolCount = 1;
+
+        // Set up form preconditions
+        spectator.component.selectOption(DisconnectOption.Export);
+        spectator.component.form.patchValue({ destroy: false, cascade: true, confirm: true });
+        spectator.component.isFormLoading = false;
+
+        // Form should be allowed when no failover config
+        expect(spectator.component.canProceed()).toBe(true);
+      });
     });
   });
 
@@ -348,7 +464,7 @@ describe('ExportDisconnectModalComponent', () => {
     beforeEach(() => {
       // Expand the pool summary panel to make content visible
       const panels = spectator.queryAll('mat-expansion-panel-header');
-      const summaryPanel = panels.find((panel) => panel.textContent?.includes('These services and processes depend on this pool'));
+      const summaryPanel = panels.find((panel) => panel.textContent?.includes('services and processes depend on this pool'));
       if (summaryPanel) {
         spectator.click(summaryPanel);
         spectator.detectChanges();
@@ -358,9 +474,9 @@ describe('ExportDisconnectModalComponent', () => {
     it('should display pool summary when attachments or processes exist', () => {
       // Find the services panel specifically by its title text
       const servicesPanel = spectator.queryAll('.expansion-panel')
-        .find((panel) => panel.textContent.includes('These services and processes depend on this pool'));
+        .find((panel) => panel.textContent.includes('services and processes depend on this pool'));
       expect(servicesPanel).toExist();
-      expect(servicesPanel).toContainText('These services and processes depend on this pool');
+      expect(servicesPanel).toContainText('7 services and processes depend on this pool');
     });
 
     it('should display attachments section', () => {
@@ -501,7 +617,7 @@ describe('ExportDisconnectModalComponent', () => {
         await submitExportForm();
 
         expect(spectator.inject(DialogService).error).toHaveBeenCalledWith(expect.objectContaining({
-          title: 'Error disconnecting/deleting pool.',
+          title: 'Error disconnecting pool.',
           message: 'Unable to terminate processes which are using this pool: docker',
         }));
       });
@@ -580,12 +696,14 @@ describe('ExportDisconnectModalComponent', () => {
           mockCall('pool.attachments', []),
           mockCall('pool.processes', []),
           mockCall('systemdataset.config', { pool: 'fakePool' } as SystemDatasetConfig),
-          mockCall('pool.query', fakeSinglePool), // Only one pool
+          mockCall('pool.query', () => 1 as unknown as Pool[]), // Only one pool count
+          mockCall('failover.config', fakeFailoverConfigDisabled), // Disabled failover for this test
           mockJob('pool.export'),
         ]),
         mockProvider(DialogService, {
           jobDialog: jest.fn(() => ({ afterClosed: () => of(null) })),
           error: jest.fn(),
+          warn: jest.fn(),
         }),
         mockProvider(MatDialogRef),
         mockProvider(MatDialog),
@@ -619,13 +737,16 @@ describe('ExportDisconnectModalComponent', () => {
       singlePoolSpectator.detectChanges();
     });
 
-    it('should show HA warning for last pool in HA system', () => {
-      expect(singlePoolSpectator.component.totalPoolCount).toBe(1);
-      expect(singlePoolSpectator.component.isLastPool).toBe(true);
-      expect(singlePoolSpectator.component.shouldShowHaWarning).toBe(true);
+    it('should show HA warning for last pool in HA system when failover is active', () => {
+      // Setup HA enabled and failover active
+      singlePoolSpectator.component.isHaEnabled = true;
+      singlePoolSpectator.component.failoverConfig = fakeFailoverConfig; // Not disabled
+      singlePoolSpectator.component.selectOption(DisconnectOption.Export); // Select an option to show content
+      singlePoolSpectator.detectChanges();
 
+      expect(singlePoolSpectator.component.totalPoolCount).toBe(1);
       expect(singlePoolSpectator.query('.ha-warning-panel')).toExist();
-      expect(singlePoolSpectator.query('.ha-warning-panel')).toContainText('Critical: High Availability will be disabled');
+      expect(singlePoolSpectator.query('.ha-warning-panel')).toContainText('Critical: High Availability should be disabled');
     });
 
     it('should show system dataset warning message', () => {
