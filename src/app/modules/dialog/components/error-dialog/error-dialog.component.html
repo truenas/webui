@@ -65,34 +65,6 @@
       <ix-copy-button [text]="getDetailsAsText()"></ix-copy-button>
     </div>
   }
-
-  <ng-container *ixIfNightly>
-    @if (error.stackTrace) {
-      <a
-        ixTest="view-stack-trace"
-        class="more-info"
-        (click)="toggleStackTrace()"
-      >
-        @if (isStackTraceOpen()) {
-          <ix-icon name="remove_circle_outline"></ix-icon>
-        } @else {
-          <ix-icon name="add_circle_outline"></ix-icon>
-        }
-        <span>{{ 'View Stack Trace' | translate }}</span>
-      </a>
-
-      <div
-        class="stack-trace-panel"
-        [class.open]="isStackTraceOpen()"
-      >
-        <div class="textarea scrolled-down" readonly matInput>
-          {{ 'Error' | translate }}: {{ error.stackTrace }}
-        </div>
-
-        <ix-copy-button [text]="error.stackTrace"></ix-copy-button>
-      </div>
-    }
-  </ng-container>
 </div>
 
 <div mat-dialog-actions>

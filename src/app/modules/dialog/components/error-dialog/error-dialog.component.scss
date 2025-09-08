@@ -11,7 +11,6 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
   text-align: right;
 }
 
-.stack-trace-panel,
 .details-panel {
   border: 0;
   max-height: 0;
@@ -26,26 +25,12 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
     padding: 2px;
   }
 
-  .textarea {
-    background: var(--contrast-darker);
-    border: 1px solid var(--lines);
-    color: var(--fg2);
-    font-family: var(--font-family-monospace);
-    max-height: $opened-scroll-container-height;
-    min-height: 100px;
-    overflow: auto;
-    padding: 1rem;
-    white-space: pre-wrap;
-  }
-
   ix-copy-button {
     bottom: 8px;
     position: absolute;
     right: 12px;
   }
-}
 
-.details-panel {
   .details-content {
     background: var(--contrast-darker);
     border: 1px solid var(--lines);
@@ -116,11 +101,6 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
       }
     }
   }
-}
-
-.scrolled-down {
-  display: flex;
-  flex-direction: column-reverse;
 }
 
 #err-md-content {
