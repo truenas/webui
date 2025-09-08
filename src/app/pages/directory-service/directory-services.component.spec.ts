@@ -3,20 +3,32 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, throwError, NEVER } from 'rxjs';
+import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import { DirectoryServiceStatus, DirectoryServiceType, DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { LdapCredentialPlain } from 'app/interfaces/directoryservice-credentials.interface';
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { IpaConfig } from 'app/interfaces/ipa-config.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LeaveDomainDialog } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { DirectoryServicesComponent } from './directory-services.component';
+
+type DirectoryServicesComponentWithProtected = DirectoryServicesComponent & {
+  onRebuildCachePressed(): void;
+  isLoading: {
+    (): boolean;
+    set(value: boolean): void;
+  };
+};
 
 describe('DirectoryServicesComponent', () => {
   let spectator: Spectator<DirectoryServicesComponent>;
@@ -53,11 +65,20 @@ describe('DirectoryServicesComponent', () => {
           });
         }),
       }),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of({ description: 'Directory Service cache has been rebuilt.' }),
+        })),
+        error: jest.fn(),
+      }),
       mockProvider(SlideIn),
       mockProvider(MatDialog),
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),
+      }),
+      mockProvider(SnackbarService),
+      mockProvider(SystemGeneralService, {
+        refreshDirServicesCache: jest.fn(() => of({ id: 1, state: 'SUCCESS' } as Job)),
       }),
     ],
   });
@@ -88,7 +109,18 @@ describe('DirectoryServicesComponent', () => {
     };
   });
 
-  describe('Leave button visibility', () => {
+  describe('Menu visibility and functionality', () => {
+    it('should show Settings menu item for all directory services', async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const settingsItems = await menu.getItems({ text: /Settings/ });
+      expect(settingsItems).toHaveLength(1);
+    });
+
     it('should show Leave button for Active Directory when healthy', async () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -561,6 +593,172 @@ describe('DirectoryServicesComponent', () => {
 
       // Restore console.warn
       console.warn = originalWarn;
+    });
+  });
+
+  describe('Rebuild cache functionality', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('should show Rebuild Directory Service Cache menu item', async () => {
+      await spectator.fixture.whenStable();
+
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
+      expect(rebuildMenuItem).toHaveLength(1);
+    });
+
+    it('should trigger rebuild cache when menu item is clicked', async () => {
+      const dialogService = spectator.inject(DialogService);
+      const jobDialogSpy = jest.spyOn(dialogService, 'jobDialog');
+
+      await spectator.fixture.whenStable();
+
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
+      await rebuildMenuItem[0].click();
+
+      expect(jobDialogSpy).toHaveBeenCalled();
+    });
+
+    it('should set loading state during rebuild cache operation', async () => {
+      const dialogService = spectator.inject(DialogService);
+
+      // Mock jobDialog to return a never-resolving observable to check loading state
+      const mockJobProgressDialogRef = {
+        afterClosed: () => NEVER, // Never emits to keep loading
+        getSubscriptionLimiterInstance: jest.fn(),
+      } as unknown as JobProgressDialogRef<unknown>;
+      jest.spyOn(dialogService, 'jobDialog').mockReturnValue(mockJobProgressDialogRef);
+
+      await spectator.fixture.whenStable();
+
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
+      await rebuildMenuItem[0].click();
+
+      expect((spectator.component as DirectoryServicesComponentWithProtected).isLoading()).toBe(true);
+      expect(dialogService.jobDialog).toHaveBeenCalled();
+    });
+
+    it('should show success message when rebuild cache succeeds', async () => {
+      const snackbarService = spectator.inject(SnackbarService);
+      const dialogService = spectator.inject(DialogService);
+      const successSpy = jest.spyOn(snackbarService, 'success');
+
+      // Mock dialogService to return success
+      const mockJobProgressDialogRef = {
+        afterClosed: () => of({ description: 'Directory Service cache has been rebuilt.' } as Job),
+        getSubscriptionLimiterInstance: jest.fn(),
+      } as unknown as JobProgressDialogRef<unknown>;
+      jest.spyOn(dialogService, 'jobDialog').mockReturnValue(mockJobProgressDialogRef);
+
+      await spectator.fixture.whenStable();
+
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
+      await rebuildMenuItem[0].click();
+
+      expect(successSpy).toHaveBeenCalledWith('Directory Service cache has been rebuilt.');
+    });
+
+    it('should show error dialog when rebuild cache fails', async () => {
+      const dialogService = spectator.inject(DialogService);
+      const errorSpy = jest.spyOn(dialogService, 'error');
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      // Mock jobDialog to return an observable that errors
+      const mockJobProgressDialogRef = {
+        afterClosed: () => throwError(() => new Error('Cache rebuild failed')),
+        getSubscriptionLimiterInstance: jest.fn(),
+      } as unknown as JobProgressDialogRef<unknown>;
+      jest.spyOn(dialogService, 'jobDialog').mockReturnValue(mockJobProgressDialogRef);
+
+      await spectator.fixture.whenStable();
+
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
+      await rebuildMenuItem[0].click();
+
+      expect(errorSpy).toHaveBeenCalledWith({
+        title: 'Error',
+        message: 'Cache rebuild failed',
+      });
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to rebuild directory service cache:', expect.any(Error));
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should disable rebuild cache button when loading', async () => {
+      (spectator.component as DirectoryServicesComponentWithProtected).isLoading.set(true);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
+
+      expect(await rebuildMenuItem[0].isDisabled()).toBe(true);
+    });
+
+    it('should prevent multiple concurrent rebuild operations', async () => {
+      const dialogService = spectator.inject(DialogService);
+      const jobDialogSpy = jest.spyOn(dialogService, 'jobDialog');
+
+      // Mock jobDialog to return a never-resolving observable to simulate ongoing operation
+      const mockJobProgressDialogRef = {
+        afterClosed: () => NEVER,
+        getSubscriptionLimiterInstance: jest.fn(),
+      } as unknown as JobProgressDialogRef<unknown>;
+      jobDialogSpy.mockReturnValue(mockJobProgressDialogRef);
+
+      await spectator.fixture.whenStable();
+
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
+
+      // First click should trigger the operation
+      await rebuildMenuItem[0].click();
+      expect(jobDialogSpy).toHaveBeenCalledTimes(1);
+      expect((spectator.component as DirectoryServicesComponentWithProtected).isLoading()).toBe(true);
+
+      // Close and reopen menu to get fresh menu items
+      await menu.close();
+      await menu.open();
+      const rebuildMenuItemAfter = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
+
+      // Second click should be ignored since loading is true
+      await rebuildMenuItemAfter[0].click();
+      expect(jobDialogSpy).toHaveBeenCalledTimes(1); // Should still be 1, not 2
+    });
+
+    it('should return early from onRebuildCachePressed when already loading', async () => {
+      const dialogService = spectator.inject(DialogService);
+      const jobDialogSpy = jest.spyOn(dialogService, 'jobDialog');
+
+      await spectator.fixture.whenStable();
+
+      // Set loading state to true first
+      (spectator.component as DirectoryServicesComponentWithProtected).isLoading.set(true);
+      spectator.detectChanges();
+
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+      const rebuildMenuItem = await menu.getItems({ text: /Rebuild Directory Service Cache/ });
+
+      // Click the menu item while loading is true
+      await rebuildMenuItem[0].click();
+
+      // Verify that jobDialog was not called since the method returned early
+      expect(jobDialogSpy).not.toHaveBeenCalled();
     });
   });
 });
