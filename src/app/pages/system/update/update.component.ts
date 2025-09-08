@@ -118,6 +118,30 @@ export class UpdateComponent implements OnInit {
     return this.status()?.code === UpdateCode.NetworkActivityDisabled;
   });
 
+  protected readonly shouldShowError = computed(() => {
+    const status = this.status();
+    return status?.error && !this.isNetworkActivityDisabled();
+  });
+
+  protected readonly errorMessage = computed(() => {
+    const status = this.status();
+    if (!status?.error) {
+      return '';
+    }
+
+    // Show custom messages for specific network errors
+    const errname = status.error.errname;
+    if (errname === (ApiErrorName.ConnectionReset as string) || errname === (ApiErrorName.TimedOut as string)) {
+      return this.translate.instant('Network connection was closed or timed out. Try again later.');
+    }
+    if (errname === (ApiErrorName.NetworkUnreachable as string)) {
+      return this.translate.instant('Network resource is not reachable, verify your network settings and health.');
+    }
+
+    // For other errors, show the reason
+    return status.error.reason;
+  });
+
   private readonly systemInfo$ = this.api.call('webui.main.dashboard.sys_info').pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
   );

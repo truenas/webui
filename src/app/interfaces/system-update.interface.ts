@@ -89,9 +89,14 @@ export interface UpdateDownloadProgress {
   version: string;
 }
 
+export interface UpdateStatusError {
+  errname: string;
+  reason: string;
+}
+
 export interface UpdateStatus {
   code: UpdateCode;
   status: UpdateStatusDetails | null;
-  error: string | null;
+  error: UpdateStatusError | null;
   update_download_progress: UpdateDownloadProgress | null;
 }
