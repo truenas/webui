@@ -15,13 +15,13 @@ describe('getCredentialsCreationSource', () => {
     expect(getCredentialsCreationSource(creds)).toBe('root');
   });
 
-  it('returns api key for ApiKey type', () => {
+  it('returns username for ApiKey type', () => {
     const creds = {
       type: CredentialType.ApiKey,
-      data: { api_key: '1234' },
+      data: { username: 'admin' },
     } as Credentials;
 
-    expect(getCredentialsCreationSource(creds)).toBe('1234');
+    expect(getCredentialsCreationSource(creds)).toBe('admin');
   });
 
   it('returns empty string when data is missing', () => {

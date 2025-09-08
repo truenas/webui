@@ -27,6 +27,7 @@ import {
   selectFailedJobsCount,
   selectJobsPanelSlice,
   selectJob,
+  selectSuccessJobsCount,
 } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -69,6 +70,7 @@ export class JobsPanelComponent {
   runningJobsCount$ = this.store$.select(selectRunningJobsCount);
   waitingJobsCount$ = this.store$.select(selectWaitingJobsCount);
   failedJobsCount$ = this.store$.select(selectFailedJobsCount);
+  selectSuccessJobsCount$ = this.store$.select(selectSuccessJobsCount);
   availableJobs$ = this.store$.select(selectJobsPanelSlice);
 
   onAbort(job: Job): void {

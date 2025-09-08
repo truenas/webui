@@ -71,6 +71,10 @@ $component-header: 50px;
   .job-icon-running {
     color: var(--primary);
   }
+
+  .job-icon-success {
+    color: var(--green);
+  }
 }
 
 .jobs-list {

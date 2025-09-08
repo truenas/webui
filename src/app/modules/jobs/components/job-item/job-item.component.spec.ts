@@ -111,7 +111,7 @@ describe('JobItemComponent', () => {
           credentials: {
             type: CredentialType.ApiKey,
             data: {
-              api_key: 'testApiKey',
+              username: 'testUser',
             },
           },
         } as Job,
@@ -124,6 +124,6 @@ describe('JobItemComponent', () => {
 
     expect(spectator.component.opened.emit).toHaveBeenCalledTimes(1);
 
-    expect(spectator.query('.job-credentials')).toHaveText('Created by: testApiKey (API Key)');
+    expect(spectator.query('.job-credentials')).toHaveText('Created by: testUser (API Key)');
   });
 });

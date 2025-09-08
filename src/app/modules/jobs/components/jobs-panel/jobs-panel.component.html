@@ -18,6 +18,13 @@
         <ix-icon name="schedule" class="job-icon-waiting"></ix-icon>
       </div>
       <div
+        class="job-badge success"
+        [matTooltip]="'Success' | translate"
+      >
+        <span class="job-badge-count">{{ selectSuccessJobsCount$ | async }}</span>
+        <ix-icon name="mdi-check-circle" class="job-icon-success"></ix-icon>
+      </div>
+      <div
         class="job-badge failed"
         [matTooltip]="'Failed' | translate"
       >
