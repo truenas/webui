@@ -63,7 +63,7 @@ describe('TwoFactorComponent', () => {
   });
 
   it('shows the QR code viewer with correct provisioning URI when 2FA is configured', () => {
-    spectator.component.userTwoFactorAuthConfigured = true;
+    spectator.component.userTwoFactorAuthConfigured.set(true);
     spectator.detectChanges();
 
     const qrViewer = spectator.query(QrViewerComponent);
@@ -72,7 +72,7 @@ describe('TwoFactorComponent', () => {
   });
 
   it('displays the secret from provisioning URI in the component', () => {
-    spectator.component.userTwoFactorAuthConfigured = true;
+    spectator.component.userTwoFactorAuthConfigured.set(true);
     spectator.detectChanges();
 
     const secretElement = spectator.query('.secret p');
@@ -81,7 +81,7 @@ describe('TwoFactorComponent', () => {
   });
 
   it('shows a copy button with the correct secret', () => {
-    spectator.component.userTwoFactorAuthConfigured = true;
+    spectator.component.userTwoFactorAuthConfigured.set(true);
     spectator.detectChanges();
 
     const copyButton = spectator.query(CopyButtonComponent);
@@ -100,7 +100,7 @@ describe('TwoFactorComponent', () => {
 
   it('shows warning when global setting is enabled but user disabled', () => {
     spectator.component.ngOnInit();
-    spectator.component.userTwoFactorAuthConfigured = false;
+    spectator.component.userTwoFactorAuthConfigured.set(false);
     spectator.detectChanges();
     const warning = spectator.query(WarningComponent);
     expect(warning).toBeTruthy();
