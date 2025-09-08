@@ -53,25 +53,47 @@
       <mat-toolbar-row>
         <h3>{{ card.title }}</h3>
         <div class="actions action-icon">
-          <button
-            mat-button color="default"
-            [ixTest]="[card.title, 'settings']"
-            [ixUiSearch]="searchableElements.elements.settings"
-            (click)="card.onSettingsPressed()"
+           <button
+            mat-icon-button
+            [matMenuTriggerFor]="actionsMenu"
+            [attr.aria-label]="'More actions' | translate"
           >
-            {{ 'Settings' | translate }}
+            <ix-icon name="more_vert"></ix-icon>
           </button>
-          @if (card.showLeaveButton) {
-            <button
-              *ixRequiresRoles="requiredRoles"
-              mat-button
-              color="warn"
-              [ixTest]="[card.title, 'leave']"
-              (click)="card.onLeavePressed()"
+
+          <mat-menu #actionsMenu="matMenu">
+            <button 
+              mat-menu-item 
+              [ixTest]="[card.title, 'settings']"
+              [ixUiSearch]="searchableElements.elements.settings"
+              (click)="card.onSettingsPressed()"
             >
-              {{ 'Leave' | translate }}
+              <ix-icon name="settings"></ix-icon>
+              <span>{{ 'Settings' | translate }}</span>
             </button>
-          }
+            <button 
+              *ixRequiresRoles="requiredRoles"
+              mat-menu-item
+              [ixTest]="[card.title, 'rebuild-cache']"
+              [attr.aria-label]="'Rebuild Directory Service Cache' | translate"
+              [disabled]="isLoading()"
+              (click)="onRebuildCachePressed()"
+            >
+              <ix-icon name="refresh"></ix-icon>
+              <span>{{ 'Rebuild Directory Service Cache' | translate }}</span>
+            </button>
+            @if (card.showLeaveButton) {
+              <button
+                *ixRequiresRoles="requiredRoles"
+                mat-menu-item
+                [ixTest]="[card.title, 'leave']"
+                (click)="card.onLeavePressed()"
+              >
+                <ix-icon name="cancel"></ix-icon>
+                <span>{{ 'Leave' | translate }}</span>
+              </button>
+            }
+          </mat-menu>
         </div>
       </mat-toolbar-row>
       <mat-card-content>

@@ -3,17 +3,18 @@ import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, viewChild, inject,
 } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatList, MatListItem } from '@angular/material/list';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   forkJoin,
 } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, finalize } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
@@ -32,8 +33,10 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -43,6 +46,7 @@ import { KerberosRealmsListComponent } from 'app/pages/directory-service/compone
 import { LeaveDomainDialog } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import { directoryServicesElements } from 'app/pages/directory-service/directory-services.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 
 interface DataCard {
   title: TranslatedString;
@@ -60,8 +64,13 @@ interface DataCard {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     EmptyComponent,
+    IxIconComponent,
     RequiresRolesDirective,
     MatButton,
+    MatIconButton,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     TestDirective,
     UiSearchDirective,
     NgTemplateOutlet,
@@ -86,6 +95,8 @@ export class DirectoryServicesComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private searchDirectives = inject(UiSearchDirectivesService);
+  private snackbarService = inject(SnackbarService);
+  private systemGeneralService = inject(SystemGeneralService);
 
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = directoryServicesElements;
@@ -96,6 +107,7 @@ export class DirectoryServicesComponent implements OnInit {
   protected readonly directoryServicesConfig = signal<DirectoryServicesConfig | null>(null);
   protected readonly directoryServicesStatus = signal<DirectoryServicesStatus | null>(null);
   protected readonly isDirectoryServicesDisabled = computed(() => !this.directoryServicesConfig()?.enable);
+  protected readonly isLoading = signal(false);
 
   protected activeDirectoryDataCard: DataCard;
   protected ldapDataCard: DataCard;
@@ -370,11 +382,44 @@ export class DirectoryServicesComponent implements OnInit {
       });
   }
 
+
   private handlePendingGlobalSearchElement(): void {
     const pendingHighlightElement = this.searchDirectives.pendingUiHighlightElement;
 
     if (pendingHighlightElement) {
       this.searchDirectives.get(pendingHighlightElement)?.highlight(pendingHighlightElement);
     }
+  }
+
+  protected onRebuildCachePressed(): void {
+    if (this.isLoading()) {
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.dialog
+      .jobDialog(this.systemGeneralService.refreshDirServicesCache())
+      .afterClosed()
+      .pipe(
+        finalize(() => this.isLoading.set(false)),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: ({ description }) => {
+          this.snackbarService.success(
+            this.translate.instant(description || helptextDashboard.rebuildCache.success),
+          );
+        },
+        error: (error: unknown) => {
+          const errorMessage = error instanceof Error && error.message
+            ? error.message
+            : helptextDashboard.rebuildCache.error;
+          this.dialog.error({
+            title: this.translate.instant(helptextDashboard.rebuildCache.errorTitle),
+            message: this.translate.instant(errorMessage),
+          });
+          console.error('Failed to rebuild directory service cache:', error);
+        },
+      });
   }
 }
