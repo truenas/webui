@@ -14,7 +14,7 @@ import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
   filter, switchMap, tap,
 } from 'rxjs';
-import { appImagePlaceholder, customApp } from 'app/constants/catalog.constants';
+import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -37,7 +37,6 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppUpdateDialog } from 'app/pages/apps/components/installed-apps/app-update-dialog/app-update-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 
@@ -64,7 +63,6 @@ import { RedirectService } from 'app/services/redirect.service';
     OrNotAvailablePipe,
     MatCardActions,
     CleanLinkPipe,
-    AppVersionPipe,
     MatTooltip,
     IxIconComponent,
     RouterLink,
@@ -87,7 +85,6 @@ export class AppInfoCardComponent {
   readonly app = input.required<App>();
   readonly startApp = output();
   readonly stopApp = output();
-  protected readonly isCustomApp = computed(() => this.app()?.metadata?.name === customApp);
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly isAppStopped = computed<boolean>(() => this.app()?.state === AppState.Stopped);
   protected readonly inProgress = computed<boolean>(() => [AppState.Deploying].includes(this.app()?.state));

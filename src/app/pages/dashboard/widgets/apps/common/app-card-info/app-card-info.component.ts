@@ -5,7 +5,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
-import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 
 @Component({
   selector: 'ix-app-card-info',
@@ -16,7 +15,6 @@ import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/ap
     WithLoadingStateDirective,
     AppStateCellComponent,
     AppUpdateCellComponent,
-    AppVersionPipe,
   ],
 })
 export class AppCardInfoComponent {
