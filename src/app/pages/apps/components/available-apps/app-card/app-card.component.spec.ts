@@ -65,6 +65,6 @@ describe('AppCardComponent', () => {
   });
 
   it('shows app version', () => {
-    expect(spectator.query('.version')).toHaveExactText('v1.0.0');
+    expect(spectator.query('.version')).toHaveExactText('1.0.0');
   });
 });
