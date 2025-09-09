@@ -152,11 +152,11 @@ describe('AppInfoCardComponent', () => {
       },
       {
         label: 'App Version:',
-        value: 'v3.2.1',
+        value: '3.2.1',
       },
       {
         label: 'Version:',
-        value: 'v1.2.3',
+        value: '1.2.3',
       },
       {
         label: 'Source:',
