@@ -8,6 +8,6 @@ describe('NetworkSpeedPipe', () => {
   it('converts values to bits per second', () => {
     spectator = createPipe('{{ 1000 | ixNetworkSpeed }}');
 
-    expect(spectator.element).toHaveText('1 kb/s');
+    expect(spectator.element).toHaveText('1 kB/s');
   });
 });
