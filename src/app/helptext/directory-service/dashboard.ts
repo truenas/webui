@@ -32,4 +32,9 @@ export const helptextDashboard = {
     title: T('Warning'),
     message: T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.'),
   },
+  rebuildCache: {
+    success: T('Directory Service cache has been rebuilt.'),
+    error: T('Failed to rebuild directory service cache.'),
+    errorTitle: T('Error'),
+  },
 };

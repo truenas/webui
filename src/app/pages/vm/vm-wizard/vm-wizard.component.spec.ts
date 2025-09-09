@@ -82,6 +82,7 @@ describe('VmWizardComponent', () => {
           UEFI: 'UEFI',
         }),
         mockCall('vm.device.bind_choices', {
+          '0.0.0.0': '0.0.0.0',
           '10.10.16.82': '10.10.16.82',
         }),
         mockCall('vm.cpu_model_choices', {
@@ -117,6 +118,18 @@ describe('VmWizardComponent', () => {
           { label: 'GeForce GTX 1080 [0000:03:00.0]', value: '0000:03:00.0' },
           { label: 'GeForce GTX 1070 [0000:02:00.0]', value: '0000:02:00.0' },
         ]),
+        getRawGpuPciChoices: () => of({
+          'GeForce GTX 1080 [0000:03:00.0]': {
+            pci_slot: '0000:03:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+          'GeForce GTX 1070 [0000:02:00.0]': {
+            pci_slot: '0000:02:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+        }),
         addIsolatedGpuPciIds: jest.fn(() => of({})),
         getIsolatedGpuPciIds: jest.fn(() => of([
           '0000:02:00.0',
@@ -157,6 +170,7 @@ describe('VmWizardComponent', () => {
     await form.fillForm({
       'Guest Operating System': 'Windows',
       Name: 'test',
+      'Enable Display (VNC)': true,
       Password: '12345678',
     });
     await nextButton.click();
@@ -339,8 +353,9 @@ describe('VmWizardComponent', () => {
         bind: '0.0.0.0',
         password: '12345678',
         port: 13669,
-        type: VmDisplayType.Spice,
-        web: true,
+        resolution: '1920x1080',
+        type: VmDisplayType.Vnc,
+        web: false,
       },
     }]);
     expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(

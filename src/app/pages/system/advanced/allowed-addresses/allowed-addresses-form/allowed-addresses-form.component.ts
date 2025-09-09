@@ -6,13 +6,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, of, switchMap, tap,
+  of, switchMap, tap,
 } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { helptextSystemGeneral } from 'app/helptext/system/general';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -27,6 +25,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -61,6 +60,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
+  private systemGeneralService = inject(SystemGeneralService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
@@ -116,22 +116,6 @@ export class AllowedAddressesFormComponent implements OnInit {
     this.form.controls.addresses.removeAt(index);
   }
 
-  handleServiceRestart(): Observable<true> {
-    return this.dialogService.confirm({
-      title: this.translate.instant(helptextSystemGeneral.restartTitle),
-      message: this.translate.instant(helptextSystemGeneral.restartMessage),
-    }).pipe(
-      switchMap((shouldRestart): Observable<true> => {
-        if (!shouldRestart) {
-          return of(true);
-        }
-        return this.api.call('system.general.ui_restart').pipe(
-          this.errorHandler.withErrorHandler(),
-          map(() => true),
-        );
-      }),
-    );
-  }
 
   onSubmit(): void {
     if (!this.form.dirty) {
@@ -148,7 +132,7 @@ export class AllowedAddressesFormComponent implements OnInit {
         this.isFormLoading.set(false);
         this.snackbar.success(this.translate.instant('Allowed addresses have been updated'));
       }),
-      switchMap(() => this.handleServiceRestart()),
+      switchMap(() => this.systemGeneralService.handleUiServiceRestart()),
       tap(() => {
         this.slideInRef.close({ response: true });
       }),

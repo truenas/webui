@@ -15,7 +15,6 @@ import {
   delay,
   filter, Observable, of, share, Subject, switchMap,
   take,
-  tap,
 } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
@@ -77,9 +76,14 @@ export class SlideIn {
           slideInRef: undefined,
         };
 
-        this.handleOverlayEvents(cdkOverlayRef, slideInInstance);
-        this.createContentPortal(slideInInstance);
-        this.updateSlideInInstances(slideInInstance);
+        // Ensure overlay is attached before creating content portal
+        // This prevents race condition where content might render before overlay is ready
+        requestAnimationFrame(() => {
+          this.createContentPortal(slideInInstance);
+          this.updateSlideInInstances(slideInInstance);
+          // Only handle overlay events after slideInRef is created
+          this.handleOverlayEvents(cdkOverlayRef, slideInInstance);
+        });
 
         return close$;
       }),
@@ -122,12 +126,43 @@ export class SlideIn {
     if (!topComponent) {
       return of(undefined);
     }
-    return topComponent.containerRef.instance.slideIn();
+
+    const container = topComponent.containerRef.instance;
+
+    // Fix for stacked slide-ins: When returning from a child slide-in to a parent,
+    // ensure the parent's container element has the correct visibility classes.
+    // Without this, the parent container may remain hidden after the child closes.
+    const hostElement = topComponent.containerRef.location.nativeElement as HTMLElement;
+    if (hostElement) {
+      // Reset any inline styles and ensure correct classes
+      hostElement.style.transform = '';
+      hostElement.classList.add('slide-in-visible');
+      hostElement.classList.remove('slide-in-hidden');
+    }
+
+    // Use double requestAnimationFrame to ensure DOM is ready before animating
+    return new Observable<void>((observer) => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          container.slideIn().subscribe(() => {
+            observer.next();
+            observer.complete();
+          });
+        });
+      });
+    });
   }
 
   private handleOverlayEvents<D, R>(overlay: OverlayRef, instance: SlideInInstance<D, R>): void {
-    overlay.backdropClick().pipe(untilDestroyed(this)).subscribe(() => {
-      instance.slideInRef.close({ response: false as R, error: undefined });
+    overlay.backdropClick().pipe(
+      // Add a small delay to prevent immediate close on open
+      delay(100),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      // Only close if slideInRef exists (fully initialized)
+      if (instance.slideInRef) {
+        instance.slideInRef.close({ response: false as R, error: undefined });
+      }
     });
   }
 
@@ -170,11 +205,18 @@ export class SlideIn {
     const close$ = new Subject<R | undefined>();
     close$.pipe(
       switchMap(() => containerRef.instance.slideOut()),
-      tap(() => {
-        cdkOverlayRef.dispose();
-        this.slideInInstances.set(
-          this.slideInInstances().filter((slideInItem) => slideInItem.slideInId !== slideInId),
-        );
+      switchMap(() => {
+        // Dispose the overlay and update instances
+        return new Observable<void>((observer) => {
+          requestAnimationFrame(() => {
+            cdkOverlayRef.dispose();
+            this.slideInInstances.set(
+              this.slideInInstances().filter((slideInItem) => slideInItem.slideInId !== slideInId),
+            );
+            observer.next();
+            observer.complete();
+          });
+        });
       }),
       switchMap(() => this.animateInTopComponent()),
       untilDestroyed(this),
@@ -219,11 +261,23 @@ export class SlideIn {
       close: (response: SlideInResponse<R>): void => {
         (!response?.response ? this.canCloseSlideIn(slideInInstance.needConfirmation) : of(true)).pipe(
           filter(Boolean),
+          take(1), // Ensure we only process once
           untilDestroyed(this),
         ).subscribe({
           next: () => {
-            slideInInstance.close$.next(response);
-            slideInInstance.close$.complete();
+            // Ensure close$ is not already completed
+            if (!slideInInstance.close$.closed) {
+              slideInInstance.close$.next(response);
+              slideInInstance.close$.complete();
+            }
+          },
+          error: (error: unknown) => {
+            console.error('Error closing slide-in:', error);
+            // Force close on error
+            if (!slideInInstance.close$.closed) {
+              slideInInstance.close$.next(response);
+              slideInInstance.close$.complete();
+            }
           },
         });
       },

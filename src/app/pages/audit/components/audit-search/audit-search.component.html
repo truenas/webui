@@ -6,14 +6,14 @@
 
   <div class="actions-bar">
     <div class="search-container">
-      <ix-search-input2
+      <ix-search-input
         #searchInput
         class="search-input"
         [properties]="searchProperties()"
         [advancedSearchPlaceholder]="advancedSearchPlaceholder"
         [query]="searchQuery()"
         (runSearch)="onSearch(searchInput.query()); updateUrlOptions(); searchInput.advancedSearch()?.hideDatePicker()"
-      ></ix-search-input2>
+      ></ix-search-input>
       <div class="search-button-wrapper">
         <button
           mat-button

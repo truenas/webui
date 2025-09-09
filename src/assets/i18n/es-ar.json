@@ -298,7 +298,7 @@
   "Add user linked API Key": "Agregar clave de API vinculada al usuario",
   "Add {item}": "Agregar {item}",
   "Adding, removing, or changing hardware components.": "Agregar, quitar o cambiar componentes de hardware.",
-  "Additional      <a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "Opciones adicionales de <a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" target=\"_blank\">rsync(1)</a> para incluir. Separá las entradas presionando <code>Entrar</code>.<br> Nota: El carácter \"*\" debe ir precedido de una barra invertida (\\*.txt) o entre comillas simples ('*.txt').",
+  "Additional      <a href=\"https://download.samba.org/pub/rsync/rsync.1\" target=\"_blank\">rsync(1)</a>      options to include. Separate entries by pressing <code>Enter</code>.<br>      Note: The \"*\" character must be escaped with a backslash (\\*.txt) or used      inside single quotes ('*.txt').": "Opciones adicionales de <a href=\"https://download.samba.org/pub/rsync/rsync.1\" target=\"_blank\">rsync(1)</a> para incluir. Separá las entradas presionando <code>Entrar</code>.<br> Nota: El carácter \"*\" debe ir precedido de una barra invertida (\\*.txt) o entre comillas simples ('*.txt').",
   "Additional Details": "Detalles adicionales",
   "Additional Domains": "Dominios adicionales",
   "Additional Domains:": "Dominios adicionales:",

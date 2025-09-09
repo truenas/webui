@@ -8,7 +8,6 @@ import { Device, PciDevice } from 'app/interfaces/device.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { byVmPciSlots } from 'app/pages/vm/utils/by-vm-pci-slots';
 import { GpuService } from 'app/services/gpu/gpu.service';
 
 @Injectable({
@@ -32,7 +31,10 @@ export class VmGpuService {
           return device.attributes.dtype === VmDeviceType.Pci;
         }) || []) as VmPciPassthroughDevice[];
         const previousSlots = previousVmPciDevices.map((device) => device.attributes.pptdev);
-        const previousGpus = allGpus.filter(byVmPciSlots(previousSlots));
+        // Only include GPUs that have at least one of their PCI devices attached to the VM
+        const previousGpus = allGpus.filter((gpu) => {
+          return gpu.devices.some((pciDevice) => previousSlots.includes(pciDevice.vm_pci_slot));
+        });
 
         const newGpus = allGpus.filter((gpu) => newGpuIds.includes(gpu.addr.pci_slot));
 
@@ -43,10 +45,17 @@ export class VmGpuService {
           return of(null);
         }
 
-        return forkJoin([
+        const operations = [
           ...this.addGpus(vm, previousSlots, gpusToAdd),
           ...this.deleteGpus(previousVmPciDevices, gpusToRemove),
-        ]);
+        ];
+
+        // If there are no operations, return of(null) to ensure the observable emits
+        if (operations.length === 0) {
+          return of(null);
+        }
+
+        return forkJoin(operations);
       }),
     );
   }

@@ -9,6 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime,
 } from 'app/enums/vm.enum';
+import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -18,6 +19,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
+import { CriticalGpuPreventionService } from 'app/services/gpu/critical-gpu-prevention.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 
@@ -41,7 +43,6 @@ describe('VmEditFormComponent', () => {
     pin_vcpus: false,
     cpu_mode: VmCpuMode.Custom,
     cpu_model: 'EPYC',
-    enable_secure_boot: true,
     memory: 257,
     min_memory: 256,
     nodeset: '0-1',
@@ -103,6 +104,25 @@ describe('VmEditFormComponent', () => {
           { label: 'GeForce [0000:02:00.0]', value: '0000:02:00.0' },
           { label: 'Intel Arc [0000:03:00.0]', value: '0000:03:00.0' },
         ])),
+        getRawGpuPciChoices: jest.fn(() => of({
+          'GeForce [0000:02:00.0]': {
+            pci_slot: '0000:02:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+          'Intel Arc [0000:03:00.0]': {
+            pci_slot: '0000:03:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+        })),
+        transformGpuChoicesToOptions: jest.fn((choices: GpuPciChoices) => {
+          return Object.entries(choices).map(([label, choice]) => ({
+            value: choice.pci_slot,
+            label: choice.uses_system_critical_devices ? `${label} (System Critical)` : label,
+            disabled: false,
+          }));
+        }),
         addIsolatedGpuPciIds: jest.fn(() => of({})),
         getIsolatedGpuPciIds: jest.fn(() => of([
           '0000:02:00.0',
@@ -137,6 +157,9 @@ describe('VmEditFormComponent', () => {
       mockProvider(VmGpuService, {
         updateVmGpus: jest.fn(() => of(undefined)),
       }),
+      mockProvider(CriticalGpuPreventionService, {
+        setupCriticalGpuPrevention: jest.fn(() => new Map()),
+      }),
     ],
     componentProviders: [
       mockProvider(CpuValidatorService, {
@@ -166,7 +189,6 @@ describe('VmEditFormComponent', () => {
       'Shutdown Timeout': '90',
       'Start on Boot': true,
       'Enable Hyper-V Enlightenments': false,
-      'Enable Secure Boot': true,
       'Enable Trusted Platform Module (TPM)': false,
 
       'Virtual CPUs': '1',
@@ -192,7 +214,6 @@ describe('VmEditFormComponent', () => {
       Description: 'New description',
       'Memory Size': '258 mb',
       'Minimum Memory Size': '257 mb',
-      'Enable Secure Boot': false,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -207,7 +228,6 @@ describe('VmEditFormComponent', () => {
       cpuset: '0-3,8-11',
       description: 'New description',
       ensure_display_device: true,
-      enable_secure_boot: false,
       hide_from_msr: false,
       hyperv_enlightenments: false,
       memory: 258,
@@ -246,7 +266,6 @@ describe('VmEditFormComponent', () => {
       cpuset: '0-3,8-11',
       description: 'New description',
       ensure_display_device: true,
-      enable_secure_boot: true,
       hide_from_msr: false,
       hyperv_enlightenments: false,
       memory: 258,
@@ -275,5 +294,58 @@ describe('VmEditFormComponent', () => {
       ['0000:03:00.0'],
     );
     expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith(existingVm, ['0000:03:00.0']);
+  });
+
+  describe('GPU API call caching', () => {
+    it('should cache GPU PCI choices and share between options and critical prevention', () => {
+      const gpuService = spectator.inject(GpuService);
+      const getRawSpy = jest.spyOn(gpuService, 'getRawGpuPciChoices');
+      const transformSpy = jest.spyOn(gpuService, 'transformGpuChoicesToOptions');
+
+      // Mock getRawGpuPciChoices to return a test observable
+      getRawSpy.mockReturnValue(of({
+        'Test GPU': {
+          pci_slot: '0000:01:00.0',
+          uses_system_critical_devices: false,
+          critical_reason: '',
+        },
+      }));
+
+      // Create a new component instance to test initial subscriptions
+      const component = spectator.component;
+
+      // Subscribe to both observables to trigger the caching mechanism
+      const subscription1 = component.gpuOptions$.subscribe();
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      const subscription2 = component['cachedGpuPciChoices$'].subscribe();
+
+      // Should only call getRawGpuPciChoices once despite multiple subscriptions
+      expect(getRawSpy).toHaveBeenCalledTimes(1);
+
+      // Transform should be called when gpuOptions$ is subscribed
+      expect(transformSpy).toHaveBeenCalled();
+
+      // Clean up subscriptions
+      subscription1.unsubscribe();
+      subscription2.unsubscribe();
+    });
+
+    it('should provide cached GPU choices to critical GPU prevention', () => {
+      const criticalGpuPrevention = spectator.inject(CriticalGpuPreventionService);
+      const setupSpy = jest.spyOn(criticalGpuPrevention, 'setupCriticalGpuPrevention');
+
+      // Recreate the component to capture the setupCriticalGpuPrevention call
+      spectator.component.ngOnInit();
+
+      // Verify that setupCriticalGpuPrevention was called with the cached observable
+      expect(setupSpy).toHaveBeenCalledWith(
+        spectator.component.form.controls.gpus,
+        spectator.component,
+        expect.any(String),
+        expect.any(String),
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        spectator.component['cachedGpuPciChoices$'],
+      );
+    });
   });
 });

@@ -145,7 +145,7 @@ describe('GuiFormComponent', () => {
           'GUI SSL Certificate': 'freenas_default',
           'HTTPS Protocols': ['TLSv1.2', 'TLSv1.3'],
           'Show Console Messages': false,
-          Theme: 'iX Dark',
+          Theme: 'Dark',
           'Usage collection & UI error reporting': false,
           'Web Interface HTTP -> HTTPS Redirect': false,
           'Web Interface HTTP Port': '80',

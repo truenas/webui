@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
-import { Component, ChangeDetectionStrategy, output, input, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, output, input, OnInit, ChangeDetectorRef, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,9 +13,8 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { injectParams } from 'ngxtension/inject-params';
 import {
-  combineLatest, filter, forkJoin, Observable, switchMap,
+  combineLatest, filter, forkJoin, map, Observable, switchMap,
 } from 'rxjs';
 import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
 import { AppState } from 'app/enums/app-state.enum';
@@ -27,7 +26,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
@@ -70,7 +69,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
   imports: [
     InstalledAppsListBulkActionsComponent,
     FakeProgressBarComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
     IxIconComponent,
     MatSort,
     AsyncPipe,
@@ -104,7 +103,7 @@ export class InstalledAppsListComponent implements OnInit {
   private loader = inject(LoaderService);
   private layoutService = inject(LayoutService);
 
-  readonly appId = injectParams('appId');
+  readonly appId = toSignal(this.activatedRoute.params.pipe(map((params) => params['appId'])));
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
@@ -113,7 +112,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   dataSource: App[] = [];
   selectedApp: App | undefined;
-  filterString = '';
+  searchQuery = signal('');
   appJobs = new Map<string, Job<void, AppStartQueryParams>>();
   selection = new SelectionModel<string>(true, []);
   sortingInfo: Sort = {
@@ -135,7 +134,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   get filteredApps(): App[] {
     return this.dataSource
-      .filter((app) => app?.name?.toLocaleLowerCase().includes(this.filterString.toLocaleLowerCase()));
+      .filter((app) => app?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase()));
   }
 
   get allAppsChecked(): boolean {
@@ -210,8 +209,8 @@ export class InstalledAppsListComponent implements OnInit {
     }
   }
 
-  onSearch(query: string): void {
-    this.filterString = query;
+  protected onListFiltered(query: string): void {
+    this.searchQuery.set(query);
 
     if (!this.filteredApps.length) {
       this.showLoadStatus(EmptyType.NoSearchResults);
@@ -297,7 +296,7 @@ export class InstalledAppsListComponent implements OnInit {
     ).subscribe({
       next: ([,, apps]) => {
         this.sortChanged(this.sortingInfo, apps);
-        this.selectAppForDetails(this.appId());
+        this.selectAppForDetails(this.appId() as string);
         this.cdr.markForCheck();
       },
     });
@@ -406,8 +405,8 @@ export class InstalledAppsListComponent implements OnInit {
 
   sortChanged(sort: Sort, apps?: App[]): void {
     this.sortingInfo = sort;
-
-    this.dataSource = (apps || this.dataSource).sort((a, b) => {
+    const sourceArray = apps && apps.length > 0 ? apps : this.dataSource;
+    this.dataSource = [...sourceArray].sort((a, b) => {
       const isAsc = sort.direction === SortDirection.Asc;
 
       switch (sort.active as SortableField) {
@@ -492,7 +491,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private resetSearch(): void {
-    this.onSearch('');
+    this.onListFiltered('');
   }
 
   private redirectToInstalledAppsWithoutDetails(): void {

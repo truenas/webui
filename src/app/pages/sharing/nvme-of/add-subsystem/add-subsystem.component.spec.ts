@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfHost, NvmeOfPort, NvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
@@ -48,6 +49,7 @@ describe('AddSubsystemComponent', () => {
         associatePorts: jest.fn(() => of(undefined)),
         associateHosts: jest.fn(() => of(undefined)),
       }),
+      mockAuth(),
       mockApi([
         mockCall('nvmet.subsys.create', newSubsystem),
         mockCall('nvmet.namespace.create'),

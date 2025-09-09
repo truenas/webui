@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, signal } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { RouterLink } from '@angular/router';
@@ -16,7 +16,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -47,7 +47,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   styleUrls: ['./group-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    SearchInput1Component,
+    BasicSearchComponent,
     MatSlideToggle,
     TestDirective,
     UiSearchDirective,
@@ -111,7 +111,7 @@ export class GroupListComponent implements OnInit {
   });
 
   hideBuiltinGroups = true;
-  filterString = '';
+  searchQuery = signal('');
   groups: Group[] = [];
 
   isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
@@ -154,7 +154,7 @@ export class GroupListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query;
+    this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.groups, query, columnKeys: ['group', 'gid'] });
   }
 
@@ -179,8 +179,7 @@ export class GroupListComponent implements OnInit {
     ).subscribe({
       next: (groups) => {
         this.groups = groups;
-        this.filterString = '';
-        this.onListFiltered(this.filterString);
+        this.onListFiltered(this.searchQuery());
         this.cdr.markForCheck();
       },
       error: () => {

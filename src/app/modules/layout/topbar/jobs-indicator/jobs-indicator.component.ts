@@ -65,7 +65,7 @@ export class JobsIndicatorComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(() => {
       const jobsPanelRef = this.matDialog.open(JobsPanelComponent, {
-        width: '400px',
+        width: '420px',
         hasBackdrop: true,
         panelClass: 'topbar-panel',
         position: topbarDialogPosition,

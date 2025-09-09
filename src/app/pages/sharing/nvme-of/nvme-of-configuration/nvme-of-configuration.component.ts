@@ -23,7 +23,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -58,7 +58,7 @@ export class NvmeOfConfigurationComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
   protected isLoading = signal(false);
-  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
 
   protected form = this.formBuilder.nonNullable.group({
     basenqn: [''],
@@ -77,19 +77,19 @@ export class NvmeOfConfigurationComponent implements OnInit {
 
     forkJoin([
       this.api.call('nvmet.global.config'),
-      this.nvmeOfService.isRdmaEnabled(),
+      this.nvmeOfService.isRdmaCapable(),
     ]).pipe(
       this.errorHandler.withErrorHandler(),
       finalize(() => this.isLoading.set(false)),
       untilDestroyed(this),
-    ).subscribe(([config, isRdmaEnabled]) => {
+    ).subscribe(([config, isRdmaCapable]) => {
       this.form.patchValue(config);
 
-      if (!isRdmaEnabled) {
+      if (!isRdmaCapable) {
         this.form.controls.rdma.disable();
       }
 
-      if (!this.isEnterprise()) {
+      if (!this.isHaLicensed()) {
         this.form.controls.ana.disable();
       }
     });

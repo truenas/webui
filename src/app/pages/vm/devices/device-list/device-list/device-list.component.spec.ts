@@ -6,16 +6,20 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VmDeviceType } from 'app/enums/vm.enum';
+import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import {
@@ -23,6 +27,7 @@ import {
 } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-details/device-details.component';
 import { DeviceListComponent } from 'app/pages/vm/devices/device-list/device-list/device-list.component';
+import { ExportDiskDialogComponent } from 'app/pages/vm/devices/device-list/export-disk-dialog/export-disk-dialog.component';
 
 describe('DeviceListComponent', () => {
   let spectator: Spectator<DeviceListComponent>;
@@ -43,6 +48,10 @@ describe('DeviceListComponent', () => {
       vm: 4,
       attributes: {
         dtype: VmDeviceType.Disk,
+        path: '/dev/zvol/tank/test-disk',
+        type: VmDiskMode.Ahci,
+        logical_sectorsize: 512,
+        physical_sectorsize: 512,
       },
     },
   ] as VmDevice[];
@@ -51,7 +60,7 @@ describe('DeviceListComponent', () => {
     component: DeviceListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
-      SearchInput1Component,
+      BasicSearchComponent,
       IxTableDetailsRowDirective,
       IxTableCellDirective,
     ],
@@ -61,6 +70,8 @@ describe('DeviceListComponent', () => {
     providers: [
       mockApi([
         mockCall('vm.device.query', devices),
+        mockCall('vm.query', [{ id: 76, name: 'Test VM' } as VirtualMachine]),
+        mockJob('vm.device.convert', fakeSuccessfulJob(true)),
       ]),
       mockAuth(),
       mockProvider(SlideIn, {
@@ -71,6 +82,12 @@ describe('DeviceListComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of({ result: true }),
+        })),
+      }),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -129,6 +146,63 @@ describe('DeviceListComponent', () => {
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeviceDetailsComponent, {
       data: devices[0],
+    });
+  });
+
+  describe('export disk functionality', () => {
+    it('correctly identifies disk devices', () => {
+      expect(spectator.component.isDiskDevice(devices[0])).toBe(false); // CD-ROM
+      expect(spectator.component.isDiskDevice(devices[1])).toBe(true); // Disk
+
+      // Test with null/undefined
+      expect(spectator.component.isDiskDevice(null)).toBe(false);
+      expect(spectator.component.isDiskDevice(undefined)).toBe(false);
+      expect(spectator.component.isDiskDevice({} as VmDevice)).toBe(false);
+    });
+
+    it('opens export dialog when onExportDisk is called', () => {
+      const dialog = spectator.inject(MatDialog);
+
+      spectator.component.onExportDisk(devices[1]);
+
+      expect(dialog.open).toHaveBeenCalledWith(
+        ExportDiskDialogComponent,
+        expect.objectContaining({
+          data: expect.objectContaining({
+            device: devices[1],
+            vmName: 'Test VM',
+          }),
+        }),
+      );
+    });
+
+    it('handles successful export with job dialog and success message', () => {
+      const dialogService = spectator.inject(DialogService);
+      const snackbar = spectator.inject(SnackbarService);
+      const matDialog = spectator.inject(MatDialog);
+
+      // Mock the export dialog result
+      (matDialog.open as jest.Mock).mockReturnValue({
+        afterClosed: () => of({
+          request: {
+            source: '/dev/zvol/tank/test-disk',
+            destination: '/mnt/exports/vm-disk.qcow2',
+          },
+          destinationPath: '/mnt/exports/vm-disk.qcow2',
+        }),
+      });
+
+      // Mock successful job completion
+      (dialogService.jobDialog as jest.Mock).mockReturnValue({
+        afterClosed: () => of({ result: true }),
+      });
+
+      // Trigger export
+      spectator.component.onExportDisk(devices[1]);
+
+      expect(snackbar.success).toHaveBeenCalledWith(
+        'Disk image successfully exported to /mnt/exports/vm-disk.qcow2',
+      );
     });
   });
 });

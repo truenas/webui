@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { ChartSchemaNode } from 'app/interfaces/app.interface';
 import {
@@ -72,6 +73,7 @@ export class IxDynamicFormItemComponent implements OnInit {
   readonly deleteListItem = output<DeleteListItemEvent>();
 
   readonly DynamicFormSchemaType = DynamicFormSchemaType;
+  readonly CodeEditorLanguage = CodeEditorLanguage;
 
   get isAllListControlsDisabled(): boolean {
     return (this.dynamicSchema() as DynamicFormSchemaList).items.every((item) => {

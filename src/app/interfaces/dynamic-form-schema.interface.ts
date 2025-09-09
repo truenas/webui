@@ -52,7 +52,7 @@ export interface DynamicFormSchemaText extends DynamicFormSchemaBase {
   type: DynamicFormSchemaType.Text;
   tooltip?: string;
   placeholder?: string;
-  language: CodeEditorLanguage;
+  language?: CodeEditorLanguage;
 }
 
 export interface DynamicFormSchemaUri extends DynamicFormSchemaBase {

@@ -155,7 +155,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
         untilDestroyed(this),
       )
       .subscribe((job) => {
-        if (job.state === JobState.Success) {
+        if (job.state === JobState.Success || job.state === JobState.Finished) {
           this.snackbar.success(this.translate.instant('Snapshot deleted.'));
           this.getCloudBackupSnapshots();
         }

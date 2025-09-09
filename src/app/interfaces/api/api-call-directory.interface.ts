@@ -659,8 +659,6 @@ export interface ApiCallDirectory {
   // NVMe-oF
   'nvmet.global.config': { params: void; response: NvmeOfGlobalConfig };
   'nvmet.global.update': { params: [NvmeOfGlobalConfigUpdate]; response: NvmeOfGlobalConfig };
-  'nvmet.global.rdma_enabled': { params: void; response: boolean };
-  'nvmet.global.ana_enabled': { params: void; response: boolean };
 
   'nvmet.subsys.query': { params: QueryParams<NvmeOfSubsystem, { extra: { verbose: boolean } }>; response: NvmeOfSubsystem[] };
   'nvmet.subsys.create': { params: [CreateNvmeOfSubsystem]; response: NvmeOfSubsystem };
@@ -939,6 +937,7 @@ export interface ApiCallDirectory {
   'vm.create': { params: [VirtualMachineUpdate]; response: VirtualMachine };
   'vm.delete': { params: VmDeleteParams; response: boolean };
   'vm.device.bind_choices': { params: void; response: Choices };
+  'vm.device.convert': { params: [{ source: string; destination: string }]; response: boolean };
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
   'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };

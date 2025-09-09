@@ -2,12 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
+import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { GpuService } from 'app/services/gpu/gpu.service';
 
 @Injectable({ providedIn: 'root' })
 export class CriticalGpuPreventionService {
-  private api = inject(ApiService);
+  private gpuService = inject(GpuService);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
 
@@ -17,17 +19,21 @@ export class CriticalGpuPreventionService {
     component: object, // Component with untilDestroyed
     dialogTitle: string,
     defaultMessage: string,
+    gpuPciChoices$?: Observable<GpuPciChoices>,
   ): Map<string, string> {
     const criticalGpus = new Map<string, string>();
 
+    // Use provided observable or fetch from service
+    const choices$ = gpuPciChoices$ || this.gpuService.getRawGpuPciChoices();
+
     // Load critical GPUs information
-    this.api.call('system.advanced.get_gpu_pci_choices').pipe(
+    choices$.pipe(
       untilDestroyed(component),
     ).subscribe((choices) => {
       criticalGpus.clear();
       Object.entries(choices).forEach(([, choice]) => {
         if (choice.uses_system_critical_devices) {
-          criticalGpus.set(choice.pci_slot, choice.critical_reason);
+          criticalGpus.set(choice.pci_slot, choice.critical_reason || '');
         }
       });
     });

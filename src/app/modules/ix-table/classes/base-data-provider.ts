@@ -87,11 +87,16 @@ export function sort<T>(rows: T[], sorting: TableSort<T>): T[] {
   const direction = sorting.direction;
   const propertyName = sorting.propertyName;
 
-  if (direction === null || propertyName === null) {
+  if (direction === null) {
     return sorted;
   }
+
   if (sorting.sortBy) {
     return direction === SortDirection.Desc ? sortBy(sorted, sorting.sortBy).reverse() : sortBy(sorted, sorting.sortBy);
+  }
+
+  if (propertyName === null) {
+    return sorted;
   }
 
   return orderBy(sorted, propertyName, direction);

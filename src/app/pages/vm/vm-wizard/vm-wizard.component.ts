@@ -13,8 +13,10 @@ import {
 import { catchError, defaultIfEmpty } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
-import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
+import { VmDeviceType, VmDisplayType, VmNicType, VmOs } from 'app/enums/vm.enum';
+import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -95,6 +97,7 @@ export class VmWizardComponent implements OnInit {
   protected readonly networkInterfaceStep = viewChild.required(NetworkInterfaceStepComponent);
   protected readonly installationMediaStep = viewChild.required(InstallationMediaStepComponent);
   protected readonly gpuStep = viewChild.required(GpuStepComponent);
+  protected readonly stepper = viewChild.required(MatStepper);
 
   protected readonly requiredRoles = [Role.VmWrite];
 
@@ -160,8 +163,21 @@ export class VmWizardComponent implements OnInit {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    this.createVm().pipe(
-      switchMap((vm) => this.createDevices(vm)),
+    // Track the zvol path if we create one for import
+    let importedZvolPath: string | null = null;
+
+    // Start with image import if needed
+    const startFlow$ = this.diskForm.import_image && this.diskForm.image_source
+      ? this.handleImageImportBeforeVmCreation().pipe(
+        switchMap((zvolPath) => {
+          importedZvolPath = zvolPath;
+          return this.createVm();
+        }),
+      )
+      : this.createVm();
+
+    startFlow$.pipe(
+      switchMap((vm) => this.createDevices(vm, importedZvolPath)),
       untilDestroyed(this),
     )
       .subscribe({
@@ -173,7 +189,19 @@ export class VmWizardComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.errorHandler.showErrorModal(error);
+
+          // Check if this is an image conversion error
+          if (this.diskForm.import_image && error instanceof Error && error.message.includes('Image conversion failed')) {
+            // Set error on the image_source field
+            this.diskStep().form.controls.image_source.setErrors({
+              conversionFailed: { message: error.message },
+            });
+            // Navigate back to step 3 (disk step)
+            this.stepper().selectedIndex = 2;
+          } else {
+            // For other errors, show the error modal
+            this.errorHandler.showErrorModal(error);
+          }
           this.cdr.markForCheck();
         },
       });
@@ -228,18 +256,18 @@ export class VmWizardComponent implements OnInit {
     return this.api.call('vm.create', [vmPayload]);
   }
 
-  private createDevices(vm: VirtualMachine): Observable<unknown[]> {
+  private createDevices(vm: VirtualMachine, importedZvolPath: string | null = null): Observable<unknown[]> {
     const requests: Observable<unknown>[] = [
       this.getNicRequest(vm),
-      this.getDiskRequest(vm),
+      this.getDiskRequest(vm, importedZvolPath),
     ];
 
     if (this.mediaForm.iso_path) {
       requests.push(this.getCdromRequest(vm));
     }
 
-    if (this.osForm.enable_display) {
-      requests.push(this.getDisplayRequest(vm));
+    if (this.osForm.enable_vnc) {
+      requests.push(this.getVncDisplayRequest(vm));
     }
 
     if (this.gpuForm.gpus.length) {
@@ -263,7 +291,21 @@ export class VmWizardComponent implements OnInit {
     });
   }
 
-  private getDiskRequest(vm: VirtualMachine): Observable<VmDevice | null> {
+  private getDiskRequest(vm: VirtualMachine, importedZvolPath: string | null = null): Observable<VmDevice | null> {
+    // If we already created and imported to a zvol, just attach it
+    if (importedZvolPath) {
+      return this.makeDeviceRequest(vm.id, {
+        attributes: {
+          dtype: VmDeviceType.Disk,
+          path: importedZvolPath,
+          type: this.diskForm.hdd_type,
+          physical_sectorsize: null,
+          logical_sectorsize: null,
+        },
+      });
+    }
+
+    // Normal flow: create new zvol or use existing
     if (this.diskForm.newOrExisting === NewOrExistingDisk.New) {
       const hdd = this.diskForm.datastore + '/' + this.osForm.name.replace(/\s+/g, '-') + '-' + Math.random().toString(36).substring(7);
       return this.makeDeviceRequest(vm.id, {
@@ -308,17 +350,18 @@ export class VmWizardComponent implements OnInit {
     );
   }
 
-  private getDisplayRequest(vm: VirtualMachine): Observable<VmDevice | null> {
+  private getVncDisplayRequest(vm: VirtualMachine): Observable<VmDevice | null> {
     return this.api.call('vm.port_wizard').pipe(
       switchMap((port) => {
         return this.makeDeviceRequest(vm.id, {
           attributes: {
             dtype: VmDeviceType.Display,
             port: port.port,
-            bind: this.osForm.bind,
-            password: this.osForm.password,
-            web: true,
-            type: this.osForm.display_type,
+            bind: this.osForm.vnc_bind,
+            password: this.osForm.vnc_password,
+            resolution: '1920x1080',
+            web: false,
+            type: VmDisplayType.Vnc,
           },
         });
       }),
@@ -341,5 +384,84 @@ export class VmWizardComponent implements OnInit {
           return of(null);
         }),
       );
+  }
+
+  private handleImageImportBeforeVmCreation(): Observable<string | null> {
+    if (this.diskForm.newOrExisting === NewOrExistingDisk.New) {
+      // Create zvol first, then convert image to it
+      const zvolName = this.diskForm.datastore + '/' + this.osForm.name.replace(/\s+/g, '-') + '-' + Math.random().toString(36).substring(7);
+      const zvolPath = `/dev/zvol/${zvolName}`;
+
+      return this.api.call('pool.dataset.create', [{
+        name: zvolName,
+        type: DatasetType.Volume,
+        volsize: this.diskForm.volsize || 10 * GiB,
+      } as DatasetCreate]).pipe(
+        switchMap(() => {
+          // Now convert the image to the created zvol
+          const jobDialog = this.dialogService.jobDialog(
+            this.api.job('vm.device.convert', [{
+              source: this.diskForm.image_source,
+              destination: zvolPath,
+            }]),
+            {
+              title: this.translate.instant('Converting disk image'),
+              description: this.translate.instant('Converting {source} to {destination}', {
+                source: this.diskForm.image_source,
+                destination: zvolPath,
+              }),
+            },
+          );
+
+          return jobDialog.afterClosed().pipe(
+            switchMap(() => of(zvolPath)), // Return the path for later use
+            catchError((conversionError: unknown) => {
+              // Conversion failed, clean up the zvol we just created
+              const errorReport = this.errorParser.parseError(conversionError);
+              const errorMessage = Array.isArray(errorReport) ? errorReport[0]?.message : errorReport.message;
+
+              return this.api.call('pool.dataset.delete', [zvolName, { recursive: false }]).pipe(
+                switchMap(() => {
+                  // Re-throw with formatted message
+                  throw new Error(`Image conversion failed: ${errorMessage || 'Unknown error'}`);
+                }),
+                catchError(() => {
+                  // If cleanup fails, still throw the conversion error
+                  throw new Error(`Image conversion failed: ${errorMessage || 'Unknown error'}`);
+                }),
+              );
+            }),
+          );
+        }),
+        catchError((error: unknown) => {
+          // Don't show error here, it will be shown in onSubmit's error handler
+          throw error;
+        }),
+      );
+    }
+    // For existing disk, just convert to it
+    const jobDialog = this.dialogService.jobDialog(
+      this.api.job('vm.device.convert', [{
+        source: this.diskForm.image_source,
+        destination: this.diskForm.hdd_path,
+      }]),
+      {
+        title: this.translate.instant('Converting disk image'),
+        description: this.translate.instant('Converting {source} to {destination}', {
+          source: this.diskForm.image_source,
+          destination: this.diskForm.hdd_path,
+        }),
+      },
+    );
+
+    return jobDialog.afterClosed().pipe(
+      switchMap(() => of(null)), // No new path created, will use existing
+      catchError((error: unknown) => {
+        // Format and re-throw as conversion error
+        const errorReport = this.errorParser.parseError(error);
+        const errorMessage = Array.isArray(errorReport) ? errorReport[0]?.message : errorReport.message;
+        throw new Error(`Image conversion failed: ${errorMessage || 'Unknown error'}`);
+      }),
+    );
   }
 }

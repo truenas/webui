@@ -2,7 +2,7 @@ import {
   AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal, inject,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -196,20 +196,33 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   get isRestartRequired(): boolean {
-    return (
-      this.isNewTimeMachineShare
-      || this.isNewHomeShare
-      || this.wasPathChanged
-      || this.hasAddedAllowDenyHosts
-    );
+    return this.isNewTimeMachineShare || this.isNewHomeShare || this.wasPathChanged || this.hasAddedAllowDenyHosts;
+  }
+
+  private isFieldEnabledForPurpose(fieldName: string, purpose: SmbSharePurpose): boolean {
+    return presetEnabledFields[purpose]?.includes(fieldName as never) ?? false;
   }
 
   get isNewTimeMachineShare(): boolean {
-    const timeMachine = this.form.controls.timemachine.value;
-    const existingTimeMachine = (this.existingSmbShare?.options as LegacySmbShareOptions)?.timemachine;
+    const currentPurpose = this.form.controls.purpose.value;
 
-    return typeof timeMachine === 'boolean'
-      && ((this.isNew && timeMachine) || (typeof existingTimeMachine === 'boolean' && timeMachine !== existingTimeMachine));
+    // For new shares, check if Time Machine will be enabled
+    if (this.isNew) {
+      // Time Machine is enabled if purpose is TimeMachineShare OR if timemachine field is enabled and checked
+      const isTimeMachinePurpose = currentPurpose === SmbSharePurpose.TimeMachineShare;
+      const hasTimeMachineField = this.isFieldEnabledForPurpose('timemachine', currentPurpose) && this.form.controls.timemachine.value;
+      return isTimeMachinePurpose || hasTimeMachineField;
+    }
+
+    // For existing shares, only trigger restart if Time Machine functionality actually changes
+    const existingTimeMachine = (this.existingSmbShare?.options as LegacySmbShareOptions)?.timemachine;
+    const existingIsTimeMachine = this.existingSmbShare?.purpose === SmbSharePurpose.TimeMachineShare
+      || !!existingTimeMachine;
+
+    const hasCurrentTimeMachineField = this.isFieldEnabledForPurpose('timemachine', currentPurpose) && this.form.controls.timemachine.value;
+    const currentIsTimeMachine = currentPurpose === SmbSharePurpose.TimeMachineShare || hasCurrentTimeMachineField;
+
+    return existingIsTimeMachine !== currentIsTimeMachine;
   }
 
   get isNewHomeShare(): boolean {
@@ -221,7 +234,14 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   get wasPathChanged(): boolean {
-    return !this.isNew && this.form.controls.path.value !== this.existingSmbShare?.path;
+    if (this.isNew || !this.existingSmbShare?.path) {
+      return false;
+    }
+
+    const currentPath = this.form.controls.path.value?.replace(/\/$/, '') || '';
+    const existingPath = this.existingSmbShare.path.replace(/\/$/, '') || '';
+
+    return currentPath !== existingPath;
   }
 
   protected rootNodes = signal<ExplorerNodeData[]>([]);
@@ -463,11 +483,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   private checkAndShowStripAclWarning(path: string, aclValue: boolean): void {
+    // Only show ACL strip warning for Legacy Share type, as it's the only purpose with "Enable ACL" option
     if (
       this.wasStripAclWarningShown
       || !path
       || aclValue
-      || this.form.controls.purpose.value === SmbSharePurpose.ExternalShare
+      || this.form.controls.purpose.value !== SmbSharePurpose.LegacyShare
       || this.isExternalPath(path)
     ) {
       return;
@@ -499,6 +520,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       const control = this.form.controls[field as keyof typeof this.form.controls];
       if (control) {
         control.enable({ emitEvent: false });
+
+        // Set default values for fields that need them when enabled
+        if (field === 'auto_quota' && control.value === null) {
+          (control as FormControl).patchValue(0, { emitEvent: false });
+        }
       }
     });
   }
@@ -716,21 +742,32 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   };
 
   private shouldRedirectToAclEdit(): Observable<boolean> {
+    // Only show ACL configuration dialog for new share creation, not for editing existing shares
+    if (!this.isNew) {
+      return of(false);
+    }
+
     const sharePath: string = this.form.controls.path.value;
     const datasetId = sharePath.replace('/mnt/', '');
 
     if (
       this.form.controls.purpose.value === SmbSharePurpose.ExternalShare
       || this.isExternalPath(sharePath)
+      || !datasetId.includes('/')
     ) {
       return of(false);
     }
 
     return this.api.call('filesystem.stat', [sharePath]).pipe(
       switchMap((stat) => {
-        return of(
-          stat.acl !== this.form.controls.acl.value && datasetId.includes('/'),
-        );
+        // For shares with ACL control enabled, check if ACL setting differs from filesystem
+        if (this.form.controls.acl.enabled) {
+          return of(stat.acl !== this.form.controls.acl.value);
+        }
+
+        // For shares without ACL control (modern purposes), check if filesystem has ACLs
+        // and we might need to configure them
+        return of(stat.acl);
       }),
     );
   }
@@ -767,6 +804,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       )
       .subscribe((config) => {
         this.smbConfig.set(config);
+        this.updateExtensionsWarning();
       });
   }
 

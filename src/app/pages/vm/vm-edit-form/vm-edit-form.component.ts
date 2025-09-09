@@ -7,6 +7,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   forkJoin, of, switchMap,
 } from 'rxjs';
+import { map, shareReplay } from 'rxjs/operators';
 import { MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -31,7 +32,6 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { byVmPciSlots } from 'app/pages/vm/utils/by-vm-pci-slots';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
@@ -92,7 +92,6 @@ export class VmEditFormComponent implements OnInit {
     shutdown_timeout: [null as number | null, Validators.min(0)],
     autostart: [false],
     hyperv_enlightenments: [false],
-    enable_secure_boot: [false],
     trusted_platform_module: [false],
     vcpus: [null as number | null, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
     cores: [null as number | null, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
@@ -114,10 +113,26 @@ export class VmEditFormComponent implements OnInit {
 
   isLoading = false;
   timeOptions$ = of(mapToOptions(vmTimeNames, this.translate));
-  bootloaderOptions$ = this.api.call('vm.bootloader_options').pipe(choicesToOptions());
+  bootloaderOptions$ = this.api.call('vm.bootloader_options').pipe(
+    choicesToOptions(),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
   cpuModeOptions$ = of(mapToOptions(vmCpuModeLabels, this.translate));
-  cpuModelOptions$ = this.api.call('vm.cpu_model_choices').pipe(choicesToOptions());
-  gpuOptions$ = this.gpuService.getGpuOptions();
+  cpuModelOptions$ = this.api.call('vm.cpu_model_choices').pipe(
+    choicesToOptions(),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  // Single source of truth for GPU PCI choices
+  private cachedGpuPciChoices$ = this.gpuService.getRawGpuPciChoices().pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  // Derive GPU options from the cached source using the service's transformation
+  gpuOptions$ = this.cachedGpuPciChoices$.pipe(
+    map((choices) => this.gpuService.transformGpuChoicesToOptions(choices)),
+  );
 
   readonly helptext = helptextVmWizard;
   previouslySetGpuPciIds: string[] = [];
@@ -165,8 +180,9 @@ export class VmEditFormComponent implements OnInit {
       min_memory: this.form.value.min_memory
         ? Math.round(this.form.value.min_memory / MiB)
         : null,
-    };
+    } as VirtualMachineUpdate & { gpus?: string[]; enable_secure_boot?: boolean };
     delete vmPayload.gpus;
+    delete vmPayload.enable_secure_boot;
 
     if (this.form.controls.cpu_mode.value !== VmCpuMode.Custom) {
       vmPayload.cpu_model = null;
@@ -197,14 +213,18 @@ export class VmEditFormComponent implements OnInit {
   private setupGpuControl(vm: VirtualMachine): void {
     const vmPciSlots = vm.devices
       ?.filter((device) => device.attributes.dtype === VmDeviceType.Pci)
-      ?.map((pciDevice: VmPciPassthroughDevice) => pciDevice.attributes.pptdev);
+      ?.map((pciDevice: VmPciPassthroughDevice) => pciDevice.attributes.pptdev) || [];
 
     this.gpuService.getAllGpus().pipe(untilDestroyed(this)).subscribe((allGpus) => {
-      const vmGpus = allGpus.filter(byVmPciSlots(vmPciSlots));
+      // Only include GPUs that have at least one of their PCI devices attached to the VM
+      const vmGpus = allGpus.filter((gpu) => {
+        return gpu.devices.some((pciDevice) => vmPciSlots.includes(pciDevice.vm_pci_slot));
+      });
 
       const vmGpuPciSlots = vmGpus.map((gpu) => gpu.addr.pci_slot);
       this.previouslySetGpuPciIds = vmGpuPciSlots;
-      this.form.controls.gpus.setValue(vmGpuPciSlots, { emitEvent: false });
+      // Set value WITH emitEvent so validators run
+      this.form.controls.gpus.setValue(vmGpuPciSlots);
     });
   }
 
@@ -218,12 +238,13 @@ export class VmEditFormComponent implements OnInit {
   }
 
   private setupCriticalGpuPrevention(): void {
-    // Setup critical GPU prevention
+    // Setup critical GPU prevention with cached observable
     this.criticalGpus = this.criticalGpuPrevention.setupCriticalGpuPrevention(
       this.form.controls.gpus,
       this,
       this.translate.instant('Cannot Select GPU'),
       this.translate.instant('System critical GPUs cannot be used for VMs'),
+      this.cachedGpuPciChoices$,
     );
   }
 

@@ -3,6 +3,7 @@ export enum UpdateCode {
   Error = 'ERROR',
   RebootRequired = 'REBOOT_REQUIRED',
   HaUnavailable = 'HA_UNAVAILABLE',
+  NetworkActivityDisabled = 'NETWORK_ACTIVITY_DISABLED',
 }
 
 export enum SystemUpdateOperationType {

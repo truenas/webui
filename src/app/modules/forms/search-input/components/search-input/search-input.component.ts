@@ -13,7 +13,7 @@ import {
 } from 'app/modules/forms/search-input/types/search-query.interface';
 
 @Component({
-  selector: 'ix-search-input2',
+  selector: 'ix-search-input',
   templateUrl: './search-input.component.html',
   styleUrls: ['./search-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

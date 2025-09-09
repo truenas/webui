@@ -86,8 +86,11 @@ export class RebootService {
     );
   }
 
-  restart(): void {
-    this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
+  restart(reason?: string): void {
+    this.router.navigate(['/system-tasks/restart'], {
+      skipLocationChange: true,
+      queryParams: reason ? { reason } : undefined,
+    });
   }
 
   failover(): void {

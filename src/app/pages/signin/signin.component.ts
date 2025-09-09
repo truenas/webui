@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { combineLatest, Observable, of } from 'rxjs';
 import {
   delay,
-  filter, map, switchMap, take, pairwise,
+  filter, map, switchMap, take, pairwise, distinctUntilChanged,
 } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -64,13 +64,14 @@ export class SigninComponent implements OnInit {
   );
 
   readonly hasLoadingIndicator$ = combineLatest([
-    this.signinStore.isLoading$,
-    this.isConnected$,
-    this.isTokenWithinTimeline$,
+    this.signinStore.isLoading$.pipe(distinctUntilChanged()),
+    this.wsStatus.isConnected$.pipe(distinctUntilChanged()),
+    this.isTokenWithinTimeline$.pipe(distinctUntilChanged()),
   ]).pipe(
     map(([isLoading, isConnected, isTokenWithinTimeline]) => {
       return isLoading || !isConnected || (isTokenWithinTimeline && this.hasAuthToken);
     }),
+    distinctUntilChanged(),
   );
 
   constructor() {

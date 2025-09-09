@@ -91,7 +91,7 @@ ix-fake-progress-bar {
   opacity: 0;
 }
 
-.actions-container > ::ng-deep ix-search-input1 {
+.actions-container > ::ng-deep ix-basic-search {
   @media (max-width: $breakpoint-tablet) {
     width: 80%;
   }

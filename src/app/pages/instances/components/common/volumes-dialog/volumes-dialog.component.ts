@@ -51,6 +51,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export interface VolumesDialogOptions {
   selectionMode: boolean;
   config: VirtualizationGlobalConfig | null;
+  showIsoManagement: boolean | null;
 }
 
 @UntilDestroy()
@@ -87,7 +88,11 @@ export class VolumesDialog implements OnInit {
   protected emptyService = inject(EmptyService);
   protected dialogRef = inject<MatDialogRef<VolumesDialog, VirtualizationVolume | null>>(MatDialogRef);
 
-  private options = signal<VolumesDialogOptions>({ selectionMode: false, config: null });
+  protected options = signal<VolumesDialogOptions>({
+    selectionMode: false,
+    config: null,
+    showIsoManagement: false,
+  });
 
   protected requiredRoles = [Role.VirtImageWrite];
 
@@ -160,7 +165,7 @@ export class VolumesDialog implements OnInit {
   constructor() {
     const options = inject<VolumesDialogOptions>(MAT_DIALOG_DATA);
 
-    this.options.set(options || { selectionMode: false, config: null });
+    this.options.set(options || { selectionMode: false, config: null, showIsoManagement: false });
   }
 
   ngOnInit(): void {

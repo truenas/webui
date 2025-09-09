@@ -1,5 +1,5 @@
 <div class="table-header">
-  @if (checkedInstances.length > 0) {
+  @if (hasCheckedInstances) {
     <ix-instance-list-bulk-actions
       [checkedInstances]="checkedInstances"
       (resetBulkSelection)="resetSelection()"
@@ -13,11 +13,10 @@
     [loading]="isLoading()"
   ></ix-fake-progress-bar>
 
-  <ix-search-input1
-    [maxLength]="100"
-    [value]="searchQuery()"
-    (search)="onSearch($event)"
-  ></ix-search-input1>
+  <ix-basic-search
+    [query]="searchQuery()"
+    (queryChange)="onListFiltered($event)"
+  ></ix-basic-search>
 </div>
 
 @if (instances() !== undefined && !filteredInstances().length && !isLoading()) {

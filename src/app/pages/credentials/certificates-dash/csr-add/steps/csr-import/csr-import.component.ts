@@ -4,7 +4,6 @@ import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { pick } from 'lodash-es';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -13,6 +12,7 @@ import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/pa
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/utils/get-certificate-preview.utils';
+import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates-dash/utils/normalize-certificate.utils';
 
 @UntilDestroy()
 @Component({
@@ -70,9 +70,13 @@ export class CsrImportComponent implements SummaryProvider {
     return summary;
   }
 
-  getPayload(): Omit<CsrImportComponent['form']['value'], 'passphrase2'> {
-    const values = this.form.value;
+  getPayload(): { CSR: string; privatekey: string | null; passphrase: string | null } {
+    const values = this.form.getRawValue();
 
-    return pick(values, ['CSR', 'privatekey', 'passphrase']);
+    return {
+      CSR: normalizeCertificateNewlines(values.CSR) || '',
+      privatekey: normalizeCertificateNewlines(values.privatekey) || null,
+      passphrase: values.passphrase?.trim() || null,
+    };
   }
 }

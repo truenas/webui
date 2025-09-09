@@ -18,6 +18,13 @@
         <ix-icon name="schedule" class="job-icon-waiting"></ix-icon>
       </div>
       <div
+        class="job-badge success"
+        [matTooltip]="'Success' | translate"
+      >
+        <span class="job-badge-count">{{ successJobsCount$ | async }}</span>
+        <ix-icon name="mdi-check-circle" class="job-icon-success"></ix-icon>
+      </div>
+      <div
         class="job-badge failed"
         [matTooltip]="'Failed' | translate"
       >
@@ -36,7 +43,7 @@
       ></mat-progress-bar>
     </div>
   } @else {
-    @let jobs = availableJobs$ | async;
+    @let jobs = ongoingJobs$ | async;
     @if (jobs?.length) {
       <div class="jobs-list">
         @for (job of jobs; track job.id) {
@@ -54,6 +61,19 @@
         <h4 class="message">{{ 'No jobs running.' | translate }}</h4>
       </div>
     }
+    <mat-divider class="list-divider"></mat-divider>
+    <div mat-subheader class="recent-header">{{'Recently Completed Jobs' | translate}}</div>
+    <div class="finished-jobs-list">
+      @let finishedJobs = finishedJobs$ | async;
+      @for (job of finishedJobs; track job.id) {
+        <ix-job-item
+          [job]="job"
+          [clickable]="true"
+          (aborted)="onAbort(job)"
+          (opened)="openJobDialog(job)"
+        ></ix-job-item>
+      }
+    </div>
   }
 
   @if (error$ | async; as error) {
@@ -74,6 +94,6 @@
     ixTest="history"
     (click)="goToJobs()"
   >
-    {{ 'Go to Jobs Page' | translate }}
+    {{ 'View All Jobs' | translate }}
   </button>
 </mat-dialog-actions>

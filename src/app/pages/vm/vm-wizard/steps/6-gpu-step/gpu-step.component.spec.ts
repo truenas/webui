@@ -23,6 +23,18 @@ describe('GpuStepComponent', () => {
           { label: 'GeForce GTX 1080 [0000:03:00.0]', value: '0000:03:00.0' },
           { label: 'GeForce GTX 1080 Ti [0000:04:00.0]', value: '0000:04:00.0' },
         ]),
+        getRawGpuPciChoices: () => of({
+          'GeForce GTX 1080 [0000:03:00.0]': {
+            pci_slot: '0000:03:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+          'GeForce GTX 1080 Ti [0000:04:00.0]': {
+            pci_slot: '0000:04:00.0',
+            uses_system_critical_devices: false,
+            critical_reason: '',
+          },
+        }),
       }),
       mockProvider(IsolatedGpuValidatorService, {
         validateGpu: () => of(null),

@@ -1,21 +1,22 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, output, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, output, signal, inject, computed } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
-import { cloudBackupTaskEmptyConfig } from 'app/constants/empty-configs';
+import { cloudBackupTaskEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -55,7 +56,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     IxTableHeadComponent,
     TranslateModule,
     AsyncPipe,
-    SearchInput1Component,
+    BasicSearchComponent,
     EmptyComponent,
   ],
 })
@@ -73,12 +74,19 @@ export class CloudBackupListComponent {
   readonly dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
   readonly cloudBackups = input<CloudBackup[]>([]);
   readonly isMobileView = input<boolean>(false);
-  protected readonly emptyConfig = cloudBackupTaskEmptyConfig;
 
   readonly toggleShowMobileDetails = output<boolean>();
   readonly searchQuery = signal<string>('');
   protected readonly requiredRoles = [Role.CloudBackupWrite];
   protected readonly searchableElements = cloudBackupListElements;
+
+  protected readonly emptyConfig = computed<EmptyConfig>(() => {
+    if (this.searchQuery()?.length) {
+      return noSearchResultsConfig;
+    }
+
+    return cloudBackupTaskEmptyConfig;
+  });
 
   columns = createTable<CloudBackup>([
     textColumn({
@@ -144,21 +152,27 @@ export class CloudBackupListComponent {
   runNow(row: CloudBackup): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
-      message: this.translate.instant('Run «{name}» Cloud Backup now?', { name: row.description }),
+      message: this.translate.instant('Run «{name}» Cloud Backup Task now?', { name: row.description }),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
       tap(() => this.updateRowJob(row, { ...row.job, state: JobState.Running })),
       tapOnce(() => {
-        this.snackbar.success(this.translate.instant('Cloud Backup «{name}» has started.', { name: row.description }));
+        this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» has started.', { name: row.description }));
       }),
       switchMap(() => this.api.job('cloud_backup.sync', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
+        if (job.state === JobState.Success || job.state === JobState.Finished) {
+          this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» completed successfully.', { name: row.description }));
+        }
         this.updateRowJob(row, job);
         // Update expanded row to call child ngOnChanges method & update snapshots list
-        if (job.state === JobState.Success && this.dataProvider().expandedRow?.id === row.id) {
+        if (
+          (job.state === JobState.Success || job.state === JobState.Finished)
+          && this.dataProvider().expandedRow?.id === row.id
+        ) {
           this.dataProvider().expandedRow = { ...row };
         }
         this.cdr.markForCheck();
@@ -170,7 +184,7 @@ export class CloudBackupListComponent {
     });
   }
 
-  onSearch(query: string): void {
+  protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider().setFilter({ query, columnKeys: ['description'] });
   }
@@ -188,7 +202,7 @@ export class CloudBackupListComponent {
       title: this.translate.instant('Confirmation'),
       buttonColor: 'warn',
       buttonText: this.translate.instant('Delete'),
-      message: this.translate.instant('Delete Cloud Backup <b>"{name}"</b>?', {
+      message: this.translate.instant('Delete Cloud Backup Task <b>"{name}"</b>?', {
         name: row.description,
       }),
     }).pipe(
@@ -197,6 +211,7 @@ export class CloudBackupListComponent {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» deleted.', { name: row.description }));
         this.dataProvider().load();
       },
       error: (error: unknown) => {

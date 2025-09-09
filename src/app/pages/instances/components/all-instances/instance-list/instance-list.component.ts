@@ -6,19 +6,18 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { injectParams } from 'ngxtension/inject-params';
-import { distinctUntilChanged, tap } from 'rxjs';
+import { distinctUntilChanged, map, tap } from 'rxjs';
 import { containersEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -35,7 +34,7 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    SearchInput1Component,
+    BasicSearchComponent,
     FakeProgressBarComponent,
     InstanceRowComponent,
     MatCheckboxModule,
@@ -47,11 +46,12 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 
 export class InstanceListComponent {
   private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
   private instancesStore = inject(VirtualizationInstancesStore);
   private searchDirectives = inject(UiSearchDirectivesService);
   private layoutService = inject(LayoutService);
 
-  readonly instanceId = injectParams('id');
+  readonly instanceId = toSignal(this.activatedRoute.params.pipe(map((params) => params['id'])));
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
@@ -77,6 +77,10 @@ export class InstanceListComponent {
       .filter((instance) => !!instance);
   }
 
+  get hasCheckedInstances(): boolean {
+    return this.checkedInstances.length > 0;
+  }
+
   readonly isSelectedInstanceVisible = computed(() => {
     return this.filteredInstances()?.some((instance) => instance.id === this.selectedInstance()?.id);
   });
@@ -98,7 +102,7 @@ export class InstanceListComponent {
     toObservable(this.instanceId).pipe(
       distinctUntilChanged(),
       tap((instanceId) => {
-        this.instancesStore.selectInstance(instanceId);
+        this.instancesStore.selectInstance(instanceId as string);
       }),
       untilDestroyed(this),
     ).subscribe();
@@ -106,10 +110,6 @@ export class InstanceListComponent {
     setTimeout(() => {
       this.handlePendingGlobalSearchElement();
     });
-  }
-
-  onSearch(query: string): void {
-    this.searchQuery.set(query);
   }
 
   toggleAllChecked(checked: boolean): void {
@@ -130,6 +130,10 @@ export class InstanceListComponent {
 
   resetSelection(): void {
     this.selection.clear();
+  }
+
+  protected onListFiltered(query: string): void {
+    this.searchQuery.set(query);
   }
 
   private handlePendingGlobalSearchElement(): void {

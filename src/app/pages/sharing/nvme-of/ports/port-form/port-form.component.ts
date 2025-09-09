@@ -7,9 +7,9 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, switchMap,
+  finalize, merge, of, switchMap,
 } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 import { NvmeOfTransportType, nvmeOfTransportTypeLabels } from 'app/enums/nvme-of.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -23,6 +23,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 
@@ -72,16 +73,20 @@ export class PortFormComponent implements OnInit {
 
   protected form = this.formBuilder.group({
     addr_trtype: [NvmeOfTransportType.Tcp],
-    addr_trsvcid: [null as number | string, Validators.required],
+    addr_trsvcid: [null as number | string],
     addr_traddr: ['', Validators.required],
   });
 
-  protected addresses$ = this.form.controls.addr_trtype.valueChanges.pipe(
-    startWith(this.form.value.addr_trtype),
+  protected addresses$ = merge(
+    of(this.form.controls.addr_trtype.value),
+    this.form.controls.addr_trtype.valueChanges,
+  ).pipe(
+    distinctUntilChanged(),
     switchMap((type) => {
       return this.api.call('nvmet.port.transport_address_choices', [type]);
     }),
     choicesToOptions(),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   get isTcp(): boolean {
@@ -90,6 +95,10 @@ export class PortFormComponent implements OnInit {
 
   get isFibreChannel(): boolean {
     return this.form.value.addr_trtype === NvmeOfTransportType.FibreChannel;
+  }
+
+  get portPlaceholder(): TranslatedString {
+    return (this.isFibreChannel ? '' : '4420') as TranslatedString;
   }
 
   ngOnInit(): void {
@@ -106,6 +115,11 @@ export class PortFormComponent implements OnInit {
     this.isLoading.set(true);
 
     const payload = this.form.getRawValue();
+
+    // Use default port 4420 if no port was specified (only for TCP/RDMA, not for Fibre Channel)
+    if (!payload.addr_trsvcid && !this.isFibreChannel) {
+      payload.addr_trsvcid = 4420;
+    }
 
     const request$ = this.isNew()
       ? this.api.call('nvmet.port.create', [payload])

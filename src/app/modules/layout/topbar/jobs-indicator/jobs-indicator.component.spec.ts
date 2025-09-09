@@ -59,7 +59,7 @@ describe('JobsIndicatorComponent', () => {
     spectator.component.ngOnInit();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(JobsPanelComponent, {
-      width: '400px',
+      width: '420px',
       hasBackdrop: true,
       panelClass: 'topbar-panel',
       position: topbarDialogPosition,
@@ -73,7 +73,7 @@ describe('JobsIndicatorComponent', () => {
     spectator.component.ngOnInit();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(JobsPanelComponent, {
-      width: '400px',
+      width: '420px',
       hasBackdrop: true,
       panelClass: 'topbar-panel',
       position: topbarDialogPosition,

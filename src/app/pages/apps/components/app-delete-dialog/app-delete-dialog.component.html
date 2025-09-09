@@ -1,11 +1,12 @@
 <h1 matDialogTitle>
-  {{ 'Delete App' | translate }}
+  {{ 'Delete application {name}' | translate: { name: data.name } }}
 </h1>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <p class="message">
-    {{ 'Delete {name}?' | translate: { name: data.name } }}
-  </p>
+  <p [innerHTML]="deleteMessage()"></p>
 
+  <p [innerHtml]="deleteAppHelpText()"></p>
+  <ix-input formControlName="confirmAppName"></ix-input>
+  
   @if (data.showRemoveVolumes) {
     <ix-checkbox
       formControlName="removeVolumes"

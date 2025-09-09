@@ -11,6 +11,7 @@ import { PoolTopology } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface VDevsState {
   isLoading: boolean;
@@ -36,6 +37,7 @@ const initialState: VDevsState = {
 export class VDevsStore extends ComponentStore<VDevsState> {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
+  private errorHandler = inject(ErrorHandlerService);
 
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly error$ = this.select((state) => state.error);
@@ -98,6 +100,8 @@ export class VDevsStore extends ComponentStore<VDevsState> {
                   isLoading: false,
                   error,
                 });
+
+                this.errorHandler.showErrorModal(error);
 
                 return EMPTY;
               }),
@@ -178,8 +182,7 @@ export class VDevsStore extends ComponentStore<VDevsState> {
       return {
         ...node,
         children: node.children.map((child: VDevItem) => {
-          child.isRoot = true;
-          return child;
+          return { ...child, isRoot: true };
         }) as TopologyDisk[],
       };
     });

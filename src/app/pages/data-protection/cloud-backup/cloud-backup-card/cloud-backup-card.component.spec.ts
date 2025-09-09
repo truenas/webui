@@ -12,10 +12,12 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CloudBackupCardComponent,
@@ -79,6 +81,7 @@ describe('CloudBackupCardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(ErrorHandlerService),
+      mockProvider(SnackbarService),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({
           response: true,
@@ -156,11 +159,53 @@ describe('CloudBackupCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run «test one» Cloud Backup now?',
+      message: 'Run «test one» Cloud Backup Task now?',
       hideCheckbox: true,
     });
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
+  });
+
+  it('shows success message when job completes successfully', async () => {
+    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of({
+      id: 1,
+      state: JobState.Success,
+    } as Job<void>));
+
+    const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
+
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Run job' });
+
+    // Wait for the observable to complete
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    expect(snackbarSpy).toHaveBeenCalledWith(
+      'Cloud Backup Task «test one» completed successfully.',
+    );
+  });
+
+  it('shows success message when job finishes successfully', async () => {
+    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of({
+      id: 1,
+      state: JobState.Finished,
+    } as Job<void>));
+
+    const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
+
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Run job' });
+
+    // Wait for the observable to complete
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    expect(snackbarSpy).toHaveBeenCalledWith(
+      'Cloud Backup Task «test one» completed successfully.',
+    );
   });
 
   it('deletes a Cloud Backup with confirmation when Delete button is pressed', async () => {
@@ -170,7 +215,7 @@ describe('CloudBackupCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Cloud Backup <b>"test one"</b>?',
+      message: 'Delete Cloud Backup Task <b>"test one"</b>?',
       buttonColor: 'warn',
       buttonText: 'Delete',
     });

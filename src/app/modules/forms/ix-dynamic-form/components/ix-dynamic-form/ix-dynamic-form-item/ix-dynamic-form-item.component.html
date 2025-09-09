@@ -50,12 +50,13 @@
         @case (DynamicFormSchemaType.Text) {
           @let textSchema = asTextSchema(schema);
           <ix-code-editor
-            [language]="textSchema.language"
+            [language]="textSchema.language || CodeEditorLanguage.Text"
             [label]="textSchema.title ? (textSchema.title | translate) : ''"
             [formControlName]="textSchema.controlName"
             [tooltip]="textSchema.tooltip ? (textSchema.tooltip | translate) : ''"
             [placeholder]="textSchema.placeholder ? (textSchema.placeholder | translate) : ''"
             [required]="textSchema.required || false"
+            [defaultValue]="'\n\n'"
           ></ix-code-editor>
         }
 

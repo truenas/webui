@@ -61,7 +61,7 @@ describe('GuiCardComponent', () => {
     const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
 
     expect(itemTexts).toEqual([
-      'Theme: ix-dark',
+      'Theme: Dark',
       'GUI SSL Certificate: truenas_default',
       'Web Interface IPv4 Address: 0.0.0.0',
       'Web Interface IPv6 Address: 0.0.0.0',
