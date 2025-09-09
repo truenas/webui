@@ -37,8 +37,8 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
     InsecureConnectionComponent,
     MatButton,
     TranslateModule,
-    TestDirective,
     IxInputComponent,
+    TestDirective,
   ],
 })
 export class SigninFormComponent implements OnInit {

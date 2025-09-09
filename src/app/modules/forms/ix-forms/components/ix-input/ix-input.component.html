@@ -34,6 +34,8 @@
     [matAutocomplete]="shouldShowAutocomplete() ? auto : null"
     [placeholder]="placeholder()"
     [ixTest]="controlDirective.name"
+    [attr.name]="controlDirective.name"
+    [attr.id]="controlDirective.name"
     [attr.aria-label]="label()"
     (input)="input(ixInput)"
     (focus)="focus(ixInput)"
