@@ -162,11 +162,14 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     );
   }
 
+  shouldShowAutocomplete(): boolean {
+    return this.type() !== 'password' && !!this.autocompleteOptions()?.length;
+  }
+
   getType(): string {
-    // Keep password type for proper password manager recognition
-    // Only convert to text when showing password (visibility toggle)
-    const shouldShowAsText = this.type() === 'password' && this.showPassword;
-    return shouldShowAsText ? 'text' : this.type();
+    // Mimicking a password field to prevent browsers from remembering passwords.
+    const isFakePassword = this.type() === 'password' && (this.autocomplete() === 'off' || this.showPassword);
+    return isFakePassword ? 'text' : this.type();
   }
 
   isPasswordField(): boolean {

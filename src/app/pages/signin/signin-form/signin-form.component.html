@@ -1,22 +1,22 @@
 <form novalidate role="form" aria-label="Sign In Form" [formGroup]="form" (submit)="hasTwoFactor ? loginWithOtp() : login()">
   @if (!hasTwoFactor) {
-    <ix-field-input
+    <ix-input
       formControlName="username"
       autocomplete="username"
       name="username"
       class="username-input"
       [prefixIcon]="iconMarker('person')"
       [label]="'Username' | translate"
-    ></ix-field-input>
+    ></ix-input>
 
-    <ix-field-input
+    <ix-input
       formControlName="password"
       type="password"
       name="password"
       autocomplete="current-password"
       [prefixIcon]="iconMarker('mdi-lock')"
       [label]="'Password' | translate"
-    ></ix-field-input>
+    ></ix-input>
 
     @if (showSecurityWarning) {
       <ix-insecure-connection></ix-insecure-connection>

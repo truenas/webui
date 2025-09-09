@@ -18,6 +18,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { LoginExResponse, LoginRedirectResponse } from 'app/interfaces/auth.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxFieldInputComponent } from 'app/modules/forms/ix-forms/components/ix-field-input/ix-field-input.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -39,6 +40,7 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
     TranslateModule,
     IxFieldInputComponent,
     TestDirective,
+    IxInputComponent,
   ],
 })
 export class SigninFormComponent implements OnInit {
