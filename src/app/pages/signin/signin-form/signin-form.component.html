@@ -43,13 +43,13 @@
       {{ '2FA has been configured for this account. Enter the OTP to continue.' | translate }}
     </p>
 
-    <ix-field-input
+    <ix-input
       formControlName="otp"
       autocomplete="one-time-code"
       [prefixIcon]="iconMarker('phonelink')"
       [label]="'Two-Factor Authentication Code' | translate"
       [required]="true"
-    ></ix-field-input>
+    ></ix-input>
 
     @if (showSecurityWarning) {
       <ix-insecure-connection></ix-insecure-connection>
