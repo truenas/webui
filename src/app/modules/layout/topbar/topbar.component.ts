@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, inject,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -99,7 +98,6 @@ export class TopbarComponent implements OnInit {
 
   readonly hasRebootRequiredReasons = signal(false);
   readonly shownDialog = signal(false);
-  readonly isExperimentalBuild = toSignal(this.apiService.call('system.experimental'));
   readonly hasTncConfig = computed(() => {
     const config = this.tnc.config();
     return config?.tnc_base_url && config?.account_service_base_url && config?.leca_service_base_url;
@@ -216,10 +214,6 @@ export class TopbarComponent implements OnInit {
   }
 
   onFeedbackIndicatorPressed(): void {
-    if (this.isExperimentalBuild()) {
-      return;
-    }
-
     this.matDialog.open(FeedbackDialog);
   }
 
