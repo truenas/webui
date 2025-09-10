@@ -20,13 +20,12 @@
 
       <div class="topbar-mobile-footer" [class.has-console-footer]="hasConsoleFooter$ | async">
         <span
-          [matTooltip]="isExperimentalBuild() ? ('Feedback is not available for experimental builds' | translate) : ('Send Feedback' | translate)"
+          [matTooltip]="'Send Feedback' | translate"
         >
           <button
             mat-icon-button
             class="topbar-button-right"
             ixTest="leave-feedback"
-            [disabled]="isExperimentalBuild()"
             [ixUiSearch]="searchableElements.elements.sendFeedback"
             (click)="onFeedbackIndicatorPressed()"
           >

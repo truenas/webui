@@ -9,7 +9,7 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
@@ -45,7 +45,6 @@ const fakeRebootInfo: RebootInfoState = {
 };
 
 interface ComponentOptions {
-  isExperimentalBuild?: boolean;
   updateJob?: Job[];
   updateRunningStatus$?: EventEmitter<'true' | 'false'>;
   matDialog?: Partial<MatDialog>;
@@ -56,7 +55,6 @@ function createTopbarComponent(options: ComponentOptions = {}): {
   mockConfigSignal: ReturnType<typeof signal<TruenasConnectConfig | null>>;
 } {
   const {
-    isExperimentalBuild = false,
     updateJob = [
       {
         state: JobState.Running,
@@ -97,9 +95,7 @@ function createTopbarComponent(options: ComponentOptions = {}): {
       }),
       mockProvider(UiSearchProvider),
       mockProvider(MatDialog, matDialog),
-      mockApi([
-        mockCall('system.experimental', isExperimentalBuild),
-      ]),
+      mockApi([]),
       mockProvider(TruenasConnectService, {
         config: mockConfigSignal,
       }),
@@ -242,34 +238,9 @@ describe('TopbarComponent', () => {
   });
 
   describe('feedback button', () => {
-    it('should not be disabled when not experimental build', () => {
-      expect(spectator.component.isExperimentalBuild()).toBe(false);
-
+    it('should not be disabled', () => {
       const feedbackButton = spectator.query('[ixTest="leave-feedback"]');
       expect(feedbackButton).not.toHaveAttribute('disabled');
-    });
-  });
-});
-
-describe('TopbarComponent - Experimental Build', () => {
-  let spectator: Spectator<TopbarComponent>;
-
-  const { factory: createComponent } = createTopbarComponent({
-    isExperimentalBuild: true,
-    updateJob: [],
-    matDialog: {},
-  });
-
-  beforeEach(() => {
-    spectator = createComponent();
-  });
-
-  describe('feedback button', () => {
-    it('should be disabled when experimental build', () => {
-      expect(spectator.component.isExperimentalBuild()).toBe(true);
-
-      const feedbackButton = spectator.query('[ixTest="leave-feedback"]');
-      expect(feedbackButton).toHaveAttribute('disabled', 'disabled');
     });
   });
 });
