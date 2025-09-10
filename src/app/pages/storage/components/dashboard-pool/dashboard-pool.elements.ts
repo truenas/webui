@@ -5,8 +5,8 @@ export const dashboardPoolElements = {
   hierarchy: [T('Storage')],
   anchorRouterLink: ['/storage'],
   elements: {
-    exportDisconnect: {
-      hierarchy: [T('Export/Disconnect')],
+    disconnect: {
+      hierarchy: [T('Disconnect')],
       synonyms: [T('Export'), T('Disconnect'), T('Offline')],
     },
     expand: {

@@ -3129,11 +3129,10 @@
   {
     "hierarchy": [
       "Storage",
-      "Export/Disconnect"
+      "Disconnect"
     ],
     "synonyms": [
       "Export",
-      "Disconnect",
       "Offline"
     ],
     "requiredRoles": [
@@ -3144,7 +3143,7 @@
       "/storage"
     ],
     "routerLink": null,
-    "anchor": "export/disconnect",
+    "anchor": "disconnect",
     "triggerAnchor": null,
     "section": "ui"
   },

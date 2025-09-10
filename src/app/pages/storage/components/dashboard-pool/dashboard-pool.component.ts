@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -18,6 +20,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -27,6 +30,9 @@ import { dashboardPoolElements } from 'app/pages/storage/components/dashboard-po
 import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
+import {
+  AutotrimDialog,
+} from 'app/pages/storage/components/dashboard-pool/storage-health-card/autotrim-dialog/autotrim-dialog.component';
 import { VDevsCardComponent } from 'app/pages/storage/components/dashboard-pool/vdevs-card/vdevs-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -43,8 +49,14 @@ import { StorageHealthCardComponent } from './storage-health-card/storage-health
   imports: [
     RequiresRolesDirective,
     MatButton,
+    MatIconButton,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    MatTooltip,
     TestDirective,
     UiSearchDirective,
+    IxIconComponent,
     VDevsCardComponent,
     PoolUsageCardComponent,
     StorageHealthCardComponent,
@@ -80,7 +92,7 @@ export class DashboardPoolComponent implements OnChanges {
     }
   }
 
-  onExport(): void {
+  onDisconnect(): void {
     this.matDialog
       .open(ExportDisconnectModalComponent, {
         data: this.pool(),
@@ -137,6 +149,14 @@ export class DashboardPoolComponent implements OnChanges {
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  onEditAutotrim(): void {
+    this.matDialog
+      .open(AutotrimDialog, { data: this.pool() })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.store.loadDashboard());
   }
 
   counter(i: number): number[] {

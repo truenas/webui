@@ -46,6 +46,11 @@ import { storageHealthCardElements } from 'app/pages/storage/components/dashboar
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
+enum AutoTrimValue {
+  On = 'on',
+  Off = 'off',
+}
+
 @UntilDestroy()
 @Component({
   selector: 'ix-storage-health-card',
@@ -96,6 +101,7 @@ export class StorageHealthCardComponent implements OnChanges {
 
   readonly poolStatusLabels = poolStatusLabels;
   protected readonly Role = Role;
+  protected readonly AutoTrimValue = AutoTrimValue;
 
   protected readonly wasScanInitiated = computed(() => this.scan()?.state === PoolScanState.Scanning);
   protected readonly isScrub = computed(() => this.scan()?.function === PoolScanFunction.Scrub);
