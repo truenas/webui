@@ -829,7 +829,6 @@ export interface ApiCallDirectory {
   'system.advanced.update_gpu_pci_ids': { params: [isolated_gpu_pci_ids: string[]]; response: void };
   'system.advanced.login_banner': { params: void; response: string };
   'system.boot_id': { params: void; response: string };
-  'system.experimental': { params: void; response: boolean };
   'system.general.config': { params: void; response: SystemGeneralConfig };
   'system.general.kbdmap_choices': { params: void; response: Choices };
   'system.general.timezone_choices': { params: void; response: Choices };
