@@ -155,6 +155,7 @@
     <ix-update-profile-card
       [currentProfileId]="config().profile"
       [profileChoices]="profileChoices()"
+      (profileSwitched)="onProfileSwitched()"
     ></ix-update-profile-card>
   }
 </div>
