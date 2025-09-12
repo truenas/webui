@@ -96,7 +96,7 @@ export class IpmiFormComponent implements OnInit {
     gateway: ['', ipv4Validator()],
     netmask: ['', ipv4Validator()],
     vlan_id_enable: [false],
-    vlan_id: [null as number | null, [Validators.required]],
+    vlan_id: [null as number | null],
     password: ['', [
       this.validatorsService.withMessage(
         Validators.maxLength(20),
@@ -194,6 +194,14 @@ export class IpmiFormComponent implements OnInit {
       vlan_id: ipmi.vlan_id || null,
       vlan_id_enable: ipmi.vlan_id_enable,
     });
+
+    // Set initial vlan_id validation based on vlan_id_enable state
+    if (ipmi.vlan_id_enable) {
+      this.form.controls.vlan_id.addValidators([Validators.required]);
+    } else {
+      this.form.controls.vlan_id.removeValidators([Validators.required]);
+    }
+    this.form.controls.vlan_id.updateValueAndValidity();
   }
 
   private loadDataOnRemoteControllerChange(): void {
@@ -274,6 +282,19 @@ export class IpmiFormComponent implements OnInit {
     this.form.controls.ipaddress.disabledWhile(stateDhcp$);
     this.form.controls.gateway.disabledWhile(stateDhcp$);
     this.form.controls.netmask.disabledWhile(stateDhcp$);
+
+    // Make vlan_id required only when vlan_id_enable is true
+    this.form.controls.vlan_id_enable.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((vlanEnabled) => {
+        if (vlanEnabled) {
+          this.form.controls.vlan_id.addValidators([Validators.required]);
+        } else {
+          this.form.controls.vlan_id.removeValidators([Validators.required]);
+          this.form.controls.vlan_id.setValue(null);
+        }
+        this.form.controls.vlan_id.updateValueAndValidity();
+      });
 
     this.form.controls.ipaddress.valueChanges
       .pipe(untilDestroyed(this))
