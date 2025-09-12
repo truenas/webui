@@ -19,7 +19,9 @@ jobs:
         uses: ./.github/actions/prepare
 
       - name: Run translations update
-        run: yarn translations
+        run: |
+          set -e
+          yarn translations
 
       - name: Check for changes
         id: changes
