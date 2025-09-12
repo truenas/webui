@@ -288,4 +288,32 @@ describe('IpmiFormComponent', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.Off]);
     });
   });
+
+  describe('VLAN validation', () => {
+    beforeEach(async () => {
+      await setupTest(ProductType.Enterprise);
+    });
+
+    it('does not require VLAN ID when Enable VLAN is false', async () => {
+      const enableVlanCheckbox = await form.getControl('Enable VLAN') as IxCheckboxHarness;
+      await enableVlanCheckbox.setValue(false);
+
+      expect(spectator.component.form.valid).toBe(true);
+      expect(spectator.component.form.controls.vlan_id.hasError('required')).toBe(false);
+    });
+
+    it('clears VLAN ID value when Enable VLAN is disabled', async () => {
+      // First enable VLAN and set a value
+      const enableVlanCheckbox = await form.getControl('Enable VLAN') as IxCheckboxHarness;
+      await enableVlanCheckbox.setValue(true);
+
+      const vlanIdInput = await form.getControl('VLAN ID') as IxInputHarness;
+      await vlanIdInput.setValue('10');
+
+      // Then disable VLAN
+      await enableVlanCheckbox.setValue(false);
+
+      expect(spectator.component.form.controls.vlan_id.value).toBeNull();
+    });
+  });
 });
