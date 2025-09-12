@@ -297,4 +297,9 @@ export class UpdateComponent implements OnInit {
       hideCancel: true,
     });
   }
+
+  protected onProfileSwitched(): void {
+    // Reload all update info after profile switch
+    this.loadUpdateInfo();
+  }
 }

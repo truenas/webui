@@ -101,6 +101,18 @@ describe('UpdateProfileCard', () => {
     expect(snackbar.success).toHaveBeenCalledWith(expect.stringMatching('Switched to Developer update profile'));
   });
 
+  it('emits profileSwitched event when profile is successfully applied', async () => {
+    jest.spyOn(spectator.component.profileSwitched, 'emit');
+
+    const select = await loader.getHarness(IxSelectHarness.with({ label: 'Select an update profile' }));
+    await select.setValue('Developer');
+
+    const button = spectator.query('button[ixTest="apply-profile"]') as HTMLButtonElement;
+    spectator.click(button);
+
+    expect(spectator.component.profileSwitched.emit).toHaveBeenCalled();
+  });
+
   it('shows the list of available profiles', () => {
     const available = spectator.queryAll('.profiles-section.available .profile-name');
     expect(available).toHaveLength(2);
