@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, OnChanges, inject, output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -41,6 +41,7 @@ export class UpdateProfileCard implements OnChanges {
 
   readonly currentProfileId = input.required<string>();
   readonly profileChoices = input.required<UpdateProfileChoices>();
+  readonly profileSwitched = output();
 
   protected updateProfileControl = new FormControl('');
 
@@ -118,6 +119,7 @@ export class UpdateProfileCard implements OnChanges {
     ).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('Switched to {profile} update profile', { profile: selectedProfile?.name }));
+        this.profileSwitched.emit();
       },
     });
   }

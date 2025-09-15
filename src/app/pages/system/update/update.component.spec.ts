@@ -171,6 +171,18 @@ describe('UpdateComponent', () => {
       expect(api.call).toHaveBeenCalledWith('update.status');
       expect(api.call).toHaveBeenCalledWith('update.config');
     });
+
+    it('reloads update info when profile is switched', () => {
+      const api = spectator.inject(ApiService);
+      jest.clearAllMocks();
+
+      const updateProfileCard = spectator.query(UpdateProfileCard);
+      updateProfileCard.profileSwitched.emit();
+
+      expect(api.call).toHaveBeenCalledWith('update.profile_choices');
+      expect(api.call).toHaveBeenCalledWith('update.status');
+      expect(api.call).toHaveBeenCalledWith('update.config');
+    });
   });
 
   describe('when there are no updates', () => {
