@@ -4,8 +4,7 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import { defaultTheme } from 'app/modules/theme/theme.constants';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
-import {
-  autoRefreshReportsToggled,
+import { autoRefreshReportsToggled,
   builtinGroupsToggled,
   builtinUsersToggled, dashboardStateUpdated, guiFormClosedWithoutSaving, guiFormSubmitted,
   lifetimeTokenUpdated,
@@ -14,9 +13,8 @@ import {
   preferencesLoaded, preferredColumnsUpdated, shownNewIndicatorKeysUpdated, themeChangedInGuiForm,
   themeNotFound,
   updateRebootAfterManualUpdate,
-} from 'app/store/preferences/preferences.actions';
+  snapshotExtraColumnsToggled, dashboardStateLoaded, noDashboardStateFound } from 'app/store/preferences/preferences.actions';
 import { sidenavUpdated } from 'app/store/topbar/topbar.actions';
-import { snapshotExtraColumnsToggled, dashboardStateLoaded, noDashboardStateFound } from './preferences.actions';
 
 export interface PreferencesState {
   areLoaded: boolean;

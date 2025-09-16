@@ -21,15 +21,13 @@ import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-nod
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-info/disk-info.component';
-import {
-  ManualDiskSelectionFilters,
-} from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/manual-selection-disks/manual-selection-disk-filters/manual-selection-disk-filters.component';
+import { ManualDiskSelectionFilters,
+  ManualSelectionDiskFiltersComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/manual-selection-disks/manual-selection-disk-filters/manual-selection-disk-filters.component';
 import {
   ManualSelectionDisk,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
 import { ManualDiskDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
-import { ManualSelectionDiskFiltersComponent } from './manual-selection-disk-filters/manual-selection-disk-filters.component';
 
 interface EnclosureDisk extends DetailsDisk {
   children: [];

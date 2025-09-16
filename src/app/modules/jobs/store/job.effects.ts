@@ -7,12 +7,10 @@ import {
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import {
-  abortJobPressed, jobAdded, jobChanged, jobRemoved, jobsLoaded, jobsNotLoaded,
-} from 'app/modules/jobs/store/job.actions';
+import { abortJobPressed, jobAdded, jobChanged, jobRemoved, jobsLoaded, jobsNotLoaded,
+  jobAborted } from 'app/modules/jobs/store/job.actions';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { jobAborted } from './job.actions';
 
 @Injectable()
 export class JobEffects {

@@ -14,11 +14,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ServicesService } from 'app/services/services.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import {
-  checkIfServiceIsEnabled, serviceChanged, serviceDisabled, serviceStartFailed, serviceStarted, servicesLoaded,
-} from 'app/store/services/services.actions';
+import { checkIfServiceIsEnabled, serviceChanged, serviceDisabled, serviceStartFailed, serviceStarted, servicesLoaded,
+  serviceEnabled } from 'app/store/services/services.actions';
 import { selectService } from 'app/store/services/services.selectors';
-import { serviceEnabled } from './services.actions';
 
 @Injectable()
 export class ServicesEffects {

@@ -43,7 +43,7 @@ export class BreadcrumbComponent implements OnInit {
   }
 
   private getBreadcrumbs(): RoutePart[] {
-    const sortedRoutes = this.routePartsService.routeParts?.sort((a, b) => {
+    const sortedRoutes = [...(this.routePartsService.routeParts || [])].sort((a, b) => {
       return (a.ngUrl?.length || 0) - (b.ngUrl?.length || 0);
     });
     const uniqRoutesList = uniqBy(sortedRoutes, 'url');

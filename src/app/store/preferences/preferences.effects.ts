@@ -10,8 +10,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
-import {
-  autoRefreshReportsToggled,
+import { autoRefreshReportsToggled,
   builtinGroupsToggled,
   builtinUsersToggled, guiFormSubmitted, lifetimeTokenUpdated, localizationFormSubmitted,
   preferencesLoaded, preferredColumnsUpdated,
@@ -19,12 +18,10 @@ import {
   themeNotFound,
   terminalFontSizeUpdated,
   updateRebootAfterManualUpdate,
-} from 'app/store/preferences/preferences.actions';
+
+  snapshotExtraColumnsToggled, dashboardStateLoaded, noPreferencesFound, noDashboardStateFound } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { sidenavUpdated } from 'app/store/topbar/topbar.actions';
-import {
-  snapshotExtraColumnsToggled, dashboardStateLoaded, noPreferencesFound, noDashboardStateFound,
-} from './preferences.actions';
 
 @Injectable()
 export class PreferencesEffects {

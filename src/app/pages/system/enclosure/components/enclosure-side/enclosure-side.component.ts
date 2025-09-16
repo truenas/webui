@@ -3,12 +3,12 @@ import {
 } from '@angular/core';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import {
+  EnclosureSvgComponent,
   TintingFunction,
 } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
 import { getDefaultSide } from 'app/pages/system/enclosure/utils/get-default-side.utils';
 import { getSlotsOfSide } from 'app/pages/system/enclosure/utils/get-slots-of-side.utils';
 import { EnclosureSide, supportedEnclosures } from 'app/pages/system/enclosure/utils/supported-enclosures';
-import { EnclosureSvgComponent } from './enclosure-svg/enclosure-svg.component';
 import { NotSupportedModelComponent } from './not-supported-model/not-supported-model.component';
 
 // TODO: It may be a good idea to make this into a separate module.
