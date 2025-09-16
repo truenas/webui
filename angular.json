@@ -43,11 +43,11 @@
               ]
             },
             "styles": [
-              "node_modules/@bugsplat/angular-tree-component/css/angular-tree-component.css",
+              "src/assets/styles/angular-tree-component.css",
               "src/assets/styles/index.scss"
             ],
             "scripts": [
-              "node_modules/marked/marked.min.js"
+              "marked/marked.min.js"
             ],
             "extractLicenses": false,
             "sourceMap": true,
