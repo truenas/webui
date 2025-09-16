@@ -3,18 +3,13 @@ import { Role } from 'app/enums/role.enum';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { GlobalSearchVisibleToken } from 'app/modules/global-search/enums/global-search-visible-token.enum';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
+import { parseUiSearchElements } from './parse-ui-search-elements';
 
 // Polyfill ReadableStream for Node.js environment
 if (typeof globalThis.ReadableStream === 'undefined') {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (globalThis as any).ReadableStream = class ReadableStream {
-    constructor() {
-      // Mock implementation
-    }
-  };
+  (globalThis as any).ReadableStream = class ReadableStream {};
 }
-
-import { parseUiSearchElements } from './parse-ui-search-elements';
 
 jest.mock('fs');
 
