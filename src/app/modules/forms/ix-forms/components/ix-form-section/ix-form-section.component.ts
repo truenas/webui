@@ -25,8 +25,17 @@ export class IxFormSectionComponent implements OnInit, OnDestroy {
   label = input.required<string>();
 
   @HostBinding('attr.id')
-  get id(): string {
-    return this.label();
+  get id(): string | null {
+    // Don't set an ID attribute if label is empty or undefined
+    const labelValue = this.label();
+    if (!labelValue) {
+      return null;
+    }
+    // Replace non-alphanumeric characters with hyphens and collapse multiple hyphens
+    return labelValue
+      .replace(/[^a-zA-Z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
+      .toLowerCase() || null;
   }
 
   ngOnInit(): void {

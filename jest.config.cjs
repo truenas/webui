@@ -33,6 +33,8 @@ module.exports = {
   cacheDirectory: "<rootDir>/.jest/cache",
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths || {}),
+    '^app/(.*)$': '<rootDir>/src/app/$1',
+    '^environments/(.*)$': '<rootDir>/src/environments/$1',
   },
   testPathIgnorePatterns: [
     '<rootDir>/dist/',

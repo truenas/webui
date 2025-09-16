@@ -23,6 +23,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationGlobalConfig, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
@@ -183,11 +184,8 @@ describe('InstanceWizardComponent', () => {
         'Container Protocol': 'UDP',
       });
 
-      // TODO: Fix this to use IxCheckboxHarness
-      const usbDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({
-        label: 'xHCI Host Controller (0003)',
-      }));
-      await usbDeviceCheckbox.check();
+      const usbDevicesList = await loader.getHarness(IxCheckboxListHarness.with({ label: 'USB Devices' }));
+      await usbDevicesList.setValue(['xHCI Host Controller (0003)']);
 
       const listItems = spectator.queryAll('.network-list-item > span');
       expect(listItems.map((element) => element.textContent)).toEqual([
@@ -203,9 +201,8 @@ describe('InstanceWizardComponent', () => {
       const nicDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'nic1' }));
       await nicDeviceCheckbox.check();
 
-      // TODO: Fix this to use IxCheckboxHarness
-      const gpuDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
-      await gpuDeviceCheckbox.check();
+      const gpuDevicesList = await loader.getHarness(IxCheckboxListHarness.with({ label: 'GPU Devices' }));
+      await gpuDevicesList.setValue(['NVIDIA GeForce GTX 1080']);
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
       await createButton.click();
