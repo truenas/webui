@@ -233,11 +233,18 @@ describe('EditableComponent', () => {
     }));
 
     it('removes click outside listener on destroy', () => {
-      const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
+      // Open editable to create a subscription
+      spectator.component.open();
+
+      // Spy on the subscription's unsubscribe method
+      const clickOutsideSubscription = (spectator.component as unknown as {
+        clickOutsideSubscription: { unsubscribe: () => void };
+      }).clickOutsideSubscription;
+      const unsubscribeSpy = jest.spyOn(clickOutsideSubscription, 'unsubscribe');
 
       spectator.component.ngOnDestroy();
 
-      expect(removeEventListenerSpy).toHaveBeenCalled();
+      expect(unsubscribeSpy).toHaveBeenCalled();
     });
   });
 
@@ -275,11 +282,18 @@ describe('EditableComponent', () => {
     }));
 
     it('removes keydown listener on destroy', () => {
-      const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
+      // Open editable to create a subscription
+      spectator.component.open();
+
+      // Spy on the subscription's unsubscribe method
+      const keydownSubscription = (spectator.component as unknown as {
+        keydownSubscription: { unsubscribe: () => void };
+      }).keydownSubscription;
+      const unsubscribeSpy = jest.spyOn(keydownSubscription, 'unsubscribe');
 
       spectator.component.ngOnDestroy();
 
-      expect(removeEventListenerSpy).toHaveBeenCalled();
+      expect(unsubscribeSpy).toHaveBeenCalled();
     });
   });
 });

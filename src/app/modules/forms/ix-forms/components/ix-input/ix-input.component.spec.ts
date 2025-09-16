@@ -208,6 +208,42 @@ describe('IxInputComponent', () => {
       });
     });
 
+    describe('password manager compatibility', () => {
+      it('renders plain input without MatAutocompleteTrigger when no autocompleteOptions', () => {
+        spectator.setHostInput('type', 'password');
+        spectator.detectComponentChanges();
+
+        const input = spectator.query('input');
+        expect(input).toHaveAttribute('type', 'password');
+        // Password field without autocomplete options uses plain input
+        expect(spectator.component.autocompleteOptions()).toBeFalsy();
+      });
+
+      it('renders input with MatAutocompleteTrigger when autocompleteOptions provided', () => {
+        spectator.setHostInput('autocompleteOptions', [{ label: 'test', value: 'test' }]);
+        spectator.detectComponentChanges();
+
+        // Should render the autocomplete-enabled input
+        expect(spectator.component.autocompleteOptions()).toEqual([{ label: 'test', value: 'test' }]);
+      });
+
+      it('switches between input rendering based on autocompleteOptions availability', () => {
+        // Initially no autocomplete options
+        spectator.detectComponentChanges();
+        expect(spectator.component.autocompleteOptions()).toBeFalsy();
+
+        // Add autocomplete options
+        spectator.setHostInput('autocompleteOptions', [{ label: 'test', value: 'test' }]);
+        spectator.detectComponentChanges();
+        expect(spectator.component.autocompleteOptions()).toEqual([{ label: 'test', value: 'test' }]);
+
+        // Remove autocomplete options
+        spectator.setHostInput('autocompleteOptions', undefined);
+        spectator.detectComponentChanges();
+        expect(spectator.component.autocompleteOptions()).toBeFalsy();
+      });
+    });
+
     describe('validation', () => {
       it('shows a validation message when native input type validation does not pass', () => {
         spectator.setHostInput('type', 'email');
