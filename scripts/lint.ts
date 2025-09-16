@@ -177,10 +177,7 @@ async function main(): Promise<void> {
         ? `${scriptFiles.length} TypeScript/JavaScript file(s)`
         : 'all TypeScript/JavaScript files';
       console.info(`Running ESLint on: ${eslintTargetDescription}`);
-      // NODE_NO_WARNINGS=1 suppresses Yarn PnP MODULE_NOT_FOUND warnings that occur when
-      // packages try to access peer dependencies that aren't explicitly declared.
-      // These warnings are harmless but verbose when using Yarn PnP mode.
-      await runCommand('npx', eslintArgs, { TIMING: '30', NODE_NO_WARNINGS: '1' });
+      await runCommand('yarn', ['exec', ...eslintArgs], { TIMING: '30' });
     }
 
     // Run Stylelint if needed
@@ -189,7 +186,7 @@ async function main(): Promise<void> {
         ? `${styleFiles.length} SCSS file(s)`
         : 'all SCSS files';
       console.info(`Running Stylelint on: ${stylelintTargetDescription}`);
-      await runCommand('npx', stylelintArgs);
+      await runCommand('yarn', ['exec', ...stylelintArgs]);
     }
 
     // Handle case where no files were found

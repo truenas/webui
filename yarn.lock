@@ -9781,7 +9781,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-import-resolver-typescript@npm:^4.4.1":
+"eslint-import-resolver-typescript@npm:^4.4.1, eslint-import-resolver-typescript@npm:~4.4.4":
   version: 4.4.4
   resolution: "eslint-import-resolver-typescript@npm:4.4.4"
   dependencies:
@@ -9886,7 +9886,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-import@npm:^2.31.0":
+"eslint-plugin-import@npm:~2.32.0":
   version: 2.32.0
   resolution: "eslint-plugin-import@npm:2.32.0"
   dependencies:
@@ -18057,9 +18057,10 @@ __metadata:
     email-validator: "npm:~2.0.4"
     eslint: "npm:^9.31.0"
     eslint-config-airbnb-base: "npm:~15.0.0"
+    eslint-import-resolver-typescript: "npm:~4.4.4"
     eslint-plugin-angular-file-naming: "npm:~1.0.6"
     eslint-plugin-angular-test-ids: "npm:~1.0.6"
-    eslint-plugin-import: "npm:^2.31.0"
+    eslint-plugin-import: "npm:~2.32.0"
     eslint-plugin-jest: "npm:~28.8.3"
     eslint-plugin-rxjs-angular: "npm:^2.0.1"
     eslint-plugin-sonarjs: "npm:~3.0.4"
