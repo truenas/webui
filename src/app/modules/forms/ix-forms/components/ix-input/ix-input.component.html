@@ -17,34 +17,68 @@
       <ix-icon [name]="prefixIcon()"></ix-icon>
     </span>
   }
-  <input
-    #ixInput
-    #trigger="matAutocompleteTrigger"
-    matInput
-    [class.prefix-padding]="prefixIcon()"
-    [class.password-field]="isPasswordField()"
-    [class.has-reset-input-icon]="shouldShowResetInput()"
-    [required]="required()"
-    [readonly]="readonly()"
-    [disabled]="isDisabled"
-    [type]="getType()"
-    [value]="formatted"
-    [autocomplete]="autocomplete()"
-    [maxLength]="maxLength()"
-    [matAutocomplete]="auto"
-    [placeholder]="placeholder()"
-    [ixTest]="controlDirective.name"
-    [attr.aria-label]="label()"
-    [attr.name]="controlDirective.name"
-    [attr.id]="controlDirective.name"
-    (input)="input(ixInput)"
-    (focus)="focus(ixInput)"
-    (blur)="blurred()"
-  />
+
+  <!--
+    Render TWO distinct <input> elements on purpose.
+    Reason: MatAutocomplete attaches the MatAutocompleteTrigger directive (via [matAutocomplete]/#trigger),
+    which turns the input into a combobox (adds role/ARIA + key handlers). Password managers often ignore
+    such fields even if type="password". Angular cannot remove a directive at runtime, so we must render:
+      • with [matAutocomplete] when autocompleteOptions() is truthy;
+      • a plain input (NO MatAutocompleteTrigger) otherwise — keeps it password‑manager friendly.
+  -->
+  @if (autocompleteOptions()) {
+    <input
+      #ixInput
+      #trigger="matAutocompleteTrigger"
+      matInput
+      [class.prefix-padding]="prefixIcon()"
+      [class.password-field]="isPasswordField()"
+      [class.has-reset-input-icon]="shouldShowResetInput()"
+      [required]="required()"
+      [readonly]="readonly()"
+      [disabled]="isDisabled"
+      [type]="getType()"
+      [value]="formatted"
+      [autocomplete]="autocomplete()"
+      [maxLength]="maxLength()"
+      [matAutocomplete]="auto"
+      [placeholder]="placeholder()"
+      [ixTest]="controlDirective.name"
+      [attr.aria-label]="label()"
+      [attr.name]="controlDirective.name"
+      [attr.id]="controlDirective.name"
+      (input)="input(ixInput)"
+      (focus)="focus(ixInput)"
+      (blur)="blurred()"
+    />
+  } @else {
+    <input
+      #ixInput
+      matInput
+      [class.prefix-padding]="prefixIcon()"
+      [class.password-field]="isPasswordField()"
+      [class.has-reset-input-icon]="shouldShowResetInput()"
+      [required]="required()"
+      [readonly]="readonly()"
+      [disabled]="isDisabled"
+      [type]="getType()"
+      [value]="formatted"
+      [autocomplete]="autocomplete()"
+      [maxLength]="maxLength()"
+      [placeholder]="placeholder()"
+      [ixTest]="controlDirective.name"
+      [attr.aria-label]="label()"
+      [attr.name]="controlDirective.name"
+      [attr.id]="controlDirective.name"
+      (input)="input(ixInput)"
+      (focus)="focus(ixInput)"
+      (blur)="blurred()"
+    />
+  }
 
   @if (shouldShowResetInput()) {
     <span class="reset-input">
-      <ix-icon name="mdi-close-circle" (click)="resetInput(ixInput)"></ix-icon>
+      <ix-icon name="mdi-close-circle" (click)="resetInput()"></ix-icon>
     </span>
   }
 
