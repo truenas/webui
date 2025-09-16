@@ -48,6 +48,7 @@ describe('FormErrorHandlerService', () => {
     body: {
       contains: jest.fn(() => true) as HTMLElement['contains'],
     } as HTMLElement,
+    dispatchEvent: jest.fn(() => true) as Document['dispatchEvent'],
   } as Document;
 
   const elementMock = {
@@ -150,8 +151,8 @@ describe('FormErrorHandlerService', () => {
     it('shows error dialog with original error when control is not found', () => {
       spectator.service.handleValidationErrors(callError, formGroup);
 
-      expect(console.warn).not.toHaveBeenCalledWith('getControlNames Could not find control test_control_1.');
-      expect(console.warn).toHaveBeenCalledWith('getControlNames Could not find control test_control_2.');
+      expect(console.warn).not.toHaveBeenCalledWith('Could not find control test_control_1.');
+      expect(console.warn).toHaveBeenCalledWith('Could not find control test_control_2.');
       expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(callError);
     });
 
@@ -163,5 +164,17 @@ describe('FormErrorHandlerService', () => {
       expect(elementMock.scrollIntoView).toHaveBeenCalledWith(expect.objectContaining({ block: 'center' }));
       expect(elementMock.focus).toHaveBeenCalled();
     }));
+
+    it('dispatches editable-validation-error event for EditableComponents', () => {
+      spectator.service.handleValidationErrors(callError, formGroup);
+
+      expect(documentMock.dispatchEvent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'editable-validation-error',
+          detail: { fieldName: 'test_control_1' },
+          bubbles: true,
+        }),
+      );
+    });
   });
 });

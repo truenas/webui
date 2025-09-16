@@ -21,13 +21,13 @@ export class FormErrorHandlerService {
 
   /**
    * @param error
-   * @param formGroup
+   * @param formGroupOrGroups Single form group or array of form groups
    * @param fieldsMap Overrides backend field names with frontend field names.
    * TODO: See if second `string` in fieldsMap can be typed to key of formGroup.
    */
   handleValidationErrors(
     error: unknown,
-    formGroup: UntypedFormGroup,
+    formGroupOrGroups: UntypedFormGroup | UntypedFormGroup[],
     fieldsMap: Record<string, string> = {},
     triggerAnchor: string | undefined = undefined,
   ): void {
@@ -36,8 +36,12 @@ export class FormErrorHandlerService {
       && isApiErrorDetails(error.error.data)
       && error.error.data.errname === ApiErrorName.Validation
       && error.error.data.extra;
+
+    // Normalize input to array for consistent handling
+    const formGroups = Array.isArray(formGroupOrGroups) ? formGroupOrGroups : [formGroupOrGroups];
+
     if (isValidationError) {
-      this.handleValidationError(error.error.data, formGroup, fieldsMap, triggerAnchor, error);
+      this.handleValidationError(error.error.data, formGroups, fieldsMap, triggerAnchor, error);
       return;
     }
 
@@ -48,7 +52,7 @@ export class FormErrorHandlerService {
     ) {
       this.handleValidationError(
         { ...error.job, extra: error.job.exc_info.extra as Job['extra'] },
-        formGroup,
+        formGroups,
         fieldsMap,
         triggerAnchor,
         error,
@@ -63,7 +67,7 @@ export class FormErrorHandlerService {
   // TODO: Too many arguments and convoluted logic. Rewrite.
   private handleValidationError(
     error: ApiErrorDetails | Job,
-    formGroup: UntypedFormGroup,
+    formGroups: UntypedFormGroup[],
     fieldsMap: Record<string, string>,
     triggerAnchor: string | undefined,
     originalError: unknown,
@@ -78,11 +82,11 @@ export class FormErrorHandlerService {
 
       const errorMessage = extraItem[1];
 
-      const control = this.getFormField(formGroup, field, fieldsMap);
-      const mappedFieldName = fieldsMap[field] ?? field; // Get the mapped field name
-      const controlsNames = this.formService.getControlNames();
+      const control = this.getFormField(formGroups, field, fieldsMap);
 
-      if (triggerAnchor && control && !controlsNames.includes(mappedFieldName)) {
+      const mappedFieldName = fieldsMap[field] ?? field; // Get the mapped field name
+
+      if (triggerAnchor && control) {
         const triggerAnchorRef = this.document.getElementById(triggerAnchor);
         if (triggerAnchorRef) {
           triggerAnchorRef.click();
@@ -117,10 +121,8 @@ export class FormErrorHandlerService {
     field: string;
     errorMessage: string;
   }): void {
-    const controlsNames = this.formService.getControlNames();
-
-    if (!control || !controlsNames.includes(field)) {
-      console.warn(`getControlNames Could not find control ${field}.`);
+    if (!control) {
+      console.warn(`Could not find control ${field}.`);
       this.needToShowError = true;
       return;
     }
@@ -146,9 +148,18 @@ export class FormErrorHandlerService {
     });
     control.markAsTouched();
 
-    const element = this.formService.getElementByControlName(field);
+    // Notify EditableComponents that might contain this field
+    this.notifyEditablesOfValidationError(field);
+
+    // Try to get element from IxFormService first, then fallback to querySelector
+    let element = this.formService.getElementByControlName(field);
+    if (!element && this.document?.querySelector) {
+      // Fallback: try to find element by formControlName attribute
+      element = this.document.querySelector(`[formControlName="${field}"]`) as HTMLElement;
+    }
+
     if (!element) {
-      console.warn(`getElementByControlName Could not find element for ${field}.`);
+      console.warn(`Could not find DOM element for field ${field}.`);
       this.needToShowError = true;
       return;
     }
@@ -162,12 +173,32 @@ export class FormErrorHandlerService {
     }
   }
 
+
+  private notifyEditablesOfValidationError(fieldName: string): void {
+    // Notify EditableComponents to check for errors immediately
+    const errorEvent = new CustomEvent('editable-validation-error', {
+      detail: { fieldName },
+      bubbles: true,
+    });
+    this.document.dispatchEvent(errorEvent);
+  }
+
+
   private getFormField(
-    formGroup: UntypedFormGroup,
+    formGroups: UntypedFormGroup[],
     field: string,
     fieldsMap: Record<string, string>,
   ): AbstractControl | null {
     const fieldName = fieldsMap[field] ?? field;
-    return formGroup.get(fieldName);
+
+    // Search through all form groups to find the control
+    for (const formGroup of formGroups) {
+      const control = formGroup.get(fieldName);
+      if (control) {
+        return control;
+      }
+    }
+
+    return null;
   }
 }

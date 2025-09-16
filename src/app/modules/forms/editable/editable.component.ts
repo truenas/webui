@@ -49,6 +49,7 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   private clickOutsideSubscription?: Subscription;
   private keydownSubscription?: Subscription;
   private previouslyFocusedElement?: HTMLElement;
+  private errorCheckInterval?: number;
 
 
   readonly emptyValue = input(this.translate.instant('Not Set'));
@@ -90,9 +91,15 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.checkVisibleValue();
+    this.setupValidationErrorListener();
+    this.setupControlErrorWatcher();
   }
 
+
   ngOnDestroy(): void {
+    if (this.errorCheckInterval) {
+      clearInterval(this.errorCheckInterval);
+    }
     this.removeClickOutsideListener();
     this.removeKeydownListener();
     this.destroy$.next();
@@ -233,5 +240,56 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   private removeKeydownListener(): void {
     this.keydownSubscription?.unsubscribe();
     this.keydownSubscription = undefined;
+  }
+
+  private setupValidationErrorListener(): void {
+    fromEvent(this.document, 'editable-validation-error')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event: CustomEvent) => {
+        this.handleValidationErrorEvent(event);
+      });
+  }
+
+  private handleValidationErrorEvent(event: CustomEvent): void {
+    const fieldName = event.detail?.fieldName;
+    if (typeof fieldName !== 'string') {
+      return;
+    }
+
+    // Check if this editable contains the field with the error
+    if (this.containsField(fieldName)) {
+      this.openIfHasErrors();
+    }
+  }
+
+  private openIfHasErrors(): void {
+    // Check if any of the controls in this editable have validation errors
+    const hasErrors = this.controls().some((control) => control?.errors && Object.keys(control.errors).length > 0);
+
+    if (hasErrors && !this.isOpen()) {
+      this.open();
+    }
+  }
+
+  private containsField(fieldName: string): boolean {
+    const editableElement = this.elementRef.nativeElement;
+    const fieldElement = editableElement.querySelector(`[formControlName="${fieldName}"]`);
+    return fieldElement !== null;
+  }
+
+  private setupControlErrorWatcher(): void {
+    // Use afterNextRender to ensure DOM is stable
+    afterNextRender(() => {
+      // Initial check for existing errors
+      this.openIfHasErrors();
+
+      // Set up a simple interval to check for validation errors periodically
+      this.errorCheckInterval = setInterval(() => {
+        if (this.isOpen()) {
+          return; // Already open, no need to check
+        }
+        this.openIfHasErrors();
+      }, 200) as unknown as number;
+    }, { injector: this.injector });
   }
 }

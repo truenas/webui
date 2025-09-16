@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, OnInit, signal, viewChild, inject } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { tooltips } from '@codemirror/view';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -20,6 +20,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -31,7 +32,6 @@ import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/u
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/users/user-form/allowed-access-section/allowed-access-section.component';
 import { AuthSectionComponent } from 'app/pages/credentials/users/user-form/auth-section/auth-section.component';
 import { defaultHomePath, defaultRole, UserFormStore, UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user.store';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 
@@ -63,7 +63,7 @@ export class UserFormComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   slideInRef = inject<SlideInRef<User | undefined, User>>(SlideInRef);
   private userFormStore = inject(UserFormStore);
-  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
@@ -104,6 +104,19 @@ export class UserFormComponent implements OnInit {
       ...this.authSection().form.value,
       ...this.additionalDetailsSection().form.value,
     };
+  }
+
+  /**
+   * Get all form instances for error handling - allows FormErrorHandlerService
+   * to find the correct original form control instead of the combined one
+   */
+  protected get allForms(): FormGroup[] {
+    return [
+      this.form,
+      this.allowedAccessSection().form,
+      this.authSection().form,
+      this.additionalDetailsSection().form,
+    ];
   }
 
   protected getHomeCreateWarning(): TranslatedString {
@@ -268,7 +281,8 @@ export class UserFormComponent implements OnInit {
       filter(Boolean),
       switchMap(() => this.submitUserRequest(payload)),
       catchError((error: unknown) => {
-        this.errorHandler.showErrorModal(error);
+        this.isFormLoading.set(false);
+        this.formErrorHandler.handleValidationErrors(error, this.allForms);
         return of(undefined);
       }),
       untilDestroyed(this),
