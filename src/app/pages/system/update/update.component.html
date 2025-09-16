@@ -26,7 +26,7 @@
             </div>
             @if (doesNotMatchProfile() && currentVersionProfile()) {
               <div class="profile-mismatch">
-                {{ '(from {profile} profile)' | translate: { profile: currentVersionProfile() } }}
+                {{ '(from {profile} profile)' | translate : { profile: currentVersionProfile() } }}
               </div>
               }
           </div>
@@ -89,7 +89,7 @@
     @if (changelog() || newVersion()?.release_notes_url) {
       <div class="update-summary">
         <h3>
-          {{ 'Update Summary for {version}' | translate: { version: newVersion().version } }}
+          {{ 'Update Summary for {version}' | translate : { version: newVersion().version } }}
         </h3>
 
         @if (changelog()) {
