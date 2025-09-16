@@ -1,7 +1,7 @@
 name: Claude Review
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, ready_for_review]
     branches:
       - master
     paths-ignore:
@@ -10,7 +10,6 @@ jobs:
   review:
     runs-on: ubuntu-latest
     if: |
-      !github.event.pull_request.draft &&
       !contains(github.event.pull_request.labels.*.name, 'skip-claude')
     permissions:
       contents: read
