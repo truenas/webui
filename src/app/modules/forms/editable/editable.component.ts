@@ -3,11 +3,15 @@ import { DOCUMENT } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChildren, ElementRef, input, OnDestroy, output, signal, viewChild, inject, afterNextRender, Injector } from '@angular/core';
 import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { fromEvent, Subject, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { combineLatest, fromEvent, Subject, Subscription } from 'rxjs';
+import { filter, startWith, takeUntil } from 'rxjs/operators';
 import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+
+interface ValidationErrorEventDetail {
+  fieldName: string;
+}
 
 /**
  * Editable component that allows inline editing of a value.
@@ -49,7 +53,6 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   private clickOutsideSubscription?: Subscription;
   private keydownSubscription?: Subscription;
   private previouslyFocusedElement?: HTMLElement;
-  private errorCheckInterval?: number;
 
 
   readonly emptyValue = input(this.translate.instant('Not Set'));
@@ -92,14 +95,11 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.checkVisibleValue();
     this.setupValidationErrorListener();
-    this.setupControlErrorWatcher();
+    this.setupReactiveErrorWatcher();
   }
 
 
   ngOnDestroy(): void {
-    if (this.errorCheckInterval) {
-      clearInterval(this.errorCheckInterval);
-    }
     this.removeClickOutsideListener();
     this.removeKeydownListener();
     this.destroy$.next();
@@ -243,16 +243,16 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   }
 
   private setupValidationErrorListener(): void {
-    fromEvent(this.document, 'editable-validation-error')
+    fromEvent<CustomEvent<ValidationErrorEventDetail>>(this.document, 'editable-validation-error')
       .pipe(takeUntil(this.destroy$))
-      .subscribe((event: CustomEvent) => {
+      .subscribe((event) => {
         this.handleValidationErrorEvent(event);
       });
   }
 
-  private handleValidationErrorEvent(event: CustomEvent): void {
-    const fieldName = event.detail?.fieldName;
-    if (typeof fieldName !== 'string') {
+  private handleValidationErrorEvent(event: CustomEvent<ValidationErrorEventDetail>): void {
+    const { fieldName } = event.detail;
+    if (!fieldName) {
       return;
     }
 
@@ -277,19 +277,31 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
     return fieldElement !== null;
   }
 
-  private setupControlErrorWatcher(): void {
-    // Use afterNextRender to ensure DOM is stable
+  private setupReactiveErrorWatcher(): void {
     afterNextRender(() => {
-      // Initial check for existing errors
-      this.openIfHasErrors();
+      const controls = this.controls();
+      if (controls.length === 0) {
+        return;
+      }
 
-      // Set up a simple interval to check for validation errors periodically
-      this.errorCheckInterval = setInterval(() => {
-        if (this.isOpen()) {
-          return; // Already open, no need to check
-        }
-        this.openIfHasErrors();
-      }, 200) as unknown as number;
+      // Watch for status changes on all controls
+      const statusChanges$ = combineLatest(
+        controls.map((control) => control.statusChanges.pipe(startWith(control.status))),
+      );
+
+      statusChanges$
+        .pipe(
+          filter(() => !this.isOpen()), // Only check when closed
+          takeUntil(this.destroy$),
+        )
+        .subscribe(() => {
+          const hasErrors = this.controls().some(
+            (control) => control?.errors && Object.keys(control.errors).length > 0,
+          );
+          if (hasErrors) {
+            this.open();
+          }
+        });
     }, { injector: this.injector });
   }
 }
