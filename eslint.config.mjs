@@ -25,6 +25,8 @@ export default tsEslint.config(
   {
     ignores: [
       ".angular/",
+      ".yarn/",
+      ".pnp*",
       "debian/",
       "docker/",
       "dist/"
