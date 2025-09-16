@@ -77,7 +77,10 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   getRowTag(row: T): string {
-    return this.columns()[0]?.uniqueRowTag?.(row) ?? '';
+    const tag = this.columns()[0]?.uniqueRowTag?.(row) ?? '';
+    // Sanitize the tag to ensure it's a valid CSS selector/ID
+    // Replace any characters that aren't alphanumeric, hyphen, or underscore
+    return tag.replace(/[^a-zA-Z0-9-_]/g, '-');
   }
 
   getTemplateByColumnIndex(idx: number): TemplateRef<{ $implicit: T }> | undefined {

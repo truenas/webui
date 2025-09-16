@@ -60,9 +60,9 @@ describe('SpaceManagementChartComponent', () => {
     const legendSwatches = spectator.queryAll('.legend-swatch');
 
     expect(legendLabels[0]).toHaveText('Data Written');
-    expect(legendSwatches[0].getAttribute('style')).toContain('background-color: rgba(0, 0, 0, 0.851);');
+    expect(legendSwatches[0].getAttribute('style')).toContain('background-color: rgba(0, 0, 0, 0.85');
 
     expect(legendLabels[1]).toHaveText('Children');
-    expect(legendSwatches[1].getAttribute('style')).toContain('background-color: rgba(10, 10, 10, 0.851);');
+    expect(legendSwatches[1].getAttribute('style')).toContain('background-color: rgba(10, 10, 10, 0.85');
   });
 });
