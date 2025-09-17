@@ -4,7 +4,7 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChi
 import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { combineLatest, fromEvent, Subject, Subscription } from 'rxjs';
-import { filter, startWith, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, startWith, takeUntil } from 'rxjs/operators';
 import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
 import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -289,17 +289,24 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
 
       statusChanges$
         .pipe(
-          filter(() => !this.isOpen()), // Only check when closed
+          distinctUntilChanged(),
+          debounceTime(0),
+          filter(() => !this.isOpen()),
           takeUntil(this.destroy$),
         )
         .subscribe(() => {
           const hasErrors = this.controls().some(
             (control) => control?.errors && Object.keys(control.errors).length > 0,
           );
-          if (hasErrors) {
+          // Only auto-open if errors are present and the form has been interacted with
+          if (hasErrors && this.hasBeenTouched()) {
             this.open();
           }
         });
     }, { injector: this.injector });
+  }
+
+  private hasBeenTouched(): boolean {
+    return this.controls().some((control) => control?.touched);
   }
 }
