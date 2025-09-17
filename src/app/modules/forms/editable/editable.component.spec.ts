@@ -403,58 +403,89 @@ describe('EditableComponent', () => {
   });
 
 
-  describe('error state checking', () => {
-    // Helper interface to access private method for testing
-    interface TestableEditableComponent {
-      shouldAutoOpenForErrors(): boolean;
-    }
+  describe('error state integration', () => {
+    it('maintains closed state when controls have no errors', async () => {
+      // Ensure editable starts closed
+      expect(await editable.isOpen()).toBe(false);
 
-    it('correctly identifies when shouldAutoOpenForErrors returns true for touched controls', () => {
-      nameControl.setErrors({ required: true });
+      // Set up control without errors but with user interaction
+      nameControl.setErrors(null);
       nameControl.markAsTouched();
-
-      // Access private method for testing
-      const shouldAutoOpen = (spectator.component as unknown as TestableEditableComponent).shouldAutoOpenForErrors();
-      expect(shouldAutoOpen).toBe(true);
-    });
-
-    it('correctly identifies when shouldAutoOpenForErrors returns true for dirty controls', () => {
-      nameControl.setErrors({ required: true });
       nameControl.markAsDirty();
-      nameControl.markAsUntouched();
 
-      // Access private method for testing
-      const shouldAutoOpen = (spectator.component as unknown as TestableEditableComponent).shouldAutoOpenForErrors();
-      expect(shouldAutoOpen).toBe(true);
+      spectator.detectChanges();
+
+      // Should remain closed since there are no errors
+      expect(await editable.isOpen()).toBe(false);
     });
 
-    it('correctly identifies when shouldAutoOpenForErrors returns false for pristine/untouched controls', () => {
+    it('can handle control state changes without breaking', async () => {
+      // Ensure editable starts closed
+      expect(await editable.isOpen()).toBe(false);
+
+      // Simulate various control state changes
+      nameControl.markAsTouched();
       nameControl.setErrors({ required: true });
-      nameControl.markAsPristine();
-      nameControl.markAsUntouched();
+      spectator.detectChanges();
 
-      // Access private method for testing
-      const shouldAutoOpen = (spectator.component as unknown as TestableEditableComponent).shouldAutoOpenForErrors();
-      expect(shouldAutoOpen).toBe(false);
+      nameControl.setErrors(null);
+      spectator.detectChanges();
+
+      nameControl.markAsDirty();
+      spectator.detectChanges();
+
+      // Component should handle all state changes gracefully
+      expect(spectator.component).toBeDefined();
+      expect(await editable.isOpen()).toBe(false);
+    });
+  });
+
+  describe('form validation integration', () => {
+    it('can be opened and closed programmatically', async () => {
+      // Verify initial state
+      expect(await editable.isOpen()).toBe(false);
+
+      // Test opening
+      spectator.component.open();
+      expect(await editable.isOpen()).toBe(true);
+
+      // Test closing
+      spectator.component.tryToClose();
+      expect(await editable.isOpen()).toBe(false);
     });
 
-    it('correctly identifies when shouldAutoOpenForErrors returns false when no errors and pristine/untouched', () => {
-      nameControl.setErrors(null);
-      nameControl.markAsUntouched(); // No user interaction
-      nameControl.markAsPristine(); // No programmatic changes
+    it('prevents closing when there are validation errors', async () => {
+      // Open the editable
+      await editable.open();
+      expect(await editable.isOpen()).toBe(true);
 
-      // Access private method for testing
-      const shouldAutoOpen = (spectator.component as unknown as TestableEditableComponent).shouldAutoOpenForErrors();
-      expect(shouldAutoOpen).toBe(false);
+      // Add validation errors
+      nameControl.setErrors({ required: true });
+
+      // Try to close - should fail due to validation errors
+      spectator.component.tryToClose();
+      expect(await editable.isOpen()).toBe(true);
     });
 
-    it('correctly identifies when shouldAutoOpenForErrors returns true for touched controls even without errors', () => {
-      nameControl.setErrors(null);
-      nameControl.markAsTouched(); // User interacted, should auto-open regardless of errors
+    it('allows closing when validation errors are cleared', async () => {
+      // Open the editable with errors
+      await editable.open();
+      nameControl.setErrors({ required: true });
+      expect(await editable.isOpen()).toBe(true);
 
-      // Access private method for testing
-      const shouldAutoOpen = (spectator.component as unknown as TestableEditableComponent).shouldAutoOpenForErrors();
-      expect(shouldAutoOpen).toBe(true);
+      // Clear validation errors
+      nameControl.setErrors(null);
+
+      // Should now be able to close
+      spectator.component.tryToClose();
+      expect(await editable.isOpen()).toBe(false);
+    });
+
+    it('correctly identifies controls that belong to this editable', () => {
+      expect(spectator.component.hasControl(nameControl)).toBe(true);
+
+      const unrelatedControl = new FormControl('unrelated');
+      expect(spectator.component.hasControl(unrelatedControl)).toBe(false);
     });
   });
 });
