@@ -162,7 +162,14 @@ describe('FormErrorHandlerService', () => {
 
       expect(console.warn).not.toHaveBeenCalledWith('Could not find control test_control_1.');
       expect(console.warn).toHaveBeenCalledWith('Could not find control test_control_2.');
-      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(callError);
+
+      // Expect the modal to be called with a custom error containing only unhandled errors
+      const mockErrorHandler = spectator.inject(ErrorHandlerService);
+      expect(mockErrorHandler.showErrorModal).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringContaining('Validation errors:\ntest_control_2: Error string for control 2'),
+        }),
+      );
     });
 
     it('scrolls element with an error into view', fakeAsync(() => {

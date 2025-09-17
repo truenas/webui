@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, tick } from '@angular/core/testing';
+import { fakeAsync, tick, flushMicrotasks } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
@@ -315,8 +315,9 @@ describe('EditableComponent', () => {
       // Trigger validation error notification
       validationService.notifyValidationError('name');
 
-      // Wait for the setTimeout delay (100ms)
-      tick(100);
+      // Wait for the timer delay (50ms) and flush microtasks
+      tick(50);
+      flushMicrotasks();
 
       // Should auto-open since control has errors
       expect(await editable.isOpen()).toBe(true);

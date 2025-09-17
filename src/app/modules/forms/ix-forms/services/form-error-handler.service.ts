@@ -20,6 +20,7 @@ export class FormErrorHandlerService {
 
   private isFocusedOnError = false;
   private unhandledErrors: { field: string; message: string }[] = [];
+  private handledInlineErrors: { field: string; message: string }[] = [];
 
   /**
    * @param error
@@ -33,8 +34,9 @@ export class FormErrorHandlerService {
     fieldsMap: Record<string, string> = {},
     triggerAnchor: string | undefined = undefined,
   ): void {
-    // Clear any existing unhandled errors when handling new validation
+    // Clear any existing errors when handling new validation
     this.unhandledErrors = [];
+    this.handledInlineErrors = [];
     const isValidationError = isApiCallError(error)
       && isApiErrorDetails(error.error.data)
       && error.error.data.errname === ApiErrorName.Validation
@@ -76,12 +78,20 @@ export class FormErrorHandlerService {
     originalError: unknown,
   ): void {
     this.isFocusedOnError = false;
-    const extra = (error as ApiErrorDetails).extra as string[][];
+
+    // Add type guard for safer type casting
+    if (!this.isApiErrorDetailsWithExtra(error)) {
+      console.warn('Error does not contain expected extra field structure:', error);
+      return;
+    }
+
+    const extra = error.extra;
     for (const extraItem of extra) {
       const fullFieldPath = extraItem[0];
       const field = this.extractFieldName(fullFieldPath);
       if (!field) {
-        return;
+        // Continue processing other errors instead of early return
+        continue;
       }
 
       const errorMessage = extraItem[1];
@@ -152,6 +162,7 @@ export class FormErrorHandlerService {
     });
     control.markAsTouched();
 
+
     // Notify editable components that might contain this field
     this.notifyEditablesOfValidationError(field);
 
@@ -159,7 +170,8 @@ export class FormErrorHandlerService {
     let element = this.formService.getElementByControlName(field);
     if (!element && this.document?.querySelector) {
       // Fallback: try to find element by formControlName attribute
-      element = this.document.querySelector(`[formControlName="${field}"]`) as HTMLElement;
+      const foundElement = this.document.querySelector(`[formControlName="${field}"]`);
+      element = foundElement instanceof HTMLElement ? foundElement : null;
     }
 
     if (!element) {
@@ -167,6 +179,9 @@ export class FormErrorHandlerService {
       this.handleErrorFallback(fieldToDisplay, errorMessage);
       return;
     }
+
+    // Track that this error was successfully handled inline
+    this.handledInlineErrors.push({ field: fieldToDisplay, message: errorMessage });
 
     if (!this.isFocusedOnError) {
       setTimeout(() => {
@@ -178,6 +193,7 @@ export class FormErrorHandlerService {
   }
 
 
+  // cSpell:ignore Editables
   private notifyEditablesOfValidationError(fieldName: string): void {
     // Securely notify editable components through dedicated service
     this.validationErrorService.notifyValidationError(fieldName);
@@ -202,16 +218,62 @@ export class FormErrorHandlerService {
   }
 
   /**
+   * Type guard to check if error has the expected extra field structure
+   */
+  private isApiErrorDetailsWithExtra(error: unknown): error is ApiErrorDetails & { extra: string[][] } {
+    if (!error || typeof error !== 'object') {
+      return false;
+    }
+
+    const errorObj = error as Record<string, unknown>;
+
+    // Check if it has extra field directly or if it's a transformed job error
+    if (!('extra' in errorObj) || !Array.isArray(errorObj.extra)) {
+      return false;
+    }
+
+    // Validate that extra is an array of arrays with proper structure
+    return errorObj.extra.every((item) => Array.isArray(item)
+      && item.length >= 2
+      && typeof item[0] === 'string'
+      && typeof item[1] === 'string');
+  }
+
+  /**
    * Extract the field name from full field path for form control lookup
    * Examples:
    * - 'user_update.username' -> 'username'
-   * - 'user_update.sudo_commands_nopassword.0' -> 'sudo_commands_nopassword'
+   * - 'user_update.sudo_commands_nopassword.0' -> 'sudo_commands_nopassword' // cSpell:ignore nopassword
+   * - 'user.address.street.0' -> 'street'
+   * - 'config.nested.deep.field' -> 'field'
    */
   private extractFieldName(fullFieldPath: string): string {
+    if (!fullFieldPath || typeof fullFieldPath !== 'string') {
+      return '';
+    }
+
     const parts = fullFieldPath.split('.');
-    // Remove the prefix (like 'user_update') and array indices
-    const fieldParts = parts.slice(1).find((part) => !(/^\d+$/.test(part)));
-    return fieldParts || parts[parts.length - 1];
+
+    // Handle edge cases
+    if (parts.length === 0) {
+      return '';
+    }
+
+    if (parts.length === 1) {
+      return parts[0];
+    }
+
+    // Find the last non-numeric part, working backwards
+    // This handles nested structures better
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const part = parts[i];
+      if (part && !(/^\d+$/.test(part))) {
+        return part;
+      }
+    }
+
+    // Fallback to last part if all are numeric (edge case)
+    return parts[parts.length - 1] || '';
   }
 
   /**
@@ -226,10 +288,27 @@ export class FormErrorHandlerService {
   /**
    * Check if there are unhandled errors and show modal fallback if needed
    */
-  private checkForFallbackErrors(originalError: unknown): void {
+  private checkForFallbackErrors(_: unknown): void {
     if (this.unhandledErrors.length > 0) {
-      // Show modal with all unhandled errors
-      this.errorHandler.showErrorModal(originalError);
+      // Log error handling summary for debugging
+      console.info('Form error handling summary:', {
+        handledInline: this.handledInlineErrors.length,
+        unhandled: this.unhandledErrors.length,
+        handledInlineErrors: this.handledInlineErrors,
+        unhandledErrors: this.unhandledErrors,
+      });
+
+      // Create a custom error object that only contains unhandled errors
+      const unhandledErrorsString = this.unhandledErrors
+        .map((error) => `${error.field}: ${error.message}`)
+        .join('\n');
+
+      // Create a simplified error object for the modal
+      const customError = new Error(`Validation errors:\n${unhandledErrorsString}`);
+      this.errorHandler.showErrorModal(customError);
+    } else if (this.handledInlineErrors.length > 0) {
+      // All errors were handled inline successfully
+      console.info(`All ${this.handledInlineErrors.length} validation errors were handled inline successfully.`);
     }
   }
 }

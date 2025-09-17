@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { ReplaySubject } from 'rxjs';
 
 export interface ValidationErrorEvent {
   fieldName: string;
 }
 
 @Injectable({ providedIn: 'root' })
-export class ValidationErrorCommunicationService {
-  private validationErrorSubject = new Subject<ValidationErrorEvent>();
+export class ValidationErrorCommunicationService implements OnDestroy {
+  private validationErrorSubject = new ReplaySubject<ValidationErrorEvent>(1);
 
   /**
    * Observable stream of validation errors for components to subscribe to
@@ -20,5 +20,12 @@ export class ValidationErrorCommunicationService {
    */
   notifyValidationError(fieldName: string): void {
     this.validationErrorSubject.next({ fieldName });
+  }
+
+  /**
+   * Cleanup resources when service is destroyed
+   */
+  ngOnDestroy(): void {
+    this.validationErrorSubject.complete();
   }
 }

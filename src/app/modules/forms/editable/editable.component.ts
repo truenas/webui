@@ -3,7 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChildren, ElementRef, input, OnDestroy, output, signal, viewChild, inject, afterNextRender, Injector } from '@angular/core';
 import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { combineLatest, fromEvent, Subject, Subscription } from 'rxjs';
+import { combineLatest, fromEvent, Subject, Subscription, timer } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, startWith, takeUntil } from 'rxjs/operators';
 import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
 import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
@@ -254,15 +254,17 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    // Instead of trying to match field names immediately, just trigger a check
-    // after a short delay to let validation errors propagate to form controls
-    setTimeout(() => {
+    // Use RxJS timer instead of setTimeout to handle validation error propagation
+    // This provides better testability and cancellation support
+    timer(50).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe(() => {
       const hasErrors = this.controls().some((control) => control?.errors && Object.keys(control.errors).length > 0);
 
       if (hasErrors && !this.isOpen()) {
         this.open();
       }
-    }, 100); // Give more time for validation errors to propagate
+    });
   }
 
 
