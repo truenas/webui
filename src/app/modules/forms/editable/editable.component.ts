@@ -6,12 +6,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { combineLatest, fromEvent, Subject, Subscription } from 'rxjs';
 import { filter, startWith, takeUntil } from 'rxjs/operators';
 import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
+import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-
-interface ValidationErrorEventDetail {
-  fieldName: string;
-}
 
 /**
  * Editable component that allows inline editing of a value.
@@ -49,6 +46,7 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private document = inject(DOCUMENT);
   private injector = inject(Injector);
+  private validationErrorService = inject(ValidationErrorCommunicationService);
   private destroy$ = new Subject<void>();
   private clickOutsideSubscription?: Subscription;
   private keydownSubscription?: Subscription;
@@ -243,15 +241,15 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   }
 
   private setupValidationErrorListener(): void {
-    fromEvent<CustomEvent<ValidationErrorEventDetail>>(this.document, 'editable-validation-error')
+    this.validationErrorService.validationErrors$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((event) => {
-        this.handleValidationErrorEvent(event);
+      .subscribe((errorEvent) => {
+        this.handleValidationErrorEvent(errorEvent);
       });
   }
 
-  private handleValidationErrorEvent(event: CustomEvent<ValidationErrorEventDetail>): void {
-    const { fieldName } = event.detail;
+  private handleValidationErrorEvent(errorEvent: { fieldName: string }): void {
+    const { fieldName } = errorEvent;
     if (!fieldName) {
       return;
     }

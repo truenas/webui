@@ -11,6 +11,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
+import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
@@ -38,8 +39,27 @@ const callError = new ApiCallError({
   },
 });
 
+const arrayFieldError = new ApiCallError({
+  code: JsonRpcErrorCode.CallError,
+  message: 'Validation error',
+  data: {
+    error: 11,
+    errname: ApiErrorName.Validation,
+    extra: [
+      [
+        'user_update.sudo_commands_nopassword.0',
+        'Command not allowed',
+        22,
+      ],
+    ],
+    trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+    reason: 'Test reason',
+  },
+});
+
 const formGroup = new FormGroup({
   test_control_1: new FormControl(''),
+  sudo_commands_nopassword: new FormControl([]),
 });
 
 describe('FormErrorHandlerService', () => {
@@ -48,7 +68,6 @@ describe('FormErrorHandlerService', () => {
     body: {
       contains: jest.fn(() => true) as HTMLElement['contains'],
     } as HTMLElement,
-    dispatchEvent: jest.fn(() => true) as Document['dispatchEvent'],
   } as Document;
 
   const elementMock = {
@@ -72,6 +91,9 @@ describe('FormErrorHandlerService', () => {
         getControlNames: jest.fn(() => Object.keys(formGroup.controls)),
         getElementByControlName: jest.fn(() => elementMock),
       }),
+      mockProvider(ValidationErrorCommunicationService, {
+        notifyValidationError: jest.fn(),
+      }),
       {
         provide: DOCUMENT,
         useValue: documentMock,
@@ -82,6 +104,9 @@ describe('FormErrorHandlerService', () => {
   beforeEach(() => {
     jest.spyOn(console, 'warn').mockImplementation();
     spectator = createService();
+
+    // Reset mocks to their default behavior
+    jest.spyOn(spectator.inject(IxFormService), 'getElementByControlName').mockReturnValue(elementMock);
   });
 
   describe('handleValidationErrors', () => {
@@ -132,23 +157,7 @@ describe('FormErrorHandlerService', () => {
       expect(formGroup.controls.test_control_1.markAsTouched).toHaveBeenCalled();
     });
 
-    it('shows generic error modal when element for the associated control is not found in IxFormService', () => {
-      jest.spyOn(spectator.inject(IxFormService), 'getElementByControlName').mockReturnValueOnce(undefined);
-
-      spectator.service.handleValidationErrors(callError, formGroup);
-
-      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(callError);
-    });
-
-    it('shows generic error modal if element is not found in DOM', () => {
-      jest.spyOn(documentMock.body, 'contains').mockReturnValueOnce(false);
-
-      spectator.service.handleValidationErrors(callError, formGroup);
-
-      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(callError);
-    });
-
-    it('shows error dialog with original error when control is not found', () => {
+    it('shows modal fallback when control is not found', () => {
       spectator.service.handleValidationErrors(callError, formGroup);
 
       expect(console.warn).not.toHaveBeenCalledWith('Could not find control test_control_1.');
@@ -165,16 +174,61 @@ describe('FormErrorHandlerService', () => {
       expect(elementMock.focus).toHaveBeenCalled();
     }));
 
-    it('dispatches editable-validation-error event for EditableComponents', () => {
+    it('notifies EditableComponents through secure service', () => {
       spectator.service.handleValidationErrors(callError, formGroup);
 
-      expect(documentMock.dispatchEvent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'editable-validation-error',
-          detail: { fieldName: 'test_control_1' },
-          bubbles: true,
-        }),
-      );
+      expect(spectator.inject(ValidationErrorCommunicationService).notifyValidationError)
+        .toHaveBeenCalledWith('test_control_1');
+    });
+
+
+    it('handles array field names properly', () => {
+      jest.spyOn(formGroup.controls.sudo_commands_nopassword, 'setErrors').mockImplementation();
+      jest.spyOn(formGroup.controls.sudo_commands_nopassword, 'markAsTouched').mockImplementation();
+
+      spectator.service.handleValidationErrors(arrayFieldError, formGroup);
+
+      expect(formGroup.controls.sudo_commands_nopassword.setErrors).toHaveBeenCalledWith({
+        ixManualValidateError: {
+          message: 'Command not allowed',
+        },
+        manualValidateError: true,
+        manualValidateErrorMsg: 'Command not allowed',
+      });
+    });
+  });
+
+  describe('field name extraction', () => {
+    it('extracts simple field names correctly', () => {
+      const service = spectator.service as unknown as {
+        extractFieldName: (path: string) => string;
+        getDisplayFieldName: (path: string, fallback: string) => string;
+      };
+
+      expect(service.extractFieldName('user_update.username')).toBe('username');
+      expect(service.getDisplayFieldName('user_update.username', 'username')).toBe('username');
+    });
+
+    it('extracts array field names correctly', () => {
+      const service = spectator.service as unknown as {
+        extractFieldName: (path: string) => string;
+        getDisplayFieldName: (path: string, fallback: string) => string;
+      };
+
+      expect(service.extractFieldName('user_update.sudo_commands_nopassword.0')).toBe('sudo_commands_nopassword');
+      expect(service.getDisplayFieldName('user_update.sudo_commands_nopassword.0', 'sudo_commands_nopassword'))
+        .toBe('sudo_commands_nopassword[0]');
+    });
+
+    it('handles complex nested field paths', () => {
+      const service = spectator.service as unknown as {
+        extractFieldName: (path: string) => string;
+        getDisplayFieldName: (path: string, fallback: string) => string;
+      };
+
+      expect(service.extractFieldName('dataset_update.inherit_encryption.1.key')).toBe('inherit_encryption');
+      expect(service.getDisplayFieldName('dataset_update.inherit_encryption.1.key', 'inherit_encryption'))
+        .toBe('inherit_encryption[1].key');
     });
   });
 });

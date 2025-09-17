@@ -8,6 +8,7 @@ import {
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
+import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
@@ -15,9 +16,10 @@ export class FormErrorHandlerService {
   private errorHandler = inject(ErrorHandlerService);
   private formService = inject(IxFormService);
   private document = inject<Document>(DOCUMENT);
+  private validationErrorService = inject(ValidationErrorCommunicationService);
 
   private isFocusedOnError = false;
-  private needToShowError = false;
+  private unhandledErrors: { field: string; message: string }[] = [];
 
   /**
    * @param error
@@ -31,7 +33,8 @@ export class FormErrorHandlerService {
     fieldsMap: Record<string, string> = {},
     triggerAnchor: string | undefined = undefined,
   ): void {
-    this.needToShowError = false;
+    // Clear any existing unhandled errors when handling new validation
+    this.unhandledErrors = [];
     const isValidationError = isApiCallError(error)
       && isApiErrorDetails(error.error.data)
       && error.error.data.errname === ApiErrorName.Validation
@@ -75,7 +78,8 @@ export class FormErrorHandlerService {
     this.isFocusedOnError = false;
     const extra = (error as ApiErrorDetails).extra as string[][];
     for (const extraItem of extra) {
-      const field = extraItem[0].split('.').pop();
+      const fullFieldPath = extraItem[0];
+      const field = this.extractFieldName(fullFieldPath);
       if (!field) {
         return;
       }
@@ -84,7 +88,9 @@ export class FormErrorHandlerService {
 
       const control = this.getFormField(formGroups, field, fieldsMap);
 
+
       const mappedFieldName = fieldsMap[field] ?? field; // Get the mapped field name
+      const displayFieldName = this.getDisplayFieldName(fullFieldPath, mappedFieldName);
 
       if (triggerAnchor && control) {
         const triggerAnchorRef = this.document.getElementById(triggerAnchor);
@@ -93,7 +99,8 @@ export class FormErrorHandlerService {
           setTimeout(() => {
             this.showValidationError({
               control,
-              field: mappedFieldName, // Use mapped field name
+              field: mappedFieldName, // Use mapped field name for control lookup
+              displayField: displayFieldName, // Use display name for error messages
               errorMessage,
             });
           });
@@ -103,27 +110,28 @@ export class FormErrorHandlerService {
 
       this.showValidationError({
         control,
-        field: mappedFieldName, // Use mapped field name
+        field: mappedFieldName, // Use mapped field name for control lookup
+        displayField: displayFieldName, // Use display name for error messages
         errorMessage,
       });
     }
 
-    if (this.needToShowError) {
-      // Fallback to default modal error message.
-      this.errorHandler.showErrorModal(originalError);
-    }
+    // Check if any errors couldn't be handled inline and need fallback
+    this.checkForFallbackErrors(originalError);
   }
 
   private showValidationError({
-    control, field, errorMessage,
+    control, field, displayField, errorMessage,
   }: {
     control: AbstractControl | null;
     field: string;
+    displayField?: string;
     errorMessage: string;
   }): void {
+    const fieldToDisplay = displayField || field;
     if (!control) {
       console.warn(`Could not find control ${field}.`);
-      this.needToShowError = true;
+      this.handleErrorFallback(fieldToDisplay, errorMessage);
       return;
     }
 
@@ -136,8 +144,7 @@ export class FormErrorHandlerService {
 
     if (!control) {
       console.warn(`Could not find control ${field}.`);
-      this.needToShowError = true;
-
+      this.handleErrorFallback(fieldToDisplay, errorMessage);
       return;
     }
 
@@ -148,7 +155,7 @@ export class FormErrorHandlerService {
     });
     control.markAsTouched();
 
-    // Notify EditableComponents that might contain this field
+    // Notify editable components that might contain this field
     this.notifyEditablesOfValidationError(field);
 
     // Try to get element from IxFormService first, then fallback to querySelector
@@ -160,7 +167,7 @@ export class FormErrorHandlerService {
 
     if (!element) {
       console.warn(`Could not find DOM element for field ${field}.`);
-      this.needToShowError = true;
+      this.handleErrorFallback(fieldToDisplay, errorMessage);
       return;
     }
 
@@ -175,12 +182,8 @@ export class FormErrorHandlerService {
 
 
   private notifyEditablesOfValidationError(fieldName: string): void {
-    // Notify EditableComponents to check for errors immediately
-    const errorEvent = new CustomEvent('editable-validation-error', {
-      detail: { fieldName },
-      bubbles: true,
-    });
-    this.document.dispatchEvent(errorEvent);
+    // Securely notify editable components through dedicated service
+    this.validationErrorService.notifyValidationError(fieldName);
   }
 
 
@@ -198,7 +201,69 @@ export class FormErrorHandlerService {
         return control;
       }
     }
-
     return null;
+  }
+
+  /**
+   * Extract the field name from full field path for form control lookup
+   * Examples:
+   * - 'user_update.username' -> 'username'
+   * - 'user_update.sudo_commands_nopassword.0' -> 'sudo_commands_nopassword'
+   */
+  private extractFieldName(fullFieldPath: string): string {
+    const parts = fullFieldPath.split('.');
+    // Remove the prefix (like 'user_update') and array indices
+    const fieldParts = parts.slice(1).find((part) => !(/^\d+$/.test(part)));
+    return fieldParts || parts[parts.length - 1];
+  }
+
+  /**
+   * Get a human-readable display name for the field
+   * Examples:
+   * - 'user_update.sudo_commands_nopassword.0' -> 'sudo_commands_nopassword[0]'
+   * - 'user_update.username' -> 'username'
+   */
+  private getDisplayFieldName(fullFieldPath: string, fallbackName: string): string {
+    const parts = fullFieldPath.split('.');
+
+    if (parts.length <= 2) {
+      // Simple field like 'user_update.username'
+      return fallbackName;
+    }
+
+    // Complex field like 'user_update.sudo_commands_nopassword.0'
+    const relevantParts = parts.slice(1); // Remove prefix like 'user_update'
+    let result = relevantParts[0]; // Start with the main field name
+
+    // Add array indices in bracket notation
+    for (let i = 1; i < relevantParts.length; i++) {
+      const part = relevantParts[i];
+      if (/^\d+$/.test(part)) {
+        result += `[${part}]`;
+      } else {
+        result += `.${part}`;
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Handle error fallback - either add to form-level errors or show modal
+   * based on whether a form-level error component is present
+   */
+  private handleErrorFallback(field: string, message: string): void {
+    // Always collect for modal fallback
+    this.unhandledErrors.push({ field, message });
+  }
+
+  /**
+   * Check if there are unhandled errors and show modal fallback if needed
+   */
+  private checkForFallbackErrors(originalError: unknown): void {
+    if (this.unhandledErrors.length > 0) {
+      // Show modal with all unhandled errors
+      this.errorHandler.showErrorModal(originalError);
+    }
   }
 }
