@@ -16,7 +16,7 @@ export class FormErrorHandlerService {
   private errorHandler = inject(ErrorHandlerService);
   private formService = inject(IxFormService);
   private document = inject<Document>(DOCUMENT);
-  private validationErrorService = inject(ValidationErrorCommunicationService);
+  private validationErrorService = inject(ValidationErrorCommunicationService, { optional: true });
 
   private isFocusedOnError = false;
   private unhandledErrors: { field: string; message: string }[] = [];
@@ -90,8 +90,7 @@ export class FormErrorHandlerService {
       const fullFieldPath = extraItem[0];
       const field = this.extractFieldName(fullFieldPath);
       if (!field) {
-        // Continue processing other errors instead of early return
-        continue;
+        return;
       }
 
       const errorMessage = extraItem[1];
@@ -195,8 +194,8 @@ export class FormErrorHandlerService {
 
   // cSpell:ignore Editables
   private notifyEditablesOfValidationError(fieldName: string): void {
-    // Securely notify editable components through dedicated service
-    this.validationErrorService.notifyValidationError(fieldName);
+    // Securely notify editable components through dedicated service (if available)
+    this.validationErrorService?.notifyValidationError(fieldName);
   }
 
 
@@ -219,8 +218,9 @@ export class FormErrorHandlerService {
 
   /**
    * Type guard to check if error has the expected extra field structure
+   * Validates that extra contains arrays of [fieldPath, errorMessage, ?errorCode]
    */
-  private isApiErrorDetailsWithExtra(error: unknown): error is ApiErrorDetails & { extra: string[][] } {
+  private isApiErrorDetailsWithExtra(error: unknown): error is ApiErrorDetails & { extra: [string, string][] } {
     if (!error || typeof error !== 'object') {
       return false;
     }
@@ -232,11 +232,15 @@ export class FormErrorHandlerService {
       return false;
     }
 
-    // Validate that extra is an array of arrays with proper structure
-    return errorObj.extra.every((item) => Array.isArray(item)
+    // Validate that extra is a non-empty array of properly structured arrays
+    return errorObj.extra.length > 0 && errorObj.extra.every((item) => (
+      Array.isArray(item)
       && item.length >= 2
       && typeof item[0] === 'string'
-      && typeof item[1] === 'string');
+      && typeof item[1] === 'string'
+      && item[0].trim().length > 0 // Field path must not be empty
+      && item[1].trim().length > 0 // Error message must not be empty
+    ));
   }
 
   /**
@@ -277,11 +281,9 @@ export class FormErrorHandlerService {
   }
 
   /**
-   * Handle error fallback - either add to form-level errors or show modal
-   * based on whether a form-level error component is present
+   * Handle error fallback - collect unhandled errors for modal display
    */
   private handleErrorFallback(field: string, message: string): void {
-    // Always collect for modal fallback
     this.unhandledErrors.push({ field, message });
   }
 
@@ -290,25 +292,12 @@ export class FormErrorHandlerService {
    */
   private checkForFallbackErrors(_: unknown): void {
     if (this.unhandledErrors.length > 0) {
-      // Log error handling summary for debugging
-      console.info('Form error handling summary:', {
-        handledInline: this.handledInlineErrors.length,
-        unhandled: this.unhandledErrors.length,
-        handledInlineErrors: this.handledInlineErrors,
-        unhandledErrors: this.unhandledErrors,
-      });
-
-      // Create a custom error object that only contains unhandled errors
       const unhandledErrorsString = this.unhandledErrors
         .map((error) => `${error.field}: ${error.message}`)
         .join('\n');
 
-      // Create a simplified error object for the modal
       const customError = new Error(`Validation errors:\n${unhandledErrorsString}`);
       this.errorHandler.showErrorModal(customError);
-    } else if (this.handledInlineErrors.length > 0) {
-      // All errors were handled inline successfully
-      console.info(`All ${this.handledInlineErrors.length} validation errors were handled inline successfully.`);
     }
   }
 }

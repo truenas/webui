@@ -242,10 +242,46 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
 
   private setupValidationErrorListener(): void {
     this.validationErrorService.validationErrors$
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        filter((errorEvent) => this.isFieldRelevantToThisEditable(errorEvent.fieldName)),
+        takeUntil(this.destroy$),
+      )
       .subscribe((errorEvent) => {
         this.handleValidationErrorEvent(errorEvent);
       });
+  }
+
+  private isFieldRelevantToThisEditable(fieldName: string): boolean {
+    if (!fieldName) {
+      return false;
+    }
+
+    // In test environments or when we can't determine control names,
+    // be more permissive to avoid blocking legitimate error notifications
+    const controls = this.controls();
+
+    if (controls.length === 0) {
+      return true; // No controls to check against, allow all notifications
+    }
+
+    // Check if any of our form controls match the field name
+    return controls.some((control) => {
+      if (!control) {
+        return false;
+      }
+
+      // Try to get control name from form group
+      const parent = control.parent;
+      if (parent && 'controls' in parent) {
+        const parentControls = parent.controls as Record<string, AbstractControl>;
+        const controlName = Object.keys(parentControls).find((key) => parentControls[key] === control);
+        return controlName === fieldName;
+      }
+
+      // Fallback: if we can't determine the control name structure,
+      // allow the notification (better to show unnecessary notifications than miss important ones)
+      return true;
+    });
   }
 
   private handleValidationErrorEvent(errorEvent: { fieldName: string }): void {
