@@ -20,7 +20,6 @@ export class FormErrorHandlerService {
 
   private isFocusedOnError = false;
   private unhandledErrors: { field: string; message: string }[] = [];
-  private handledInlineErrors: { field: string; message: string }[] = [];
 
   /**
    * @param error
@@ -36,7 +35,6 @@ export class FormErrorHandlerService {
   ): void {
     // Clear any existing errors when handling new validation
     this.unhandledErrors = [];
-    this.handledInlineErrors = [];
     const isValidationError = isApiCallError(error)
       && isApiErrorDetails(error.error.data)
       && error.error.data.errname === ApiErrorName.Validation
@@ -90,7 +88,7 @@ export class FormErrorHandlerService {
       const fullFieldPath = extraItem[0];
       const field = this.extractFieldName(fullFieldPath);
       if (!field) {
-        return;
+        continue;
       }
 
       const errorMessage = extraItem[1];
@@ -179,8 +177,6 @@ export class FormErrorHandlerService {
       return;
     }
 
-    // Track that this error was successfully handled inline
-    this.handledInlineErrors.push({ field: fieldToDisplay, message: errorMessage });
 
     if (!this.isFocusedOnError) {
       setTimeout(() => {

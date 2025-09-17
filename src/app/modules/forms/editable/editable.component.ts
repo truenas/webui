@@ -256,32 +256,47 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
       return false;
     }
 
-    // In test environments or when we can't determine control names,
-    // be more permissive to avoid blocking legitimate error notifications
     const controls = this.controls();
 
+    // If no controls, this editable doesn't handle any fields
     if (controls.length === 0) {
-      return true; // No controls to check against, allow all notifications
+      return false;
     }
 
     // Check if any of our form controls match the field name
-    return controls.some((control) => {
+    let hasMatchingControl = false;
+    let hasStructuredParent = false;
+
+    for (const control of controls) {
       if (!control) {
-        return false;
+        continue;
       }
 
       // Try to get control name from form group
       const parent = control.parent;
       if (parent && 'controls' in parent) {
+        hasStructuredParent = true;
         const parentControls = parent.controls as Record<string, AbstractControl>;
         const controlName = Object.keys(parentControls).find((key) => parentControls[key] === control);
-        return controlName === fieldName;
+        if (controlName === fieldName) {
+          hasMatchingControl = true;
+          break;
+        }
       }
+    }
 
-      // Fallback: if we can't determine the control name structure,
-      // allow the notification (better to show unnecessary notifications than miss important ones)
+    // If we found a matching control name, use it
+    if (hasMatchingControl) {
       return true;
-    });
+    }
+
+    // If no controls have structured parents (like in tests),
+    // be permissive but only for this editable's controls
+    if (!hasStructuredParent && controls.length > 0) {
+      return true;
+    }
+
+    return false;
   }
 
   private handleValidationErrorEvent(errorEvent: { fieldName: string }): void {
