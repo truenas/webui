@@ -197,38 +197,4 @@ describe('FormErrorHandlerService', () => {
       });
     });
   });
-
-  describe('field name extraction', () => {
-    it('extracts simple field names correctly', () => {
-      const service = spectator.service as unknown as {
-        extractFieldName: (path: string) => string;
-        getDisplayFieldName: (path: string, fallback: string) => string;
-      };
-
-      expect(service.extractFieldName('user_update.username')).toBe('username');
-      expect(service.getDisplayFieldName('user_update.username', 'username')).toBe('username');
-    });
-
-    it('extracts array field names correctly', () => {
-      const service = spectator.service as unknown as {
-        extractFieldName: (path: string) => string;
-        getDisplayFieldName: (path: string, fallback: string) => string;
-      };
-
-      expect(service.extractFieldName('user_update.sudo_commands_nopassword.0')).toBe('sudo_commands_nopassword');
-      expect(service.getDisplayFieldName('user_update.sudo_commands_nopassword.0', 'sudo_commands_nopassword'))
-        .toBe('sudo_commands_nopassword[0]');
-    });
-
-    it('handles complex nested field paths', () => {
-      const service = spectator.service as unknown as {
-        extractFieldName: (path: string) => string;
-        getDisplayFieldName: (path: string, fallback: string) => string;
-      };
-
-      expect(service.extractFieldName('dataset_update.inherit_encryption.1.key')).toBe('inherit_encryption');
-      expect(service.getDisplayFieldName('dataset_update.inherit_encryption.1.key', 'inherit_encryption'))
-        .toBe('inherit_encryption[1].key');
-    });
-  });
 });

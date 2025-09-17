@@ -90,7 +90,6 @@ export class FormErrorHandlerService {
 
 
       const mappedFieldName = fieldsMap[field] ?? field; // Get the mapped field name
-      const displayFieldName = this.getDisplayFieldName(fullFieldPath, mappedFieldName);
 
       if (triggerAnchor && control) {
         const triggerAnchorRef = this.document.getElementById(triggerAnchor);
@@ -100,7 +99,6 @@ export class FormErrorHandlerService {
             this.showValidationError({
               control,
               field: mappedFieldName, // Use mapped field name for control lookup
-              displayField: displayFieldName, // Use display name for error messages
               errorMessage,
             });
           });
@@ -111,7 +109,6 @@ export class FormErrorHandlerService {
       this.showValidationError({
         control,
         field: mappedFieldName, // Use mapped field name for control lookup
-        displayField: displayFieldName, // Use display name for error messages
         errorMessage,
       });
     }
@@ -215,37 +212,6 @@ export class FormErrorHandlerService {
     // Remove the prefix (like 'user_update') and array indices
     const fieldParts = parts.slice(1).find((part) => !(/^\d+$/.test(part)));
     return fieldParts || parts[parts.length - 1];
-  }
-
-  /**
-   * Get a human-readable display name for the field
-   * Examples:
-   * - 'user_update.sudo_commands_nopassword.0' -> 'sudo_commands_nopassword[0]'
-   * - 'user_update.username' -> 'username'
-   */
-  private getDisplayFieldName(fullFieldPath: string, fallbackName: string): string {
-    const parts = fullFieldPath.split('.');
-
-    if (parts.length <= 2) {
-      // Simple field like 'user_update.username'
-      return fallbackName;
-    }
-
-    // Complex field like 'user_update.sudo_commands_nopassword.0'
-    const relevantParts = parts.slice(1); // Remove prefix like 'user_update'
-    let result = relevantParts[0]; // Start with the main field name
-
-    // Add array indices in bracket notation
-    for (let i = 1; i < relevantParts.length; i++) {
-      const part = relevantParts[i];
-      if (/^\d+$/.test(part)) {
-        result += `[${part}]`;
-      } else {
-        result += `.${part}`;
-      }
-    }
-
-    return result;
   }
 
   /**

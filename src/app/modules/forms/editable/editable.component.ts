@@ -254,26 +254,17 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    // Check if this editable contains the field with the error
-    if (this.containsField(fieldName)) {
-      this.openIfHasErrors();
-    }
+    // Instead of trying to match field names immediately, just trigger a check
+    // after a short delay to let validation errors propagate to form controls
+    setTimeout(() => {
+      const hasErrors = this.controls().some((control) => control?.errors && Object.keys(control.errors).length > 0);
+
+      if (hasErrors && !this.isOpen()) {
+        this.open();
+      }
+    }, 100); // Give more time for validation errors to propagate
   }
 
-  private openIfHasErrors(): void {
-    // Check if any of the controls in this editable have validation errors
-    const hasErrors = this.controls().some((control) => control?.errors && Object.keys(control.errors).length > 0);
-
-    if (hasErrors && !this.isOpen()) {
-      this.open();
-    }
-  }
-
-  private containsField(fieldName: string): boolean {
-    const editableElement = this.elementRef.nativeElement;
-    const fieldElement = editableElement.querySelector(`[formControlName="${fieldName}"]`);
-    return fieldElement !== null;
-  }
 
   private setupReactiveErrorWatcher(): void {
     afterNextRender(() => {
@@ -298,15 +289,27 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
           const hasErrors = this.controls().some(
             (control) => control?.errors && Object.keys(control.errors).length > 0,
           );
-          // Only auto-open if errors are present and the form has been interacted with
-          if (hasErrors && this.hasBeenTouched()) {
+          // Only auto-open if errors are present and this isn't initial form setup
+          if (hasErrors && this.shouldAutoOpenForErrors()) {
             this.open();
           }
         });
     }, { injector: this.injector });
   }
 
-  private hasBeenTouched(): boolean {
-    return this.controls().some((control) => control?.touched);
+  private shouldAutoOpenForErrors(): boolean {
+    // Auto-open if any control has been touched (user interaction)
+    if (this.controls().some((control) => control?.touched)) {
+      return true;
+    }
+
+    // For untouched controls, only auto-open if they have both errors AND dirty state
+    // Dirty indicates the value was programmatically set (like saved invalid data)
+    // but not touched by user, which distinguishes it from initial empty state
+    return this.controls().some((control) => {
+      return control?.dirty
+        && control?.errors
+        && Object.keys(control.errors).length > 0;
+    });
   }
 }
