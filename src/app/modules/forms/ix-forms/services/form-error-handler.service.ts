@@ -110,7 +110,7 @@ export class FormErrorHandlerService {
               errorMessage,
             });
           });
-          continue;
+          return;
         }
       }
 
