@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 
 describe('EditableComponent', () => {
@@ -34,6 +35,9 @@ describe('EditableComponent', () => {
 
   beforeEach(async () => {
     nameControl.setValue('Robert');
+    nameControl.setErrors(null);
+    nameControl.markAsPristine();
+    nameControl.markAsUntouched();
     spectator = createHost(
       `
         <ix-editable
@@ -294,6 +298,162 @@ describe('EditableComponent', () => {
       spectator.component.ngOnDestroy();
 
       expect(unsubscribeSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('validation error handling', () => {
+    it('auto-opens editable when validation error notification is received and control has errors', fakeAsync(async () => {
+      const validationService = spectator.inject(ValidationErrorCommunicationService);
+
+      // Set an error on the form control
+      nameControl.setErrors({ required: true });
+      nameControl.markAsTouched();
+
+      // Ensure editable is closed
+      expect(await editable.isOpen()).toBe(false);
+
+      // Trigger validation error notification
+      validationService.notifyValidationError('name');
+
+      // Wait for the setTimeout delay (100ms)
+      tick(100);
+
+      // Should auto-open since control has errors
+      expect(await editable.isOpen()).toBe(true);
+    }));
+
+    it('does not open editable when validation error notification is received but control has no errors', fakeAsync(async () => {
+      const validationService = spectator.inject(ValidationErrorCommunicationService);
+
+      // Ensure control has no errors
+      nameControl.setErrors(null);
+
+      // Ensure editable is closed
+      expect(await editable.isOpen()).toBe(false);
+
+      // Trigger validation error notification
+      validationService.notifyValidationError('name');
+
+      // Wait for the setTimeout delay (100ms)
+      tick(100);
+
+      // Should not open since control has no errors
+      expect(await editable.isOpen()).toBe(false);
+    }));
+
+    it('does not open editable when validation error notification is received and editable is already open', fakeAsync(async () => {
+      const validationService = spectator.inject(ValidationErrorCommunicationService);
+
+      // Set an error on the form control
+      nameControl.setErrors({ required: true });
+      nameControl.markAsTouched();
+
+      // Open the editable first
+      await editable.open();
+      expect(await editable.isOpen()).toBe(true);
+
+      // Spy on the open method to ensure it's not called again
+      const openSpy = jest.spyOn(spectator.component, 'open');
+
+      // Trigger validation error notification
+      validationService.notifyValidationError('name');
+
+      // Wait for the setTimeout delay (100ms)
+      tick(100);
+
+      // Should not call open again since already open
+      expect(openSpy).not.toHaveBeenCalled();
+      expect(await editable.isOpen()).toBe(true);
+    }));
+
+    it('handles validation error notification gracefully when no controls have errors', fakeAsync(async () => {
+      const validationService = spectator.inject(ValidationErrorCommunicationService);
+
+      // Ensure control has no errors
+      nameControl.setErrors(null);
+
+      // Ensure editable is closed
+      expect(await editable.isOpen()).toBe(false);
+
+      // Trigger validation error notification
+      validationService.notifyValidationError('someField');
+
+      // Wait for the setTimeout delay (100ms)
+      tick(100);
+
+      // Should not open since no controls have errors
+      expect(await editable.isOpen()).toBe(false);
+    }));
+
+    it('handles empty field name in validation error notification', fakeAsync(async () => {
+      const validationService = spectator.inject(ValidationErrorCommunicationService);
+
+      // Ensure editable is closed
+      expect(await editable.isOpen()).toBe(false);
+
+      // Trigger validation error notification with empty field name
+      validationService.notifyValidationError('');
+
+      // No tick needed since empty field name returns early
+
+      // Should not open since field name is empty
+      expect(await editable.isOpen()).toBe(false);
+    }));
+  });
+
+
+  describe('error state checking', () => {
+    // Helper interface to access private method for testing
+    interface TestableEditableComponent {
+      shouldAutoOpenForErrors(): boolean;
+    }
+
+    it('correctly identifies when shouldAutoOpenForErrors returns true for touched controls', () => {
+      nameControl.setErrors({ required: true });
+      nameControl.markAsTouched();
+
+      // Access private method for testing
+      const shouldAutoOpen = (spectator.component as unknown as TestableEditableComponent).shouldAutoOpenForErrors();
+      expect(shouldAutoOpen).toBe(true);
+    });
+
+    it('correctly identifies when shouldAutoOpenForErrors returns true for dirty controls', () => {
+      nameControl.setErrors({ required: true });
+      nameControl.markAsDirty();
+      nameControl.markAsUntouched();
+
+      // Access private method for testing
+      const shouldAutoOpen = (spectator.component as unknown as TestableEditableComponent).shouldAutoOpenForErrors();
+      expect(shouldAutoOpen).toBe(true);
+    });
+
+    it('correctly identifies when shouldAutoOpenForErrors returns false for pristine/untouched controls', () => {
+      nameControl.setErrors({ required: true });
+      nameControl.markAsPristine();
+      nameControl.markAsUntouched();
+
+      // Access private method for testing
+      const shouldAutoOpen = (spectator.component as unknown as TestableEditableComponent).shouldAutoOpenForErrors();
+      expect(shouldAutoOpen).toBe(false);
+    });
+
+    it('correctly identifies when shouldAutoOpenForErrors returns false when no errors and pristine/untouched', () => {
+      nameControl.setErrors(null);
+      nameControl.markAsUntouched(); // No user interaction
+      nameControl.markAsPristine(); // No programmatic changes
+
+      // Access private method for testing
+      const shouldAutoOpen = (spectator.component as unknown as TestableEditableComponent).shouldAutoOpenForErrors();
+      expect(shouldAutoOpen).toBe(false);
+    });
+
+    it('correctly identifies when shouldAutoOpenForErrors returns true for touched controls even without errors', () => {
+      nameControl.setErrors(null);
+      nameControl.markAsTouched(); // User interacted, should auto-open regardless of errors
+
+      // Access private method for testing
+      const shouldAutoOpen = (spectator.component as unknown as TestableEditableComponent).shouldAutoOpenForErrors();
+      expect(shouldAutoOpen).toBe(true);
     });
   });
 });
