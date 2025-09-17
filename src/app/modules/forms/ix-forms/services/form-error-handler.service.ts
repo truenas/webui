@@ -88,6 +88,7 @@ export class FormErrorHandlerService {
       const fullFieldPath = extraItem[0];
       const field = this.extractFieldName(fullFieldPath);
       if (!field) {
+        console.warn(`Failed to extract field name from path: ${fullFieldPath}`);
         continue;
       }
 
@@ -109,7 +110,7 @@ export class FormErrorHandlerService {
               errorMessage,
             });
           });
-          return;
+          continue;
         }
       }
 
