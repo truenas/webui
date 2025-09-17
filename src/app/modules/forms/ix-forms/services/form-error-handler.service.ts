@@ -89,7 +89,7 @@ export class FormErrorHandlerService {
       const field = this.extractFieldName(fullFieldPath);
       if (!field) {
         console.warn(`Failed to extract field name from path: ${fullFieldPath}`);
-        continue;
+        return;
       }
 
       const errorMessage = extraItem[1];
