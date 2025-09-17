@@ -158,6 +158,7 @@ export class UserFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupForm();
+    this.setupAccessWatchers();
   }
 
   private setupForm(): void {
@@ -237,6 +238,66 @@ export class UserFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((username) => {
       this.form.patchValue({ username });
+    });
+  }
+
+  /**
+   * Setup watchers for all access types to reload form validation when access changes
+   */
+  private setupAccessWatchers(): void {
+    // Watch for changes in all access configurations
+    this.userFormStore.state$.pipe(
+      map((state) => state?.setupDetails?.allowedAccess),
+      distinctUntilChanged((prev, curr) => prev?.shellAccess === curr?.shellAccess
+        && prev?.sshAccess === curr?.sshAccess
+        && prev?.smbAccess === curr?.smbAccess
+        && prev?.truenasAccess === curr?.truenasAccess),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      // Force form validation recalculation for all forms
+      this.reloadFormValidationState();
+    });
+  }
+
+  /**
+   * Reload validation state for all forms to ensure proper validation after access changes
+   */
+  private reloadFormValidationState(): void {
+    // Get current access state to determine which fields should be cleared
+    const allowedAccess = this.userFormStore.state()?.setupDetails?.allowedAccess;
+    if (!allowedAccess) return;
+
+    // Collect field names that should have their validation errors cleared based on hidden sections
+    const fieldsToClear: string[] = [];
+
+    // Shell Access controls: shell field and all sudo command fields
+    if (!allowedAccess.shellAccess) {
+      fieldsToClear.push(
+        'shell',
+        'sudo_commands',
+        'sudo_commands_all',
+        'sudo_commands_nopasswd',
+        'sudo_commands_nopasswd_all',
+      );
+    }
+
+    // SSH Access controls: ssh-related fields
+    if (!allowedAccess.sshAccess) {
+      fieldsToClear.push(
+        'sshpubkey',
+        'ssh_password_enabled',
+      );
+    }
+
+    // SMB Access controls: password disable field (shown when SMB is disabled)
+    // Note: password_disabled is shown when smbAccess is FALSE
+
+    // Clear validation errors for fields that are no longer relevant
+    this.formErrorHandler.clearValidationErrorsForHiddenFields(this.allForms, fieldsToClear);
+
+    // Update validation for all forms to recalculate based on current access settings
+    this.allForms.forEach((form) => {
+      form.updateValueAndValidity();
     });
   }
 

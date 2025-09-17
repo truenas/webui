@@ -188,7 +188,6 @@ export class FormErrorHandlerService {
   }
 
 
-  // cSpell:ignore Editables
   private notifyEditablesOfValidationError(fieldName: string): void {
     // Securely notify editable components through dedicated service (if available)
     this.validationErrorService?.notifyValidationError(fieldName);
@@ -243,7 +242,7 @@ export class FormErrorHandlerService {
    * Extract the field name from full field path for form control lookup
    * Examples:
    * - 'user_update.username' -> 'username'
-   * - 'user_update.sudo_commands_nopassword.0' -> 'sudo_commands_nopassword' // cSpell:ignore nopassword
+   * - 'user_update.sudo_commands_nopassword.0' -> 'sudo_commands_nopassword'
    * - 'user.address.street.0' -> 'street'
    * - 'config.nested.deep.field' -> 'field'
    */
@@ -281,6 +280,60 @@ export class FormErrorHandlerService {
    */
   private handleErrorFallback(field: string, message: string): void {
     this.unhandledErrors.push({ field, message });
+  }
+
+  /**
+   * Clear validation errors for fields that are no longer visible or relevant
+   * This should be called when form conditions change (e.g., fields become hidden)
+   */
+  clearValidationErrorsForHiddenFields(
+    formGroups: UntypedFormGroup | UntypedFormGroup[],
+    hiddenFieldNames: string[],
+  ): void {
+    if (!hiddenFieldNames || hiddenFieldNames.length === 0) {
+      return;
+    }
+
+    const groups = Array.isArray(formGroups) ? formGroups : [formGroups];
+
+    hiddenFieldNames.forEach((fieldName) => {
+      groups.forEach((group) => {
+        const control = this.findControlByPath(group, fieldName);
+        if (control) {
+          // Clear validation errors
+          control.setErrors(null);
+
+          // Remove from unhandled errors list if present
+          this.unhandledErrors = this.unhandledErrors.filter(
+            (error) => error.field !== fieldName,
+          );
+        }
+      });
+    });
+  }
+
+
+  /**
+   * Find control by field path (supports nested paths like 'user.settings.shell')
+   */
+  private findControlByPath(formGroup: UntypedFormGroup, fieldPath: string): AbstractControl | null {
+    if (!fieldPath) {
+      return null;
+    }
+
+    const parts = fieldPath.split('.');
+    let currentControl: AbstractControl = formGroup;
+
+    for (const part of parts) {
+      if (currentControl && 'controls' in currentControl) {
+        const controls = (currentControl as UntypedFormGroup).controls;
+        currentControl = controls[part];
+      } else {
+        return null;
+      }
+    }
+
+    return currentControl || null;
   }
 
   /**
