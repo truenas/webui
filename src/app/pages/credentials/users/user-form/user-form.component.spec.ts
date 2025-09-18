@@ -5,13 +5,14 @@ import {
 } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { User } from '@sentry/angular';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
+import { User } from 'app/interfaces/user.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
@@ -27,10 +28,13 @@ describe('UserFormComponent', () => {
     id: 69,
     uid: 1004,
     username: 'test',
+    unixhash: '',
+    smbhash: '',
     home: '/home/test',
     shell: '/usr/bin/bash',
     full_name: 'test',
     builtin: false,
+    immutable: true,
     smb: true,
     ssh_password_enabled: true,
     password_disabled: false,
@@ -43,7 +47,11 @@ describe('UserFormComponent', () => {
       id: 101,
     },
     groups: [101],
-    immutable: true,
+    twofactor_auth_configured: false,
+    local: true,
+    id_type_both: false,
+    roles: [],
+    api_keys: [],
   } as User;
 
   let spectator: Spectator<UserFormComponent>;
@@ -174,6 +182,30 @@ describe('UserFormComponent', () => {
     it('checks username field is disabled when user immutable', async () => {
       const usernameField = await loader.getHarness(IxInputHarness.with({ label: 'Username' }));
       expect(await usernameField.isDisabled()).toBeTruthy();
+    });
+  });
+
+  describe('validation clearing integration', () => {
+    it('verifies FormErrorHandlerService has clearValidationErrorsForHiddenFields method', () => {
+      // This test ensures the FormErrorHandlerService method exists and can be called
+      // This validates our integration point without testing private implementation
+
+      spectator = createComponent();
+
+      // Verify the service was injected and has the expected method
+      const formErrorHandler = spectator.inject(FormErrorHandlerService);
+      expect(formErrorHandler).toBeDefined();
+      expect(formErrorHandler.clearValidationErrorsForHiddenFields).toBeDefined();
+      expect(typeof formErrorHandler.clearValidationErrorsForHiddenFields).toBe('function');
+    });
+
+    it('validates that component initializes correctly', () => {
+      // Test that the component initializes without errors
+      spectator = createComponent();
+
+      // Verify component initialization succeeded
+      expect(spectator.component).toBeDefined();
+      expect(spectator.component).toBeInstanceOf(UserFormComponent);
     });
   });
 
