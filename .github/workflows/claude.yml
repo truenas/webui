@@ -1,7 +1,7 @@
 name: Claude Review
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, ready_for_review]
     branches:
       - master
     paths-ignore:
@@ -9,27 +9,32 @@ on:
 jobs:
   review:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     if: |
-      !github.event.pull_request.draft &&
       !contains(github.event.pull_request.labels.*.name, 'skip-claude')
     permissions:
       contents: read
-      pull-requests: read
+      issues: write
+      pull-requests: write
       id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 10
 
       - name: Automatic PR Review
-        uses: anthropics/claude-code-action@v0.0.55
+        uses: anthropics/claude-code-action@v1.0.7
         with:
           anthropic_api_key: ${{ secrets.CLAUDE_API_KEY }}
+          track_progress: true
           use_sticky_comment: true
-          timeout_minutes: "20"
-          direct_prompt: |
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
             Please review this pull request and provide comprehensive feedback.
+            It should be already checked out in the current directory.
 
             Focus on:
             - Code quality and best practices
