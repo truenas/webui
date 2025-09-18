@@ -3,9 +3,10 @@ import { DOCUMENT } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChildren, ElementRef, input, OnDestroy, output, signal, viewChild, inject, afterNextRender, Injector } from '@angular/core';
 import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { fromEvent, Subject, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { combineLatest, fromEvent, Subject, Subscription, timer } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, startWith, takeUntil } from 'rxjs/operators';
 import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
+import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -45,6 +46,7 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private document = inject(DOCUMENT);
   private injector = inject(Injector);
+  private validationErrorService = inject(ValidationErrorCommunicationService);
   private destroy$ = new Subject<void>();
   private clickOutsideSubscription?: Subscription;
   private keydownSubscription?: Subscription;
@@ -90,7 +92,10 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.checkVisibleValue();
+    this.setupValidationErrorListener();
+    this.setupReactiveErrorWatcher();
   }
+
 
   ngOnDestroy(): void {
     this.removeClickOutsideListener();
@@ -233,5 +238,131 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   private removeKeydownListener(): void {
     this.keydownSubscription?.unsubscribe();
     this.keydownSubscription = undefined;
+  }
+
+  private setupValidationErrorListener(): void {
+    this.validationErrorService.validationErrors$
+      .pipe(
+        filter((errorEvent) => this.isFieldRelevantToThisEditable(errorEvent.fieldName)),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((errorEvent) => {
+        this.handleValidationErrorEvent(errorEvent);
+      });
+  }
+
+  private isFieldRelevantToThisEditable(fieldName: string): boolean {
+    if (!fieldName) {
+      return false;
+    }
+
+    const controls = this.controls();
+
+    // If no controls, this editable doesn't handle any fields
+    if (controls.length === 0) {
+      return false;
+    }
+
+    // Check if any of our form controls match the field name
+    let hasMatchingControl = false;
+    let hasStructuredParent = false;
+
+    for (const control of controls) {
+      if (!control) {
+        continue;
+      }
+
+      // Try to get control name from form group
+      const parent = control.parent;
+      if (parent && 'controls' in parent) {
+        hasStructuredParent = true;
+        const parentControls = parent.controls as Record<string, AbstractControl>;
+        const controlName = Object.keys(parentControls).find((key) => parentControls[key] === control);
+        if (controlName === fieldName) {
+          hasMatchingControl = true;
+          break;
+        }
+      }
+    }
+
+    // If we found a matching control name, use it
+    if (hasMatchingControl) {
+      return true;
+    }
+
+    // If no controls have structured parents (like in tests),
+    // be permissive but only for this editable's controls
+    if (!hasStructuredParent && controls.length > 0) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private handleValidationErrorEvent(errorEvent: { fieldName: string }): void {
+    const { fieldName } = errorEvent;
+    if (!fieldName) {
+      return;
+    }
+
+    // Use RxJS timer instead of setTimeout to handle validation error propagation
+    // This provides better testability and cancellation support
+    timer(50).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe(() => {
+      const hasErrors = this.controls().some((control) => control?.errors && Object.keys(control.errors).length > 0);
+
+      if (hasErrors && !this.isOpen()) {
+        this.open();
+      }
+    });
+  }
+
+
+  private setupReactiveErrorWatcher(): void {
+    afterNextRender(() => {
+      const controls = this.controls();
+      if (controls.length === 0) {
+        return;
+      }
+
+      // Watch for status changes on all controls
+      const statusChanges$ = combineLatest(
+        controls.map((control) => control.statusChanges.pipe(startWith(control.status))),
+      );
+
+      statusChanges$
+        .pipe(
+          distinctUntilChanged(),
+          debounceTime(0),
+          filter(() => !this.isOpen()),
+          takeUntil(this.destroy$),
+        )
+        .subscribe(() => {
+          const hasErrors = this.controls().some(
+            (control) => control?.errors && Object.keys(control.errors).length > 0,
+          );
+          // Only auto-open if errors are present and this isn't initial form setup
+          if (hasErrors && this.shouldAutoOpenForErrors()) {
+            this.open();
+          }
+        });
+    }, { injector: this.injector });
+  }
+
+  private shouldAutoOpenForErrors(): boolean {
+    // Auto-open if any control has been touched (user interaction)
+    if (this.controls().some((control) => control?.touched)) {
+      return true;
+    }
+
+    // For untouched controls, only auto-open if they have both errors AND dirty state
+    // Dirty indicates the value was programmatically set (like saved invalid data)
+    // but not touched by user, which distinguishes it from initial empty state
+    return this.controls().some((control) => {
+      return control?.dirty
+        && control?.errors
+        && Object.keys(control.errors).length > 0;
+    });
   }
 }
