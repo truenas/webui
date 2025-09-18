@@ -35,7 +35,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   ],
 })
 export class EnclosureDashboardComponent {
-  private enclosureStore = inject(EnclosureStore);
+  protected enclosureStore = inject(EnclosureStore);
   private route = inject(ActivatedRoute);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
@@ -44,6 +44,11 @@ export class EnclosureDashboardComponent {
 
   readonly selectedEnclosure = this.enclosureStore.selectedEnclosure;
 
+  loadingConf = {
+    type: EmptyType.Loading,
+    large: true,
+  } as EmptyConfig;
+
   emptyDashboardConf: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
@@ -51,8 +56,10 @@ export class EnclosureDashboardComponent {
     message: this.translate.instant('We’re unable to access the enclosure at the moment. Please ensure it’s connected properly and reload the page.'),
   };
 
+  protected readonly isLoading = this.enclosureStore.isLoading;
+
   constructor() {
-    this.enclosureStore.initiate();
+    this.enclosureStore.initiate(null);
     this.enclosureStore.listenForDiskUpdates().pipe(untilDestroyed(this)).subscribe();
 
     this.route.paramMap
