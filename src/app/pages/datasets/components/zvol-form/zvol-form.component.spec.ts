@@ -193,7 +193,6 @@ describe('ZvolFormComponent', () => {
         volblocksize: '16K',
         readonly: OnOff.On,
         snapdev: DatasetSnapdev.Visible,
-        inherit_encryption: false,
         encryption: true,
         encryption_options: {
           algorithm: 'AES-128-CCM',
@@ -283,9 +282,10 @@ describe('ZvolFormComponent', () => {
       expect(createCall[1][0]).toMatchObject({
         name: 'parentId/encrypted-zvol',
         type: DatasetType.Volume,
-        encryption: true, // Should include encryption: true when inheriting from encrypted parent
-        inherit_encryption: true,
+        // Should NOT include encryption field when inherit_encryption is true
       });
+      expect(createCall[1][0].inherit_encryption).toBeUndefined(); // inherit_encryption should be deleted from payload
+      expect(createCall[1][0].encryption).toBeUndefined(); // encryption should not be sent when inheriting
     });
   });
 
