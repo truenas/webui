@@ -8,7 +8,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { forkJoin, Observable, of } from 'rxjs';
+import { combineLatest, forkJoin, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
@@ -202,6 +202,9 @@ export class IpmiFormComponent implements OnInit {
       this.form.controls.vlan_id.removeValidators([Validators.required]);
     }
     this.form.controls.vlan_id.updateValueAndValidity();
+
+    // Update manage button state after form values are set
+    this.updateManageButtonState();
   }
 
   private loadDataOnRemoteControllerChange(): void {
@@ -296,12 +299,23 @@ export class IpmiFormComponent implements OnInit {
         this.form.controls.vlan_id.updateValueAndValidity();
       });
 
-    this.form.controls.ipaddress.valueChanges
+    // Listen to both DHCP and IP address changes to update manage button state
+    combineLatest([
+      this.form.controls.dhcp.valueChanges,
+      this.form.controls.ipaddress.valueChanges,
+    ])
       .pipe(untilDestroyed(this))
-      .subscribe((value) => {
-        this.isManageButtonDisabled = (value === '0.0.0.0' || value === '' || this.form.controls.dhcp.value || this.form.controls.ipaddress.invalid);
-        this.managementIp = value;
+      .subscribe(() => {
+        this.updateManageButtonState();
       });
+  }
+
+  private updateManageButtonState(): void {
+    const ipAddress = this.form.controls.ipaddress.value;
+    const isIpInvalid = this.form.controls.ipaddress.invalid;
+
+    this.managementIp = ipAddress;
+    this.isManageButtonDisabled = !ipAddress || ipAddress === '0.0.0.0' || isIpInvalid;
   }
 
   private loadFlashingStatus(): Observable<unknown> {
