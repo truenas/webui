@@ -555,13 +555,8 @@ export class ZvolFormComponent implements OnInit {
 
     // encryption values
     if (data.inherit_encryption) {
-      // When inheriting encryption from an encrypted parent, we must still specify encryption: true
-      // to avoid backend error: "Cannot create an unencrypted dataset within an encrypted dataset"
-      if (this.encryptedParent) {
-        data.encryption = true;
-      } else {
-        delete data.encryption;
-      }
+      // When inherit_encryption is true, don't send encryption field at all
+      delete data.encryption;
     } else if (data.encryption) {
       data.encryption_options = {};
       if (data.encryption_type === 'key') {
@@ -575,6 +570,7 @@ export class ZvolFormComponent implements OnInit {
       }
       data.encryption_options.algorithm = data.algorithm;
     }
+    delete data.inherit_encryption;
     delete data.key;
     delete data.generate_key;
     delete data.passphrase;
