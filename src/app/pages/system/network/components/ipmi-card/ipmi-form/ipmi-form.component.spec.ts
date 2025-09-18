@@ -316,4 +316,168 @@ describe('IpmiFormComponent', () => {
       expect(spectator.component.form.controls.vlan_id.value).toBeNull();
     });
   });
+
+  describe('Manage button functionality', () => {
+    beforeEach(async () => {
+      await setupTest(ProductType.Enterprise);
+    });
+
+    it('should be enabled by default with valid static IP', async () => {
+      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+
+      expect(await manageButton.isDisabled()).toBe(false);
+      expect(spectator.component.managementIp).toBe('10.220.15.114');
+      expect(spectator.component.isManageButtonDisabled).toBe(false);
+    });
+
+    it('should be disabled when IP address is empty', async () => {
+      const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
+      await ipaddressInput.setValue('');
+
+      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+
+      expect(await manageButton.isDisabled()).toBe(true);
+      expect(spectator.component.isManageButtonDisabled).toBe(true);
+    });
+
+    it('should be disabled when IP address is 0.0.0.0', async () => {
+      const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
+      await ipaddressInput.setValue('0.0.0.0');
+
+      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+
+      expect(await manageButton.isDisabled()).toBe(true);
+      expect(spectator.component.isManageButtonDisabled).toBe(true);
+    });
+
+    it('should be disabled when IP address is invalid', async () => {
+      const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
+      await ipaddressInput.setValue('invalid.ip.address');
+
+      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+
+      expect(await manageButton.isDisabled()).toBe(true);
+      expect(spectator.component.isManageButtonDisabled).toBe(true);
+    });
+
+    it('should be enabled with valid IP address in static mode', async () => {
+      const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
+      await ipaddressInput.setValue('192.168.1.100');
+
+      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+
+      expect(await manageButton.isDisabled()).toBe(false);
+      expect(spectator.component.managementIp).toBe('192.168.1.100');
+      expect(spectator.component.isManageButtonDisabled).toBe(false);
+    });
+
+    it('should be enabled with valid IP address when DHCP is enabled', async () => {
+      // Enable DHCP first
+      const dhcpCheckbox = await form.getControl('DHCP') as IxCheckboxHarness;
+      await dhcpCheckbox.setValue(true);
+
+      // Simulate DHCP obtaining an IP address by directly setting form value
+      spectator.component.form.controls.ipaddress.setValue('192.168.1.50');
+      spectator.component.form.controls.ipaddress.updateValueAndValidity();
+
+      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+
+      expect(await manageButton.isDisabled()).toBe(false);
+      expect(spectator.component.managementIp).toBe('192.168.1.50');
+      expect(spectator.component.isManageButtonDisabled).toBe(false);
+    });
+
+    it('should update managementIp when IP address changes', async () => {
+      const testIp = '10.0.0.100';
+      const ipaddressInput = await form.getControl('IPv4 Address') as IxInputHarness;
+      await ipaddressInput.setValue(testIp);
+
+      expect(spectator.component.managementIp).toBe(testIp);
+    });
+
+    it('should respond to setFormValues updates', () => {
+      const mockIpmiData: Ipmi = {
+        channel: 1,
+        ip_address_source: IpmiIpAddressSource.UseDhcp,
+        ip_address: '192.168.1.200',
+        default_gateway_ip_address: '192.168.1.1',
+        id: 1,
+        subnet_mask: '255.255.255.0',
+        vlan_id_enable: false,
+        vlan_id: null,
+      } as Ipmi;
+
+      spectator.component.setFormValues(mockIpmiData);
+
+      expect(spectator.component.managementIp).toBe('192.168.1.200');
+      expect(spectator.component.isManageButtonDisabled).toBe(false);
+      expect(spectator.component.form.controls.dhcp.value).toBe(true);
+    });
+
+    it('should call redirect service when manage button is clicked', async () => {
+      const redirectService = spectator.inject(RedirectService);
+      const openWindowSpy = jest.spyOn(redirectService, 'openWindow');
+
+      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      await manageButton.click();
+
+      expect(openWindowSpy).toHaveBeenCalledWith('https://10.220.15.114');
+    });
+  });
+
+  describe('DHCP to static IP transitions', () => {
+    beforeEach(async () => {
+      await setupTest(ProductType.Enterprise);
+    });
+
+    it('should disable manage button when switching to DHCP with no IP', async () => {
+      const dhcpCheckbox = await form.getControl('DHCP') as IxCheckboxHarness;
+      await dhcpCheckbox.setValue(true);
+
+      // Clear IP address to simulate initial DHCP state
+      spectator.component.form.controls.ipaddress.setValue('');
+      spectator.component.form.controls.ipaddress.updateValueAndValidity();
+
+      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+
+      expect(await manageButton.isDisabled()).toBe(true);
+      expect(spectator.component.isManageButtonDisabled).toBe(true);
+    });
+
+    it('should enable manage button when DHCP obtains valid IP', async () => {
+      // Start with DHCP enabled and no IP
+      const dhcpCheckbox = await form.getControl('DHCP') as IxCheckboxHarness;
+      await dhcpCheckbox.setValue(true);
+
+      spectator.component.form.controls.ipaddress.setValue('');
+      spectator.component.form.controls.ipaddress.updateValueAndValidity();
+
+      let manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      expect(await manageButton.isDisabled()).toBe(true);
+
+      // Simulate DHCP obtaining an IP
+      spectator.component.form.controls.ipaddress.setValue('10.0.0.50');
+      spectator.component.form.controls.ipaddress.updateValueAndValidity();
+
+      manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      expect(await manageButton.isDisabled()).toBe(false);
+      expect(spectator.component.managementIp).toBe('10.0.0.50');
+    });
+
+    it('should maintain button state when switching from DHCP back to static', async () => {
+      // Start with DHCP and valid IP
+      const dhcpCheckbox = await form.getControl('DHCP') as IxCheckboxHarness;
+      await dhcpCheckbox.setValue(true);
+
+      spectator.component.form.controls.ipaddress.setValue('192.168.1.100');
+      spectator.component.form.controls.ipaddress.updateValueAndValidity();
+
+      // Switch back to static
+      await dhcpCheckbox.setValue(false);
+
+      const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
+      expect(await manageButton.isDisabled()).toBe(false);
+      expect(spectator.component.managementIp).toBe('192.168.1.100');
+    });
+  });
 });
