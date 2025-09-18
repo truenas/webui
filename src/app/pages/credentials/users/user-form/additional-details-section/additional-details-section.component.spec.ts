@@ -123,8 +123,8 @@ describe('AdditionalDetailsSectionComponent', () => {
       const table = await loader.getHarness(DetailsTableHarness);
       const values = await table.getValues();
 
-      expect(values['Sudo Commands']).toContain('ALL');
-      expect(values['Sudo Commands']).toContain('rm -rf /');
+      expect(values['Sudo Commands']).toContain('Allowed sudo commands: ALL');
+      expect(values['Sudo Commands']).toContain('Allowed Sudo Commands (No Password): rm -rf /');
     });
 
     it('shows "Not Set" when sudo commands are empty', async () => {

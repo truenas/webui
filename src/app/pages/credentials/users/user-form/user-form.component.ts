@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, OnInit, signal, viewChild, inject } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { tooltips } from '@codemirror/view';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -20,6 +20,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -31,7 +32,6 @@ import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/u
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/users/user-form/allowed-access-section/allowed-access-section.component';
 import { AuthSectionComponent } from 'app/pages/credentials/users/user-form/auth-section/auth-section.component';
 import { defaultHomePath, defaultRole, UserFormStore, UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user.store';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 
@@ -63,7 +63,7 @@ export class UserFormComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   slideInRef = inject<SlideInRef<User | undefined, User>>(SlideInRef);
   private userFormStore = inject(UserFormStore);
-  private errorHandler = inject(ErrorHandlerService);
+  private formErrorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
@@ -106,6 +106,19 @@ export class UserFormComponent implements OnInit {
     };
   }
 
+  /**
+   * Get all form instances for error handling - allows FormErrorHandlerService
+   * to find the correct original form control instead of the combined one
+   */
+  protected get allForms(): FormGroup[] {
+    return [
+      this.form,
+      this.allowedAccessSection().form,
+      this.authSection().form,
+      this.additionalDetailsSection().form,
+    ];
+  }
+
   protected getHomeCreateWarning(): TranslatedString {
     const homeCreate = this.formValues.home_create;
     const home = this.formValues.home;
@@ -145,6 +158,7 @@ export class UserFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupForm();
+    this.setupAccessWatchers();
   }
 
   private setupForm(): void {
@@ -227,6 +241,66 @@ export class UserFormComponent implements OnInit {
     });
   }
 
+  /**
+   * Setup watchers for all access types to reload form validation when access changes
+   */
+  private setupAccessWatchers(): void {
+    // Watch for changes in all access configurations
+    this.userFormStore.state$.pipe(
+      map((state) => state?.setupDetails?.allowedAccess),
+      distinctUntilChanged((prev, curr) => prev?.shellAccess === curr?.shellAccess
+        && prev?.sshAccess === curr?.sshAccess
+        && prev?.smbAccess === curr?.smbAccess
+        && prev?.truenasAccess === curr?.truenasAccess),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      // Force form validation recalculation for all forms
+      this.reloadFormValidationState();
+    });
+  }
+
+  /**
+   * Reload validation state for all forms to ensure proper validation after access changes
+   */
+  private reloadFormValidationState(): void {
+    // Get current access state to determine which fields should be cleared
+    const allowedAccess = this.userFormStore.state()?.setupDetails?.allowedAccess;
+    if (!allowedAccess) return;
+
+    // Collect field names that should have their validation errors cleared based on hidden sections
+    const fieldsToClear: string[] = [];
+
+    // Shell Access controls: shell field and all sudo command fields
+    if (!allowedAccess.shellAccess) {
+      fieldsToClear.push(
+        'shell',
+        'sudo_commands',
+        'sudo_commands_all',
+        'sudo_commands_nopasswd',
+        'sudo_commands_nopasswd_all',
+      );
+    }
+
+    // SSH Access controls: ssh-related fields
+    if (!allowedAccess.sshAccess) {
+      fieldsToClear.push(
+        'sshpubkey',
+        'ssh_password_enabled',
+      );
+    }
+
+    // SMB Access controls: password disable field (shown when SMB is disabled)
+    // Note: password_disabled is shown when smbAccess is FALSE
+
+    // Clear validation errors for fields that are no longer relevant
+    this.formErrorHandler.clearValidationErrorsForHiddenFields(this.allForms, fieldsToClear);
+
+    // Update validation for all forms to recalculate based on current access settings
+    this.allForms.forEach((form) => {
+      form.updateValueAndValidity();
+    });
+  }
+
   private getHomeCreateConfirmation(): Observable<boolean> {
     const warning = this.getHomeCreateWarning();
     if (warning) {
@@ -268,7 +342,8 @@ export class UserFormComponent implements OnInit {
       filter(Boolean),
       switchMap(() => this.submitUserRequest(payload)),
       catchError((error: unknown) => {
-        this.errorHandler.showErrorModal(error);
+        this.isFormLoading.set(false);
+        this.formErrorHandler.handleValidationErrors(error, this.allForms);
         return of(undefined);
       }),
       untilDestroyed(this),

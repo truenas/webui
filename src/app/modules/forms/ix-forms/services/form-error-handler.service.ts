@@ -8,6 +8,7 @@ import {
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
+import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
@@ -15,29 +16,35 @@ export class FormErrorHandlerService {
   private errorHandler = inject(ErrorHandlerService);
   private formService = inject(IxFormService);
   private document = inject<Document>(DOCUMENT);
+  private validationErrorService = inject(ValidationErrorCommunicationService, { optional: true });
 
   private isFocusedOnError = false;
-  private needToShowError = false;
+  private unhandledErrors: { field: string; message: string }[] = [];
 
   /**
    * @param error
-   * @param formGroup
+   * @param formGroupOrGroups Single form group or array of form groups
    * @param fieldsMap Overrides backend field names with frontend field names.
    * TODO: See if second `string` in fieldsMap can be typed to key of formGroup.
    */
   handleValidationErrors(
     error: unknown,
-    formGroup: UntypedFormGroup,
+    formGroupOrGroups: UntypedFormGroup | UntypedFormGroup[],
     fieldsMap: Record<string, string> = {},
     triggerAnchor: string | undefined = undefined,
   ): void {
-    this.needToShowError = false;
+    // Clear any existing errors when handling new validation
+    this.unhandledErrors = [];
     const isValidationError = isApiCallError(error)
       && isApiErrorDetails(error.error.data)
       && error.error.data.errname === ApiErrorName.Validation
       && error.error.data.extra;
+
+    // Normalize input to array for consistent handling
+    const formGroups = Array.isArray(formGroupOrGroups) ? formGroupOrGroups : [formGroupOrGroups];
+
     if (isValidationError) {
-      this.handleValidationError(error.error.data, formGroup, fieldsMap, triggerAnchor, error);
+      this.handleValidationError(error.error.data, formGroups, fieldsMap, triggerAnchor, error);
       return;
     }
 
@@ -48,7 +55,7 @@ export class FormErrorHandlerService {
     ) {
       this.handleValidationError(
         { ...error.job, extra: error.job.exc_info.extra as Job['extra'] },
-        formGroup,
+        formGroups,
         fieldsMap,
         triggerAnchor,
         error,
@@ -63,33 +70,43 @@ export class FormErrorHandlerService {
   // TODO: Too many arguments and convoluted logic. Rewrite.
   private handleValidationError(
     error: ApiErrorDetails | Job,
-    formGroup: UntypedFormGroup,
+    formGroups: UntypedFormGroup[],
     fieldsMap: Record<string, string>,
     triggerAnchor: string | undefined,
     originalError: unknown,
   ): void {
     this.isFocusedOnError = false;
-    const extra = (error as ApiErrorDetails).extra as string[][];
+
+    // Add type guard for safer type casting
+    if (!this.isApiErrorDetailsWithExtra(error)) {
+      console.warn('Error does not contain expected extra field structure:', error);
+      return;
+    }
+
+    const extra = error.extra;
     for (const extraItem of extra) {
-      const field = extraItem[0].split('.').pop();
+      const fullFieldPath = extraItem[0];
+      const field = this.extractFieldName(fullFieldPath);
       if (!field) {
+        console.warn(`Failed to extract field name from path: ${fullFieldPath}`);
         return;
       }
 
       const errorMessage = extraItem[1];
 
-      const control = this.getFormField(formGroup, field, fieldsMap);
-      const mappedFieldName = fieldsMap[field] ?? field; // Get the mapped field name
-      const controlsNames = this.formService.getControlNames();
+      const control = this.getFormField(formGroups, field, fieldsMap);
 
-      if (triggerAnchor && control && !controlsNames.includes(mappedFieldName)) {
+
+      const mappedFieldName = fieldsMap[field] ?? field; // Get the mapped field name
+
+      if (triggerAnchor && control) {
         const triggerAnchorRef = this.document.getElementById(triggerAnchor);
         if (triggerAnchorRef) {
           triggerAnchorRef.click();
           setTimeout(() => {
             this.showValidationError({
               control,
-              field: mappedFieldName, // Use mapped field name
+              field: mappedFieldName, // Use mapped field name for control lookup
               errorMessage,
             });
           });
@@ -99,29 +116,27 @@ export class FormErrorHandlerService {
 
       this.showValidationError({
         control,
-        field: mappedFieldName, // Use mapped field name
+        field: mappedFieldName, // Use mapped field name for control lookup
         errorMessage,
       });
     }
 
-    if (this.needToShowError) {
-      // Fallback to default modal error message.
-      this.errorHandler.showErrorModal(originalError);
-    }
+    // Check if any errors couldn't be handled inline and need fallback
+    this.checkForFallbackErrors(originalError);
   }
 
   private showValidationError({
-    control, field, errorMessage,
+    control, field, displayField, errorMessage,
   }: {
     control: AbstractControl | null;
     field: string;
+    displayField?: string;
     errorMessage: string;
   }): void {
-    const controlsNames = this.formService.getControlNames();
-
-    if (!control || !controlsNames.includes(field)) {
-      console.warn(`getControlNames Could not find control ${field}.`);
-      this.needToShowError = true;
+    const fieldToDisplay = displayField || field;
+    if (!control) {
+      console.warn(`Could not find control ${field}.`);
+      this.handleErrorFallback(fieldToDisplay, errorMessage);
       return;
     }
 
@@ -134,8 +149,7 @@ export class FormErrorHandlerService {
 
     if (!control) {
       console.warn(`Could not find control ${field}.`);
-      this.needToShowError = true;
-
+      this.handleErrorFallback(fieldToDisplay, errorMessage);
       return;
     }
 
@@ -146,12 +160,24 @@ export class FormErrorHandlerService {
     });
     control.markAsTouched();
 
-    const element = this.formService.getElementByControlName(field);
+
+    // Notify editable components that might contain this field
+    this.notifyEditablesOfValidationError(field);
+
+    // Try to get element from IxFormService first, then fallback to querySelector
+    let element = this.formService.getElementByControlName(field);
+    if (!element && this.document?.querySelector) {
+      // Fallback: try to find element by formControlName attribute
+      const foundElement = this.document.querySelector(`[formControlName="${field}"]`);
+      element = foundElement instanceof HTMLElement ? foundElement : null;
+    }
+
     if (!element) {
-      console.warn(`getElementByControlName Could not find element for ${field}.`);
-      this.needToShowError = true;
+      console.warn(`Could not find DOM element for field ${field}.`);
+      this.handleErrorFallback(fieldToDisplay, errorMessage);
       return;
     }
+
 
     if (!this.isFocusedOnError) {
       setTimeout(() => {
@@ -162,12 +188,166 @@ export class FormErrorHandlerService {
     }
   }
 
+
+  private notifyEditablesOfValidationError(fieldName: string): void {
+    // Securely notify editable components through dedicated service (if available)
+    this.validationErrorService?.notifyValidationError(fieldName);
+  }
+
+
   private getFormField(
-    formGroup: UntypedFormGroup,
+    formGroups: UntypedFormGroup[],
     field: string,
     fieldsMap: Record<string, string>,
   ): AbstractControl | null {
     const fieldName = fieldsMap[field] ?? field;
-    return formGroup.get(fieldName);
+
+    // Search through all form groups to find the control
+    for (const formGroup of formGroups) {
+      const control = formGroup.get(fieldName);
+      if (control) {
+        return control;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Type guard to check if error has the expected extra field structure
+   * Validates that extra contains arrays of [fieldPath, errorMessage, ?errorCode]
+   */
+  private isApiErrorDetailsWithExtra(error: unknown): error is ApiErrorDetails & { extra: [string, string][] } {
+    if (!error || typeof error !== 'object') {
+      return false;
+    }
+
+    const errorObj = error as Record<string, unknown>;
+
+    // Check if it has extra field directly or if it's a transformed job error
+    if (!('extra' in errorObj) || !Array.isArray(errorObj.extra)) {
+      return false;
+    }
+
+    // Validate that extra is a non-empty array of properly structured arrays
+    return errorObj.extra.length > 0 && errorObj.extra.every((item) => (
+      Array.isArray(item)
+      && item.length >= 2
+      && typeof item[0] === 'string'
+      && typeof item[1] === 'string'
+      && item[0].trim().length > 0 // Field path must not be empty
+      && item[1].trim().length > 0 // Error message must not be empty
+    ));
+  }
+
+  /**
+   * Extract the field name from full field path for form control lookup
+   * Examples:
+   * - 'user_update.username' -> 'username'
+   * - 'user_update.sudo_commands_nopassword.0' -> 'sudo_commands_nopassword'
+   * - 'user.address.street.0' -> 'street'
+   * - 'config.nested.deep.field' -> 'field'
+   */
+  private extractFieldName(fullFieldPath: string): string {
+    if (!fullFieldPath || typeof fullFieldPath !== 'string') {
+      return '';
+    }
+
+    const parts = fullFieldPath.split('.');
+
+    // Handle edge cases
+    if (parts.length === 0) {
+      return '';
+    }
+
+    if (parts.length === 1) {
+      return parts[0];
+    }
+
+    // Find the last non-numeric part, working backwards
+    // This handles nested structures better
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const part = parts[i];
+      if (part && !(/^\d+$/.test(part))) {
+        return part;
+      }
+    }
+
+    // Fallback to last part if all are numeric (edge case)
+    return parts[parts.length - 1] || '';
+  }
+
+  /**
+   * Handle error fallback - collect unhandled errors for modal display
+   */
+  private handleErrorFallback(field: string, message: string): void {
+    this.unhandledErrors.push({ field, message });
+  }
+
+  /**
+   * Clear validation errors for fields that are no longer visible or relevant
+   * This should be called when form conditions change (e.g., fields become hidden)
+   */
+  clearValidationErrorsForHiddenFields(
+    formGroups: UntypedFormGroup | UntypedFormGroup[],
+    hiddenFieldNames: string[],
+  ): void {
+    if (!hiddenFieldNames || hiddenFieldNames.length === 0) {
+      return;
+    }
+
+    const groups = Array.isArray(formGroups) ? formGroups : [formGroups];
+
+    hiddenFieldNames.forEach((fieldName) => {
+      groups.forEach((group) => {
+        const control = this.findControlByPath(group, fieldName);
+        if (control) {
+          // Clear validation errors
+          control.setErrors(null);
+
+          // Remove from unhandled errors list if present
+          this.unhandledErrors = this.unhandledErrors.filter(
+            (error) => error.field !== fieldName,
+          );
+        }
+      });
+    });
+  }
+
+
+  /**
+   * Find control by field path (supports nested paths like 'user.settings.shell')
+   */
+  private findControlByPath(formGroup: UntypedFormGroup, fieldPath: string): AbstractControl | null {
+    if (!fieldPath) {
+      return null;
+    }
+
+    const parts = fieldPath.split('.');
+    let currentControl: AbstractControl = formGroup;
+
+    for (const part of parts) {
+      if (currentControl && 'controls' in currentControl) {
+        const controls = (currentControl as UntypedFormGroup).controls;
+        currentControl = controls[part];
+      } else {
+        return null;
+      }
+    }
+
+    return currentControl || null;
+  }
+
+  /**
+   * Check if there are unhandled errors and show modal fallback if needed
+   */
+  private checkForFallbackErrors(_: unknown): void {
+    if (this.unhandledErrors.length > 0) {
+      const unhandledErrorsString = this.unhandledErrors
+        .map((error) => `${error.field}: ${error.message}`)
+        .join('\n');
+
+      const customError = new Error(`Validation errors:\n${unhandledErrorsString}`);
+      this.errorHandler.showErrorModal(customError);
+    }
   }
 }
