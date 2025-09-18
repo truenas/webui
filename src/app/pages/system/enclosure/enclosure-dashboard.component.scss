@@ -1,3 +1,7 @@
 ix-empty {
   height: inherit;
+
+  &.loading {
+    min-height: 80%;
+  }
 }

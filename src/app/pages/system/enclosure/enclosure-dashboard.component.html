@@ -18,5 +18,8 @@
 @if (selectedEnclosure()) {
   <router-outlet></router-outlet>
 } @else {
-  <ix-empty [conf]="emptyDashboardConf"></ix-empty>
+  <ix-empty
+    [conf]="isLoading() ? loadingConf : emptyDashboardConf"
+    [class.loading]="isLoading()"
+  ></ix-empty>
 }
