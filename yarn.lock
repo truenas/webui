@@ -4884,6 +4884,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@truenas/common-typescript@github:truenas/tn-common-typescript#master":
+  version: 1.0.0
+  resolution: "@truenas/common-typescript@https://github.com/truenas/tn-common-typescript.git#commit=b5a0fc32f5f175daf4ccdf313b239fcccbc6cda1"
+  dependencies:
+    "@eslint/compat": "npm:~1.2.1"
+    "@eslint/js": "npm:~9.13.0"
+    "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
+    "@stylistic/eslint-plugin": "npm:~2.9.0"
+    "@typescript-eslint/eslint-plugin": "npm:~8.38.0"
+    "@typescript-eslint/parser": "npm:~8.38.0"
+    angular-eslint: "npm:~20.1.1"
+    eslint: "npm:^9.31.0"
+    eslint-plugin-angular-file-naming: "npm:~1.0.6"
+    eslint-plugin-import: "npm:^2.31.0"
+    eslint-plugin-rxjs-angular: "npm:^2.0.1"
+    eslint-plugin-sonarjs: "npm:~3.0.4"
+    eslint-plugin-unicorn: "npm:^56.0.0"
+    eslint-plugin-unused-imports: "npm:^4.1.4"
+    typescript: "npm:~5.8.3"
+    typescript-eslint: "npm:~8.38.0"
+  peerDependencies:
+    jest: "*"
+  checksum: 10/b172a165ce31cd4b82d8629e65ac63fbb02b0f591b120595a739b521a05b842630177f0038351496a758f9c4bf8957849f0d0b51cd3809824ffc85b43a651a0a
+  languageName: node
+  linkType: hard
+
 "@trysound/sax@npm:0.2.0":
   version: 0.2.0
   resolution: "@trysound/sax@npm:0.2.0"
@@ -5614,7 +5640,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:8.38.0":
+"@typescript-eslint/eslint-plugin@npm:8.38.0, @typescript-eslint/eslint-plugin@npm:~8.38.0":
   version: 8.38.0
   resolution: "@typescript-eslint/eslint-plugin@npm:8.38.0"
   dependencies:
@@ -5646,7 +5672,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:8.38.0":
+"@typescript-eslint/parser@npm:8.38.0, @typescript-eslint/parser@npm:~8.38.0":
   version: 8.38.0
   resolution: "@typescript-eslint/parser@npm:8.38.0"
   dependencies:
@@ -17665,6 +17691,7 @@ __metadata:
     "@shopify/eslint-plugin": "npm:~50.0.0"
     "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
     "@stylistic/eslint-plugin": "npm:~2.9.0"
+    "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
     "@types/cheerio": "npm:~0.22.35"
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"
