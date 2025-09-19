@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
 import { User } from 'app/interfaces/user.interface';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -21,6 +22,7 @@ import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-for
   imports: [
     IxIconComponent,
     IxSelectComponent,
+    IxErrorsComponent,
     TestDirective,
     MatCheckbox,
     IxFieldsetComponent,
