@@ -45,7 +45,6 @@ ix-fake-progress-bar {
     display: flex;
     height: 100%;
     justify-content: center;
-    min-height: 330px;
     padding: 0;
 
     @media (max-width: $breakpoint-md) {
@@ -55,7 +54,7 @@ ix-fake-progress-bar {
 
     ::ng-deep {
       .enclosure-image {
-        max-height: 350px;
+        max-height: max-content;
 
         &.has-side-switch {
           max-height: 300px;
