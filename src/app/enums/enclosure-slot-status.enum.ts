@@ -33,6 +33,7 @@ export enum EnclosureDiskStatus {
   Degraded = 'DEGRADED',
   Online = 'ONLINE',
   Unknown = 'UNKNOWN',
+  Avail = 'AVAIL',
 }
 
 export const enclosureDiskStatusLabels = new Map<EnclosureDiskStatus, string>([
