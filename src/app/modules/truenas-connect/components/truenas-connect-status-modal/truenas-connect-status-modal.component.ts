@@ -98,9 +98,9 @@ export class TruenasConnectStatusModalComponent {
 
     enableIfNeeded$
       .pipe(
-        // NOW check if we need token generation based on current status
-        switchMap(() => {
-          if (this.tnc.config()?.status === TruenasConnectStatus.ClaimTokenMissing) {
+        // NOW check if we need token generation based on updated config
+        switchMap((config) => {
+          if (config?.status === TruenasConnectStatus.ClaimTokenMissing) {
             return this.tnc.generateToken();
           }
           return of('');
