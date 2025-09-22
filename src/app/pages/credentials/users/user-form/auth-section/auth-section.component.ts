@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, effect, input, OnInit, inject } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -40,17 +40,19 @@ export class AuthSectionComponent implements OnInit {
 
   form = this.formBuilder.group({
     password: ['', [Validators.required]],
+    password_confirm: [''],
     password_disabled: [false],
     ssh_password_enabled: [false],
     sshpubkey: [''],
     stig_password: [UserStigPasswordOption.DisablePassword],
-  });
+  }, { validators: [this.passwordMatchValidator()] });
 
   protected readonly tooltips = {
     password_disabled: helptextUsers.disablePasswordTooltip,
     one_time_password: helptextUsers.oneTimePasswordTooltip,
     password: helptextUsers.passwordTooltip,
     password_edit: helptextUsers.passwordTooltip,
+    password_confirm: 'Confirm the password by typing it again.',
     sshpubkey: helptextUsers.publicKeyTooltip,
   };
 
@@ -114,7 +116,31 @@ export class AuthSectionComponent implements OnInit {
     if (this.editingUser()) {
       this.form.controls.password.removeValidators([Validators.required]);
       this.form.controls.password.reset();
+      this.form.controls.password_confirm.removeValidators([Validators.required]);
+      this.form.controls.password_confirm.reset();
+    } else {
+      this.form.controls.password_confirm.setValidators([Validators.required]);
     }
+
+    // Set up cross-field validation error propagation
+    this.form.statusChanges.pipe(
+      untilDestroyed(this),
+    ).subscribe(() => {
+      const formErrors = this.form.errors;
+      const confirmControl = this.form.controls.password_confirm;
+
+      if (formErrors?.['passwordMismatch'] && !confirmControl.hasError('passwordMismatch')) {
+        const currentErrors = confirmControl.errors || {};
+        confirmControl.setErrors({
+          ...currentErrors,
+          passwordMismatch: { message: 'Passwords do not match' },
+        });
+      } else if (!formErrors?.['passwordMismatch'] && confirmControl.hasError('passwordMismatch')) {
+        const errors = { ...confirmControl.errors };
+        delete errors.passwordMismatch;
+        confirmControl.setErrors(Object.keys(errors).length ? errors : null);
+      }
+    });
   }
 
   private setPasswordFieldRelations(): void {
@@ -123,9 +149,11 @@ export class AuthSectionComponent implements OnInit {
     ).subscribe((isDisabled) => {
       if (isDisabled) {
         this.form.controls.password.disable();
+        this.form.controls.password_confirm.disable();
         this.form.controls.ssh_password_enabled.disable({ emitEvent: false });
       } else {
         this.form.controls.password.enable();
+        this.form.controls.password_confirm.enable();
         this.form.controls.ssh_password_enabled.enable({ emitEvent: false });
       }
     });
@@ -140,5 +168,26 @@ export class AuthSectionComponent implements OnInit {
         this.form.controls.password_disabled.enable({ emitEvent: false });
       }
     });
+  }
+
+  private passwordMatchValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control?.get('password') || !control.get('password_confirm')) {
+        return null;
+      }
+
+      const password = control.get('password')?.value;
+      const passwordConfirm = control.get('password_confirm')?.value;
+
+      if (!password || !passwordConfirm) {
+        return null;
+      }
+
+      return password === passwordConfirm
+        ? null
+        : {
+            passwordMismatch: { message: 'Passwords do not match' },
+          };
+    };
   }
 }
