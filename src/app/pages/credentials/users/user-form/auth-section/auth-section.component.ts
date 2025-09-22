@@ -117,19 +117,27 @@ export class AuthSectionComponent implements OnInit {
         this.form.patchValue({ password_disabled: false });
       }
     });
+
+    effect(() => {
+      this.setupPasswordValidation();
+    });
   }
 
   ngOnInit(): void {
     this.setPasswordFieldRelations();
+    this.setupPasswordValidation();
+  }
 
+  private setupPasswordValidation(): void {
     if (this.editingUser()) {
       this.form.controls.password.removeValidators([Validators.required]);
       this.form.controls.password.reset();
-      this.form.controls.password_confirm.removeValidators([Validators.required]);
+      this.form.controls.password_confirm.clearValidators();
       this.form.controls.password_confirm.reset();
     } else {
       this.form.controls.password_confirm.setValidators([Validators.required]);
     }
+    this.form.controls.password_confirm.updateValueAndValidity();
   }
 
   private setPasswordFieldRelations(): void {

@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
@@ -87,8 +87,11 @@ describe('AuthSectionComponent', () => {
       confirmPasswordInput?.dispatchEvent(new Event('blur'));
       spectator.detectChanges();
 
-      const errors = spectator.queryAll('.mat-mdc-form-field-error, .error, ix-errors');
-      expect(errors.length).toBeGreaterThan(0);
+      // Check that the validator sets the correct error
+      expect(spectator.component.form.controls.password_confirm.hasError('matchOther')).toBe(true);
+      expect(spectator.component.form.controls.password_confirm.errors?.['matchOther']).toEqual({
+        message: 'Passwords do not match',
+      });
     });
 
     it('does not show validation error when passwords match', async () => {
@@ -116,6 +119,27 @@ describe('AuthSectionComponent', () => {
       await form.fillForm({ 'Change Password': 'newpassword' });
       const labelsAfter = await form.getLabels();
       expect(labelsAfter).toContain('Confirm Password');
+    });
+
+    it('validates password confirmation is required for new users', async () => {
+      // For new users, password_confirm should be required
+      expect(spectator.component.form.controls.password_confirm.hasValidator(Validators.required)).toBe(true);
+
+      // Clear the confirmation field
+      await form.fillForm({ 'Confirm Password': '' });
+
+      spectator.component.form.controls.password_confirm.markAsTouched();
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.password_confirm.hasError('required')).toBe(true);
+    });
+
+    it('does not require password confirmation for editing users initially', () => {
+      spectator.setInput('editingUser', { id: 1, username: 'test' });
+      spectator.detectChanges();
+
+      // For editing users, password_confirm should not be required initially
+      expect(spectator.component.form.controls.password_confirm.hasValidator(Validators.required)).toBe(false);
     });
 
     it('checks stig mode fields when "STIG Mode" is true', async () => {
