@@ -61,7 +61,7 @@ export class AuthSectionComponent implements OnInit {
     one_time_password: helptextUsers.oneTimePasswordTooltip,
     password: helptextUsers.passwordTooltip,
     password_edit: helptextUsers.passwordTooltip,
-    password_confirm: 'Confirm the password by typing it again.',
+    password_confirm: helptextUsers.passwordConfirmTooltip,
     sshpubkey: helptextUsers.publicKeyTooltip,
   };
 
