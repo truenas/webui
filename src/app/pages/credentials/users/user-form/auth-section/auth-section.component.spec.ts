@@ -46,9 +46,10 @@ describe('AuthSectionComponent', () => {
   });
 
   describe('password fields', () => {
-    it('shows Password and "Disable Password" fields when creating a new user', async () => {
+    it('shows Password, Confirm Password and "Disable Password" fields when creating a new user', async () => {
       expect(await form.getValues()).toMatchObject({
         Password: '',
+        'Confirm Password': '',
         'Disable Password': false,
       });
     });
@@ -66,13 +67,55 @@ describe('AuthSectionComponent', () => {
       }));
     });
 
-    it('disables password field when Disable Password is ticked', async () => {
+    it('disables password fields when Disable Password is ticked', async () => {
       await form.fillForm({ 'Disable Password': true });
 
-      expect(await form.getDisabledState()).toEqual({
+      expect(await form.getDisabledState()).toMatchObject({
         Password: true,
+        'Confirm Password': true,
         'Disable Password': false,
       });
+    });
+
+    it('shows validation error when passwords do not match', async () => {
+      await form.fillForm({
+        Password: 'password123',
+        'Confirm Password': 'different-password',
+      });
+
+      const confirmPasswordInput = spectator.query('[formControlName="password_confirm"]');
+      confirmPasswordInput?.dispatchEvent(new Event('blur'));
+      spectator.detectChanges();
+
+      const errors = spectator.queryAll('.mat-mdc-form-field-error, .error, ix-errors');
+      expect(errors.length).toBeGreaterThan(0);
+    });
+
+    it('does not show validation error when passwords match', async () => {
+      await form.fillForm({
+        Password: 'password123',
+        'Confirm Password': 'password123',
+      });
+
+      const confirmPasswordInput = spectator.query('[formControlName="password_confirm"]');
+      confirmPasswordInput?.dispatchEvent(new Event('blur'));
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('passwordMismatch')).toBe(false);
+    });
+
+    it('shows password confirmation field only when password is entered for editing user', async () => {
+      spectator.setInput('editingUser', { id: 1, username: 'test' });
+      spectator.detectChanges();
+
+      // Initially, no confirmation field should be visible
+      const labels = await form.getLabels();
+      expect(labels).not.toContain('Confirm Password');
+
+      // After entering password, confirmation field should appear
+      await form.fillForm({ 'Change Password': 'newpassword' });
+      const labelsAfter = await form.getLabels();
+      expect(labelsAfter).toContain('Confirm Password');
     });
 
     it('checks stig mode fields when "STIG Mode" is true', async () => {
