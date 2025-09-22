@@ -125,6 +125,11 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
+  shouldShowPermissions(): boolean {
+    const homeValue = this.form.controls.home.value;
+    return homeValue !== defaultHomePath;
+  }
+
   groupsProvider: ChipsProvider = (query: string) => {
     return this.api.call('group.query', [[
       ['name', '^', query],
