@@ -101,7 +101,7 @@ describe('AuthSectionComponent', () => {
       confirmPasswordInput?.dispatchEvent(new Event('blur'));
       spectator.detectChanges();
 
-      expect(spectator.component.form.hasError('passwordMismatch')).toBe(false);
+      expect(spectator.component.form.controls.password_confirm.hasError('matchOther')).toBe(false);
     });
 
     it('shows password confirmation field only when password is entered for editing user', async () => {
