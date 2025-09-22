@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -55,7 +54,6 @@ import { StorageService } from 'app/services/storage.service';
     IxFieldsetComponent,
     IxInputComponent,
     IxCheckboxComponent,
-    MatCheckbox,
     TranslateModule,
     IxChipsComponent,
     IxExplorerComponent,
@@ -170,9 +168,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
             groups: values.groups.map((grp) => (+grp)),
             group: values.group_create ? null : values.group,
             home: values.home,
-            home_mode: this.userFormStore.homeModeOldValue() !== values.home_mode
-              ? values.home_mode
-              : undefined,
+            home_mode: values.home_mode,
             email: values.email,
             uid: values.uid,
             shell: values.shell,
@@ -343,31 +339,53 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     }
 
     if (user?.home && !isEmptyHomeDirectory(user.home)) {
-      this.storageService.filesystemStat(user.home)
-        .pipe(
-          take(1),
-          catchError((error: unknown) => {
-            const apiError = extractApiErrorDetails(error);
-            if (apiError?.reason?.includes('[ENOENT]')) {
-              return of(null);
-            }
-            this.errorHandler.showErrorModal(error);
-            return EMPTY;
-          }),
-          untilDestroyed(this),
-        )
-        .subscribe((stat) => {
-          if (stat) {
-            const homeMode = stat.mode.toString(8).substring(2, 5);
-            this.form.patchValue({ home_mode: homeMode });
-            this.userFormStore.updateSetupDetails({ homeModeOldValue: homeMode });
-          } else {
-            this.form.patchValue({ home_mode: '700' });
-            this.form.controls.home_mode.disable();
-          }
+      // For users with /var/empty, we can't rely on filesystem permissions
+      // Default to custom permissions mode so user can explicitly choose
+      if (user.home === defaultHomePath) {
+        this.form.patchValue({
+          home_mode: '700',
+          default_permissions: false,
         });
+        this.userFormStore.updateSetupDetails({ homeModeOldValue: '700' });
+      } else {
+        // For real home directories, check actual filesystem permissions
+        this.storageService.filesystemStat(user.home)
+          .pipe(
+            take(1),
+            catchError((error: unknown) => {
+              const apiError = extractApiErrorDetails(error);
+              if (apiError?.reason?.includes('[ENOENT]')) {
+                return of(null);
+              }
+              this.errorHandler.showErrorModal(error);
+              return EMPTY;
+            }),
+            untilDestroyed(this),
+          )
+          .subscribe((stat) => {
+            if (stat) {
+              const homeMode = stat.mode.toString(8).substring(2, 5);
+              const isDefaultPermissions = homeMode === '700';
+
+              this.form.patchValue({
+                home_mode: homeMode,
+                default_permissions: isDefaultPermissions,
+              });
+              this.userFormStore.updateSetupDetails({ homeModeOldValue: homeMode });
+            } else {
+              this.form.patchValue({
+                home_mode: '700',
+                default_permissions: true,
+              });
+              this.form.controls.home_mode.disable();
+            }
+          });
+      }
     } else {
-      this.form.patchValue({ home_mode: '700' });
+      this.form.patchValue({
+        home_mode: '700',
+        default_permissions: true,
+      });
       this.form.controls.home_mode.disable();
     }
 
@@ -402,6 +420,21 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
       if ((requiredGroup && !groupNames.includes(requiredGroup)) || !groups.length) {
         this.userFormStore.updateSetupDetails({ role: null });
+      }
+    });
+
+    // Sync default_permissions checkbox with home_mode changes
+    this.form.controls.home_mode.valueChanges.pipe(untilDestroyed(this)).subscribe((homeMode) => {
+      const isDefaultPermissions = homeMode === '700';
+      if (this.form.controls.default_permissions.value !== isDefaultPermissions) {
+        this.form.controls.default_permissions.patchValue(isDefaultPermissions);
+      }
+    });
+
+    // When default_permissions is checked, set home_mode to '700'
+    this.form.controls.default_permissions.valueChanges.pipe(untilDestroyed(this)).subscribe((isDefault) => {
+      if (isDefault && this.form.controls.home_mode.value !== '700') {
+        this.form.controls.home_mode.patchValue('700');
       }
     });
   }
@@ -474,7 +507,11 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
     this.form.controls.home_create.valueChanges.pipe(untilDestroyed(this)).subscribe((checked) => {
       if (checked) {
-        this.form.patchValue({ home_mode: '700' });
+        this.form.patchValue({
+          home_mode: '700',
+          default_permissions: true,
+        });
+        this.cdr.detectChanges();
       }
     });
   }
