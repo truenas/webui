@@ -91,6 +91,7 @@ export class TestDirective {
       case 'span':
         return 'text';
       case 'ix-date':
+      case 'ix-checkbox':
         return tagName.replace('ix-', '');
       default:
         throw new Error(`Unknown element type: ${tagName}`);
