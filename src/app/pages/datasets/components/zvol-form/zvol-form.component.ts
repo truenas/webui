@@ -570,7 +570,7 @@ export class ZvolFormComponent implements OnInit {
       }
       data.encryption_options.algorithm = data.algorithm;
     }
-    delete data.inherit_encryption;
+    // Keep inherit_encryption in the payload - don't delete it
     delete data.key;
     delete data.generate_key;
     delete data.passphrase;
@@ -611,7 +611,7 @@ export class ZvolFormComponent implements OnInit {
           data.encryption_options.algorithm = data.algorithm;
         }
 
-        delete data.inherit_encryption;
+        // Keep inherit_encryption in the payload - don't delete it
         delete data.key;
         delete data.generate_key;
         delete data.passphrase;
