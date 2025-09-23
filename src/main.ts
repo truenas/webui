@@ -43,7 +43,7 @@ import { createTranslateLoader } from 'app/modules/language/translations/icu-tra
 import { ApiService } from 'app/modules/websocket/api.service';
 import { provideWebSocketDebugState } from 'app/modules/websocket-debug-panel/providers/websocket-debug.providers';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { registerServiceWorker } from 'app/services/service-worker/service-worker-registration';
+import { ServiceWorkerService } from 'app/services/service-worker.service';
 import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 
@@ -51,9 +51,6 @@ if (environment.production) {
   enableProdMode();
   enableSentry();
 }
-
-// Register service worker in all environments
-registerServiceWorker();
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -130,6 +127,12 @@ bootstrapApplication(AppComponent, {
       provide: APP_INITIALIZER,
       useFactory: () => () => {},
       deps: [Sentry.TraceService],
+      multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (swService: ServiceWorkerService) => () => swService.register(),
+      deps: [ServiceWorkerService],
       multi: true,
     },
     ApiService,
