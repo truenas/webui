@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -41,6 +42,9 @@ describe('AddPortMenuComponent', () => {
   const createComponent = createComponentFactory({
     component: AddPortMenuComponent,
     providers: [
+      mockProvider(AuthService, {
+        hasRole: jest.fn(() => of(true)),
+      }),
       mockProvider(NvmeOfStore, {
         ports: allPorts,
       }),
