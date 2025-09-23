@@ -1,14 +1,36 @@
 let isRegistered = false;
 let registration: ServiceWorkerRegistration | null = null;
+let lastReloadTimeMemory: number | null = null; // Fallback for when localStorage is unavailable
+
+// Helper function to safely get from localStorage
+function getLastReloadTime(): string | null {
+  try {
+    return localStorage.getItem('sw-last-reload');
+  } catch {
+    // Fallback to in-memory storage if localStorage throws (e.g., private browsing)
+    return lastReloadTimeMemory ? lastReloadTimeMemory.toString() : null;
+  }
+}
+
+// Helper function to safely set in localStorage
+function setLastReloadTime(time: string): void {
+  try {
+    localStorage.setItem('sw-last-reload', time);
+  } catch {
+    // Fallback to in-memory storage if localStorage throws
+    lastReloadTimeMemory = parseInt(time, 10);
+    console.warn('[Main] localStorage unavailable, using in-memory storage for reload protection');
+  }
+}
 
 // Helper function to check if we should reload (prevents infinite reload loops)
 function shouldAllowReload(): boolean {
-  const lastReloadTime = localStorage.getItem('sw-last-reload');
+  const lastReloadTime = getLastReloadTime();
   const now = Date.now();
   const minTimeBetweenReloads = 5000; // 5 seconds
 
   if (!lastReloadTime || now - parseInt(lastReloadTime, 10) > minTimeBetweenReloads) {
-    localStorage.setItem('sw-last-reload', now.toString());
+    setLastReloadTime(now.toString());
     return true;
   }
 
@@ -29,10 +51,17 @@ export function registerServiceWorker(): void {
     // Use URL constructor for proper path joining, with fallback for test environments
     let swPath: string;
     try {
-      swPath = new URL('sw.js', globalThis.location?.href || `http://localhost${baseHref}`).pathname;
+      // Try using actual location first
+      if (globalThis.location?.href) {
+        swPath = new URL('sw.js', globalThis.location.href).pathname;
+      } else {
+        // Fallback for test environments - use origin with baseHref
+        const origin = globalThis.location?.origin || 'http://localhost';
+        swPath = new URL('sw.js', `${origin}${baseHref}`).pathname;
+      }
     } catch {
-      // Fallback for environments without proper location
-      swPath = baseHref.endsWith('/') ? `${baseHref}sw.js` : `${baseHref}/sw.js`;
+      // Last resort fallback - use URL constructor with full path
+      swPath = new URL('sw.js', `http://localhost${baseHref}`).pathname;
     }
 
     navigator.serviceWorker
@@ -71,7 +100,12 @@ export function registerServiceWorker(): void {
           if (event.data && event.data.type === 'CACHE_UPDATED') {
             console.info('[Main] Cache updated to version:', event.data.version);
             // Store the version for debugging
-            localStorage.setItem('webui-cache-version', String(event.data.version));
+            try {
+              localStorage.setItem('webui-cache-version', String(event.data.version));
+            } catch {
+              // Ignore localStorage errors (e.g., private browsing mode)
+              console.warn('[Main] Could not store cache version in localStorage');
+            }
           }
         });
 
