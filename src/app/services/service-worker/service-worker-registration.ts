@@ -8,64 +8,70 @@ export function registerServiceWorker(): void {
 
   isRegistered = true;
 
-  // Register service worker - handle both development (/) and production (/ui/) paths
-  const baseHref = document.querySelector('base')?.getAttribute('href') || '/';
-  const swPath = `${baseHref}sw.js`.replace(/\/+/g, '/'); // Normalize slashes
+  try {
+    // Register service worker - handle both development (/) and production (/ui/) paths
+    const baseHref = document.querySelector('base')?.getAttribute('href') || '/';
+    // Ensure proper path joining with trailing slash handling
+    const swPath = baseHref.endsWith('/') ? `${baseHref}sw.js` : `${baseHref}/sw.js`;
 
-  navigator.serviceWorker
-    .register(swPath)
-    .then((reg) => {
-      registration = reg;
-      console.info('[Main] Service Worker registered successfully');
+    navigator.serviceWorker
+      .register(swPath)
+      .then((reg) => {
+        registration = reg;
+        console.info('[Main] Service Worker registered successfully');
 
-      // Check for updates only on page visibility change (when user returns to tab)
-      // This is sufficient since upgrades are manual and infrequent
-      document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) {
-          reg.update().catch((error: unknown) => {
-            console.error('[Main] Service Worker update check failed:', error);
-          });
-        }
-      });
-
-      // Listen for service worker updates
-      reg.addEventListener('updatefound', () => {
-        const newWorker = reg.installing;
-        if (!newWorker) return;
-
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
-            console.info('[Main] New Service Worker activated, reloading...');
-            // The new service worker has activated, reload immediately
-            reloadWithUpdate();
+        // Check for updates only on page visibility change (when user returns to tab)
+        // This is sufficient since upgrades are manual and infrequent
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) {
+            reg.update().catch((error: unknown) => {
+              console.error('[Main] Service Worker update check failed:', error);
+            });
           }
         });
-      });
 
-      // Handle messages from service worker
-      navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data && event.data.type === 'CACHE_UPDATED') {
-          console.info('[Main] Cache updated to version:', event.data.version);
-          // Store the version for debugging
-          localStorage.setItem('webui-cache-version', String(event.data.version));
-        }
-      });
+        // Listen for service worker updates
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          if (!newWorker) return;
 
-      // Check if there's a waiting service worker on page load
-      if (reg.waiting) {
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
+              console.info('[Main] New Service Worker activated, reloading...');
+              // The new service worker has activated, reload immediately
+              reloadWithUpdate();
+            }
+          });
+        });
+
+        // Handle messages from service worker
+        navigator.serviceWorker.addEventListener('message', (event) => {
+          if (event.data && event.data.type === 'CACHE_UPDATED') {
+            console.info('[Main] Cache updated to version:', event.data.version);
+            // Store the version for debugging
+            localStorage.setItem('webui-cache-version', String(event.data.version));
+          }
+        });
+
+        // Check if there's a waiting service worker on page load
+        if (reg.waiting) {
         // There's already a new version waiting, reload immediately
-        reloadWithUpdate();
-      }
+          reloadWithUpdate();
+        }
 
-      // Handle controller change (when skipWaiting is called)
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        console.info('[Main] Service Worker controller changed, reloading...');
-        globalThis.location.reload();
+        // Handle controller change (when skipWaiting is called)
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          console.info('[Main] Service Worker controller changed, reloading...');
+          globalThis.location.reload();
+        });
+      })
+      .catch((error: unknown) => {
+        console.error('[Main] Service Worker registration failed:', error);
       });
-    })
-    .catch((error: unknown) => {
-      console.error('[Main] Service Worker registration failed:', error);
-    });
+  } catch (error) {
+    // Catch any synchronous errors during registration setup
+    console.error('[Main] Service Worker registration setup failed:', error);
+  }
 }
 
 function reloadWithUpdate(): void {

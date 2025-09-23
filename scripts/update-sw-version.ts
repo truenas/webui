@@ -23,7 +23,8 @@ function updateServiceWorkerVersion(): string {
     // Get current git commit hash (first 8 characters)
     let gitHash = 'unknown';
     try {
-      gitHash = execSync('/usr/bin/git rev-parse --short HEAD', { encoding: 'utf-8' }).trim();
+      // eslint-disable-next-line sonarjs/no-os-command-from-path
+      gitHash = execSync('git rev-parse --short HEAD', { encoding: 'utf-8' }).trim();
     } catch (error) {
       console.warn('Could not get git commit hash:', (error as Error).message);
     }

@@ -55,7 +55,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   // Skip non-HTTP requests and external requests
-  if (!request.url.startsWith('http') || !url.origin.includes(self.location.origin)) {
+  if (!request.url.startsWith('http') || url.origin !== self.location.origin) {
     return;
   }
 

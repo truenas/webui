@@ -19,7 +19,7 @@ describe('ServiceWorkerRegistration', () => {
 
     // Mock globalThis.location.reload
     delete (globalThis as { location?: unknown }).location;
-    (globalThis as { location: { reload: jest.Mock } }).location = { reload: jest.fn() };
+    (globalThis as unknown as { location: { reload: jest.Mock } }).location = { reload: jest.fn() };
 
     // Clear module cache to reset the isRegistered flag
     jest.resetModules();
