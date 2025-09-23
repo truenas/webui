@@ -157,15 +157,46 @@ self.addEventListener('message', (event) => {
       version: CACHE_VERSION
     });
   }
-});
 
-// Periodic cache cleanup (remove expired items)
-self.addEventListener('message', (event) => {
+  // Cache cleanup - remove old/stale entries
   if (event.data && event.data.type === 'CLEANUP_CACHE') {
-    caches.open(CACHE_NAME).then(cache => {
-      cache.keys().then(requests => {
-        console.log(`[Service Worker] Cache contains ${requests.length} items`);
-      });
+    const maxAge = event.data.maxAge || 7 * 24 * 60 * 60 * 1000; // Default: 7 days
+    const maxEntries = event.data.maxEntries || 500; // Default: 500 entries
+
+    caches.open(CACHE_NAME).then(async cache => {
+      const requests = await cache.keys();
+      console.log(`[Service Worker] Cache cleanup started. Current size: ${requests.length} items`);
+
+      // Remove old caches from other versions
+      const cacheNames = await caches.keys();
+      const oldCaches = cacheNames
+        .filter(name => name.startsWith('truenas-webui-'))
+        .filter(name => name !== CACHE_NAME);
+
+      for (const oldCache of oldCaches) {
+        await caches.delete(oldCache);
+        console.log(`[Service Worker] Deleted old cache: ${oldCache}`);
+      }
+
+      // If current cache is too large, remove oldest entries
+      if (requests.length > maxEntries) {
+        // Sort by URL to group similar resources, then remove oldest
+        const sortedRequests = requests.sort((a, b) =>
+          a.url.localeCompare(b.url)
+        );
+
+        const toRemove = sortedRequests.slice(0, requests.length - maxEntries);
+        for (const request of toRemove) {
+          await cache.delete(request);
+        }
+        console.log(`[Service Worker] Removed ${toRemove.length} old cache entries`);
+      }
+
+      // Log final cache size
+      const finalRequests = await cache.keys();
+      console.log(`[Service Worker] Cache cleanup complete. Final size: ${finalRequests.length} items`);
+    }).catch(error => {
+      console.error('[Service Worker] Cache cleanup failed:', error);
     });
   }
 });

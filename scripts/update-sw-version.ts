@@ -51,7 +51,7 @@ function updateServiceWorkerVersion(): string {
   } catch (error) {
     console.error('❌ Failed to update Service Worker version:', error);
     process.exit(1);
-    throw error; // This line is unreachable but satisfies the linter
+    return ''; // This line is unreachable but satisfies TypeScript
   }
 }
 

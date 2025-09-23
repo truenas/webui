@@ -1,6 +1,21 @@
 let isRegistered = false;
 let registration: ServiceWorkerRegistration | null = null;
 
+// Helper function to check if we should reload (prevents infinite reload loops)
+function shouldAllowReload(): boolean {
+  const lastReloadTime = localStorage.getItem('sw-last-reload');
+  const now = Date.now();
+  const minTimeBetweenReloads = 5000; // 5 seconds
+
+  if (!lastReloadTime || now - parseInt(lastReloadTime, 10) > minTimeBetweenReloads) {
+    localStorage.setItem('sw-last-reload', now.toString());
+    return true;
+  }
+
+  console.info('[Main] Skipping reload to prevent loop, last reload was too recent');
+  return false;
+}
+
 export function registerServiceWorker(): void {
   if (isRegistered || !('serviceWorker' in navigator)) {
     return;
@@ -11,8 +26,14 @@ export function registerServiceWorker(): void {
   try {
     // Register service worker - handle both development (/) and production (/ui/) paths
     const baseHref = document.querySelector('base')?.getAttribute('href') || '/';
-    // Ensure proper path joining with trailing slash handling
-    const swPath = baseHref.endsWith('/') ? `${baseHref}sw.js` : `${baseHref}/sw.js`;
+    // Use URL constructor for proper path joining, with fallback for test environments
+    let swPath: string;
+    try {
+      swPath = new URL('sw.js', globalThis.location?.href || `http://localhost${baseHref}`).pathname;
+    } catch {
+      // Fallback for environments without proper location
+      swPath = baseHref.endsWith('/') ? `${baseHref}sw.js` : `${baseHref}/sw.js`;
+    }
 
     navigator.serviceWorker
       .register(swPath)
@@ -37,9 +58,10 @@ export function registerServiceWorker(): void {
 
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
-              console.info('[Main] New Service Worker activated, reloading...');
-              // The new service worker has activated, reload immediately
-              reloadWithUpdate();
+              if (shouldAllowReload()) {
+                console.info('[Main] New Service Worker activated, reloading...');
+                reloadWithUpdate();
+              }
             }
           });
         });
@@ -54,15 +76,17 @@ export function registerServiceWorker(): void {
         });
 
         // Check if there's a waiting service worker on page load
-        if (reg.waiting) {
-        // There's already a new version waiting, reload immediately
+        if (reg.waiting && shouldAllowReload()) {
+          console.info('[Main] New version waiting, reloading...');
           reloadWithUpdate();
         }
 
         // Handle controller change (when skipWaiting is called)
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-          console.info('[Main] Service Worker controller changed, reloading...');
-          globalThis.location.reload();
+          if (shouldAllowReload()) {
+            console.info('[Main] Service Worker controller changed, reloading...');
+            globalThis.location.reload();
+          }
         });
       })
       .catch((error: unknown) => {
@@ -119,6 +143,16 @@ if (typeof globalThis !== 'undefined' && !isRegistered) {
             console.info(`Deleted cache: ${name}`);
           });
         });
+      }
+    },
+    cleanupCache: (maxAge?: number, maxEntries?: number) => {
+      if (navigator.serviceWorker?.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          type: 'CLEANUP_CACHE',
+          maxAge,
+          maxEntries,
+        });
+        console.info('Cache cleanup initiated');
       }
     },
   };
