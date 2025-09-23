@@ -118,12 +118,19 @@ describe('AuthSectionComponent', () => {
       expect(await loader.getHarness(IxCheckboxHarness.with({ label: 'Allow SSH Login with Password (not recommended)' }))).toBeTruthy();
     });
 
-    it('disables "Allow SSH Login with Password" when password is disabled', async () => {
+    it('provides SSH access through key-based authentication when password is disabled', async () => {
+      // When password is disabled, users can still get SSH access via SSH keys
       await form.fillForm({ 'Disable Password': true });
 
-      expect(await form.getDisabledState()).toMatchObject({
-        'Allow SSH Login with Password (not recommended)': true,
-      });
+      // SSH key field should still be available for SSH access
+      expect(await loader.getHarness(IxTextareaHarness.with({ label: 'Public SSH Key' }))).toBeTruthy();
+
+      // User can enter an SSH key to enable SSH access
+      await form.fillForm({ 'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...' });
+
+      expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(expect.objectContaining({
+        sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
+      }));
     });
 
     it('disables Disable Password when "Allow SSH Login with Password" is set', async () => {
@@ -132,6 +139,16 @@ describe('AuthSectionComponent', () => {
       expect(await form.getDisabledState()).toMatchObject({
         'Disable Password': true,
       });
+    });
+
+    it('automatically enables SSH password authentication for new users when SSH access is enabled', async () => {
+      // SSH password should be automatically enabled when SSH access is available for new users
+      expect(await form.getValues()).toMatchObject({
+        'Allow SSH Login with Password (not recommended)': true,
+      });
+
+      // The auto-enable effect should have enabled SSH password authentication
+      expect(spectator.component.form.value.ssh_password_enabled).toBe(true);
     });
 
     it('updates the store when SSH fields are changed', async () => {
@@ -160,6 +177,30 @@ describe('AuthSectionComponent', () => {
         'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
         'Allow SSH Login with Password (not recommended)': true,
       });
+    });
+
+    it('validates that SSH access requires at least one authentication method', async () => {
+      // With auto-enable logic, SSH password is automatically enabled for new users
+      expect(spectator.component.form.value.ssh_password_enabled).toBe(true);
+
+      // Form should not have SSH access validation error since SSH password is auto-enabled
+      expect(spectator.component.form.hasError('sshAccessRequired')).toBe(false);
+
+      // Disable SSH password authentication should bring back the error
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': false });
+      expect(spectator.component.form.hasError('sshAccessRequired')).toBe(true);
+
+      // Enable SSH password authentication should remove the error
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      expect(spectator.component.form.hasError('sshAccessRequired')).toBe(false);
+
+      // Disable SSH password authentication again
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': false });
+      expect(spectator.component.form.hasError('sshAccessRequired')).toBe(true);
+
+      // Adding SSH key should remove SSH access error
+      await form.fillForm({ 'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...' });
+      expect(spectator.component.form.hasError('sshAccessRequired')).toBe(false);
     });
   });
 });
