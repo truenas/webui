@@ -95,19 +95,7 @@ export function registerServiceWorker(): void {
           });
         });
 
-        // Handle messages from service worker
-        navigator.serviceWorker.addEventListener('message', (event) => {
-          if (event.data && event.data.type === 'CACHE_UPDATED') {
-            console.info('[Main] Cache updated to version:', event.data.version);
-            // Store the version for debugging
-            try {
-              localStorage.setItem('webui-cache-version', String(event.data.version));
-            } catch {
-              // Ignore localStorage errors (e.g., private browsing mode)
-              console.warn('[Main] Could not store cache version in localStorage');
-            }
-          }
-        });
+        // Handle messages from service worker (if any)
 
         // Check if there's a waiting service worker on page load
         if (reg.waiting && shouldAllowReload()) {
@@ -169,9 +157,13 @@ if (typeof globalThis !== 'undefined' && !isRegistered) {
         });
       }
     },
-    clearCache: () => {
+    clearAllCaches: () => {
       if ('caches' in globalThis) {
         caches.keys().then((names) => {
+          if (names.length === 0) {
+            console.info('No caches to clear');
+            return;
+          }
           names.forEach((name) => {
             caches.delete(name);
             console.info(`Deleted cache: ${name}`);
@@ -179,15 +171,27 @@ if (typeof globalThis !== 'undefined' && !isRegistered) {
         });
       }
     },
-    cleanupCache: (maxAge?: number, maxEntries?: number) => {
-      if (navigator.serviceWorker?.controller) {
-        navigator.serviceWorker.controller.postMessage({
-          type: 'CLEANUP_CACHE',
-          maxAge,
-          maxEntries,
-        });
-        console.info('Cache cleanup initiated');
+    enableDebug: () => {
+      if (!navigator.serviceWorker?.controller) {
+        console.warn('No service worker controller - try refreshing the page');
+        return;
       }
+      navigator.serviceWorker.controller.postMessage({
+        type: 'SET_DEBUG_MODE',
+        enabled: true,
+      });
+      console.info('Service Worker debug mode enabled - all requests will be logged');
+    },
+    disableDebug: () => {
+      if (!navigator.serviceWorker?.controller) {
+        console.warn('No service worker controller - try refreshing the page');
+        return;
+      }
+      navigator.serviceWorker.controller.postMessage({
+        type: 'SET_DEBUG_MODE',
+        enabled: false,
+      });
+      console.info('Service Worker debug mode disabled');
     },
   };
 }
