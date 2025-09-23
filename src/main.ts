@@ -42,6 +42,7 @@ import { createTranslateLoader } from 'app/modules/language/translations/icu-tra
 import { ApiService } from 'app/modules/websocket/api.service';
 import { provideWebSocketDebugState } from 'app/modules/websocket-debug-panel/providers/websocket-debug.providers';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ServiceWorkerService } from 'app/services/service-worker.service';
 import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 
@@ -123,6 +124,10 @@ bootstrapApplication(AppComponent, {
     },
     provideAppInitializer(() => {
       inject(Sentry.TraceService);
+    }),
+    provideAppInitializer(() => {
+      const swService = inject(ServiceWorkerService);
+      swService.register();
     }),
     ApiService,
     provideCharts(withDefaultRegisterables()),
