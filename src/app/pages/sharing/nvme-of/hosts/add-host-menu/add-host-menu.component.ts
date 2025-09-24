@@ -7,6 +7,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { sortBy } from 'lodash-es';
 import { filter } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -29,6 +31,7 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
     TranslateModule,
     MatMenuTrigger,
     MatDivider,
+    RequiresRolesDirective,
   ],
 })
 export class AddHostMenuComponent {
@@ -50,6 +53,8 @@ export class AddHostMenuComponent {
     const unusedHosts = this.allHosts().filter((host) => !usedHostIds.includes(host.id));
     return sortBy(unusedHosts, ['hostnqn']);
   });
+
+  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected openHostForm(): void {
     this.slideIn

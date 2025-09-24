@@ -29,6 +29,7 @@
 
               <span class="port-actions">
                 <button
+                  *ixRequiresRoles="requiredRoles"
                   mat-icon-button
                   [ixTest]="['remove-port-association', port.addr_trtype, port.addr_traddr, port.addr_trsvcid]"
                   [matTooltip]="'Remove port from the subsystem' | translate"
