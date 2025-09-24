@@ -8,7 +8,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { forkJoin, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { Role } from 'app/enums/role.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfSubsystemDetails, NvmeOfHost } from 'app/interfaces/nvme-of.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -39,6 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatIconButton,
     TestDirective,
     UiSearchDirective,
+    RequiresRolesDirective,
   ],
 })
 export class SubsystemHostsCardComponent {
@@ -54,6 +57,8 @@ export class SubsystemHostsCardComponent {
   protected helptext = helptextNvmeOf;
 
   protected readonly searchableElements = subsystemHostsCardElements;
+
+  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected hostAdded(host: NvmeOfHost): void {
     const subsystem = this.subsystem();

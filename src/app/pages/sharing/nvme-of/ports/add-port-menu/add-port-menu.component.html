@@ -1,5 +1,6 @@
 @if (noPortsExist()) {
   <button
+    *ixRequiresRoles="requiredRoles"
     mat-button
     type="button"
     [ixTest]="'add-port'"
@@ -10,6 +11,7 @@
 }
 @else {
   <button
+    *ixRequiresRoles="requiredRoles"
     mat-button
     type="button"
     [ixTest]="'add-port'"

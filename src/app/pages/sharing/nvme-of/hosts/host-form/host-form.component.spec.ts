@@ -2,8 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NvmeOfGlobalConfig, NvmeOfHost } from 'app/interfaces/nvme-of.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -33,6 +35,9 @@ describe('HostFormComponent', () => {
       mockProvider(SlideInRef, {
         getData: slideInGetData,
         close: jest.fn(),
+      }),
+      mockProvider(AuthService, {
+        hasRole: jest.fn(() => of(true)),
       }),
     ],
   });

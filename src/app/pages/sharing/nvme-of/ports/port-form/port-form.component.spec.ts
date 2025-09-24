@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -39,6 +40,9 @@ describe('PortFormComponent', () => {
       mockProvider(SlideInRef, {
         getData: slideInGetData,
         close: jest.fn(),
+      }),
+      mockProvider(AuthService, {
+        hasRole: jest.fn(() => of(true)),
       }),
     ],
   });
