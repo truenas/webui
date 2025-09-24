@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, effect, input, OnInit, inject } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -48,6 +48,7 @@ export class AuthSectionComponent implements OnInit {
     stig_password: [UserStigPasswordOption.DisablePassword],
   }, {
     validators: [
+      this.sshAccessValidator.bind(this),
       matchOthersFgValidator(
         'password_confirm',
         ['password'],
@@ -94,6 +95,7 @@ export class AuthSectionComponent implements OnInit {
       },
     });
 
+
     effect(() => {
       if (this.editingUser()) {
         this.form.patchValue({
@@ -108,7 +110,12 @@ export class AuthSectionComponent implements OnInit {
       if (!this.sshAccess()) {
         this.form.patchValue({ ssh_password_enabled: false });
         this.form.controls.password_disabled.enable({ emitEvent: false });
+      } else if (this.form.value.password_disabled) {
+        // If SSH access is enabled but password is disabled, SSH password authentication should be false
+        this.form.patchValue({ ssh_password_enabled: false });
       }
+      // Trigger validation update when SSH access changes
+      this.form.updateValueAndValidity();
     });
 
     effect(() => {
@@ -138,6 +145,26 @@ export class AuthSectionComponent implements OnInit {
       this.form.controls.password_confirm.setValidators([Validators.required]);
     }
     this.form.controls.password_confirm.updateValueAndValidity();
+  }
+
+  private sshAccessValidator(formGroup: AbstractControl): ValidationErrors | null {
+    if (!this.sshAccess()) {
+      return null; // SSH access is not enabled, no validation needed
+    }
+
+    const sshPasswordEnabled = formGroup.get('ssh_password_enabled')?.value;
+    const sshPublicKey = formGroup.get('sshpubkey')?.value;
+    const hasSshKey = sshPublicKey && sshPublicKey.trim().length > 0;
+
+    if (!sshPasswordEnabled && !hasSshKey) {
+      return {
+        sshAccessRequired: {
+          message: this.translate.instant('SSH access requires either password authentication or an SSH public key'),
+        },
+      };
+    }
+
+    return null;
   }
 
   private setPasswordFieldRelations(): void {
