@@ -242,6 +242,8 @@ export class AuthService implements OnDestroy {
         this.api.clearSubscriptions();
         this.sessionInitialized = false;
         this.pendingAuthData = null;
+        this.loggedInUser$.next(null); // Clear user data on logout
+        this.cachedGlobalTwoFactorConfig$.next(null); // Clear cached 2FA config
       }),
     );
   }
