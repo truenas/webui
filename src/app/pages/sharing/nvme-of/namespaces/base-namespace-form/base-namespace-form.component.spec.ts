@@ -4,9 +4,11 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import {
   ExplorerCreateZvolComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
@@ -29,6 +31,9 @@ describe('BaseNamespaceFormComponent', () => {
       MockComponent(ExplorerCreateZvolComponent),
     ],
     providers: [
+      mockProvider(AuthService, {
+        hasRole: jest.fn(() => of(true)),
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(FilesystemService),
       mockProvider(SlideInRef),

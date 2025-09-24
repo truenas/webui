@@ -10,7 +10,9 @@ import {
   finalize, merge, of, switchMap,
 } from 'rxjs';
 import { distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { NvmeOfTransportType, nvmeOfTransportTypeLabels } from 'app/enums/nvme-of.enum';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
@@ -45,6 +47,7 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
     FormActionsComponent,
     MatButton,
     TestDirective,
+    RequiresRolesDirective,
   ],
 })
 export class PortFormComponent implements OnInit {
@@ -70,6 +73,8 @@ export class PortFormComponent implements OnInit {
   );
 
   protected readonly helptext = helptextNvmeOf;
+
+  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected form = this.formBuilder.group({
     addr_trtype: [NvmeOfTransportType.Tcp],

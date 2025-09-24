@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfPort, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddPortMenuComponent } from 'app/pages/sharing/nvme-of/ports/add-port-menu/add-port-menu.component';
@@ -33,6 +34,9 @@ describe('SubsystemPortsCardComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),
+      }),
+      mockProvider(AuthService, {
+        hasRole: jest.fn(() => of(true)),
       }),
     ],
   });

@@ -7,7 +7,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
+import { Role } from 'app/enums/role.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -69,6 +71,7 @@ const typeOptions: Option[] = [
     IxButtonGroupComponent,
     IxInputComponent,
     ExplorerCreateZvolComponent,
+    RequiresRolesDirective,
   ],
 })
 export class BaseNamespaceFormComponent implements OnInit, OnChanges {
@@ -104,6 +107,8 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
   protected readonly FormNamespaceType = FormNamespaceType;
 
   protected typeOptions$ = of(translateOptions(this.translate, typeOptions));
+
+  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   constructor() {
     this.clearPathOnTypeChanges();

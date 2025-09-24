@@ -9,6 +9,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { omit } from 'lodash-es';
 import { finalize, switchMap } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
@@ -53,6 +55,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     DetailsTableComponent,
     DetailsItemComponent,
     MatTooltip,
+    RequiresRolesDirective,
   ],
 })
 export class HostFormComponent implements OnInit {
@@ -85,6 +88,8 @@ export class HostFormComponent implements OnInit {
 
   protected isGeneratingHostKey = signal(false);
   protected isGeneratingTrueNasKey = signal(false);
+
+  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   ngOnInit(): void {
     const existingHost = this.slideInRef.getData();
