@@ -77,6 +77,11 @@ export class UserAccessCardComponent {
   protected readonly searchableElements = userAccessCardElements;
 
   protected readonly globalTwoFactorConfig = toSignal(this.authService.getGlobalTwoFactorConfig());
+  protected readonly currentUser = toSignal(this.authService.user$);
+
+  protected readonly isCurrentUser = computed(() => {
+    return this.currentUser()?.pw_name === this.user().username;
+  });
 
   readonly sshAccessStatus = computed<string | null>(() => {
     if (this.user().sshpubkey && this.user().ssh_password_enabled) {
