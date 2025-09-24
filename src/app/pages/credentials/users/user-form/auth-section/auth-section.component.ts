@@ -85,20 +85,6 @@ export class AuthSectionComponent implements OnInit {
       },
     });
 
-    // Auto-enable SSH password authentication for new users when SSH access is available
-    effect(() => {
-      if (this.sshAccess() && !this.editingUser()) {
-        // Only auto-enable if password is not disabled and other conditions are met
-        if (!this.form.value.password_disabled) {
-          const hasSshKey = this.form.value.sshpubkey && this.form.value.sshpubkey.trim().length > 0;
-          const sshControlNotDisabled = !this.form.controls.ssh_password_enabled.disabled;
-          // Auto-enable SSH password auth if neither SSH method is configured
-          if (!this.form.value.ssh_password_enabled && !hasSshKey && sshControlNotDisabled) {
-            this.form.patchValue({ ssh_password_enabled: true });
-          }
-        }
-      }
-    });
 
     effect(() => {
       if (this.editingUser()) {

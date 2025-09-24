@@ -141,14 +141,14 @@ describe('AuthSectionComponent', () => {
       });
     });
 
-    it('automatically enables SSH password authentication for new users when SSH access is enabled', async () => {
-      // SSH password should be automatically enabled when SSH access is available for new users
+    it('requires validation when SSH access is enabled but no authentication method is provided', async () => {
+      // SSH password should not be automatically enabled - users need to choose
       expect(await form.getValues()).toMatchObject({
-        'Allow SSH Login with Password (not recommended)': true,
+        'Allow SSH Login with Password (not recommended)': false,
       });
 
-      // The auto-enable effect should have enabled SSH password authentication
-      expect(spectator.component.form.value.ssh_password_enabled).toBe(true);
+      // Without any authentication method, form should have validation error
+      expect(spectator.component.form.hasError('sshAccessRequired')).toBe(true);
     });
 
     it('updates the store when SSH fields are changed', async () => {
@@ -180,21 +180,17 @@ describe('AuthSectionComponent', () => {
     });
 
     it('validates that SSH access requires at least one authentication method', async () => {
-      // With auto-enable logic, SSH password is automatically enabled for new users
-      expect(spectator.component.form.value.ssh_password_enabled).toBe(true);
+      // Without auto-enable logic, SSH password should be false by default
+      expect(spectator.component.form.value.ssh_password_enabled).toBe(false);
 
-      // Form should not have SSH access validation error since SSH password is auto-enabled
-      expect(spectator.component.form.hasError('sshAccessRequired')).toBe(false);
-
-      // Disable SSH password authentication should bring back the error
-      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': false });
+      // Form should have SSH access validation error since no authentication method is configured
       expect(spectator.component.form.hasError('sshAccessRequired')).toBe(true);
 
       // Enable SSH password authentication should remove the error
       await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
       expect(spectator.component.form.hasError('sshAccessRequired')).toBe(false);
 
-      // Disable SSH password authentication again
+      // Disable SSH password authentication should bring back the error
       await form.fillForm({ 'Allow SSH Login with Password (not recommended)': false });
       expect(spectator.component.form.hasError('sshAccessRequired')).toBe(true);
 
