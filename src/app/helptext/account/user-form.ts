@@ -7,6 +7,7 @@ export const helptextUsers = {
  <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be\
  used as the last character of the username.'),
   passwordTooltip: T('Longer passwords are more secure. Try using a phrase or a mix of words and numbers.'),
+  passwordConfirmTooltip: T('Confirm the password by typing it again.'),
   uidTooltip: T('User accounts have an ID greater than 1000 and\
  system accounts have an ID equal to the default\
  port number used by the service.'),

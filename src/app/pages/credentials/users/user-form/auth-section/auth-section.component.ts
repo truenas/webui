@@ -10,6 +10,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
+import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { UserFormStore, UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user.store';
 
 @UntilDestroy()
@@ -40,12 +41,20 @@ export class AuthSectionComponent implements OnInit {
 
   form = this.formBuilder.group({
     password: ['', [Validators.required]],
+    password_confirm: [''],
     password_disabled: [false],
     ssh_password_enabled: [false],
     sshpubkey: [''],
     stig_password: [UserStigPasswordOption.DisablePassword],
   }, {
-    validators: [this.sshAccessValidator.bind(this)],
+    validators: [
+      this.sshAccessValidator.bind(this),
+      matchOthersFgValidator(
+        'password_confirm',
+        ['password'],
+        this.translate.instant('Passwords do not match'),
+      ),
+    ],
   });
 
   protected readonly tooltips = {
@@ -53,6 +62,7 @@ export class AuthSectionComponent implements OnInit {
     one_time_password: helptextUsers.oneTimePasswordTooltip,
     password: helptextUsers.passwordTooltip,
     password_edit: helptextUsers.passwordTooltip,
+    password_confirm: helptextUsers.passwordConfirmTooltip,
     sshpubkey: helptextUsers.publicKeyTooltip,
   };
 
@@ -114,15 +124,27 @@ export class AuthSectionComponent implements OnInit {
         this.form.patchValue({ password_disabled: false });
       }
     });
+
+    effect(() => {
+      this.setupPasswordValidation();
+    });
   }
 
   ngOnInit(): void {
     this.setPasswordFieldRelations();
+    this.setupPasswordValidation();
+  }
 
+  private setupPasswordValidation(): void {
     if (this.editingUser()) {
       this.form.controls.password.removeValidators([Validators.required]);
       this.form.controls.password.reset();
+      this.form.controls.password_confirm.clearValidators();
+      this.form.controls.password_confirm.reset();
+    } else {
+      this.form.controls.password_confirm.setValidators([Validators.required]);
     }
+    this.form.controls.password_confirm.updateValueAndValidity();
   }
 
   private sshAccessValidator(formGroup: AbstractControl): ValidationErrors | null {
@@ -151,9 +173,11 @@ export class AuthSectionComponent implements OnInit {
     ).subscribe((isDisabled) => {
       if (isDisabled) {
         this.form.controls.password.disable();
+        this.form.controls.password_confirm.disable();
         this.form.controls.ssh_password_enabled.disable({ emitEvent: false });
       } else {
         this.form.controls.password.enable();
+        this.form.controls.password_confirm.enable();
         this.form.controls.ssh_password_enabled.enable({ emitEvent: false });
       }
     });
