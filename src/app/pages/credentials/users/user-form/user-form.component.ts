@@ -31,7 +31,7 @@ import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/user-form/additional-details-section/additional-details-section.component';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/users/user-form/allowed-access-section/allowed-access-section.component';
 import { AuthSectionComponent } from 'app/pages/credentials/users/user-form/auth-section/auth-section.component';
-import { defaultHomePath, defaultRole, UserFormStore, UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user.store';
+import { defaultHomePath, UserFormStore, UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user.store';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 
@@ -195,10 +195,6 @@ export class UserFormComponent implements OnInit {
       sudo_commands: user.sudo_commands,
       sudo_commands_nopasswd: user.sudo_commands_nopasswd,
     });
-
-    const role = user.roles?.length > 0 ? user.roles[0] : defaultRole;
-
-    this.userFormStore.updateSetupDetails({ role });
 
     this.userFormStore.setAllowedAccessConfig({
       smbAccess: user.smb,
