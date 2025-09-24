@@ -46,7 +46,7 @@
             {{ 'Unset 2FA Secret' | translate }}
           </button>
         }
-        @if (isSetupDialog() && !userTwoFactorAuthConfigured()) {
+        @if (showSkipButton()) {
           <button
             mat-button
             type="button"

@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, input, output, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, input, output, signal, inject, computed } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardActions } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -71,6 +71,10 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   globalTwoFactorEnabled = signal(false);
   showQrCodeWarning = false;
 
+  protected readonly showSkipButton = computed(() => {
+    return this.isSetupDialog() && !this.userTwoFactorAuthConfigured();
+  });
+
   protected get global2FaMsg(): string {
     if (!this.globalTwoFactorEnabled()) {
       return this.translate.instant(helptext2fa.globallyDisabled);
@@ -100,7 +104,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.window.localStorage.setItem('showQr2FaWarning', 'false');
+    this.setQrWarningState(false);
   }
 
   private loadTwoFactorConfigs(): void {
@@ -146,7 +150,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   private renewSecretForUser(): Observable<void> {
     this.isFormLoading.set(true);
 
-    this.window.localStorage.setItem('showQr2FaWarning', 'true');
+    this.setQrWarningState(true);
 
     return this.authService.user$.pipe(
       take(1),
@@ -155,7 +159,6 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       switchMap(() => this.authService.refreshUser()),
       tap(() => {
         this.userTwoFactorAuthConfigured.set(true);
-        this.showQrCodeWarning = true;
       }),
       untilDestroyed(this),
     );
@@ -216,11 +219,15 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       tap(() => {
         this.isFormLoading.set(false);
         this.userTwoFactorAuthConfigured.set(false);
-        this.showQrCodeWarning = false;
-        this.window.localStorage.setItem('showQr2FaWarning', 'false');
+        this.setQrWarningState(false);
       }),
       catchError((error: unknown) => this.handleError(error)),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  private setQrWarningState(show: boolean): void {
+    this.showQrCodeWarning = show;
+    this.window.localStorage.setItem('showQr2FaWarning', show.toString());
   }
 }
