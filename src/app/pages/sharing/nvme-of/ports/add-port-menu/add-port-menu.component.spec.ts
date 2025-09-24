@@ -8,6 +8,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { AddPortMenuComponent } from 'app/pages/sharing/nvme-of/ports/add-port-menu/add-port-menu.component';
 import { ManagePortsDialog } from 'app/pages/sharing/nvme-of/ports/manage-ports/manage-ports-dialog.component';
@@ -41,6 +42,9 @@ describe('AddPortMenuComponent', () => {
   const createComponent = createComponentFactory({
     component: AddPortMenuComponent,
     providers: [
+      mockProvider(AuthService, {
+        hasRole: jest.fn(() => of(true)),
+      }),
       mockProvider(NvmeOfStore, {
         ports: allPorts,
       }),

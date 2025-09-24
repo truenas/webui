@@ -3,6 +3,7 @@
     <h3 mat-card-title>{{ 'Namespaces' | translate }}</h3>
 
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-button
       type="button"
       ixTest="add-namespace"
@@ -33,6 +34,7 @@
 
               <span class="namespace-actions">
                 <button
+                  *ixRequiresRoles="requiredRoles"
                   mat-icon-button
                   [ixTest]="['delete-namespace', namespace.device_path]"
                   [matTooltip]="'Delete namespace' | translate"
