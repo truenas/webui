@@ -897,6 +897,7 @@ export interface ApiCallDirectory {
   'user.has_local_administrator_set_up': { params: void; response: boolean };
   'user.query': { params: QueryParams<User>; response: User[] };
   'user.renew_2fa_secret': { params: [string, { interval: number; otp_digits: number }]; response: User };
+  'user.unset_2fa_secret': { params: [string]; response: User };
   'user.set_password': { params: [SetPasswordParams]; response: void };
   'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.shell_choices': { params: [ids: number[]]; response: Choices };

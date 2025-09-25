@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, input, output, signal, inject, computed } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardActions } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -52,6 +52,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class TwoFactorComponent implements OnInit, OnDestroy {
+  readonly isSetupDialog = input(false);
+  readonly skipSetup = output();
+
   authService = inject(AuthService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
@@ -67,6 +70,10 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   protected isFormLoading = signal(false);
   globalTwoFactorEnabled = signal(false);
   showQrCodeWarning = false;
+
+  protected readonly showSkipButton = computed(() => {
+    return this.isSetupDialog() && !this.userTwoFactorAuthConfigured();
+  });
 
   protected get global2FaMsg(): string {
     if (!this.globalTwoFactorEnabled()) {
@@ -97,7 +104,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.window.localStorage.setItem('showQr2FaWarning', 'false');
+    this.setQrWarningState(false);
   }
 
   private loadTwoFactorConfigs(): void {
@@ -143,7 +150,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
   private renewSecretForUser(): Observable<void> {
     this.isFormLoading.set(true);
 
-    this.window.localStorage.setItem('showQr2FaWarning', 'true');
+    this.setQrWarningState(true);
 
     return this.authService.user$.pipe(
       take(1),
@@ -152,7 +159,6 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       switchMap(() => this.authService.refreshUser()),
       tap(() => {
         this.userTwoFactorAuthConfigured.set(true);
-        this.showQrCodeWarning = true;
       }),
       untilDestroyed(this),
     );
@@ -168,5 +174,60 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       });
     }
     return of(true);
+  }
+
+  protected onSkipSetup(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Skip Two-Factor Authentication Setup?'),
+      message: this.translate.instant(
+        'Two-factor authentication significantly improves the security of your account. '
+        + 'Are you sure you want to skip this setup? You can enable it later from your user settings.',
+      ),
+      buttonText: this.translate.instant('Skip Setup'),
+      cancelText: this.translate.instant('Continue Setup'),
+      hideCheckbox: true,
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.skipSetup.emit();
+    });
+  }
+
+  protected unset2FaSecret(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Unset Two-Factor Authentication?'),
+      message: this.translate.instant(
+        'Are you sure you want to unset two-factor authentication? '
+        + 'This will remove your current 2FA configuration and you will need to set it up again to use 2FA.',
+      ),
+      buttonText: this.translate.instant('Unset 2FA'),
+      cancelText: this.translate.instant('Cancel'),
+      hideCheckbox: true,
+      buttonColor: 'warn',
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        this.isFormLoading.set(true);
+        return this.authService.user$.pipe(
+          take(1),
+          filter((user) => !!user),
+          switchMap((user) => this.api.call('user.unset_2fa_secret', [user.pw_name])),
+        );
+      }),
+      switchMap(() => this.authService.refreshUser()),
+      tap(() => {
+        this.isFormLoading.set(false);
+        this.userTwoFactorAuthConfigured.set(false);
+        this.setQrWarningState(false);
+      }),
+      catchError((error: unknown) => this.handleError(error)),
+      untilDestroyed(this),
+    ).subscribe();
+  }
+
+  private setQrWarningState(show: boolean): void {
+    this.showQrCodeWarning = show;
+    this.window.localStorage.setItem('showQr2FaWarning', show.toString());
   }
 }
