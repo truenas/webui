@@ -104,20 +104,21 @@ export class AllowedAccessSectionComponent {
 
     effect(() => {
       if (this.editingUser()) {
+        const roleValue = this.editingUser().roles.length > 0 ? this.editingUser().roles[0] : defaultRole;
         this.form.patchValue({
           smb: this.editingUser().smb,
           truenas_access: !!this.editingUser().roles.length,
           shell_access: hasShellAccess(this.editingUser()),
           ssh_access: hasSshAccess(this.editingUser()),
-          role: this.editingUser().roles.length > 0 ? this.editingUser().roles[0] : defaultRole,
+          role: roleValue,
         });
+        this.userFormStore.updateSetupDetails({ role: roleValue });
       }
     });
 
     effect(() => {
       const role = this.userFormStore.role();
-
-      if (!role) {
+      if (!role && !this.editingUser()) {
         this.form.controls.role.patchValue(null);
       }
     });
