@@ -122,6 +122,10 @@
           width: 100%;
         }
 
+        .mat-calendar-table tr {
+          display: table-row;
+        }
+
         .mat-calendar-body-cell,
         .mat-calendar-body-cell-content {
           cursor: pointer;
