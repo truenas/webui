@@ -49,11 +49,10 @@ const mockGlobalTwoFactorConfig: GlobalTwoFactorConfig = {
   services: { ssh: false },
 };
 
-describe('UserAccessCardComponent', () => {
-  let spectator: Spectator<UserAccessCardComponent>;
-  let loader: HarnessLoader;
-
-  const createComponent = createComponentFactory({
+function createTestComponent(
+  globalTwoFactorConfig: GlobalTwoFactorConfig = mockGlobalTwoFactorConfig,
+): ReturnType<typeof createComponentFactory<UserAccessCardComponent>> {
+  return createComponentFactory({
     component: UserAccessCardComponent,
     imports: [
       IxIconComponent,
@@ -66,8 +65,9 @@ describe('UserAccessCardComponent', () => {
       mockAuth(),
       mockProvider(ApiService),
       mockProvider(AuthService, {
-        getGlobalTwoFactorConfig: jest.fn(() => of(mockGlobalTwoFactorConfig)),
+        getGlobalTwoFactorConfig: jest.fn(() => of(globalTwoFactorConfig)),
         hasRole: jest.fn(() => of(true)),
+        user$: of({ pw_name: 'testuser' }),
       }),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
@@ -75,6 +75,7 @@ describe('UserAccessCardComponent', () => {
       }),
       mockApi([
         mockCall('user.update'),
+        mockCall('user.unset_2fa_secret'),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({})),
@@ -84,6 +85,13 @@ describe('UserAccessCardComponent', () => {
       }),
     ],
   });
+}
+
+describe('UserAccessCardComponent', () => {
+  let spectator: Spectator<UserAccessCardComponent>;
+  let loader: HarnessLoader;
+
+  const createComponent = createTestComponent();
 
   beforeEach(() => {
     spectator = createComponent({
@@ -140,6 +148,15 @@ describe('UserAccessCardComponent', () => {
     expect(additionalShellAccessInfo).toHaveText('Allowed sudo commands: command1, command2  Allowed Sudo Commands (No Password): command3');
   });
 
+  it('clears two-factor authentication when Clear Two-Factor Authentication is clicked', async () => {
+    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Two-Factor Authentication' }));
+    await button.click();
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.unset_2fa_secret', [mockUser.username]);
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Two-Factor Authentication settings cleared');
+  });
+
   it('should open lock user when button Lock User is clicked', async () => {
     const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock User' }));
     await lockButton.click();
@@ -178,7 +195,7 @@ describe('UserAccessCardComponent', () => {
 
   describe('API Keys', () => {
     it('shows API keys count', () => {
-      const apiKeysSection = spectator.query('.content-wrapper:nth-child(8)');
+      const apiKeysSection = spectator.query('.content-wrapper:nth-of-type(7) .flex-container');
       expect(apiKeysSection).toHaveText('API Keys: 2 keys');
     });
 
@@ -211,6 +228,126 @@ describe('UserAccessCardComponent', () => {
         new Blob([mockUser.sshpubkey], { type: 'text/plain' }),
         `${mockUser.username}_public_key_rsa`,
       );
+    });
+  });
+
+  describe('Two-Factor Authentication', () => {
+    let twoFactorSpectator: Spectator<UserAccessCardComponent>;
+    const createFactory = createTestComponent({
+      ...mockGlobalTwoFactorConfig,
+      enabled: true,
+    });
+
+    it('shows "Set up 2FA" link for current user when 2FA is not configured', () => {
+      twoFactorSpectator = createFactory({
+        props: {
+          user: {
+            ...mockUser,
+            twofactor_auth_configured: false,
+          },
+        },
+      });
+
+      const link = twoFactorSpectator.query(byText('Set up 2FA'));
+
+      expect(link).toBeTruthy();
+      expect(link).toHaveAttribute('href', '/two-factor-auth');
+    });
+
+    it('does not show "Set up 2FA" link when 2FA is already configured', () => {
+      twoFactorSpectator = createFactory({
+        props: {
+          user: {
+            ...mockUser,
+            twofactor_auth_configured: true,
+          },
+        },
+      });
+
+      const link = twoFactorSpectator.query(byText('Set up 2FA'));
+
+      expect(link).toBeFalsy();
+    });
+  });
+
+  describe('Two-Factor Authentication - Other User', () => {
+    let otherUserSpectator: Spectator<UserAccessCardComponent>;
+    const createFactory = createComponentFactory({
+      component: UserAccessCardComponent,
+      imports: [
+        IxIconComponent,
+        RequiresRolesDirective,
+      ],
+      declarations: [
+        MockComponent(UserLastActionComponent),
+      ],
+      providers: [
+        mockAuth(),
+        mockProvider(ApiService),
+        mockProvider(AuthService, {
+          getGlobalTwoFactorConfig: jest.fn(() => of({
+            ...mockGlobalTwoFactorConfig,
+            enabled: true,
+          })),
+          hasRole: jest.fn(() => of(true)),
+          user$: of({ pw_name: 'differentuser' }), // Different user
+        }),
+        mockProvider(SnackbarService),
+        mockProvider(DialogService, {
+          confirm: jest.fn(() => of(true)),
+        }),
+        mockApi([
+          mockCall('user.update'),
+          mockCall('user.unset_2fa_secret'),
+        ]),
+        mockProvider(SlideIn, {
+          open: jest.fn(() => of({})),
+        }),
+        mockProvider(DownloadService, {
+          downloadBlob: jest.fn(),
+        }),
+      ],
+    });
+
+    it('does not show "Set up 2FA" link for other users', () => {
+      otherUserSpectator = createFactory({
+        props: {
+          user: {
+            ...mockUser,
+            twofactor_auth_configured: false,
+          },
+        },
+      });
+
+      const link = otherUserSpectator.query(byText('Set up 2FA'));
+
+      expect(link).toBeFalsy();
+    });
+  });
+
+  describe('Two-Factor Authentication - Disabled', () => {
+    let disabledSpectator: Spectator<UserAccessCardComponent>;
+    const createFactory = createTestComponent({
+      ...mockGlobalTwoFactorConfig,
+      enabled: false,
+    });
+
+    it('does not show 2FA section when global 2FA is disabled', () => {
+      disabledSpectator = createFactory({
+        props: {
+          user: {
+            ...mockUser,
+            twofactor_auth_configured: false,
+          },
+        },
+      });
+
+      // When global 2FA is disabled, the entire 2FA section should not be displayed
+      const twoFactorText = disabledSpectator.query(byText('No Two-Factor Authentication'));
+      const link = disabledSpectator.query(byText('Set up 2FA'));
+
+      expect(twoFactorText).toBeFalsy();
+      expect(link).toBeFalsy();
     });
   });
 });

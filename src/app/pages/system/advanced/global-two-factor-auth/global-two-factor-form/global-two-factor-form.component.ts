@@ -68,7 +68,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     ssh: [false],
   });
 
-  enableWarning: string = this.translate.instant('Once enabled, users will be required to set up two factor authentication next time they login.');
+  enableWarning: string = this.translate.instant('Once enabled, users will be prompted to set up two-factor authentication next time they login. They can choose to skip the setup if desired.');
 
   protected twoFactorConfig: GlobalTwoFactorConfig;
 
