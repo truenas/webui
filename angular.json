@@ -27,7 +27,7 @@
             "polyfills": [
               "src/polyfills.ts"
             ],
-            "assets": ["src/assets"],
+            "assets": ["src/assets", "src/sw.js"],
             "stylePreprocessorOptions": {
               "sass": {
                 "silenceDeprecations": [
