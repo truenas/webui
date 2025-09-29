@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
-import { UntypedFormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { UntypedFormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, pairwise } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -137,6 +137,83 @@ export class AcmednsFormComponent implements OnInit {
     this.authenticatorOptions$ = of(schemas.map((schema) => ({ label: schema.key, value: schema.key })));
   }
 
+  private setupConditionalValidation(): void {
+    /* cloudflare DNS is a special case where the user can either input
+    * both an email and an API key OR just an API token
+    * so to make this apparent to the user, we'll hardcode this special case */
+
+    const cfEmail = this.form.controls.attributes.get(['cloudflare_email']) as FormControl<string>;
+    const cfKey = this.form.controls.attributes.get(['api_key']) as FormControl<string>;
+    const cfToken = this.form.controls.attributes.get(['api_token']) as FormControl<string>;
+
+    const mustBeEmpty = (control: AbstractControl): ValidationErrors | null => {
+      return control.value !== '' ? { cannotUse: { message: 'email/API key cannot be used with token' } } : null;
+    };
+
+    const setRequiredFields = (req: FormControl<string>[], notReq: FormControl<string>[]): void => {
+      req.forEach((elem) => elem.setValidators([Validators.required], { emitEvent: false }));
+      notReq.forEach((elem) => elem.setValidators([mustBeEmpty], { emitEvent: false }));
+    };
+
+    this.form.valueChanges.pipe(pairwise(), untilDestroyed(this)).subscribe(([prev, next]) => {
+      if (next.authenticator !== DnsAuthenticatorType.Cloudflare) {
+        return;
+      }
+
+      const emailInput = next.attributes?.cloudflare_email;
+      const keyInput = next.attributes?.api_key;
+      const tokenInput = next.attributes?.api_token;
+
+      // determine which field was *just* edited to help assume user intent.
+      let edited: 'email' | 'key' | 'token' | null = null;
+      if (prev.attributes?.cloudflare_email !== next.attributes?.cloudflare_email) {
+        edited = 'email';
+      } else if (prev.attributes?.api_key !== next.attributes?.api_key) {
+        edited = 'key';
+      } else if (prev.attributes?.api_token !== next.attributes?.api_token) {
+        edited = 'token';
+      }
+
+      // case: all fields are empty
+      if (emailInput === '' && keyInput === '' && tokenInput === '') {
+        // set *all* fields required just so the user has to put *something* in.
+        setRequiredFields([cfEmail, cfKey, cfToken], []);
+
+        // case: the user just edited the email or key fields
+      } else if (edited === 'email' || edited === 'key') {
+        // if they zeroed out both of them - assume they want to input a token
+        if (emailInput === '' && keyInput === '') {
+          setRequiredFields([cfToken], [cfEmail, cfKey]);
+
+          // otherwise, assume they want to input an email/key pair
+        } else {
+          setRequiredFields([cfEmail, cfKey], [cfToken]);
+        }
+
+        // case: the user just edited the token field
+      } else if (edited === 'token') {
+        // if they zeroed it out, assume they want to input an email/key pair.
+        if (tokenInput === '') {
+          setRequiredFields([cfEmail, cfKey], [cfToken]);
+
+          // otherwise, assume they want to input a token.
+        } else {
+          setRequiredFields([cfToken], [cfEmail, cfKey]);
+        }
+
+        // case: edited is null
+      } else {
+        setRequiredFields([cfEmail, cfKey, cfToken], []);
+      }
+
+      // the form doesn't update without forcing value re-evaluations, so
+      // i force updates here by setting each input's value manually.
+      cfEmail.setValue(cfEmail.value, { onlySelf: true });
+      cfKey.setValue(cfKey.value, { onlySelf: true });
+      cfToken.setValue(cfToken.value, { onlySelf: true });
+    });
+  }
+
   private createAuthenticatorControls(schemas: AuthenticatorSchema[]): void {
     schemas.forEach((schema) => {
       Object.values(schema.schema.properties).forEach((input) => {
@@ -157,6 +234,7 @@ export class AcmednsFormComponent implements OnInit {
 
     this.dnsAuthenticatorList = schemas.map((schema) => this.parseSchemaForDnsAuthList(schema));
     this.onAuthenticatorTypeChanged(DnsAuthenticatorType.Cloudflare);
+    this.setupConditionalValidation();
   }
 
   parseSchemaForDynamicSchema(schema: AuthenticatorSchema): DynamicFormSchemaNode[] {

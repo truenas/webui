@@ -183,4 +183,52 @@ describe('AcmednsFormComponent', () => {
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
+
+  describe('Cloudflare DNS conditional formatting', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => existingAcmedns) }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('requires an API key when email is supplied', async () => {
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': 'qatest@truenas.com',
+        'API Key': '',
+        'API Token': '',
+      });
+
+      expect(spectator.query('.form-error > * > span').textContent.toLowerCase()).toBe('api key is required');
+    });
+
+    it('requires an email address when API key is supplied', async () => {
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': '',
+        'API Key': 'some_api_key',
+        'API Token': '',
+      });
+
+      expect(spectator.query('.form-error > * > span').textContent.toLowerCase()).toBe('cloudflare email is required');
+    });
+
+    it('will not permit an email nor API key to be used with token', async () => {
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': 'qatest@truenas.com',
+        'API Key': '',
+        'API Token': 'some_token',
+      });
+
+      expect(spectator.query('.form-error > * > span').textContent.toLowerCase()).toBe('email/api key cannot be used with token');
+    });
+  });
 });
