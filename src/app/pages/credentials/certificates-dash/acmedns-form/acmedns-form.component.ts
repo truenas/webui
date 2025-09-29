@@ -200,10 +200,6 @@ export class AcmednsFormComponent implements OnInit {
         } else {
           setRequiredFields([cfToken], [cfEmail, cfKey]);
         }
-
-        // case: edited is null
-      } else {
-        setRequiredFields([cfEmail, cfKey, cfToken], []);
       }
 
       // the form doesn't update without forcing value re-evaluations, so
