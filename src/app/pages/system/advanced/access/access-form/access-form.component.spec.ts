@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
+import { ProductType } from 'app/enums/product-type.enum';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -50,10 +51,16 @@ describe('AccessFormComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of(true)),
       }),
-      mockProvider(SystemGeneralService, {
-        isEnterprise: jest.fn(() => true),
-      }),
+      mockProvider(SystemGeneralService),
       provideMockStore({
+        initialState: {
+          systemInfo: {
+            systemInfo: null,
+            productType: ProductType.Enterprise,
+            isIxHardware: false,
+            buildYear: 2024,
+          },
+        },
         selectors: [{
           selector: selectPreferences,
           value: { lifetime: 300 } as Preferences,

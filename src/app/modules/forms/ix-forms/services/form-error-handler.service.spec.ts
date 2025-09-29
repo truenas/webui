@@ -347,16 +347,24 @@ describe('FormErrorHandlerService', () => {
   });
 
   describe('DOM element fallback handling', () => {
+    /**
+     * These tests verify the service's querySelector fallback behavior.
+     * Note: querySelector is flagged as deprecated by SonarJS, but it's necessary here because:
+     * 1. The service being tested uses querySelector as a fallback mechanism when IxFormService fails
+     * 2. We're testing error handling paths that require mocking DOM queries
+     * 3. There's no modern alternative for testing Document.querySelector behavior in Jest
+     */
     it('uses querySelector as fallback when IxFormService returns null', () => {
       const mockFormService = spectator.inject(IxFormService);
       jest.spyOn(mockFormService, 'getElementByControlName').mockReturnValue(null);
 
       const mockElement = document.createElement('input');
-      jest.spyOn(spectator.inject(DOCUMENT), 'querySelector').mockReturnValue(mockElement);
+      const doc = spectator.inject(DOCUMENT);
+      jest.spyOn(doc, 'querySelector').mockReturnValue(mockElement);
 
       spectator.service.handleValidationErrors(callError, formGroup);
 
-      expect(spectator.inject(DOCUMENT).querySelector).toHaveBeenCalledWith('[formControlName="test_control_1"]');
+      expect(doc.querySelector).toHaveBeenCalledWith('[formControlName="test_control_1"]');
     });
 
     it('warns when DOM element cannot be found', () => {

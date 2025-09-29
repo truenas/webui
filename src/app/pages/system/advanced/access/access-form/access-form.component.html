@@ -13,7 +13,7 @@
           [label]="'Session Timeout' | translate"
           [tooltip]="'Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.' | translate"
         ></ix-input>
-        @if (isEnterprise) {
+        @if (isEnterprise()) {
           <ix-checkbox
             formControlName="ds_auth"
             [label]="'Allow Directory Service users to access WebUI' | translate"

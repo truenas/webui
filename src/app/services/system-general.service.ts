@@ -5,9 +5,8 @@ import {
   Subject, Observable,
   of, switchMap,
 } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { languages } from 'app/constants/languages.constant';
-import { ProductType } from 'app/enums/product-type.enum';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -24,52 +23,11 @@ export class SystemGeneralService {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
 
-  private productType: ProductType;
   protected certificateList = 'certificate.query' as const;
 
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
   updateIsDone$ = new Subject<void>();
-
-  /**
-   * @deprecated
-   * Use selectIsEnterprise selector instead
-   */
-  get isEnterprise(): boolean {
-    return this.getProductType() === ProductType.Enterprise;
-  }
-
-  /**
-   * @deprecated
-   * Use selectProductType selector instead
-   */
-  getProductType(): ProductType {
-    return this.productType;
-  }
-
-  loadProductType(): Observable<void> {
-    return this.getProductType$.pipe(
-      map((productType): void => {
-        this.productType = productType;
-        return undefined;
-      }),
-    );
-  }
-
-  /**
-   * @deprecated
-   * Use selectProductType selector instead
-   */
-  getProductType$ = this.api.call('system.product_type').pipe(shareReplay({ refCount: false, bufferSize: 1 }));
-
-  /**
-   * @deprecated
-   * Use selectIsEnterprise selector instead
-   */
-  readonly isEnterprise$ = this.getProductType$.pipe(
-    map((productType) => productType === ProductType.Enterprise),
-    shareReplay({ refCount: true, bufferSize: 1 }),
-  );
 
   getCertificates(): Observable<Certificate[]> {
     return this.api.call(this.certificateList);

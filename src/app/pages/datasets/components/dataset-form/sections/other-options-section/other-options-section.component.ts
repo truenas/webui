@@ -25,7 +25,6 @@ import {
 import { DeduplicationSetting, deduplicationSettingLabels } from 'app/enums/deduplication-setting.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -49,7 +48,7 @@ import {
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -217,20 +216,21 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     this.hasDeduplication = false;
     this.cdr.markForCheck();
 
-    if (this.systemGeneralService.getProductType() !== ProductType.Enterprise) {
-      this.hasDeduplication = true;
-      this.cdr.markForCheck();
-      return;
-    }
-
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
-      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-      if (!systemInfo.license || !systemInfo.license.features.includes(LicenseFeature.Dedup)) {
+    combineLatest([
+      this.store$.select(selectIsEnterprise),
+      this.store$.pipe(waitForSystemInfo),
+    ]).pipe(untilDestroyed(this)).subscribe(([isEnterprise, systemInfo]) => {
+      if (!isEnterprise) {
+        this.hasDeduplication = true;
+        this.cdr.markForCheck();
         return;
       }
 
-      this.hasDeduplication = true;
-      this.cdr.markForCheck();
+      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+      if (systemInfo.license && systemInfo.license.features.includes(LicenseFeature.Dedup)) {
+        this.hasDeduplication = true;
+        this.cdr.markForCheck();
+      }
     });
   }
 

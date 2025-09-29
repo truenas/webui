@@ -2,10 +2,12 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, take, tap } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -50,8 +52,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualMachineDetailsRowComponent } from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
 import { vmListElements } from 'app/pages/vm/vm-list.elements';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { VmService } from 'app/services/vm.service';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -90,7 +93,7 @@ import { VmService } from 'app/services/vm.service';
 })
 export class VmListComponent implements OnInit {
   private slideIn = inject(SlideIn);
-  private systemGeneralService = inject(SystemGeneralService);
+  private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
@@ -101,6 +104,7 @@ export class VmListComponent implements OnInit {
   protected readonly requiredRoles = [Role.VmWrite];
   protected readonly searchableElements = vmListElements;
 
+  private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   vmMachines: VirtualMachine[] = [];
   searchQuery = signal('');
   dataProvider: AsyncDataProvider<VirtualMachine>;
@@ -272,7 +276,7 @@ export class VmListComponent implements OnInit {
     if (!devices || devices.length === 0) {
       return false;
     }
-    if (this.systemGeneralService.isEnterprise && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
+    if (this.isEnterprise() && vm.bootloader === VmBootloader.UefiCsm) {
       return false;
     }
 
@@ -298,7 +302,7 @@ export class VmListComponent implements OnInit {
     if (!devices || devices.length === 0) {
       return Number.MAX_SAFE_INTEGER - 1; // No devices should sort near the end
     }
-    if (this.systemGeneralService.isEnterprise && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
+    if (this.isEnterprise() && vm.bootloader === VmBootloader.UefiCsm) {
       return Number.MAX_SAFE_INTEGER - 2; // Enterprise limitations should sort near the end
     }
 

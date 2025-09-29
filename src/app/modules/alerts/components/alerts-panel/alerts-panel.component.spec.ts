@@ -8,6 +8,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { CollectionChangeType } from 'app/enums/api.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
@@ -20,6 +21,8 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
+import { systemInfoReducer } from 'app/store/system-info/system-info.reducer';
+import { systemInfoStateKey } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 const unreadAlerts = [
@@ -62,7 +65,11 @@ describe('AlertsPanelComponent', () => {
   const createComponent = createComponentFactory({
     component: AlertsPanelComponent,
     imports: [
-      StoreModule.forRoot({ [alertStateKey]: alertReducer, [haInfoStateKey]: haInfoReducer }, {
+      StoreModule.forRoot({
+        [alertStateKey]: alertReducer,
+        [haInfoStateKey]: haInfoReducer,
+        [systemInfoStateKey]: systemInfoReducer,
+      }, {
         initialState: {
           [alertStateKey]: adapter.setAll([...unreadAlerts, ...dismissedAlerts], alertsInitialState),
           [haInfoStateKey]: {
@@ -71,6 +78,12 @@ describe('AlertsPanelComponent', () => {
               reasons: [],
             },
             isHaLicensed: true,
+          },
+          [systemInfoStateKey]: {
+            systemInfo: null,
+            productType: ProductType.Enterprise,
+            isIxHardware: false,
+            buildYear: 2024,
           },
         },
       }),
@@ -87,11 +100,7 @@ describe('AlertsPanelComponent', () => {
         mockCall('alert.dismiss'),
         mockCall('alert.restore'),
       ]),
-      mockProvider(SystemGeneralService, {
-        get isEnterprise(): boolean {
-          return true;
-        },
-      }),
+      mockProvider(SystemGeneralService),
     ],
   });
 

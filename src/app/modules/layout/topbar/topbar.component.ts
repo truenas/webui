@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, inject,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -43,6 +44,7 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
 import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
 
@@ -89,6 +91,7 @@ export class TopbarComponent implements OnInit {
   updateIsDone: Subscription;
 
   updateDialog: MatDialogRef<UpdateDialog>;
+  private readonly isEnterprise = toSignal(this.appStore$.select(selectIsEnterprise));
   isHaLicensed = false;
   updateIsRunning = false;
   systemWillRestart = false;
@@ -124,7 +127,7 @@ export class TopbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.systemGeneralService.isEnterprise) {
+    if (this.isEnterprise()) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
         this.cdr.markForCheck();
