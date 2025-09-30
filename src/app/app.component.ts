@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
@@ -24,7 +24,7 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, WebSocketDebugPanelComponent],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = inject(Title);
   private router = inject(Router);
   private wsStatus = inject(WebSocketStatusService);
@@ -93,6 +93,11 @@ export class AppComponent implements OnInit {
           }
         });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private logOutExpiredUser(): void {
