@@ -4,10 +4,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
+import { SmbProtocol } from 'app/enums/smb-protocol.enum';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -36,6 +38,7 @@ describe('ServiceSmbComponent', () => {
     component: ServiceSmbComponent,
     imports: [
       ReactiveFormsModule,
+      TranslateModule.forRoot(),
     ],
     providers: [
       mockAuth(),
@@ -60,6 +63,7 @@ describe('ServiceSmbComponent', () => {
           admin_group: null,
           next_rid: 0,
           encryption: SmbEncryption.Negotiate,
+          search_protocols: [SmbProtocol.Spotlight],
         } as SmbConfig),
         mockCall('smb.unixcharset_choices', {
           'UTF-8': 'UTF-8',
@@ -137,6 +141,7 @@ describe('ServiceSmbComponent', () => {
       'NTLMv1 Auth': false,
       'NetBIOS Alias': [],
       'NetBIOS Name': 'truenas',
+      'Search Protocols': 'Spotlight',
       'Transport Encryption Behavior': 'Negotiate – only encrypt transport if explicitly requested by the SMB client',
       Multichannel: false,
       'UNIX Charset': 'UTF-8',
@@ -182,6 +187,7 @@ describe('ServiceSmbComponent', () => {
       multichannel: false,
       unixcharset: 'UTF-8',
       encryption: SmbEncryption.Negotiate,
+      search_protocols: [SmbProtocol.Spotlight],
     }]);
   });
 
@@ -208,6 +214,7 @@ describe('ServiceSmbComponent', () => {
       'File Mask': '0666',
       'Directory Mask': '0777',
       'Transport Encryption Behavior': 'Default – follow upstream / TrueNAS default',
+      'Search Protocols': 'Spotlight',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -238,6 +245,7 @@ describe('ServiceSmbComponent', () => {
       multichannel: false,
       unixcharset: 'UTF-16',
       encryption: SmbEncryption.Default,
+      search_protocols: [SmbProtocol.Spotlight],
     }]);
   });
 });
