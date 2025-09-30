@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { UntypedFormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -63,6 +63,7 @@ export class AcmednsFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandlerService = inject(FormErrorHandlerService);
   private api = inject(ApiService);
+  private cdr = inject(ChangeDetectorRef);
   slideInRef = inject<SlideInRef<DnsAuthenticator | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
@@ -202,11 +203,9 @@ export class AcmednsFormComponent implements OnInit {
         }
       }
 
-      // the form doesn't update without forcing value re-evaluations, so
-      // i force updates here by setting each input's value manually.
-      cfEmail.setValue(cfEmail.value, { onlySelf: true });
-      cfKey.setValue(cfKey.value, { onlySelf: true });
-      cfToken.setValue(cfToken.value, { onlySelf: true });
+      [cfEmail, cfKey, cfToken].forEach(elem => {
+        elem.updateValueAndValidity({onlySelf: true});
+      });
     });
   }
 
