@@ -230,5 +230,42 @@ describe('AcmednsFormComponent', () => {
 
       expect(spectator.query('.form-error > * > span').textContent.toLowerCase()).toBe('email/api key cannot be used with token');
     });
+
+    it('will correctly swap which fields are required when emptying other fields', async () => {
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': 'qatest@truenas.com',
+        'API Key': 'some_key',
+        'API Token': 'some_token',
+      });
+
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': '',
+        'API Key': '',
+      });
+
+      // this tests for null since there *won't* be any errors. reason for this is the only way
+      // to trigger the behavior we're testing is to make the form valid.
+      expect(spectator.query('.form-error > * > span')).toBeNull();
+
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': 'qatest@truenas.com',
+        'API Key': '',
+        'API Token': 'some_token',
+      });
+
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'API Token': '',
+      });
+
+      expect(spectator.query('.form-error > * > span').textContent.toLowerCase()).toBe('api key is required');
+    });
   });
 });
