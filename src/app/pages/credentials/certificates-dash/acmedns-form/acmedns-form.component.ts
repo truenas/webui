@@ -203,9 +203,10 @@ export class AcmednsFormComponent implements OnInit {
         }
       }
 
-      [cfEmail, cfKey, cfToken].forEach(elem => {
-        elem.updateValueAndValidity({onlySelf: true});
-      });
+
+      cfEmail.updateValueAndValidity({ onlySelf: true });
+      cfKey.updateValueAndValidity({ onlySelf: true });
+      cfToken.updateValueAndValidity({ onlySelf: true });
     });
   }
 
