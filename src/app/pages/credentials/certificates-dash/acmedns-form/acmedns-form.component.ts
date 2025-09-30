@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { UntypedFormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -63,7 +63,6 @@ export class AcmednsFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandlerService = inject(FormErrorHandlerService);
   private api = inject(ApiService);
-  private cdr = inject(ChangeDetectorRef);
   slideInRef = inject<SlideInRef<DnsAuthenticator | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
