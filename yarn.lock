@@ -732,6 +732,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@angular/service-worker@npm:~20.3.2":
+  version: 20.3.2
+  resolution: "@angular/service-worker@npm:20.3.2"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/core": 20.3.2
+    rxjs: ^6.5.3 || ^7.4.0
+  bin:
+    ngsw-config: ngsw-config.js
+  checksum: 10/744c2ac19ee0973edd671bb17ced9490f7101b4128e0dcf4f528bf2f0cb2cffaa6e93f3e485c961d972373a66a748bb794d939e04a53ed5107b092d7da3943a4
+  languageName: node
+  linkType: hard
+
 "@antfu/install-pkg@npm:^1.0.0":
   version: 1.1.0
   resolution: "@antfu/install-pkg@npm:1.1.0"

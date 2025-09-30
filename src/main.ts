@@ -2,6 +2,7 @@ import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/
 import {
   APP_INITIALIZER,
   enableProdMode, ErrorHandler, importProvidersFrom, inject,
+  isDevMode,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -18,6 +19,7 @@ import {
   withNavigationErrorHandler,
   NavigationError, Router,
 } from '@angular/router';
+import { provideServiceWorker } from '@angular/service-worker';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
 import { provideStore } from '@ngrx/store';
@@ -143,5 +145,9 @@ bootstrapApplication(AppComponent, {
         console.error(error);
       }),
     ),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
 });

@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
+import { SwUpdate } from '@angular/service-worker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
-import { filter, tap } from 'rxjs';
+import { filter, Subject, takeUntil, tap } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -36,6 +37,8 @@ export class AppComponent implements OnInit {
   private window = inject<Window>(WINDOW);
   private slideIn = inject(SlideIn);
   private pingService = inject(PingService);
+  private swUpdate = inject(SwUpdate);
+  private destroy$ = new Subject<void>();
 
   isAuthenticated = false;
   debugPanelEnabled = environment.debugPanel?.enabled || false;
@@ -80,6 +83,16 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupScrollToTopOnNavigation();
+
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.versionUpdates
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((event) => {
+          if (event.type === 'VERSION_READY') {
+            this.window.location.reload();
+          }
+        });
+    }
   }
 
   private logOutExpiredUser(): void {
