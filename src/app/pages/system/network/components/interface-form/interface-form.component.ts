@@ -11,8 +11,9 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { range } from 'lodash-es';
 import {
-  BehaviorSubject, forkJoin, of,
+  BehaviorSubject, EMPTY, forkJoin, of,
 } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   CreateNetworkInterfaceType,
@@ -400,20 +401,20 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   private loadFailoverStatus(): void {
-    this.store$.select(selectIsEnterprise).pipe(untilDestroyed(this)).subscribe((isEnterprise) => {
-      if (!isEnterprise) {
-        return;
-      }
+    this.store$.select(selectIsEnterprise).pipe(
+      switchMap((isEnterprise) => {
+        if (!isEnterprise) {
+          return EMPTY;
+        }
 
-      forkJoin([
-        this.api.call('failover.licensed'),
-        this.api.call('failover.node'),
-      ])
-        .pipe(
-          this.errorHandler.withErrorHandler(),
-          untilDestroyed(this),
-        )
-        .subscribe(([isHaLicensed, failoverNode]) => {
+        return forkJoin([
+          this.api.call('failover.licensed'),
+          this.api.call('failover.node'),
+        ]);
+      }),
+      this.errorHandler.withErrorHandler(),
+      untilDestroyed(this),
+    ).subscribe(([isHaLicensed, failoverNode]) => {
           this.isHaLicensed = isHaLicensed;
           if (isHaLicensed) {
             if (failoverNode === 'A') {
@@ -426,7 +427,6 @@ export class InterfaceFormComponent implements OnInit {
           }
           this.cdr.markForCheck();
         });
-    });
   }
 
   private disableVlanParentInterface(): void {
