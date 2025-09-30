@@ -1,4 +1,5 @@
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
+import { SmbProtocol } from 'app/enums/smb-protocol.enum';
 
 export interface SmbConfig {
   aapl_extensions: boolean;
@@ -21,6 +22,7 @@ export interface SmbConfig {
   unixcharset: string;
   workgroup: string;
   encryption: SmbEncryption;
+  search_protocols: SmbProtocol[];
 }
 
 export type SmbConfigUpdate = {

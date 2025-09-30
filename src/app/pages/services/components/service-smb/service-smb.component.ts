@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
+import { SmbProtocol, smbProtocolLabels } from 'app/enums/smb-protocol.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
@@ -105,6 +106,7 @@ export class ServiceSmbComponent implements OnInit {
     aapl_extensions: [false, []],
     multichannel: [false, []],
     encryption: [SmbEncryption.Default],
+    search_protocols: [[] as SmbProtocol[]],
   });
 
   protected readonly requiredRoles = [Role.SharingSmbWrite];
@@ -127,6 +129,7 @@ export class ServiceSmbComponent implements OnInit {
     bindip: helptextServiceSmb.bindipTooltip,
     aapl_extensions: helptextServiceSmb.aaplExtensionsTooltip,
     multichannel: helptextServiceSmb.multichannelTooltip,
+    search_protocols: helptextServiceSmb.search_protocolsTooltip,
   };
 
   readonly unixCharsetOptions$ = this.api.call('smb.unixcharset_choices').pipe(choicesToOptions());
@@ -155,6 +158,7 @@ export class ServiceSmbComponent implements OnInit {
   );
 
   readonly encryptionOptions$ = of(mapToOptions(smbEncryptionLabels, this.translate));
+  readonly searchProtocolsOptions$ = of(mapToOptions(smbProtocolLabels, this.translate));
 
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {

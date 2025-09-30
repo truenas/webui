@@ -62,6 +62,14 @@
             [required]="true"
           ></ix-select>
 
+          <ix-select
+            formControlName="search_protocols"
+            [label]="'Search Protocols' | translate"
+            [options]="searchProtocolsOptions$"
+            [multiple]="true"
+            [tooltip]="tooltips.search_protocols | translate"
+          ></ix-select>
+
           <ix-checkbox
             formControlName="debug"
             [label]="'Use Debug' | translate"
