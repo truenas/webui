@@ -106,7 +106,7 @@ export class ServiceSmbComponent implements OnInit {
     aapl_extensions: [false, []],
     multichannel: [false, []],
     encryption: [SmbEncryption.Default],
-    search_protocols: [[] as SmbProtocol[]],
+    search_protocols: ['' as SmbProtocol],
   });
 
   protected readonly requiredRoles = [Role.SharingSmbWrite];
@@ -171,8 +171,13 @@ export class ServiceSmbComponent implements OnInit {
 
     this.api.call('smb.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
+        const searchProtocols = Array.isArray(config.search_protocols) && config.search_protocols.length ? config.search_protocols[0] : '';
         config.bindip.forEach(() => this.addBindIp());
-        this.form.patchValue({ ...config, bindip: config.bindip.map((ip) => ({ bindIp: ip })) });
+        this.form.patchValue({
+          ...config,
+          bindip: config.bindip.map((ip) => ({ bindIp: ip })),
+          search_protocols: searchProtocols as SmbProtocol,
+        });
         this.isFormLoading.set(false);
       },
       error: (error: unknown) => {
@@ -197,8 +202,12 @@ export class ServiceSmbComponent implements OnInit {
   }
 
   onSubmit(): void {
+    const form = this.form.value;
+    const searchProtocols = form.search_protocols ? [form.search_protocols] : [];
+
     const values: SmbConfigUpdate = {
-      ...this.form.value,
+      ...form,
+      search_protocols: searchProtocols,
       bindip: this.form.value.bindip.map((value) => value.bindIp),
     };
 

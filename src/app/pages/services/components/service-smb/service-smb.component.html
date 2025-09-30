@@ -62,14 +62,6 @@
             [required]="true"
           ></ix-select>
 
-          <ix-select
-            formControlName="search_protocols"
-            [label]="'Search Protocols' | translate"
-            [options]="searchProtocolsOptions$"
-            [multiple]="true"
-            [tooltip]="tooltips.search_protocols | translate"
-          ></ix-select>
-
           <ix-checkbox
             formControlName="debug"
             [label]="'Use Debug' | translate"
@@ -125,6 +117,13 @@
             [label]="'Directory Mask' | translate"
             [tooltip]="tooltips.dirmask | translate"
           ></ix-input>
+
+          <ix-select
+            formControlName="search_protocols"
+            [label]="'Search Protocols' | translate"
+            [options]="searchProtocolsOptions$"
+            [tooltip]="tooltips.search_protocols | translate"
+          ></ix-select>
 
           <ix-list
             formArrayName="bindip"
