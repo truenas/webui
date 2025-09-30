@@ -415,18 +415,18 @@ export class InterfaceFormComponent implements OnInit {
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe(([isHaLicensed, failoverNode]) => {
-          this.isHaLicensed = isHaLicensed;
-          if (isHaLicensed) {
-            if (failoverNode === 'A') {
-              this.ipLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
-              this.failoverLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 2)') as TranslatedString;
-            } else if (failoverNode === 'B') {
-              this.ipLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 1)') as TranslatedString;
-              this.failoverLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
-            }
-          }
-          this.cdr.markForCheck();
-        });
+      this.isHaLicensed = isHaLicensed;
+      if (isHaLicensed) {
+        if (failoverNode === 'A') {
+          this.ipLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
+          this.failoverLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 2)') as TranslatedString;
+        } else if (failoverNode === 'B') {
+          this.ipLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 1)') as TranslatedString;
+          this.failoverLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
+        }
+      }
+      this.cdr.markForCheck();
+    });
   }
 
   private disableVlanParentInterface(): void {
