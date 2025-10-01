@@ -22,6 +22,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { isFailedJobError } from 'app/helpers/api.helper';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -78,6 +79,7 @@ export class ManualUpdateFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
   private upload = inject(UploadService);
+  private window = inject<Window>(WINDOW);
 
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly searchableElements = systemManualUpdateFormElements;
@@ -239,7 +241,9 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   finishNonHaUpdate(): void {
+    // Mark that update completed successfully - reload page after restart to get latest UI
     if (this.form.value.rebootAfterManualUpdate) {
+      this.window.sessionStorage.setItem('updateCompleted', 'true');
       this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
     } else {
       this.dialogService.confirm({
@@ -248,7 +252,10 @@ export class ManualUpdateFormComponent implements OnInit {
       }).pipe(
         filter(Boolean),
         untilDestroyed(this),
-      ).subscribe(() => this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true }));
+      ).subscribe(() => {
+        this.window.sessionStorage.setItem('updateCompleted', 'true');
+        this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
+      });
     }
   }
 
