@@ -188,8 +188,13 @@ export class ApiService {
         return throwError(() => new ApiCallError(message.error as JsonRpcError));
       }
 
-      performance.mark(`${method} - ${uuid} - end`);
-      performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
+      try {
+        performance.mark(`${method} - ${uuid} - end`);
+        performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
+      } catch (error) {
+        // Ignore performance measurement errors (e.g., when start mark doesn't exist for mocked responses)
+        console.warn(`Performance measurement failed for ${method}:`, error);
+      }
       return of(message);
     });
   }
