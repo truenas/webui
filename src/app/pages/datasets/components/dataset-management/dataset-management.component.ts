@@ -172,7 +172,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
       .subscribe(() => {
-        if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
+        if (this.router.currentNavigation()?.extras?.state?.hideMobileDetails) {
           this.closeMobileDetails();
         }
       });

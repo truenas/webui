@@ -183,7 +183,7 @@ export class InstalledAppsListComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
+        if (this.router.currentNavigation()?.extras?.state?.hideMobileDetails) {
           this.closeMobileDetails();
           this.selectedApp = undefined;
           this.cdr.markForCheck();

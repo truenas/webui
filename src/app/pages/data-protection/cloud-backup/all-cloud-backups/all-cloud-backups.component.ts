@@ -52,7 +52,7 @@ export class AllCloudBackupsComponent implements OnInit {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
       .subscribe(() => {
-        if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
+        if (this.router.currentNavigation()?.extras?.state?.hideMobileDetails) {
           this.dataProvider.expandedRow = null;
           this.cdr.markForCheck();
         }
