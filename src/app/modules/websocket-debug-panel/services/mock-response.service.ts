@@ -189,13 +189,13 @@ export class MockResponseService implements OnDestroy {
 
     // Schedule subsequent events
     let totalDelay = 0;
-    events.forEach((event) => {
+    events.forEach((event, eventIndex) => {
       totalDelay += event.delay || 0;
 
       const eventSubscription = timer(totalDelay).pipe(take(1)).subscribe(() => {
         this.emitEvent(message, event, jobId);
       });
-      this.eventSubscriptions.set(`${message.id}-event-${jobId}`, eventSubscription);
+      this.eventSubscriptions.set(`${message.id}-event-${jobId}-${eventIndex}`, eventSubscription);
     });
 
     this.activeEvents.set(message.id, eventIds);
@@ -234,7 +234,7 @@ export class MockResponseService implements OnDestroy {
 
   private cleanupEventSubscriptions(messageId: string): void {
     this.eventSubscriptions.forEach((subscription, key) => {
-      if (key.startsWith(messageId)) {
+      if (key === messageId || key.startsWith(`${messageId}-event-`) || key.startsWith(`${messageId}-response`)) {
         subscription.unsubscribe();
         this.eventSubscriptions.delete(key);
       }
