@@ -170,6 +170,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
         tap((metrics) => this.patchState({ metrics })),
         catchError(() => EMPTY),
       )),
+      untilDestroyed(this),
     );
   });
 }

@@ -133,7 +133,11 @@ export class InstanceWizardComponent implements OnInit {
 
   protected readonly forbiddenNames$ = this.api.call('container.query', [
     [], { select: ['name'], order_by: ['name'] },
-  ]).pipe(map((keys) => keys.map((key) => key.name)));
+  ]).pipe(
+    map((instances) => instances
+      .map((instance) => instance.name)
+      .filter((name) => name !== this.editingInstance?.name)),
+  );
 
   readonly VirtualizationSource = VirtualizationSource;
 

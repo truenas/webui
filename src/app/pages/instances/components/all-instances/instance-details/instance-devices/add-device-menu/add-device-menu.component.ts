@@ -51,9 +51,10 @@ export class AddDeviceMenuComponent {
   private devicesStore = inject(VirtualizationDevicesStore);
   private instancesStore = inject(VirtualizationInstancesStore);
 
+  protected readonly gpuType = VirtualizationGpuType.Physical;
+
   private readonly usbChoices = toSignal(this.api.call('virt.device.usb_choices'), { initialValue: {} });
-  // TODO: Stop hardcoding params
-  private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [VirtualizationGpuType.Physical]), { initialValue: {} });
+  private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [this.gpuType]), { initialValue: {} });
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
