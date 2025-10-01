@@ -126,6 +126,7 @@ describe('CertificateEditComponent', () => {
           certificate: '--BEGIN CERTIFICATE--',
           name: 'ray',
           extension: 'crt',
+          mimeType: 'application/x-x509-user-cert',
         } as ViewCertificateDialogData,
       });
     });
@@ -138,7 +139,8 @@ describe('CertificateEditComponent', () => {
         data: {
           certificate: '--BEGIN RSA PRIVATE KEY--',
           name: 'ray',
-          extension: 'crt',
+          extension: 'key',
+          mimeType: 'application/x-pem-file',
         } as ViewCertificateDialogData,
       });
     });
@@ -180,6 +182,20 @@ describe('CertificateEditComponent', () => {
     it('does not show add to trusted store checkbox for CSR', async () => {
       const addToTrustedStoreCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Add to trusted store' }));
       expect(addToTrustedStoreCheckbox).not.toExist();
+    });
+
+    it('opens modal for CSR when View/Download CSR is pressed', async () => {
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'View/Download CSR' }));
+      await button.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ViewCertificateDialog, {
+        data: {
+          certificate: '--BEGIN CERTIFICATE REQUEST--',
+          name: 'ray',
+          extension: 'csr',
+          mimeType: 'application/pkcs10',
+        } as ViewCertificateDialogData,
+      });
     });
 
     it('opens SlideIn for creating ACME certificates when Create ACME Certificate is pressed', async () => {
