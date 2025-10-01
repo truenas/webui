@@ -13,6 +13,7 @@ import { SmbProtocol } from 'app/enums/smb-protocol.enum';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -53,7 +54,7 @@ describe('ServiceSmbComponent', () => {
           syslog: false,
           aapl_extensions: false,
           localmaster: true,
-          guest: 'nobody',
+          guest: '',
           filemask: '',
           dirmask: '',
           bindip: [] as string[],
@@ -141,14 +142,17 @@ describe('ServiceSmbComponent', () => {
       'NTLMv1 Auth': false,
       'NetBIOS Alias': [],
       'NetBIOS Name': 'truenas',
-      'Search Protocols': 'Spotlight',
       'Transport Encryption Behavior': 'Negotiate – only encrypt transport if explicitly requested by the SMB client',
       Multichannel: false,
       'UNIX Charset': 'UTF-8',
       'Use Debug': true,
       'Use Syslog Only': false,
       Workgroup: 'WORKGROUP',
+      'Enable Search (Spotlight)': true,
     });
+
+    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Search (Spotlight)' }));
+    expect(await searchCheckbox.getValue()).toBe(true);
   });
 
   it('sends an update payload to websocket when basic form is filled and saved', async () => {
@@ -178,7 +182,7 @@ describe('ServiceSmbComponent', () => {
       aapl_extensions: false,
       admin_group: null,
       bindip: [],
-      guest: 'nobody',
+      guest: '',
       dirmask: '',
       filemask: '',
       debug: true,
@@ -214,8 +218,10 @@ describe('ServiceSmbComponent', () => {
       'File Mask': '0666',
       'Directory Mask': '0777',
       'Transport Encryption Behavior': 'Default – follow upstream / TrueNAS default',
-      'Search Protocols': 'Spotlight',
     });
+
+    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Search (Spotlight)' }));
+    await searchCheckbox.setValue(false);
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -236,7 +242,7 @@ describe('ServiceSmbComponent', () => {
         '1.1.1.1',
         '2.2.2.2',
       ],
-      guest: 'nobody',
+      guest: '',
       dirmask: '0777',
       filemask: '0666',
       debug: true,
@@ -245,7 +251,7 @@ describe('ServiceSmbComponent', () => {
       multichannel: false,
       unixcharset: 'UTF-16',
       encryption: SmbEncryption.Default,
-      search_protocols: [SmbProtocol.Spotlight],
+      search_protocols: [],
     }]);
   });
 });
