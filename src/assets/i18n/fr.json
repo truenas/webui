@@ -1,6 +1,7 @@
 {
   "0": "0",
   "": "",
+  "Administratively Disabled": "",
   "Are you sure you want to unset two-factor authentication? This will remove your current 2FA configuration and you will need to set it up again to use 2FA.": "",
   "Configure as CallError": "",
   "Confirm the password by typing it again.": "",
@@ -48,6 +49,7 @@
   "Note": "",
   "Once enabled, users will be prompted to set up two-factor authentication next time they login. They can choose to skip the setup if desired.": "",
   "Optional VDEV types like cache, log, or spare can improve performance.": "",
+  "Password Login is Enabled": "",
   "Path to the disk image file to import. Supported formats: qcow2, qed, raw, vdi, vhdx, vmdk": "",
   "Percent sign at end must be escaped as %%": "",
   "Please ensure you understand the implications before proceeding.": "",
