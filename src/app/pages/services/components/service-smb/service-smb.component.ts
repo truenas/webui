@@ -10,11 +10,10 @@ import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
-import { SmbProtocol } from 'app/enums/smb-protocol.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
-import { SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
+import { SmbConfigUpdate, smbProtocolSpotlight } from 'app/interfaces/smb-config.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -106,7 +105,7 @@ export class ServiceSmbComponent implements OnInit {
     aapl_extensions: [false, []],
     multichannel: [false, []],
     encryption: [SmbEncryption.Default],
-    search_protocols: [false, []],
+    spotlightSearch: [false, []],
   });
 
   protected readonly requiredRoles = [Role.SharingSmbWrite];
@@ -129,7 +128,7 @@ export class ServiceSmbComponent implements OnInit {
     bindip: helptextServiceSmb.bindipTooltip,
     aapl_extensions: helptextServiceSmb.aaplExtensionsTooltip,
     multichannel: helptextServiceSmb.multichannelTooltip,
-    search_protocols: helptextServiceSmb.search_protocolsTooltip,
+    spotlight_search: helptextServiceSmb.spotlightSearch,
   };
 
   readonly unixCharsetOptions$ = this.api.call('smb.unixcharset_choices').pipe(choicesToOptions());
@@ -170,11 +169,11 @@ export class ServiceSmbComponent implements OnInit {
 
     this.api.call('smb.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
-        const searchProtocolEnabled = config.search_protocols?.[0] === SmbProtocol.Spotlight;
+        const searchProtocolEnabled = config.search_protocols.includes(smbProtocolSpotlight);
         config.bindip.forEach(() => this.addBindIp());
         this.form.patchValue({
           ...config,
-          search_protocols: searchProtocolEnabled,
+          spotlightSearch: searchProtocolEnabled,
           bindip: config.bindip.map((ip) => ({ bindIp: ip })),
         });
         this.isFormLoading.set(false);
@@ -200,16 +199,11 @@ export class ServiceSmbComponent implements OnInit {
     this.isBasicMode = !this.isBasicMode;
   }
 
-  onSubmit(): void {
-    const form = this.form.value;
-
+  protected onSubmit(): void {
+    const { spotlightSearch, ...formValues } = this.form.value;
     const values: SmbConfigUpdate = {
-      ...form,
-      /**
-       * Transforms `search_protocols` from a boolean to an array with `SmbProtocol.Spotlight`
-       * if true, or an empty array if false, to match API expectations.
-       */
-      search_protocols: form.search_protocols ? [SmbProtocol.Spotlight] : [],
+      ...formValues,
+      search_protocols: spotlightSearch ? [smbProtocolSpotlight] : [],
       bindip: this.form.value.bindip.map((value) => value.bindIp),
     };
 

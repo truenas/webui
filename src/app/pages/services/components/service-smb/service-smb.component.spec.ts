@@ -9,8 +9,7 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
-import { SmbProtocol } from 'app/enums/smb-protocol.enum';
-import { SmbConfig } from 'app/interfaces/smb-config.interface';
+import { SmbConfig, SmbProtocolSpotlight } from 'app/interfaces/smb-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -54,7 +53,7 @@ describe('ServiceSmbComponent', () => {
           syslog: false,
           aapl_extensions: false,
           localmaster: true,
-          guest: '',
+          guest: 'nobody',
           filemask: '',
           dirmask: '',
           bindip: [] as string[],
@@ -64,7 +63,7 @@ describe('ServiceSmbComponent', () => {
           admin_group: null,
           next_rid: 0,
           encryption: SmbEncryption.Negotiate,
-          search_protocols: [SmbProtocol.Spotlight],
+          search_protocols: [SmbProtocolSpotlight],
         } as SmbConfig),
         mockCall('smb.unixcharset_choices', {
           'UTF-8': 'UTF-8',
@@ -155,6 +154,48 @@ describe('ServiceSmbComponent', () => {
     expect(await searchCheckbox.getValue()).toBe(true);
   });
 
+  it('should have Spotlight checkbox unchecked when search_protocols is empty', async () => {
+    const smbConfigMock = {
+      id: 1,
+      netbiosname: 'truenas',
+      workgroup: 'WORKGROUP',
+      description: 'TrueNAS Server',
+      unixcharset: 'UTF-8',
+      debug: true,
+      syslog: false,
+      aapl_extensions: false,
+      localmaster: true,
+      guest: 'nobody',
+      filemask: '',
+      dirmask: '',
+      bindip: [] as string[],
+      cifs_SID: 'mockSid',
+      ntlmv1_auth: false,
+      enable_smb1: false,
+      admin_group: null,
+      next_rid: 0,
+      encryption: SmbEncryption.Negotiate,
+      search_protocols: [],
+    } as SmbConfig;
+
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method: string) => {
+      if (method === 'smb.config') {
+        return of(smbConfigMock);
+      }
+      return of(null);
+    });
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+    await advancedButton.click();
+
+    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Search (Spotlight)' }));
+    expect(await searchCheckbox.getValue()).toBe(false);
+  });
+
   it('sends an update payload to websocket when basic form is filled and saved', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
@@ -165,6 +206,11 @@ describe('ServiceSmbComponent', () => {
       'NTLMv1 Auth': true,
       Workgroup: 'WORKGROUP2',
     });
+
+    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+    await advancedButton.click();
+    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Search (Spotlight)' }));
+    expect(await searchCheckbox.getValue()).toBe(true);
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -182,7 +228,7 @@ describe('ServiceSmbComponent', () => {
       aapl_extensions: false,
       admin_group: null,
       bindip: [],
-      guest: '',
+      guest: 'nobody',
       dirmask: '',
       filemask: '',
       debug: true,
@@ -191,7 +237,7 @@ describe('ServiceSmbComponent', () => {
       multichannel: false,
       unixcharset: 'UTF-8',
       encryption: SmbEncryption.Negotiate,
-      search_protocols: [SmbProtocol.Spotlight],
+      search_protocols: [SmbProtocolSpotlight],
     }]);
   });
 
@@ -221,7 +267,7 @@ describe('ServiceSmbComponent', () => {
     });
 
     const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Search (Spotlight)' }));
-    await searchCheckbox.setValue(false);
+    await searchCheckbox.toggle();
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -242,7 +288,7 @@ describe('ServiceSmbComponent', () => {
         '1.1.1.1',
         '2.2.2.2',
       ],
-      guest: '',
+      guest: 'nobody',
       dirmask: '0777',
       filemask: '0666',
       debug: true,
@@ -253,14 +299,5 @@ describe('ServiceSmbComponent', () => {
       encryption: SmbEncryption.Default,
       search_protocols: [],
     }]);
-  });
-
-  it('shows "Enable Search (Spotlight)" as unchecked when it is not enabled in config', async () => {
-    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
-    await advancedButton.click();
-
-    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Search (Spotlight)' }));
-    await searchCheckbox.toggle();
-    expect(await searchCheckbox.getValue()).toBe(false);
   });
 });

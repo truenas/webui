@@ -1,5 +1,6 @@
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
-import { SmbProtocol } from 'app/enums/smb-protocol.enum';
+
+export const smbProtocolSpotlight = 'SPOTLIGHT' as const;
 
 export interface SmbConfig {
   aapl_extensions: boolean;
@@ -22,11 +23,7 @@ export interface SmbConfig {
   unixcharset: string;
   workgroup: string;
   encryption: SmbEncryption;
-  /**
-   * For now, `search_protocols` can either be an array with `SmbProtocol.Spotlight`
-   * or an empty array.
-   */
-  search_protocols: [SmbProtocol.Spotlight] | [];
+  search_protocols: string[];
 }
 
 export type SmbConfigUpdate = {
