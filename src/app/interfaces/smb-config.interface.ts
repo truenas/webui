@@ -22,7 +22,7 @@ export interface SmbConfig {
   unixcharset: string;
   workgroup: string;
   encryption: SmbEncryption;
-  search_protocols: SmbProtocol[];
+  search_protocols: [SmbProtocol.Spotlight] | [];
 }
 
 export type SmbConfigUpdate = {

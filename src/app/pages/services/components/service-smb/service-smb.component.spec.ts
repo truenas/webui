@@ -254,4 +254,13 @@ describe('ServiceSmbComponent', () => {
       search_protocols: [],
     }]);
   });
+
+  it('shows "Enable Search (Spotlight)" as unchecked when it is not enabled in config', async () => {
+    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+    await advancedButton.click();
+
+    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Search (Spotlight)' }));
+    await searchCheckbox.toggle();
+    expect(await searchCheckbox.getValue()).toBe(false);
+  });
 });

@@ -106,10 +106,8 @@ export class ServiceSmbComponent implements OnInit {
     aapl_extensions: [false, []],
     multichannel: [false, []],
     encryption: [SmbEncryption.Default],
+    search_protocols: [false, []],
   });
-
-  searchProtocols = this.fb.control(false);
-
 
   protected readonly requiredRoles = [Role.SharingSmbWrite];
   readonly helptext = helptextServiceSmb;
@@ -176,9 +174,9 @@ export class ServiceSmbComponent implements OnInit {
         config.bindip.forEach(() => this.addBindIp());
         this.form.patchValue({
           ...config,
+          search_protocols: searchProtocolEnabled,
           bindip: config.bindip.map((ip) => ({ bindIp: ip })),
         });
-        this.searchProtocols.setValue(searchProtocolEnabled);
         this.isFormLoading.set(false);
       },
       error: (error: unknown) => {
@@ -204,11 +202,14 @@ export class ServiceSmbComponent implements OnInit {
 
   onSubmit(): void {
     const form = this.form.value;
-    const searchProtocols = this.searchProtocols.value ? [SmbProtocol.Spotlight] : [];
 
     const values: SmbConfigUpdate = {
       ...form,
-      search_protocols: searchProtocols,
+      /**
+       * Transforms `search_protocols` from a boolean to an array with `SmbProtocol.Spotlight`
+       * if true, or an empty array if false, to match API expectations.
+       */
+      search_protocols: form.search_protocols ? [SmbProtocol.Spotlight] : [],
       bindip: this.form.value.bindip.map((value) => value.bindIp),
     };
 
