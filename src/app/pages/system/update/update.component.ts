@@ -18,6 +18,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { Role } from 'app/enums/role.enum';
 import { UpdateCode } from 'app/enums/system-update.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { UpdateConfig, UpdateProfileChoices, UpdateStatus } from 'app/interfaces/system-update.interface';
@@ -76,6 +77,7 @@ export class UpdateComponent implements OnInit {
   private dialogService = inject(DialogService);
   private sysGenService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
+  private window = inject<Window>(WINDOW);
 
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
@@ -289,6 +291,9 @@ export class UpdateComponent implements OnInit {
   }
 
   private nonHaUpdateFinished(): Observable<boolean> {
+    // Mark that update completed successfully - reload page after restart to get latest UI
+    this.window.sessionStorage.setItem('updateCompleted', 'true');
+
     return this.dialogService.confirm({
       title: this.translate.instant(helptext.haUpdate.completeTitle),
       message: this.translate.instant('Update completed successfully. The system will restart shortly'),
