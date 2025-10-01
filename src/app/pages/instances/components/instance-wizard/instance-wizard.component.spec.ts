@@ -59,10 +59,6 @@ describe('InstanceWizardComponent', () => {
           fakeVirtualizationInstance({ name: 'test' }),
           fakeVirtualizationInstance({ name: 'testVM' }),
         ]),
-        mockCall('virt.instance.query', [
-          fakeVirtualizationInstance({ name: 'test' }),
-          fakeVirtualizationInstance({ name: 'testVM' }),
-        ]),
         mockCall('interface.has_pending_changes', false),
         mockCall('virt.device.nic_choices', {
           nic1: 'nic1',

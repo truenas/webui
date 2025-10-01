@@ -56,9 +56,6 @@ export interface VirtualizationInstance {
     pid: number | null;
     domain_state: string | null;
   };
-
-  root_disk_size: number; // TODO: // check if it exists when API is finalized:
-  root_disk_io_bus: DiskIoBus; // TODO: // check if it exists when API is finalized:
 }
 
 export interface VirtualizationAlias {
@@ -352,3 +349,8 @@ export interface ZvolToImport {
   virt_volume_name: string;
   zvol_path: string;
 }
+
+// Shorter aliases for common types
+export type Instance = VirtualizationInstance;
+export type CreateInstance = CreateVirtualizationInstance;
+export type UpdateInstance = UpdateVirtualizationInstance;

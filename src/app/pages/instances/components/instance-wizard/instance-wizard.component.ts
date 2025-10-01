@@ -133,7 +133,7 @@ export class InstanceWizardComponent implements OnInit {
   ]);
 
 
-  protected readonly forbiddenNames$ = this.api.call('virt.instance.query', [
+  protected readonly forbiddenNames$ = this.api.call('container.query', [
     [], { select: ['name'], order_by: ['name'] },
   ]).pipe(map((keys) => keys.map((key) => key.name)));
 

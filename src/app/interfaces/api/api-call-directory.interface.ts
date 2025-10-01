@@ -273,14 +273,14 @@ import {
 
   VirtualizationGlobalConfig, VirtualizationImage,
   VirtualizationImageParams,
-  VirtualizationInstance,
+  Instance,
   VirtualizationNetwork,
   AvailableUsb,
   AvailableGpus, VirtualizationVolume,
   VirtualizationVolumeUpdate,
   CreateVirtualizationVolume,
-  CreateVirtualizationInstance,
-  UpdateVirtualizationInstance,
+  CreateInstance,
+  UpdateInstance,
   ContainerImageRegistryResponse,
 } from 'app/interfaces/virtualization.interface';
 import {
@@ -902,7 +902,6 @@ export interface ApiCallDirectory {
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
 
   // Virt
-  'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
   'virt.instance.device_add': { params: [instanceId: number, device: VirtualizationDevice]; response: true };
   'virt.instance.device_update': { params: [instanceId: number, device: VirtualizationDevice]; response: true };
   'virt.instance.device_delete': { params: [instanceId: number, name: string]; response: true };
@@ -926,16 +925,15 @@ export interface ApiCallDirectory {
   'virt.volume.delete': { params: [id: string]; response: true };
 
   // Container (actual available endpoints only)
-  'container.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
+  'container.create': { params: [CreateInstance]; response: Instance };
   'container.delete': { params: [instanceId: number]; response: boolean };
-  'container.get_instance': { params: [instanceId: number]; response: VirtualizationInstance };
-  'container.image': { params: []; response: unknown }; // TODO: Define proper response type
+  'container.get_instance': { params: [instanceId: number]; response: Instance };
   'container.image.query_registry': { params: []; response: ContainerImageRegistryResponse[] };
   'container.migrate': { params: [instanceId: number]; response: boolean };
-  'container.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
+  'container.query': { params: QueryParams<Instance>; response: Instance[] };
   'container.start': { params: [instanceId: number]; response: void };
   'container.stop': { params: [instanceId: number, params?: { force?: boolean }]; response: void };
-  'container.update': { params: [instanceId: number, update: UpdateVirtualizationInstance]; response: VirtualizationInstance };
+  'container.update': { params: [instanceId: number, update: UpdateInstance]; response: Instance };
 
   // LXC (actual available endpoints only)
   'lxc.bridge_choices': { params: []; response: Choices };
