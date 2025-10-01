@@ -73,11 +73,8 @@ export type CreateVirtualizationInstance = Partial<Omit<VirtualizationInstance, 
     name: string;
     version: string;
   };
-  idmap?: unknown;
   gpu_devices?: string[];
   usb_devices?: string[];
-  mounts?: unknown[];
-  secureboot_configuration?: unknown;
 };
 
 export type UpdateVirtualizationInstance = Partial<Pick<VirtualizationInstance,

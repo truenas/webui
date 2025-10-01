@@ -276,7 +276,9 @@ export class InstanceWizardComponent implements OnInit {
 
     // Remove validators that are only for creation
     this.form.controls.pool.clearValidators();
+    this.form.controls.pool.updateValueAndValidity();
     this.form.controls.image.clearValidators();
+    this.form.controls.image.updateValueAndValidity();
 
     // Load the instance data with loader
     this.loader.open();
