@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
-import { SmbProtocol, smbProtocolLabels } from 'app/enums/smb-protocol.enum';
+import { SmbProtocol } from 'app/enums/smb-protocol.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
@@ -106,8 +106,10 @@ export class ServiceSmbComponent implements OnInit {
     aapl_extensions: [false, []],
     multichannel: [false, []],
     encryption: [SmbEncryption.Default],
-    search_protocols: [''],
   });
+
+  searchProtocols = this.fb.control(false);
+
 
   protected readonly requiredRoles = [Role.SharingSmbWrite];
   readonly helptext = helptextServiceSmb;
@@ -158,7 +160,6 @@ export class ServiceSmbComponent implements OnInit {
   );
 
   readonly encryptionOptions$ = of(mapToOptions(smbEncryptionLabels, this.translate));
-  readonly searchProtocolsOptions$ = of(mapToOptions(smbProtocolLabels, this.translate));
 
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -171,13 +172,13 @@ export class ServiceSmbComponent implements OnInit {
 
     this.api.call('smb.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
-        const searchProtocol = config.search_protocols?.[0] ?? '';
+        const searchProtocolEnabled = config.search_protocols?.[0] === SmbProtocol.Spotlight;
         config.bindip.forEach(() => this.addBindIp());
         this.form.patchValue({
           ...config,
           bindip: config.bindip.map((ip) => ({ bindIp: ip })),
-          search_protocols: searchProtocol,
         });
+        this.searchProtocols.setValue(searchProtocolEnabled);
         this.isFormLoading.set(false);
       },
       error: (error: unknown) => {
@@ -203,7 +204,7 @@ export class ServiceSmbComponent implements OnInit {
 
   onSubmit(): void {
     const form = this.form.value;
-    const searchProtocols = form.search_protocols ? [form.search_protocols as SmbProtocol] : [];
+    const searchProtocols = this.searchProtocols.value ? [SmbProtocol.Spotlight] : [];
 
     const values: SmbConfigUpdate = {
       ...form,

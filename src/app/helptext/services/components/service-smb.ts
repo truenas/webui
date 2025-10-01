@@ -55,5 +55,5 @@ export const helptextServiceSmb = {
  Computer Management MMC snap-in.'),
   bindipTooltip: T('Static IP addresses which SMB listens on for connections. \
  Leaving all unselected defaults to listening on all active interfaces.'),
-  search_protocolsTooltip: T('Select the SMB protocols that will be used for searching.'),
+  search_protocolsTooltip: T('Enable search protocol using Spotlight'),
 };

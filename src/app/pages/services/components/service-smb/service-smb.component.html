@@ -92,6 +92,12 @@
             [tooltip]="tooltips.multichannel | translate"
           ></ix-checkbox>
 
+          <ix-checkbox
+            [formControl]="searchProtocols"
+            [label]="'Enable Search (Spotlight)' | translate"
+            [tooltip]="tooltips.localmaster | translate"
+          ></ix-checkbox>
+
           <ix-combobox
             formControlName="admin_group"
             [label]="'Administrators Group' | translate"
@@ -117,13 +123,6 @@
             [label]="'Directory Mask' | translate"
             [tooltip]="tooltips.dirmask | translate"
           ></ix-input>
-
-          <ix-select
-            formControlName="search_protocols"
-            [label]="'Search Protocols' | translate"
-            [options]="searchProtocolsOptions$"
-            [tooltip]="tooltips.search_protocols | translate"
-          ></ix-select>
 
           <ix-list
             formArrayName="bindip"
