@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -6,7 +6,6 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { VirtualizationGlobalState, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationVolume } from 'app/interfaces/virtualization.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -18,9 +17,6 @@ import {
 import {
   MapUserGroupIdsDialog,
 } from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/map-user-group-ids-dialog.component';
-import {
-  VirtualizationStateComponent,
-} from 'app/pages/instances/components/all-instances/all-instances-header/virtualization-state/virtualization-state.component';
 import {
   VolumesDialog,
   VolumesDialogOptions,
@@ -42,7 +38,6 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
     TestDirective,
     MatAnchor,
     RouterLink,
-    VirtualizationStateComponent,
     UiSearchDirective,
     IxIconComponent,
     MatMenu,
@@ -56,21 +51,8 @@ export class AllInstancesHeaderComponent {
   private configStore = inject(VirtualizationConfigStore);
   private instanceStore = inject(VirtualizationInstancesStore);
 
-  protected readonly state = this.configStore.virtualizationState;
-
   protected readonly searchableElements = allInstancesHeaderElements;
-
-  protected readonly needToSetupPool = computed(() => this.state() === VirtualizationGlobalState.NoPool);
-  protected readonly isLocked = computed(() => this.state() === VirtualizationGlobalState.Locked);
   protected readonly config = this.configStore.config;
-
-  protected readonly canAddNewInstances = computed(() => this.state() === VirtualizationGlobalState.Initialized);
-  protected readonly hasCreateNewButton = computed(() => {
-    const state = this.state();
-    // Conditions for showing button and button being disabled are different on purpose
-    // to communicate current state to the user better.
-    return state && [VirtualizationGlobalState.Initializing, VirtualizationGlobalState.Initialized].includes(state);
-  });
 
   protected onGlobalConfiguration(): void {
     this.slideIn
@@ -89,9 +71,6 @@ export class AllInstancesHeaderComponent {
       data: {
         selectionMode: false,
         config: this.config(),
-        showIsoManagement: this.instanceStore?.instances()?.filter(
-          (instance) => instance.type === VirtualizationType.Vm,
-        ).length > 0,
       },
     });
   }

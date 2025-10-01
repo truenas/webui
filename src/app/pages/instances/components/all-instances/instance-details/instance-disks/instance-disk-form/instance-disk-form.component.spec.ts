@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DiskIoBus, VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationVolume } from 'app/interfaces/virtualization.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -16,7 +16,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
-import { VolumesDialog } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 describe('InstanceDiskFormComponent', () => {
@@ -137,53 +136,6 @@ describe('InstanceDiskFormComponent', () => {
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: true,
       });
-    });
-  });
-
-  describe('handling vm', () => {
-    beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            getData: () => ({
-              instance: { id: 'my-instance', type: VirtualizationType.Vm },
-            }),
-            close: jest.fn(),
-            requireConfirmationWhen: jest.fn(),
-          }),
-        ],
-      });
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('opens VolumesDialogComponent when Select Volume is pressed', async () => {
-      const selectVolumeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Select Volume' }));
-      await selectVolumeButton.click();
-
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(VolumesDialog, expect.anything());
-    });
-
-    it('creates a new disk for a VM', async () => {
-      const selectVolumeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Select Volume' }));
-      await selectVolumeButton.click();
-
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'I/O Bus': 'Virtio-BLK',
-      });
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-        response: true,
-      });
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
-        source: 'my-volume',
-        dev_type: VirtualizationDeviceType.Disk,
-        io_bus: DiskIoBus.VirtioBlk,
-      }]);
     });
   });
 });

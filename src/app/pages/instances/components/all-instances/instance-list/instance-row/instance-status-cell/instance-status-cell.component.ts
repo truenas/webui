@@ -21,12 +21,12 @@ export class InstanceStatusCellComponent {
 
   @HostBinding('class') get hostClasses(): string[] {
     return [
-      this.status()?.toLowerCase(),
+      this.status()?.toLowerCase() || 'unknown',
       'has-cell',
     ];
   }
 
-  status = computed(() => this.instance().status);
+  status = computed(() => this.instance().status?.state);
 
   protected statusLabels = virtualizationStatusLabels;
 }

@@ -52,11 +52,7 @@ import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.in
 import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
 import {
   CreateVirtualizationInstance, ImportZvolParams,
-  UpdateVirtualizationInstance,
-  VirtualizationGlobalConfig,
-  VirtualizationGlobalConfigUpdate,
   VirtualizationInstance,
-  VirtualizationStopParams,
 } from 'app/interfaces/virtualization.interface';
 import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
@@ -199,18 +195,11 @@ export interface ApiJobDirectory {
   'update.run': { params: [UpdateParams]; response: void };
 
   // Virt
-  'virt.global.update': { params: [VirtualizationGlobalConfigUpdate]; response: VirtualizationGlobalConfig };
-  'virt.volume.import_iso': { params: [{ name: string }]; response: { name: string } };
   'virt.volume.import_zvol': { params: [ImportZvolParams]; response: void };
-  'virt.instance.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
-  'virt.instance.delete': { params: [instanceId: string]; response: boolean };
-  'virt.instance.restart': { params: [instanceId: string, params: VirtualizationStopParams]; response: boolean };
-  'virt.instance.start': { params: [instanceId: string]; response: boolean };
-  'virt.instance.stop': { params: [instanceId: string, params: VirtualizationStopParams]; response: boolean };
-  'virt.instance.update': {
-    params: [instanceId: string, update: UpdateVirtualizationInstance];
-    response: VirtualizationInstance;
-  };
+
+  // Container
+  'container.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
+  'container.migrate': { params: [instanceId: number]; response: boolean };
 
   // VM
   'vm.device.convert': { params: [{ source: string; destination: string }]; response: boolean };

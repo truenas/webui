@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, OnInit, signal, WritableSignal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormArray,
@@ -11,48 +11,36 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  delay,
-  filter, map, Observable, of, switchMap, tap,
+  filter, map, Observable, of, tap,
 } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { Role } from 'app/enums/role.enum';
 import {
-  VirtualizationDeviceType,
-  VirtualizationGpuType,
-  VirtualizationNicType,
-  virtualizationNicTypeLabels,
+  ContainerCapabilitiesPolicy,
+  ContainerTime,
   VirtualizationProxyProtocol,
   virtualizationProxyProtocolLabels,
   VirtualizationRemote,
   VirtualizationSource,
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
-import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
-import { Option } from 'app/interfaces/option.interface';
 import {
   CreateVirtualizationInstance,
+  UpdateVirtualizationInstance,
   InstanceEnvVariablesFormGroup,
-  VirtualizationDevice,
   VirtualizationInstance,
-  VirtualizationNic,
 } from 'app/interfaces/virtualization.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import {
-  IxCheckboxListComponent,
-} from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import {
   IxFormGlossaryComponent,
 } from 'app/modules/forms/ix-forms/components/ix-form-glossary/ix-form-glossary.component';
@@ -66,30 +54,22 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { InstanceNicMacDialog } from 'app/pages/instances/components/common/instance-nics-mac-addr-dialog/instance-nic-mac-dialog.component';
 import {
   SelectImageDialog,
   VirtualizationImageWithId,
 } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-
-interface NicDeviceOption {
-  control: FormControl<boolean>;
-  label: string;
-  mac?: string;
-  value: string;
-}
 
 @UntilDestroy()
 @Component({
@@ -97,8 +77,6 @@ interface NicDeviceOption {
   imports: [
     AsyncPipe,
     IxCheckboxComponent,
-    IxCheckboxListComponent,
-    IxExplorerComponent,
     IxFormGlossaryComponent,
     IxFormSectionComponent,
     IxInputComponent,
@@ -112,7 +90,6 @@ interface NicDeviceOption {
     ReadOnlyComponent,
     TestDirective,
     TranslateModule,
-    ExplorerCreateDatasetComponent,
   ],
   templateUrl: './instance-wizard.component.html',
   styleUrls: ['./instance-wizard.component.scss'],
@@ -123,6 +100,7 @@ export class InstanceWizardComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private matDialog = inject(MatDialog);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
@@ -132,16 +110,28 @@ export class InstanceWizardComponent implements OnInit {
   private authService = inject(AuthService);
   private filesystem = inject(FilesystemService);
   private unsavedChangesService = inject(UnsavedChangesService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
 
   protected readonly isLoading = signal<boolean>(false);
-  protected readonly requiredRoles = [Role.VirtGlobalWrite];
+  protected readonly requiredRoles = [Role.LxcConfigWrite];
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
 
   protected readonly slashRootNode = [slashRootNode];
 
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
-  protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
-  protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
+
+  protected readonly timeOptions$ = of([
+    { label: this.translate.instant('Local'), value: ContainerTime.Local },
+    { label: this.translate.instant('UTC'), value: ContainerTime.Utc },
+  ]);
+
+  protected readonly capabilitiesPolicyOptions$ = of([
+    { label: this.translate.instant('Default'), value: ContainerCapabilitiesPolicy.Default },
+    { label: this.translate.instant('Allow'), value: ContainerCapabilitiesPolicy.Allow },
+    { label: this.translate.instant('Deny'), value: ContainerCapabilitiesPolicy.Deny },
+  ]);
+
 
   protected readonly forbiddenNames$ = this.api.call('virt.instance.query', [
     [], { select: ['name'], order_by: ['name'] },
@@ -149,63 +139,90 @@ export class InstanceWizardComponent implements OnInit {
 
   readonly VirtualizationSource = VirtualizationSource;
 
-  protected readonly bridgedNicDevices = signal<NicDeviceOption[]>(undefined);
-  protected readonly macVlanNicDevices = signal<NicDeviceOption[]>(undefined);
 
-  usbDevices$ = this.api.call('virt.device.usb_choices').pipe(
-    map((choices) => Object.values(choices).map((choice) => ({
-      label: ignoreTranslation(`${choice.product} (${choice.product_id})`),
-      value: choice.product_id.toString(),
-    }))),
-  );
+  // Mode tracking
+  protected readonly isEditMode = signal<boolean>(false);
+  protected editingInstance: VirtualizationInstance | null = null;
+  protected readonly pageTitle = computed(() => {
+    if (this.isEditMode()) {
+      return this.translate.instant('Edit Container: {name}', {
+        name: this.editingInstance?.name || '',
+      });
+    }
+    return this.translate.instant('Create Container');
+  });
 
-  gpuDevices$ = this.api.call(
-    'virt.device.gpu_choices',
-    [VirtualizationGpuType.Physical],
-  ).pipe(
-    map((choices) => Object.entries(choices).map(([pci, gpu]) => ({
-      label: gpu.description,
-      value: pci,
-    }))),
-  );
+  protected readonly submitButtonText = computed(() => {
+    return this.isEditMode() ? this.translate.instant('Save') : this.translate.instant('Create');
+  });
 
-  protected poolOptions$ = this.configStore.state$.pipe(
-    filter((state) => !state.isLoading),
-    map((state) => state.config?.storage_pools),
-    singleArrayToOptions(),
+
+  poolOptions$ = this.api.call('virt.global.pool_choices').pipe(
+    choicesToOptions(),
     tap((options) => {
-      if (options.length && !this.form.controls.storage_pool.value) {
-        this.form.controls.storage_pool.setValue(`${options[0].value}`);
+      if (options.length && !this.form.controls.pool.value && !this.isEditMode()) {
+        this.form.controls.pool.setValue(`${options[0].value}`);
       }
     }),
   );
 
-  protected hasOnePool = computed(() => this.configStore.config()?.storage_pools?.length === 1);
-
   protected readonly form = this.formBuilder.group({
+    // Basic Configuration
     name: [
       '',
       [Validators.required, Validators.minLength(1), Validators.maxLength(200), Validators.pattern(/^[a-zA-Z0-9-]+$/)],
       [forbiddenAsyncValues(this.forbiddenNames$)],
     ],
-    image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
-    cpu: ['', [cpuValidator()]],
-    memory: [null as number | null],
-    storage_pool: [null as string | null, [Validators.required]],
+    pool: [''], // Required for create, not shown for edit
+    description: [''],
+    autostart: [true],
+    image: [''], // Required for create, not shown for edit
+
+    // CPU Configuration
+    vcpus: [null as number | null, [Validators.min(1)]],
+    cores: [null as number | null, [Validators.min(1)]],
+    threads: [null as number | null, [Validators.min(1)]],
+    cpuset: [''],
+
+    // Memory
+    memory: [null as number | null, [Validators.min(20)]],
+
+    // Time Configuration
+    time: [ContainerTime.Local],
+    shutdown_timeout: [30, [Validators.min(5), Validators.max(300)]],
+
+    // Init Process
+    init: ['/sbin/init'],
+    initdir: [''],
+    inituser: [''],
+    initgroup: [''],
+
+    // Capabilities
+    capabilities_policy: [ContainerCapabilitiesPolicy.Default],
+
+    // Environment Variables
+    environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
+
+    // Network
     use_default_network: [true],
+
+    // Devices
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
+
+    // Proxies
     proxies: this.formBuilder.array<FormGroup<{
       source_proto: FormControl<VirtualizationProxyProtocol>;
       source_port: FormControl<number | null>;
       dest_proto: FormControl<VirtualizationProxyProtocol>;
       dest_port: FormControl<number | null>;
     }>>([]),
+
+    // Disks
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
       destination?: FormControl<string>;
     }>>([]),
-    environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
   get hasRequiredRoles(): Observable<boolean> {
@@ -224,100 +241,103 @@ export class InstanceWizardComponent implements OnInit {
 
   constructor() {
     this.configStore.initialize();
+  }
 
-    effect(() => {
-      if (!this.form.value.storage_pool && this.hasOnePool()) {
-        this.form.patchValue({ storage_pool: this.configStore.config()?.storage_pools?.[0] });
+  ngOnInit(): void {
+    // Check if we're in edit mode from the route
+    this.route.paramMap.pipe(
+      untilDestroyed(this),
+    ).subscribe((params) => {
+      const instanceId = params.get('id');
+      if (instanceId) {
+        this.loadInstanceForEditing(Number(instanceId));
+      } else {
+        this.setupForCreation();
       }
     });
   }
 
-  ngOnInit(): void {
-    this.setupBridgedNicDevices2();
-    this.setupMacVlanNicDevices2();
+  private setupForCreation(): void {
+    this.isEditMode.set(false);
+    this.editingInstance = null;
+
+    // Set required validators for creation
+    this.form.controls.pool.setValidators(Validators.required);
+    this.form.controls.image.setValidators([Validators.required, Validators.minLength(1), Validators.maxLength(200)]);
+    this.form.controls.init.setValue('/sbin/init');
+
+    // Reset form for new creation
+    this.form.reset({
+      autostart: true,
+      time: ContainerTime.Local,
+      shutdown_timeout: 30,
+      init: '/sbin/init',
+      capabilities_policy: ContainerCapabilitiesPolicy.Default,
+      use_default_network: true,
+      usb_devices: [],
+      gpu_devices: [],
+    });
+  }
+
+  private loadInstanceForEditing(instanceId: number): void {
+    this.isEditMode.set(true);
+
+    // Remove validators that are only for creation
+    this.form.controls.pool.clearValidators();
+    this.form.controls.image.clearValidators();
+
+    // Load the instance data with loader
+    this.loader.open();
+    this.api.call('container.get_instance', [instanceId]).pipe(
+      this.errorHandler.withErrorHandler(),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (instance: VirtualizationInstance) => {
+        this.editingInstance = instance;
+        this.populateFormForEdit(instance);
+        this.loader.close();
+      },
+      error: () => {
+        this.loader.close();
+        this.router.navigate(['/containers']);
+      },
+    });
+  }
+
+  private populateFormForEdit(instance: VirtualizationInstance): void {
+    // Basic fields
+    this.form.patchValue({
+      name: instance.name,
+      description: instance.description || '',
+      autostart: instance.autostart,
+      vcpus: instance.vcpus,
+      cores: instance.cores,
+      threads: instance.threads,
+      cpuset: instance.cpuset || '',
+      memory: instance.memory,
+      time: instance.time as ContainerTime,
+      shutdown_timeout: instance.shutdown_timeout,
+      init: instance.init,
+      initdir: instance.initdir || '',
+      inituser: instance.inituser || '',
+      initgroup: instance.initgroup || '',
+      capabilities_policy: instance.capabilities_policy as ContainerCapabilitiesPolicy,
+    });
+
+    // Environment variables
+    if (instance.initenv && Object.keys(instance.initenv).length > 0) {
+      for (const [name, value] of Object.entries(instance.initenv)) {
+        this.addEnvironmentVariableWithValue(name, String(value));
+      }
+    }
+
+    // TODO: Load other complex fields like devices, proxies, disks when API provides them
   }
 
   protected canDeactivate(): Observable<boolean> {
     return this.form.dirty ? this.unsavedChangesService.showConfirmDialog() : of(true);
   }
 
-  private setupBridgedNicDevices2(): void {
-    this.setupNicDevices(VirtualizationNicType.Bridged, this.bridgedNicDevices);
-  }
-
-  private setupMacVlanNicDevices2(): void {
-    this.setupNicDevices(VirtualizationNicType.Macvlan, this.macVlanNicDevices);
-  }
-
-  private setupNicDevices(
-    type: VirtualizationNicType,
-    nicDevicesSignal: WritableSignal<NicDeviceOption[]>,
-  ): void {
-    this.getNicDevicesOptions(type).pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: (options) => {
-        nicDevicesSignal.set([]);
-
-        for (const option of options) {
-          const control = new FormControl<boolean>(false);
-
-          control.valueChanges.pipe(
-            tap((selected) => {
-              if (!selected) {
-                nicDevicesSignal.set(
-                  nicDevicesSignal().map((nic) => {
-                    if (nic.value === option.value) {
-                      nic.label = option.label;
-                      delete nic.mac;
-                    }
-                    return nic;
-                  }),
-                );
-              }
-            }),
-            filter(Boolean),
-            switchMap(() => this.matDialog.open(InstanceNicMacDialog, {
-              data: option.value,
-              minWidth: '500px',
-            }).afterClosed() as Observable<{ useDefault: boolean; mac: string }>),
-            untilDestroyed(this),
-          ).subscribe({
-            next: (macConfig) => {
-              if (!macConfig) {
-                control.setValue(false);
-                return;
-              }
-
-              nicDevicesSignal.set(
-                nicDevicesSignal().map((nic) => {
-                  if (nic.value === option.value) {
-                    if (macConfig.useDefault) {
-                      nic.label = `${option.label} (${this.translate.instant('Default Mac Address')})`;
-                    } else if (macConfig.mac) {
-                      nic.label = `${option.label} (${macConfig.mac})`;
-                      nic.mac = macConfig.mac;
-                    } else {
-                      nic.label = option.label;
-                    }
-                  }
-                  return nic;
-                }),
-              );
-            },
-          });
-
-          const deviceOption: NicDeviceOption = {
-            label: option.label,
-            control,
-            value: option.value.toString(),
-          };
-
-          nicDevicesSignal.set([...nicDevicesSignal(), deviceOption]);
-        }
-      },
-    });
-  }
 
   protected onBrowseCatalogImages(): void {
     this.matDialog
@@ -367,16 +387,36 @@ export class InstanceWizardComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    this.createInstance().pipe(untilDestroyed(this)).subscribe({
-      next: (instance) => {
-        this.form.markAsPristine();
-        this.snackbar.success(this.translate.instant('Container created'));
-        this.router.navigate(['/containers', 'view', instance?.id]);
-      },
-      error: (error: unknown) => {
-        this.formErrorHandler.handleValidationErrors(error, this.form);
-      },
-    });
+    // Show loader for both create and update
+    this.loader.open();
+
+    if (this.isEditMode()) {
+      this.updateInstance().pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.loader.close();
+          this.form.markAsPristine();
+          this.snackbar.success(this.translate.instant('Container updated'));
+          this.router.navigate(['/containers', 'view', this.editingInstance?.id]);
+        },
+        error: (error: unknown) => {
+          this.loader.close();
+          this.formErrorHandler.handleValidationErrors(error, this.form);
+        },
+      });
+    } else {
+      this.createInstance().pipe(untilDestroyed(this)).subscribe({
+        next: (instance) => {
+          this.loader.close();
+          this.form.markAsPristine();
+          this.snackbar.success(this.translate.instant('Container created'));
+          this.router.navigate(['/containers', 'view', instance?.id]);
+        },
+        error: (error: unknown) => {
+          this.loader.close();
+          this.formErrorHandler.handleValidationErrors(error, this.form);
+        },
+      });
+    }
   }
 
   protected addEnvironmentVariable(): void {
@@ -388,44 +428,157 @@ export class InstanceWizardComponent implements OnInit {
     this.form.controls.environment_variables.push(control);
   }
 
+  private addEnvironmentVariableWithValue(name: string, value: string): void {
+    const control = this.formBuilder.group({
+      name: [name, Validators.required],
+      value: [value, Validators.required],
+    });
+
+    this.form.controls.environment_variables.push(control);
+  }
+
   protected removeEnvironmentVariable(index: number): void {
     this.form.controls.environment_variables.removeAt(index);
   }
 
   private createInstance(): Observable<VirtualizationInstance> {
-    const payload = this.getPayload();
+    const payload = this.getCreatePayload();
 
-    const job$ = this.api.job('virt.instance.create', [payload]);
+    const job$ = this.api.job('container.create', [payload]);
 
     return this.dialogService
       .jobDialog(job$, { title: this.translate.instant('Creating Container') })
-      .afterClosed().pipe(map((job) => job.result));
+      .afterClosed().pipe(
+        map((job) => {
+          if (!job?.result) {
+            throw new Error('Container creation was cancelled');
+          }
+          return job.result;
+        }),
+      );
   }
 
-  private getPayload(): CreateVirtualizationInstance {
+  private updateInstance(): Observable<VirtualizationInstance> {
+    const payload = this.getUpdatePayload();
+
+    return this.api.call('container.update', [this.editingInstance.id, payload]);
+  }
+
+  private getCreatePayload(): CreateVirtualizationInstance {
     const form = this.form.getRawValue();
 
-    const payload = {
-      devices: this.getDevicesPayload(),
-      autostart: true,
-      instance_type: VirtualizationType.Container,
+    const payload: CreateVirtualizationInstance = {
+      uuid: crypto.randomUUID(),
       name: form.name,
-      cpu: form.cpu,
-      memory: form.memory || null,
-      storage_pool: form.storage_pool,
-      source_type: VirtualizationSource.Image,
-      image: form.image,
-      environment: this.environmentVariablesPayload,
-    } as CreateVirtualizationInstance;
+      pool: form.pool,
+      image: this.parseImageField(form.image),
+      autostart: form.autostart,
+    };
+
+    // Add optional fields
+    if (form.description) payload.description = form.description;
+
+    // CPU configuration
+    if (form.vcpus) payload.vcpus = form.vcpus;
+    if (form.cores) payload.cores = form.cores;
+    if (form.threads) payload.threads = form.threads;
+    if (form.cpuset) payload.cpuset = form.cpuset;
+
+    // Memory
+    if (form.memory) payload.memory = form.memory;
+
+    // Time configuration
+    if (form.time) payload.time = form.time;
+    if (form.shutdown_timeout) payload.shutdown_timeout = form.shutdown_timeout;
+
+    // Init process
+    if (form.init) payload.init = form.init;
+    if (form.initdir) payload.initdir = form.initdir;
+    if (form.inituser) payload.inituser = form.inituser;
+    if (form.initgroup) payload.initgroup = form.initgroup;
+
+    // Capabilities
+    if (form.capabilities_policy) payload.capabilities_policy = form.capabilities_policy;
+
+    // Environment variables
+    const envVars = this.getEnvironmentVariablesPayload();
+    if (Object.keys(envVars).length > 0) {
+      payload.initenv = envVars;
+    }
+
+    // USB, GPU, disks and proxies - commented out until API support is available
+    // These features will be enabled once the container API supports them
 
     return payload;
   }
 
-  private getNicDevicesOptions(nicType: VirtualizationNicType): Observable<Option[]> {
-    return this.api.call('virt.device.nic_choices', [nicType]).pipe(choicesToOptions(), delay(5 * 1000));
+  private getUpdatePayload(): UpdateVirtualizationInstance {
+    const form = this.form.getRawValue();
+    const payload: UpdateVirtualizationInstance = {};
+
+    // Only include fields that have changed
+    if (form.name !== this.editingInstance.name) payload.name = form.name;
+    if (form.description !== (this.editingInstance.description || '')) payload.description = form.description;
+    if (form.autostart !== this.editingInstance.autostart) payload.autostart = form.autostart;
+
+    // CPU configuration
+    if (form.vcpus !== this.editingInstance.vcpus) payload.vcpus = form.vcpus;
+    if (form.cores !== this.editingInstance.cores) payload.cores = form.cores;
+    if (form.threads !== this.editingInstance.threads) payload.threads = form.threads;
+    if (form.cpuset !== (this.editingInstance.cpuset || '')) payload.cpuset = form.cpuset || null;
+
+    // Memory
+    if (form.memory !== this.editingInstance.memory) payload.memory = form.memory;
+
+    // Time configuration
+    if (form.time !== (this.editingInstance.time as ContainerTime)) payload.time = form.time;
+    if (form.shutdown_timeout !== this.editingInstance.shutdown_timeout) {
+      payload.shutdown_timeout = form.shutdown_timeout;
+    }
+
+    // Init process
+    if (form.init !== this.editingInstance.init) payload.init = form.init;
+    if (form.initdir !== (this.editingInstance.initdir || '')) payload.initdir = form.initdir || null;
+    if (form.inituser !== (this.editingInstance.inituser || '')) payload.inituser = form.inituser || null;
+    if (form.initgroup !== (this.editingInstance.initgroup || '')) payload.initgroup = form.initgroup || null;
+
+    // Capabilities
+    if (form.capabilities_policy !== (this.editingInstance.capabilities_policy as ContainerCapabilitiesPolicy)) {
+      payload.capabilities_policy = form.capabilities_policy;
+    }
+
+    // Environment variables
+    const envVars = this.getEnvironmentVariablesPayload();
+    if (JSON.stringify(envVars) !== JSON.stringify(this.editingInstance.initenv || {})) {
+      payload.initenv = envVars;
+    }
+
+    return payload;
   }
 
-  private get environmentVariablesPayload(): Record<string, string> {
+  private parseImageField(imageString: string): { name: string; version: string } {
+    // For container images like "almalinux:10:amd64:default:20250924_23:08"
+    // The base name format is typically "name:major:arch:variant"
+    // So we split and take the first 4 parts as name, everything after as version
+    const parts = imageString.split(':');
+    if (parts.length >= 5) {
+      // Container image format: name:major:arch:variant:version_part1:version_part2...
+      const name = parts.slice(0, 4).join(':'); // "almalinux:10:amd64:default"
+      const version = parts.slice(4).join(':'); // "20250924_23:08"
+      return { name, version };
+    }
+    if (parts.length >= 2) {
+      // Fallback: last part is version, everything else is name
+      const version = parts[parts.length - 1];
+      const name = parts.slice(0, -1).join(':');
+      return { name, version };
+    }
+    // Fallback if no colon found - shouldn't happen with our current data
+    return { name: imageString, version: '' };
+  }
+
+
+  private getEnvironmentVariablesPayload(): Record<string, string> {
     return this.form.controls.environment_variables.controls.reduce((env: Record<string, string>, control) => {
       const name = control.get('name')?.value;
       const value = control.get('value')?.value;
@@ -435,91 +588,6 @@ export class InstanceWizardComponent implements OnInit {
       }
       return env;
     }, {});
-  }
-
-  private getDevicesPayload(): VirtualizationDevice[] {
-    const disks = this.form.controls.disks.value.map((disk) => ({
-      dev_type: VirtualizationDeviceType.Disk,
-      source: disk.source,
-      destination: disk.destination,
-    }));
-
-    const usbDevices: { dev_type: VirtualizationDeviceType; product_id: string }[] = [];
-    for (const productId of this.form.controls.usb_devices.value) {
-      usbDevices.push({
-        dev_type: VirtualizationDeviceType.Usb,
-        product_id: productId,
-      });
-    }
-
-    const gpuDevices: { pci: string; dev_type: VirtualizationDeviceType; gpu_type: VirtualizationGpuType }[] = [];
-    for (const pci of this.form.controls.gpu_devices.value) {
-      gpuDevices.push({
-        pci,
-        dev_type: VirtualizationDeviceType.Gpu,
-        gpu_type: VirtualizationGpuType.Physical,
-      });
-    }
-    const macVlanNics: Partial<VirtualizationNic>[] = [];
-    if (!this.form.controls.use_default_network.value) {
-      const macVlanDeviceOptions = this.macVlanNicDevices();
-      const selectedValues: NicDeviceOption[] = [];
-      for (const deviceOption of macVlanDeviceOptions) {
-        if (deviceOption.control.value) {
-          selectedValues.push(deviceOption);
-        }
-      }
-      for (const deviceOption of selectedValues) {
-        const macVlanNic: Partial<VirtualizationNic> = {
-          parent: deviceOption.value,
-          dev_type: VirtualizationDeviceType.Nic,
-          nic_type: VirtualizationNicType.Macvlan,
-        };
-        if (deviceOption.mac) {
-          macVlanNic.mac = deviceOption.mac;
-        }
-        macVlanNics.push(macVlanNic);
-      }
-    }
-
-    const bridgedNics: Partial<VirtualizationNic>[] = [];
-    if (!this.form.controls.use_default_network.value) {
-      const bridgedDeviceOptions = this.bridgedNicDevices();
-      const selectedValues: NicDeviceOption[] = [];
-      for (const deviceOption of bridgedDeviceOptions) {
-        if (deviceOption.control.value) {
-          selectedValues.push(deviceOption);
-        }
-      }
-      for (const deviceOption of selectedValues) {
-        const bridgedNic: Partial<VirtualizationNic> = {
-          parent: deviceOption.value,
-          dev_type: VirtualizationDeviceType.Nic,
-          nic_type: VirtualizationNicType.Bridged,
-        };
-        if (deviceOption.mac) {
-          bridgedNic.mac = deviceOption.mac;
-        }
-        bridgedNics.push(bridgedNic);
-      }
-    }
-
-    const proxies = this.form.controls.proxies.value.map((proxy) => ({
-      dev_type: VirtualizationDeviceType.Proxy,
-      source_proto: proxy.source_proto,
-      source_port: proxy.source_port,
-      dest_proto: proxy.dest_proto,
-      dest_port: proxy.dest_port,
-    }));
-
-    return [
-      ...disks,
-      ...proxies,
-      ...macVlanNics,
-      ...bridgedNics,
-      ...usbDevices,
-      ...gpuDevices,
-    ] as VirtualizationDevice[];
   }
 
   protected readonly instancesHelptext = instancesHelptext;

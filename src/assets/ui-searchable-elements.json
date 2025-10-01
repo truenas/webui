@@ -1819,26 +1819,6 @@
   {
     "hierarchy": [
       "Containers",
-      "Global Settings"
-    ],
-    "synonyms": [
-      "Container Settings"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers"
-    ],
-    "routerLink": null,
-    "anchor": "vm-global-settings",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
       "Create New Container"
     ],
     "synonyms": [

@@ -24,7 +24,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 interface InstanceProxyFormOptions {
-  instanceId: string;
+  instanceId: number;
   proxy: VirtualizationProxy | undefined;
 }
 

@@ -9,7 +9,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
-import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 
 @UntilDestroy()
 @Component({
@@ -23,7 +22,6 @@ import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/ca
     MatCardHeader,
     TranslateModule,
     MatCardContent,
-    CardExpandCollapseComponent,
   ],
 })
 export class InstanceIdmapComponent {

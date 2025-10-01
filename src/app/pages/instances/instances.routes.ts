@@ -31,6 +31,12 @@ export const instancesRoutes: Routes = [{
       data: { title: T('Add Containers') },
     },
     {
+      path: 'edit/:id',
+      component: InstanceWizardComponent,
+      canDeactivate: [UnsavedFormGuard],
+      data: { title: T('Edit Container') },
+    },
+    {
       path: 'view/:id',
       data: { title: T('Containers'), breadcrumb: null },
       children: [

@@ -5,10 +5,9 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { VirtualizationDeviceType, VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationDeviceType, VirtualizationStatus } from 'app/enums/virtualization.enum';
 import {
   VirtualizationDevice,
-  VirtualizationInstance,
   VirtualizationTpm,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -19,14 +18,14 @@ import {
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
 
 describe('DeviceActionsMenuComponent', () => {
   let spectator: Spectator<DeviceActionsMenuComponent>;
   let loader: HarnessLoader;
-  const selectedInstance = signal({
-    id: 'my-instance',
-    type: VirtualizationType.Container,
-  } as VirtualizationInstance);
+  const selectedInstance = signal(fakeVirtualizationInstance({
+    id: 1,
+  }));
   const createComponent = createComponentFactory({
     component: DeviceActionsMenuComponent,
     providers: [
@@ -74,11 +73,14 @@ describe('DeviceActionsMenuComponent', () => {
         dev_type: VirtualizationDeviceType.Tpm,
       } as VirtualizationTpm);
 
-      selectedInstance.set({
-        id: 'my-instance',
-        type: VirtualizationType.Vm,
-        status: VirtualizationStatus.Running,
-      } as VirtualizationInstance);
+      selectedInstance.set(fakeVirtualizationInstance({
+        id: 1,
+        status: {
+          state: VirtualizationStatus.Running,
+          pid: 123,
+          domain_state: null,
+        },
+      }));
 
       const menu = await loader.getHarness(MatMenuHarness);
       expect(await menu.isDisabled()).toBe(true);
@@ -93,7 +95,7 @@ describe('DeviceActionsMenuComponent', () => {
       await menu.clickItem({ text: 'Delete' });
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_delete', ['my-instance', 'my-device']);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_delete', [1, 'my-device']);
       expect(spectator.inject(VirtualizationDevicesStore).deviceDeleted).toHaveBeenCalledWith('my-device');
     });
   });

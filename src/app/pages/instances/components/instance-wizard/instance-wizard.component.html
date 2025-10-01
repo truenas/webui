@@ -1,4 +1,4 @@
-<ix-page-header [pageTitle]="'Create Container' | translate">
+<ix-page-header [pageTitle]="pageTitle()">
   @if (!(hasRequiredRoles | async)) {
     <ix-readonly-badge></ix-readonly-badge>
   }
@@ -7,290 +7,232 @@
 <div class="container">
   <form class="form" [formGroup]="form" (submit)="onSubmit()">
     <ix-form-section
-      [label]="'Container Configuration' | translate"
+      [label]="'Basic Configuration' | translate"
     >
       <ix-input
         formControlName="name"
-        [label]="instancesHelptext.namePlaceholderLabel | translate"
+        [label]="'Name' | translate"
         [required]="true"
-        [hint]="instancesHelptext.nameHint | translate"
+        [tooltip]="'Container name' | translate"
       ></ix-input>
 
-      <div class="image-field">
-        <ix-input
-          class="input"
-          formControlName="image"
-          [readonly]="true"
-          [label]="'Image' | translate"
-          [required]="true"
-        ></ix-input>
-
-        <button
-          mat-button
-          ixTest="browse-images"
-          type="button"
-          (click)="onBrowseCatalogImages()"
-        >{{ 'Browse Catalog' | translate }}</button>
-      </div>
-    </ix-form-section>
-
-    <ix-form-section
-      [label]="'CPU & Memory' | translate"
-      [help]="instancesHelptext.cpuMemoryTooltip | translate"
-    >
-      <ix-input
-        formControlName="cpu"
-        [label]="instancesHelptext.cpuLabel | translate"
-        [tooltip]="instancesHelptext.cpuTooltip | translate"
-        [hint]="instancesHelptext.cpuHint | translate"
-      ></ix-input>
-
-      <ix-input
-        formControlName="memory"
-        [label]="instancesHelptext.memoryLabel | translate"
-        [tooltip]="instancesHelptext.memoryTooltip | translate"
-        [format]="formatter.memorySizeFormatting"
-        [parse]="formatter.memorySizeParsing"
-        [hint]="instancesHelptext.memoryHint | translate"
-      ></ix-input>
-    </ix-form-section>
-
-    <ix-form-section
-      [label]="'Environment' | translate"
-    >
-        <ix-list
-          formArrayName="environment_variables"
-          [empty]="form.controls.environment_variables.controls.length === 0"
-          [label]="instancesHelptext.envLabel | translate"
-          (add)="addEnvironmentVariable()"
-        >
-          @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
-            <ix-list-item
-              [formGroupName]="i"
-              [label]="'Environment Variable' | translate"
-              (delete)="removeEnvironmentVariable(i)"
-            >
-              <div class="environment-variable">
-                <ix-input
-                  formControlName="name"
-                  [label]="instancesHelptext.envNameLabel | translate"
-                  [required]="true"
-                ></ix-input>
-
-                <ix-input
-                  formControlName="value"
-                  [label]="instancesHelptext.envValueLabel | translate"
-                  [required]="true"
-                ></ix-input>
-              </div>
-            </ix-list-item>
-          }
-        </ix-list>
-    </ix-form-section>
-
-    <ix-form-section [label]="'Storage' | translate">
-      @if (!hasOnePool()) {
+      @if (!isEditMode()) {
         <ix-select
-          formControlName="storage_pool"
-          [label]="'Store At' | translate"
+          formControlName="pool"
+          [label]="'Pool' | translate"
           [required]="true"
+          [tooltip]="'Pool to use for this container' | translate"
           [options]="poolOptions$"
         ></ix-select>
       }
 
+      <ix-input
+        formControlName="description"
+        [label]="'Description' | translate"
+        [tooltip]="'Container description' | translate"
+      ></ix-input>
 
-      <ix-list
-        formArrayName="disks"
-        [empty]="form.controls.disks.controls.length === 0"
-        [label]="instancesHelptext.disksLabel | translate"
-        [formArray]="form.controls.disks"
-        (add)="addDisk()"
-      >
-        @for (disk of form.controls.disks.controls; track disk.value; let i = $index) {
-          <ix-list-item
-            [label]="'Disk' | translate"
-            [formGroupName]="i"
-            (delete)="removeDisk(i)"
-          >
-            <ix-explorer
-              formControlName="source"
-              [rootNodes]="slashRootNode"
-              [label]="instancesHelptext.disksSourceLabel | translate"
-              [required]="true"
-              [nodeProvider]="datasetProvider"
-            >
-              <ix-explorer-create-dataset></ix-explorer-create-dataset>
-            </ix-explorer>
-
-            <ix-input
-              formControlName="destination"
-              [label]="instancesHelptext.disksDestinationLabel | translate"
-              [tooltip]="instancesHelptext.disksDestinationTooltip | translate"
-              [required]="true"
-            ></ix-input>
-          </ix-list-item>
-        }
-      </ix-list>
-
-    </ix-form-section>
-
-    <ix-form-section
-      [label]="'Proxies' | translate"
-    >
-        <ix-list
-          formArrayName="proxies"
-          [empty]="form.controls.proxies.controls.length === 0"
-          [label]="instancesHelptext.proxiesLabel | translate"
-          [formArray]="form.controls.proxies"
-          (add)="addProxy()"
-        >
-          @for (proxy of form.controls.proxies.controls; track proxy; let i = $index) {
-            <ix-list-item
-              [label]="'Proxy' | translate"
-              [formGroupName]="i"
-              (delete)="removeProxy(i)"
-            >
-              <div class="protocol-and-port">
-                <ix-select
-                  class="protocol"
-                  formControlName="source_proto"
-                  [label]="instancesHelptext.hostProtocolLabel | translate"
-                  [required]="true"
-                  [options]="proxyProtocols$"
-                ></ix-select>
-
-                <ix-input
-                  class="port"
-                  type="number"
-                  formControlName="source_port"
-                  [label]="instancesHelptext.hostPortLabel | translate"
-                  [tooltip]="instancesHelptext.hostPortTooltip | translate"
-                  [required]="true"
-                ></ix-input>
-              </div>
-
-              <div class="protocol-and-port">
-                <ix-select
-                  class="protocol"
-                  formControlName="dest_proto"
-                  [label]="instancesHelptext.instanceProtocolLabel | translate"
-                  [tooltip]="instancesHelptext.instanceProtocolTooltip | translate"
-                  [required]="true"
-                  [options]="proxyProtocols$"
-                ></ix-select>
-
-                <ix-input
-                  class="port"
-                  type="number"
-                  formControlName="dest_port"
-                  [label]="instancesHelptext.instancePortLabel | translate"
-                  [required]="true"
-                ></ix-input>
-              </div>
-            </ix-list-item>
-          }
-        </ix-list>
-    </ix-form-section>
-
-    <ix-form-section
-      [label]="'Network' | translate"
-      [help]="instancesHelptext.networkTooltip | translate"
-    >
       <ix-checkbox
-        formControlName="use_default_network"
-        [label]="instancesHelptext.networkUseDefaultLabel | translate"
+        formControlName="autostart"
+        [label]="'Autostart' | translate"
+        [tooltip]="'Automatically start the container on boot' | translate"
       ></ix-checkbox>
 
-      @if (!form.controls.use_default_network.value) {
-        @if (hasPendingInterfaceChanges()) {
-          <p class="warning">
-            {{ 'NIC selection is currently restricted due to pending network changes.' | translate }}
-          </p>
-        } @else {
-          @if (bridgedNicDevices(); as devices) {
-            @if (devices.length > 0) {
-              <p>{{ bridgedNicTypeLabel ? (bridgedNicTypeLabel | translate) : '' }}</p>
+      @if (!isEditMode()) {
+        <div class="image-field">
+          <ix-input
+            class="input"
+            formControlName="image"
+            [readonly]="true"
+            [label]="'Image' | translate"
+            [required]="true"
+          ></ix-input>
 
-              @for(nicOption of devices; track nicOption.value ) {
-                <ix-checkbox
-                  [label]="nicOption.label"
-                  [formControl]="nicOption.control"
-                ></ix-checkbox>
-              }
-            }
-          } @else {
-            <ngx-skeleton-loader></ngx-skeleton-loader>
-          }
-
-          @if (macVlanNicDevices(); as devices) {
-            @if (devices.length > 0) {
-              <p>{{ macVlanNicTypeLabel ? (macVlanNicTypeLabel | translate) : '' }}</p>
-
-              @for(nicOption of devices; track nicOption.value ) {
-                <ix-checkbox
-                  [label]="nicOption.label"
-                  [formControl]="nicOption.control"
-                ></ix-checkbox>
-              }
-            }
-          } @else {
-            <ngx-skeleton-loader></ngx-skeleton-loader>
-          }
-        }
-      } @else {
-        <div>
-          <div class="network-list-item">
-            <strong>{{ 'Bridge' | translate }}: </strong>
-            <span>{{ 'Automatic' | translate }}</span>
-          </div>
-          <div class="network-list-item">
-            <strong>{{ 'IPv4 Network' | translate }}: </strong>
-            <span>{{ defaultIpv4Network() }}</span>
-          </div>
-          <div class="network-list-item">
-            <strong>{{ 'IPv6 Network' | translate }}: </strong>
-            <span>{{ defaultIpv6Network() }}</span>
-          </div>
+          <button
+            mat-button
+            ixTest="browse-images"
+            type="button"
+            (click)="onBrowseCatalogImages()"
+          >{{ 'Browse Catalog' | translate }}</button>
         </div>
       }
     </ix-form-section>
 
-    @let usbDevices = usbDevices$ | async;
+    <ix-form-section
+      [label]="'CPU Configuration' | translate"
+    >
+      <ix-input
+        formControlName="vcpus"
+        type="number"
+        [label]="'Virtual CPUs' | translate"
+        [tooltip]="'Number of virtual CPUs (greater or equal to 1)' | translate"
+      ></ix-input>
+
+      <ix-input
+        formControlName="cores"
+        type="number"
+        [label]="'Cores' | translate"
+        [tooltip]="'Number of cores per socket' | translate"
+      ></ix-input>
+
+      <ix-input
+        formControlName="threads"
+        type="number"
+        [label]="'Threads' | translate"
+        [tooltip]="'Number of threads per core' | translate"
+      ></ix-input>
+
+      <ix-input
+        formControlName="cpuset"
+        [label]="'CPU Set' | translate"
+        [tooltip]="'List of physical CPU numbers to bind container to (e.g., 0-3,5)' | translate"
+      ></ix-input>
+    </ix-form-section>
+
+    <ix-form-section
+      [label]="'Memory' | translate"
+    >
+      <ix-input
+        formControlName="memory"
+        type="number"
+        [label]="'Memory Size (MB)' | translate"
+        [tooltip]="'Memory available to container in megabytes' | translate"
+      ></ix-input>
+    </ix-form-section>
+
+    <ix-form-section
+      [label]="'Time Configuration' | translate"
+    >
+      <ix-select
+        formControlName="time"
+        [label]="'Container Time' | translate"
+        [options]="timeOptions$"
+        [tooltip]="'Whether container time should be local time or UTC time' | translate"
+      ></ix-select>
+
+      <ix-input
+        formControlName="shutdown_timeout"
+        type="number"
+        [label]="'Shutdown Timeout (seconds)' | translate"
+        [tooltip]="'How many seconds to wait for container to shut down before killing it' | translate"
+      ></ix-input>
+    </ix-form-section>
+
+    <ix-form-section
+      [label]="'Init Process' | translate"
+    >
+      @if (!isEditMode()) {
+        <ix-input
+          formControlName="init"
+          [label]="'Init Process' | translate"
+          [tooltip]="'Init process command line' | translate"
+        ></ix-input>
+      }
+
+      <ix-input
+        formControlName="initdir"
+        [label]="'Init Working Directory' | translate"
+        [tooltip]="'Init process working directory' | translate"
+      ></ix-input>
+
+      <ix-input
+        formControlName="inituser"
+        [label]="'Init User' | translate"
+        [tooltip]="'Init process username' | translate"
+      ></ix-input>
+
+      <ix-input
+        formControlName="initgroup"
+        [label]="'Init Group' | translate"
+        [tooltip]="'Init process group' | translate"
+      ></ix-input>
+    </ix-form-section>
+
+    <ix-form-section
+      [label]="'Environment Variables' | translate"
+    >
+      <ix-list
+        formArrayName="environment_variables"
+        [empty]="form.controls.environment_variables.controls.length === 0"
+        [label]="'Environment Variables' | translate"
+        (add)="addEnvironmentVariable()"
+      >
+        @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
+          <ix-list-item
+            [formGroupName]="i"
+            [label]="'Environment Variable' | translate"
+            (delete)="removeEnvironmentVariable(i)"
+          >
+            <div class="environment-variable">
+              <ix-input
+                formControlName="name"
+                [label]="'Name' | translate"
+                [required]="true"
+              ></ix-input>
+
+              <ix-input
+                formControlName="value"
+                [label]="'Value' | translate"
+                [required]="true"
+              ></ix-input>
+            </div>
+          </ix-list-item>
+        }
+      </ix-list>
+    </ix-form-section>
+
+    <ix-form-section
+      [label]="'Capabilities' | translate"
+    >
+      <ix-select
+        formControlName="capabilities_policy"
+        [label]="'Capabilities Policy' | translate"
+        [options]="capabilitiesPolicyOptions$"
+        [hideEmpty]="true"
+        [tooltip]="'Default rules for capabilities: DEFAULT (keep default behavior), ALLOW (drop all capabilities), or DENY (keep all capabilities)' | translate"
+      ></ix-select>
+    </ix-form-section>
+
+    <!-- Storage section hidden until API support is available -->
+    <!-- <ix-form-section [label]="'Storage' | translate">
+      ...
+    </ix-form-section> -->
+
+    <!-- Proxies section hidden until API support is available -->
+    <!-- <ix-form-section [label]="'Proxies' | translate">
+      ...
+    </ix-form-section> -->
+
+    <!-- Network section hidden until API support is available -->
+    <!-- <ix-form-section [label]="'Network' | translate">
+      ...
+    </ix-form-section> -->
+
+    <!-- USB Devices section hidden until API support is available -->
+    <!-- @let usbDevices = usbDevices$ | async;
     @if (usbDevices && usbDevices.length > 0) {
-      <ix-form-section
-        [label]="'USB Devices' | translate"
-      >
-        <ix-checkbox-list
-          formControlName="usb_devices"
-          [label]="instancesHelptext.usbDevicesLabel | translate"
-          [options]="usbDevices$"
-        ></ix-checkbox-list>
+      <ix-form-section [label]="'USB Devices' | translate">
+        ...
       </ix-form-section>
-    }
+    } -->
 
-    @let gpuDevices = gpuDevices$ | async;
+    <!-- GPU Devices section hidden until API support is available -->
+    <!-- @let gpuDevices = gpuDevices$ | async;
     @if (gpuDevices && gpuDevices.length > 0) {
-      <ix-form-section
-        [label]="'GPU Devices' | translate"
-      >
-        <ix-checkbox-list
-          formControlName="gpu_devices"
-          [label]="'GPU Devices' | translate"
-          [options]="gpuDevices$"
-        ></ix-checkbox-list>
+      <ix-form-section [label]="'GPU Devices' | translate">
+        ...
       </ix-form-section>
-    }
-
+    } -->
 
     <div class="actions">
       <button
         mat-button
         type="submit"
         color="primary"
-        ixTest="create"
+        [ixTest]="isEditMode() ? 'save' : 'create'"
         [disabled]="form.invalid || isLoading()"
       >
-        {{ 'Create' | translate }}
+        {{ submitButtonText() }}
       </button>
     </div>
   </form>

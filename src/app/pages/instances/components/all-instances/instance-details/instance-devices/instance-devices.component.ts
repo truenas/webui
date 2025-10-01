@@ -43,8 +43,6 @@ export class InstanceDevicesComponent {
       return [
         VirtualizationDeviceType.Usb,
         VirtualizationDeviceType.Gpu,
-        VirtualizationDeviceType.Tpm,
-        VirtualizationDeviceType.Pci,
       ].includes(device.dev_type);
     });
   });

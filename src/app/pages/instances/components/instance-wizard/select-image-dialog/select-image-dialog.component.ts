@@ -12,7 +12,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { VirtualizationRemote, VirtualizationType } from 'app/enums/virtualization.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { VirtualizationImage } from 'app/interfaces/virtualization.interface';
+import { VirtualizationImage, ContainerImageRegistryResponse } from 'app/interfaces/virtualization.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -96,7 +96,7 @@ export class SelectImageDialog implements OnInit {
   }
 
   private getImages(): void {
-    this.api.call('virt.instance.image_choices', [{ remote: this.data.remote }])
+    this.api.call('container.image.query_registry', [])
       .pipe(
         catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
@@ -104,28 +104,65 @@ export class SelectImageDialog implements OnInit {
         }),
         untilDestroyed(this),
       )
-      .subscribe((images: Record<string, VirtualizationImage>) => {
-        this.setFilteringOptions(images);
+      .subscribe((registryImages: ContainerImageRegistryResponse[]) => {
+        this.setFilteringOptions(registryImages);
         this.filterImages();
       });
   }
 
-  private setFilteringOptions(images: Record<string, VirtualizationImage>): void {
+  private setFilteringOptions(registryImages: ContainerImageRegistryResponse[]): void {
     const osSet = new Set<string>();
     const variantSet = new Set<string>();
     const releaseSet = new Set<string>();
 
-    const imageArray = Object.entries(images)
-      .filter(([_, image]) => image?.instance_types?.includes(this.data.type))
-      .map(([id, image]) => ({ ...image, id }));
+    // Flatten the registry response into individual selectable images
+    const imageArray: VirtualizationImageWithId[] = [];
+
+    registryImages.forEach((registryImage) => {
+      registryImage.versions.forEach((version: unknown) => {
+        // Handle different version object structures
+        let versionString: string;
+        let archsArray: string[] = ['amd64'];
+        let variantString = 'default';
+
+        if (typeof version === 'string') {
+          versionString = version;
+        } else if (version && typeof version === 'object') {
+          // If version is an object, extract the version string from its properties
+          const versionObj = version as Record<string, unknown>;
+          versionString = (versionObj.version as string)
+          || (versionObj.name as string)
+          || (versionObj.tag as string)
+          || JSON.stringify(version);
+          archsArray = (versionObj.archs as string[]) || (versionObj.architectures as string[]) || ['amd64'];
+          variantString = (versionObj.variant as string) || 'default';
+        } else {
+          versionString = String(version);
+        }
+
+        const imageId = `${registryImage.name}:${versionString}`;
+
+        // Create a VirtualizationImage-compatible object
+        const image: VirtualizationImageWithId = {
+          id: imageId,
+          archs: archsArray,
+          description: `${registryImage.name} container image`,
+          label: registryImage.name,
+          os: this.extractOs(registryImage.name),
+          release: versionString,
+          variant: variantString,
+          instance_types: [VirtualizationType.Container],
+          secureboot: null,
+        };
+
+        imageArray.push(image);
+        osSet.add(image.os);
+        variantSet.add(image.variant);
+        releaseSet.add(image.release);
+      });
+    });
 
     this.images.set(imageArray);
-
-    imageArray.forEach((image) => {
-      osSet.add(image.os);
-      variantSet.add(image.variant);
-      releaseSet.add(image.release);
-    });
 
     this.osOptions$ = of([...osSet].map((os) => ({ label: ignoreTranslation(os), value: os })));
     this.variantOptions$ = of([...variantSet].map((variant) => ({
@@ -137,6 +174,23 @@ export class SelectImageDialog implements OnInit {
       label: ignoreTranslation(release),
       value: release,
     })));
+  }
+
+  private extractOs(imageName: string): string {
+    // Try to extract OS name from image name
+    const lowerName = imageName.toLowerCase();
+
+    if (lowerName.includes('ubuntu')) return 'Ubuntu';
+    if (lowerName.includes('debian')) return 'Debian';
+    if (lowerName.includes('alpine')) return 'Alpine';
+    if (lowerName.includes('centos')) return 'CentOS';
+    if (lowerName.includes('fedora')) return 'Fedora';
+    if (lowerName.includes('nginx')) return 'Linux';
+    if (lowerName.includes('node')) return 'Linux';
+    if (lowerName.includes('python')) return 'Linux';
+
+    // Default fallback
+    return 'Linux';
   }
 
   private filterImages(): void {

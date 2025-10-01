@@ -18,15 +18,13 @@
       [ixUiSearch]="searchableElements.elements.nic"
     ></ix-instance-nics>
 
-    @if (isContainer()) {
-      <ix-instance-proxies
-        [ixUiSearch]="searchableElements.elements.proxies"
-      ></ix-instance-proxies>
+    <ix-instance-proxies
+      [ixUiSearch]="searchableElements.elements.proxies"
+    ></ix-instance-proxies>
 
-      <ix-instance-idmap [instance]="instance()"
-        [ixUiSearch]="searchableElements.elements.idmap"
-      ></ix-instance-idmap>
-    }
+    <ix-instance-idmap [instance]="instance()"
+      [ixUiSearch]="searchableElements.elements.idmap"
+    ></ix-instance-idmap>
 
     <ix-instance-tools [instance]="instance()"
       [ixUiSearch]="searchableElements.elements.tools"

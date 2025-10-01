@@ -41,7 +41,7 @@ export class VirtualizationDevicesStore extends ComponentStore<VirtualizationIns
         }
       }),
       filter(Boolean),
-      tap(() => this.loadDevices()),
+      // tap(() => this.loadDevices()),
     ).pipe(untilDestroyed(this)).subscribe();
   }
 
@@ -49,7 +49,7 @@ export class VirtualizationDevicesStore extends ComponentStore<VirtualizationIns
     return trigger$.pipe(
       switchMap(() => {
         this.patchState({ isLoading: true });
-        return this.api.call('virt.instance.device_list', [this.selectedInstance().id]).pipe(
+        return this.api.call('virt.instance.device_list', [this.selectedInstance().id.toString()]).pipe(
           tap((devices) => {
             this.patchState({
               devices,

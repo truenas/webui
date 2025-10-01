@@ -5,9 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { VirtualizationGlobalState } from 'app/enums/virtualization.enum';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   GlobalConfigFormComponent,
@@ -15,7 +13,6 @@ import {
 import {
   MapUserGroupIdsDialog,
 } from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/map-user-group-ids-dialog.component';
-import { VirtualizationStateComponent } from 'app/pages/instances/components/all-instances/all-instances-header/virtualization-state/virtualization-state.component';
 import {
   VolumesDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
@@ -28,15 +25,11 @@ describe('AllInstancesHeaderComponent', () => {
   let loader: HarnessLoader;
   const storeMock = {
     isLoading: signal(false),
-    virtualizationState: signal(VirtualizationGlobalState.Initialized),
     config: signal({ dataset: 'pool1/dataset1' }),
   };
 
   const createComponent = createComponentFactory({
     component: AllInstancesHeaderComponent,
-    declarations: [
-      MockComponent(VirtualizationStateComponent),
-    ],
     providers: [
       mockProvider(VirtualizationInstancesStore, {
         initialize: jest.fn(),
@@ -56,40 +49,7 @@ describe('AllInstancesHeaderComponent', () => {
   });
 
   describe('elements visibility', () => {
-    it('shows status and Select Pool button for NoPool state', async () => {
-      storeMock.virtualizationState.set(VirtualizationGlobalState.NoPool);
-      spectator.detectChanges();
-
-      expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(2);
-
-      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent)!;
-      expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.NoPool);
-
-      const selectPoolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Select Pool' }));
-      expect(selectPoolButton).toExist();
-    });
-
-    it('shows status, Settings button and disabled Create New Container for Initializing state', async () => {
-      storeMock.virtualizationState.set(VirtualizationGlobalState.Initializing);
-      spectator.detectChanges();
-
-      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent)!;
-      expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Initializing);
-
-      const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configuration' }));
-      expect(configurationButton).toExist();
-
-      const createNewButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create New Container' }));
-      expect(await createNewButton.isDisabled()).toBe(true);
-    });
-
-    it('shows status, Configuration and Create New Container for Initialized state', async () => {
-      storeMock.virtualizationState.set(VirtualizationGlobalState.Initialized);
-      spectator.detectChanges();
-
-      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent)!;
-      expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Initialized);
-
+    it('shows Configuration and Create New Container buttons', async () => {
       const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configuration' }));
       expect(configurationButton).toExist();
 
@@ -97,39 +57,10 @@ describe('AllInstancesHeaderComponent', () => {
       expect(createNewButton).not.toBeDisabled();
       expect(await (await createNewButton.host()).getAttribute('href')).toBe('/containers/new');
     });
-
-    it('shows status, Configuration and Go To Dataset for Locked state', async () => {
-      storeMock.virtualizationState.set(VirtualizationGlobalState.Locked);
-      spectator.detectChanges();
-
-      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent)!;
-      expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Locked);
-
-      const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configuration' }));
-      expect(configurationButton).toExist();
-
-      const goToDataset = await loader.getHarness(MatButtonHarness.with({ text: 'Go To Dataset' }));
-      expect(goToDataset).toExist();
-      expect(await (await goToDataset.host()).getAttribute('href')).toBe('/storage/datasets/pool1/dataset1');
-    });
-
-    it('shows status and Configuration for Error state', async () => {
-      storeMock.virtualizationState.set(VirtualizationGlobalState.Error);
-      spectator.detectChanges();
-
-      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent)!;
-      expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Error);
-
-      const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configuration' }));
-      expect(configurationButton).toExist();
-    });
   });
 
   describe('actions', () => {
     it('opens GlobalConfigFormComponent when Global Settings in Configuration menu is pressed', async () => {
-      storeMock.virtualizationState.set(VirtualizationGlobalState.Initialized);
-      spectator.detectChanges();
-
       const configurationMenu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Configuration' }));
       await configurationMenu.open();
       await configurationMenu.clickItem({ text: 'Global Settings' });
@@ -142,9 +73,6 @@ describe('AllInstancesHeaderComponent', () => {
     });
 
     it('opens VolumesDialogComponent when Manage Volumes in Configuration menu is pressed', async () => {
-      storeMock.virtualizationState.set(VirtualizationGlobalState.Initialized);
-      spectator.detectChanges();
-
       const configurationMenu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Configuration' }));
       await configurationMenu.open();
       await configurationMenu.clickItem({ text: 'Manage Volumes' });
@@ -156,9 +84,6 @@ describe('AllInstancesHeaderComponent', () => {
     });
 
     it('opens MapUserGroupIdsDialog when Map User/Group IDs is pressed', async () => {
-      storeMock.virtualizationState.set(VirtualizationGlobalState.Initialized);
-      spectator.detectChanges();
-
       const configurationMenu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Configuration' }));
       await configurationMenu.open();
       await configurationMenu.clickItem({ text: 'Map User/Group IDs' });

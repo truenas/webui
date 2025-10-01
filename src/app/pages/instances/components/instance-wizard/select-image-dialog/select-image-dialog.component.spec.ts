@@ -13,29 +13,21 @@ import {
   mockApi,
 } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationRemote, VirtualizationType } from 'app/enums/virtualization.enum';
-import { VirtualizationImage } from 'app/interfaces/virtualization.interface';
+import { ContainerImageRegistryResponse } from 'app/interfaces/virtualization.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SelectImageDialog } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 
-const imageChoices: Record<string, VirtualizationImage> = {
-  'almalinux/8/cloud': {
-    label: 'Almalinux 8 (arm64, cloud)',
-    os: 'Almalinux',
-    release: '8',
-    archs: ['arm64'],
-    variant: 'cloud',
-    instance_types: [VirtualizationType.Container],
-  } as VirtualizationImage,
-  'alpine/3.18/default': {
-    label: 'Alpine 3.18 (armhf, default)',
-    os: 'Alpine',
-    release: '3.18',
-    archs: ['armhf'],
-    variant: 'default',
-    instance_types: [VirtualizationType.Container],
-  } as VirtualizationImage,
-} as Record<string, VirtualizationImage>;
+const imageChoices: ContainerImageRegistryResponse[] = [
+  {
+    name: 'almalinux',
+    versions: ['8'],
+  },
+  {
+    name: 'alpine',
+    versions: ['3.18'],
+  },
+];
 
 describe('SelectImageDialogComponent', () => {
   let spectator: Spectator<SelectImageDialog>;
@@ -45,7 +37,7 @@ describe('SelectImageDialogComponent', () => {
     component: SelectImageDialog,
     imports: [ReactiveFormsModule],
     providers: [
-      mockApi([mockCall('virt.instance.image_choices', imageChoices)]),
+      mockApi([mockCall('container.image.query_registry', imageChoices)]),
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,
@@ -69,8 +61,8 @@ describe('SelectImageDialogComponent', () => {
 
     it('loads image choices', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
-        'virt.instance.image_choices',
-        [{ remote: VirtualizationRemote.LinuxContainers }],
+        'container.image.query_registry',
+        [],
       );
     });
 
@@ -91,8 +83,8 @@ describe('SelectImageDialogComponent', () => {
       });
 
       expect(rows).toEqual([
-        ['Almalinux 8 (arm64, cloud)', 'Almalinux', '8', 'arm64', 'cloud', 'Select'],
-        ['Alpine 3.18 (armhf, default)', 'Alpine', '3.18', 'armhf', 'default', 'Select'],
+        ['almalinux', 'Linux', '8', 'amd64', 'default', 'Select'],
+        ['alpine', 'Alpine', '3.18', 'amd64', 'default', 'Select'],
       ]);
     });
 
@@ -107,7 +99,7 @@ describe('SelectImageDialogComponent', () => {
       });
 
       expect(rows).toEqual([
-        ['Alpine 3.18 (armhf, default)', 'Alpine', '3.18', 'armhf', 'default', 'Select'],
+        ['alpine', 'Alpine', '3.18', 'amd64', 'default', 'Select'],
       ]);
     });
 
@@ -116,21 +108,32 @@ describe('SelectImageDialogComponent', () => {
         MatButtonHarness.with({ text: 'Select' }),
       );
 
-      const imageChoicesKeys = Object.keys(imageChoices);
-      const imageChoicesValues = Object.values(imageChoices);
-
-      expect(selectButtons).toHaveLength(imageChoicesValues.length);
+      expect(selectButtons).toHaveLength(2);
 
       await selectButtons[0].click();
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
-        id: imageChoicesKeys[0],
-        ...imageChoicesValues[0],
+        id: 'almalinux:8',
+        archs: ['amd64'],
+        description: 'almalinux container image',
+        label: 'almalinux',
+        os: 'Linux',
+        release: '8',
+        variant: 'default',
+        instance_types: [VirtualizationType.Container],
+        secureboot: null,
       });
 
       await selectButtons[1].click();
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
-        id: imageChoicesKeys[1],
-        ...imageChoicesValues[1],
+        id: 'alpine:3.18',
+        archs: ['amd64'],
+        description: 'alpine container image',
+        label: 'alpine',
+        os: 'Alpine',
+        release: '3.18',
+        variant: 'default',
+        instance_types: [VirtualizationType.Container],
+        secureboot: null,
       });
     });
 

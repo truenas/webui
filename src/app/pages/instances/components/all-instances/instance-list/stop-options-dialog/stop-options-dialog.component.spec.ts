@@ -43,53 +43,48 @@ describe('StopOptionsDialogComponent', () => {
     expect(await loader.getHarness(MatButtonHarness.with({ text: 'Restart' }))).toBeTruthy();
   });
 
-  it('closes the form with parameters when Wait for 30 seconds is selected', async () => {
+  it('closes the form with parameters when graceful stop is selected', async () => {
     setupTest(StopOptionsOperation.Stop);
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Wait to stop cleanly': 'Wait for 30 seconds',
+      'Stop Method': 'Wait for graceful stop',
+    });
+
+    const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
+    await stopButton.click();
+
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({});
+  });
+
+  it('closes the form with parameters when force after timeout is selected', async () => {
+    setupTest(StopOptionsOperation.Stop);
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Stop Method': 'Wait for graceful stop, then force',
     });
 
     const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
     await stopButton.click();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
-      timeout: 30,
-      force: false,
+      force_after_timeout: true,
     });
   });
 
-  it('closes the form with parameters when Wait for 5 minutes is selected', async () => {
+  it('closes the form with parameters when force immediately is selected', async () => {
     setupTest(StopOptionsOperation.Stop);
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Wait to stop cleanly': 'Wait for 5 minutes',
+      'Stop Method': 'Force stop immediately',
     });
 
     const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
     await stopButton.click();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
-      timeout: 5 * 60,
-      force: false,
-    });
-  });
-
-  it('closes the form with parameters when Shutdown now is selected', async () => {
-    setupTest(StopOptionsOperation.Stop);
-
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Wait to stop cleanly': 'Force shutdown now',
-    });
-
-    const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
-    await stopButton.click();
-
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
-      timeout: -1,
       force: true,
     });
   });

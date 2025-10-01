@@ -5,7 +5,6 @@ import {
   MAT_DIALOG_DATA, MatDialog, MatDialogRef,
 } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -16,16 +15,12 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { IxImportIsoDialogComponent } from 'app/pages/instances/components/common/volumes-dialog/import-iso-dialog/import-iso-dialog.component';
 import {
   ImportZvolsDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/import-zvol-dialog/import-zvols-dialog.component';
 import {
   NewVolumeDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/new-volume-dialog/new-volume-dialog.component';
-import {
-  UploadIsoButtonComponent,
-} from 'app/pages/instances/components/common/volumes-dialog/upload-iso-button/upload-iso-button.component';
 import {
   VolumesDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
@@ -56,9 +51,6 @@ describe('VolumesDialogComponent', () => {
 
   const createComponent = createComponentFactory({
     component: VolumesDialog,
-    imports: [
-      MockComponent(UploadIsoButtonComponent),
-    ],
     providers: [
       mockApi([
         mockCall('virt.volume.query', volumes),
@@ -99,12 +91,6 @@ describe('VolumesDialogComponent', () => {
         ['ubuntu.iso', '17 MiB', '2025-01-28 23:45:47', 'N/A', ''],
         ['windows.iso', 'Unknown', '2025-01-29 23:45:47', 'my-instance, test', ''],
       ]);
-    });
-
-    it('does not show ISO upload when showIsoManagement is false by default', () => {
-      const uploadButton = spectator.query(UploadIsoButtonComponent);
-
-      expect(uploadButton).toBeFalsy();
     });
 
     it('allows volume to be removed', async () => {
@@ -160,65 +146,6 @@ describe('VolumesDialogComponent', () => {
       await selectButton.click();
 
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(volumes[0]);
-    });
-  });
-
-  describe('showIsoManagement visibility', () => {
-    beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          {
-            provide: MAT_DIALOG_DATA,
-            useValue: { showIsoManagement: false },
-          },
-        ],
-      });
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('hides ISO management controls when showIsoManagement is false', async () => {
-      const uploadButton = spectator.query(UploadIsoButtonComponent);
-      expect(uploadButton).toBeFalsy();
-
-      const importButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Import ISO' }));
-      expect(importButtons).toHaveLength(0);
-    });
-  });
-
-  describe('showIsoManagement enabled', () => {
-    beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          {
-            provide: MAT_DIALOG_DATA,
-            useValue: { showIsoManagement: true },
-          },
-        ],
-      });
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('shows ISO management controls when showIsoManagement is true', async () => {
-      const uploadButton = spectator.query(UploadIsoButtonComponent);
-      expect(uploadButton).toBeTruthy();
-
-      const importButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Import ISO' }));
-      expect(importButtons).toHaveLength(1);
-    });
-
-    it('allows ISO import when showIsoManagement is true', async () => {
-      const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import ISO' }));
-      await importButton.click();
-
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-        IxImportIsoDialogComponent,
-        expect.objectContaining({
-          minWidth: '500px',
-          data: {
-            config: undefined,
-          },
-        }),
-      );
     });
   });
 });

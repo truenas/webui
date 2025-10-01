@@ -4,20 +4,21 @@ import { of, Subject } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import {
-  VirtualizationDevice, VirtualizationInstance, VirtualizationMetrics,
+  VirtualizationDevice, VirtualizationMetrics,
 } from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
 
 describe('VirtualizationInstancesStore', () => {
   let spectator: SpectatorService<VirtualizationInstancesStore>;
 
-  const event$ = new Subject<ApiEvent<VirtualizationInstance>>();
+  const event$ = new Subject<ApiEvent>();
   const metricsEvent$ = new Subject<ApiEvent<VirtualizationMetrics>>();
   const instances = [
-    { id: 'instance1' },
-    { id: 'instance2' },
-  ] as VirtualizationInstance[];
+    fakeVirtualizationInstance({ id: 1 }),
+    fakeVirtualizationInstance({ id: 2 }),
+  ];
 
   const devices = [
     { name: 'device1' },
@@ -31,7 +32,7 @@ describe('VirtualizationInstancesStore', () => {
     providers: [
       mockProvider(ApiService, {
         call: jest.fn((method) => {
-          if (method === 'virt.instance.query') {
+          if (method === 'container.query') {
             return of(instances);
           }
           return of(devices);
@@ -80,24 +81,24 @@ describe('VirtualizationInstancesStore', () => {
 
   it('should select instance when method is called', () => {
     spectator.service.initialize();
-    spectator.service.selectInstance('instance1');
+    spectator.service.selectInstance(1);
     expect(spectator.service.state()).toEqual({
       instances,
       isLoading: false,
       selectedInstance: instances[0],
-      selectedInstanceId: 'instance1',
+      selectedInstanceId: 1,
       metrics: {},
     });
   });
 
   it('resets selected instance', () => {
     spectator.service.initialize();
-    spectator.service.selectInstance('instance1');
+    spectator.service.selectInstance(1);
     expect(spectator.service.state()).toEqual({
       instances,
       isLoading: false,
       selectedInstance: instances[0],
-      selectedInstanceId: 'instance1',
+      selectedInstanceId: 1,
       metrics: {},
     });
     spectator.service.resetInstance();
@@ -105,7 +106,7 @@ describe('VirtualizationInstancesStore', () => {
       instances,
       isLoading: false,
       selectedInstance: null,
-      selectedInstanceId: 'instance1',
+      selectedInstanceId: 1,
       metrics: {},
     });
   });
@@ -125,41 +126,42 @@ describe('VirtualizationInstancesStore', () => {
   describe('handles subscribe events', () => {
     beforeEach(() => spectator.service.initialize());
     it('adds instance to the list if add event emitted', () => {
+      const newInstance = fakeVirtualizationInstance({ id: 3 });
       event$.next({
-        collection: 'virt.instance.query',
-        id: 'instance3',
+        collection: 'container.query',
+        id: 3,
         msg: CollectionChangeType.Added,
-        fields: { id: 'instance3' } as VirtualizationInstance,
+        fields: newInstance,
       });
 
       expect(spectator.service.instances()).toEqual([
         ...instances,
-        { id: 'instance3' },
+        newInstance,
       ]);
     });
 
     it('handles change event', () => {
       event$.next({
-        collection: 'virt.instance.query',
-        id: 'instance2',
+        collection: 'container.query',
+        id: 2,
         msg: CollectionChangeType.Changed,
-        fields: { id: 'instance2', name: 'instance3' } as VirtualizationInstance,
+        fields: fakeVirtualizationInstance({ id: 2, name: 'instance3' }),
       });
       expect(spectator.service.instances()).toEqual([
-        { id: 'instance1' },
-        { id: 'instance2', name: 'instance3' },
+        instances[0],
+        expect.objectContaining({ id: 2, name: 'instance3' }),
       ]);
     });
 
     it('handles remove event', () => {
       event$.next({
-        collection: 'virt.instance.query',
-        id: 'instance2',
+        collection: 'container.query',
+        id: 2,
         msg: CollectionChangeType.Removed,
-        fields: { id: 'instance2' } as VirtualizationInstance,
+        fields: fakeVirtualizationInstance({ id: 2 }),
       });
       expect(spectator.service.instances()).toEqual([
-        { id: 'instance1' },
+        instances[0],
       ]);
     });
 

@@ -13,7 +13,6 @@ import {
   DiskIoBus,
   diskIoBusLabels,
   VirtualizationDeviceType,
-  VirtualizationType,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
@@ -104,10 +103,6 @@ export class InstanceDiskFormComponent implements OnInit {
     return this.slideInRef.getData().instance;
   }
 
-  protected get isVm(): boolean {
-    return this.instance.type === VirtualizationType.Vm;
-  }
-
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -125,11 +120,7 @@ export class InstanceDiskFormComponent implements OnInit {
       });
     }
 
-    if (this.isVm) {
-      this.form.controls.destination.disable();
-    } else {
-      this.form.controls.io_bus.disable();
-    }
+    this.form.controls.io_bus.disable();
   }
 
   protected onSelectVolume(): void {
@@ -139,7 +130,6 @@ export class InstanceDiskFormComponent implements OnInit {
         data: {
           selectionMode: true,
           config: null,
-          showIsoManagement: this.instance.type === VirtualizationType.Vm,
         },
       })
       .afterClosed()

@@ -2,22 +2,25 @@ import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { InstanceListComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-list.component';
 import { InstanceRowComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-row.component';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
 
 describe('InstanceListComponent', () => {
   let spectator: Spectator<InstanceListComponent>;
 
-  const mockInstance = {
-    id: '1',
+  const mockInstance = fakeVirtualizationInstance({
+    id: 1,
     name: 'agi_instance',
-    status: VirtualizationStatus.Running,
-    type: VirtualizationType.Container,
-  } as VirtualizationInstance;
+    status: {
+      state: VirtualizationStatus.Running,
+      pid: 123,
+      domain_state: null,
+    },
+  });
 
   const createComponent = createRoutingFactory({
     component: InstanceListComponent,
@@ -59,7 +62,7 @@ describe('InstanceListComponent', () => {
     const router = spectator.inject(Router);
     spectator.click(spectator.query('ix-instance-row')!);
     expect(spectator.inject(LayoutService).navigatePreservingScroll).toHaveBeenCalledWith(router, [
-      '/containers', 'view', '1',
+      '/containers', 'view', 1,
     ]);
   });
 });

@@ -45,9 +45,12 @@ export interface ApiEventDirectory {
   'tn_connect.config': { response: TruenasConnectConfig };
   'truecommand.config': { response: TrueCommandConfig };
   'user.query': { response: User };
-  'virt.global.config': { response: VirtualizationGlobalConfig };
   'virt.instance.metrics': { response: VirtualizationMetrics };
   'virt.instance.query': { response: VirtualizationInstance };
+
+  'container.query': { response: VirtualizationInstance };
+  'lxc.config': { response: VirtualizationGlobalConfig };
+
   'vm.query': { response: VirtualMachine };
   'zfs.pool.scan': { response: PoolScan };
   'pool.snapshot.query': { response: ZfsSnapshot };

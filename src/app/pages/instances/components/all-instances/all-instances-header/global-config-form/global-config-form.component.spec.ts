@@ -2,11 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -27,22 +24,16 @@ describe('GlobalConfigFormComponent', () => {
           '[Disabled]': '[Disabled]',
           poolio: 'poolio',
         }),
-        mockCall('virt.global.bridge_choices', {
+        mockCall('lxc.bridge_choices', {
           bridge1: 'bridge1',
-          '[AUTO]': '[AUTO]',
+          '': 'Automatic',
         }),
-        mockJob('virt.global.update', fakeSuccessfulJob()),
+        mockCall('lxc.update'),
       ]),
-      mockProvider(DialogService, {
-        jobDialog: jest.fn(() => ({
-          afterClosed: () => of(undefined),
-        })),
-      }),
       mockProvider(SlideInRef, {
         close: jest.fn(),
         requireConfirmationWhen: jest.fn(),
         getData: jest.fn(() => ({
-          pool: 'poolio',
           storage_pools: ['poolio'],
           bridge: 'bridge1',
           v4_network: '1.2.3.4/24',
@@ -60,10 +51,11 @@ describe('GlobalConfigFormComponent', () => {
   });
 
   it('shows current global settings from the slide-in data', async () => {
+    // Wait for the bridge options to load and set the bridge value
+    await spectator.fixture.whenStable();
+
     expect(await form.getValues()).toEqual({
       Bridge: 'bridge1',
-      'Enable Containers': true,
-      Pools: ['poolio'],
     });
 
     const v4NetworkInput = await form.getControl('v4_network');
@@ -73,23 +65,21 @@ describe('GlobalConfigFormComponent', () => {
   });
 
   it('updates global settings and shows network fields when bridge is [AUTO] and closes slide-in', async () => {
+    // Wait for the bridge options to load and set the bridge value
+    await spectator.fixture.whenStable();
+
     await form.fillForm({
-      'Enable Containers': true,
-      Bridge: '[AUTO]',
-      Pools: ['poolio'],
+      Bridge: 'Automatic',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.global.update', [{
-      pool: 'poolio',
-      storage_pools: ['poolio'],
-      bridge: '[AUTO]',
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
+      bridge: '',
       v4_network: '1.2.3.4/24',
       v6_network: null,
     }]);
-    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
       response: true,
     });

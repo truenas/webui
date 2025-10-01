@@ -1,27 +1,24 @@
-import { KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, map, switchMap } from 'rxjs';
+import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { VirtualizationType } from 'app/enums/virtualization.enum';
+import { containerCapabilitiesPolicyLabels } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { InstanceEditFormComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-edit-form/instance-edit-form.component';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -39,10 +36,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatCardContent,
     TranslateModule,
     YesNoPipe,
+    MapValuePipe,
     RequiresRolesDirective,
-    KeyValuePipe,
     TestDirective,
-    MatTooltip,
   ],
 })
 export class InstanceGeneralInfoComponent {
@@ -52,26 +48,15 @@ export class InstanceGeneralInfoComponent {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
-  private slideIn = inject(SlideIn);
-  private instancesStore = inject(VirtualizationInstancesStore);
+  private loader = inject(LoaderService);
 
   instance = input.required<VirtualizationInstance>();
 
   protected readonly Role = Role;
-
-  protected readonly environmentVariablesTooltip = computed(() => {
-    return Object.entries(this.instance().environment).map(([key, value]) => `${key} = ${value}`).join('\n');
-  });
-
-  protected readonly isVm = computed(() => this.instance().type === VirtualizationType.Vm);
+  protected readonly containerCapabilitiesPolicyLabels = containerCapabilitiesPolicyLabels;
 
   editInstance(): void {
-    this.slideIn.open(InstanceEditFormComponent, { data: this.instance() })
-      .pipe(map((response) => response.response), filter(Boolean), untilDestroyed(this))
-      .subscribe((instance: VirtualizationInstance) => {
-        this.instancesStore.instanceUpdated(instance);
-        this.instancesStore.selectInstance(instance.id);
-      });
+    this.router.navigate(['/containers/edit', this.instance().id]);
   }
 
   deleteInstance(): void {
@@ -82,14 +67,19 @@ export class InstanceGeneralInfoComponent {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.dialogService.jobDialog(
-          this.api.job('virt.instance.delete', [this.instance().id]),
-        ).afterClosed();
+        this.loader.open();
+        return this.api.call('container.delete', [this.instance().id]);
       }),
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.router.navigate(['/containers'], { state: { hideMobileDetails: true } });
+    ).subscribe({
+      next: () => {
+        this.loader.close();
+        this.router.navigate(['/containers'], { state: { hideMobileDetails: true } });
+      },
+      error: () => {
+        this.loader.close();
+      },
     });
   }
 }

@@ -51,13 +51,13 @@ export class InstanceListComponent {
   private searchDirectives = inject(UiSearchDirectivesService);
   private layoutService = inject(LayoutService);
 
-  readonly instanceId = toSignal(this.activatedRoute.params.pipe(map((params) => params['id'])));
+  readonly instanceId = toSignal(this.activatedRoute.params.pipe(map((params) => (params['id'] ? Number(params['id']) : null))));
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
   readonly searchQuery = signal<string>('');
   protected readonly window = inject<Window>(WINDOW);
-  protected readonly selection = new SelectionModel<string>(true, []);
+  protected readonly selection = new SelectionModel<number>(true, []);
 
   protected readonly instances = this.instancesStore.instances;
   protected readonly isLoading = this.instancesStore.isLoading;
@@ -71,9 +71,7 @@ export class InstanceListComponent {
 
   get checkedInstances(): VirtualizationInstance[] {
     return this.selection.selected
-      .map((id) => {
-        return this.instances().find((instance) => instance.id === id);
-      })
+      .map((id) => this.instances().find((instance) => instance.id === id))
       .filter((instance) => !!instance);
   }
 
@@ -102,7 +100,9 @@ export class InstanceListComponent {
     toObservable(this.instanceId).pipe(
       distinctUntilChanged(),
       tap((instanceId) => {
-        this.instancesStore.selectInstance(instanceId as string);
+        if (instanceId !== null) {
+          this.instancesStore.selectInstance(instanceId);
+        }
       }),
       untilDestroyed(this),
     ).subscribe();

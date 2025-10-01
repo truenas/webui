@@ -278,9 +278,10 @@ import {
   AvailableUsb,
   AvailableGpus, VirtualizationVolume,
   VirtualizationVolumeUpdate,
-  VirtualizationPciChoices,
   CreateVirtualizationVolume,
-  VirtualizationImportIsoParams,
+  CreateVirtualizationInstance,
+  UpdateVirtualizationInstance,
+  ContainerImageRegistryResponse,
 } from 'app/interfaces/virtualization.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
@@ -902,10 +903,9 @@ export interface ApiCallDirectory {
 
   // Virt
   'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
-  'virt.instance.set_bootable_disk': { params: [instanceId: string, diskId: string]; response: boolean };
-  'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
-  'virt.instance.device_update': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
-  'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: true };
+  'virt.instance.device_add': { params: [instanceId: number, device: VirtualizationDevice]; response: true };
+  'virt.instance.device_update': { params: [instanceId: number, device: VirtualizationDevice]; response: true };
+  'virt.instance.device_delete': { params: [instanceId: number, name: string]; response: true };
   'virt.instance.device_list': { params: [instanceId: string]; response: VirtualizationDevice[] };
   'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: Record<string, VirtualizationImage> };
 
@@ -916,10 +916,7 @@ export interface ApiCallDirectory {
   };
   'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
   'virt.device.nic_choices': { params: [nicType: VirtualizationNicType]; response: Record<string, string> };
-  'virt.device.pci_choices': { params: []; response: VirtualizationPciChoices };
 
-  'virt.global.bridge_choices': { params: []; response: Choices };
-  'virt.global.config': { params: []; response: VirtualizationGlobalConfig };
   'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
   'virt.global.pool_choices': { params: []; response: Choices };
 
@@ -927,7 +924,23 @@ export interface ApiCallDirectory {
   'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
   'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
   'virt.volume.delete': { params: [id: string]; response: true };
-  'virt.volume.import_iso': { params: [VirtualizationImportIsoParams]; response: VirtualizationVolume };
+
+  // Container (actual available endpoints only)
+  'container.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
+  'container.delete': { params: [instanceId: number]; response: boolean };
+  'container.get_instance': { params: [instanceId: number]; response: VirtualizationInstance };
+  'container.image': { params: []; response: unknown }; // TODO: Define proper response type
+  'container.image.query_registry': { params: []; response: ContainerImageRegistryResponse[] };
+  'container.migrate': { params: [instanceId: number]; response: boolean };
+  'container.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
+  'container.start': { params: [instanceId: number]; response: void };
+  'container.stop': { params: [instanceId: number, params?: { force?: boolean }]; response: void };
+  'container.update': { params: [instanceId: number, update: UpdateVirtualizationInstance]; response: VirtualizationInstance };
+
+  // LXC (actual available endpoints only)
+  'lxc.bridge_choices': { params: []; response: Choices };
+  'lxc.config': { params: []; response: VirtualizationGlobalConfig };
+  'lxc.update': { params: [VirtualizationGlobalConfig]; response: VirtualizationGlobalConfig };
 
   // VM
   'vm.bootloader_options': { params: void; response: Choices };
