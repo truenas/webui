@@ -147,12 +147,19 @@ export class AcmednsFormComponent implements OnInit {
     const cfToken = this.form.controls.attributes.get(['api_token']) as FormControl<string>;
 
     const mustBeEmpty = (control: AbstractControl): ValidationErrors | null => {
-      return control.value !== '' ? { cannotUse: { message: 'email/API key cannot be used with token' } } : null;
+      return control.value !== '' ? { cannotUse: { message: this.translate.instant('Email/API key cannot be used with API token') } } : null;
     };
 
     const setRequiredFields = (req: FormControl<string>[], notReq: FormControl<string>[]): void => {
-      req.forEach((elem) => elem.setValidators([Validators.required], { emitEvent: false }));
+      req.forEach((elem) => {
+        elem.setValidators([Validators.required], { emitEvent: false });
+      });
       notReq.forEach((elem) => elem.setValidators([mustBeEmpty], { emitEvent: false }));
+
+      // Update the schema to reflect which fields are required for the asterisk display
+      this.updateSchemaRequired('cloudflare_email', req.includes(cfEmail));
+      this.updateSchemaRequired('api_key', req.includes(cfKey));
+      this.updateSchemaRequired('api_token', req.includes(cfToken));
     };
 
     this.form.valueChanges.pipe(pairwise(), untilDestroyed(this)).subscribe(([prev, next]) => {
@@ -176,8 +183,9 @@ export class AcmednsFormComponent implements OnInit {
 
       // case: all fields are empty
       if (emailInput === '' && keyInput === '' && tokenInput === '') {
-        // set *all* fields required just so the user has to put *something* in.
-        setRequiredFields([cfEmail, cfKey, cfToken], []);
+        // set *all* fields unrequired so we don't confuse the user by showing
+        // errors immediately upon form open
+        setRequiredFields([], [cfEmail, cfKey, cfToken]);
 
         // case: the user just edited the email or key fields
       } else if (edited === 'email' || edited === 'key') {
@@ -243,6 +251,19 @@ export class AcmednsFormComponent implements OnInit {
     return { key: schema.key, variables };
   }
 
+  private updateSchemaRequired(controlName: string, isRequired: boolean): void {
+    // search through the dynamic section of the form, find the control we want to update by name,
+    // and then set its `required` field to `isRequired`
+    for (const section of this.dynamicSection) {
+      for (const schemaNode of section.schema) {
+        if (schemaNode.controlName === controlName) {
+          schemaNode.required = isRequired;
+          return;
+        }
+      }
+    }
+  }
+
   protected onAuthenticatorTypeChanged(event: DnsAuthenticatorType): void {
     this.dnsAuthenticatorList.forEach((auth) => {
       if (auth.key === event) {
@@ -257,6 +278,8 @@ export class AcmednsFormComponent implements OnInit {
       } else {
         auth.variables.forEach((variable) => {
           const formField = this.form.controls.attributes.controls[variable] as unknown as CustomUntypedFormField;
+          // clean up validators when switching auth type
+          formField.clearValidators();
           formField.disable();
           if (!formField.hidden$) {
             formField.hidden$ = new BehaviorSubject<boolean>(false);

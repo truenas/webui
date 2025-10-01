@@ -13,6 +13,7 @@ import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Schema } from 'app/interfaces/schema.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -204,7 +205,9 @@ describe('AcmednsFormComponent', () => {
         'API Token': '',
       });
 
-      expect(spectator.query('.form-error > * > span').textContent.toLowerCase()).toBe('api key is required');
+      const errorMsg = await loader.getHarness(IxInputHarness.with({ label: 'API Key' }))
+        .then((harness) => harness.getErrorText());
+      expect(errorMsg.toLowerCase()).toBe('api key is required');
     });
 
     it('requires an email address when API key is supplied', async () => {
@@ -216,7 +219,9 @@ describe('AcmednsFormComponent', () => {
         'API Token': '',
       });
 
-      expect(spectator.query('.form-error > * > span').textContent.toLowerCase()).toBe('cloudflare email is required');
+      const errorMsg = await loader.getHarness(IxInputHarness.with({ label: 'Cloudflare Email' }))
+        .then((harness) => harness.getErrorText());
+      expect(errorMsg.toLowerCase()).toBe('cloudflare email is required');
     });
 
     it('will not permit an email nor API key to be used with token', async () => {
@@ -228,7 +233,9 @@ describe('AcmednsFormComponent', () => {
         'API Token': 'some_token',
       });
 
-      expect(spectator.query('.form-error > * > span').textContent.toLowerCase()).toBe('email/api key cannot be used with token');
+      const errorMsg = await loader.getHarness(IxInputHarness.with({ label: 'Cloudflare Email' }))
+        .then((harness) => harness.getErrorText());
+      expect(errorMsg.toLowerCase()).toBe('email/api key cannot be used with api token');
     });
 
     it('will correctly swap which fields are required when emptying other fields', async () => {
@@ -249,7 +256,9 @@ describe('AcmednsFormComponent', () => {
 
       // this tests for null since there *won't* be any errors. reason for this is the only way
       // to trigger the behavior we're testing is to make the form valid.
-      expect(spectator.query('.form-error > * > span')).toBeNull();
+      let errorMsg = await loader.getHarness(IxInputHarness.with({ label: 'Cloudflare Email' }))
+        .then((harness) => harness.getErrorText());
+      expect(errorMsg.toLowerCase()).toBe('');
 
       await form.fillForm({
         Name: 'name_edit',
@@ -265,7 +274,9 @@ describe('AcmednsFormComponent', () => {
         'API Token': '',
       });
 
-      expect(spectator.query('.form-error > * > span').textContent.toLowerCase()).toBe('api key is required');
+      errorMsg = await loader.getHarness(IxInputHarness.with({ label: 'API Token' }))
+        .then((harness) => harness.getErrorText());
+      expect(errorMsg.toLowerCase()).toBe('');
     });
   });
 });
