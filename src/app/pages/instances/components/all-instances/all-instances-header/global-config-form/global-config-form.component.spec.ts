@@ -20,10 +20,6 @@ describe('GlobalConfigFormComponent', () => {
     component: GlobalConfigFormComponent,
     providers: [
       mockApi([
-        mockCall('virt.global.pool_choices', {
-          '[Disabled]': '[Disabled]',
-          poolio: 'poolio',
-        }),
         mockCall('lxc.bridge_choices', {
           bridge1: 'bridge1',
           '': 'Automatic',

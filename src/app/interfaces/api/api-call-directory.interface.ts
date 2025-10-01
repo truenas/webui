@@ -917,7 +917,6 @@ export interface ApiCallDirectory {
   'virt.device.nic_choices': { params: [nicType: VirtualizationNicType]; response: Record<string, string> };
 
   'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
-  'virt.global.pool_choices': { params: []; response: Choices };
 
   'virt.volume.create': { params: [CreateVirtualizationVolume]; response: VirtualizationVolume };
   'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
@@ -930,6 +929,7 @@ export interface ApiCallDirectory {
   'container.get_instance': { params: [instanceId: number]; response: VirtualizationInstance };
   'container.image.query_registry': { params: []; response: ContainerImageRegistryResponse[] };
   'container.migrate': { params: [instanceId: number]; response: boolean };
+  'container.pool_choices': { params: []; response: Choices };
   'container.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
   'container.start': { params: [instanceId: number]; response: void };
   'container.stop': { params: [instanceId: number, params?: { force?: boolean }]; response: void };

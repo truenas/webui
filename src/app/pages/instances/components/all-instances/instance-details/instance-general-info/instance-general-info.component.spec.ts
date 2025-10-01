@@ -110,4 +110,24 @@ describe('InstanceGeneralInfoComponent', () => {
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers/edit', 1]);
   });
+
+  it('does not delete instance when confirmation is cancelled', async () => {
+    const dialogService = spectator.inject(DialogService);
+    (dialogService.confirm as jest.Mock).mockReturnValue(of(false));
+
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    await deleteButton.click();
+
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('container.delete', [1]);
+    expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
+  });
+
+  it('shows capabilities policy when available', () => {
+    spectator.setInput('instance', fakeVirtualizationInstance({
+      capabilities_policy: 'ALLOW',
+    }));
+
+    const cardContent = spectator.query('mat-card-content');
+    expect(cardContent).toContainText('Capabilities Policy: Allow');
+  });
 });

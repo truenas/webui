@@ -138,4 +138,42 @@ describe('InstanceDiskFormComponent', () => {
       });
     });
   });
+
+  describe('form validation', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            getData: () => ({
+              instance: { id: 'my-instance', type: VirtualizationType.Container },
+            }),
+            close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('requires source and destination fields', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      await form.fillForm({
+        Source: '/mnt/source',
+      });
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      await form.fillForm({
+        Destination: 'dest',
+      });
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('shows form title for new disk', () => {
+      expect(spectator.query(ModalHeaderComponent)).toExist();
+    });
+  });
 });

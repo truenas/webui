@@ -19,6 +19,7 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceWizardComponent } from 'app/pages/instances/components/instance-wizard/instance-wizard.component';
 import {
@@ -82,7 +83,7 @@ describe('InstanceWizardComponent', () => {
           },
         }),
         mockJob('container.create', fakeSuccessfulJob(fakeVirtualizationInstance({ id: 999 }))),
-        mockCall('virt.global.pool_choices', {
+        mockCall('container.pool_choices', {
           poolio: 'poolio',
         }),
       ]),
@@ -105,6 +106,9 @@ describe('InstanceWizardComponent', () => {
         state$: of({ isLoading: false, config: globalConfig }),
         initialize: jest.fn(),
         config: jest.fn(() => globalConfig),
+      }),
+      mockProvider(UnsavedChangesService, {
+        showConfirmDialog: jest.fn(() => of(true)),
       }),
     ],
   });
@@ -145,7 +149,7 @@ describe('InstanceWizardComponent', () => {
     });
   });
 
-  describe('container', () => {
+  describe('container creation', () => {
     it('creates new instance with basic fields when form is submitted', async () => {
       await form.fillForm({
         Name: 'new',
@@ -181,6 +185,133 @@ describe('InstanceWizardComponent', () => {
       ]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    });
+
+    it('creates instance with all optional fields populated', async () => {
+      await form.fillForm({
+        Name: 'full-instance',
+        Description: 'Test description',
+        'Virtual CPUs': 4,
+        Cores: 2,
+        Threads: 2,
+        'CPU Set': '0-3',
+        'Memory Size (MB)': 2048,
+        'Container Time': 'UTC',
+        'Shutdown Timeout (seconds)': 60,
+        'Init Working Directory': '/opt',
+        'Init User': 'root',
+        'Init Group': 'root',
+        'Capabilities Policy': 'Allow',
+      });
+
+      const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
+      await browseButton.click();
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await createButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('container.create', [
+        expect.objectContaining({
+          name: 'full-instance',
+          description: 'Test description',
+          vcpus: 4,
+          cores: 2,
+          threads: 2,
+          cpuset: '0-3',
+          memory: 2048,
+          time: 'UTC',
+          shutdown_timeout: 60,
+          initdir: '/opt',
+          inituser: 'root',
+          initgroup: 'root',
+          capabilities_policy: 'ALLOW',
+        }),
+      ]);
+    });
+
+    it('parses image field correctly with version', async () => {
+      const matDialog = spectator.inject(MatDialog);
+      (matDialog.open as jest.Mock).mockReturnValue({
+        afterClosed: () => of({
+          id: 'almalinux:10:amd64:default:20250924_23:08',
+          label: 'Almalinux 10',
+        } as VirtualizationImageWithId),
+      });
+
+      await form.fillForm({ Name: 'test-parse' });
+
+      const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
+      await browseButton.click();
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await createButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('container.create', [
+        expect.objectContaining({
+          image: { name: 'almalinux:10:amd64:default', version: '20250924_23:08' },
+        }),
+      ]);
+    });
+
+    it('handles creation error with form validation', async () => {
+      const apiService = spectator.inject(ApiService);
+      (apiService.job as jest.Mock).mockReturnValue(of({ state: 'FAILED', error: 'Creation failed' } as Job));
+
+      await form.fillForm({ Name: 'error-test' });
+
+      const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
+      await browseButton.click();
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await createButton.click();
+
+      expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('environment variables', () => {
+    it('adds and removes environment variables', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const component = spectator.component as any;
+
+      const getLength = (): number => component.form.controls.environment_variables.length as number;
+      const initialLength = getLength();
+
+      component.addEnvironmentVariable();
+      spectator.detectChanges();
+      expect(getLength()).toBe(initialLength + 1);
+
+      component.addEnvironmentVariable();
+      spectator.detectChanges();
+      expect(getLength()).toBe(initialLength + 2);
+
+      component.removeEnvironmentVariable(0);
+      spectator.detectChanges();
+      expect(getLength()).toBe(initialLength + 1);
+    });
+
+    it('includes environment variables in create payload', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const component = spectator.component as any;
+      await form.fillForm({ Name: 'env-test' });
+
+      component.addEnvironmentVariable();
+      component.form.controls.environment_variables.at(0).patchValue({
+        name: 'MY_VAR',
+        value: 'my_value',
+      });
+
+      const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
+      await browseButton.click();
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await createButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('container.create', [
+        expect.objectContaining({
+          initenv: { MY_VAR: 'my_value' },
+        }),
+      ]);
     });
   });
 });

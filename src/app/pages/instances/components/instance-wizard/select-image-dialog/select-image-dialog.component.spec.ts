@@ -142,5 +142,30 @@ describe('SelectImageDialogComponent', () => {
 
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
     });
+
+    it('shows empty state when no images match search', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Search Images': 'nonexistent',
+      });
+
+      const rows = spectator.queryAll('tr').slice(1);
+      expect(rows).toHaveLength(0);
+    });
+
+    it('filters images case-insensitively', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Search Images': 'AlMaLiNuX',
+      });
+
+      const rows = spectator.queryAll('tr').slice(1).map((row) => {
+        return Array.from(row.querySelectorAll('td')).map((item) => item.textContent!.trim());
+      });
+
+      expect(rows).toEqual([
+        ['almalinux', 'Linux', '8', 'amd64', 'default', 'Select'],
+      ]);
+    });
   });
 });

@@ -155,7 +155,7 @@ export class InstanceWizardComponent implements OnInit {
   });
 
 
-  poolOptions$ = this.api.call('virt.global.pool_choices').pipe(
+  poolOptions$ = this.api.call('container.pool_choices').pipe(
     choicesToOptions(),
     tap((options) => {
       if (options.length && !this.form.controls.pool.value && !this.isEditMode()) {
