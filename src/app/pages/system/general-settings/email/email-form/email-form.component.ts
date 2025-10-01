@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -34,6 +36,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { AppState } from 'app/store';
+import { selectProductType } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -69,7 +73,10 @@ export class EmailFormComponent implements OnInit {
   private validatorService = inject(IxValidatorsService);
   private snackbar = inject(SnackbarService);
   private systemGeneralService = inject(SystemGeneralService);
+  private store$ = inject(Store<AppState>);
   slideInRef = inject<SlideInRef<MailConfig | undefined, boolean>>(SlideInRef);
+
+  private productType = toSignal(this.store$.select(selectProductType));
 
   protected readonly requiredRoles = [Role.AlertWrite];
 
@@ -228,7 +235,7 @@ export class EmailFormComponent implements OnInit {
   }
 
   private sendTestEmail(): void {
-    const productType = this.systemGeneralService.getProductType();
+    const productType = this.productType();
     const email = {
       subject: 'Test Message',
       text: `This is a test message from TrueNAS ${productType.replace('_', ' ')}.`,

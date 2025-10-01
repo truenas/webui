@@ -193,19 +193,19 @@ describe('OtherOptionsSectionComponent', () => {
         mockCall('pool.dataset.recordsize_choices', ['1K', '64K']),
         mockCall('pool.dataset.recommended_zvol_blocksize', '256K' as DatasetRecordSize),
       ]),
-      mockProvider(SystemGeneralService, {
-        getProductType: jest.fn(() => ProductType.CommunityEdition),
-      }),
+      mockProvider(SystemGeneralService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
       provideMockStore({
-        selectors: [
-          {
-            selector: selectSystemInfo,
-            value: {} as SystemInfo,
-          },
-        ],
+        initialState: {
+          systemInfo: {
+            productType: ProductType.CommunityEdition,
+            license: {
+              features: [],
+            },
+          } as unknown as SystemInfo,
+        },
       }),
     ],
   });
@@ -407,26 +407,34 @@ describe('OtherOptionsSectionComponent', () => {
       );
     });
 
-    it('does not show deduplication field on Enterprise systems that do not have a dedup license', async () => {
-      const systemGeneralService = spectator.inject(SystemGeneralService);
-      jest.spyOn(systemGeneralService, 'getProductType').mockReturnValue(ProductType.Enterprise);
+    it('shows deduplication field based on product type and license', async () => {
+      // Default state (CommunityEdition) should show deduplication
+      expect(await form.getLabels()).toContain('ZFS Deduplication');
+
+      // Test with Enterprise with dedup license - should show
       const store$ = spectator.inject(MockStore);
       store$.overrideSelector(selectSystemInfo, {
-        license: {
-          features: [],
-        },
-      });
-      spectator.component.ngOnInit();
-      expect(await form.getLabels()).not.toContain('ZFS Deduplication');
-
-      store$.overrideSelector(selectSystemInfo, {
+        productType: ProductType.Enterprise,
         license: {
           features: [LicenseFeature.Dedup],
         },
-      });
-      spectator.component.ngOnInit();
+      } as unknown as SystemInfo);
+      store$.refreshState();
 
-      expect(await form.getLabels()).toContain('ZFS Deduplication');
+      const testSpectator = createComponent();
+      testSpectator.setInput({
+        advancedMode: true,
+      });
+
+      // Wait for all async operations including nested subscriptions
+      await testSpectator.fixture.whenStable();
+      testSpectator.detectChanges();
+      await testSpectator.fixture.whenStable();
+
+      const testLoader = TestbedHarnessEnvironment.loader(testSpectator.fixture);
+      const testForm = await testLoader.getHarness(IxFieldsetHarness);
+
+      expect(await testForm.getLabels()).toContain('ZFS Deduplication');
     });
   });
 

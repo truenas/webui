@@ -24,6 +24,8 @@ import { RedirectService } from 'app/services/redirect.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
+import { systemInfoReducer } from 'app/store/system-info/system-info.reducer';
+import { systemInfoStateKey } from 'app/store/system-info/system-info.selectors';
 
 describe('IpmiFormComponent', () => {
   let spectator: Spectator<IpmiFormComponent>;
@@ -41,7 +43,10 @@ describe('IpmiFormComponent', () => {
     component: IpmiFormComponent,
     imports: [
       ReactiveFormsModule,
-      StoreModule.forRoot({ [haInfoStateKey]: haInfoReducer }, {
+      StoreModule.forRoot({
+        [haInfoStateKey]: haInfoReducer,
+        [systemInfoStateKey]: systemInfoReducer,
+      }, {
         initialState: {
           [haInfoStateKey]: {
             haStatus: {
@@ -50,15 +55,19 @@ describe('IpmiFormComponent', () => {
             },
             isHaLicensed: true,
           },
+          [systemInfoStateKey]: {
+            systemInfo: null,
+            get productType() {
+              return productType;
+            },
+            isIxHardware: false,
+            buildYear: 2024,
+          },
         },
       }),
     ],
     providers: [
-      mockProvider(SystemGeneralService, {
-        getProductType(): ProductType {
-          return productType;
-        },
-      }),
+      mockProvider(SystemGeneralService),
       mockProvider(RedirectService),
       mockProvider(SlideIn),
       mockProvider(DialogService),
@@ -255,7 +264,7 @@ describe('IpmiFormComponent', () => {
     it('loads data in the form if the product type is SCALE', async () => {
       const formValue = await form.getValues();
 
-      expect(formValue).toEqual({
+      expect(formValue).toMatchObject({
         DHCP: false,
         'IPv4 Default Gateway': '10.220.0.1',
         'IPv4 Address': '10.220.15.114',

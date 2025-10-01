@@ -7,7 +7,7 @@ import {
 } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { async, finalize } from 'rxjs';
+import { finalize } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfSubsystemDetails, UpdateNvmeOfSubsystem } from 'app/interfaces/nvme-of.interface';
@@ -118,6 +118,4 @@ export class SubsystemDetailsCardComponent implements OnChanges {
         },
       });
   }
-
-  protected readonly async = async;
 }

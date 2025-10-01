@@ -203,8 +203,8 @@ export class FeedbackService {
 
   private prepareReview(data: ReviewData): Observable<AddReview> {
     return this.getSystemInfo().pipe(
-      map(([{ systemInfo, isIxHardware }, systemHostId]) => {
-        return {
+      switchMap(([{ systemInfo, isIxHardware, productType }, systemHostId]) => {
+        return of({
           host_u_id: systemHostId,
           rating: Number(data.rating),
           message: data.message || '',
@@ -212,10 +212,10 @@ export class FeedbackService {
           user_agent: this.window.navigator.userAgent,
           environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,
           release: systemInfo.version,
-          product_type: this.systemGeneralService.getProductType(),
+          product_type: productType,
           product_model: systemInfo.system_product && isIxHardware ? systemInfo.system_product : 'Generic',
           extra: {},
-        };
+        });
       }),
     );
   }
@@ -258,7 +258,7 @@ export class FeedbackService {
     return forkJoin([
       this.store$.pipe(
         select(selectSystemInfoState),
-        filter((systemInfoState) => Boolean(systemInfoState.systemInfo)),
+        filter((systemInfoState) => Boolean(systemInfoState.systemInfo) && Boolean(systemInfoState.productType)),
         map((systemInfoState) => systemInfoState as SystemInfoState & { systemInfo: SystemInfo }),
         take(1),
       ),

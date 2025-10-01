@@ -1,4 +1,5 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import {
   SpectatorService,
   createServiceFactory,
@@ -13,8 +14,9 @@ describe('GlobalApiHttpService', () => {
 
   const createService = createServiceFactory({
     service: GlobalApiHttpService,
-    imports: [HttpClientTestingModule],
     providers: [
+      provideHttpClient(),
+      provideHttpClientTesting(),
       mockWindow(),
     ],
   });

@@ -62,9 +62,7 @@ describe('SigninStore', () => {
       mockProvider(UpdateService, {
         hardRefreshIfNeeded: () => of(undefined),
       }),
-      mockProvider(SystemGeneralService, {
-        loadProductType: () => of(undefined),
-      }),
+      mockProvider(SystemGeneralService),
       {
         provide: WINDOW,
         useValue: {
@@ -145,7 +143,6 @@ describe('SigninStore', () => {
       jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValueOnce(of({ enabled: false }));
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigateByUrl');
-      jest.spyOn(spectator.inject(SystemGeneralService), 'loadProductType').mockReturnValue(of(null));
       // Mock user$ to emit a user
       const authServiceLocal = spectator.inject(AuthService);
       Object.defineProperty(authServiceLocal, 'user$', {
@@ -167,7 +164,6 @@ describe('SigninStore', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigateByUrl');
       jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValue('/some-url');
-      jest.spyOn(spectator.inject(SystemGeneralService), 'loadProductType').mockReturnValue(of(null));
       // Mock user$ to emit a user
       const authServiceLocal = spectator.inject(AuthService);
       Object.defineProperty(authServiceLocal, 'user$', {
@@ -185,7 +181,6 @@ describe('SigninStore', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigateByUrl');
       jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValue('/some-url?token=123');
-      jest.spyOn(spectator.inject(SystemGeneralService), 'loadProductType').mockReturnValue(of(null));
       // Mock user$ to emit a user
       const authServiceLocal = spectator.inject(AuthService);
       Object.defineProperty(authServiceLocal, 'user$', {
@@ -262,7 +257,6 @@ describe('SigninStore', () => {
       // Mock auth service methods
       const loginWithTokenSpy = jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
       jest.spyOn(authService, 'initializeSession').mockReturnValue(of(LoginResult.Success));
-      jest.spyOn(spectator.inject(SystemGeneralService), 'loadProductType').mockReturnValue(of(null));
       jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValue(null);
       Object.defineProperty(authService, 'user$', {
         value: of(mockLoggedInUser),
@@ -325,7 +319,6 @@ describe('SigninStore', () => {
       });
       jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
       jest.spyOn(authService, 'initializeSession').mockReturnValue(of(LoginResult.Success));
-      jest.spyOn(spectator.inject(SystemGeneralService), 'loadProductType').mockReturnValue(of(null));
       const routerSpy = jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(true);
 
       Object.defineProperty(authService, 'user$', {
@@ -355,7 +348,6 @@ describe('SigninStore', () => {
       });
       jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
       jest.spyOn(authService, 'initializeSession').mockReturnValue(of(LoginResult.Success));
-      jest.spyOn(spectator.inject(SystemGeneralService), 'loadProductType').mockReturnValue(of(null));
       const navigationError = new Error('Navigation failed');
       jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockRejectedValue(navigationError);
       const errorHandlerSpy = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal');
@@ -574,7 +566,6 @@ describe('SigninStore', () => {
       const loginWithTokenSpy = jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
       jest.spyOn(authService, 'initializeSession').mockReturnValue(of(LoginResult.Success));
       jest.spyOn(api, 'call').mockReturnValueOnce(of({ enabled: false }));
-      jest.spyOn(spectator.inject(SystemGeneralService), 'loadProductType').mockReturnValue(of(null));
       jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValue(null);
       // Mock user$ to emit a user
       Object.defineProperty(authService, 'user$', {

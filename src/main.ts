@@ -1,7 +1,6 @@
 import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
 import {
-  APP_INITIALIZER,
-  enableProdMode, ErrorHandler, importProvidersFrom, inject,
+  enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -122,12 +121,9 @@ bootstrapApplication(AppComponent, {
       provide: Sentry.TraceService,
       deps: [Router],
     },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: () => () => {},
-      deps: [Sentry.TraceService],
-      multi: true,
-    },
+    provideAppInitializer(() => {
+      inject(Sentry.TraceService);
+    }),
     ApiService,
     provideCharts(withDefaultRegisterables()),
     provideHttpClient(withInterceptorsFromDi()),

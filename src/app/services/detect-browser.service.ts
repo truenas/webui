@@ -16,14 +16,13 @@ export class DetectBrowserService {
   }
 
   matchesBrowser(name: string): boolean {
-    const appName = this.window.navigator.appName;
     const ua = this.window.navigator.userAgent;
     const browserVersion = /(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i.exec(ua);
     const versionMatch = /version\/([.\d]+)/i.exec(ua);
     if (browserVersion && versionMatch !== null) {
       browserVersion[2] = versionMatch[1];
     }
-    const browserName = browserVersion ? browserVersion[1] : appName;
+    const browserName = browserVersion ? browserVersion[1] : '';
 
     return name === browserName;
   }

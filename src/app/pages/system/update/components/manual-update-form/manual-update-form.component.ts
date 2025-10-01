@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   Validators, ReactiveFormsModule, NonNullableFormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
@@ -43,7 +44,7 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -98,6 +99,7 @@ export class ManualUpdateFormComponent implements OnInit {
   fileLocationOptions$: Observable<Option[]>;
 
   isHaLicensed = false;
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   ngOnInit(): void {
     this.checkHaLicenseAndUpdateStatus();
@@ -141,16 +143,18 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   private checkHaLicenseAndUpdateStatus(): void {
-    if (this.systemService.isEnterprise) {
-      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
-        this.isHaLicensed = isHaLicensed;
-        this.checkForUpdateRunning();
+    this.store$.select(selectIsEnterprise).pipe(untilDestroyed(this)).subscribe((isEnterprise) => {
+      if (isEnterprise) {
+        this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+          this.isHaLicensed = isHaLicensed;
+          this.checkForUpdateRunning();
 
-        if (this.isHaLicensed) {
-          this.form.removeControl('filelocation');
-        }
-      });
-    }
+          if (this.isHaLicensed) {
+            this.form.removeControl('filelocation');
+          }
+        });
+      }
+    });
   }
 
   private checkForUpdateRunning(): void {
