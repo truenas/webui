@@ -22,6 +22,10 @@ export interface SmbConfig {
   unixcharset: string;
   workgroup: string;
   encryption: SmbEncryption;
+  /**
+   * For now, `search_protocols` can either be an array with `SmbProtocol.Spotlight`
+   * or an empty array.
+   */
   search_protocols: [SmbProtocol.Spotlight] | [];
 }
 
