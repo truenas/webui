@@ -105,7 +105,7 @@ export class ServiceSmbComponent implements OnInit {
     aapl_extensions: [false, []],
     multichannel: [false, []],
     encryption: [SmbEncryption.Default],
-    spotlightSearch: [false, []],
+    spotlight_search: [false, []],
   });
 
   protected readonly requiredRoles = [Role.SharingSmbWrite];
@@ -128,7 +128,7 @@ export class ServiceSmbComponent implements OnInit {
     bindip: helptextServiceSmb.bindipTooltip,
     aapl_extensions: helptextServiceSmb.aaplExtensionsTooltip,
     multichannel: helptextServiceSmb.multichannelTooltip,
-    spotlight_search: helptextServiceSmb.spotlightSearch,
+    spotlight_search: helptextServiceSmb.spotlightSearchTooltip,
   };
 
   readonly unixCharsetOptions$ = this.api.call('smb.unixcharset_choices').pipe(choicesToOptions());
@@ -173,7 +173,7 @@ export class ServiceSmbComponent implements OnInit {
         config.bindip.forEach(() => this.addBindIp());
         this.form.patchValue({
           ...config,
-          spotlightSearch: searchProtocolEnabled,
+          spotlight_search: searchProtocolEnabled,
           bindip: config.bindip.map((ip) => ({ bindIp: ip })),
         });
         this.isFormLoading.set(false);
@@ -200,7 +200,7 @@ export class ServiceSmbComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    const { spotlightSearch, ...formValues } = this.form.value;
+    const { spotlight_search: spotlightSearch, ...formValues } = this.form.value;
     const values: SmbConfigUpdate = {
       ...formValues,
       search_protocols: spotlightSearch ? [smbProtocolSpotlight] : [],

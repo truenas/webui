@@ -55,5 +55,5 @@ export const helptextServiceSmb = {
  Computer Management MMC snap-in.'),
   bindipTooltip: T('Static IP addresses which SMB listens on for connections. \
  Leaving all unselected defaults to listening on all active interfaces.'),
-  spotlightSearch: T('Enable to allow macOS clients to use Spotlight to quickly search for file contents on SMB shares.'),
+  spotlightSearchTooltip: T('Enable to allow macOS clients to use Spotlight to quickly search for file contents on SMB shares.'),
 };
