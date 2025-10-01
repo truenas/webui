@@ -269,19 +269,10 @@ describe('AcmednsFormComponent', () => {
       expect(errorElement.textContent).toContain('API Key requires Cloudflare Email');
     });
 
-    it('shows error when neither API Token nor API Key is provided after user interaction', async () => {
-      // First, user types something
+    it('shows hint when neither API Token nor API Key is provided', async () => {
       await form.fillForm({
         Name: 'test',
         Authenticator: 'cloudflare',
-        'API Token': 'test',
-      });
-
-      spectator.detectChanges();
-
-      // Then user clears it
-      await form.fillForm({
-        'API Token': '',
       });
 
       spectator.detectChanges();
@@ -292,9 +283,31 @@ describe('AcmednsFormComponent', () => {
         },
       });
 
+      // When cloudflareAuth is the only error, it shows as a hint (not red)
+      const hintElement = spectator.query('.cloudflare-hint');
+      expect(hintElement).toBeTruthy();
+      expect(hintElement.textContent).toContain('Either API Token or Cloudflare Email + API Key must be provided');
+    });
+
+    it('shows cloudflareAuth as hint always (never as red error)', async () => {
+      await form.fillForm({
+        Name: 'test',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': 'invalid-email',
+      });
+
+      spectator.detectChanges();
+
+      // Invalid email creates cloudflareEmailInvalid error (red)
+      // Validator returns first error, so only emailInvalid is present
+      expect(spectator.component.formGroup.errors?.['cloudflareEmailInvalid']).toBeTruthy();
+
       const errorElement = spectator.query('.cloudflare-validation-error');
       expect(errorElement).toBeTruthy();
-      expect(errorElement.textContent).toContain('Either API Token or Cloudflare Email + API Key must be provided');
+      expect(errorElement.textContent).toContain('Cloudflare Email must be a valid email address');
+
+      // cloudflareAuth should never appear in the error section (only as hint)
+      expect(errorElement.textContent).not.toContain('Either API Token or Cloudflare Email + API Key must be provided');
     });
 
     it('validates successfully with API Token only', async () => {
