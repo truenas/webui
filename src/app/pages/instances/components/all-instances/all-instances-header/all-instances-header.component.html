@@ -11,6 +11,7 @@
   <button
     mat-menu-item
     ixTest="global-configuration"
+    [ixUiSearch]="searchableElements.elements.globalSettings"
     (click)="onGlobalConfiguration()"
   >
     {{ 'Global Settings' | translate }}

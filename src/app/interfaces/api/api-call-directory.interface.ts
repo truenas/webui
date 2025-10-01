@@ -273,14 +273,14 @@ import {
 
   VirtualizationGlobalConfig, VirtualizationImage,
   VirtualizationImageParams,
-  Instance,
+  VirtualizationInstance,
   VirtualizationNetwork,
   AvailableUsb,
   AvailableGpus, VirtualizationVolume,
   VirtualizationVolumeUpdate,
   CreateVirtualizationVolume,
-  CreateInstance,
-  UpdateInstance,
+  CreateVirtualizationInstance,
+  UpdateVirtualizationInstance,
   ContainerImageRegistryResponse,
 } from 'app/interfaces/virtualization.interface';
 import {
@@ -925,15 +925,15 @@ export interface ApiCallDirectory {
   'virt.volume.delete': { params: [id: string]; response: true };
 
   // Container (actual available endpoints only)
-  'container.create': { params: [CreateInstance]; response: Instance };
+  'container.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
   'container.delete': { params: [instanceId: number]; response: boolean };
-  'container.get_instance': { params: [instanceId: number]; response: Instance };
+  'container.get_instance': { params: [instanceId: number]; response: VirtualizationInstance };
   'container.image.query_registry': { params: []; response: ContainerImageRegistryResponse[] };
   'container.migrate': { params: [instanceId: number]; response: boolean };
-  'container.query': { params: QueryParams<Instance>; response: Instance[] };
+  'container.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
   'container.start': { params: [instanceId: number]; response: void };
   'container.stop': { params: [instanceId: number, params?: { force?: boolean }]; response: void };
-  'container.update': { params: [instanceId: number, update: UpdateInstance]; response: Instance };
+  'container.update': { params: [instanceId: number, update: UpdateVirtualizationInstance]; response: VirtualizationInstance };
 
   // LXC (actual available endpoints only)
   'lxc.bridge_choices': { params: []; response: Choices };

@@ -64,57 +64,42 @@ export interface VirtualizationAlias {
   netmask: string;
 }
 
-export interface CreateVirtualizationInstance {
+export type CreateVirtualizationInstance = Partial<Omit<VirtualizationInstance, 'id' | 'dataset' | 'status' | 'idmap'>> & {
   uuid: string;
   name: string;
+  autostart: boolean;
   pool: string;
-  description?: string;
-  vcpus?: number | null;
-  cores?: number | null;
-  threads?: number | null;
-  cpuset?: string | null;
-  memory?: number | null;
-  autostart?: boolean;
-  time?: string;
-  shutdown_timeout?: number;
-  init?: string;
-  initdir?: string | null;
-  initenv?: Record<string, unknown>;
-  inituser?: string | null;
-  initgroup?: string | null;
-  capabilities_policy?: string;
-  capabilities_state?: Record<string, unknown>;
   image: {
     name: string;
     version: string;
   };
+  idmap?: unknown;
   gpu_devices?: string[];
   usb_devices?: string[];
   mounts?: unknown[];
-  idmap?: unknown;
   secureboot_configuration?: unknown;
-}
+};
 
-export interface UpdateVirtualizationInstance {
-  uuid?: string;
-  name?: string;
-  description?: string;
-  vcpus?: number | null;
-  cores?: number | null;
-  threads?: number | null;
-  cpuset?: string | null;
-  memory?: number | null;
-  autostart?: boolean;
-  time?: string;
-  shutdown_timeout?: number;
-  init?: string;
-  initdir?: string | null;
-  initenv?: Record<string, unknown>;
-  inituser?: string | null;
-  initgroup?: string | null;
-  capabilities_policy?: string;
-  capabilities_state?: Record<string, unknown>;
-}
+export type UpdateVirtualizationInstance = Partial<Pick<VirtualizationInstance,
+  | 'uuid'
+  | 'name'
+  | 'description'
+  | 'vcpus'
+  | 'cores'
+  | 'threads'
+  | 'cpuset'
+  | 'memory'
+  | 'autostart'
+  | 'time'
+  | 'shutdown_timeout'
+  | 'init'
+  | 'initdir'
+  | 'initenv'
+  | 'inituser'
+  | 'initgroup'
+  | 'capabilities_policy'
+  | 'capabilities_state'
+>>;
 
 export type VirtualizationDevice =
   | VirtualizationDisk
@@ -349,8 +334,3 @@ export interface ZvolToImport {
   virt_volume_name: string;
   zvol_path: string;
 }
-
-// Shorter aliases for common types
-export type Instance = VirtualizationInstance;
-export type CreateInstance = CreateVirtualizationInstance;
-export type UpdateInstance = UpdateVirtualizationInstance;

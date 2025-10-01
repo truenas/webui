@@ -9,12 +9,12 @@ export const allInstancesHeaderElements = {
     globalSettings: {
       hierarchy: [T('Global Settings')],
       synonyms: [T('Container Settings')],
-      anchor: 'vm-global-settings',
+      anchor: 'container-global-settings',
     },
     add: {
       hierarchy: [T('Create New Container')],
       synonyms: [T('New Container'), T('Add Container')],
-      anchor: 'add-instance',
+      anchor: 'add-container',
     },
   },
   visibleTokens: [GlobalSearchVisibleToken.Vms],

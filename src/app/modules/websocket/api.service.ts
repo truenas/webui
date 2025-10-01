@@ -197,8 +197,6 @@ export class ApiService {
           return EMPTY;
         }
 
-        console.error(`API call ${method} failed`, message.error);
-
         return throwError(() => new ApiCallError(message.error as JsonRpcError));
       }
 

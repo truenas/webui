@@ -1819,6 +1819,26 @@
   {
     "hierarchy": [
       "Containers",
+      "Global Settings"
+    ],
+    "synonyms": [
+      "Container Settings"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/containers"
+    ],
+    "routerLink": null,
+    "anchor": "container-global-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Containers",
       "Create New Container"
     ],
     "synonyms": [
@@ -1835,7 +1855,7 @@
     "routerLink": [
       "/containers/new"
     ],
-    "anchor": "add-instance",
+    "anchor": "add-container",
     "triggerAnchor": null,
     "section": "ui"
   },

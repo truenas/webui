@@ -69,7 +69,6 @@ import {
 } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { FilesystemService } from 'app/services/filesystem.service';
 
 @UntilDestroy()
 @Component({
@@ -108,7 +107,6 @@ export class InstanceWizardComponent implements OnInit {
   protected formatter = inject(IxFormatterService);
   protected configStore = inject(VirtualizationConfigStore);
   private authService = inject(AuthService);
-  private filesystem = inject(FilesystemService);
   private unsavedChangesService = inject(UnsavedChangesService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
@@ -228,16 +226,6 @@ export class InstanceWizardComponent implements OnInit {
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);
   }
-
-  readonly datasetProvider = this.filesystem.getFilesystemNodeProvider({ datasetsOnly: true });
-
-  protected defaultIpv4Network = computed(() => {
-    return this.configStore.config()?.v4_network || this.translate.instant('N/A');
-  });
-
-  protected defaultIpv6Network = computed(() => {
-    return this.configStore.config()?.v6_network || this.translate.instant('N/A');
-  });
 
   constructor() {
     this.configStore.initialize();
