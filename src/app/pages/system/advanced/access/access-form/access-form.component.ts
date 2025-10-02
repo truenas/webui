@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -22,7 +23,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
@@ -32,6 +32,7 @@ import {
   waitForAdvancedConfig,
   waitForGeneralConfig,
 } from 'app/store/system-config/system-config.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -61,13 +62,13 @@ export class AccessFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private systemGeneralService = inject(SystemGeneralService);
   private authService = inject(AuthService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
 
   protected isLoading = signal(false);
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   form = this.fb.nonNullable.group({
     token_lifetime: [defaultPreferences.lifetime, [
@@ -78,10 +79,6 @@ export class AccessFormComponent implements OnInit {
     ds_auth: [false],
     login_banner: [null as string | null],
   });
-
-  get isEnterprise(): boolean {
-    return this.systemGeneralService.isEnterprise;
-  }
 
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {

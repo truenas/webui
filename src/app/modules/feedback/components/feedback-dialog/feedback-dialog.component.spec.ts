@@ -5,8 +5,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
+import { ProductType } from 'app/enums/product-type.enum';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
@@ -19,11 +21,13 @@ import { IxButtonGroupHarness } from 'app/modules/forms/ix-forms/components/ix-b
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('FeedbackDialogComponent', () => {
   let spectator: Spectator<FeedbackDialog>;
   let typeButtonGroup: IxButtonGroupHarness | null;
   let loader: HarnessLoader;
+  let store$: MockStore;
 
   const isReviewAllowed$ = new BehaviorSubject(false);
   const isEnterprise$ = new BehaviorSubject(false);
@@ -46,17 +50,28 @@ describe('FeedbackDialogComponent', () => {
       mockProvider(FeedbackService, {
         checkIfReviewAllowed: () => isReviewAllowed$,
       }),
-      mockProvider(SystemGeneralService, { isEnterprise$ }),
+      mockProvider(SystemGeneralService),
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,
         useValue: null,
       },
+      provideMockStore({
+        initialState: {
+          systemInfo: {
+            systemInfo: null,
+            productType: ProductType.CommunityEdition,
+            isIxHardware: false,
+            buildYear: 2024,
+          },
+        },
+      }),
     ],
   });
 
   async function setupTest(): Promise<void> {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    store$ = spectator.inject(MockStore);
     isReviewAllowed$.next(true);
     isEnterprise$.next(false);
     typeButtonGroup = await loader.getHarness(IxButtonGroupHarness);
@@ -136,6 +151,9 @@ describe('FeedbackDialogComponent', () => {
 
       it('shows FileTicketLicensed form when Bug is selected on an enterprise system', async () => {
         isEnterprise$.next(true);
+        store$.overrideSelector(selectIsEnterprise, true);
+        store$.refreshState();
+        spectator.detectChanges();
 
         await typeButtonGroup!.setValue('Report a bug');
         spectator.detectChanges();
@@ -149,6 +167,12 @@ describe('FeedbackDialogComponent', () => {
       });
 
       it('disables dialog close when loading is set to true', async () => {
+        // Reset to non-enterprise to ensure FileTicketComponent is shown
+        isEnterprise$.next(false);
+        store$.overrideSelector(selectIsEnterprise, false);
+        store$.refreshState();
+        spectator.detectChanges();
+
         await typeButtonGroup!.setValue('Report a bug');
         spectator.detectChanges();
 
@@ -175,6 +199,9 @@ describe('FeedbackDialogComponent', () => {
     });
     await setupTest();
     isReviewAllowed$.next(true);
+    store$.overrideSelector(selectIsEnterprise, false);
+    store$.refreshState();
+    spectator.detectChanges();
 
     expect(await typeButtonGroup!.getValue()).toBe('Report a bug');
     expect(spectator.query(FileTicketComponent)).toExist();

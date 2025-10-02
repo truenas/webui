@@ -13,7 +13,6 @@ import { switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiQueryParams, IpmiUpdate } from 'app/interfaces/ipmi.interface';
@@ -36,6 +35,7 @@ import { RedirectService } from 'app/services/redirect.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -328,21 +328,25 @@ export class IpmiFormComponent implements OnInit {
   }
 
   private loadFailoverData(): Observable<unknown> {
-    if (this.systemGeneralService.getProductType() !== ProductType.Enterprise) {
-      return of(null);
-    }
-
-    return this.store$.select(selectIsHaLicensed).pipe(
-      switchMap((isHaLicensed) => {
-        if (!isHaLicensed) {
+    return this.store$.select(selectIsEnterprise).pipe(
+      switchMap((isEnterprise) => {
+        if (!isEnterprise) {
           return of(null);
         }
 
-        return this.api.call('failover.node').pipe(
-          tap((node) => {
-            this.createControllerOptions(node);
-            this.loadDataOnRemoteControllerChange();
-            this.form.controls.apply_remote.setValue(false);
+        return this.store$.select(selectIsHaLicensed).pipe(
+          switchMap((isHaLicensed) => {
+            if (!isHaLicensed) {
+              return of(null);
+            }
+
+            return this.api.call('failover.node').pipe(
+              tap((node) => {
+                this.createControllerOptions(node);
+                this.loadDataOnRemoteControllerChange();
+                this.form.controls.apply_remote.setValue(false);
+              }),
+            );
           }),
         );
       }),

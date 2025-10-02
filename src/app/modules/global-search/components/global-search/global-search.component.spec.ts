@@ -2,7 +2,7 @@ import { A11yModule } from '@angular/cdk/a11y';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -36,7 +36,6 @@ describe('GlobalSearchComponent', () => {
     imports: [
       FormsModule,
       ReactiveFormsModule,
-      RouterTestingModule,
       MatDialogModule,
       TranslateModule.forRoot(),
       IxIconComponent,
@@ -45,6 +44,7 @@ describe('GlobalSearchComponent', () => {
       GlobalSearchResultsComponent,
     ],
     providers: [
+      provideRouter([]),
       mockAuth(),
       GlobalSearchSectionsProvider,
       { provide: MatDialogRef, useValue: {} },

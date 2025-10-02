@@ -58,6 +58,16 @@ describe('ManualUpdateFormComponent', () => {
         },
       }),
       provideMockStore({
+        initialState: {
+          systemInfo: {
+            systemInfo: {
+              version: 'TrueNAS-SCALE-22.12',
+            } as SystemInfo,
+            productType: ProductType.Enterprise,
+            isIxHardware: false,
+            buildYear: 2024,
+          },
+        },
         selectors: [
           {
             selector: selectPreferences,

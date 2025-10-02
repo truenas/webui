@@ -31,7 +31,7 @@
           ></ix-select>
         }
 
-        @if (!isHaLicensed && systemService.isEnterprise) {
+        @if (!isHaLicensed && isEnterprise()) {
           <ix-checkbox
             formControlName="rebootAfterManualUpdate"
             [label]="helptext.rebootAfterManualUpdate.label | translate"

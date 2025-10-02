@@ -1,11 +1,10 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
-import { AppState } from 'app/store/index';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 
 export const preferencesStateKey = 'preferences';
 
-export const selectPreferencesState = createFeatureSelector<AppState, PreferencesState>(preferencesStateKey);
+export const selectPreferencesState = createFeatureSelector<PreferencesState>(preferencesStateKey);
 
 export const selectPreferences = createSelector(
   selectPreferencesState,

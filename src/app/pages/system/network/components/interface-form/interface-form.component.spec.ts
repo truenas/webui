@@ -42,6 +42,9 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
+import { productTypeLoaded } from 'app/store/system-info/system-info.actions';
+import { systemInfoReducer } from 'app/store/system-info/system-info.reducer';
+import { systemInfoStateKey } from 'app/store/system-info/system-info.selectors';
 
 describe('InterfaceFormComponent', () => {
   let spectator: Spectator<InterfaceFormComponent>;
@@ -49,6 +52,7 @@ describe('InterfaceFormComponent', () => {
   let api: ApiService;
   let form: IxFormHarness;
   let aliasesList: IxListHarness | null;
+  const productType = ProductType.CommunityEdition;
 
   const existingInterface = {
     id: 'enp0s6',
@@ -77,7 +81,10 @@ describe('InterfaceFormComponent', () => {
       ReactiveFormsModule,
       IxIpInputWithNetmaskComponent,
       DefaultGatewayDialog,
-      StoreModule.forRoot({ [haInfoStateKey]: haInfoReducer }, {
+      StoreModule.forRoot({
+        [haInfoStateKey]: haInfoReducer,
+        [systemInfoStateKey]: systemInfoReducer,
+      }, {
         initialState: {
           [haInfoStateKey]: {
             haStatus: {
@@ -86,16 +93,18 @@ describe('InterfaceFormComponent', () => {
             },
             isHaLicensed: true,
           },
+          [systemInfoStateKey]: {
+            systemInfo: null,
+            get productType() {
+              return productType;
+            },
+            isIxHardware: false,
+            buildYear: 2024,
+          },
         },
       }),
     ],
     providers: [
-      {
-        provide: Store,
-        useValue: {
-          dispatch: jest.fn(),
-        },
-      },
       mockApi([
         mockCall('interface.xmit_hash_policy_choices', {
           [XmitHashPolicy.Layer2]: XmitHashPolicy.Layer2,
@@ -145,9 +154,7 @@ describe('InterfaceFormComponent', () => {
       }),
       mockProvider(DialogService),
       mockProvider(SlideIn),
-      mockProvider(SystemGeneralService, {
-        getProductType: () => ProductType.Enterprise,
-      }),
+      mockProvider(SystemGeneralService),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
       mockProvider(LoaderService, {
@@ -208,6 +215,9 @@ describe('InterfaceFormComponent', () => {
     it('saves a new bridge interface when form is submitted for bridge interface', async () => {
       jest.spyOn(spectator.inject(MatDialog), 'open');
 
+      const store$ = spectator.inject(Store);
+      const dispatchSpy = jest.spyOn(store$, 'dispatch');
+
       await form.fillForm({
         Type: 'Bridge',
       });
@@ -241,8 +251,7 @@ describe('InterfaceFormComponent', () => {
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
 
-      const store$ = spectator.inject(Store);
-      expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
+      expect(dispatchSpy).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
       expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
 
@@ -258,6 +267,8 @@ describe('InterfaceFormComponent', () => {
 
     it('saves a new link aggregation interface when form is submitted for LAG', async () => {
       jest.spyOn(spectator.inject(MatDialog), 'open');
+      const store$ = spectator.inject(Store);
+      const dispatchSpy = jest.spyOn(store$, 'dispatch');
 
       await form.fillForm(
         {
@@ -290,8 +301,7 @@ describe('InterfaceFormComponent', () => {
         xmit_hash_policy: XmitHashPolicy.Layer2Plus3,
       }]);
 
-      const store$ = spectator.inject(Store);
-      expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
+      expect(dispatchSpy).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
       expect(api.call).toHaveBeenCalledWith('interface.network_config_to_be_removed');
@@ -507,17 +517,25 @@ describe('InterfaceFormComponent', () => {
 
   describe('failover fields', () => {
     beforeEach(async () => {
-      spectator = createComponent();
+      spectator = createComponent({
+        detectChanges: false,
+      });
+
+      // Dispatch action to set Enterprise product type
+      const store$ = spectator.inject(Store);
+      store$.dispatch(productTypeLoaded({ productType: ProductType.Enterprise }));
+
+      const websocketMock = spectator.inject(MockApiService);
+      websocketMock.mockCall('failover.licensed', true);
+
+      // Trigger ngOnInit which will call loadFailoverStatus
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Static IP Addresses' }));
       api = spectator.inject(ApiService);
-    });
-
-    beforeEach(() => {
-      const websocketMock = spectator.inject(MockApiService);
-      websocketMock.mockCall('failover.licensed', true);
-      spectator.component.ngOnInit();
     });
 
     it('checks whether failover is licensed for', () => {

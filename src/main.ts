@@ -1,7 +1,6 @@
 import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
 import {
-  APP_INITIALIZER,
-  enableProdMode, ErrorHandler, importProvidersFrom, inject,
+  enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -43,6 +42,7 @@ import { createTranslateLoader } from 'app/modules/language/translations/icu-tra
 import { ApiService } from 'app/modules/websocket/api.service';
 import { provideWebSocketDebugState } from 'app/modules/websocket-debug-panel/providers/websocket-debug.providers';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ServiceWorkerService } from 'app/services/service-worker.service';
 import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 
@@ -122,12 +122,13 @@ bootstrapApplication(AppComponent, {
       provide: Sentry.TraceService,
       deps: [Router],
     },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: () => () => {},
-      deps: [Sentry.TraceService],
-      multi: true,
-    },
+    provideAppInitializer(() => {
+      inject(Sentry.TraceService);
+    }),
+    provideAppInitializer(() => {
+      const swService = inject(ServiceWorkerService);
+      swService.register();
+    }),
     ApiService,
     provideCharts(withDefaultRegisterables()),
     provideHttpClient(withInterceptorsFromDi()),

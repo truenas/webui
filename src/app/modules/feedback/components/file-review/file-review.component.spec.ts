@@ -6,9 +6,12 @@ import { MatDialogRef } from '@angular/material/dialog';
 import {
   createComponentFactory, createSpyObject, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { ProductType } from 'app/enums/product-type.enum';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxStarRatingComponent } from 'app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component';
@@ -34,6 +37,13 @@ describe('FileReviewComponent', () => {
       ]),
       mockProvider(FeedbackService, {
         createReview: jest.fn(() => of()),
+      }),
+      provideMockStore({
+        initialState: {
+          systemInfo: {
+            productType: ProductType.CommunityEdition,
+          } as unknown as SystemInfo,
+        },
       }),
     ],
   });

@@ -11,8 +11,9 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { range } from 'lodash-es';
 import {
-  BehaviorSubject, forkJoin, of,
+  BehaviorSubject, EMPTY, forkJoin, of,
 } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   CreateNetworkInterfaceType,
@@ -21,7 +22,6 @@ import {
   NetworkInterfaceType,
   XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextInterfacesForm } from 'app/helptext/network/interfaces/interfaces-form';
@@ -67,6 +67,7 @@ import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -400,31 +401,32 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   private loadFailoverStatus(): void {
-    if (this.systemGeneralService.getProductType() !== ProductType.Enterprise) {
-      return;
-    }
-
-    forkJoin([
-      this.api.call('failover.licensed'),
-      this.api.call('failover.node'),
-    ])
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe(([isHaLicensed, failoverNode]) => {
-        this.isHaLicensed = isHaLicensed;
-        if (isHaLicensed) {
-          if (failoverNode === 'A') {
-            this.ipLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
-            this.failoverLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 2)') as TranslatedString;
-          } else if (failoverNode === 'B') {
-            this.ipLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 1)') as TranslatedString;
-            this.failoverLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
-          }
+    this.store$.select(selectIsEnterprise).pipe(
+      switchMap((isEnterprise) => {
+        if (!isEnterprise) {
+          return EMPTY;
         }
-        this.cdr.markForCheck();
-      });
+
+        return forkJoin([
+          this.api.call('failover.licensed'),
+          this.api.call('failover.node'),
+        ]);
+      }),
+      this.errorHandler.withErrorHandler(),
+      untilDestroyed(this),
+    ).subscribe(([isHaLicensed, failoverNode]) => {
+      this.isHaLicensed = isHaLicensed;
+      if (isHaLicensed) {
+        if (failoverNode === 'A') {
+          this.ipLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
+          this.failoverLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 2)') as TranslatedString;
+        } else if (failoverNode === 'B') {
+          this.ipLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 1)') as TranslatedString;
+          this.failoverLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
+        }
+      }
+      this.cdr.markForCheck();
+    });
   }
 
   private disableVlanParentInterface(): void {

@@ -17,16 +17,6 @@ export const xSeries = [
   EnclosureModel.X20,
 ];
 
-/**
- * @deprecated
- */
-export const zSeries = [
-  'Z20',
-  'Z30',
-  'Z35',
-  'Z50',
-];
-
 export const rSeries = [
   EnclosureModel.R10,
   EnclosureModel.R20,
@@ -56,7 +46,6 @@ export const serverSeries = [
   ...hSeries,
   ...mSeries,
   ...xSeries,
-  ...zSeries,
   ...rSeries,
   ...fSeries,
 ];

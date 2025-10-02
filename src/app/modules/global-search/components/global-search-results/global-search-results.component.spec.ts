@@ -1,5 +1,4 @@
-import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { Router, provideRouter } from '@angular/router';
 import { mockProvider, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -36,10 +35,10 @@ describe('GlobalSearchResultsComponent', () => {
   const createComponent = createComponentFactory({
     component: GlobalSearchResultsComponent,
     imports: [
-      RouterTestingModule.withRoutes([]),
       TranslateModule.forRoot(),
     ],
     providers: [
+      provideRouter([]),
       mockAuth(),
       mockProvider(UiSearchDirectivesService, {
         directiveAdded$: of(),

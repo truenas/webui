@@ -113,7 +113,6 @@ export class SigninStore extends ComponentStore<SigninState> {
     // Handle successful token login by performing the post-login tasks
     filter((result) => result === LoginResult.Success),
     switchMap(() => this.authService.user$.pipe(filter(Boolean), take(1))),
-    switchMap(() => this.systemGeneralService.loadProductType()),
     switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
     catchError((error: unknown) => {
       this.setLoadingState(false);
@@ -144,10 +143,6 @@ export class SigninStore extends ComponentStore<SigninState> {
     filter((result) => result === LoginResult.Success),
     // Wait for user to be loaded
     switchMap(() => this.authService.user$.pipe(filter(Boolean))),
-    switchMap(() => {
-      // TODO: This is a hack to keep existing code working. Ideally it shouldn't be here.
-      return this.systemGeneralService.loadProductType();
-    }),
     switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
     catchError((error: unknown) => {
       this.setLoadingState(false);
