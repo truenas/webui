@@ -72,7 +72,9 @@
     <p class="result-message">
       {{ 'Warning: {n} of {total} snapshots could not be deleted.' | translate: { n: jobErrors.length, total } }}
     </p>
-    <p>{{ getErrorMessage() }}</p>
+    <div class="error-message-container">
+      <p>{{ getErrorMessage() }}</p>
+    </div>
   } @else {
     <p class="result-message">
       {{ 'Deleted {n, plural, one {# snapshot} other {# snapshots} }' | translate:
