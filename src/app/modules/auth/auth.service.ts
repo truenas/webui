@@ -348,7 +348,7 @@ export class AuthService implements OnDestroy {
       switchMap(() => this.api.call('auth.mechanism_choices').pipe(
         catchError((wsError: unknown) => {
           console.error(wsError);
-          return of([]);
+          return of<AuthMechanism[]>([]);
         }),
       )),
       map((choices) => choices.includes(AuthMechanism.TokenPlain)),
