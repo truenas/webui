@@ -272,11 +272,11 @@ export class SmbAclComponent implements OnInit {
         }),
       )
       .pipe(untilDestroyed(this))
-      .subscribe((response: unknown[]) => {
+      .subscribe((aceData: unknown[]) => {
         const initialOptions: Option[] = [];
 
-        if (response.length) {
-          const firstItem = response[0] as Group | User;
+        if (aceData.length) {
+          const firstItem = aceData[0] as Group | User;
           let option: Option;
 
           if ('gid' in firstItem) {

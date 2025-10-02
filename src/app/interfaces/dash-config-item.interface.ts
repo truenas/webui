@@ -1,20 +1,4 @@
-/**
- * Kept for compatibility with older dashboard configurations stored in user attributes.
- * This is only used for old dashboard state in preferences, which is no longer actively used.
- * Can be removed when old dashboard migration support is no longer needed.
- */
-enum WidgetName {
-  SystemInformation = 'System Information',
-  SystemInformationStandby = 'System Information(Standby)',
-  Cpu = 'CPU',
-  Memory = 'Memory',
-  Storage = 'Storage',
-  Network = 'Network',
-  Interface = 'Interface',
-  Pool = 'Pool',
-  Help = 'Help',
-  Backup = 'Backup',
-}
+import { WidgetName } from 'app/pages/dashboard/services/dashboard.store';
 
 /**
  * Old dashboard configuration item interface.

@@ -19,7 +19,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
  * Kept for compatibility with older dashboard versions.
  * This is the last usage of WidgetName - should be removed when old dashboard migration is no longer needed.
  */
-enum WidgetName {
+export enum WidgetName {
   SystemInformation = 'System Information',
   SystemInformationStandby = 'System Information(Standby)',
   Cpu = 'CPU',
