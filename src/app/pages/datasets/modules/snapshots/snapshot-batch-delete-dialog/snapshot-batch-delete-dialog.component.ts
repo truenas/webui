@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
@@ -9,7 +9,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, map } from 'rxjs/operators';
+import { filter, finalize, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -57,6 +57,7 @@ export class SnapshotBatchDeleteDialog implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotDelete];
 
   isJobCompleted = false;
+  isDeleting = signal(false);
   form = this.fb.group({
     confirm: [false, [Validators.requiredTrue]],
   });
@@ -90,11 +91,13 @@ export class SnapshotBatchDeleteDialog implements OnInit {
   }
 
   onSubmit(): void {
+    this.isDeleting.set(true);
     const snapshots = this.snapshots.map((item) => [item.name]);
     const params: CoreBulkQuery = ['pool.snapshot.delete', snapshots];
     this.api.job('core.bulk', params).pipe(
       filter((job: Job<CoreBulkResponse<boolean>[]>) => !!job.result),
       map((job: Job<CoreBulkResponse<boolean>[]>) => job.result),
+      finalize(() => this.isDeleting.set(false)),
       untilDestroyed(this),
     ).subscribe({
       next: (results: CoreBulkResponse<boolean>[]) => {

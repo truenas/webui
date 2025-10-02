@@ -2,6 +2,7 @@
 @if (!isJobCompleted) {
   <form
     class="ix-form-container"
+    [disabled]="isDeleting()"
     [formGroup]="form"
     (submit)="onSubmit()"
   >
