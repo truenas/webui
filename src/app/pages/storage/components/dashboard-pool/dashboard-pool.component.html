@@ -3,7 +3,7 @@
     <div class="pool-header">
       <h2 class="pool-name">{{ pool()?.name }}</h2>
       <div class="pool-actions">
-        @if (!pool()?.is_upgraded) {
+        @if (!pool()?.is_upgraded && isOnline()) {
           <button
             *ixRequiresRoles="requiredRoles"
             mat-button
