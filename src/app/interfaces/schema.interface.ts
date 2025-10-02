@@ -5,7 +5,8 @@ export type Schema = {
 } & OldSchema;
 
 /**
- * @deprecated Remove after "reporting.exporters.exporter_schemas" refactoring.
+ * Legacy schema interface for backward compatibility.
+ * Used by reporting.exporters.exporter_schemas and DNS authenticators.
  */
 export interface OldSchema {
   title: string;

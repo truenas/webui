@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isNumber } from 'lodash-es';
 import {
-  concatMap, firstValueFrom, forkJoin, mergeMap, Observable, of, from,
+  concatMap, firstValueFrom, mergeMap, Observable, of, from,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
@@ -268,14 +268,11 @@ export class SmbAclComponent implements OnInit {
     from(shareAcl)
       .pipe(
         concatMap((ace: SmbSharesecAce) => {
-          return forkJoin(
-            this.initialValueDataFromAce(ace),
-          );
+          return this.initialValueDataFromAce(ace);
         }),
       )
       .pipe(untilDestroyed(this))
-      .subscribe((data: unknown[][]) => {
-        const response = data[0];
+      .subscribe((response: unknown[]) => {
         const initialOptions: Option[] = [];
 
         if (response.length) {

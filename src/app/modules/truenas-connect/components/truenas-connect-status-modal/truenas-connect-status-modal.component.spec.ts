@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import {
   Spectator,
   createComponentFactory,
@@ -33,7 +32,6 @@ describe('TruenasConnectStatusModalComponent', () => {
   const createComponent = createComponentFactory({
     component: TruenasConnectStatusModalComponent,
     providers: [
-      provideNoopAnimations(),
       mockProvider(TruenasConnectService, {
         config,
         connect: jest.fn(() => of(null)),

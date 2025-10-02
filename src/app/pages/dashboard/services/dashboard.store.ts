@@ -6,7 +6,6 @@ import {
   EMPTY,
   Observable, catchError, combineLatest, filter, finalize, map, of, switchMap, tap,
 } from 'rxjs';
-import { WidgetName } from 'app/enums/widget-name.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
@@ -15,6 +14,23 @@ import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+
+/**
+ * Kept for compatibility with older dashboard versions.
+ * This is the last usage of WidgetName - should be removed when old dashboard migration is no longer needed.
+ */
+enum WidgetName {
+  SystemInformation = 'System Information',
+  SystemInformationStandby = 'System Information(Standby)',
+  Cpu = 'CPU',
+  Memory = 'Memory',
+  Storage = 'Storage',
+  Network = 'Network',
+  Interface = 'Interface',
+  Pool = 'Pool',
+  Help = 'Help',
+  Backup = 'Backup',
+}
 
 // we have external `DashConfigItem` in old dashboard, but it will be removed once we go ahead with new dashboard
 export interface OldDashboardConfigItem {
