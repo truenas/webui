@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/deprecation */
 import { FlatTreeControl, NestedTreeControl } from '@angular/cdk/tree';
 import { Observable } from 'rxjs';
 import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
