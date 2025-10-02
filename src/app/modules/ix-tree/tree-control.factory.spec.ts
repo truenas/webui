@@ -57,14 +57,18 @@ describe('Tree Control Factory', () => {
 
     it('should allow setting dataNodes', () => {
       const nodes: TestNode[] = [
-        { id: '1', name: 'Node 1', level: 0, expandable: true },
+        {
+          id: '1', name: 'Node 1', level: 0, expandable: true,
+        },
       ];
       treeControl.dataNodes = nodes;
       expect(treeControl.dataNodes).toEqual(nodes);
     });
 
     it('should track expansion state correctly', () => {
-      const node: TestNode = { id: '1', name: 'Node 1', level: 0, expandable: true };
+      const node: TestNode = {
+        id: '1', name: 'Node 1', level: 0, expandable: true,
+      };
       treeControl.dataNodes = [node];
 
       expect(treeControl.isExpanded(node)).toBe(false);
@@ -77,7 +81,9 @@ describe('Tree Control Factory', () => {
     });
 
     it('should toggle expansion state', () => {
-      const node: TestNode = { id: '1', name: 'Node 1', level: 0, expandable: true };
+      const node: TestNode = {
+        id: '1', name: 'Node 1', level: 0, expandable: true,
+      };
       treeControl.dataNodes = [node];
 
       treeControl.toggle(node);
@@ -89,9 +95,15 @@ describe('Tree Control Factory', () => {
 
     it('should expand all nodes', () => {
       const nodes: TestNode[] = [
-        { id: '1', name: 'Node 1', level: 0, expandable: true },
-        { id: '2', name: 'Node 2', level: 1, expandable: true },
-        { id: '3', name: 'Node 3', level: 2, expandable: false },
+        {
+          id: '1', name: 'Node 1', level: 0, expandable: true,
+        },
+        {
+          id: '2', name: 'Node 2', level: 1, expandable: true,
+        },
+        {
+          id: '3', name: 'Node 3', level: 2, expandable: false,
+        },
       ];
       treeControl.dataNodes = nodes;
 
@@ -103,8 +115,12 @@ describe('Tree Control Factory', () => {
 
     it('should collapse all nodes', () => {
       const nodes: TestNode[] = [
-        { id: '1', name: 'Node 1', level: 0, expandable: true },
-        { id: '2', name: 'Node 2', level: 1, expandable: true },
+        {
+          id: '1', name: 'Node 1', level: 0, expandable: true,
+        },
+        {
+          id: '2', name: 'Node 2', level: 1, expandable: true,
+        },
       ];
       treeControl.dataNodes = nodes;
 
@@ -117,10 +133,18 @@ describe('Tree Control Factory', () => {
 
     it('should get descendants of a node', () => {
       const nodes: TestNode[] = [
-        { id: '1', name: 'Node 1', level: 0, expandable: true },
-        { id: '2', name: 'Node 2', level: 1, expandable: true },
-        { id: '3', name: 'Node 3', level: 2, expandable: false },
-        { id: '4', name: 'Node 4', level: 1, expandable: false },
+        {
+          id: '1', name: 'Node 1', level: 0, expandable: true,
+        },
+        {
+          id: '2', name: 'Node 2', level: 1, expandable: true,
+        },
+        {
+          id: '3', name: 'Node 3', level: 2, expandable: false,
+        },
+        {
+          id: '4', name: 'Node 4', level: 1, expandable: false,
+        },
       ];
       treeControl.dataNodes = nodes;
 
@@ -129,7 +153,7 @@ describe('Tree Control Factory', () => {
       expect(descendants).toContain(nodes[1]);
       expect(descendants).toContain(nodes[2]);
       expect(descendants).toContain(nodes[3]);
-      expect(descendants.length).toBe(3);
+      expect(descendants).toHaveLength(3);
     });
   });
 
@@ -173,14 +197,18 @@ describe('Tree Control Factory', () => {
 
     it('should allow setting dataNodes', () => {
       const nodes: TestNode[] = [
-        { id: '1', name: 'Node 1', level: 0, expandable: true },
+        {
+          id: '1', name: 'Node 1', level: 0, expandable: true,
+        },
       ];
       treeControl.dataNodes = nodes;
       expect(treeControl.dataNodes).toEqual(nodes);
     });
 
     it('should track expansion state correctly', () => {
-      const child: TestNode = { id: '2', name: 'Child', level: 1, expandable: false };
+      const child: TestNode = {
+        id: '2', name: 'Child', level: 1, expandable: false,
+      };
       const parent: TestNode = {
         id: '1',
         name: 'Parent',
@@ -200,7 +228,9 @@ describe('Tree Control Factory', () => {
     });
 
     it('should toggle expansion state', () => {
-      const child: TestNode = { id: '2', name: 'Child', level: 1, expandable: false };
+      const child: TestNode = {
+        id: '2', name: 'Child', level: 1, expandable: false,
+      };
       const parent: TestNode = {
         id: '1',
         name: 'Parent',
@@ -218,7 +248,9 @@ describe('Tree Control Factory', () => {
     });
 
     it('should expand all nodes', () => {
-      const grandchild: TestNode = { id: '3', name: 'Grandchild', level: 2, expandable: false };
+      const grandchild: TestNode = {
+        id: '3', name: 'Grandchild', level: 2, expandable: false,
+      };
       const child: TestNode = {
         id: '2',
         name: 'Child',
@@ -242,7 +274,9 @@ describe('Tree Control Factory', () => {
     });
 
     it('should get descendants of a nested node', () => {
-      const grandchild: TestNode = { id: '3', name: 'Grandchild', level: 2, expandable: false };
+      const grandchild: TestNode = {
+        id: '3', name: 'Grandchild', level: 2, expandable: false,
+      };
       const child: TestNode = {
         id: '2',
         name: 'Child',
@@ -263,11 +297,13 @@ describe('Tree Control Factory', () => {
 
       expect(descendants).toContain(child);
       expect(descendants).toContain(grandchild);
-      expect(descendants.length).toBe(2);
+      expect(descendants).toHaveLength(2);
     });
 
     it('should toggle descendants recursively', () => {
-      const grandchild: TestNode = { id: '3', name: 'Grandchild', level: 2, expandable: false };
+      const grandchild: TestNode = {
+        id: '3', name: 'Grandchild', level: 2, expandable: false,
+      };
       const child: TestNode = {
         id: '2',
         name: 'Child',
