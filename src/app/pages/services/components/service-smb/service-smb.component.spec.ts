@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
-import { SmbConfig, smbProtocolSpotlight } from 'app/interfaces/smb-config.interface';
+import { SmbConfig, smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -63,7 +63,7 @@ describe('ServiceSmbComponent', () => {
           admin_group: null,
           next_rid: 0,
           encryption: SmbEncryption.Negotiate,
-          search_protocols: [smbProtocolSpotlight],
+          search_protocols: [smbSearchSpotlight],
         } as SmbConfig),
         mockCall('smb.unixcharset_choices', {
           'UTF-8': 'UTF-8',
@@ -237,7 +237,7 @@ describe('ServiceSmbComponent', () => {
       multichannel: false,
       unixcharset: 'UTF-8',
       encryption: SmbEncryption.Negotiate,
-      search_protocols: [smbProtocolSpotlight],
+      search_protocols: [smbSearchSpotlight],
     }]);
   });
 

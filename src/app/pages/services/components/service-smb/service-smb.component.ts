@@ -13,7 +13,7 @@ import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enu
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
-import { SmbConfigUpdate, smbProtocolSpotlight } from 'app/interfaces/smb-config.interface';
+import { SmbConfigUpdate, smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -169,7 +169,7 @@ export class ServiceSmbComponent implements OnInit {
 
     this.api.call('smb.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
-        const searchProtocolEnabled = config.search_protocols.includes(smbProtocolSpotlight);
+        const searchProtocolEnabled = config.search_protocols.includes(smbSearchSpotlight);
         config.bindip.forEach(() => this.addBindIp());
         this.form.patchValue({
           ...config,
@@ -203,7 +203,7 @@ export class ServiceSmbComponent implements OnInit {
     const { spotlight_search: spotlightSearch, ...formValues } = this.form.value;
     const values: SmbConfigUpdate = {
       ...formValues,
-      search_protocols: spotlightSearch ? [smbProtocolSpotlight] : [],
+      search_protocols: spotlightSearch ? [smbSearchSpotlight] : [],
       bindip: this.form.value.bindip.map((value) => value.bindIp),
     };
 

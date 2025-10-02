@@ -1,6 +1,6 @@
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
 
-export const smbProtocolSpotlight = 'SPOTLIGHT' as const;
+export const smbSearchSpotlight = 'SPOTLIGHT' as const;
 
 export interface SmbConfig {
   aapl_extensions: boolean;
