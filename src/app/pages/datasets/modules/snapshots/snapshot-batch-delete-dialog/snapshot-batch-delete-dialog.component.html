@@ -2,7 +2,6 @@
 @if (!isJobCompleted) {
   <form
     class="ix-form-container"
-    [disabled]="isDeleting()"
     [formGroup]="form"
     (submit)="onSubmit()"
   >
@@ -57,7 +56,7 @@
             type="submit"
             color="warn"
             ixTest="delete"
-            [disabled]="form.invalid || hasClones"
+            [disabled]="form.invalid || hasClones || isDeleting()"
           >
             {{ 'Delete' | translate }}
           </button>
