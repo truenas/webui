@@ -111,8 +111,15 @@ describe('UserAccessCardComponent', () => {
 
   it('should display password availability', () => {
     const passwordSection = spectator.query('.content-wrapper:nth-of-type(2)');
-    expect(passwordSection).toHaveText('Has Password');
+    expect(passwordSection).toHaveText('Password Login is Enabled');
     expect(passwordSection).toContainText('Change Required');
+  });
+
+  it('should display message when password login is disabled', () => {
+    spectator.setInput('user', { ...mockUser, password_disabled: true });
+    const passwordSection = spectator.query('.content-wrapper:nth-of-type(2)');
+    expect(passwordSection).toHaveClass('not-available');
+    expect(passwordSection).toHaveText('Administratively Disabled');
   });
 
   it('should display 2FA access status', () => {
