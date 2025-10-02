@@ -59,7 +59,7 @@ export class SnapshotBatchDeleteDialog implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotDelete];
 
   isJobCompleted = false;
-  deleteStarted = signal(false);
+  isDeleting = signal(false);
   form = this.fb.group({
     confirm: [false, [Validators.requiredTrue]],
   });
@@ -93,14 +93,14 @@ export class SnapshotBatchDeleteDialog implements OnInit {
   }
 
   onSubmit(): void {
-    this.deleteStarted.set(true);
+    this.isDeleting.set(true);
     const snapshots = this.snapshots.map((item) => [item.name]);
     const params: CoreBulkQuery = ['pool.snapshot.delete', snapshots];
     this.api.job('core.bulk', params).pipe(
       this.loader.withLoader(),
       filter((job: Job<CoreBulkResponse<boolean>[]>) => !!job.result),
       map((job: Job<CoreBulkResponse<boolean>[]>) => job.result),
-      finalize(() => this.deleteStarted.set(false)),
+      finalize(() => this.isDeleting.set(false)),
       untilDestroyed(this),
     ).subscribe({
       next: (results: CoreBulkResponse<boolean>[]) => {
