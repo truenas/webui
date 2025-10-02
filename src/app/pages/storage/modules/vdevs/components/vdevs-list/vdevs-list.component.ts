@@ -1,4 +1,3 @@
-import { NestedTreeControl } from '@angular/cdk/tree';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, input, output, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +21,8 @@ import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-d
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
+import { createNestedTreeControl } from 'app/modules/ix-tree/tree-control.factory';
+import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -77,9 +78,13 @@ export class VDevsListComponent implements OnInit {
 
   protected dataSource: NestedTreeDataSource<VDevNestedDataNode>;
 
-  protected treeControl = new NestedTreeControl<VDevNestedDataNode, string>((vdev) => vdev.children, {
-    trackBy: (vdev) => vdev.guid,
-  });
+  protected treeControl: TreeExpansion<VDevNestedDataNode, string> = createNestedTreeControl<
+    VDevNestedDataNode,
+    string
+  >(
+    (vdev) => vdev.children,
+    { trackBy: (vdev) => vdev.guid },
+  );
 
   protected readonly hasNestedChild = (_: number, node: VDevNestedDataNode): boolean => {
     return Boolean(node.children?.length);
