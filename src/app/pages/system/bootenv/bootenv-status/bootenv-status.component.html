@@ -35,22 +35,23 @@
       </mat-accordion>
     }
 
-    <div class="tree-header">
-      <div class="name-header">
-        <span >{{ 'Name' | translate }}</span>
+    @if (dataSource) {
+      <div class="tree-header">
+        <div class="name-header">
+          <span >{{ 'Name' | translate }}</span>
+        </div>
+        <div>{{ 'Status' | translate }}</div>
+        <div>{{ 'Read' | translate }}</div>
+        <div>{{ 'Write' | translate }}</div>
+        <div>{{ 'Checksum' | translate }}</div>
+        <div>{{ 'Errors' | translate }}</div>
       </div>
-      <div>{{ 'Status' | translate }}</div>
-      <div>{{ 'Read' | translate }}</div>
-      <div>{{ 'Write' | translate }}</div>
-      <div>{{ 'Checksum' | translate }}</div>
-      <div>{{ 'Errors' | translate }}</div>
-    </div>
 
-    <ix-tree-view
-      class="tree"
-      [ixDataSource]="dataSource"
-      [ixTreeControl]="treeControl"
-    >
+      <ix-tree-view
+        class="tree"
+        [ixDataSource]="dataSource"
+        [ixTreeControl]="treeControl"
+      >
       <ix-tree-node
         *treeNodeDef="let topologyItem; dataSource: dataSource"
         [treeNodeDefDataSource]="dataSource"
@@ -95,6 +96,7 @@
           <ng-container treeNodeOutlet></ng-container>
         }
       </ix-nested-tree-node>
-    </ix-tree-view>
+      </ix-tree-view>
+    }
   </div>
 </div>

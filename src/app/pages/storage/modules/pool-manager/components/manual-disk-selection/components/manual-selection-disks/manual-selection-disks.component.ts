@@ -1,4 +1,3 @@
-import { NestedTreeControl } from '@angular/cdk/tree';
 import { NgClass, AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
 import { RouterLinkActive } from '@angular/router';
@@ -20,6 +19,8 @@ import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-d
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
+import { createNestedTreeControl } from 'app/modules/ix-tree/tree-control.factory';
+import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-info/disk-info.component';
 import {
   ManualDiskSelectionFilters,
@@ -79,9 +80,10 @@ export class ManualSelectionDisksComponent implements OnInit {
   readonly enclosures = input.required<Enclosure[]>();
 
   dataSource: NestedTreeDataSource<DiskOrGroup>;
-  treeControl = new NestedTreeControl<DiskOrGroup, string>((node) => node.children, {
-    trackBy: (node) => node.identifier,
-  });
+  treeControl: TreeExpansion<DiskOrGroup, string> = createNestedTreeControl<DiskOrGroup, string>(
+    (node) => node.children,
+    { trackBy: (node) => node.identifier },
+  );
 
   filtersUpdated = new BehaviorSubject<ManualDiskSelectionFilters>({});
 
