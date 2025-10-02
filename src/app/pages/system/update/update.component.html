@@ -86,7 +86,7 @@
       <h4 class="hint">{{ 'Network activity has been administratively disabled for update operation. Please use Manual Update.' | translate }}</h4>
     }
 
-    @if (changelog() || newVersion()?.release_notes_url) {
+    @if ((changelog() || newVersion()?.release_notes_url) && !newVersion()?.release_notes) {
       <div class="update-summary">
         <h3>
           {{ 'Update Summary for {version}' | translate: { version: newVersion().version } }}
@@ -114,7 +114,7 @@
 
     @if (newVersion()?.release_notes) {
       <div class="release-notes-section">
-        <h3>{{ 'Release Notes' | translate }}</h3>
+        <h3>{{ 'Release Notes for {version}' | translate: { version: newVersion().version } }}</h3>
         <div class="release-notes-content">
           <ix-dynamic-markdown 
             [content]="newVersion().release_notes"
