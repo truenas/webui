@@ -17,6 +17,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
@@ -53,11 +54,12 @@ export class SnapshotBatchDeleteDialog implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private snapshots = inject<ZfsSnapshot[]>(MAT_DIALOG_DATA);
+  private loader = inject(LoaderService);
 
   protected readonly requiredRoles = [Role.SnapshotDelete];
 
   isJobCompleted = false;
-  isDeleting = signal(false);
+  deleteStarted = signal(false);
   form = this.fb.group({
     confirm: [false, [Validators.requiredTrue]],
   });
@@ -91,13 +93,14 @@ export class SnapshotBatchDeleteDialog implements OnInit {
   }
 
   onSubmit(): void {
-    this.isDeleting.set(true);
+    this.deleteStarted.set(true);
     const snapshots = this.snapshots.map((item) => [item.name]);
     const params: CoreBulkQuery = ['pool.snapshot.delete', snapshots];
     this.api.job('core.bulk', params).pipe(
+      this.loader.withLoader(),
       filter((job: Job<CoreBulkResponse<boolean>[]>) => !!job.result),
       map((job: Job<CoreBulkResponse<boolean>[]>) => job.result),
-      finalize(() => this.isDeleting.set(false)),
+      finalize(() => this.deleteStarted.set(false)),
       untilDestroyed(this),
     ).subscribe({
       next: (results: CoreBulkResponse<boolean>[]) => {

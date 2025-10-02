@@ -43,6 +43,7 @@
         formControlName="confirm"
         [label]="'Confirm' | translate"
         [required]="true"
+        [disabled]="deleteStarted()"
       ></ix-checkbox>
 
       <div class="form-buttons">
@@ -56,7 +57,7 @@
             type="submit"
             color="warn"
             ixTest="delete"
-            [disabled]="form.invalid || hasClones || isDeleting()"
+            [disabled]="form.invalid || hasClones || deleteStarted()"
           >
             {{ 'Delete' | translate }}
           </button>
