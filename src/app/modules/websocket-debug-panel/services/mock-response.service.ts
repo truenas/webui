@@ -148,39 +148,73 @@ export class MockResponseService implements OnDestroy {
   }
 
   private scheduleEvents(message: RequestMessage, events: MockEvent[]): void {
-    const eventIds: number[] = [];
-    let totalDelay = 0;
+    const jobId = this.getNextJobId();
+    const eventIds: number[] = [jobId];
 
-    events.forEach((event) => {
-      const eventId = this.getNextJobId();
-      eventIds.push(eventId);
+    // Send initial "added" event immediately
+    const addedEvent: CollectionUpdateMessage = {
+      jsonrpc: '2.0',
+      method: 'collection_update',
+      params: {
+        msg: CollectionChangeType.Added,
+        collection: 'core.get_jobs',
+        id: jobId,
+        fields: {
+          id: jobId,
+          message_ids: [message.id],
+          method: message.method,
+          arguments: message.params,
+          transient: false,
+          description: null,
+          abortable: false,
+          logs_path: null,
+          logs_excerpt: null,
+          progress: {
+            percent: 0,
+            description: '',
+            extra: null,
+          },
+          result: null,
+          result_encoding_error: null,
+          error: null,
+          exception: null,
+          exc_info: null,
+          state: 'WAITING',
+          time_started: { $date: Date.now() },
+          time_finished: null,
+        },
+      },
+    };
+    this.mockResponses$.next(addedEvent);
+
+    // Schedule subsequent events
+    let totalDelay = 0;
+    events.forEach((event, eventIndex) => {
       totalDelay += event.delay || 0;
 
       const eventSubscription = timer(totalDelay).pipe(take(1)).subscribe(() => {
-        this.emitEvent(message, event, eventId);
+        this.emitEvent(message, event, jobId);
       });
-      this.eventSubscriptions.set(`${message.id}-event-${eventId}`, eventSubscription);
+      this.eventSubscriptions.set(`${message.id}-event-${jobId}-${eventIndex}`, eventSubscription);
     });
 
     this.activeEvents.set(message.id, eventIds);
   }
 
-  private emitEvent(message: RequestMessage, event: MockEvent, eventId: number): void {
+  private emitEvent(message: RequestMessage, event: MockEvent, jobId: number): void {
     const updateMessage: CollectionUpdateMessage = {
       jsonrpc: '2.0',
       method: 'collection_update',
       params: {
         msg: CollectionChangeType.Changed,
         collection: 'core.get_jobs',
-        id: eventId,
+        id: jobId,
         fields: {
           ...event.fields,
-          id: event.fields.id || eventId,
+          id: jobId,
           message_ids: event.fields.message_ids || [message.id],
           method: event.fields.method || message.method,
           arguments: event.fields.arguments || message.params,
-          transient: event.fields.transient ?? true,
-          time_started: event.fields.time_started || { $date: Date.now() },
         },
       },
     };
@@ -200,7 +234,7 @@ export class MockResponseService implements OnDestroy {
 
   private cleanupEventSubscriptions(messageId: string): void {
     this.eventSubscriptions.forEach((subscription, key) => {
-      if (key.startsWith(messageId)) {
+      if (key === messageId || key.startsWith(`${messageId}-event-`) || key.startsWith(`${messageId}-response`)) {
         subscription.unsubscribe();
         this.eventSubscriptions.delete(key);
       }
