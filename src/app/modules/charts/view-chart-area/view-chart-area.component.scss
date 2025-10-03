@@ -1,8 +1,16 @@
+@import 'scss-imports/variables';
+
 .dygraph-legend {
   display: none !important;
 }
 
 .canvas-container {
-  height: 182px;
+  height: 100%;
   width: 100%;
+}
+
+@media (min-width: $breakpoint-lg) {
+  .canvas-container {
+    height: 192px;
+  }
 }
