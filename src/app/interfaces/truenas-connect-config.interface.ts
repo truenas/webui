@@ -26,7 +26,7 @@ export interface TruenasConnectConfig extends TruenasConnectUpdate {
 
 export interface TruenasConnectUpdate {
   enabled: boolean;
-  ips: string[];
-  interfaces: string[];
-  use_all_interfaces: boolean;
+  ips?: string[];
+  interfaces?: string[];
+  use_all_interfaces?: boolean;
 }
