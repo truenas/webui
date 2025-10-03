@@ -13,6 +13,7 @@ import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Schema } from 'app/interfaces/schema.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -181,6 +182,101 @@ describe('AcmednsFormComponent', () => {
         },
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+  });
+
+  describe('Cloudflare DNS conditional formatting', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => existingAcmedns) }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('requires an API key when email is supplied', async () => {
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': 'qatest@truenas.com',
+        'API Key': '',
+        'API Token': '',
+      });
+
+      const errorMsg = await loader.getHarness(IxInputHarness.with({ label: 'API Key' }))
+        .then((harness) => harness.getErrorText());
+      expect(errorMsg.toLowerCase()).toBe('api key is required');
+    });
+
+    it('requires an email address when API key is supplied', async () => {
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': '',
+        'API Key': 'some_api_key',
+        'API Token': '',
+      });
+
+      const errorMsg = await loader.getHarness(IxInputHarness.with({ label: 'Cloudflare Email' }))
+        .then((harness) => harness.getErrorText());
+      expect(errorMsg.toLowerCase()).toBe('cloudflare email is required');
+    });
+
+    it('will not permit an email nor API key to be used with token', async () => {
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': 'qatest@truenas.com',
+        'API Key': '',
+        'API Token': 'some_token',
+      });
+
+      const errorMsg = await loader.getHarness(IxInputHarness.with({ label: 'Cloudflare Email' }))
+        .then((harness) => harness.getErrorText());
+      expect(errorMsg.toLowerCase()).toBe('email/api key cannot be used with api token');
+    });
+
+    it('will correctly swap which fields are required when emptying other fields', async () => {
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': 'qatest@truenas.com',
+        'API Key': 'some_key',
+        'API Token': 'some_token',
+      });
+
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': '',
+        'API Key': '',
+      });
+
+      // this tests for null since there *won't* be any errors. reason for this is the only way
+      // to trigger the behavior we're testing is to make the form valid.
+      let errorMsg = await loader.getHarness(IxInputHarness.with({ label: 'Cloudflare Email' }))
+        .then((harness) => harness.getErrorText());
+      expect(errorMsg.toLowerCase()).toBe('');
+
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': 'qatest@truenas.com',
+        'API Key': '',
+        'API Token': 'some_token',
+      });
+
+      await form.fillForm({
+        Name: 'name_edit',
+        Authenticator: 'cloudflare',
+        'API Token': '',
+      });
+
+      errorMsg = await loader.getHarness(IxInputHarness.with({ label: 'API Token' }))
+        .then((harness) => harness.getErrorText());
+      expect(errorMsg.toLowerCase()).toBe('');
     });
   });
 });
