@@ -145,6 +145,10 @@ export class ReportingExportersFormComponent implements OnInit {
     });
   }
 
+  /**
+   * Uses reporting.exporters.exporter_schemas API which returns the legacy schema format.
+   * Can be refactored when the API is updated to use the new schema format.
+   */
   private getExportersSchemas(): Observable<ReportingExporterSchema[]> {
     return this.api.call('reporting.exporters.exporter_schemas');
   }

@@ -1,9 +1,9 @@
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
-import { FlatTreeControl } from '@angular/cdk/tree';
 import {
   BehaviorSubject, Subject, Observable, debounceTime,
   distinctUntilChanged, takeUntil, filter, map, mergeWith,
 } from 'rxjs';
+import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 
 /**
@@ -21,7 +21,7 @@ export class FlatTreeDataSource<T, F> extends DataSource<F> {
   private readonly disconnect$ = new Subject<void>();
 
   constructor(
-    private treeControl: FlatTreeControl<F>,
+    private treeControl: TreeExpansion<F>,
     private treeFlattener: TreeFlattener<T, F>,
     private initialData: T[] = [],
   ) {

@@ -43,6 +43,7 @@ export class CopyButtonComponent {
       textArea.value = text;
       document.body.appendChild(textArea);
       textArea.select();
+      // Fallback for browsers that don't support navigator.clipboard
       document.execCommand('copy');
       textArea.remove();
       resolve();
