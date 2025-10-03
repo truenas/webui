@@ -9,6 +9,7 @@ import { DockerStatusData } from 'app/interfaces/docker-config.interface';
 import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { FailoverRebootInfo, SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
@@ -51,5 +52,6 @@ export interface ApiEventDirectory {
   'vm.query': { response: VirtualMachine };
   'zfs.pool.scan': { response: PoolScan };
   'pool.snapshot.query': { response: ZfsSnapshot };
+  'pool.snapshottask.query': { response: PeriodicSnapshotTask };
   'directoryservices.status': { response: DirectoryServicesStatus };
 }
