@@ -1,6 +1,6 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, HostListener,
+} from '@angular/core';
 import {
   FormArray,
   FormControl,
@@ -10,11 +10,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, map, Observable, of, tap,
 } from 'rxjs';
@@ -38,82 +38,70 @@ import {
   InstanceEnvVariablesFormGroup,
   VirtualizationInstance,
 } from 'app/interfaces/virtualization.interface';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import {
-  IxFormGlossaryComponent,
-} from 'app/modules/forms/ix-forms/components/ix-form-glossary/ix-form-glossary.component';
-import {
-  IxFormSectionComponent,
-} from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { LoaderService } from 'app/modules/loader/loader.service';
-import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectImageDialog,
   VirtualizationImageWithId,
 } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
-import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-instance-wizard',
+  selector: 'ix-instance-form',
+  templateUrl: './instance-form.component.html',
+  styleUrls: ['./instance-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     IxCheckboxComponent,
-    IxFormGlossaryComponent,
-    IxFormSectionComponent,
+    IxFieldsetComponent,
     IxInputComponent,
     IxListComponent,
     IxListItemComponent,
     IxSelectComponent,
     MatButton,
-    NgxSkeletonLoaderModule,
-    PageHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ModalHeaderComponent,
     ReactiveFormsModule,
-    ReadOnlyComponent,
     TestDirective,
     TranslateModule,
+    FormActionsComponent,
   ],
-  templateUrl: './instance-wizard.component.html',
-  styleUrls: ['./instance-wizard.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InstanceWizardComponent implements OnInit {
+export class InstanceFormComponent implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private matDialog = inject(MatDialog);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
   private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
   protected formatter = inject(IxFormatterService);
-  protected configStore = inject(VirtualizationConfigStore);
-  private authService = inject(AuthService);
-  private unsavedChangesService = inject(UnsavedChangesService);
-  private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
+  slideInRef = inject<SlideInRef<VirtualizationInstance | undefined, boolean>>(SlideInRef);
+  private instancesStore = inject(VirtualizationInstancesStore, { optional: true });
+  private router = inject(Router);
 
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.LxcConfigWrite];
-  protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
 
   protected readonly slashRootNode = [slashRootNode];
 
@@ -130,7 +118,6 @@ export class InstanceWizardComponent implements OnInit {
     { label: this.translate.instant('Deny'), value: ContainerCapabilitiesPolicy.Deny },
   ]);
 
-
   protected readonly forbiddenNames$ = this.api.call('container.query', [
     [], { select: ['name'], order_by: ['name'] },
   ]).pipe(
@@ -141,23 +128,18 @@ export class InstanceWizardComponent implements OnInit {
 
   readonly VirtualizationSource = VirtualizationSource;
 
+  protected isAdvancedMode = false;
 
-  // Mode tracking
   protected readonly isEditMode = signal<boolean>(false);
   protected editingInstance: VirtualizationInstance | null = null;
-  protected readonly pageTitle = computed(() => {
+  protected readonly title = computed(() => {
     if (this.isEditMode()) {
       return this.translate.instant('Edit Container: {name}', {
         name: this.editingInstance?.name || '',
       });
     }
-    return this.translate.instant('Create Container');
+    return this.translate.instant('Add Container');
   });
-
-  protected readonly submitButtonText = computed(() => {
-    return this.isEditMode() ? this.translate.instant('Save') : this.translate.instant('Create');
-  });
-
 
   poolOptions$ = this.api.call('container.pool_choices').pipe(
     choicesToOptions(),
@@ -169,83 +151,63 @@ export class InstanceWizardComponent implements OnInit {
   );
 
   protected readonly form = this.formBuilder.group({
-    // Basic Configuration
     name: [
       '',
       [Validators.required, Validators.minLength(1), Validators.maxLength(200), Validators.pattern(/^[a-zA-Z0-9-]+$/)],
       [forbiddenAsyncValues(this.forbiddenNames$)],
     ],
-    pool: [''], // Required for create, not shown for edit
+    pool: [''],
     description: [''],
     autostart: [true],
-    image: [''], // Required for create, not shown for edit
-
-    // CPU Configuration
+    image: [''],
     vcpus: [null as number | null, [Validators.min(1)]],
     cores: [null as number | null, [Validators.min(1)]],
     threads: [null as number | null, [Validators.min(1)]],
     cpuset: [''],
-
-    // Memory
     memory: [null as number | null, [Validators.min(20)]],
-
-    // Time Configuration
     time: [ContainerTime.Local],
     shutdown_timeout: [30, [Validators.min(5), Validators.max(300)]],
-
-    // Init Process
     init: ['/sbin/init'],
     initdir: [''],
     inituser: [''],
     initgroup: [''],
-
-    // Capabilities
     capabilities_policy: [ContainerCapabilitiesPolicy.Default],
-
-    // Environment Variables
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
-
-    // Network
     use_default_network: [true],
-
-    // Devices
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
-
-    // Proxies
     proxies: this.formBuilder.array<FormGroup<{
       source_proto: FormControl<VirtualizationProxyProtocol>;
       source_port: FormControl<number | null>;
       dest_proto: FormControl<VirtualizationProxyProtocol>;
       dest_port: FormControl<number | null>;
     }>>([]),
-
-    // Disks
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
       destination?: FormControl<string>;
     }>>([]),
   });
 
-  get hasRequiredRoles(): Observable<boolean> {
-    return this.authService.hasRole(this.requiredRoles);
+  constructor() {
+    this.editingInstance = this.slideInRef.getData();
   }
 
-  constructor() {
-    this.configStore.initialize();
+  @HostListener('window:beforeunload', ['$event'])
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    if (this.form.dirty) {
+      event.preventDefault();
+    }
   }
 
   ngOnInit(): void {
-    // Check if we're in edit mode from the route
-    this.route.paramMap.pipe(
-      untilDestroyed(this),
-    ).subscribe((params) => {
-      const instanceId = params.get('id');
-      if (instanceId) {
-        this.loadInstanceForEditing(Number(instanceId));
-      } else {
-        this.setupForCreation();
-      }
+    if (this.editingInstance) {
+      this.loadInstanceForEditing(this.editingInstance.id);
+    } else {
+      this.setupForCreation();
+    }
+
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
     });
   }
 
@@ -253,12 +215,10 @@ export class InstanceWizardComponent implements OnInit {
     this.isEditMode.set(false);
     this.editingInstance = null;
 
-    // Set required validators for creation
     this.form.controls.pool.setValidators(Validators.required);
     this.form.controls.image.setValidators([Validators.required, Validators.minLength(1), Validators.maxLength(200)]);
     this.form.controls.init.setValue('/sbin/init');
 
-    // Reset form for new creation
     this.form.reset({
       autostart: true,
       time: ContainerTime.Local,
@@ -274,14 +234,12 @@ export class InstanceWizardComponent implements OnInit {
   private loadInstanceForEditing(instanceId: number): void {
     this.isEditMode.set(true);
 
-    // Remove validators that are only for creation
     this.form.controls.pool.clearValidators();
     this.form.controls.pool.updateValueAndValidity();
     this.form.controls.image.clearValidators();
     this.form.controls.image.updateValueAndValidity();
 
-    // Load the instance data with loader
-    this.loader.open();
+    this.isLoading.set(true);
     this.api.call('container.get_instance', [instanceId]).pipe(
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
@@ -289,17 +247,16 @@ export class InstanceWizardComponent implements OnInit {
       next: (instance: VirtualizationInstance) => {
         this.editingInstance = instance;
         this.populateFormForEdit(instance);
-        this.loader.close();
+        this.isLoading.set(false);
       },
       error: () => {
-        this.loader.close();
-        this.router.navigate(['/containers']);
+        this.isLoading.set(false);
+        this.slideInRef.close({ response: false, error: true });
       },
     });
   }
 
   private populateFormForEdit(instance: VirtualizationInstance): void {
-    // Basic fields
     this.form.patchValue({
       name: instance.name,
       description: instance.description || '',
@@ -318,20 +275,12 @@ export class InstanceWizardComponent implements OnInit {
       capabilities_policy: instance.capabilities_policy as ContainerCapabilitiesPolicy,
     });
 
-    // Environment variables
     if (instance.initenv && Object.keys(instance.initenv).length > 0) {
       for (const [name, value] of Object.entries(instance.initenv)) {
         this.addEnvironmentVariableWithValue(name, String(value));
       }
     }
-
-    // TODO: Load other complex fields like devices, proxies, disks when API provides them
   }
-
-  protected canDeactivate(): Observable<boolean> {
-    return this.form.dirty ? this.unsavedChangesService.showConfirmDialog() : of(true);
-  }
-
 
   protected onBrowseCatalogImages(): void {
     this.matDialog
@@ -380,33 +329,41 @@ export class InstanceWizardComponent implements OnInit {
     this.form.controls.disks.removeAt(index);
   }
 
-  protected onSubmit(): void {
-    // Show loader for both create and update
-    this.loader.open();
+  protected submit(): void {
+    this.isLoading.set(true);
 
     if (this.isEditMode()) {
       this.updateInstance().pipe(untilDestroyed(this)).subscribe({
-        next: () => {
-          this.loader.close();
+        next: (updatedInstance) => {
+          this.isLoading.set(false);
           this.form.markAsPristine();
           this.snackbar.success(this.translate.instant('Container updated'));
-          this.router.navigate(['/containers', 'view', this.editingInstance?.id]);
+
+          this.slideInRef.close({ response: true, error: false });
+
+          if (this.instancesStore && updatedInstance) {
+            this.instancesStore.instanceUpdated(updatedInstance);
+          }
         },
         error: (error: unknown) => {
-          this.loader.close();
+          this.isLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
     } else {
       this.createInstance().pipe(untilDestroyed(this)).subscribe({
         next: (instance) => {
-          this.loader.close();
+          this.isLoading.set(false);
           this.form.markAsPristine();
           this.snackbar.success(this.translate.instant('Container created'));
-          this.router.navigate(['/containers', 'view', instance?.id]);
+          this.slideInRef.close({ response: true, error: false });
+          this.instancesStore?.initialize();
+          if (instance?.id) {
+            this.router.navigate(['/containers', 'view', instance.id]);
+          }
         },
         error: (error: unknown) => {
-          this.loader.close();
+          this.isLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
@@ -469,39 +426,29 @@ export class InstanceWizardComponent implements OnInit {
       autostart: form.autostart,
     };
 
-    // Add optional fields
     if (form.description) payload.description = form.description;
 
-    // CPU configuration
     if (form.vcpus) payload.vcpus = form.vcpus;
     if (form.cores) payload.cores = form.cores;
     if (form.threads) payload.threads = form.threads;
     if (form.cpuset) payload.cpuset = form.cpuset;
 
-    // Memory
     if (form.memory) payload.memory = form.memory;
 
-    // Time configuration
     if (form.time) payload.time = form.time;
     if (form.shutdown_timeout) payload.shutdown_timeout = form.shutdown_timeout;
 
-    // Init process
     if (form.init) payload.init = form.init;
     if (form.initdir) payload.initdir = form.initdir;
     if (form.inituser) payload.inituser = form.inituser;
     if (form.initgroup) payload.initgroup = form.initgroup;
 
-    // Capabilities
     if (form.capabilities_policy) payload.capabilities_policy = form.capabilities_policy;
 
-    // Environment variables
     const envVars = this.getEnvironmentVariablesPayload();
     if (Object.keys(envVars).length > 0) {
       payload.initenv = envVars;
     }
-
-    // USB, GPU, disks and proxies - commented out until API support is available
-    // These features will be enabled once the container API supports them
 
     return payload;
   }
@@ -510,38 +457,31 @@ export class InstanceWizardComponent implements OnInit {
     const form = this.form.getRawValue();
     const payload: UpdateVirtualizationInstance = {};
 
-    // Only include fields that have changed
     if (form.name !== this.editingInstance.name) payload.name = form.name;
     if (form.description !== (this.editingInstance.description || '')) payload.description = form.description;
     if (form.autostart !== this.editingInstance.autostart) payload.autostart = form.autostart;
 
-    // CPU configuration
     if (form.vcpus !== this.editingInstance.vcpus) payload.vcpus = form.vcpus;
     if (form.cores !== this.editingInstance.cores) payload.cores = form.cores;
     if (form.threads !== this.editingInstance.threads) payload.threads = form.threads;
     if (form.cpuset !== (this.editingInstance.cpuset || '')) payload.cpuset = form.cpuset || null;
 
-    // Memory
     if (form.memory !== this.editingInstance.memory) payload.memory = form.memory;
 
-    // Time configuration
     if (form.time !== (this.editingInstance.time as ContainerTime)) payload.time = form.time;
     if (form.shutdown_timeout !== this.editingInstance.shutdown_timeout) {
       payload.shutdown_timeout = form.shutdown_timeout;
     }
 
-    // Init process
     if (form.init !== this.editingInstance.init) payload.init = form.init;
     if (form.initdir !== (this.editingInstance.initdir || '')) payload.initdir = form.initdir || null;
     if (form.inituser !== (this.editingInstance.inituser || '')) payload.inituser = form.inituser || null;
     if (form.initgroup !== (this.editingInstance.initgroup || '')) payload.initgroup = form.initgroup || null;
 
-    // Capabilities
     if (form.capabilities_policy !== (this.editingInstance.capabilities_policy as ContainerCapabilitiesPolicy)) {
       payload.capabilities_policy = form.capabilities_policy;
     }
 
-    // Environment variables
     const envVars = this.getEnvironmentVariablesPayload();
     if (JSON.stringify(envVars) !== JSON.stringify(this.editingInstance.initenv || {})) {
       payload.initenv = envVars;
@@ -570,7 +510,6 @@ export class InstanceWizardComponent implements OnInit {
     // Fallback if no colon found - shouldn't happen with our current data
     return { name: imageString, version: '' };
   }
-
 
   private getEnvironmentVariablesPayload(): Record<string, string> {
     return this.form.controls.environment_variables.controls.reduce((env: Record<string, string>, control) => {

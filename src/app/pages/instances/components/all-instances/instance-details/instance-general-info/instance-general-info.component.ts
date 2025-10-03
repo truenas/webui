@@ -17,8 +17,11 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { InstanceFormComponent } from 'app/pages/instances/components/instance-form/instance-form.component';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -49,6 +52,8 @@ export class InstanceGeneralInfoComponent {
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
   private loader = inject(LoaderService);
+  private slideIn = inject(SlideIn);
+  private instancesStore = inject(VirtualizationInstancesStore);
 
   instance = input.required<VirtualizationInstance>();
 
@@ -56,7 +61,17 @@ export class InstanceGeneralInfoComponent {
   protected readonly containerCapabilitiesPolicyLabels = containerCapabilitiesPolicyLabels;
 
   editInstance(): void {
-    this.router.navigate(['/containers/edit', this.instance().id]);
+    this.slideIn
+      .open(InstanceFormComponent, { data: this.instance() })
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (result) => {
+          // Reload the instance data if the form was saved successfully
+          if (result?.response) {
+            this.instancesStore.initialize();
+          }
+        },
+      });
   }
 
   deleteInstance(): void {

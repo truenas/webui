@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MatAnchor, MatButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -21,6 +20,7 @@ import {
   VolumesDialog,
   VolumesDialogOptions,
 } from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
+import { InstanceFormComponent } from 'app/pages/instances/components/instance-form/instance-form.component';
 import {
   VirtualizationConfigStore,
 } from 'app/pages/instances/stores/virtualization-config.store';
@@ -36,8 +36,6 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
     TranslateModule,
     MatButton,
     TestDirective,
-    MatAnchor,
-    RouterLink,
     UiSearchDirective,
     IxIconComponent,
     MatMenu,
@@ -53,6 +51,13 @@ export class AllInstancesHeaderComponent {
 
   protected readonly searchableElements = allInstancesHeaderElements;
   protected readonly config = this.configStore.config;
+
+  protected onCreateContainer(): void {
+    this.slideIn
+      .open(InstanceFormComponent)
+      .pipe(untilDestroyed(this))
+      .subscribe();
+  }
 
   protected onGlobalConfiguration(): void {
     this.slideIn

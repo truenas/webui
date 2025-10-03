@@ -1852,9 +1852,7 @@
     "anchorRouterLink": [
       "/containers"
     ],
-    "routerLink": [
-      "/containers/new"
-    ],
+    "routerLink": null,
     "anchor": "add-container",
     "triggerAnchor": null,
     "section": "ui"

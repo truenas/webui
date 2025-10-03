@@ -32,11 +32,11 @@
 
 
 @if (config()) {
-  <a
+  <button
     mat-button
     ixTest="create-new-container"
     [color]="'primary'"
-    [routerLink]="['/containers/new']"
     [ixUiSearch]="searchableElements.elements.add"
-  >{{ 'Create New Container' | translate }}</a>
+    (click)="onCreateContainer()"
+  >{{ 'Create New Container' | translate }}</button>
 }

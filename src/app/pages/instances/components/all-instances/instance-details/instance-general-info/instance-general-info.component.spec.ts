@@ -18,6 +18,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
+import { InstanceFormComponent } from 'app/pages/instances/components/instance-form/instance-form.component';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
 
@@ -46,12 +47,13 @@ describe('InstanceGeneralInfoComponent', () => {
       mockAuth(),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({
-          response: { id: 'updated_instance' },
+          response: true,
         })),
       }),
       mockProvider(VirtualizationInstancesStore, {
         selectedInstance: jest.fn(),
         instanceUpdated: jest.fn(),
+        initialize: jest.fn(),
       }),
       mockApi([
         mockCall('container.delete'),
@@ -108,7 +110,8 @@ describe('InstanceGeneralInfoComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers/edit', 1]);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(InstanceFormComponent, { data: instance });
+    expect(spectator.inject(VirtualizationInstancesStore).initialize).toHaveBeenCalled();
   });
 
   it('does not delete instance when confirmation is cancelled', async () => {
