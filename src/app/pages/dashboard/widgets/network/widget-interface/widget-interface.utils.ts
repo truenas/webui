@@ -6,21 +6,23 @@ import {
 } from 'app/interfaces/network-interface.interface';
 
 /**
- * @deprecated Do not use.
+ * Extended network interface alias used by dashboard widgets.
+ * Adds optional interface property to track which physical interface the alias belongs to.
  */
 export interface DashboardNetworkInterfaceAlias extends NetworkInterfaceAlias {
   interface?: string;
 }
 
 /**
- * @deprecated Do not use.
+ * Extended network interface type used by dashboard widgets.
  */
 export type DashboardNetworkInterface = NetworkInterface & {
   state: DashboardNicState;
 };
 
 /**
- * @deprecated Do not use.
+ * Extended network interface state used by dashboard widgets.
+ * Includes aggregated information about VLANs, LAGG ports, and aliases.
  */
 export interface DashboardNicState extends NetworkInterfaceState {
   vlans: (NetworkInterfaceState & { interface?: string })[];
@@ -29,7 +31,9 @@ export interface DashboardNicState extends NetworkInterfaceState {
 }
 
 /**
- * @deprecated Do not use.
+ * Processes network interfaces for dashboard display.
+ * Aggregates VLANs and aliases under their parent interfaces (LAGG).
+ *
  * TODO: Rewrite to have widgets pick what they need instead of doing global processing.
  */
 export function processNetworkInterfaces(interfaces: NetworkInterface[]): DashboardNetworkInterface[] {

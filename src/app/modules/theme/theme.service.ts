@@ -7,7 +7,6 @@ import { filter } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Theme } from 'app/interfaces/theme.interface';
 import { allThemes, defaultTheme } from 'app/modules/theme/theme.constants';
-import { ThemeUtils } from 'app/modules/theme/utils/theme-utils';
 import { AppState } from 'app/store';
 import { themeNotFound } from 'app/store/preferences/preferences.actions';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -26,8 +25,6 @@ export class ThemeService {
 
   allThemes: Theme[] = allThemes;
   loadTheme$ = new Subject<string>();
-
-  private utils = new ThemeUtils();
 
   get isDefaultTheme(): boolean {
     return this.activeTheme === this.defaultTheme;
@@ -98,7 +95,7 @@ export class ThemeService {
 
       // Generate aux. text styles
       if (this.allThemes[0].accentColors.includes(color as Theme['accentColors'][number])) {
-        const txtColor = this.utils.textContrast(swatch, theme.bg2);
+        const txtColor = this.getTextContrast(swatch, theme.bg2);
         document.documentElement.style.setProperty('--' + color + '-txt', txtColor);
       }
 
@@ -119,10 +116,10 @@ export class ThemeService {
     document.documentElement.style.setProperty('--accent', theme.accent);
 
     // Set Material aux. text styles
-    const primaryColor = this.utils.colorFromMeta(theme.primary) as keyof Theme; // eg. blue
-    const accentColor = this.utils.colorFromMeta(theme.accent) as keyof Theme; // eg. yellow
-    const primaryTextColor = this.utils.textContrast(theme[primaryColor] as string, theme.bg2);
-    const accentTextColor = this.utils.textContrast(theme[accentColor] as string, theme.bg2);
+    const primaryColor = this.extractColorFromCssVar(theme.primary) as keyof Theme; // eg. blue
+    const accentColor = this.extractColorFromCssVar(theme.accent) as keyof Theme; // eg. yellow
+    const primaryTextColor = this.getTextContrast(theme[primaryColor] as string, theme.bg2);
+    const accentTextColor = this.getTextContrast(theme[accentColor] as string, theme.bg2);
 
     document.documentElement.style.setProperty('--primary-txt', primaryTextColor);
     document.documentElement.style.setProperty('--accent-txt', accentTextColor);
@@ -150,12 +147,39 @@ export class ThemeService {
 
     let topbarTextColor;
     if (!theme['topbar-txt'] && theme.topbar) {
-      topbarTextColor = this.utils.textContrast(theme.topbar, theme.bg2);
+      topbarTextColor = this.getTextContrast(theme.topbar, theme.bg2);
       document.documentElement.style.setProperty('--topbar-txt', topbarTextColor);
     } else if (!theme['topbar-txt'] && !theme.topbar) {
-      topbarTextColor = this.utils.textContrast(theme[primaryColor] as string, theme.bg2);
+      topbarTextColor = this.getTextContrast(theme[primaryColor] as string, theme.bg2);
       document.documentElement.style.setProperty('--topbar-txt', topbarTextColor);
     }
+  }
+
+  /**
+   * Determines appropriate text color (light or dark) based on background color brightness.
+   */
+  private getTextContrast(foregroundColor: string, backgroundColor: string): string {
+    const rgb = new TinyColor(foregroundColor).toRgb();
+    const brightest = (rgb.r + rgb.b + rgb.g) / 3;
+
+    if (brightest < 144) {
+      return '#ffffff';
+    }
+    if (brightest > 191) {
+      return '#333333';
+    }
+
+    // RGB averages between 144-191 use background color to determine contrast
+    const backgroundRgb = new TinyColor(backgroundColor).toRgb();
+    const bgAvg = (backgroundRgb.r + backgroundRgb.g + backgroundRgb.b) / 3;
+    return bgAvg < 127 ? '#333333' : '#ffffff';
+  }
+
+  /**
+   * Extracts color name from CSS variable format (e.g., 'var(--blue)' => 'blue').
+   */
+  private extractColorFromCssVar(cssVar: string): string {
+    return cssVar.replace('var(--', '').replace(')', '');
   }
 
   darkTest(css: string): boolean {

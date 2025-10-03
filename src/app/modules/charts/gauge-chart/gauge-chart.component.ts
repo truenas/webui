@@ -4,7 +4,6 @@ import { ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { ThemeUtils } from 'app/modules/theme/utils/theme-utils';
 import './rounded-doughnut.class';
 
 const defaultHeight = 300;
@@ -82,18 +81,20 @@ export class GaugeChartComponent {
   });
 
   private conversionColor(color: string): string {
-    const colorType = (new ThemeUtils()).getValueType(color);
     let resultColor = color;
-    switch (colorType) {
-      case 'cssVar': {
-        const cssVar = color.replace('var(--', '').replace(')', '') as keyof Theme;
-        resultColor = this.themeService.currentTheme()[cssVar] as string;
-        return this.conversionColor(resultColor);
-      }
-      case 'rgba':
-        resultColor = new TinyColor(color).toHex8String();
-        return resultColor;
+
+    // Handle CSS variable format (e.g., 'var(--blue)')
+    if (color.startsWith('var')) {
+      const cssVar = color.replace('var(--', '').replace(')', '') as keyof Theme;
+      resultColor = this.themeService.currentTheme()[cssVar] as string;
+      return this.conversionColor(resultColor);
     }
+
+    // Convert RGBA to hex format for chart compatibility
+    if (color.startsWith('rgba(')) {
+      return new TinyColor(color).toHex8String();
+    }
+
     return resultColor;
   }
 }
