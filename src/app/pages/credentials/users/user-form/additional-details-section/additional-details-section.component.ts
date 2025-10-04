@@ -279,7 +279,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   protected getSudoCommands(): string {
     if (this.form.controls.sudo_commands_all.value) {
-      return allCommands;
+      return this.translate.instant('All');
     }
 
     return this.form.controls.sudo_commands.value?.join(', ') || '';
@@ -287,7 +287,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   protected getSudoCommandsNoPasswd(): string {
     if (this.form.controls.sudo_commands_nopasswd_all.value) {
-      return allCommands;
+      return this.translate.instant('All');
     }
 
     return this.form.controls.sudo_commands_nopasswd.value?.join(', ') || '';

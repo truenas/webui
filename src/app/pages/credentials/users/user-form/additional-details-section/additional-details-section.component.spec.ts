@@ -122,7 +122,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       const table = await loader.getHarness(DetailsTableHarness);
       const values = await table.getValues();
 
-      expect(values['Sudo Commands']).toContain('Allowed sudo commands: ALL');
+      expect(values['Sudo Commands']).toContain('Allowed Sudo Commands: All');
       expect(values['Sudo Commands']).toContain('Allowed Sudo Commands (No Password): rm -rf /');
     });
 
@@ -226,7 +226,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         Groups: 'Primary Group: test-group  Auxiliary Groups:  test-group-2, test-group-3',
         'Home Directory': '/home/test',
         Shell: '/usr/bin/bash',
-        'Sudo Commands': 'Allowed sudo commands: ALL  Allowed Sudo Commands (No Password): rm -rf /',
+        'Sudo Commands': 'Allowed Sudo Commands: All  Allowed Sudo Commands (No Password): rm -rf /',
       });
 
       expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({

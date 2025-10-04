@@ -108,8 +108,8 @@ describe('GroupFormComponent', () => {
       await form.fillForm({
         Name: 'new',
         'SMB Group': true,
-        'Allow all sudo commands': true,
-        'Allowed sudo commands with no password': ['ls'],
+        'Allow All Sudo Commands': true,
+        'Allowed Sudo Commands with No Password': ['ls'],
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -148,10 +148,10 @@ describe('GroupFormComponent', () => {
       expect(values).toEqual({
         GID: '1111',
         Name: 'editing',
-        'Allow all sudo commands': false,
-        'Allowed sudo commands': [],
-        'Allow all sudo commands with no password': true,
-        'Allowed sudo commands with no password': [],
+        'Allow All Sudo Commands': false,
+        'Allowed Sudo Commands': [],
+        'Allow All Sudo Commands with No Password': true,
+        'Allowed Sudo Commands with No Password': [],
         'SMB Group': false,
         Privileges: ['Privilege 1'],
       });
@@ -162,7 +162,7 @@ describe('GroupFormComponent', () => {
       await form.fillForm({
         Name: 'updated',
         'SMB Group': true,
-        'Allow all sudo commands with no password': false,
+        'Allow All Sudo Commands with No Password': false,
         Privileges: ['Privilege 1'],
       });
 
@@ -189,7 +189,7 @@ describe('GroupFormComponent', () => {
       await form.fillForm({
         Name: 'updated',
         'SMB Group': true,
-        'Allow all sudo commands with no password': false,
+        'Allow All Sudo Commands with No Password': false,
         Privileges: ['Privilege 2'],
       });
 
