@@ -1,0 +1,207 @@
+<ix-modal-header
+  [requiredRoles]="requiredRoles"
+  [title]="title()"
+  [loading]="isLoading()"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="submit()">
+      <ix-fieldset [title]="'Basic' | translate">
+        <ix-input
+          formControlName="name"
+          [label]="'Name' | translate"
+          [required]="true"
+          [tooltip]="'Container name' | translate"
+        ></ix-input>
+
+        @if (!isEditMode()) {
+          <ix-select
+            formControlName="pool"
+            [label]="'Pool' | translate"
+            [required]="true"
+            [tooltip]="'Pool to use for this container' | translate"
+            [options]="poolOptions$"
+          ></ix-select>
+        }
+
+        <ix-input
+          formControlName="description"
+          [label]="'Description' | translate"
+          [tooltip]="'Container description' | translate"
+        ></ix-input>
+
+        <ix-checkbox
+          formControlName="autostart"
+          [label]="'Autostart' | translate"
+          [tooltip]="'Automatically start the container on boot' | translate"
+        ></ix-checkbox>
+
+        @if (!isEditMode()) {
+          <div class="image-field">
+            <ix-input
+              class="input"
+              formControlName="image"
+              [readonly]="true"
+              [label]="'Image' | translate"
+              [required]="true"
+            ></ix-input>
+
+            <button
+              mat-button
+              ixTest="browse-images"
+              type="button"
+              (click)="onBrowseCatalogImages()"
+            >{{ 'Browse Catalog' | translate }}</button>
+          </div>
+        }
+      </ix-fieldset>
+
+      @if (isAdvancedMode) {
+        <ix-fieldset [title]="'CPU Configuration' | translate">
+          <ix-input
+            formControlName="vcpus"
+            type="number"
+            [label]="'Virtual CPUs' | translate"
+            [tooltip]="'Number of virtual CPUs (greater or equal to 1)' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="cores"
+            type="number"
+            [label]="'Cores' | translate"
+            [tooltip]="'Number of cores per socket' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="threads"
+            type="number"
+            [label]="'Threads' | translate"
+            [tooltip]="'Number of threads per core' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="cpuset"
+            [label]="'CPU Set' | translate"
+            [tooltip]="'List of physical CPU numbers to bind container to (e.g., 0-3,5)' | translate"
+          ></ix-input>
+        </ix-fieldset>
+
+        <ix-fieldset [title]="'Memory' | translate">
+          <ix-input
+            formControlName="memory"
+            type="number"
+            [label]="'Memory Size (MB)' | translate"
+            [tooltip]="'Memory available to container in megabytes' | translate"
+          ></ix-input>
+        </ix-fieldset>
+
+        <ix-fieldset [title]="'Time Configuration' | translate">
+          <ix-select
+            formControlName="time"
+            [label]="'Container Time' | translate"
+            [options]="timeOptions$"
+            [tooltip]="'Whether container time should be local time or UTC time' | translate"
+          ></ix-select>
+
+          <ix-input
+            formControlName="shutdown_timeout"
+            type="number"
+            [label]="'Shutdown Timeout (seconds)' | translate"
+            [tooltip]="'How many seconds to wait for container to shut down before killing it' | translate"
+          ></ix-input>
+        </ix-fieldset>
+
+        <ix-fieldset [title]="'Init Process' | translate">
+          @if (!isEditMode()) {
+            <ix-input
+              formControlName="init"
+              [label]="'Init Process' | translate"
+              [tooltip]="'Init process command line' | translate"
+            ></ix-input>
+          }
+
+          <ix-input
+            formControlName="initdir"
+            [label]="'Init Working Directory' | translate"
+            [tooltip]="'Init process working directory' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="inituser"
+            [label]="'Init User' | translate"
+            [tooltip]="'Init process username' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="initgroup"
+            [label]="'Init Group' | translate"
+            [tooltip]="'Init process group' | translate"
+          ></ix-input>
+        </ix-fieldset>
+
+        <ix-fieldset [title]="'Environment Variables' | translate">
+          <ix-list
+            formArrayName="environment_variables"
+            [empty]="form.controls.environment_variables.controls.length === 0"
+            [label]="'Environment Variables' | translate"
+            (add)="addEnvironmentVariable()"
+          >
+            @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
+              <ix-list-item
+                [formGroupName]="i"
+                [label]="'Environment Variable' | translate"
+                (delete)="removeEnvironmentVariable(i)"
+              >
+                <div class="environment-variable">
+                  <ix-input
+                    formControlName="name"
+                    [label]="'Name' | translate"
+                    [required]="true"
+                  ></ix-input>
+
+                  <ix-input
+                    formControlName="value"
+                    [label]="'Value' | translate"
+                    [required]="true"
+                  ></ix-input>
+                </div>
+              </ix-list-item>
+            }
+          </ix-list>
+        </ix-fieldset>
+
+        <ix-fieldset [title]="'Capabilities' | translate">
+          <ix-select
+            formControlName="capabilities_policy"
+            [label]="'Capabilities Policy' | translate"
+            [options]="capabilitiesPolicyOptions$"
+            [hideEmpty]="true"
+            [tooltip]="'Default rules for capabilities: DEFAULT (keep default behavior), ALLOW (drop all capabilities), or DENY (keep all capabilities)' | translate"
+          ></ix-select>
+        </ix-fieldset>
+      }
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          [ixTest]="isEditMode() ? 'save' : 'create'"
+          [disabled]="!form.valid || isLoading()"
+        >
+          {{ isEditMode() ? ('Save' | translate) : ('Create' | translate) }}
+        </button>
+
+        <button
+          mat-button
+          type="button"
+          ixTest="advanced-options"
+          (click)="this.isAdvancedMode = !this.isAdvancedMode"
+        >
+          {{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

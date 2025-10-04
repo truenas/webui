@@ -36,22 +36,17 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { IxImportIsoDialogComponent } from 'app/pages/instances/components/common/volumes-dialog/import-iso-dialog/import-iso-dialog.component';
 import {
   ImportZvolsDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/import-zvol-dialog/import-zvols-dialog.component';
 import {
   NewVolumeDialog,
 } from 'app/pages/instances/components/common/volumes-dialog/new-volume-dialog/new-volume-dialog.component';
-import {
-  UploadIsoButtonComponent,
-} from 'app/pages/instances/components/common/volumes-dialog/upload-iso-button/upload-iso-button.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface VolumesDialogOptions {
   selectionMode: boolean;
   config: VirtualizationGlobalConfig | null;
-  showIsoManagement: boolean | null;
 }
 
 @UntilDestroy()
@@ -72,7 +67,6 @@ export interface VolumesDialogOptions {
     IxTableComponent,
     IxTableHeadComponent,
     IxTableEmptyDirective,
-    UploadIsoButtonComponent,
     FakeProgressBarComponent,
     MatButton,
   ],
@@ -91,10 +85,9 @@ export class VolumesDialog implements OnInit {
   protected options = signal<VolumesDialogOptions>({
     selectionMode: false,
     config: null,
-    showIsoManagement: false,
   });
 
-  protected requiredRoles = [Role.VirtImageWrite];
+  protected requiredRoles = [Role.ContainerWrite];
 
   protected columns = computed(() => {
     const selectionMode = this.options().selectionMode;
@@ -165,7 +158,7 @@ export class VolumesDialog implements OnInit {
   constructor() {
     const options = inject<VolumesDialogOptions>(MAT_DIALOG_DATA);
 
-    this.options.set(options || { selectionMode: false, config: null, showIsoManagement: false });
+    this.options.set(options || { selectionMode: false, config: null });
   }
 
   ngOnInit(): void {
@@ -215,21 +208,5 @@ export class VolumesDialog implements OnInit {
 
   protected onImageUploaded(): void {
     this.dataProvider.load();
-  }
-
-  protected importIso(): void {
-    this.matDialog.open(IxImportIsoDialogComponent, {
-      minWidth: '500px',
-      data: {
-        config: this.options().config,
-      },
-    }).afterClosed().pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.dataProvider.load();
-      },
-    });
   }
 }

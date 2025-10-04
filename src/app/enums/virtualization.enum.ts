@@ -122,3 +122,25 @@ export enum VolumeContentType {
   Block = 'BLOCK',
   Iso = 'ISO',
 }
+
+export enum ContainerTime {
+  Local = 'LOCAL',
+  Utc = 'UTC',
+}
+
+export const containerTimeLabels = new Map<ContainerTime, string>([
+  [ContainerTime.Local, T('Local')],
+  [ContainerTime.Utc, T('UTC')],
+]);
+
+export enum ContainerCapabilitiesPolicy {
+  Default = 'DEFAULT',
+  Allow = 'ALLOW',
+  Deny = 'DENY',
+}
+
+export const containerCapabilitiesPolicyLabels = new Map<ContainerCapabilitiesPolicy, string>([
+  [ContainerCapabilitiesPolicy.Default, T('Default (keep default behavior)')],
+  [ContainerCapabilitiesPolicy.Allow, T('Allow (drop all capabilities)')],
+  [ContainerCapabilitiesPolicy.Deny, T('Deny (keep all capabilities)')],
+]);

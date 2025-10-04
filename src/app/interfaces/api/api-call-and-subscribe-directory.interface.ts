@@ -16,7 +16,7 @@ export interface ApiCallAndSubscribeEventDirectory {
   'group.query': { response: Group };
   'app.image.query': { response: ContainerImage };
   'app.query': { response: App };
-  'virt.instance.query': { response: VirtualizationInstance };
+  'container.query': { response: VirtualizationInstance };
 }
 
 export type ApiCallAndSubscribeMethod = keyof ApiCallAndSubscribeEventDirectory;

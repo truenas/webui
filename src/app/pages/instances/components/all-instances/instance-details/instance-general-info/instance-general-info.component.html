@@ -16,44 +16,81 @@
   <mat-card-content>
     @if (instance(); as instance) {
       <p>
+        <span class="label">{{ 'Description' | translate }}:</span>
+        {{ instance.description || ('N/A' | translate) }}
+      </p>
+      <p>
         <span class="label">{{ 'Autostart' | translate }}:</span>
         {{ instance.autostart | yesNo }}
       </p>
       <p>
-        <span class="label">{{ 'Base Image' | translate }}:</span>
-        {{ instance.image.description || instance.image.os || '-' }}
+        <span class="label">{{ 'Dataset' | translate }}:</span>
+        {{ instance.dataset }}
       </p>
       <p>
-        <span class="label">{{ 'CPU' | translate }}:</span>
-        {{ instance.cpu || ('All Host CPUs' | translate) }}
+        <span class="label">{{ 'Virtual CPUs' | translate }}:</span>
+        {{ instance.vcpus ?? ('N/A' | translate) }}
+      </p>
+      <p>
+        <span class="label">{{ 'Cores' | translate }}:</span>
+        {{ instance.cores ?? ('N/A' | translate) }}
+      </p>
+      <p>
+        <span class="label">{{ 'Threads' | translate }}:</span>
+        {{ instance.threads ?? ('N/A' | translate) }}
+      </p>
+      <p>
+        <span class="label">{{ 'CPU Set' | translate }}:</span>
+        {{ instance.cpuset || ('All Host CPUs' | translate) }}
       </p>
       <p>
         <span class="label">{{ 'Memory' | translate }}:</span>
-        {{ formatter.memorySizeFormatting(instance.memory) || ('Available Host Memory' | translate) }}
+        @if (instance.memory) {
+          {{ instance.memory }} MB
+        } @else {
+          {{ 'Available Host Memory' | translate }}
+        }
       </p>
       <p>
-        <span class="label">{{ 'Storage Pool' | translate }}:</span>
-        {{ instance.storage_pool || '-' }}
+        <span class="label">{{ 'Container Time' | translate }}:</span>
+        {{ instance.time }}
       </p>
-
-      @if (this.isVm()) {
+      <p>
+        <span class="label">{{ 'Shutdown Timeout' | translate }}:</span>
+        {{ instance.shutdown_timeout }} {{ 'seconds' | translate }}
+      </p>
+      <p>
+        <span class="label">{{ 'Init Process' | translate }}:</span>
+        {{ instance.init }}
+      </p>
+      @if (instance.initdir) {
         <p>
-          <span class="label">{{ 'Secure Boot' | translate }}:</span>
-          {{ instance.secure_boot | yesNo }}
+          <span class="label">{{ 'Init Working Directory' | translate }}:</span>
+          {{ instance.initdir }}
         </p>
       }
-
-      @if (instance.environment && (instance.environment | keyvalue)?.length) {
-        <span class="environment-variables" [matTooltip]="environmentVariablesTooltip()">
-          {{ '{n, plural, one {# Environment Variable} other {# Environment Variables} }' | translate: { n: (instance.environment | keyvalue)?.length } }}
-        </span>
+      @if (instance.inituser) {
+        <p>
+          <span class="label">{{ 'Init User' | translate }}:</span>
+          {{ instance.inituser }}
+        </p>
       }
+      @if (instance.initgroup) {
+        <p>
+          <span class="label">{{ 'Init Group' | translate }}:</span>
+          {{ instance.initgroup }}
+        </p>
+      }
+      <p>
+        <span class="label">{{ 'Capabilities Policy' | translate }}:</span>
+        {{ instance.capabilities_policy | mapValue: containerCapabilitiesPolicyLabels | translate }}
+      </p>
     }
   </mat-card-content>
 
   <mat-card-actions>
     <button
-      *ixRequiresRoles="[Role.VirtInstanceDelete]"
+      *ixRequiresRoles="[Role.ContainerWrite]"
       mat-button
       ixTest="delete-instance"
       (click)="deleteInstance()"

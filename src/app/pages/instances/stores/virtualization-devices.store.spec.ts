@@ -1,17 +1,18 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
 
 describe('VirtualizationDevicesStore', () => {
   let spectator: SpectatorService<VirtualizationDevicesStore>;
 
   const instances = [
-    { id: 'instance1' },
-    { id: 'instance2' },
-  ] as VirtualizationInstance[];
+    fakeVirtualizationInstance({ id: 1 }),
+    fakeVirtualizationInstance({ id: 2 }),
+  ];
 
   const devices = [
     { name: 'device1' },
@@ -57,7 +58,7 @@ describe('VirtualizationDevicesStore', () => {
 
     expect(spectator.service.devices()).toBe(devices);
     expect(spectator.inject(ApiService).call)
-      .toHaveBeenCalledWith('virt.instance.device_list', ['instance1']);
+      .toHaveBeenCalledWith('virt.instance.device_list', ['1']);
   });
 
   it('deviceDeleted – removes a device from list of devices for selected instance', () => {

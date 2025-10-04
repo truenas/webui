@@ -18,7 +18,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export interface VirtualizationInstancesState {
   isLoading: boolean;
   instances: VirtualizationInstance[] | undefined;
-  selectedInstanceId: string | null;
+  selectedInstanceId: number | null;
   selectedInstance: VirtualizationInstance | undefined;
   metrics: VirtualizationMetrics;
 }
@@ -58,12 +58,11 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
     this.destroySubscription$.next();
     return trigger$.pipe(
       switchMap(() => {
-        return this.api.call('virt.instance.query').pipe(
+        return this.api.call('container.query').pipe(
           tap((instances) => {
             const selectedInstanceId = this.selectedInstanceId();
-            const selectedInstance = this.selectedInstance();
 
-            if (!selectedInstance || selectedInstance.id !== selectedInstanceId) {
+            if (selectedInstanceId) {
               const updatedSelectedInstance = instances.find((instance) => instance.id === selectedInstanceId);
               if (updatedSelectedInstance) {
                 this.patchState({ selectedInstance: updatedSelectedInstance });
@@ -72,6 +71,8 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
               } else {
                 this.router.navigate(['/containers']);
               }
+            } else if (instances.length) {
+              this.router.navigate(['/containers', 'view', instances[0].id]);
             }
           }),
           tap((instances) => {
@@ -81,7 +82,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
             });
           }),
           switchMap(() => {
-            return this.api.subscribe('virt.instance.query').pipe(
+            return this.api.subscribe('container.query').pipe(
               tap((event) => this.processInstanceUpdateEvent(event)),
             );
           }),
@@ -98,7 +99,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
   });
 
   private processInstanceUpdateEvent(
-    event: ApiEventTyped<'virt.instance.query'>,
+    event: ApiEventTyped<'container.query'>,
   ): void {
     const prevInstances = this.instances();
     switch (event?.msg) {
@@ -128,10 +129,16 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
 
   instanceUpdated(updated: VirtualizationInstance): void {
     const instances = this.instances().map((instance) => (updated.id === instance.id ? updated : instance));
-    this.patchState({ instances });
+    const updates: Partial<VirtualizationInstancesState> = { instances };
+
+    if (this.selectedInstance()?.id === updated.id) {
+      updates.selectedInstance = updated;
+    }
+
+    this.patchState(updates);
   }
 
-  selectInstance(instanceId: string): void {
+  selectInstance(instanceId: number): void {
     this.patchState({ selectedInstanceId: instanceId });
     const instances = this.instances();
     const selectedInstance = instances?.find((instance) => instance.id === instanceId);
@@ -170,6 +177,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
         tap((metrics) => this.patchState({ metrics })),
         catchError(() => EMPTY),
       )),
+      untilDestroyed(this),
     );
   });
 }

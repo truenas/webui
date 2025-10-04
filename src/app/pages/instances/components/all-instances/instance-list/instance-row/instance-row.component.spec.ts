@@ -4,12 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import {
-  VirtualizationInstance,
   VirtualizationInstanceMetrics,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -23,14 +20,18 @@ import {
   StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
 
-const instance = {
-  id: 'my-instance',
+const instance = fakeVirtualizationInstance({
+  id: 1,
   name: 'agi_instance',
   autostart: false,
-  status: VirtualizationStatus.Running,
-  type: VirtualizationType.Container,
-} as VirtualizationInstance;
+  status: {
+    state: VirtualizationStatus.Running,
+    pid: 123,
+    domain_state: null,
+  },
+});
 
 const metrics: VirtualizationInstanceMetrics = {
   cpu: {
@@ -58,11 +59,6 @@ describe('InstanceRowComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockJob('virt.instance.restart', fakeSuccessfulJob()),
-        mockJob('virt.instance.start', fakeSuccessfulJob()),
-        mockJob('virt.instance.stop', fakeSuccessfulJob()),
-      ]),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of({
@@ -81,6 +77,14 @@ describe('InstanceRowComponent', () => {
         })),
       }),
       mockProvider(SnackbarService),
+      mockProvider(ApiService, {
+        call: jest.fn((method: string) => {
+          if (method === 'container.start' || method === 'container.stop') {
+            return of(undefined);
+          }
+          return of({});
+        }),
+      }),
     ],
   });
 
@@ -115,10 +119,14 @@ describe('InstanceRowComponent', () => {
     });
 
     it('shows Stop and Restart button when instance is Running', async () => {
-      spectator.setInput('instance', {
+      spectator.setInput('instance', fakeVirtualizationInstance({
         ...instance,
-        status: VirtualizationStatus.Running,
-      });
+        status: {
+          state: VirtualizationStatus.Running,
+          pid: 123,
+          domain_state: null,
+        },
+      }));
 
       const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop-circle' }));
       const startIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-play-circle' }));
@@ -130,10 +138,14 @@ describe('InstanceRowComponent', () => {
     });
 
     it('shows Start button when instance is Stopped', async () => {
-      spectator.setInput('instance', {
+      spectator.setInput('instance', fakeVirtualizationInstance({
         ...instance,
-        status: VirtualizationStatus.Stopped,
-      });
+        status: {
+          state: VirtualizationStatus.Stopped,
+          pid: null,
+          domain_state: null,
+        },
+      }));
 
       const stopIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-stop-circle' }));
       const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
@@ -153,10 +165,9 @@ describe('InstanceRowComponent', () => {
       expect(spectator.inject(MatDialog).open)
         .toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Stop });
 
-      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
-        'virt.instance.stop',
-        ['my-instance', { force: true, timeout: -1 }],
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'container.stop',
+        [1, { force: true, timeout: -1 }],
       );
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container stopped');
     });
@@ -168,25 +179,31 @@ describe('InstanceRowComponent', () => {
       expect(spectator.inject(MatDialog).open)
         .toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
 
-      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
-        'virt.instance.restart',
-        ['my-instance', { force: true, timeout: -1 }],
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'container.stop',
+        [1, { force: true, timeout: -1 }],
+      );
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'container.start',
+        [1],
       );
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container restarted');
     });
 
     it('starts an instance when Start icon is pressed', async () => {
-      spectator.setInput('instance', {
+      spectator.setInput('instance', fakeVirtualizationInstance({
         ...instance,
-        status: VirtualizationStatus.Stopped,
-      });
+        status: {
+          state: VirtualizationStatus.Stopped,
+          pid: null,
+          domain_state: null,
+        },
+      }));
 
       const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
       await startIcon.click();
 
-      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.start', ['my-instance']);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.start', [1]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container started');
     });
   });

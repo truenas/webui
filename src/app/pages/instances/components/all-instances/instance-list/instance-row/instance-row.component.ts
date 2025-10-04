@@ -16,7 +16,6 @@ import {
   VirtualizationStopParams,
   VirtualizationInstanceMetrics,
 } from 'app/interfaces/virtualization.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -48,7 +47,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class InstanceRowComponent {
-  private dialog = inject(DialogService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
@@ -56,16 +54,16 @@ export class InstanceRowComponent {
   private snackbar = inject(SnackbarService);
   private instancesStore = inject(VirtualizationInstancesStore);
 
-  protected readonly requiredRoles = [Role.VirtInstanceWrite];
+  protected readonly requiredRoles = [Role.ContainerWrite];
   readonly instance = input.required<VirtualizationInstance>();
   readonly metrics = input<VirtualizationInstanceMetrics | undefined>();
   readonly selected = input<boolean>(false);
-  protected readonly isStopped = computed(() => this.instance()?.status === VirtualizationStatus.Stopped);
+  protected readonly isStopped = computed(() => this.instance()?.status?.state === VirtualizationStatus.Stopped);
 
   readonly hasMetrics = computed(() => {
     const metrics = this.metrics();
 
-    return this.instance()?.status === VirtualizationStatus.Running
+    return this.instance()?.status?.state === VirtualizationStatus.Running
       && metrics
       && Object.keys(metrics).length > 0;
   });
@@ -75,11 +73,7 @@ export class InstanceRowComponent {
   start(): void {
     const instanceId = this.instance().id;
 
-    this.dialog.jobDialog(
-      this.api.job('virt.instance.start', [instanceId]),
-      { title: this.translate.instant('Starting...') },
-    )
-      .afterClosed()
+    this.api.call('container.start', [instanceId])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Container started'));
@@ -96,11 +90,7 @@ export class InstanceRowComponent {
       .pipe(
         filter(Boolean),
         switchMap((options: VirtualizationStopParams) => {
-          return this.dialog.jobDialog(
-            this.api.job('virt.instance.stop', [instanceId, options]),
-            { title: this.translate.instant('Stopping...') },
-          )
-            .afterClosed()
+          return this.api.call('container.stop', [instanceId, options])
             .pipe(this.errorHandler.withErrorHandler());
         }),
         untilDestroyed(this),
@@ -120,12 +110,11 @@ export class InstanceRowComponent {
       .pipe(
         filter(Boolean),
         switchMap((options: VirtualizationStopParams) => {
-          return this.dialog.jobDialog(
-            this.api.job('virt.instance.restart', [instanceId, options]),
-            { title: this.translate.instant('Restarting...') },
-          )
-            .afterClosed()
-            .pipe(this.errorHandler.withErrorHandler());
+          return this.api.call('container.stop', [instanceId, options])
+            .pipe(
+              switchMap(() => this.api.call('container.start', [instanceId])),
+              this.errorHandler.withErrorHandler(),
+            );
         }),
         untilDestroyed(this),
       )

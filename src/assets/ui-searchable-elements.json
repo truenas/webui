@@ -1832,7 +1832,7 @@
       "/containers"
     ],
     "routerLink": null,
-    "anchor": "vm-global-settings",
+    "anchor": "container-global-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1852,10 +1852,8 @@
     "anchorRouterLink": [
       "/containers"
     ],
-    "routerLink": [
-      "/containers/new"
-    ],
-    "anchor": "add-instance",
+    "routerLink": null,
+    "anchor": "add-container",
     "triggerAnchor": null,
     "section": "ui"
   },

@@ -7,41 +7,25 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset [title]="'Storage' | translate">
-        <ix-slide-toggle
-          formControlName="pool"
-          [label]="'Enable Containers' | translate"
-        ></ix-slide-toggle>
-
-        @if (form.controls.pool.value) {
-          <ix-select
-            formControlName="storage_pools"
-            [label]="'Pools' | translate"
-            [multiple]="true"
-            [options]="poolOptions$"
-          ></ix-select>
-        }
-      </ix-fieldset>
 
       <ix-fieldset [title]="'Default Network' | translate">
         <ix-select
           formControlName="bridge"
           [label]="'Bridge' | translate"
-          [required]="true"
           [options]="bridgeOptions$"
+          [hideEmpty]="true"
         ></ix-select>
 
         @if (isAutoBridge) {
           <ix-ip-input-with-netmask
             formControlName="v4_network"
             [label]="'IPv4 Network' | translate"
-            [hint]="'Leave empty for default values' | translate"
+            [required]="true"
           ></ix-ip-input-with-netmask>
 
           <ix-ip-input-with-netmask
             formControlName="v6_network"
             [label]="'IPv6 Network' | translate"
-            [hint]="'Leave empty for default values' | translate"
           ></ix-ip-input-with-netmask>
         }
       </ix-fieldset>

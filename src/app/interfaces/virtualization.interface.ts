@@ -1,17 +1,14 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import {
-  AllowedImageOs,
   DiskIoBus,
   ImageOs,
   VirtualizationDeviceType,
-  VirtualizationGlobalState,
   VirtualizationGpuType,
   VirtualizationNetworkType,
   VirtualizationNicType,
   VirtualizationProxyProtocol,
   VirtualizationRemote,
-  VirtualizationSource,
   VirtualizationStatus,
   VirtualizationType, VolumeContentType,
 } from 'app/enums/virtualization.enum';
@@ -31,25 +28,34 @@ export interface VirtualizationInstanceMetrics {
 }
 
 export interface VirtualizationInstance {
-  id: string;
+  id: number;
+  uuid: string;
   name: string;
-  type: VirtualizationType;
-  status: VirtualizationStatus;
-  cpu: string;
-  memory: number;
+  description: string;
+  vcpus: number | null;
+  cores: number | null;
+  threads: number | null;
+  cpuset: string | null;
+  memory: number | null;
   autostart: boolean;
-  environment: Record<string, string>;
-  aliases: VirtualizationAlias;
-  raw: unknown;
-  image: VirtualizationImage;
-  vnc_enabled: boolean;
-  vnc_port: number | null;
-  vnc_password: string | null;
-  secure_boot: boolean;
-  root_disk_io_bus: DiskIoBus;
-  root_disk_size: number | null;
-  userns_idmap: UserNsIdmap | null;
-  storage_pool: string;
+  time: string;
+  shutdown_timeout: number;
+  dataset: string;
+  init: string;
+  initdir: string | null;
+  initenv: Record<string, unknown>;
+  inituser: string | null;
+  initgroup: string | null;
+  idmap: {
+    type: string;
+  };
+  capabilities_policy: string;
+  capabilities_state: Record<string, unknown>;
+  status: {
+    state: VirtualizationStatus;
+    pid: number | null;
+    domain_state: string | null;
+  };
 }
 
 export interface VirtualizationAlias {
@@ -58,54 +64,39 @@ export interface VirtualizationAlias {
   netmask: string;
 }
 
-export interface CreateVirtualizationInstance {
+export type CreateVirtualizationInstance = Partial<Omit<VirtualizationInstance, 'id' | 'dataset' | 'status' | 'idmap'>> & {
+  uuid: string;
   name: string;
-  image: string;
-  remote: VirtualizationRemote;
-  instance_type: VirtualizationType;
+  autostart: boolean;
+  pool: string;
+  image: {
+    name: string;
+    version: string;
+  };
+  gpu_devices?: string[];
+  usb_devices?: string[];
+};
 
-  /**
-   * Value in GBs.
-   */
-  root_disk_size?: number;
-  root_disk_io_bus?: DiskIoBus;
-  source_type?: VirtualizationSource;
-  environment?: Record<string, string>;
-  autostart?: boolean;
-  secure_boot?: boolean;
-  cpu: string;
-  iso_volume?: string;
-  /**
-   * Value must be greater or equal to 33554432
-   */
-  memory: number;
-  devices: VirtualizationDevice[];
-  enable_vnc?: boolean;
-  /**
-   * Value must be greater or equal to 5900 and lesser or equal to 65535
-   */
-  vnc_port?: number | null;
-  vnc_password?: string | null;
-
-  zvol_path?: string | null;
-  storage_pool: string | null;
-  volume?: string | null;
-  image_os?: AllowedImageOs;
-}
-
-export interface UpdateVirtualizationInstance {
-  environment?: Record<string, string>;
-  autostart?: boolean;
-  cpu?: string;
-  memory?: number;
-  enable_vnc?: boolean;
-  vnc_port?: number | null;
-  secure_boot?: boolean;
-  root_disk_io_bus?: DiskIoBus;
-  vnc_password?: string | null;
-  root_disk_size?: number;
-  image_os?: AllowedImageOs;
-}
+export type UpdateVirtualizationInstance = Partial<Pick<VirtualizationInstance,
+  | 'uuid'
+  | 'name'
+  | 'description'
+  | 'vcpus'
+  | 'cores'
+  | 'threads'
+  | 'cpuset'
+  | 'memory'
+  | 'autostart'
+  | 'time'
+  | 'shutdown_timeout'
+  | 'init'
+  | 'initdir'
+  | 'initenv'
+  | 'inituser'
+  | 'initgroup'
+  | 'capabilities_policy'
+  | 'capabilities_state'
+>>;
 
 export type VirtualizationDevice =
   | VirtualizationDisk
@@ -220,27 +211,14 @@ export interface VirtualizationImage {
 }
 
 export interface VirtualizationStopParams {
-  timeout?: number;
   force?: boolean;
-}
-
-export interface VirtualizationGlobalConfigUpdate {
-  pool?: string;
-  bridge?: string | null;
-  v4_network?: string | null;
-  v6_network?: string | null;
-  storage_pools: string[] | null;
+  force_after_timeout?: boolean;
 }
 
 export interface VirtualizationGlobalConfig {
-  id: number;
-  pool: string | null;
   bridge: string | null;
   v4_network: string | null;
   v6_network: string | null;
-  dataset: string | null;
-  state: VirtualizationGlobalState;
-  storage_pools: string[];
 }
 
 export interface VirtualizationNetwork {
@@ -254,6 +232,11 @@ export interface VirtualizationNetwork {
 
 export interface VirtualizationImageParams {
   remote: VirtualizationRemote;
+}
+
+export interface ContainerImageRegistryResponse {
+  name: string;
+  versions: string[];
 }
 
 export interface AvailableGpu {

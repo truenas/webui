@@ -6,7 +6,7 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -35,7 +35,5 @@ export class InstanceToolsComponent {
 
   readonly instance = input.required<VirtualizationInstance>();
 
-  protected readonly isInstanceStopped = computed(() => this.instance().status !== VirtualizationStatus.Running);
-  protected readonly isVm = computed(() => this.instance().type === VirtualizationType.Vm);
-  protected readonly vncLink = computed(() => `vnc://${this.window.location.hostname}:${this.instance().vnc_port}`);
+  protected readonly isInstanceStopped = computed(() => this.instance().status?.state !== VirtualizationStatus.Running);
 }

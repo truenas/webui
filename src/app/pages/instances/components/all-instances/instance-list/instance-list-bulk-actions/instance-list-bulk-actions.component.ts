@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   filter,
+  switchMap,
   tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -47,31 +48,31 @@ export class InstanceListBulkActionsComponent {
   readonly checkedInstances = input.required<VirtualizationInstance[]>();
   readonly resetBulkSelection = output();
 
-  protected readonly requiredRoles = [Role.VirtInstanceWrite];
+  protected readonly requiredRoles = [Role.ContainerWrite];
 
   readonly bulkActionStartedMessage = this.translate.instant('Requested action performed for selected Containers');
 
   protected readonly isBulkStartDisabled = computed(() => {
     return this.checkedInstances().every(
-      (instance) => [VirtualizationStatus.Running].includes(instance.status),
+      (instance) => [VirtualizationStatus.Running].includes(instance.status?.state),
     );
   });
 
   protected readonly isBulkStopDisabled = computed(() => {
     return this.checkedInstances().every(
-      (instance) => [VirtualizationStatus.Stopped].includes(instance.status),
+      (instance) => [VirtualizationStatus.Stopped].includes(instance.status?.state),
     );
   });
 
   protected readonly activeCheckedInstances = computed(() => {
     return this.checkedInstances().filter(
-      (instance) => [VirtualizationStatus.Running].includes(instance.status),
+      (instance) => [VirtualizationStatus.Running].includes(instance.status?.state),
     );
   });
 
   protected readonly stoppedCheckedInstances = computed(() => {
     return this.checkedInstances().filter(
-      (instance) => [VirtualizationStatus.Stopped].includes(instance.status),
+      (instance) => [VirtualizationStatus.Stopped].includes(instance.status?.state),
     );
   });
 
@@ -111,21 +112,25 @@ export class InstanceListBulkActionsComponent {
       ).subscribe();
   }
 
-  private start(instanceId: string): void {
-    this.api.job('virt.instance.start', [instanceId])
+  private start(instanceId: number): void {
+    this.api.call('container.start', [instanceId])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe();
   }
 
-  private stop(instanceId: string, options: VirtualizationStopParams): void {
-    this.api.job('virt.instance.stop', [instanceId, options])
+  private stop(instanceId: number, options: VirtualizationStopParams): void {
+    this.api.call('container.stop', [instanceId, options])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe();
   }
 
-  private restart(instanceId: string, options: VirtualizationStopParams): void {
-    this.api.job('virt.instance.restart', [instanceId, options])
-      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
+  private restart(instanceId: number, options: VirtualizationStopParams): void {
+    this.api.call('container.stop', [instanceId, options])
+      .pipe(
+        switchMap(() => this.api.call('container.start', [instanceId])),
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
       .subscribe();
   }
 }

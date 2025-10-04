@@ -62,7 +62,7 @@ export class DeviceActionsMenuComponent {
       return this.translate.instant('This device is read-only and cannot be edited.');
     }
 
-    const isInstanceStopped = this.instancesStore.selectedInstance()?.status === VirtualizationStatus.Stopped;
+    const isInstanceStopped = this.instancesStore.selectedInstance()?.status?.state === VirtualizationStatus.Stopped;
     if (this.device().dev_type === VirtualizationDeviceType.Tpm && !isInstanceStopped) {
       return this.translate.instant('This device cannot be edited while the instance is running.');
     }
