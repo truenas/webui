@@ -29,7 +29,6 @@ export class ViewChartAreaComponent implements OnDestroy {
   canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
   data = input.required<ChartData<'line'>>();
   options = input<ChartOptions<'line'>>();
-  height = input<number>(192);
 
   chart: Chart;
   maxSources = 8;
