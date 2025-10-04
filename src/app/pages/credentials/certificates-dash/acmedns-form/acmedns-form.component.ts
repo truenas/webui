@@ -29,6 +29,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { CloudflareAuthValidator } from 'app/pages/credentials/certificates-dash/acmedns-form/cloudflare-auth.validator';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface DnsAuthenticatorList {
@@ -40,6 +41,7 @@ interface DnsAuthenticatorList {
 @Component({
   selector: 'ix-acmedns-form',
   templateUrl: './acmedns-form.component.html',
+  styleUrl: './acmedns-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
@@ -80,7 +82,14 @@ export class AcmednsFormComponent implements OnInit {
   form = this.formBuilder.nonNullable.group({
     name: [null as string | null, Validators.required],
     authenticator: [DnsAuthenticatorType.Cloudflare, Validators.required],
-    attributes: this.formBuilder.group<Record<string, string>>({}),
+    attributes: this.formBuilder.group<Record<string, string>>({}, {
+      validators: [(formGroup) => {
+        if (this.form?.value.authenticator !== DnsAuthenticatorType.Cloudflare) {
+          return null;
+        }
+        return CloudflareAuthValidator.validate(this.translate)(formGroup);
+      }],
+    }),
   });
 
   get formGroup(): UntypedFormGroup {
@@ -111,6 +120,13 @@ export class AcmednsFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadSchemas();
+
+    // Listen to authenticator type changes
+    this.form.controls.authenticator.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((authenticatorType) => {
+        this.onAuthenticatorTypeChanged(authenticatorType);
+      });
   }
 
   private loadSchemas(): void {
@@ -126,7 +142,15 @@ export class AcmednsFormComponent implements OnInit {
 
         if (this.editingAcmedns) {
           this.form.patchValue(this.editingAcmedns);
+          const authenticatorType = this.editingAcmedns.attributes.authenticator as DnsAuthenticatorType;
+          if (authenticatorType) {
+            this.form.patchValue({ authenticator: authenticatorType });
+            this.onAuthenticatorTypeChanged(authenticatorType);
+          }
         }
+
+        // Setup validation listeners after controls are created
+        this.setupCloudflareValidation();
 
         this.isLoading.set(false);
         this.isLoadingSchemas.set(false);
@@ -192,6 +216,26 @@ export class AcmednsFormComponent implements OnInit {
         });
       }
     });
+    // Re-validate when authenticator type changes
+    this.form.controls.attributes.updateValueAndValidity();
+  }
+
+  private setupCloudflareValidation(): void {
+    const attributes = this.form.controls.attributes;
+
+    // Listen to value changes on Cloudflare fields to re-validate
+    ['cloudflare_email', 'api_key', 'api_token'].forEach((fieldName) => {
+      const control = attributes.get(fieldName);
+      if (control) {
+        control.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+          attributes.updateValueAndValidity();
+        });
+      }
+    });
+  }
+
+  protected isCloudflareAuthenticator(): boolean {
+    return this.form.value.authenticator === DnsAuthenticatorType.Cloudflare;
   }
 
   protected onSubmit(): void {
