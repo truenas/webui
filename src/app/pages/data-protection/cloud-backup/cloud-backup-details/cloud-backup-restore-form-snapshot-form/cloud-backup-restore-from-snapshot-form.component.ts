@@ -101,11 +101,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     includedPaths: [[] as string[]],
   });
 
-  protected get includedPathsRootNodes(): ExplorerNodeData[] {
-    return this.form.controls.subFolder.value
-      ? [{ ...datasetsRootNode, path: this.form.controls.subFolder.value, name: this.form.controls.subFolder.value }]
-      : [{ ...datasetsRootNode, path: this.backupMntPath, name: this.backupMntPath }];
-  }
+  protected readonly includedPathsRootNodes = signal<ExplorerNodeData[]>([]);
 
   protected readonly rootDatasetNode: ExplorerNodeData = datasetsRootNode;
   protected readonly slashRootNode: ExplorerNodeData = slashRootNode;
@@ -141,6 +137,8 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     this.form.patchValue({
       subFolder: this.backupMntPath,
     });
+
+    this.updateIncludedPathsRootNodes();
   }
 
   ngOnInit(): void {
@@ -249,6 +247,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     this.form.controls.subFolder.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.form.controls.includedPaths.setValue([]);
+        this.updateIncludedPathsRootNodes();
       },
     });
   }
@@ -266,5 +265,13 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     this.form.controls.excludedPaths.disable();
     this.form.controls.includedPaths.disable();
     this.form.controls.subFolder.disable();
+  }
+
+  private updateIncludedPathsRootNodes(): void {
+    const subfolderValue = this.form.controls.subFolder.value;
+    const rootNodes = subfolderValue
+      ? [{ ...this.slashRootNode, path: subfolderValue, name: subfolderValue }]
+      : [{ ...this.slashRootNode, path: this.backupMntPath, name: this.backupMntPath }];
+    this.includedPathsRootNodes.set(rootNodes);
   }
 }

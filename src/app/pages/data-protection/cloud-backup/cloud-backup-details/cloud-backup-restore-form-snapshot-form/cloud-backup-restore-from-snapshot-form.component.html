@@ -54,7 +54,7 @@
         @if (isIncludeFromSubfolderSelected) {
           <ix-explorer
             formControlName="includedPaths"
-            [rootNodes]="includedPathsRootNodes"
+            [rootNodes]="includedPathsRootNodes()"
             [label]="'Included Paths' | translate"
             [nodeProvider]="snapshotNodeProvider"
             [tooltip]="helptext.tooltips.includedPaths | translate"

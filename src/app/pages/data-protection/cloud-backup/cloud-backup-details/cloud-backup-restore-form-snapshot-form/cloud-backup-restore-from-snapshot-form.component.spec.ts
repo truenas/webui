@@ -179,4 +179,51 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       ]);
     });
   });
+
+  describe('includedPathsRootNodes signal', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('initializes includedPathsRootNodes with backup path', () => {
+      const component = spectator.component as unknown as { includedPathsRootNodes: () => unknown[] };
+      const rootNodes = component.includedPathsRootNodes();
+      expect(rootNodes).toHaveLength(1);
+      expect(rootNodes[0]).toMatchObject({
+        path: '/mnt/dozer',
+        name: '/mnt/dozer',
+      });
+    });
+
+    it('updates includedPathsRootNodes when subfolder changes', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Include/Exclude': 'Include from subfolder',
+        Subfolder: '/mnt/dozer/subfolder',
+      });
+
+      const component = spectator.component as unknown as { includedPathsRootNodes: () => unknown[] };
+      const rootNodes = component.includedPathsRootNodes();
+      expect(rootNodes).toHaveLength(1);
+      expect(rootNodes[0]).toMatchObject({
+        path: '/mnt/dozer/subfolder',
+        name: '/mnt/dozer/subfolder',
+      });
+    });
+
+    it('resets includedPaths when subfolder changes', async () => {
+      spectator.component.form.patchValue({
+        includedPaths: ['/mnt/dozer/path1', '/mnt/dozer/path2'],
+      });
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Include/Exclude': 'Include from subfolder',
+        Subfolder: '/mnt/dozer/new-subfolder',
+      });
+
+      expect(spectator.component.form.controls.includedPaths.value).toEqual([]);
+    });
+  });
 });
