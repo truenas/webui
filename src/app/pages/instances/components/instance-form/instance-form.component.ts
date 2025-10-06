@@ -165,10 +165,10 @@ export class InstanceFormComponent implements OnInit {
     memory: [null as number | null, [Validators.min(20)]],
     time: [ContainerTime.Local],
     shutdown_timeout: [30, [Validators.min(5), Validators.max(300)]],
-    init: ['/sbin/init'],
-    initdir: [''],
-    inituser: [''],
-    initgroup: [''],
+    init: [null as string | null],
+    initdir: [null as string | null],
+    inituser: [null as string | null],
+    initgroup: [null as string | null],
     capabilities_policy: [ContainerCapabilitiesPolicy.Default],
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
     use_default_network: [true],
@@ -215,13 +215,15 @@ export class InstanceFormComponent implements OnInit {
 
     this.form.controls.pool.setValidators(Validators.required);
     this.form.controls.image.setValidators([Validators.required, Validators.minLength(1), Validators.maxLength(200)]);
-    this.form.controls.init.setValue('/sbin/init');
 
     this.form.reset({
       autostart: true,
       time: ContainerTime.Local,
       shutdown_timeout: 30,
-      init: '/sbin/init',
+      init: null,
+      initdir: null,
+      inituser: null,
+      initgroup: null,
       capabilities_policy: ContainerCapabilitiesPolicy.Default,
       use_default_network: true,
       usb_devices: [],
@@ -436,10 +438,10 @@ export class InstanceFormComponent implements OnInit {
     if (form.time) payload.time = form.time;
     if (form.shutdown_timeout) payload.shutdown_timeout = form.shutdown_timeout;
 
-    if (form.init) payload.init = form.init;
-    if (form.initdir) payload.initdir = form.initdir;
-    if (form.inituser) payload.inituser = form.inituser;
-    if (form.initgroup) payload.initgroup = form.initgroup;
+    if (form.init !== null && form.init !== '') payload.init = form.init;
+    if (form.initdir !== null && form.initdir !== '') payload.initdir = form.initdir;
+    if (form.inituser !== null && form.inituser !== '') payload.inituser = form.inituser;
+    if (form.initgroup !== null && form.initgroup !== '') payload.initgroup = form.initgroup;
 
     if (form.capabilities_policy) payload.capabilities_policy = form.capabilities_policy;
 
