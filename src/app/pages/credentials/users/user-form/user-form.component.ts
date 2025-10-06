@@ -80,6 +80,12 @@ export class UserFormComponent implements OnInit {
 
   protected isFormInvalid = signal<boolean>(false);
 
+  // Signals to track home directory and shell for validation
+  protected homeDirectory = signal<string>(defaultHomePath);
+  protected shell = signal<string | null>(null);
+  protected password = signal<string>('');
+  protected passwordDisabled = signal<boolean>(false);
+
   protected readonly tooltips = tooltips;
   protected readonly Role = Role;
   protected readonly fakeTooltip = '';
@@ -159,6 +165,7 @@ export class UserFormComponent implements OnInit {
   ngOnInit(): void {
     this.setupForm();
     this.setupAccessWatchers();
+    this.setupHomeAndShellWatchers();
   }
 
   private setupForm(): void {
@@ -252,6 +259,40 @@ export class UserFormComponent implements OnInit {
     ).subscribe(() => {
       // Force form validation recalculation for all forms
       this.reloadFormValidationState();
+    });
+  }
+
+  /**
+   * Setup watchers for home directory and shell to update signals for auth validation
+   */
+  private setupHomeAndShellWatchers(): void {
+    this.additionalDetailsSection().form.controls.home.valueChanges.pipe(
+      startWith(this.additionalDetailsSection().form.controls.home.value),
+      untilDestroyed(this),
+    ).subscribe((home) => {
+      this.homeDirectory.set(home || defaultHomePath);
+    });
+
+    this.additionalDetailsSection().form.controls.shell.valueChanges.pipe(
+      startWith(this.additionalDetailsSection().form.controls.shell.value),
+      untilDestroyed(this),
+    ).subscribe((shell) => {
+      this.shell.set(shell);
+    });
+
+    // Watch password and password_disabled for SMB validation
+    this.authSection().form.controls.password.valueChanges.pipe(
+      startWith(this.authSection().form.controls.password.value),
+      untilDestroyed(this),
+    ).subscribe((pwd) => {
+      this.password.set(pwd || '');
+    });
+
+    this.authSection().form.controls.password_disabled.valueChanges.pipe(
+      startWith(this.authSection().form.controls.password_disabled.value),
+      untilDestroyed(this),
+    ).subscribe((disabled) => {
+      this.passwordDisabled.set(disabled || false);
     });
   }
 
