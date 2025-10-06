@@ -4,7 +4,7 @@ import { subHours } from 'date-fns';
 import {
   Observable, Subject, catchError, debounceTime,
   filter,
-  forkJoin, map, of, repeat, shareReplay, startWith, throttleTime, timer,
+  forkJoin, map, NEVER, of, repeat, shareReplay, startWith, throttleTime, timer,
 } from 'rxjs';
 import { detectStaleData, StaleDataState } from 'app/helpers/operators/detect-stale-data.operator';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -165,10 +165,12 @@ export class WidgetResourcesService {
   /**
    * Returns CPU data with stale detection.
    * Data is considered stale if no updates received within 5 seconds.
+   * Errors in the stream are caught and the observable completes silently.
    */
   cpuUpdatesWithStaleDetection(): Observable<StaleDataState<AllCpusUpdate>> {
     return this.realtimeUpdates$.pipe(
       map((update) => update.fields.cpu),
+      catchError(() => NEVER),
       detectStaleData(5000),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
@@ -177,10 +179,12 @@ export class WidgetResourcesService {
   /**
    * Returns memory data with stale detection.
    * Data is considered stale if no updates received within 5 seconds.
+   * Errors in the stream are caught and the observable completes silently.
    */
   memoryUpdatesWithStaleDetection(): Observable<StaleDataState<MemoryUpdate>> {
     return this.realtimeUpdates$.pipe(
       map((update) => update.fields.memory),
+      catchError(() => NEVER),
       detectStaleData(5000),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
@@ -189,10 +193,12 @@ export class WidgetResourcesService {
   /**
    * Returns network interface data with stale detection.
    * Data is considered stale if no updates received within 5 seconds.
+   * Errors in the stream are caught and the observable completes silently.
    */
   networkInterfaceUpdatesWithStaleDetection(): Observable<StaleDataState<AllNetworkInterfacesUpdate>> {
     return this.realtimeUpdates$.pipe(
       map((update) => update.fields.interfaces),
+      catchError(() => NEVER),
       detectStaleData(5000),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
@@ -201,10 +207,12 @@ export class WidgetResourcesService {
   /**
    * Returns pool data with stale detection.
    * Data is considered stale if no updates received within 5 seconds.
+   * Errors in the stream are caught and the observable completes silently.
    */
   poolUpdatesWithStaleDetection(): Observable<StaleDataState<Record<string, PoolUsage>>> {
     return this.realtimeUpdates$.pipe(
       map((update) => update.fields.pools),
+      catchError(() => NEVER),
       detectStaleData(5000),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
