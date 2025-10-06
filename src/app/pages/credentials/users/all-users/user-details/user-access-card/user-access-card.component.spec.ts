@@ -152,7 +152,7 @@ describe('UserAccessCardComponent', () => {
     expect(shellAccessSection).toHaveText('Shell Access: /bin/bash');
 
     const additionalShellAccessInfo = spectator.query('.additional-info');
-    expect(additionalShellAccessInfo).toHaveText('Allowed sudo commands: command1, command2  Allowed Sudo Commands (No Password): command3');
+    expect(additionalShellAccessInfo).toHaveText('Allowed Sudo Commands: command1, command2  Allowed Sudo Commands (No Password): command3');
   });
 
   it('clears two-factor authentication when Clear Two-Factor Authentication is clicked', async () => {

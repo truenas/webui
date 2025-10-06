@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
+import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
@@ -186,5 +187,15 @@ export class UserAccessCardComponent {
       this.snackbar.success(this.translate.instant('Two-Factor Authentication settings cleared'));
       this.reloadUsers.emit();
     });
+  }
+
+  protected formatSudoCommands(commands: string[]): string {
+    if (!commands?.length) {
+      return '';
+    }
+
+    return commands
+      .map((cmd) => (cmd === allCommands ? this.translate.instant('All') : cmd))
+      .join(', ');
   }
 }
