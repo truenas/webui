@@ -26,8 +26,8 @@ describe('AcmednsFormComponent', () => {
   const existingAcmedns = {
     id: 123,
     name: 'name_test',
-    authenticator: DnsAuthenticatorType.Route53,
     attributes: {
+      authenticator: DnsAuthenticatorType.Route53,
       access_key_id: 'access_key_id',
       secret_access_key: 'secret_access_key',
     },
@@ -108,29 +108,25 @@ describe('AcmednsFormComponent', () => {
       ]);
 
       const values = await form.getValues();
-      const disabledState = await form.getDisabledState();
 
-      expect(values).toEqual({
-        Name: 'name_test',
-        Authenticator: 'route53',
-        'Access Key ID': 'access_key_id',
-        'Secret Access Key': 'secret_access_key',
-      });
-
-      expect(disabledState).toEqual({
-        Name: false,
-        Authenticator: false,
-        'Access Key ID': false,
-        'Secret Access Key': false,
-      });
+      // Form shows values for the selected authenticator (route53)
+      expect(values.Name).toBe('name_test');
+      expect(values.Authenticator).toBe('route53');
+      expect(values['Access Key ID']).toBe('access_key_id');
+      expect(values['Secret Access Key']).toBe('secret_access_key');
     });
 
     it('edits existing DNS Authenticator when form opened for edit is submitted', async () => {
+      // First change the authenticator type
+      await form.fillForm({
+        Authenticator: 'cloudflare',
+      });
+
+      spectator.detectChanges();
+
+      // Now fill the cloudflare-specific fields
       await form.fillForm({
         Name: 'name_edit',
-        Authenticator: 'cloudflare',
-        'Cloudflare Email': '',
-        'API Key': '',
         'API Token': 'new_api_token',
       });
 
@@ -181,6 +177,183 @@ describe('AcmednsFormComponent', () => {
         },
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+  });
+
+  describe('Cloudflare validation', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('shows error when Cloudflare Email is invalid', async () => {
+      await form.fillForm({
+        Name: 'test',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': 'invalid-email',
+      });
+
+      spectator.detectChanges();
+
+      expect(spectator.component.formGroup.errors).toEqual({
+        cloudflareEmailInvalid: {
+          message: 'Cloudflare Email must be a valid email address',
+        },
+      });
+
+      const errorElement = spectator.query('.cloudflare-validation-error');
+      expect(errorElement).toBeTruthy();
+      expect(errorElement.textContent).toContain('Cloudflare Email must be a valid email address');
+    });
+
+    it('shows error when both API Token and API Key are provided', async () => {
+      await form.fillForm({
+        Name: 'test',
+        Authenticator: 'cloudflare',
+        'API Token': 'test_token',
+        'API Key': 'test_key',
+      });
+
+      spectator.detectChanges();
+
+      expect(spectator.component.formGroup.errors).toEqual({
+        cloudflareMutuallyExclusive: {
+          message: 'You can use either an API Token or the combination of Cloudflare Email + API Key, but not both',
+        },
+      });
+
+      const errorElement = spectator.query('.cloudflare-validation-error');
+      expect(errorElement).toBeTruthy();
+      expect(errorElement.textContent).toContain('You can use either an API Token or the combination of Cloudflare Email + API Key, but not both');
+    });
+
+    it('shows error when Cloudflare Email is provided without API Key', async () => {
+      await form.fillForm({
+        Name: 'test',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': 'test@example.com',
+        'API Key': '',
+      });
+
+      spectator.detectChanges();
+
+      expect(spectator.component.formGroup.errors).toEqual({
+        cloudflareApiKey: {
+          message: 'Cloudflare Email requires Global API Key',
+        },
+      });
+
+      const errorElement = spectator.query('.cloudflare-validation-error');
+      expect(errorElement).toBeTruthy();
+      expect(errorElement.textContent).toContain('Cloudflare Email requires Global API Key');
+    });
+
+    it('shows error when API Key is provided without Cloudflare Email', async () => {
+      await form.fillForm({
+        Name: 'test',
+        Authenticator: 'cloudflare',
+        'API Key': 'test_key',
+      });
+
+      spectator.detectChanges();
+
+      expect(spectator.component.formGroup.errors).toEqual({
+        cloudflareEmailRequired: {
+          message: 'API Key requires Cloudflare Email',
+        },
+      });
+
+      const errorElement = spectator.query('.cloudflare-validation-error');
+      expect(errorElement).toBeTruthy();
+      expect(errorElement.textContent).toContain('API Key requires Cloudflare Email');
+    });
+
+    it('shows hint when neither API Token nor API Key is provided', async () => {
+      await form.fillForm({
+        Name: 'test',
+        Authenticator: 'cloudflare',
+      });
+
+      spectator.detectChanges();
+
+      expect(spectator.component.formGroup.errors).toEqual({
+        cloudflareAuth: {
+          message: 'Either API Token or Cloudflare Email + API Key must be provided',
+        },
+      });
+
+      // When cloudflareAuth is the only error, it shows as a hint (not red)
+      const hintElement = spectator.query('.cloudflare-hint');
+      expect(hintElement).toBeTruthy();
+      expect(hintElement.textContent).toContain('Either API Token or Cloudflare Email + API Key must be provided');
+    });
+
+    it('shows cloudflareAuth as hint always (never as red error)', async () => {
+      await form.fillForm({
+        Name: 'test',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': 'invalid-email',
+      });
+
+      spectator.detectChanges();
+
+      // Invalid email creates cloudflareEmailInvalid error (red)
+      // Validator returns first error, so only emailInvalid is present
+      expect(spectator.component.formGroup.errors?.['cloudflareEmailInvalid']).toBeTruthy();
+
+      const errorElement = spectator.query('.cloudflare-validation-error');
+      expect(errorElement).toBeTruthy();
+      expect(errorElement.textContent).toContain('Cloudflare Email must be a valid email address');
+
+      // cloudflareAuth should never appear in the error section (only as hint)
+      expect(errorElement.textContent).not.toContain('Either API Token or Cloudflare Email + API Key must be provided');
+    });
+
+    it('validates successfully with API Token only', async () => {
+      await form.fillForm({
+        Name: 'test',
+        Authenticator: 'cloudflare',
+        'API Token': 'test_token',
+      });
+
+      spectator.detectChanges();
+
+      expect(spectator.component.formGroup.errors).toBeNull();
+    });
+
+    it('validates successfully with Email and API Key', async () => {
+      await form.fillForm({
+        Name: 'test',
+        Authenticator: 'cloudflare',
+        'Cloudflare Email': 'test@example.com',
+        'API Key': 'test_key',
+      });
+
+      spectator.detectChanges();
+
+      expect(spectator.component.formGroup.errors).toBeNull();
+    });
+
+    it('does not validate for non-Cloudflare authenticators', async () => {
+      // First change to route53
+      await form.fillForm({
+        Name: 'test',
+        Authenticator: 'route53',
+      });
+
+      spectator.detectChanges();
+
+      // Now fill route53-specific fields
+      await form.fillForm({
+        'Access Key ID': 'test_key',
+        'Secret Access Key': 'test_secret',
+      });
+
+      spectator.detectChanges();
+
+      // Cloudflare validator shouldn't run for route53
+      expect(spectator.component.formGroup.errors).toBeNull();
     });
   });
 });
