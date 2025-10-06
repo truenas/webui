@@ -9,7 +9,7 @@ import { VirtualizationDeviceType, VirtualizationStatus } from 'app/enums/virtua
 import {
   VirtualizationDevice,
   VirtualizationTpm,
-} from 'app/interfaces/virtualization.interface';
+} from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';

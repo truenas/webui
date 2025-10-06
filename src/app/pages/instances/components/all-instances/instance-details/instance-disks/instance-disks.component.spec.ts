@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import { VirtualizationDisk, VirtualizationProxy } from 'app/interfaces/virtualization.interface';
+import { VirtualizationDisk, VirtualizationProxy } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   InstanceDiskFormComponent,

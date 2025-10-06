@@ -12,7 +12,7 @@ import { switchMap } from 'rxjs/operators';
 import { MiB } from 'app/constants/bytes.constant';
 import { Role } from 'app/enums/role.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { ContainerGlobalConfig, VirtualizationVolume } from 'app/interfaces/virtualization.interface';
+import { ContainerGlobalConfig, VirtualizationVolume } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';

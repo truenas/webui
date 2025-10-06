@@ -7,7 +7,7 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { VirtualizationDeviceType, VirtualizationProxyProtocol } from 'app/enums/virtualization.enum';
-import { VirtualizationProxy, VirtualizationUsb } from 'app/interfaces/virtualization.interface';
+import { VirtualizationProxy, VirtualizationUsb } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   InstanceProxiesComponent,

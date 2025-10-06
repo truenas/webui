@@ -5,7 +5,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
-import { AvailableGpu, AvailableUsb, VirtualizationDevice } from 'app/interfaces/virtualization.interface';
+import { AvailableGpu, AvailableUsb, VirtualizationDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {

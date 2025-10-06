@@ -8,7 +8,7 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
-import { ContainerInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance } from 'app/interfaces/container.interface';
 
 @UntilDestroy()
 @Component({

@@ -11,7 +11,7 @@ import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { containerCapabilitiesPolicyLabels, containerTimeLabels } from 'app/enums/virtualization.enum';
-import { ContainerInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { LoaderService } from 'app/modules/loader/loader.service';

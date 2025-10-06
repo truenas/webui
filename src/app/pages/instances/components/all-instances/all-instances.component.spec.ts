@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationGlobalState } from 'app/enums/virtualization.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ContainerInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/testing/mock-master-detail-view.component';
 import { AllInstancesHeaderComponent } from 'app/pages/instances/components/all-instances/all-instances-header/all-instances-header.component';

@@ -16,7 +16,7 @@ import {
   VirtualizationDevice,
   VirtualizationGpu,
   VirtualizationUsb,
-} from 'app/interfaces/virtualization.interface';
+} from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';

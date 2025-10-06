@@ -141,6 +141,6 @@ export enum ContainerCapabilitiesPolicy {
 
 export const containerCapabilitiesPolicyLabels = new Map<ContainerCapabilitiesPolicy, string>([
   [ContainerCapabilitiesPolicy.Default, T('Default (keep default behavior)')],
-  [ContainerCapabilitiesPolicy.Allow, T('Allow (drop all capabilities)')],
-  [ContainerCapabilitiesPolicy.Deny, T('Deny (keep all capabilities)')],
+  [ContainerCapabilitiesPolicy.Allow, T('Allow (keep all capabilities)')],
+  [ContainerCapabilitiesPolicy.Deny, T('Deny (drop all capabilities)')],
 ]);

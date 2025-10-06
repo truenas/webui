@@ -4,7 +4,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { VirtualizationType } from 'app/enums/virtualization.enum';
-import { ContainerInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance } from 'app/interfaces/container.interface';
 import { instanceDetailsElements } from 'app/pages/instances/components/all-instances/instance-details/instance-details.elements';
 import {
   InstanceDevicesComponent,

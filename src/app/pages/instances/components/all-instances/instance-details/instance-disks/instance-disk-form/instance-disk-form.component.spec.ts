@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
-import { VirtualizationVolume } from 'app/interfaces/virtualization.interface';
+import { VirtualizationVolume } from 'app/interfaces/container.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';

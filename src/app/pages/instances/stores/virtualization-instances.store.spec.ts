@@ -5,7 +5,7 @@ import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import {
   VirtualizationDevice, ContainerMetrics,
-} from 'app/interfaces/virtualization.interface';
+} from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';

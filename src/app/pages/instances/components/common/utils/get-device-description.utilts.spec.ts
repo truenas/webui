@@ -6,7 +6,7 @@ import {
 import {
   VirtualizationDevice,
   VirtualizationNic,
-} from 'app/interfaces/virtualization.interface';
+} from 'app/interfaces/container.interface';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
 
 describe('getDeviceDescription', () => {

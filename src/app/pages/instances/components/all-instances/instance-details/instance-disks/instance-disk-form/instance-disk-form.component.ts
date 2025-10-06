@@ -20,7 +20,7 @@ import {
   VirtualizationDisk,
   ContainerInstance,
   VirtualizationVolume,
-} from 'app/interfaces/virtualization.interface';
+} from 'app/interfaces/container.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   ExplorerCreateDatasetComponent,

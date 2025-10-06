@@ -72,6 +72,21 @@ import { CloudSyncProvider, CloudSyncRestoreParams } from 'app/interfaces/clouds
 import {
   ContainerImage, DeleteContainerImageParams,
 } from 'app/interfaces/container-image.interface';
+import {
+  VirtualizationDevice,
+
+  ContainerGlobalConfig, VirtualizationImage,
+  VirtualizationImageParams,
+  ContainerInstance,
+  VirtualizationNetwork,
+  AvailableUsb,
+  AvailableGpus, VirtualizationVolume,
+  VirtualizationVolumeUpdate,
+  CreateVirtualizationVolume,
+  CreateContainerInstance,
+  UpdateContainerInstance,
+  ContainerImageRegistryResponse,
+} from 'app/interfaces/container.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { CoreOptions } from 'app/interfaces/core-options.interface';
 import {
@@ -268,21 +283,6 @@ import {
   VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
   VmDisplayWebUriParams, VmPortWizardResult,
 } from 'app/interfaces/virtual-machine.interface';
-import {
-  VirtualizationDevice,
-
-  ContainerGlobalConfig, VirtualizationImage,
-  VirtualizationImageParams,
-  ContainerInstance,
-  VirtualizationNetwork,
-  AvailableUsb,
-  AvailableGpus, VirtualizationVolume,
-  VirtualizationVolumeUpdate,
-  CreateVirtualizationVolume,
-  CreateContainerInstance,
-  UpdateContainerInstance,
-  ContainerImageRegistryResponse,
-} from 'app/interfaces/virtualization.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';

@@ -12,6 +12,10 @@ import { CloudBackupRestoreParams, CloudBackupSnapshot } from 'app/interfaces/cl
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
 import { PullContainerImageParams, PullContainerImageResponse } from 'app/interfaces/container-image.interface';
+import {
+  CreateContainerInstance, ImportZvolParams,
+  ContainerInstance,
+} from 'app/interfaces/container.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import {
@@ -50,10 +54,6 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
-import {
-  CreateContainerInstance, ImportZvolParams,
-  ContainerInstance,
-} from 'app/interfaces/virtualization.interface';
 import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 export interface ApiJobDirectory {

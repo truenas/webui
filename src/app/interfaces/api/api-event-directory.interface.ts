@@ -3,6 +3,9 @@ import { Alert } from 'app/interfaces/alert.interface';
 import { App, AppContainerLog, AppStats } from 'app/interfaces/app.interface';
 import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
+import {
+  ContainerGlobalConfig, ContainerInstance, ContainerMetrics,
+} from 'app/interfaces/container.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { DockerStatusData } from 'app/interfaces/docker-config.interface';
@@ -18,9 +21,6 @@ import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface'
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import {
-  ContainerGlobalConfig, ContainerInstance, ContainerMetrics,
-} from 'app/interfaces/virtualization.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
 export interface ApiEventDirectory {

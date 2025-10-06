@@ -5,7 +5,7 @@ import {
   of, Subscription, switchMap, tap,
 } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { ContainerGlobalConfig } from 'app/interfaces/virtualization.interface';
+import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 

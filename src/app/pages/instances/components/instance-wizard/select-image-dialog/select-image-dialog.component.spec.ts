@@ -13,7 +13,7 @@ import {
   mockApi,
 } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationRemote, VirtualizationType } from 'app/enums/virtualization.enum';
-import { ContainerImageRegistryResponse } from 'app/interfaces/virtualization.interface';
+import { ContainerImageRegistryResponse } from 'app/interfaces/container.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SelectImageDialog } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';

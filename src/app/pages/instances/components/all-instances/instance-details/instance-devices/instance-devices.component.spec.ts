@@ -2,7 +2,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import { VirtualizationProxy, VirtualizationUsb } from 'app/interfaces/virtualization.interface';
+import { VirtualizationProxy, VirtualizationUsb } from 'app/interfaces/container.interface';
 import {
   AddDeviceMenuComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';

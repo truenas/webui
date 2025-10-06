@@ -8,7 +8,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import {
   ContainerInstanceMetrics,
-} from 'app/interfaces/virtualization.interface';
+} from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';

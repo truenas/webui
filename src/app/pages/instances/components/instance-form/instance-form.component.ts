@@ -38,7 +38,7 @@ import {
   UpdateContainerInstance,
   InstanceEnvVariablesFormGroup,
   ContainerInstance,
-} from 'app/interfaces/virtualization.interface';
+} from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';

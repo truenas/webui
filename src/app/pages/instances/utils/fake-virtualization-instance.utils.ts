@@ -1,5 +1,5 @@
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
-import { ContainerInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance } from 'app/interfaces/container.interface';
 
 export function fakeVirtualizationInstance(overrides: Partial<ContainerInstance> = {}): ContainerInstance {
   return {

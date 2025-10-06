@@ -11,7 +11,7 @@ import {
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEventTyped } from 'app/interfaces/api-message.interface';
-import { ContainerInstance, ContainerMetrics } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance, ContainerMetrics } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 

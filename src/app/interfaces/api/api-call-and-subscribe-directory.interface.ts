@@ -1,10 +1,10 @@
 import { App } from 'app/interfaces/app.interface';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
+import { ContainerInstance } from 'app/interfaces/container.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { ContainerInstance } from 'app/interfaces/virtualization.interface';
 
 /**
  * Directory of compatible API call and subscribe methods.

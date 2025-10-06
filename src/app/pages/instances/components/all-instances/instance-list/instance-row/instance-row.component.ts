@@ -15,7 +15,7 @@ import {
   ContainerInstance,
   VirtualizationStopParams,
   ContainerInstanceMetrics,
-} from 'app/interfaces/virtualization.interface';
+} from 'app/interfaces/container.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';

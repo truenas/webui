@@ -12,7 +12,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
-import { ContainerInstance, VirtualizationStopParams } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance, VirtualizationStopParams } from 'app/interfaces/container.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';

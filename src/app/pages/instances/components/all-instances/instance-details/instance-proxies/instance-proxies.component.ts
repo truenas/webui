@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import { VirtualizationProxy } from 'app/interfaces/virtualization.interface';
+import { VirtualizationProxy } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {

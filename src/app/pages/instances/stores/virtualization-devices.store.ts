@@ -7,7 +7,7 @@ import {
   EMPTY,
   filter,
 } from 'rxjs';
-import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
+import { VirtualizationDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
