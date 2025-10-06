@@ -1,12 +1,15 @@
+import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, HostListener, ViewChild, inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, HostListener, ViewChild, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  debounceTime,
-  Observable, of, Subject, take, timeout,
+  debounceTime, fromEvent,
+  Observable, of, Subject, Subscription, take, timeout,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { FocusService } from 'app/services/focus.service';
 
 @UntilDestroy()
 @Component({
@@ -16,18 +19,24 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
   standalone: true,
   imports: [
     CdkPortalOutlet,
+    CdkTrapFocus,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SlideInContainerComponent implements AfterViewInit {
   private cdr = inject(ChangeDetectorRef);
   private window = inject<Window>(WINDOW);
+  private elementRef = inject(ElementRef);
+  private focusService = inject(FocusService);
+  private document = inject(DOCUMENT);
 
   @ViewChild(CdkPortalOutlet, { static: true }) private readonly portalOutlet!: CdkPortalOutlet;
 
   private readonly whenHidden$ = new Subject<void>();
   private readonly whenVisible$ = new Subject<void>();
   private readonly resizeSubject$ = new Subject<void>();
+  private keydownSubscription?: Subscription;
+  private slideInRef?: SlideInRef<unknown, unknown>;
 
   @HostBinding('class.slide-in-visible') private isVisible = false;
   @HostBinding('class.slide-in-hidden') private isHidden = true;
@@ -73,6 +82,7 @@ export class SlideInContainerComponent implements AfterViewInit {
     this.isVisible = false;
     this.isHidden = true;
     this.cdr.markForCheck();
+    this.removeKeydownListener();
 
     // Add timeout fallback in case transition doesn't fire
     return this.whenHidden$.pipe(
@@ -89,11 +99,31 @@ export class SlideInContainerComponent implements AfterViewInit {
     this.cdr.markForCheck();
 
     // Add timeout fallback in case transition doesn't fire
-    return this.whenVisible$.pipe(
+    const slideIn$ = this.whenVisible$.pipe(
       take(1),
       // Fallback after 300ms (150ms transition + buffer)
       timeout({ first: 300, with: () => of(undefined) }),
     );
+
+    slideIn$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.focusFirstElement();
+      this.addKeydownListener();
+    });
+
+    return slideIn$;
+  }
+
+  private focusFirstElement(): void {
+    requestAnimationFrame(() => {
+      const container = this.elementRef.nativeElement as HTMLElement;
+      const closeButton = container.querySelector<HTMLElement>('#ix-close-icon');
+
+      if (closeButton) {
+        closeButton.focus();
+      } else {
+        this.focusService.focusFirstFocusableElement(container);
+      }
+    });
   }
 
   @HostListener('window:resize')
@@ -121,6 +151,30 @@ export class SlideInContainerComponent implements AfterViewInit {
   attachPortal<D, R>(portal: ComponentPortal<{
     slideInRef: SlideInRef<D, R>;
   }>): void {
-    this.portalOutlet.attach(portal);
+    const componentRef = this.portalOutlet.attach(portal);
+    if (componentRef && 'instance' in componentRef && 'slideInRef' in componentRef.instance) {
+      this.slideInRef = (componentRef.instance as { slideInRef: SlideInRef<D, R> }).slideInRef;
+    }
+  }
+
+  private addKeydownListener(): void {
+    this.removeKeydownListener();
+
+    this.keydownSubscription = fromEvent<KeyboardEvent>(this.document, 'keydown')
+      .pipe(untilDestroyed(this))
+      .subscribe((event) => {
+        if (event.key === 'Escape' && this.slideInRef) {
+          if (event.defaultPrevented) {
+            return;
+          }
+
+          this.slideInRef.close({ response: false, error: undefined });
+        }
+      });
+  }
+
+  private removeKeydownListener(): void {
+    this.keydownSubscription?.unsubscribe();
+    this.keydownSubscription = undefined;
   }
 }

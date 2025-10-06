@@ -1,9 +1,10 @@
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
 import { fakeAsync, tick } from '@angular/core/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SlideInContainerComponent } from 'app/modules/slide-ins/components/slide-in-container/slide-in-container.component';
 import { MockSlideInComponent } from 'app/modules/slide-ins/test-utils/mock-slide-in.component';
+import { FocusService } from 'app/services/focus.service';
 
 describe('SlideInContainerComponent', () => {
   let spectator: Spectator<SlideInContainerComponent>;
@@ -28,6 +29,9 @@ describe('SlideInContainerComponent', () => {
           innerWidth: 1024,
         },
       },
+      mockProvider(FocusService, {
+        focusFirstFocusableElement: jest.fn(),
+      }),
     ],
   });
 
@@ -382,5 +386,112 @@ describe('SlideInContainerComponent', () => {
       spectator.component.makeWide(true);
       expect(cdrSpy).toHaveBeenCalled();
     });
+  });
+
+  describe('keyboard handling', () => {
+    it('should close slide-in when Escape key is pressed', fakeAsync(() => {
+      const mockSlideInRef = {
+        close: jest.fn(),
+      };
+      (spectator.component as unknown as { slideInRef: typeof mockSlideInRef }).slideInRef = mockSlideInRef;
+
+      spectator.component.slideIn();
+      tick(300); // Wait for transition timeout
+
+      const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+      document.dispatchEvent(escapeEvent);
+      tick();
+
+      expect(mockSlideInRef.close).toHaveBeenCalledWith({ response: false, error: undefined });
+    }));
+
+    it('should not close slide-in when other keys are pressed', fakeAsync(() => {
+      const mockSlideInRef = {
+        close: jest.fn(),
+      };
+      (spectator.component as unknown as { slideInRef: typeof mockSlideInRef }).slideInRef = mockSlideInRef;
+
+      spectator.component.slideIn();
+      tick(300);
+
+      const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+      document.dispatchEvent(enterEvent);
+      tick();
+
+      expect(mockSlideInRef.close).not.toHaveBeenCalled();
+    }));
+
+    it('should remove keydown listener when sliding out', fakeAsync(() => {
+      const mockSlideInRef = {
+        close: jest.fn(),
+      };
+      (spectator.component as unknown as { slideInRef: typeof mockSlideInRef }).slideInRef = mockSlideInRef;
+
+      spectator.component.slideIn();
+      tick(300);
+      spectator.component.slideOut();
+      tick(300);
+
+      const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+      document.dispatchEvent(escapeEvent);
+      tick();
+
+      expect(mockSlideInRef.close).not.toHaveBeenCalled();
+    }));
+
+    it('should not crash if slideInRef is not set when Escape is pressed', fakeAsync(() => {
+      spectator.component.slideIn();
+      tick(300);
+
+      const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+      expect(() => {
+        document.dispatchEvent(escapeEvent);
+        tick();
+      }).not.toThrow();
+    }));
+
+    it('should not close slide-in when event is defaultPrevented (e.g., global search handled it)', fakeAsync(() => {
+      const mockSlideInRef = {
+        close: jest.fn(),
+      };
+      (spectator.component as unknown as { slideInRef: typeof mockSlideInRef }).slideInRef = mockSlideInRef;
+
+      spectator.component.slideIn();
+      tick(300);
+
+      const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', cancelable: true });
+      escapeEvent.preventDefault();
+      document.dispatchEvent(escapeEvent);
+      tick();
+
+      expect(mockSlideInRef.close).not.toHaveBeenCalled();
+    }));
+  });
+
+  describe('focus management', () => {
+    it('should focus close button if available', fakeAsync(() => {
+      const closeButton = document.createElement('button');
+      closeButton.id = 'ix-close-icon';
+      spectator.element.appendChild(closeButton);
+
+      const focusSpy = jest.spyOn(closeButton, 'focus');
+
+      spectator.component.slideIn();
+      tick(300);
+
+      expect(focusSpy).toHaveBeenCalled();
+
+      spectator.element.removeChild(closeButton);
+    }));
+
+    it('should focus first focusable element if close button is not available', fakeAsync(() => {
+      const focusService = spectator.inject(FocusService);
+      const focusSpy = jest.spyOn(focusService, 'focusFirstFocusableElement');
+
+      spectator.component.slideIn();
+      tick(300);
+
+      expect(focusSpy).toHaveBeenCalled();
+    }));
   });
 });

@@ -224,6 +224,12 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
 
   private handleKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
+      const globalSearchOverlay = this.document.querySelector('.topbar-panel');
+      if (globalSearchOverlay) {
+        return;
+      }
+
+      event.stopPropagation();
       this.tryToClose();
     }
   }
