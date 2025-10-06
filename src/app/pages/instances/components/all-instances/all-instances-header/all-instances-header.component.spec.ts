@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   GlobalConfigFormComponent,
@@ -31,6 +32,7 @@ describe('AllInstancesHeaderComponent', () => {
   const createComponent = createComponentFactory({
     component: AllInstancesHeaderComponent,
     providers: [
+      mockAuth(),
       mockProvider(VirtualizationInstancesStore, {
         initialize: jest.fn(),
         instances: signal([]),

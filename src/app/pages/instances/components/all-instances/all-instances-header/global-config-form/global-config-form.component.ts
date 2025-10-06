@@ -10,7 +10,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import { VirtualizationGlobalConfig } from 'app/interfaces/virtualization.interface';
+import { ContainerGlobalConfig } from 'app/interfaces/virtualization.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
@@ -50,11 +50,11 @@ export class GlobalConfigFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
-  slideInRef = inject<SlideInRef<VirtualizationGlobalConfig, boolean>>(SlideInRef);
+  slideInRef = inject<SlideInRef<ContainerGlobalConfig, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.LxcConfigWrite];
   protected isLoading = signal(false);
-  protected currentConfig = signal<VirtualizationGlobalConfig>(this.slideInRef.getData());
+  protected currentConfig = signal<ContainerGlobalConfig>(this.slideInRef.getData());
   protected readonly autoBridge = '';
 
   protected readonly form = this.formBuilder.nonNullable.group({
@@ -92,7 +92,7 @@ export class GlobalConfigFormComponent implements OnInit {
     this.isLoading.set(true);
 
     const controls = this.form.controls;
-    const values: VirtualizationGlobalConfig = {
+    const values: ContainerGlobalConfig = {
       bridge: controls.bridge.value,
       v4_network: controls.v4_network.value,
       v6_network: controls.v6_network.value,

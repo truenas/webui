@@ -51,8 +51,8 @@ import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
 import {
-  CreateVirtualizationInstance, ImportZvolParams,
-  VirtualizationInstance,
+  CreateContainerInstance, ImportZvolParams,
+  ContainerInstance,
 } from 'app/interfaces/virtualization.interface';
 import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
@@ -198,7 +198,7 @@ export interface ApiJobDirectory {
   'virt.volume.import_zvol': { params: [ImportZvolParams]; response: void };
 
   // Container
-  'container.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
+  'container.create': { params: [CreateContainerInstance]; response: ContainerInstance };
   'container.migrate': { params: [instanceId: number]; response: boolean };
 
   // VM

@@ -33,6 +33,7 @@
 
 @if (config()) {
   <button
+    *ixRequiresRoles="requiredRoles"
     mat-button
     ixTest="create-new-container"
     [color]="'primary'"

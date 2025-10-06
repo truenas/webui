@@ -8,7 +8,7 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance } from 'app/interfaces/virtualization.interface';
 
 @UntilDestroy()
 @Component({
@@ -25,7 +25,7 @@ import { VirtualizationInstance } from 'app/interfaces/virtualization.interface'
   ],
 })
 export class InstanceIdmapComponent {
-  instance = input.required<VirtualizationInstance>();
+  instance = input.required<ContainerInstance>();
 
   virtualizationStatus = VirtualizationStatus;
 }

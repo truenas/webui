@@ -18,7 +18,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import {
   VirtualizationDisk,
-  VirtualizationInstance,
+  ContainerInstance,
   VirtualizationVolume,
 } from 'app/interfaces/virtualization.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -42,7 +42,7 @@ import {
 import { FilesystemService } from 'app/services/filesystem.service';
 
 interface InstanceDiskFormOptions {
-  instance: VirtualizationInstance;
+  instance: ContainerInstance;
   disk: VirtualizationDisk | undefined;
 }
 
@@ -99,7 +99,7 @@ export class InstanceDiskFormComponent implements OnInit {
     return !this.isNew() ? this.translate.instant('Edit Disk') : this.translate.instant('Add Disk');
   });
 
-  protected get instance(): VirtualizationInstance {
+  protected get instance(): ContainerInstance {
     return this.slideInRef.getData().instance;
   }
 

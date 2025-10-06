@@ -271,16 +271,16 @@ import {
 import {
   VirtualizationDevice,
 
-  VirtualizationGlobalConfig, VirtualizationImage,
+  ContainerGlobalConfig, VirtualizationImage,
   VirtualizationImageParams,
-  VirtualizationInstance,
+  ContainerInstance,
   VirtualizationNetwork,
   AvailableUsb,
   AvailableGpus, VirtualizationVolume,
   VirtualizationVolumeUpdate,
   CreateVirtualizationVolume,
-  CreateVirtualizationInstance,
-  UpdateVirtualizationInstance,
+  CreateContainerInstance,
+  UpdateContainerInstance,
   ContainerImageRegistryResponse,
 } from 'app/interfaces/virtualization.interface';
 import {
@@ -924,21 +924,21 @@ export interface ApiCallDirectory {
   'virt.volume.delete': { params: [id: string]; response: true };
 
   // Container (actual available endpoints only)
-  'container.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
+  'container.create': { params: [CreateContainerInstance]; response: ContainerInstance };
   'container.delete': { params: [instanceId: number]; response: boolean };
-  'container.get_instance': { params: [instanceId: number]; response: VirtualizationInstance };
+  'container.get_instance': { params: [instanceId: number]; response: ContainerInstance };
   'container.image.query_registry': { params: []; response: ContainerImageRegistryResponse[] };
   'container.migrate': { params: [instanceId: number]; response: boolean };
   'container.pool_choices': { params: []; response: Choices };
-  'container.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
+  'container.query': { params: QueryParams<ContainerInstance>; response: ContainerInstance[] };
   'container.start': { params: [instanceId: number]; response: void };
   'container.stop': { params: [instanceId: number, params?: { force?: boolean }]; response: void };
-  'container.update': { params: [instanceId: number, update: UpdateVirtualizationInstance]; response: VirtualizationInstance };
+  'container.update': { params: [instanceId: number, update: UpdateContainerInstance]; response: ContainerInstance };
 
   // LXC (actual available endpoints only)
   'lxc.bridge_choices': { params: []; response: Choices };
-  'lxc.config': { params: []; response: VirtualizationGlobalConfig };
-  'lxc.update': { params: [VirtualizationGlobalConfig]; response: VirtualizationGlobalConfig };
+  'lxc.config': { params: []; response: ContainerGlobalConfig };
+  'lxc.update': { params: [ContainerGlobalConfig]; response: ContainerGlobalConfig };
 
   // VM
   'vm.bootloader_options': { params: void; response: Choices };

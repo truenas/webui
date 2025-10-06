@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { virtualizationStatusLabels } from 'app/enums/virtualization.enum';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance } from 'app/interfaces/virtualization.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
 @Component({
@@ -17,7 +17,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   imports: [TranslateModule, MapValuePipe],
 })
 export class InstanceStatusCellComponent {
-  readonly instance = input.required<VirtualizationInstance>();
+  readonly instance = input.required<ContainerInstance>();
 
   @HostBinding('class') get hostClasses(): string[] {
     return [

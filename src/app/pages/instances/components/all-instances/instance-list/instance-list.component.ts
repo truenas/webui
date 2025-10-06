@@ -15,7 +15,7 @@ import { distinctUntilChanged, map, tap } from 'rxjs';
 import { containersEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance } from 'app/interfaces/virtualization.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
@@ -69,7 +69,7 @@ export class InstanceListComponent {
     return this.selection.selected.length === this.filteredInstances().length;
   }
 
-  get checkedInstances(): VirtualizationInstance[] {
+  get checkedInstances(): ContainerInstance[] {
     return this.selection.selected
       .map((id) => this.instances().find((instance) => instance.id === id))
       .filter((instance) => !!instance);
@@ -120,7 +120,7 @@ export class InstanceListComponent {
     }
   }
 
-  navigateToDetails(instance: VirtualizationInstance): void {
+  navigateToDetails(instance: ContainerInstance): void {
     this.layoutService.navigatePreservingScroll(this.router, ['/containers', 'view', instance.id]);
 
     if (this.isMobileView()) {

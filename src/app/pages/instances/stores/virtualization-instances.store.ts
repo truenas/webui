@@ -11,16 +11,16 @@ import {
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEventTyped } from 'app/interfaces/api-message.interface';
-import { VirtualizationInstance, VirtualizationMetrics } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance, ContainerMetrics } from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface VirtualizationInstancesState {
   isLoading: boolean;
-  instances: VirtualizationInstance[] | undefined;
+  instances: ContainerInstance[] | undefined;
   selectedInstanceId: number | null;
-  selectedInstance: VirtualizationInstance | undefined;
-  metrics: VirtualizationMetrics;
+  selectedInstance: ContainerInstance | undefined;
+  metrics: ContainerMetrics;
 }
 
 const initialState: VirtualizationInstancesState = {
@@ -127,7 +127,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
     }
   }
 
-  instanceUpdated(updated: VirtualizationInstance): void {
+  instanceUpdated(updated: ContainerInstance): void {
     const instances = this.instances().map((instance) => (updated.id === instance.id ? updated : instance));
     const updates: Partial<VirtualizationInstancesState> = { instances };
 

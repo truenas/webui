@@ -4,7 +4,7 @@ import { of, Subject } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import {
-  VirtualizationDevice, VirtualizationMetrics,
+  VirtualizationDevice, ContainerMetrics,
 } from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
@@ -14,7 +14,7 @@ describe('VirtualizationInstancesStore', () => {
   let spectator: SpectatorService<VirtualizationInstancesStore>;
 
   const event$ = new Subject<ApiEvent>();
-  const metricsEvent$ = new Subject<ApiEvent<VirtualizationMetrics>>();
+  const metricsEvent$ = new Subject<ApiEvent<ContainerMetrics>>();
   const instances = [
     fakeVirtualizationInstance({ id: 1 }),
     fakeVirtualizationInstance({ id: 2 }),
@@ -178,7 +178,7 @@ describe('VirtualizationInstancesStore', () => {
             io_full_pressure_full_60_percentage: 10,
           },
         },
-      } as unknown as VirtualizationMetrics;
+      } as unknown as ContainerMetrics;
 
       metricsEvent$.next({
         collection: 'virt.instance.metrics',

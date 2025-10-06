@@ -33,10 +33,10 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import {
-  CreateVirtualizationInstance,
-  UpdateVirtualizationInstance,
+  CreateContainerInstance,
+  UpdateContainerInstance,
   InstanceEnvVariablesFormGroup,
-  VirtualizationInstance,
+  ContainerInstance,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -96,7 +96,7 @@ export class InstanceFormComponent implements OnInit {
   private dialogService = inject(DialogService);
   protected formatter = inject(IxFormatterService);
   private errorHandler = inject(ErrorHandlerService);
-  slideInRef = inject<SlideInRef<VirtualizationInstance | undefined, boolean>>(SlideInRef);
+  slideInRef = inject<SlideInRef<ContainerInstance | undefined, boolean>>(SlideInRef);
   private instancesStore = inject(VirtualizationInstancesStore, { optional: true });
   private router = inject(Router);
 
@@ -131,7 +131,7 @@ export class InstanceFormComponent implements OnInit {
   protected isAdvancedMode = false;
 
   protected readonly isEditMode = signal<boolean>(false);
-  protected editingInstance: VirtualizationInstance | null = null;
+  protected editingInstance: ContainerInstance | null = null;
   protected readonly title = computed(() => {
     if (this.isEditMode()) {
       return this.translate.instant('Edit Container: {name}', {
@@ -244,7 +244,7 @@ export class InstanceFormComponent implements OnInit {
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe({
-      next: (instance: VirtualizationInstance) => {
+      next: (instance: ContainerInstance) => {
         this.editingInstance = instance;
         this.populateFormForEdit(instance);
         this.isLoading.set(false);
@@ -256,7 +256,7 @@ export class InstanceFormComponent implements OnInit {
     });
   }
 
-  private populateFormForEdit(instance: VirtualizationInstance): void {
+  private populateFormForEdit(instance: ContainerInstance): void {
     this.form.patchValue({
       name: instance.name,
       description: instance.description || '',
@@ -392,7 +392,7 @@ export class InstanceFormComponent implements OnInit {
     this.form.controls.environment_variables.removeAt(index);
   }
 
-  private createInstance(): Observable<VirtualizationInstance> {
+  private createInstance(): Observable<ContainerInstance> {
     const payload = this.getCreatePayload();
 
     const job$ = this.api.job('container.create', [payload]);
@@ -409,16 +409,16 @@ export class InstanceFormComponent implements OnInit {
       );
   }
 
-  private updateInstance(): Observable<VirtualizationInstance> {
+  private updateInstance(): Observable<ContainerInstance> {
     const payload = this.getUpdatePayload();
 
     return this.api.call('container.update', [this.editingInstance.id, payload]);
   }
 
-  private getCreatePayload(): CreateVirtualizationInstance {
+  private getCreatePayload(): CreateContainerInstance {
     const form = this.form.getRawValue();
 
-    const payload: CreateVirtualizationInstance = {
+    const payload: CreateContainerInstance = {
       uuid: crypto.randomUUID(),
       name: form.name,
       pool: form.pool,
@@ -453,9 +453,9 @@ export class InstanceFormComponent implements OnInit {
     return payload;
   }
 
-  private getUpdatePayload(): UpdateVirtualizationInstance {
+  private getUpdatePayload(): UpdateContainerInstance {
     const form = this.form.getRawValue();
-    const payload: UpdateVirtualizationInstance = {};
+    const payload: UpdateContainerInstance = {};
 
     if (form.name !== this.editingInstance.name) payload.name = form.name;
     if (form.description !== (this.editingInstance.description || '')) payload.description = form.description;

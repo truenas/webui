@@ -1,7 +1,7 @@
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance } from 'app/interfaces/virtualization.interface';
 
-export function fakeVirtualizationInstance(overrides: Partial<VirtualizationInstance> = {}): VirtualizationInstance {
+export function fakeVirtualizationInstance(overrides: Partial<ContainerInstance> = {}): ContainerInstance {
   return {
     id: 1,
     uuid: 'test-uuid',
@@ -30,5 +30,5 @@ export function fakeVirtualizationInstance(overrides: Partial<VirtualizationInst
       domain_state: null,
     },
     ...overrides,
-  } as VirtualizationInstance;
+  } as ContainerInstance;
 }

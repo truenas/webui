@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import { VirtualizationDisk, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { VirtualizationDisk, ContainerInstance } from 'app/interfaces/virtualization.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -39,7 +39,7 @@ export class InstanceDisksComponent {
   private slideIn = inject(SlideIn);
   private devicesStore = inject(VirtualizationDevicesStore);
 
-  readonly instance = input.required<VirtualizationInstance>();
+  readonly instance = input.required<ContainerInstance>();
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 

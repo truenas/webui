@@ -12,9 +12,9 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import {
-  VirtualizationInstance,
+  ContainerInstance,
   VirtualizationStopParams,
-  VirtualizationInstanceMetrics,
+  ContainerInstanceMetrics,
 } from 'app/interfaces/virtualization.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
@@ -55,8 +55,8 @@ export class InstanceRowComponent {
   private instancesStore = inject(VirtualizationInstancesStore);
 
   protected readonly requiredRoles = [Role.ContainerWrite];
-  readonly instance = input.required<VirtualizationInstance>();
-  readonly metrics = input<VirtualizationInstanceMetrics | undefined>();
+  readonly instance = input.required<ContainerInstance>();
+  readonly metrics = input<ContainerInstanceMetrics | undefined>();
   readonly selected = input<boolean>(false);
   protected readonly isStopped = computed(() => this.instance()?.status?.state === VirtualizationStatus.Stopped);
 

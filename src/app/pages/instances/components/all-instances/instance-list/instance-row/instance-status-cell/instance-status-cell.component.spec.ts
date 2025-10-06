@@ -1,6 +1,6 @@
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance } from 'app/interfaces/virtualization.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { InstanceStatusCellComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-status-cell/instance-status-cell.component';
 import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
@@ -15,7 +15,7 @@ describe('InstanceStatusCellComponent', () => {
     ],
   });
 
-  function setupTest(instance: VirtualizationInstance): void {
+  function setupTest(instance: ContainerInstance): void {
     spectator = createHost(`
       <ix-instance-status-cell [instance]="instance"></ix-instance-status-cell>
     `, { hostProps: { instance } });

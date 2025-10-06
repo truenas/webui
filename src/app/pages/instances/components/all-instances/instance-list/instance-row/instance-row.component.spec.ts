@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import {
-  VirtualizationInstanceMetrics,
+  ContainerInstanceMetrics,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -33,7 +33,7 @@ const instance = fakeVirtualizationInstance({
   },
 });
 
-const metrics: VirtualizationInstanceMetrics = {
+const metrics: ContainerInstanceMetrics = {
   cpu: {
     cpu_user_percentage: 20,
   },

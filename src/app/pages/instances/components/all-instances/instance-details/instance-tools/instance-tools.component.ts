@@ -8,7 +8,7 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance } from 'app/interfaces/virtualization.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -33,7 +33,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class InstanceToolsComponent {
   private window = inject<Window>(WINDOW);
 
-  readonly instance = input.required<VirtualizationInstance>();
+  readonly instance = input.required<ContainerInstance>();
 
   protected readonly isInstanceStopped = computed(() => this.instance().status?.state !== VirtualizationStatus.Running);
 }

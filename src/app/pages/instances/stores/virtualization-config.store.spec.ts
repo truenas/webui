@@ -1,16 +1,16 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { VirtualizationGlobalConfig } from 'app/interfaces/virtualization.interface';
+import { ContainerGlobalConfig } from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
 
 describe('VirtualizationConfigStore', () => {
   let spectator: SpectatorService<VirtualizationConfigStore>;
-  const config: VirtualizationGlobalConfig = {
+  const config: ContainerGlobalConfig = {
     bridge: 'br0',
     v4_network: null,
     v6_network: null,
-  } as VirtualizationGlobalConfig;
+  } as ContainerGlobalConfig;
 
   const createService = createServiceFactory({
     service: VirtualizationConfigStore,

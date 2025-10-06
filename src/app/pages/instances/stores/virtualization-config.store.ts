@@ -5,13 +5,13 @@ import {
   of, Subscription, switchMap, tap,
 } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { VirtualizationGlobalConfig } from 'app/interfaces/virtualization.interface';
+import { ContainerGlobalConfig } from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface VirtualizationConfigState {
   isLoading: boolean;
-  config: VirtualizationGlobalConfig | null;
+  config: ContainerGlobalConfig | null;
 }
 
 const initialState: VirtualizationConfigState = {

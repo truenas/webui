@@ -1845,7 +1845,9 @@
       "New Container",
       "Add Container"
     ],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "CONTAINER_WRITE"
+    ],
     "visibleTokens": [
       "VMS"
     ],

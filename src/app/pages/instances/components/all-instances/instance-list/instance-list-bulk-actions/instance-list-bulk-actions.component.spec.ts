@@ -6,7 +6,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerInstance } from 'app/interfaces/virtualization.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { StopOptionsDialog, StopOptionsOperation } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -20,7 +20,7 @@ describe('InstanceListBulkActionsComponent', () => {
   const checkedInstancesMock = [
     { id: '1', status: 'Running' },
     { id: '2', status: 'Stopped' },
-  ] as unknown as VirtualizationInstance[];
+  ] as unknown as ContainerInstance[];
 
   const createComponent = createComponentFactory({
     component: InstanceListBulkActionsComponent,

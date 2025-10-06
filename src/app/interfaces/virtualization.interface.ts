@@ -13,9 +13,9 @@ import {
   VirtualizationType, VolumeContentType,
 } from 'app/enums/virtualization.enum';
 
-export type VirtualizationMetrics = Record<string, VirtualizationInstanceMetrics>;
+export type ContainerMetrics = Record<string, ContainerInstanceMetrics>;
 
-export interface VirtualizationInstanceMetrics {
+export interface ContainerInstanceMetrics {
   cpu: {
     cpu_user_percentage: number;
   };
@@ -27,7 +27,7 @@ export interface VirtualizationInstanceMetrics {
   };
 }
 
-export interface VirtualizationInstance {
+export interface ContainerInstance {
   id: number;
   uuid: string;
   name: string;
@@ -64,7 +64,7 @@ export interface VirtualizationAlias {
   netmask: string;
 }
 
-export type CreateVirtualizationInstance = Partial<Omit<VirtualizationInstance, 'id' | 'dataset' | 'status' | 'idmap'>> & {
+export type CreateContainerInstance = Partial<Omit<ContainerInstance, 'id' | 'dataset' | 'status' | 'idmap'>> & {
   uuid: string;
   name: string;
   autostart: boolean;
@@ -77,7 +77,7 @@ export type CreateVirtualizationInstance = Partial<Omit<VirtualizationInstance, 
   usb_devices?: string[];
 };
 
-export type UpdateVirtualizationInstance = Partial<Pick<VirtualizationInstance,
+export type UpdateContainerInstance = Partial<Pick<ContainerInstance,
   | 'uuid'
   | 'name'
   | 'description'
@@ -215,7 +215,7 @@ export interface VirtualizationStopParams {
   force_after_timeout?: boolean;
 }
 
-export interface VirtualizationGlobalConfig {
+export interface ContainerGlobalConfig {
   bridge: string | null;
   v4_network: string | null;
   v6_network: string | null;
