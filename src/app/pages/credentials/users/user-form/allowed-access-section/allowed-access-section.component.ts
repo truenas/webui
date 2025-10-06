@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, effect, input, inject } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
@@ -34,8 +34,12 @@ import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-for
 export class AllowedAccessSectionComponent {
   private formBuilder = inject(NonNullableFormBuilder);
   private userFormStore = inject(UserFormStore);
+  private translate = inject(TranslateService);
 
   editingUser = input<User>();
+  password = input<string>();
+  passwordDisabled = input<boolean>();
+
   protected sshAccess = this.userFormStore.sshAccess;
 
   protected readonly roles$ = of([
@@ -50,11 +54,44 @@ export class AllowedAccessSectionComponent {
     ssh_access: [false],
     shell_access: [false],
     role: [null as Role | null],
+  }, {
+    validators: [this.smbAccessValidator.bind(this)],
   });
 
   constructor() {
     this.setFieldRelations();
     this.updateStoreOnChanges();
+
+    // Revalidate when password or passwordDisabled changes
+    effect(() => {
+      this.password();
+      this.passwordDisabled();
+      this.form.updateValueAndValidity();
+    });
+  }
+
+  private smbAccessValidator(formGroup: AbstractControl): ValidationErrors | null {
+    const smbEnabled = formGroup.get('smb')?.value;
+
+    if (!smbEnabled) {
+      return null; // SMB is not enabled, no validation needed
+    }
+
+    const password = this.password();
+    const passwordDisabled = this.passwordDisabled();
+
+    // Check if password is set (has value and is not empty)
+    const hasPassword = password && password.trim().length > 0;
+
+    if (!hasPassword || passwordDisabled) {
+      return {
+        smb: {
+          message: this.translate.instant('Password must be reset in order to enable SMB authentication'),
+        },
+      };
+    }
+
+    return null;
   }
 
   private setFieldRelations(): void {
