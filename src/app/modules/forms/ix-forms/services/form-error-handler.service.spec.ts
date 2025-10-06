@@ -364,6 +364,7 @@ describe('FormErrorHandlerService', () => {
 
       spectator.service.handleValidationErrors(callError, formGroup);
 
+      // eslint-disable-next-line sonarjs/deprecation
       expect(doc.querySelector).toHaveBeenCalledWith('[formControlName="test_control_1"]');
     });
 
