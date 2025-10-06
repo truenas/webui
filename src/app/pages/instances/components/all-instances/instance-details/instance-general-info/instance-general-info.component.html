@@ -53,7 +53,7 @@
       </p>
       <p>
         <span class="label">{{ 'Container Time' | translate }}:</span>
-        {{ instance.time }}
+        {{ instance.time | mapValue: containerTimeLabels | translate }}
       </p>
       <p>
         <span class="label">{{ 'Shutdown Timeout' | translate }}:</span>

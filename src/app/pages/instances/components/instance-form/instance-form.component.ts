@@ -22,6 +22,7 @@ import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { Role } from 'app/enums/role.enum';
 import {
   ContainerCapabilitiesPolicy,
+  containerTimeLabels,
   ContainerTime,
   VirtualizationProxyProtocol,
   virtualizationProxyProtocolLabels,
@@ -107,10 +108,7 @@ export class InstanceFormComponent implements OnInit {
 
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
 
-  protected readonly timeOptions$ = of([
-    { label: this.translate.instant('Local'), value: ContainerTime.Local },
-    { label: this.translate.instant('UTC'), value: ContainerTime.Utc },
-  ]);
+  protected readonly timeOptions$ = of(mapToOptions(containerTimeLabels, this.translate));
 
   protected readonly capabilitiesPolicyOptions$ = of([
     { label: this.translate.instant('Default'), value: ContainerCapabilitiesPolicy.Default },

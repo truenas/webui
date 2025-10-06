@@ -10,7 +10,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { containerCapabilitiesPolicyLabels } from 'app/enums/virtualization.enum';
+import { containerCapabilitiesPolicyLabels, containerTimeLabels } from 'app/enums/virtualization.enum';
 import { ContainerInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
@@ -59,6 +59,7 @@ export class InstanceGeneralInfoComponent {
 
   protected readonly Role = Role;
   protected readonly containerCapabilitiesPolicyLabels = containerCapabilitiesPolicyLabels;
+  protected readonly containerTimeLabels = containerTimeLabels;
 
   editInstance(): void {
     this.slideIn
