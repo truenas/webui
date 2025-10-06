@@ -1,21 +1,24 @@
 <mat-card class="card">
   <mat-card-content class="card-content">
-    <div class="header">
-      <h3>{{ 'Memory' | translate }}</h3>
+    @if (isStale()) {
+      <ix-widget-stale-data-notice></ix-widget-stale-data-notice>
+    } @else {
+      <div class="header">
+        <h3>{{ 'Memory' | translate }}</h3>
 
-      <button
-        mat-icon-button
-        ixTest="memory-go-to-reports"
-        matTooltipPosition="above"
-        [attr.aria-label]="'Memory Reports' | translate"
-        [matTooltip]="'Memory Reports' | translate"
-        [routerLink]="['/reportsdashboard', 'memory']"
-      >
-        <ix-icon name="insert_chart"></ix-icon>
-      </button>
-    </div>
+        <button
+          mat-icon-button
+          ixTest="memory-go-to-reports"
+          matTooltipPosition="above"
+          [attr.aria-label]="'Memory Reports' | translate"
+          [matTooltip]="'Memory Reports' | translate"
+          [routerLink]="['/reportsdashboard', 'memory']"
+        >
+          <ix-icon name="insert_chart"></ix-icon>
+        </button>
+      </div>
 
-    <div [class]="['container', size()]">
+      <div [class]="['container', size()]">
       <div class="stats">
         <h2 class="total-memory">
           @if (isLoading()) {
@@ -24,7 +27,7 @@
               [theme]="{ height: 42, background: 'var(--alt-bg2)', opacity: 0.25 }"
             ></ngx-skeleton-loader>
           } @else {
-            {{ formatUnit(memory().physical_memory_total) }}
+            {{ formatUnit(memoryState().value.physical_memory_total) }}
             <span class="units">GiB</span>
           }
         </h2>
@@ -78,5 +81,6 @@
         </ng-template>
       </div>
     </div>
+    }
   </mat-card-content>
 </mat-card>

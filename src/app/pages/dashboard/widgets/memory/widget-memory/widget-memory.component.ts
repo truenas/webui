@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -16,6 +16,7 @@ import { GiB } from 'app/constants/bytes.constant';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { AppState } from 'app/store';
@@ -38,6 +39,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     BaseChartDirective,
     TranslateModule,
     AsyncPipe,
+    WidgetStaleDataNoticeComponent,
   ],
 })
 export class WidgetMemoryComponent {
@@ -50,34 +52,31 @@ export class WidgetMemoryComponent {
 
   protected ecc$ = this.store$.pipe(waitForSystemInfo, map((sysInfo) => sysInfo.ecc_memory));
 
-  protected memory = toSignal(this.resources.realtimeUpdates$.pipe(
-    map((update) => update.fields.memory),
-  ));
+  protected memoryState = toSignal(
+    this.resources.memoryUpdatesWithStaleDetection().pipe(takeUntilDestroyed()),
+  );
 
-  protected isLoading = computed(() => !this.memory());
-
-  protected arcSize = toSignal(this.resources.realtimeUpdates$.pipe(
-    map((update) => update.fields.memory?.arc_size),
-  ));
+  protected isStale = computed(() => this.memoryState()?.isStale ?? false);
+  protected isLoading = computed(() => !this.memoryState()?.value && !this.isStale());
 
   stats = computed(() => {
     const colors = [0, 1, 2].map((i) => this.theme.getRgbBackgroundColorByIndex(i));
     let services = 0;
-    const memory = this.memory();
+    const memory = this.memoryState()?.value;
     if (memory) {
-      services = memory.physical_memory_total - memory.physical_memory_available - (this.arcSize() || 0);
+      services = memory.physical_memory_total - memory.physical_memory_available - (memory.arc_size || 0);
     }
 
     return [
       {
         name: this.translate.instant('Free'),
         color: colors[0],
-        value: this.memory()?.physical_memory_available || 0,
+        value: memory?.physical_memory_available || 0,
       },
       {
         name: this.translate.instant('ZFS Cache'),
         color: colors[1],
-        value: this.arcSize() || 0,
+        value: memory?.arc_size || 0,
       },
       {
         name: this.translate.instant('Services'),
