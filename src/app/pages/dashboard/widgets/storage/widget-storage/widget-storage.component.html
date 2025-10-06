@@ -15,7 +15,9 @@
       </button>
     </div>
     <div [class]="['container', size()]">
-      @if (!isLoading()) {
+      @if (isStale()) {
+        <ix-widget-stale-data-notice></ix-widget-stale-data-notice>
+      } @else if (!isLoading()) {
         <mat-grid-list
           [cols]="isTwoTilesInRow ? 2 : 1"
           [gutterSize]="isThreeTilesInColumn ? '7px' : '12px'"

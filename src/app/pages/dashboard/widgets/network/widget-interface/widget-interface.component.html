@@ -17,7 +17,10 @@
     }
 
     <div *ixWithLoadingState="interface() as interface" [class]="['container', size()]">
-      <div class="nic-info">
+      @if (isStale()) {
+        <ix-widget-stale-data-notice></ix-widget-stale-data-notice>
+      } @else {
+        <div class="nic-info">
         <div class="info-header">
           <h3 class="info-header-title">{{ interface.name }}</h3>
         </div>
@@ -112,6 +115,7 @@
             <ix-network-chart [data]="chartData()" [aspectRatio]="aspectRatio()"></ix-network-chart>
           }
         </div>
+      }
       }
     </div>
   </mat-card-content>

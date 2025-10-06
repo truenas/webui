@@ -1,6 +1,6 @@
 import { PercentPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
@@ -21,6 +21,7 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import {
@@ -46,6 +47,7 @@ import {
     RequiresRolesDirective,
     NgxSkeletonLoaderModule,
     TranslateModule,
+    WidgetStaleDataNoticeComponent,
   ],
 })
 export class WidgetStorageComponent {
@@ -56,8 +58,12 @@ export class WidgetStorageComponent {
 
   size = input.required<SlotSize>();
 
-  protected realtimeUpdates = toSignal(this.resources.realtimeUpdates$);
-  protected isLoading = computed(() => !this.pools() || !this.poolStats());
+  protected poolDataState = toSignal(
+    this.resources.poolUpdatesWithStaleDetection().pipe(takeUntilDestroyed()),
+  );
+
+  protected isStale = computed(() => this.poolDataState()?.isStale ?? false);
+  protected isLoading = computed(() => (!this.pools() || !this.poolStats()) && !this.isStale());
   poolsInfo = computed(() => {
     const pools = this.pools();
 
@@ -82,7 +88,7 @@ export class WidgetStorageComponent {
   });
 
   protected poolStats = computed(() => {
-    return this.realtimeUpdates()?.fields?.pools;
+    return this.poolDataState()?.value;
   });
 
   protected readonly requiredRoles = [Role.PoolWrite];
