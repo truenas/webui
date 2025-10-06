@@ -16,9 +16,9 @@ export interface StaleDataState<T> {
  * @returns An operator function that emits StaleDataState
  */
 export function detectStaleData<T>(timeoutMs = 5000): OperatorFunction<T, StaleDataState<T>> {
-  const startTime = Date.now();
-
   return (source$: Observable<T>): Observable<StaleDataState<T>> => {
+    const startTime = Date.now();
+
     return combineLatest([
       source$.pipe(
         map((value) => ({ value, timestamp: Date.now() })),
