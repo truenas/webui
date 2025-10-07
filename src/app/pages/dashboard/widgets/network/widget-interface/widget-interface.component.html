@@ -18,6 +18,11 @@
 
     <div *ixWithLoadingState="interface() as interface" [class]="['container', size()]">
       @if (isStale()) {
+        <div class="nic-info">
+          <div class="info-header">
+            <h3 class="info-header-title">{{ interface.name }}</h3>
+          </div>
+        </div>
         <ix-widget-stale-data-notice></ix-widget-stale-data-notice>
       } @else {
         <div class="nic-info">

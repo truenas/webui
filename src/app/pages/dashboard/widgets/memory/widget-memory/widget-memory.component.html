@@ -1,23 +1,23 @@
 <mat-card class="card">
   <mat-card-content class="card-content">
+    <div class="header">
+      <h3>{{ 'Memory' | translate }}</h3>
+
+      <button
+        mat-icon-button
+        ixTest="memory-go-to-reports"
+        matTooltipPosition="above"
+        [attr.aria-label]="'Memory Reports' | translate"
+        [matTooltip]="'Memory Reports' | translate"
+        [routerLink]="['/reportsdashboard', 'memory']"
+      >
+        <ix-icon name="insert_chart"></ix-icon>
+      </button>
+    </div>
+
     @if (isStale()) {
       <ix-widget-stale-data-notice></ix-widget-stale-data-notice>
     } @else {
-      <div class="header">
-        <h3>{{ 'Memory' | translate }}</h3>
-
-        <button
-          mat-icon-button
-          ixTest="memory-go-to-reports"
-          matTooltipPosition="above"
-          [attr.aria-label]="'Memory Reports' | translate"
-          [matTooltip]="'Memory Reports' | translate"
-          [routerLink]="['/reportsdashboard', 'memory']"
-        >
-          <ix-icon name="insert_chart"></ix-icon>
-        </button>
-      </div>
-
       <div [class]="['container', size()]">
       <div class="stats">
         <h2 class="total-memory">
@@ -80,7 +80,7 @@
           ></canvas>
         </ng-template>
       </div>
-    </div>
+      </div>
     }
   </mat-card-content>
 </mat-card>
