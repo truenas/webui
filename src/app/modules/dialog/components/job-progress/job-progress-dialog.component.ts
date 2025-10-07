@@ -212,7 +212,7 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
   private getRealtimeLogs(): Subscription {
     this.realtimeLogsSubscribed = true;
     this.cdr.markForCheck();
-    return this.api.subscribe(`filesystem.file_tail_follow:${this.job.logs_path}`)
+    return this.api.subscribe(`filesystem.file_tail_follow:${JSON.stringify({ path: this.job.logs_path })}`)
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
       .subscribe((logs) => {
         if (logs?.data && typeof logs.data === 'string') {

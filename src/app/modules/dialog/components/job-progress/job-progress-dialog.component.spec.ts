@@ -203,5 +203,35 @@ describe('JobProgressDialogComponent', () => {
     expect(spectator.inject(MatDialogRef).disableClose).toBe(false);
   });
 
-  // TODO: Test cases for realtime jobs.
+  describe('realtime logs', () => {
+    it('subscribes to filesystem.file_tail_follow with JSON format when showRealtimeLogs is true and logs_path is provided', () => {
+      const jobWithLogs = {
+        ...testJob,
+        logs_path: '/var/log/test.log',
+      } as Job;
+
+      spectator = createComponent({
+        providers: [
+          mockProvider(ApiService, {
+            subscribe: jest.fn(() => of({
+              fields: {
+                data: 'Log line 1\nLog line 2\n',
+              },
+            })),
+          }),
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: {
+              job$: of(jobWithLogs),
+              showRealtimeLogs: true,
+            } as JobProgressDialogConfig<unknown>,
+          },
+        ],
+      });
+
+      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith(
+        `filesystem.file_tail_follow:${JSON.stringify({ path: '/var/log/test.log' })}`,
+      );
+    });
+  });
 });
