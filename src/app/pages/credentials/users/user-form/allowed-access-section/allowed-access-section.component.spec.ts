@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Role } from 'app/enums/role.enum';
+import { User } from 'app/interfaces/user.interface';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/users/user-form/allowed-access-section/allowed-access-section.component';
 import { UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
@@ -133,6 +134,81 @@ describe('AllowedAccessSectionComponent', () => {
 
     expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({
       role: Role.FullAdmin,
+    });
+  });
+
+  describe('SMB access validation', () => {
+    it('does not show validation error for new users', () => {
+      spectator.component.form.controls.smb.setValue(true);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('smb')).toBe(false);
+    });
+
+    it('shows validation error when enabling SMB for existing user without password', () => {
+      spectator.setInput('editingUser', {
+        username: 'test',
+        smb: false,
+        roles: [],
+      } as User);
+      spectator.setInput('password', '');
+      spectator.detectChanges();
+
+      spectator.component.form.controls.smb.setValue(true);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('smb')).toBe(true);
+      expect(spectator.component.form.getError('smb')).toEqual({
+        message: 'Password must be reset in order to enable SMB authentication',
+      });
+    });
+
+    it('does not show validation error when enabling SMB for existing user with password', () => {
+      spectator.setInput('editingUser', {
+        username: 'test',
+        smb: false,
+        roles: [],
+      } as User);
+      spectator.setInput('password', 'newpassword123');
+      spectator.detectChanges();
+
+      spectator.component.form.controls.smb.setValue(true);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('smb')).toBe(false);
+    });
+
+    it('does not show validation error when SMB was already enabled', () => {
+      spectator.setInput('editingUser', {
+        username: 'test',
+        smb: true,
+        roles: [],
+      } as User);
+      spectator.setInput('password', '');
+      spectator.detectChanges();
+
+      spectator.component.form.controls.smb.setValue(true);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('smb')).toBe(false);
+    });
+
+    it('revalidates when password changes', () => {
+      spectator.setInput('editingUser', {
+        username: 'test',
+        smb: false,
+        roles: [],
+      } as User);
+      spectator.setInput('password', '');
+      spectator.component.form.controls.smb.setValue(true);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('smb')).toBe(true);
+
+      spectator.setInput('password', 'newpassword123');
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('smb')).toBe(false);
     });
   });
 });

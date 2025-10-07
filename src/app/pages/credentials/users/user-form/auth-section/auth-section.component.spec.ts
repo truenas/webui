@@ -266,4 +266,84 @@ describe('AuthSectionComponent', () => {
       expect(spectator.component.form.hasError('sshAccessRequired')).toBe(false);
     });
   });
+
+  describe('SSH password enabled validation', () => {
+    beforeEach(() => {
+      sshAccess.set(true);
+    });
+
+    it('shows validation error when SSH password enabled without valid home directory', async () => {
+      spectator.setInput('homeDirectory', '');
+      spectator.setInput('shell', '/usr/bin/bash');
+      spectator.detectChanges();
+
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(true);
+      expect(spectator.component.form.getError('ssh_password_enabled')).toEqual({
+        message: 'Cannot be enabled without a valid home path and login shell.',
+      });
+    });
+
+    it('shows validation error when SSH password enabled without valid shell', async () => {
+      spectator.setInput('homeDirectory', '/mnt/tank/user');
+      spectator.setInput('shell', '/usr/sbin/nologin');
+      spectator.detectChanges();
+
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(true);
+      expect(spectator.component.form.getError('ssh_password_enabled')).toEqual({
+        message: 'Cannot be enabled without a valid home path and login shell.',
+      });
+    });
+
+    it('does not show validation error when SSH password enabled with valid home and shell', async () => {
+      spectator.setInput('homeDirectory', '/mnt/tank/user');
+      spectator.setInput('shell', '/usr/bin/bash');
+      spectator.detectChanges();
+
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
+    });
+
+    it('revalidates when home directory changes', async () => {
+      spectator.setInput('homeDirectory', '');
+      spectator.setInput('shell', '/usr/bin/bash');
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(true);
+
+      spectator.setInput('homeDirectory', '/mnt/tank/user');
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
+    });
+
+    it('revalidates when shell changes', async () => {
+      spectator.setInput('homeDirectory', '/mnt/tank/user');
+      spectator.setInput('shell', '/usr/sbin/nologin');
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(true);
+
+      spectator.setInput('shell', '/usr/bin/bash');
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
+    });
+
+    it('does not validate when SSH password is not enabled', async () => {
+      spectator.setInput('homeDirectory', '');
+      spectator.setInput('shell', '/usr/sbin/nologin');
+      spectator.detectChanges();
+
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': false });
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
+    });
+  });
 });
