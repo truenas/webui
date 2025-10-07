@@ -161,6 +161,7 @@ describe('WidgetMemoryComponent', () => {
     });
 
     expect(spectator.query('ix-widget-stale-data-notice')).toExist();
-    expect(spectator.query('.header')).not.toExist();
+    expect(spectator.query('.header')).toExist();
+    expect(spectator.query('.stats')).not.toExist();
   });
 });
