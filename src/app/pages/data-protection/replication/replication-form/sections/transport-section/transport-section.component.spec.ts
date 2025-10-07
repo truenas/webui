@@ -95,12 +95,32 @@ describe('TransportSectionComponent', () => {
         compression: 'LZ4',
         compressed: true,
         large_block: true,
+        speed_limit: null,
         netcat_active_side: null,
         netcat_active_side_listen_address: null,
         netcat_active_side_port_max: null,
         netcat_active_side_port_min: null,
         netcat_passive_side_connect_address: null,
       });
+    });
+
+    it('includes speed_limit as null when not provided in SSH mode', async () => {
+      // make it *something* and get the value
+      await form.fillForm({
+        'SSH Connection': 'connection 1',
+        'Limit(Examples: 500 KiB, 500M, 2 TB)': '1GiB',
+      });
+      const shouldHaveLimit = spectator.component.getPayload();
+      expect(shouldHaveLimit).toHaveProperty('speed_limit', 1 * GiB);
+
+      // then, make it empty and ensure that it does properly return null
+      await form.fillForm({
+        'SSH Connection': 'connection 1',
+        'Limit(Examples: 500 KiB, 500M, 2 TB)': '',
+      });
+
+      const shouldNotHaveLimit = spectator.component.getPayload();
+      expect(shouldNotHaveLimit).toHaveProperty('speed_limit', null);
     });
 
     it('sends compression: null in payload when it is disabled', async () => {
