@@ -56,16 +56,15 @@ describe('WidgetInterfaceComponent', () => {
           isLoading: false,
           error: null,
         }),
-        realtimeUpdates$: of({
-          fields: {
-            interfaces: {
-              ens1: {
-                received_bytes_rate: 2048,
-                sent_bytes_rate: 4096,
-                link_state: LinkState.Up,
-              },
+        networkInterfaceUpdatesWithStaleDetection: () => of({
+          value: {
+            ens1: {
+              received_bytes_rate: 2048,
+              sent_bytes_rate: 4096,
+              link_state: LinkState.Up,
             },
           },
+          isStale: false,
         }),
         networkInterfaceLastHourStats: jest.fn(() => of([
           {

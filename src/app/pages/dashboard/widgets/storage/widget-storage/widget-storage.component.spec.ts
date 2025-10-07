@@ -85,16 +85,15 @@ describe('WidgetStorageComponent', () => {
         WidgetResourcesService,
         {
           pools$: of(fakePools),
-          realtimeUpdates$: of({
-            fields: {
-              pools: {
-                dozer: {
-                  available: 1625071616,
-                  used: 2267242496,
-                  total: 3892314112,
-                },
+          poolUpdatesWithStaleDetection: () => of({
+            value: {
+              dozer: {
+                available: 1625071616,
+                used: 2267242496,
+                total: 3892314112,
               },
             },
+            isStale: false,
           }),
         },
       ),
