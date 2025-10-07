@@ -335,7 +335,6 @@ describe('ZvolFormComponent', () => {
         compression: 'LZ4',
         deduplication: 'OFF',
         force_size: false,
-        inherit_encryption: true,
         readonly: 'INHERIT',
         snapdev: 'INHERIT',
         sync: 'STANDARD',
