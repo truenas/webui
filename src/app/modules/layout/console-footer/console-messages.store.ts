@@ -22,7 +22,7 @@ export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> i
   lines$ = this.select((state) => state.lines.join('\n'));
   lastThreeLogLines$ = this.select((state) => state.lines.slice(-3).join('\n'));
 
-  private readonly logPath = 'filesystem.file_tail_follow:/var/log/messages:500';
+  private readonly logPath = `filesystem.file_tail_follow:${JSON.stringify({ path: '/var/log/messages', tail_lines: 500 })}` as const;
   private readonly maxMessages = 500;
 
   private addMessage = this.updater((state, message: string) => {
@@ -39,7 +39,7 @@ export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> i
   }
 
   subscribeToMessageUpdates(): void {
-    this.api.subscribe(this.logPath)
+    this.api.subscribe<'filesystem.file_tail_follow'>(this.logPath)
       .pipe(
         map((event) => event.fields),
         filter((log) => typeof log?.data === 'string'),

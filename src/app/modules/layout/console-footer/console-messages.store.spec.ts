@@ -26,7 +26,7 @@ describe('ConsoleMessagesStore', () => {
     spectator.service.subscribeToMessageUpdates();
 
     expect(spectator.inject(ApiService).subscribe)
-      .toHaveBeenCalledWith('filesystem.file_tail_follow:/var/log/messages:500');
+      .toHaveBeenCalledWith(`filesystem.file_tail_follow:${JSON.stringify({ path: '/var/log/messages', tail_lines: 500 })}`);
     const state = await firstValueFrom(spectator.service.state$);
     expect(state).toEqual({
       lines: [
