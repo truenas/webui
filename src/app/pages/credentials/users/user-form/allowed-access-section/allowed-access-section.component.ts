@@ -62,10 +62,16 @@ export class AllowedAccessSectionComponent {
     this.setFieldRelations();
     this.updateStoreOnChanges();
 
-    // Revalidate when password or passwordDisabled changes
+    // Revalidate when password changes
     effect(() => {
       this.password();
-      this.passwordDisabled();
+      this.form.updateValueAndValidity();
+    });
+
+    // Revalidate when SMB checkbox changes
+    this.form.controls.smb.valueChanges.pipe(
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.form.updateValueAndValidity();
     });
   }
@@ -77,13 +83,21 @@ export class AllowedAccessSectionComponent {
       return null; // SMB is not enabled, no validation needed
     }
 
-    const password = this.password();
-    const passwordDisabled = this.passwordDisabled();
+    // Skip validation for new users - password field is already required
+    if (!this.editingUser()) {
+      return null;
+    }
 
-    // Check if password is set (has value and is not empty)
+    const password = this.password();
     const hasPassword = password && password.trim().length > 0;
 
-    if (!hasPassword || passwordDisabled) {
+    // Get original user state
+    const user = this.editingUser();
+    const originalSmbEnabled = user?.smb ?? false;
+
+    // Show error if enabling SMB and no password entered
+    // API requires password reset when enabling SMB access
+    if (originalSmbEnabled === false && !hasPassword) {
       return {
         smb: {
           message: this.translate.instant('Password must be reset in order to enable SMB authentication'),

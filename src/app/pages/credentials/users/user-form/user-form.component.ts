@@ -296,6 +296,20 @@ export class UserFormComponent implements OnInit {
     });
   }
 
+  // Field names that need validation clearing based on access type
+  private readonly shellAccessFields = [
+    'shell',
+    'sudo_commands',
+    'sudo_commands_all',
+    'sudo_commands_nopasswd',
+    'sudo_commands_nopasswd_all',
+  ] as const;
+
+  private readonly sshAccessFields = [
+    'sshpubkey',
+    'ssh_password_enabled',
+  ] as const;
+
   /**
    * Reload validation state for all forms to ensure proper validation after access changes
    */
@@ -309,21 +323,12 @@ export class UserFormComponent implements OnInit {
 
     // Shell Access controls: shell field and all sudo command fields
     if (!allowedAccess.shellAccess) {
-      fieldsToClear.push(
-        'shell',
-        'sudo_commands',
-        'sudo_commands_all',
-        'sudo_commands_nopasswd',
-        'sudo_commands_nopasswd_all',
-      );
+      fieldsToClear.push(...this.shellAccessFields);
     }
 
     // SSH Access controls: ssh-related fields
     if (!allowedAccess.sshAccess) {
-      fieldsToClear.push(
-        'sshpubkey',
-        'ssh_password_enabled',
-      );
+      fieldsToClear.push(...this.sshAccessFields);
     }
 
     // SMB Access controls: password disable field (shown when SMB is disabled)
@@ -333,8 +338,9 @@ export class UserFormComponent implements OnInit {
     this.formErrorHandler.clearValidationErrorsForHiddenFields(this.allForms, fieldsToClear);
 
     // Update validation for all forms to recalculate based on current access settings
+    // Use emitEvent: false to prevent unnecessary validation cascades
     this.allForms.forEach((form) => {
-      form.updateValueAndValidity();
+      form.updateValueAndValidity({ emitEvent: false });
     });
   }
 
