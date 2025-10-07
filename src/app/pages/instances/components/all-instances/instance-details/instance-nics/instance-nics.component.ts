@@ -8,7 +8,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import {
   VirtualizationDevice,
-} from 'app/interfaces/virtualization.interface';
+} from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddNicMenuComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
 import {

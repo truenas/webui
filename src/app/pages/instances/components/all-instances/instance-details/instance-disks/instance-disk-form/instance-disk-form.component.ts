@@ -13,15 +13,14 @@ import {
   DiskIoBus,
   diskIoBusLabels,
   VirtualizationDeviceType,
-  VirtualizationType,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import {
   VirtualizationDisk,
-  VirtualizationInstance,
+  ContainerInstance,
   VirtualizationVolume,
-} from 'app/interfaces/virtualization.interface';
+} from 'app/interfaces/container.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   ExplorerCreateDatasetComponent,
@@ -43,7 +42,7 @@ import {
 import { FilesystemService } from 'app/services/filesystem.service';
 
 interface InstanceDiskFormOptions {
-  instance: VirtualizationInstance;
+  instance: ContainerInstance;
   disk: VirtualizationDisk | undefined;
 }
 
@@ -100,12 +99,8 @@ export class InstanceDiskFormComponent implements OnInit {
     return !this.isNew() ? this.translate.instant('Edit Disk') : this.translate.instant('Add Disk');
   });
 
-  protected get instance(): VirtualizationInstance {
+  protected get instance(): ContainerInstance {
     return this.slideInRef.getData().instance;
-  }
-
-  protected get isVm(): boolean {
-    return this.instance.type === VirtualizationType.Vm;
   }
 
   constructor() {
@@ -125,11 +120,7 @@ export class InstanceDiskFormComponent implements OnInit {
       });
     }
 
-    if (this.isVm) {
-      this.form.controls.destination.disable();
-    } else {
-      this.form.controls.io_bus.disable();
-    }
+    this.form.controls.io_bus.disable();
   }
 
   protected onSelectVolume(): void {
@@ -139,7 +130,6 @@ export class InstanceDiskFormComponent implements OnInit {
         data: {
           selectionMode: true,
           config: null,
-          showIsoManagement: this.instance.type === VirtualizationType.Vm,
         },
       })
       .afterClosed()

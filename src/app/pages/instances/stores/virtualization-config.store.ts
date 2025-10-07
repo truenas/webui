@@ -5,13 +5,13 @@ import {
   of, Subscription, switchMap, tap,
 } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { VirtualizationGlobalConfig } from 'app/interfaces/virtualization.interface';
+import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface VirtualizationConfigState {
   isLoading: boolean;
-  config: VirtualizationGlobalConfig | null;
+  config: ContainerGlobalConfig | null;
 }
 
 const initialState: VirtualizationConfigState = {
@@ -27,7 +27,6 @@ export class VirtualizationConfigStore extends ComponentStore<VirtualizationConf
 
   readonly isLoading = computed(() => this.state().isLoading);
   readonly config = computed(() => this.state().config);
-  readonly virtualizationState = computed(() => this.config()?.state);
 
   private configSubscription: Subscription;
 
@@ -42,7 +41,7 @@ export class VirtualizationConfigStore extends ComponentStore<VirtualizationConf
 
         this.patchState({ isLoading: true });
 
-        return this.api.call('virt.global.config').pipe(
+        return this.api.call('lxc.config').pipe(
           tap((config) => {
             this.patchState({
               config,
@@ -64,7 +63,7 @@ export class VirtualizationConfigStore extends ComponentStore<VirtualizationConf
       return;
     }
 
-    this.configSubscription = this.api.subscribe('virt.global.config')
+    this.configSubscription = this.api.subscribe('lxc.config')
       .pipe(untilDestroyed(this))
       .subscribe(({ fields }) => {
         this.patchState({ config: fields });

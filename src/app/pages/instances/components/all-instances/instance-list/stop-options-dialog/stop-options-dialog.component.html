@@ -8,10 +8,10 @@
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-select
-    formControlName="waitFor"
-    [label]="'Wait to stop cleanly' | translate"
+    formControlName="stopMethod"
+    [label]="'Stop Method' | translate"
     [required]="true"
-    [options]="waitForOptions$"
+    [options]="stopMethodOptions$"
   ></ix-select>
 
   <ix-form-actions>

@@ -7,24 +7,24 @@ import {
   EMPTY,
   filter,
 } from 'rxjs';
-import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
+import { VirtualizationDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-export interface VirtualizationInstanceDeviceState {
+export interface ContainerInstanceDeviceState {
   isLoading: boolean;
   devices: VirtualizationDevice[];
 }
 
-const initialState: VirtualizationInstanceDeviceState = {
+const initialState: ContainerInstanceDeviceState = {
   isLoading: false,
   devices: [],
 };
 
 @UntilDestroy()
 @Injectable()
-export class VirtualizationDevicesStore extends ComponentStore<VirtualizationInstanceDeviceState> {
+export class VirtualizationDevicesStore extends ComponentStore<ContainerInstanceDeviceState> {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private instanceStore = inject(VirtualizationInstancesStore);
@@ -41,7 +41,7 @@ export class VirtualizationDevicesStore extends ComponentStore<VirtualizationIns
         }
       }),
       filter(Boolean),
-      tap(() => this.loadDevices()),
+      // tap(() => this.loadDevices()),
     ).pipe(untilDestroyed(this)).subscribe();
   }
 
@@ -49,7 +49,7 @@ export class VirtualizationDevicesStore extends ComponentStore<VirtualizationIns
     return trigger$.pipe(
       switchMap(() => {
         this.patchState({ isLoading: true });
-        return this.api.call('virt.instance.device_list', [this.selectedInstance().id]).pipe(
+        return this.api.call('virt.instance.device_list', [this.selectedInstance().id.toString()]).pipe(
           tap((devices) => {
             this.patchState({
               devices,

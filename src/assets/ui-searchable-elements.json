@@ -1832,7 +1832,7 @@
       "/containers"
     ],
     "routerLink": null,
-    "anchor": "vm-global-settings",
+    "anchor": "container-global-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1845,17 +1845,17 @@
       "New Container",
       "Add Container"
     ],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "CONTAINER_WRITE"
+    ],
     "visibleTokens": [
       "VMS"
     ],
     "anchorRouterLink": [
       "/containers"
     ],
-    "routerLink": [
-      "/containers/new"
-    ],
-    "anchor": "add-instance",
+    "routerLink": null,
+    "anchor": "add-container",
     "triggerAnchor": null,
     "section": "ui"
   },

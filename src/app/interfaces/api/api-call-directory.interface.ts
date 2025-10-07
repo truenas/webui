@@ -72,6 +72,21 @@ import { CloudSyncProvider, CloudSyncRestoreParams } from 'app/interfaces/clouds
 import {
   ContainerImage, DeleteContainerImageParams,
 } from 'app/interfaces/container-image.interface';
+import {
+  VirtualizationDevice,
+
+  ContainerGlobalConfig, VirtualizationImage,
+  VirtualizationImageParams,
+  ContainerInstance,
+  VirtualizationNetwork,
+  AvailableUsb,
+  AvailableGpus, VirtualizationVolume,
+  VirtualizationVolumeUpdate,
+  CreateVirtualizationVolume,
+  CreateContainerInstance,
+  UpdateContainerInstance,
+  ContainerImageRegistryResponse,
+} from 'app/interfaces/container.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { CoreOptions } from 'app/interfaces/core-options.interface';
 import {
@@ -268,20 +283,6 @@ import {
   VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
   VmDisplayWebUriParams, VmPortWizardResult,
 } from 'app/interfaces/virtual-machine.interface';
-import {
-  VirtualizationDevice,
-
-  VirtualizationGlobalConfig, VirtualizationImage,
-  VirtualizationImageParams,
-  VirtualizationInstance,
-  VirtualizationNetwork,
-  AvailableUsb,
-  AvailableGpus, VirtualizationVolume,
-  VirtualizationVolumeUpdate,
-  VirtualizationPciChoices,
-  CreateVirtualizationVolume,
-  VirtualizationImportIsoParams,
-} from 'app/interfaces/virtualization.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
@@ -901,11 +902,9 @@ export interface ApiCallDirectory {
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
 
   // Virt
-  'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
-  'virt.instance.set_bootable_disk': { params: [instanceId: string, diskId: string]; response: boolean };
-  'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
-  'virt.instance.device_update': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
-  'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: true };
+  'virt.instance.device_add': { params: [instanceId: number, device: VirtualizationDevice]; response: true };
+  'virt.instance.device_update': { params: [instanceId: number, device: VirtualizationDevice]; response: true };
+  'virt.instance.device_delete': { params: [instanceId: number, name: string]; response: true };
   'virt.instance.device_list': { params: [instanceId: string]; response: VirtualizationDevice[] };
   'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: Record<string, VirtualizationImage> };
 
@@ -916,18 +915,30 @@ export interface ApiCallDirectory {
   };
   'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
   'virt.device.nic_choices': { params: [nicType: VirtualizationNicType]; response: Record<string, string> };
-  'virt.device.pci_choices': { params: []; response: VirtualizationPciChoices };
 
-  'virt.global.bridge_choices': { params: []; response: Choices };
-  'virt.global.config': { params: []; response: VirtualizationGlobalConfig };
   'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
-  'virt.global.pool_choices': { params: []; response: Choices };
 
   'virt.volume.create': { params: [CreateVirtualizationVolume]; response: VirtualizationVolume };
   'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
   'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
   'virt.volume.delete': { params: [id: string]; response: true };
-  'virt.volume.import_iso': { params: [VirtualizationImportIsoParams]; response: VirtualizationVolume };
+
+  // Container (actual available endpoints only)
+  'container.create': { params: [CreateContainerInstance]; response: ContainerInstance };
+  'container.delete': { params: [instanceId: number]; response: boolean };
+  'container.get_instance': { params: [instanceId: number]; response: ContainerInstance };
+  'container.image.query_registry': { params: []; response: ContainerImageRegistryResponse[] };
+  'container.migrate': { params: [instanceId: number]; response: boolean };
+  'container.pool_choices': { params: []; response: Choices };
+  'container.query': { params: QueryParams<ContainerInstance>; response: ContainerInstance[] };
+  'container.start': { params: [instanceId: number]; response: void };
+  'container.stop': { params: [instanceId: number, params?: { force?: boolean }]; response: void };
+  'container.update': { params: [instanceId: number, update: UpdateContainerInstance]; response: ContainerInstance };
+
+  // LXC (actual available endpoints only)
+  'lxc.bridge_choices': { params: []; response: Choices };
+  'lxc.config': { params: []; response: ContainerGlobalConfig };
+  'lxc.update': { params: [ContainerGlobalConfig]; response: ContainerGlobalConfig };
 
   // VM
   'vm.bootloader_options': { params: void; response: Choices };

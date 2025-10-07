@@ -2,8 +2,6 @@ import { Type } from '@angular/core';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { VirtualizationType } from 'app/enums/virtualization.enum';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import {
   InstanceDetailsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-details.component';
@@ -28,6 +26,7 @@ import {
 import {
   InstanceToolsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-tools/instance-tools.component';
+import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
 
 describe('InstanceDetailsComponent', () => {
   let spectator: Spectator<InstanceDetailsComponent>;
@@ -50,10 +49,10 @@ describe('InstanceDetailsComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        instance: {
+        instance: fakeVirtualizationInstance({
+          id: 1,
           name: 'my-instance',
-          type: VirtualizationType.Container,
-        } as VirtualizationInstance,
+        }),
       },
     });
   });
@@ -71,34 +70,6 @@ describe('InstanceDetailsComponent', () => {
 
     expectedComponents.forEach((component) => {
       expect(spectator.query(component as Type<unknown>)).toExist();
-    });
-  });
-
-  it('shows details sub-components related to a selected VM', () => {
-    spectator.setInput('instance', {
-      name: 'my-instance',
-      type: VirtualizationType.Vm,
-    } as VirtualizationInstance);
-
-    const expectedComponents = [
-      InstanceGeneralInfoComponent,
-      InstanceDevicesComponent,
-      InstanceDisksComponent,
-      InstanceNicsComponent,
-      InstanceToolsComponent,
-    ];
-
-    expectedComponents.forEach((component) => {
-      expect(spectator.query(component as Type<unknown>)).toExist();
-    });
-
-    const notExpectedComponents = [
-      InstanceProxiesComponent,
-      InstanceIdmapComponent,
-    ];
-
-    notExpectedComponents.forEach((component) => {
-      expect(spectator.query(component as Type<unknown>)).not.toExist();
     });
   });
 });

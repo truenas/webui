@@ -14,7 +14,6 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 export class SnackbarService {
   private matSnackBar = inject(MatSnackBar);
 
-
   success(message: TranslatedString): MatSnackBarRef<SnackbarComponent> {
     const config: MatSnackBarConfig = {
       announcementMessage: message,

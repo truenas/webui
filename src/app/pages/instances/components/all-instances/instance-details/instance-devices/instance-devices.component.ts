@@ -6,7 +6,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import {
   VirtualizationDevice,
-} from 'app/interfaces/virtualization.interface';
+} from 'app/interfaces/container.interface';
 import {
   AddDeviceMenuComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
@@ -43,8 +43,6 @@ export class InstanceDevicesComponent {
       return [
         VirtualizationDeviceType.Usb,
         VirtualizationDeviceType.Gpu,
-        VirtualizationDeviceType.Tpm,
-        VirtualizationDeviceType.Pci,
       ].includes(device.dev_type);
     });
   });
