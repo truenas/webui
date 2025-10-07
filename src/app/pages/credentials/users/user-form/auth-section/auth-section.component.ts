@@ -84,13 +84,14 @@ export class AuthSectionComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        const rawValue = this.form.getRawValue();
         this.userStore.updateUserConfig({
-          ssh_password_enabled: this.form.value.ssh_password_enabled,
+          ssh_password_enabled: rawValue.ssh_password_enabled,
           password_disabled: this.smbAccess()
             ? false
-            : this.form.value.password_disabled,
-          password: this.form.value.password,
-          sshpubkey: this.form.value.sshpubkey,
+            : rawValue.password_disabled,
+          password: rawValue.password,
+          sshpubkey: rawValue.sshpubkey,
         });
       },
     });
