@@ -611,7 +611,8 @@ export class ZvolFormComponent implements OnInit {
           data.encryption_options.algorithm = data.algorithm;
         }
 
-        // Keep inherit_encryption in the payload - don't delete it
+        // Delete all encryption-related fields when editing
+        delete data.inherit_encryption;
         delete data.key;
         delete data.generate_key;
         delete data.passphrase;
