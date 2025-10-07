@@ -99,10 +99,10 @@ export class UserFormComponent implements OnInit {
 
   protected get formValues(): UserUpdate & { stig_password?: UserStigPasswordOption } {
     return {
-      ...this.form.value,
-      ...this.allowedAccessSection().form.value,
-      ...this.authSection().form.value,
-      ...this.additionalDetailsSection().form.value,
+      ...this.form.getRawValue(),
+      ...this.allowedAccessSection().form.getRawValue(),
+      ...this.authSection().form.getRawValue(),
+      ...this.additionalDetailsSection().form.getRawValue(),
     };
   }
 
