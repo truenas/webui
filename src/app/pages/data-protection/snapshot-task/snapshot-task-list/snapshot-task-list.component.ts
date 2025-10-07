@@ -198,6 +198,11 @@ export class SnapshotTaskListComponent implements OnInit {
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
+
+    this.api.subscribe('pool.snapshottask.query').pipe(
+      tap(() => this.getSnapshotTasks()),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   protected getSnapshotTasks(): void {
