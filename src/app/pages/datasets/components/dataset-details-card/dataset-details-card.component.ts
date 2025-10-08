@@ -104,7 +104,7 @@ export class DatasetDetailsCardComponent {
         untilDestroyed(this),
       )
       .subscribe((parent) => {
-        this.router.navigate(['/datasets', parent?.id], { state: { hideMobileDetails: true } });
+        this.router.navigate(['/datasets', parent?.id]);
       });
   }
 
