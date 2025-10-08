@@ -481,7 +481,6 @@ describe('VDevsListComponent', () => {
     spectator = createComponent({
       props: {
         poolId: 2,
-        isMobileView: false,
       },
       providers: [
         {

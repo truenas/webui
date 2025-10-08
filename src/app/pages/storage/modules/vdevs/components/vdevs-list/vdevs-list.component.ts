@@ -68,7 +68,6 @@ export class VDevsListComponent implements OnInit {
   private layoutService = inject(LayoutService);
 
   poolId = input.required<number>();
-  isMobileView = input<boolean>();
   showMobileDetails = output<boolean>();
   showDetails = output<{ poolId: number; guid: string }>();
 
@@ -195,8 +194,6 @@ export class VDevsListComponent implements OnInit {
 
     this.layoutService.navigatePreservingScroll(this.router, ['/storage', poolId, 'vdevs', guid]);
 
-    if (this.isMobileView()) {
-      this.showMobileDetails.emit(true);
-    }
+    this.showMobileDetails.emit(true);
   }
 }

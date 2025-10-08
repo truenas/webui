@@ -111,7 +111,6 @@ describe('CloudBackupListComponent', () => {
       props: {
         dataProvider,
         cloudBackups,
-        isMobileView: false,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
