@@ -34,6 +34,7 @@ function getMiddlewareLogImportantData(log: MiddlewareAuditEntry, translate: Tra
       return log.event_data?.description || log.event_data?.method;
     case AuditEvent.Reboot:
       return log.event_data?.reason;
+    case AuditEvent.Logout:
     case AuditEvent.Authentication: {
       const credentialType = log.event_data?.credentials?.credentials;
       const credentialTypeLabel = translate.instant(credentialTypeLabels.get(credentialType) || credentialType);
