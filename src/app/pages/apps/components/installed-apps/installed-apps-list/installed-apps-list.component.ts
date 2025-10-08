@@ -103,7 +103,7 @@ export class InstalledAppsListComponent implements OnInit {
   private loader = inject(LoaderService);
   private layoutService = inject(LayoutService);
 
-  readonly appId = toSignal<string>(this.activatedRoute.params.pipe(map((params) => params['appId'])));
+  readonly appId = toSignal<string | undefined>(this.activatedRoute.params.pipe(map((params) => params['appId'])));
   readonly toggleShowMobileDetails = output<boolean>();
 
   protected readonly searchableElements = installedAppsElements;
