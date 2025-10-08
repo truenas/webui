@@ -5,7 +5,7 @@
   "Allow All Sudo Commands": "すべての sudo コマンドを許可します",
   "Allow All Sudo Commands with No Password": "パスワードなしですべての sudo コマンドを許可する",
   "Allowed Sudo Commands with No Password": "パスワードなしで許可される sudo コマンド",
-  "Enable Search (Spotlight)": "検索を有効にする（スポットライト）",
+  "Enable Search (Spotlight)": "検索を有効にする（Spotlight）",
   "Enable to allow macOS clients to use Spotlight to quickly search for file contents on SMB shares.": "有効にすると、macOS クライアントが Spotlight を使用して SMB 共有上のファイル コンテンツを迅速に検索できるようになります。",
   "Password Login is Enabled": "パスワードログインが有効になっています",
   "Release Notes for {version}": "{version} のリリースノート",
