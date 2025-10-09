@@ -116,7 +116,11 @@ export class SlideInContainerComponent implements AfterViewInit {
   private focusFirstElement(): void {
     requestAnimationFrame(() => {
       const container = this.elementRef.nativeElement as HTMLElement;
-      const closeButton = container.querySelector<HTMLElement>('#ix-close-icon');
+
+      // Try multiple selectors in order of preference
+      const closeButton = container.querySelector<HTMLElement>(
+        '#ix-close-icon, [aria-label*="Close"], [aria-label*="close"], .close-button, button[data-close]',
+      ) || container.querySelector<HTMLElement>('button[type="button"]:last-of-type');
 
       if (closeButton) {
         closeButton.focus();

@@ -5,10 +5,10 @@ import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { combineLatest, fromEvent, Subject, Subscription, timer } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, startWith, takeUntil } from 'rxjs/operators';
-import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
 import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FocusService } from 'app/services/focus.service';
 
 /**
  * Editable component that allows inline editing of a value.
@@ -47,10 +47,10 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   private document = inject(DOCUMENT);
   private injector = inject(Injector);
   private validationErrorService = inject(ValidationErrorCommunicationService);
+  private focusService = inject(FocusService);
   private destroy$ = new Subject<void>();
   private clickOutsideSubscription?: Subscription;
   private keydownSubscription?: Subscription;
-  private previouslyFocusedElement?: HTMLElement;
 
 
   readonly emptyValue = input(this.translate.instant('Not Set'));
@@ -143,14 +143,13 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   }
 
   open(): void {
-    // Store the currently focused element for restoration later
-    this.previouslyFocusedElement = this.document.activeElement as HTMLElement;
+    this.focusService.captureCurrentFocus();
     this.isOpen.set(true);
     this.addClickOutsideListener();
     this.addKeydownListener();
 
     afterNextRender(() => {
-      this.elementRef.nativeElement.querySelector<HTMLElement>(focusableElements)?.focus();
+      this.focusService.focusFirstFocusableElement(this.elementRef.nativeElement);
       const editSlot = this.elementRef.nativeElement.querySelector<HTMLElement>('.edit-slot');
       if (editSlot) {
         editSlot.scrollIntoView({
@@ -176,18 +175,7 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
     this.removeClickOutsideListener();
     this.removeKeydownListener();
 
-    // Restore focus to the previously focused element
-    if (this.previouslyFocusedElement) {
-      try {
-        if (this.document.contains(this.previouslyFocusedElement)
-          && this.previouslyFocusedElement.isConnected) {
-          this.previouslyFocusedElement.focus();
-        }
-      } catch (error) {
-        console.warn('Failed to restore focus:', error);
-      }
-    }
-    this.previouslyFocusedElement = undefined;
+    this.focusService.restoreFocus();
 
     setTimeout(() => {
       this.checkVisibleValue();
@@ -229,6 +217,7 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
         return;
       }
 
+      event.preventDefault();
       event.stopPropagation();
       this.tryToClose();
     }

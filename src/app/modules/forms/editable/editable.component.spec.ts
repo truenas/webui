@@ -146,7 +146,7 @@ describe('EditableComponent', () => {
 
       await editable.open();
       spectator.component.tryToClose();
-      tick();
+      tick(200);
 
       expect(document.activeElement).toBe(focusedElement);
 
