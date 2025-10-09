@@ -402,7 +402,7 @@
   "Enter vm name to continue.": "Wpisz nazwę VM, aby kontynuować.",
   "Error Code": "Kod błędu",
   "Error Code (error)": "Kod błędu (błąd)",
-  "Error creating device": "Błąd podczas tworzenia urządzenia"
+  "Error creating device": "Błąd podczas tworzenia urządzenia",
   "Error Data (Optional)": "Dane błędu (opcjonalnie)",
   "Error description": "Opis błędu",
   "Error disconnecting pool.": "Błąd podczas odłączania puli.",
