@@ -122,11 +122,13 @@ export class TransportSectionComponent implements OnChanges {
       return {
         ...omitBy({
           ssh_credentials: values.ssh_credentials,
-          speed_limit: values.speed_limit,
           large_block: values.large_block,
           compressed: values.compressed,
         }, isNull),
         compression: values.compression === CompressionType.Disabled ? null : values.compression,
+        // speed_limit is only available for SSH connections
+        // on all other types of replication tasks it should be null or not submitted at all
+        speed_limit: values.speed_limit || null,
         netcat_active_side: null,
         netcat_active_side_listen_address: null,
         netcat_active_side_port_min: null,
