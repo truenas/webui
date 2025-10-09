@@ -498,7 +498,7 @@
   "Hide Built-in Users": "Ukryj wbudowanych użytkowników",
   "Hide from MSR": "Ukryj w MSR",
   "High Availability": "Wysoka dostępność",
-  "Home Directory Attribute": "Atrybut katalogu domowego"
+  "Home Directory Attribute": "Atrybut katalogu domowego",
   "Host Added": "Host dodany",
   "Host added to the subsystem": "Host dodany do podsystemu",
   "Host authentication is enabled": "Uwierzytelnianie hosta jest włączone",
@@ -632,7 +632,7 @@
   "MiB. Units  smaller than MiB are not allowed.": "MiB. Jednostki mniejsze niż MiB nie są dozwolone.",
   "Migrate existing applications": "Migruj istniejące aplikacje",
   "Min Days Attribute": "Atrybut minimalnej liczby dni",
-  "Min Password Age": "Minimalny wiek hasła"
+  "Min Password Age": "Minimalny wiek hasła",
   "Min Password Length": "Minimalna długość hasła",
   "Minimum Memory": "Minimalna pamięć",
   "Minimum Memory Size": "Minimalny rozmiar pamięci",
@@ -713,7 +713,7 @@
   "Note": "Notatka",
   "NQN": "NQN",
   "NQN to be used as the prefix on the creation of a subsystem, if a subnqn is not supplied. Modifying this value will not change the subnqn of any existing subsystems.": "NQN do użycia jako prefiks przy tworzeniu podsystemu, jeśli subnqn nie zostanie podany. Modyfikacja tej wartości nie zmieni subnqn istniejących podsystemów.",
-  "Number": "Numer"
+  "Number": "Numer",
   "Number of previous passwords to remember. Must be between 1 and 10.": "Liczba poprzednich haseł do zapamiętania. Musi mieścić się w zakresie od 1 do 10.",
   "Number of simultaneous file transfers. Enter a number based on the available bandwidth and destination system performance. See <a href=\"https://rclone.org/docs/#transfers-n\" target=\"_blank\">rclone --transfers</a>.": "Liczba równoczesnych transferów plików. Wprowadź wartość w oparciu o dostępną przepustowość i wydajność systemu docelowego. Zobacz <a href=\"https://rclone.org/docs/#transfers-n\" target=\"_blank\">rclone --transfers</a>.",
   "Number of virtual CPUs to allocate to the virtual machine. The VM operating system might have operational or licensing restrictions on the number of CPUs.": "Liczba wirtualnych CPU do przydzielenia maszynie wirtualnej. System operacyjny VM może mieć ograniczenia operacyjne lub licencyjne dotyczące liczby CPU.",
@@ -794,7 +794,7 @@
   "Priority Resilvering": "Priorytetowe resilvering",
   "Private Datasets Share": "Udział prywatnych datasetów",
   "Privileged": "Uprzywilejowany",
-  "Privileges List": "Lista uprawnień"
+  "Privileges List": "Lista uprawnień",
   "Product ID": "ID produktu",
   "Product identification string for the extent. The default is \"iSCSI Disk\" when left empty.": "Ciąg identyfikacyjny produktu dla extentu. Domyślnie „iSCSI Disk”, jeśli pozostawione puste.",
   "Progress %": "Postęp %",
@@ -884,7 +884,7 @@
   "Select an IP address to use for remote SPICE sessions. Note: this setting only applies if you are using a SPICE client other than the TrueNAS WebUI.": "Wybierz adres IP do użycia dla zdalnych sesji SPICE. Uwaga: to ustawienie dotyczy tylko klientów SPICE innych niż WebUI TrueNAS.",
   "Select an IP address to use for SPICE sessions.": "Wybierz adres IP do użycia dla sesji SPICE.",
   "Select an update profile": "Wybierz profil aktualizacji",
-  "Select desired disk type.": "Wybierz żądany typ dysku"
+  "Select desired disk type.": "Wybierz żądany typ dysku",
   "Select Disk for Spare VDEV": "Wybierz dysk dla zapasowego VDEV",
   "Select Disk Type": "Wybierz typ dysku",
   "Select Existing Zvol": "Wybierz istniejący zvol",
@@ -964,7 +964,7 @@
   "SSH Password Login Enabled": "Logowanie hasłem SSH włączone",
   "Stack Trace (Optional)": "Ślad stosu (opcjonalnie)",
   "Standard error name (e.g., EINVAL, EACCES)": "Standardowa nazwa błędu (np. EINVAL, EACCES)",
-  "Standby Controller must be rebooted because": "Kontroler zapasowy musi zostać uruchomiony ponownie, ponieważ"
+  "Standby Controller must be rebooted because": "Kontroler zapasowy musi zostać uruchomiony ponownie, ponieważ",
   "Start on Boot": "Uruchom przy starcie",
   "Start Service": "Uruchom usługę",
   "Start TLS": "Rozpocznij TLS",
@@ -1026,7 +1026,7 @@
   "The SMB share is a DFS proxy to a share hosted on an external SMB server.": "Udział SMB jest proxy DFS do udziału hostowanego na zewnętrznym serwerze SMB.",
   "The SMB share is a repository for Veeam Backup & Replication and supports Fast Clone.": "Udział SMB jest repozytorium dla Veeam Backup & Replication i obsługuje Fast Clone.",
   "The SMB share is configured for multi-protocol access. Set this if the path is shared through NFS, FTP, or used by containers or apps. NOTE: This setting can reduce SMB share performance because it turns off some SMB features for safer interoperability with external processes.": "Udział SMB jest skonfigurowany do dostępu wieloprotokołowego. Ustaw to, jeśli ścieżka jest udostępniana przez NFS, FTP lub używana przez kontenery lub aplikacje. UWAGA: To ustawienie może obniżyć wydajność udziału SMB, ponieważ wyłącza niektóre funkcje SMB dla bezpieczniejszej współpracy z procesami zewnętrznymi.",
-  "The SMB share is presented to MacOS clients as a time machine target.": "Udział SMB jest prezentowany klientom MacOS jako cel Time Machine."
+  "The SMB share is presented to MacOS clients as a time machine target.": "Udział SMB jest prezentowany klientom MacOS jako cel Time Machine.",
   "The SMB share is presented to MacOS clients as a time machine target. NOTE: aapl_extensions must be set in the global smb.config": "Udział SMB jest prezentowany klientom MacOS jako cel Time Machine. UWAGA: aapl_extensions musi być ustawione w globalnym smb.config",
   "The SMB share makes files read-only through the SMB protocol after the set graceperiod ends. WARNING: This setting does not work if the path is accessed locally or if another SMB share without the TIMELOCKED_SHARE purpose uses the same path. WARNING: This setting might not meet regulatory requirements for write-once storage.": "Udział SMB ustawia pliki jako tylko do odczytu przez protokół SMB po zakończeniu okresu karencji. OSTRZEŻENIE: To ustawienie nie działa, jeśli ścieżka jest dostępna lokalnie lub jeśli inny udział SMB bez przeznaczenia TIMELOCKED_SHARE używa tej samej ścieżki. OSTRZEŻENIE: To ustawienie może nie spełniać wymagań regulacyjnych dotyczących pamięci typu write-once.",
   "The system dataset contains configuration files and other system data. When this pool is exported, these files will be moved off this pool to ensure system functionality.": "Dataset systemowy zawiera pliki konfiguracyjne i inne dane systemowe. Gdy ta pula zostanie wyeksportowana, pliki te zostaną przeniesione z tej puli, aby zapewnić funkcjonalność systemu.",
@@ -1104,7 +1104,7 @@
   "UPS reaches low battery": "UPS osiąga niski poziom baterii",
   "Usage collection & UI error reporting": "Zbieranie danych o użyciu i raportowanie błędów UI",
   "USB Passthrough Device": "Urządzenie USB passthrough",
-  "Use Containers to configure Incus-based containers (LXC) in TrueNAS.": "Użyj kontenerów do konfiguracji kontenerów opartych na Incus (LXC) w TrueNAS."
+  "Use Containers to configure Incus-based containers (LXC) in TrueNAS.": "Użyj kontenerów do konfiguracji kontenerów opartych na Incus (LXC) w TrueNAS.",
   "Use Default Mac Address": "Użyj domyślnego adresu MAC",
   "Use Default SMB Domain Configuration": "Użyj domyślnej konfiguracji domeny SMB",
   "Use existing disk image": "Użyj istniejącego obrazu dysku",
@@ -1187,7 +1187,7 @@
   "Zvol": "Zvol",
   "Zvol Details": "Szczegóły Zvol",
   "Zvol Location": "Lokalizacja Zvol",
-  "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              Wygląda na to, że Twoja sesja była nieaktywna przez ponad {lifetime} sekund.<br>\n              Ze względów bezpieczeństwa zostaniesz wylogowany o {time}.\n            "
+  "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              Wygląda na to, że Twoja sesja była nieaktywna przez ponad {lifetime} sekund.<br>\n              Ze względów bezpieczeństwa zostaniesz wylogowany o {time}.\n            ",
   " as of {dateTime}": " na dzień {dateTime}",
   " bytes.": " bajtów.",
   " Est. Usable Raw Capacity": " Szacowana użyteczna pojemność surowa",
