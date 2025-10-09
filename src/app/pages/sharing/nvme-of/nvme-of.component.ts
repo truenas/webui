@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, OnInit, inject, viewChild } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -57,10 +57,10 @@ export class NvmeOfComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
   private location = inject(Location);
 
+  protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
+
   protected readonly subsystems = this.nvmeOfStore.subsystems;
-
   protected dataProvider = new ArrayDataProvider<NvmeOfSubsystemDetails>();
-
   private selectedSubsystemName: string | null = null;
 
   protected readonly isLoading = this.nvmeOfStore.isLoading;
@@ -97,7 +97,11 @@ export class NvmeOfComponent implements OnInit {
           const urlName = this.activatedRoute.snapshot.paramMap.get('name');
           const selectedName = this.selectedSubsystemName || urlName;
           const routeSelectedRow = subsystems.find((subsystem) => subsystem.name === selectedName);
-          this.dataProvider.expandedRow = routeSelectedRow || subsystems[0];
+
+          if (!this.masterDetailView().isMobileView()) {
+            this.dataProvider.expandedRow = (routeSelectedRow || subsystems[0]);
+          }
+
           this.selectedSubsystemName = this.dataProvider.expandedRow?.name || null;
           setSubsystemNameInUrl(this.location, this.selectedSubsystemName);
         }

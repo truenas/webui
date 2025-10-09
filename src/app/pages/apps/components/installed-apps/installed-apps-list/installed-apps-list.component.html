@@ -33,7 +33,7 @@
     matSortActive="application"
     matSortDirection="asc"
     matSortDisableClear
-    (matSortChange)="sortChanged($event)"
+    (matSortChange)="setDatasourceWithSort($event)"
   >
     <div class="app-header-row">
       <div>
@@ -91,7 +91,7 @@
     matSortActive="application"
     matSortDirection="asc"
     class="app-wrapper"
-    (matSortChange)="sortChanged($event)"
+    (matSortChange)="setDatasourceWithSort($event)"
   >
     <div class="app-inner">
       <div class="apps-rows">

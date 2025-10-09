@@ -9,7 +9,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, AfterVie
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import {
-  ActivatedRoute, NavigationStart, Router,
+  ActivatedRoute, NavigationSkipped, NavigationStart, Router,
   RouterLink, RouterLinkActive,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -172,12 +172,11 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   constructor() {
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
-      .subscribe(() => {
-        if (this.router.currentNavigation()?.extras?.state?.hideMobileDetails) {
-          this.closeMobileDetails();
-        }
-      });
+      .pipe(
+        filter((event) => event instanceof NavigationSkipped || event instanceof NavigationStart),
+        untilDestroyed(this),
+      )
+      .subscribe(() => this.closeMobileDetails());
   }
 
   ngOnInit(): void {
@@ -245,6 +244,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   protected closeMobileDetails(): void {
     this.showMobileDetails = false;
+    this.cdr.markForCheck();
   }
 
   protected createPool(): void {
