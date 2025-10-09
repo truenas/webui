@@ -1,20 +1,21 @@
 <ix-audit-search
   [dataProvider]="dataProvider()"
-  [isMobileView]="isMobileView()"
 ></ix-audit-search>
 
-@if (!isMobileView()) {
-  <ng-container [ngTemplateOutlet]="thead"></ng-container>
-}
+<div class="sticky-header">
+  <thead
+    class="audit-header-row"
+    ix-table-head
+    [columns]="columns"
+    [dataProvider]="dataProvider()"
+  ></thead>
+</div>
 
 <ix-table
   [ixUiSearch]="searchableElements.elements.audit"
   [ix-table-empty]="!(dataProvider().currentPageCount$ | async)"
   [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
 >
-  @if (isMobileView()) {
-    <ng-container [ngTemplateOutlet]="thead"></ng-container>
-  }
   <tbody
     ix-table-body
     detailsRowIdentifier="audit_id"
@@ -59,13 +60,3 @@
   [currentPage]="dataProvider().pagination.pageNumber"
 ></ix-table-pager>
 
-<ng-template #thead>
-  <div class="sticky-header">
-    <thead
-      class="audit-header-row"
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider()"
-    ></thead>
-  </div>
-</ng-template>

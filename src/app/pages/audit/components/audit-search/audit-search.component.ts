@@ -1,4 +1,4 @@
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, input, computed, signal, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
@@ -39,7 +39,6 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     AsyncPipe,
     FakeProgressBarComponent,
     MatButton,
-    NgTemplateOutlet,
     SearchInputComponent,
     TranslateModule,
     ExportButtonComponent,
@@ -53,7 +52,6 @@ export class AuditSearchComponent implements OnInit {
   private translate = inject(TranslateService);
 
   readonly dataProvider = input.required<AuditApiDataProvider>();
-  readonly isMobileView = input.required<boolean>();
 
   protected readonly searchQuery = signal<SearchQuery<AuditEntry>>({ query: '', isBasicQuery: true });
   protected readonly searchProperties = signal<SearchProperty<AuditEntry>[]>([]);
