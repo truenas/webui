@@ -13,8 +13,9 @@ interface SudoEventTimeData {
   iso8601: string;
 }
 
-interface BaseSudoEventData {
+interface SudoEventData {
   uuid: string;
+  ttyname: string;
   submituser: string;
   submithost: string;
   submitcwd: string;
@@ -32,7 +33,7 @@ interface BaseSudoEventData {
 
 export interface SudoAcceptEventData {
   sudo: {
-    accept: BaseSudoEventData & {
+    accept: SudoEventData & {
       runenv: string;
       source: string;
     };
@@ -41,7 +42,7 @@ export interface SudoAcceptEventData {
 
 export interface SudoRejectEventData {
   sudo: {
-    reject: BaseSudoEventData & {
+    reject: SudoEventData & {
       reason: string;
     };
   };
