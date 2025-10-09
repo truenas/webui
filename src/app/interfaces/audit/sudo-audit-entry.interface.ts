@@ -6,44 +6,55 @@ interface BaseSudoAuditEntry extends BaseAuditEntry {
   service_data: AuditSudoServiceData;
 }
 
-export interface SudoEventData<T extends 'accept' | 'reject'> {
-  sudo: Record<T, {
-    uuid: string;
-    ttyname: string;
-    submituser: string;
-    submithost: string;
-    submitcwd: string;
-    submit_time: {
-      seconds: string;
-      nanoseconds: string;
-      localtime: string;
-      iso8601: string;
+interface SudoEventTimeData {
+  seconds: string;
+  nanoseconds: string;
+  localtime: string;
+  iso8601: string;
+}
+
+interface BaseSudoEventData {
+  uuid: string;
+  submituser: string;
+  submithost: string;
+  submitcwd: string;
+  submitenv: string;
+  submit_time: SudoEventTimeData;
+  server_time: SudoEventTimeData;
+  runuser: string;
+  runuid: string;
+  runcwd: string;
+  runargv: string;
+  lines: string;
+  command: string;
+  columns: string;
+}
+
+export interface SudoAcceptEventData {
+  sudo: {
+    accept: BaseSudoEventData & {
+      runenv: string;
+      source: string;
     };
-    server_time: {
-      seconds: string;
-      nanoseconds: string;
-      localtime: string;
-      iso8601: string;
+  };
+}
+
+export interface SudoRejectEventData {
+  sudo: {
+    reject: BaseSudoEventData & {
+      reason: string;
     };
-    runuser: string;
-    runuid: string;
-    runenv: string;
-    runcwd: string;
-    runargv: string;
-    lines: string;
-    command: string;
-    columns: string;
-  }>;
+  };
 }
 
 export interface SudoAcceptEntry extends BaseSudoAuditEntry {
   event: AuditEvent.Accept;
-  event_data: SudoEventData<'accept'>;
+  event_data: SudoAcceptEventData;
 }
 
 export interface SudoRejectEntry extends BaseSudoAuditEntry {
   event: AuditEvent.Reject;
-  event_data: SudoEventData<'reject'>;
+  event_data: SudoRejectEventData;
 }
 
 export type SudoAuditEntry = SudoAcceptEntry | SudoRejectEntry;
