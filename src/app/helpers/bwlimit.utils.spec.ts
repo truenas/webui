@@ -44,4 +44,23 @@ describe('prepareBwlimit', () => {
       { time: '12:00', bandwidth: 5368709120 },
     ]);
   });
+
+  it('should return NaN for invalid numeric inputs', () => {
+    const bwlimit: string[] = ['00:00, abc'];
+    const result = prepareBwlimit(bwlimit);
+    expect(result).toEqual([{ time: '00:00', bandwidth: NaN }]);
+  });
+
+  it('should return NaN for inputs with typos that look like numbers', () => {
+    const bwlimit: string[] = ['00:00, 1o0'];
+    const result = prepareBwlimit(bwlimit);
+    expect(result[0].time).toBe('00:00');
+    expect(Number.isNaN(result[0].bandwidth)).toBe(true);
+  });
+
+  it('should return null for undefined bandwidth (time only)', () => {
+    const bwlimit: string[] = ['9:00'];
+    const result = prepareBwlimit(bwlimit);
+    expect(result).toEqual([{ time: '9:00', bandwidth: null }]);
+  });
 });
