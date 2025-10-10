@@ -3886,92 +3886,92 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ngrx/component-store@npm:~18.1.1":
-  version: 18.1.1
-  resolution: "@ngrx/component-store@npm:18.1.1"
+"@ngrx/component-store@npm:~20.0.1":
+  version: 20.0.1
+  resolution: "@ngrx/component-store@npm:20.0.1"
   dependencies:
     tslib: "npm:^2.0.0"
   peerDependencies:
-    "@angular/core": ^18.0.0
+    "@angular/core": ^20.0.0
     rxjs: ^6.5.3 || ^7.5.0
-  checksum: 10/17ffad35ebb8b8545f29d8eceb24a6619e00c7c9ca5c24d70bc6bf0637548a8c4407ea9c22e18c3f838af846cce9cd600314ae5eb605556751692d7677f999f2
+  checksum: 10/0332f95174c4188be1452669c3b1538818d219c96a98b95c8e2cb0ca14b3bff343745bcdbefdc63730044c016dc7c06a886ca585d3efb2d5f51d5a404a3a481e
   languageName: node
   linkType: hard
 
-"@ngrx/effects@npm:~18.1.1":
-  version: 18.1.1
-  resolution: "@ngrx/effects@npm:18.1.1"
+"@ngrx/effects@npm:~20.0.1":
+  version: 20.0.1
+  resolution: "@ngrx/effects@npm:20.0.1"
   dependencies:
     tslib: "npm:^2.0.0"
   peerDependencies:
-    "@angular/core": ^18.0.0
-    "@ngrx/store": 18.1.1
+    "@angular/core": ^20.0.0
+    "@ngrx/store": 20.0.1
     rxjs: ^6.5.3 || ^7.5.0
-  checksum: 10/89f208aa04ad37dc8601633f847056a3be411cfee5b6352efc4332056aa88cf4159090f5bd8f3436147eabeda87381d2254970f495d44fd0b013cedbfd7d487f
+  checksum: 10/70b1f5bc8698e6090d45c2fbfa60bd28d7c880948ab0e42723560c95c53f114ae8dc7cb09777f57b6bccd98083b4a96ac8aea9203989a32e12cf02337ccc2821
   languageName: node
   linkType: hard
 
-"@ngrx/entity@npm:~18.1.1":
-  version: 18.1.1
-  resolution: "@ngrx/entity@npm:18.1.1"
+"@ngrx/entity@npm:~20.0.1":
+  version: 20.0.1
+  resolution: "@ngrx/entity@npm:20.0.1"
   dependencies:
     tslib: "npm:^2.0.0"
   peerDependencies:
-    "@angular/core": ^18.0.0
-    "@ngrx/store": 18.1.1
+    "@angular/core": ^20.0.0
+    "@ngrx/store": 20.0.1
     rxjs: ^6.5.3 || ^7.5.0
-  checksum: 10/1acb2ae4adaf2c7c317ef0a78c972da46cfe0b8b200918bbf358a925054ff024b46ee2cf7f515a920930abc3e27afe493cdbb0ce2aa2626b2ac436d30a68dc1d
+  checksum: 10/4474135242dc77ae75b6651a807009768414a6a7d6dba2ae661697549d3e9963bffb05852decc4dd87f5a18b462b30681c02cd310fbdd6bf9bddf665b9a24141
   languageName: node
   linkType: hard
 
-"@ngrx/operators@npm:^18.1.1":
-  version: 18.1.1
-  resolution: "@ngrx/operators@npm:18.1.1"
+"@ngrx/operators@npm:~20.0.1":
+  version: 20.0.1
+  resolution: "@ngrx/operators@npm:20.0.1"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/c246e774f37b5b5a87607086541f5df12847ae7450e9b2c523683f84834e5ebaea802fac200eb99478e15ddbd79c34c1c7a94538553467f66bd50ae27ce4cb43
+  checksum: 10/a408f4a8b1396490410e4253e8100a07f0e69397d468d0eb29c9d21a6247a6b2ae8134873fe65ceec79d2807458878588eee63c5c9bf9f7df62bc6fd1aeac8c1
   languageName: node
   linkType: hard
 
-"@ngrx/router-store@npm:~18.1.1":
-  version: 18.1.1
-  resolution: "@ngrx/router-store@npm:18.1.1"
+"@ngrx/router-store@npm:~20.0.1":
+  version: 20.0.1
+  resolution: "@ngrx/router-store@npm:20.0.1"
   dependencies:
     tslib: "npm:^2.0.0"
   peerDependencies:
-    "@angular/common": ^18.0.0
-    "@angular/core": ^18.0.0
-    "@angular/router": ^18.0.0
-    "@ngrx/store": 18.1.1
+    "@angular/common": ^20.0.0
+    "@angular/core": ^20.0.0
+    "@angular/router": ^20.0.0
+    "@ngrx/store": 20.0.1
     rxjs: ^6.5.3 || ^7.5.0
-  checksum: 10/75c70e4030b649909b44eccab98d8352e5b13a8c5e37932eca086240c112b869b9e61d0717d6abe6542265dddb687642bd046597d6cd52b8a90d6f8c0153a587
+  checksum: 10/7750c1a55a00536f838fef0f4ad125d01e150271e74e08a76cd5c2a5325fd6b9b78fbe005a9e4b5e59873268e49e2a070d1964f4e21ac91ff8a8c2553460d150
   languageName: node
   linkType: hard
 
-"@ngrx/store-devtools@npm:~18.1.1":
-  version: 18.1.1
-  resolution: "@ngrx/store-devtools@npm:18.1.1"
+"@ngrx/store-devtools@npm:~20.0.1":
+  version: 20.0.1
+  resolution: "@ngrx/store-devtools@npm:20.0.1"
   dependencies:
     tslib: "npm:^2.0.0"
   peerDependencies:
-    "@angular/core": ^18.0.0
-    "@ngrx/store": 18.1.1
+    "@angular/core": ^20.0.0
+    "@ngrx/store": 20.0.1
     rxjs: ^6.5.3 || ^7.5.0
-  checksum: 10/35cd84d5e0a9c4cf05996e63ab8a20cbdc66ff408b7a8670e9916dc207ccd34c5217c8be1bd2881c0db21c57f6ed86ba3e9c9c72785b1f6cc6e836a656d3b2db
+  checksum: 10/237cfaa91f52f3411624bfaa4da49d1f70c980cec32c50a2fb15e70ea35ad1a8d5d801e7fa864bbe3a62be29d52e091b2a0576284363efeaa583c894e3b1f846
   languageName: node
   linkType: hard
 
-"@ngrx/store@npm:~18.1.1":
-  version: 18.1.1
-  resolution: "@ngrx/store@npm:18.1.1"
+"@ngrx/store@npm:~20.0.1":
+  version: 20.0.1
+  resolution: "@ngrx/store@npm:20.0.1"
   dependencies:
     tslib: "npm:^2.0.0"
   peerDependencies:
-    "@angular/core": ^18.0.0
+    "@angular/core": ^20.0.0
     rxjs: ^6.5.3 || ^7.5.0
-  checksum: 10/62ddf4295386a838e3dd21500538d50ffeb8de6085f07483032867604bdbbef5971fa43d25dca611789ed722bcd9f40fba906431643bc10ffb61b41bdcb8182f
+  checksum: 10/09efe58d0d317064583c9a372ae0811bc32fdeb4292882e624a7570d41d948306ab9c69c379031f9d32369cd41b8d0ccb5e6ff062e7fb557fedafd82951cf134
   languageName: node
   linkType: hard
 
@@ -5593,16 +5593,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/glob@npm:~7.2.0":
-  version: 7.2.0
-  resolution: "@types/glob@npm:7.2.0"
-  dependencies:
-    "@types/minimatch": "npm:*"
-    "@types/node": "npm:*"
-  checksum: 10/6ae717fedfdfdad25f3d5a568323926c64f52ef35897bcac8aca8e19bc50c0bd84630bbd063e5d52078b2137d8e7d3c26eabebd1a2f03ff350fff8a91e79fc19
-  languageName: node
-  linkType: hard
-
 "@types/google.visualization@npm:*":
   version: 0.0.74
   resolution: "@types/google.visualization@npm:0.0.74"
@@ -5716,15 +5706,6 @@ __metadata:
   version: 2.1.4
   resolution: "@types/mime-types@npm:2.1.4"
   checksum: 10/f8c521c54ee0c0b9f90a65356a80b1413ed27ccdc94f5c7ebb3de5d63cedb559cd2610ea55b4100805c7349606a920d96e54f2d16b2f0afa6b7cd5253967ccc9
-  languageName: node
-  linkType: hard
-
-"@types/minimatch@npm:*":
-  version: 6.0.0
-  resolution: "@types/minimatch@npm:6.0.0"
-  dependencies:
-    minimatch: "npm:*"
-  checksum: 10/690ce1580571b9d450c552457c689d3ce7531934305767c64dce826c3da64672a08642aac0b477844c130c53bb05cee60c702b50a6a4a036943a2de578ee7c34
   languageName: node
   linkType: hard
 
@@ -7892,32 +7873,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commitlint-config-jira@npm:~1.6.4":
-  version: 1.6.4
-  resolution: "commitlint-config-jira@npm:1.6.4"
-  dependencies:
-    commitlint-jira-utils: "npm:^1.6.4"
-    opencollective-postinstall: "npm:^2.0.2"
-  checksum: 10/cd3adad4d24af5f350de7dc735bfd01b5d270a39b2f4ef397c0b5641b969a274c43d2ac1ff0d75eee55ce0115df06e88eaf873d2e1cfd188dfde5f622b349665
-  languageName: node
-  linkType: hard
-
-"commitlint-jira-utils@npm:^1.6.4":
-  version: 1.6.4
-  resolution: "commitlint-jira-utils@npm:1.6.4"
-  checksum: 10/9eb62701b1ef3bcffefdcfd01bca6386a8d974e57bc283c36f1f2d3ac20177a6439235f459a653e1c1748db08d3d9d7be50cf901f236ed55e2488642040cee3f
-  languageName: node
-  linkType: hard
-
-"commitlint-plugin-jira-rules@npm:~1.6.4":
-  version: 1.6.4
-  resolution: "commitlint-plugin-jira-rules@npm:1.6.4"
-  dependencies:
-    commitlint-jira-utils: "npm:^1.6.4"
-  checksum: 10/a2b47a2600003553d95d98cf0b7a5a142fd22a60115d8e5ad96df5fe5054e665d61d27f23196a9f3d6e1da5a906540fd2be29578fdd1898ada93c5bc836043ef
-  languageName: node
-  linkType: hard
-
 "common-tags@npm:^1.8.0, common-tags@npm:^1.8.2":
   version: 1.8.2
   resolution: "common-tags@npm:1.8.2"
@@ -8050,10 +8005,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:~3.6.4":
-  version: 3.6.5
-  resolution: "core-js@npm:3.6.5"
-  checksum: 10/c1c51c2c791d5e5964db95776b47c7467649d40cbe8a695cd8902912517e7be64bd75dc1f0cfd9879a14b11ff5414d2199f3ea61fbaf8771f956e4514d28b7f8
+"core-js@npm:~3.46.0":
+  version: 3.46.0
+  resolution: "core-js@npm:3.46.0"
+  checksum: 10/82993ca487c6cbbf8bbf00e45eeb9705eb63dc2f9c90d7f35696733efbc3f4b52426e1f8dbef0f0b68ea16caa21e4f44cc5490e08120e1cad4a72b031ed8adaa
   languageName: node
   linkType: hard
 
@@ -8192,13 +8147,6 @@ __metadata:
     shebang-command: "npm:^2.0.0"
     which: "npm:^2.0.1"
   checksum: 10/0d52657d7ae36eb130999dffff1168ec348687b48dd38e2ff59992ed916c88d328cf1d07ff4a4a10bc78de5e1c23f04b306d569e42f7a2293915c081e4dfee86
-  languageName: node
-  linkType: hard
-
-"crypto@npm:~1.0.1":
-  version: 1.0.1
-  resolution: "crypto@npm:1.0.1"
-  checksum: 10/087fe3165bd94c333a49e6ed66a0193911f63eac38a24f379b3001a5fe260a59c413646e53a0f67875ba13902b2686d81dc703cb2c147a4ec727dcdc04e5645e
   languageName: node
   linkType: hard
 
@@ -11216,20 +11164,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:7.2.3, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6, glob@npm:^7.2.0, glob@npm:^7.2.3":
-  version: 7.2.3
-  resolution: "glob@npm:7.2.3"
-  dependencies:
-    fs.realpath: "npm:^1.0.0"
-    inflight: "npm:^1.0.4"
-    inherits: "npm:2"
-    minimatch: "npm:^3.1.1"
-    once: "npm:^1.3.0"
-    path-is-absolute: "npm:^1.0.0"
-  checksum: 10/59452a9202c81d4508a43b8af7082ca5c76452b9fcc4a9ab17655822e6ce9b21d4f8fbadabe4fe3faef448294cec249af305e2cd824b7e9aaf689240e5e96a7b
-  languageName: node
-  linkType: hard
-
 "glob@npm:^10.2.2, glob@npm:^10.3.0, glob@npm:^10.3.10":
   version: 10.4.5
   resolution: "glob@npm:10.4.5"
@@ -11259,6 +11193,20 @@ __metadata:
   bin:
     glob: dist/esm/bin.mjs
   checksum: 10/2ae536c1360c0266b523b2bfa6aadc10144a8b7e08869b088e37ac3c27cd30774f82e4bfb291cde796776e878f9e13200c7ff44010eb7054e00f46f649397893
+  languageName: node
+  linkType: hard
+
+"glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6, glob@npm:^7.2.0, glob@npm:^7.2.3":
+  version: 7.2.3
+  resolution: "glob@npm:7.2.3"
+  dependencies:
+    fs.realpath: "npm:^1.0.0"
+    inflight: "npm:^1.0.4"
+    inherits: "npm:2"
+    minimatch: "npm:^3.1.1"
+    once: "npm:^1.3.0"
+    path-is-absolute: "npm:^1.0.0"
+  checksum: 10/59452a9202c81d4508a43b8af7082ca5c76452b9fcc4a9ab17655822e6ce9b21d4f8fbadabe4fe3faef448294cec249af305e2cd824b7e9aaf689240e5e96a7b
   languageName: node
   linkType: hard
 
@@ -14278,21 +14226,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:*, minimatch@npm:^10.0.3, minimatch@npm:^9.0.3 || ^10.0.1":
-  version: 10.0.3
-  resolution: "minimatch@npm:10.0.3"
-  dependencies:
-    "@isaacs/brace-expansion": "npm:^5.0.0"
-  checksum: 10/d5b8b2538b367f2cfd4aeef27539fddeee58d1efb692102b848e4a968a09780a302c530eb5aacfa8c57f7299155fb4b4e85219ad82664dcef5c66f657111d9b8
-  languageName: node
-  linkType: hard
-
 "minimatch@npm:9.0.5, minimatch@npm:^9.0.0, minimatch@npm:^9.0.4, minimatch@npm:^9.0.5":
   version: 9.0.5
   resolution: "minimatch@npm:9.0.5"
   dependencies:
     brace-expansion: "npm:^2.0.1"
   checksum: 10/dd6a8927b063aca6d910b119e1f2df6d2ce7d36eab91de83167dd136bb85e1ebff97b0d3de1cb08bd1f7e018ca170b4962479fefab5b2a69e2ae12cb2edc8348
+  languageName: node
+  linkType: hard
+
+"minimatch@npm:^10.0.3, minimatch@npm:^9.0.3 || ^10.0.1":
+  version: 10.0.3
+  resolution: "minimatch@npm:10.0.3"
+  dependencies:
+    "@isaacs/brace-expansion": "npm:^5.0.0"
+  checksum: 10/d5b8b2538b367f2cfd4aeef27539fddeee58d1efb692102b848e4a968a09780a302c530eb5aacfa8c57f7299155fb4b4e85219ad82664dcef5c66f657111d9b8
   languageName: node
   linkType: hard
 
@@ -15201,15 +15149,6 @@ __metadata:
   dependencies:
     mimic-function: "npm:^5.0.0"
   checksum: 10/eb08d2da9339819e2f9d52cab9caf2557d80e9af8c7d1ae86e1a0fef027d00a88e9f5bd67494d350df360f7c559fbb44e800b32f310fb989c860214eacbb561c
-  languageName: node
-  linkType: hard
-
-"opencollective-postinstall@npm:^2.0.2":
-  version: 2.0.3
-  resolution: "opencollective-postinstall@npm:2.0.3"
-  bin:
-    opencollective-postinstall: index.js
-  checksum: 10/69d63778087cd10c9d707d9ed360556780cfdd0cd6241ded0e26632f467f1d5a064f4a9aec19a30c187770c17adba034d988f7684b226f3a73e79f44e73fab0e
   languageName: node
   linkType: hard
 
@@ -18073,13 +18012,13 @@ __metadata:
     "@ngneat/reactive-forms": "npm:~5.0.2"
     "@ngneat/spectator": "npm:~21.0.1"
     "@ngneat/until-destroy": "npm:~10.0.0"
-    "@ngrx/component-store": "npm:~18.1.1"
-    "@ngrx/effects": "npm:~18.1.1"
-    "@ngrx/entity": "npm:~18.1.1"
-    "@ngrx/operators": "npm:^18.1.1"
-    "@ngrx/router-store": "npm:~18.1.1"
-    "@ngrx/store": "npm:~18.1.1"
-    "@ngrx/store-devtools": "npm:~18.1.1"
+    "@ngrx/component-store": "npm:~20.0.1"
+    "@ngrx/effects": "npm:~20.0.1"
+    "@ngrx/entity": "npm:~20.0.1"
+    "@ngrx/operators": "npm:~20.0.1"
+    "@ngrx/router-store": "npm:~20.0.1"
+    "@ngrx/store": "npm:~20.0.1"
+    "@ngrx/store-devtools": "npm:~20.0.1"
     "@ngx-translate/core": "npm:~15.0.0"
     "@ngx-translate/http-loader": "npm:~8.0.0"
     "@playwright/mcp": "npm:latest"
@@ -18096,7 +18035,6 @@ __metadata:
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"
     "@types/fontfaceobserver": "npm:^2.1.3"
-    "@types/glob": "npm:~7.2.0"
     "@types/jest": "npm:~29.5.14"
     "@types/jest-when": "npm:^3.5.5"
     "@types/js-yaml": "npm:~4.0.8"
@@ -18121,13 +18059,10 @@ __metadata:
     cheerio: "npm:~1.0.0"
     codemirror: "npm:~6.0.1"
     commander: "npm:~12.1.0"
-    commitlint-config-jira: "npm:~1.6.4"
-    commitlint-plugin-jira-rules: "npm:~1.6.4"
-    core-js: "npm:~3.6.4"
+    core-js: "npm:~3.46.0"
     cron-parser: "npm:~4.9.0"
     croner: "npm:~8.1.1"
     cronstrue: "npm:~2.50.0"
-    crypto: "npm:~1.0.1"
     d3: "npm:~7.9.0"
     date-fns: "npm:~4.1.0"
     date-fns-tz: "npm:~3.2.0"
@@ -18146,7 +18081,6 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^4.1.4"
     fontfaceobserver: "npm:^2.3.0"
     fuse.js: "npm:~7.0.0"
-    glob: "npm:7.2.3"
     html2canvas: "npm:~1.4.1"
     husky: "npm:^9.1.6"
     immer: "npm:~10.1.1"
