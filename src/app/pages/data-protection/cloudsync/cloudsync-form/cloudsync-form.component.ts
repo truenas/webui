@@ -29,7 +29,6 @@ import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { bwlimitValidator } from 'app/modules/forms/ix-forms/validators/bwlimit-validation/bwlimit-validation';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTask, CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
@@ -50,6 +49,7 @@ import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-se
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { bwlimitValidator } from 'app/modules/forms/ix-forms/validators/bwlimit-validation/bwlimit-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -659,12 +659,21 @@ export class CloudSyncFormComponent implements OnInit {
     const formValue = this.form.value;
     const attributes: CloudSyncTaskUpdate['attributes'] = {};
 
+    const bwlimit = prepareBwlimit(formValue.bwlimit);
+    // attempt to find any NaNs that made it through despite the validator.
+    // this should **not** happen; however, if it somehow does, throw an error.
+    bwlimit.forEach((limit, i) => {
+      if (Number.isNaN(limit.bandwidth)) {
+        throw new Error(`Specified bandwidth limit ${formValue.bwlimit[i]} is invalid`);
+      }
+    });
+
     const value: CloudSyncTaskUpdate = {
       ...formValue,
       attributes,
       include: [],
       path: undefined,
-      bwlimit: prepareBwlimit(formValue.bwlimit),
+      bwlimit,
       schedule: formValue.cloudsync_picker ? crontabToSchedule(formValue.cloudsync_picker) : {},
       snapshot: formValue.direction === Direction.Pull ? false : formValue.snapshot,
     };

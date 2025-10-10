@@ -356,6 +356,24 @@ describe('CloudSyncFormComponent', () => {
         }),
       }));
     });
+
+    it('throws an error if `getPayload` is called when invalid values are present', () => {
+      const bwlimitStr = '9:00, abc';
+      spectator.component.form.patchValue({
+        bwlimit: [bwlimitStr],
+      });
+
+      expect(() => spectator.component.getPayload()).toThrow(`Specified bandwidth limit ${bwlimitStr} is invalid`);
+    });
+
+    it('throws an error if `getPayload` is called with a typo value (i.e. "1o0")', () => {
+      const bwlimitStr = '12:00, 1o0';
+      spectator.component.form.patchValue({
+        bwlimit: [bwlimitStr],
+      });
+
+      expect(() => spectator.component.getPayload()).toThrow(`Specified bandwidth limit ${bwlimitStr} is invalid`);
+    });
   });
 
   describe('doesnt load buckets when user doesnt has roles', () => {
