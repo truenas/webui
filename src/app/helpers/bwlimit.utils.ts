@@ -57,9 +57,10 @@ export function prepareBwlimit(bwlimit: string[] | undefined): BwLimitUpdate[] {
         sublimitArr[1] = getByte(sublimitArr[1]).toFixed(0);
       }
     }
+    const parsedBandwidth = sublimitArr[1] === 'off' ? null : parseInt(sublimitArr[1]);
     const subLimit: BwLimitUpdate = {
       time: sublimitArr[0],
-      bandwidth: sublimitArr[1] === 'off' ? null : sublimitArr[1],
+      bandwidth: Number.isNaN(parsedBandwidth) ? null : parsedBandwidth,
     };
 
     bwlimtResult.push(subLimit);
