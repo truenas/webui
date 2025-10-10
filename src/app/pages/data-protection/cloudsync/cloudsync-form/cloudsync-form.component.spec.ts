@@ -307,8 +307,8 @@ describe('CloudSyncFormComponent', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
         attributes: { folder: mntPath },
         bwlimit: [
-          { bandwidth: undefined, time: '9:00' },
-          { bandwidth: '2048', time: '12:30' },
+          { bandwidth: null, time: '9:00' },
+          { bandwidth: 2048, time: '12:30' },
         ],
         create_empty_src_dirs: true,
         credentials: 2,
@@ -355,6 +355,24 @@ describe('CloudSyncFormComponent', () => {
           bucket: 'test-bucket',
         }),
       }));
+    });
+
+    it('throws an error if `getPayload` is called when invalid values are present', () => {
+      const bwlimitStr = '9:00, abc';
+      spectator.component.form.patchValue({
+        bwlimit: [bwlimitStr],
+      });
+
+      expect(() => spectator.component.getPayload()).toThrow(`Specified bandwidth limit ${bwlimitStr} is invalid`);
+    });
+
+    it('throws an error if `getPayload` is called with a typo value (i.e. "1o0")', () => {
+      const bwlimitStr = '12:00, 1o0';
+      spectator.component.form.patchValue({
+        bwlimit: [bwlimitStr],
+      });
+
+      expect(() => spectator.component.getPayload()).toThrow(`Specified bandwidth limit ${bwlimitStr} is invalid`);
     });
   });
 
