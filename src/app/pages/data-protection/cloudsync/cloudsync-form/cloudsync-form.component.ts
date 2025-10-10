@@ -29,6 +29,7 @@ import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { bwlimitValidator } from 'app/modules/forms/ix-forms/validators/bwlimit-validation/bwlimit-validation';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTask, CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
@@ -178,7 +179,7 @@ export class CloudSyncFormComponent implements OnInit {
     encryption_password: [''],
     encryption_salt: [''],
     transfers: [4],
-    bwlimit: [[] as string[]],
+    bwlimit: [[] as string[], bwlimitValidator()],
   });
 
   isCredentialInvalid$ = new BehaviorSubject(false);

@@ -57,10 +57,18 @@ export function prepareBwlimit(bwlimit: string[] | undefined): BwLimitUpdate[] {
         sublimitArr[1] = getByte(sublimitArr[1]).toFixed(0);
       }
     }
-    const parsedBandwidth = sublimitArr[1] === 'off' ? null : parseInt(sublimitArr[1]);
+    let parsedBandwidth: number | null;
+    if (sublimitArr[1] === 'off' || sublimitArr[1] === undefined) {
+      parsedBandwidth = null;
+    } else {
+      // validate that the `parsed` string is a number *if it isn't `off` or not there at all (`undefined`)*.
+      // this returns `NaN` if we're unable to convert it into a number, so strings like 'abc' or '1o0'
+      // don't slip by.
+      parsedBandwidth = Number(sublimitArr[1]);
+    }
     const subLimit: BwLimitUpdate = {
       time: sublimitArr[0],
-      bandwidth: Number.isNaN(parsedBandwidth) ? null : parsedBandwidth,
+      bandwidth: parsedBandwidth,
     };
 
     bwlimtResult.push(subLimit);
