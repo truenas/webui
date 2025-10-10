@@ -351,11 +351,17 @@ describe('SlideInContainerComponent', () => {
   });
 
   describe('portal management', () => {
-    it('should attach portal', () => {
+    it('should attach portal and ensure that slideInRef is set', () => {
+      const mockSlideInRef = {};
+      const mockComponentRef = { instance: { slideInRef: mockSlideInRef } };
+      (mockPortalOutlet.attach as jest.Mock).mockReturnValueOnce(mockComponentRef);
+
       const portal = new ComponentPortal(MockSlideInComponent);
       spectator.component.attachPortal(portal);
 
       expect(mockPortalOutlet.attach).toHaveBeenCalledWith(portal);
+
+      expect(spectator.component).toHaveProperty('slideInRef', mockSlideInRef);
     });
 
     it('should detach portal', () => {
