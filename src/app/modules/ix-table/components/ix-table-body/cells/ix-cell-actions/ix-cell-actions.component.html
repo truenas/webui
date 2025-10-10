@@ -1,38 +1,18 @@
 <div class="actions">
   @for (action of actions; track action) {
-    @if (action.requiredRoles?.length || action.dynamicRequiredRoles) {
-      <div [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || ''">
-        @if (action.hidden ? !(action.hidden(row()) | async) : true) {
-          <!-- TODO: Clean up component -->
-          <button
-            *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
-            mat-icon-button
-            [ixTest]="[uniqueRowTag(row()), action.iconName, 'row-action']"
-            [attr.aria-label]="(action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '') + ' ' + getAriaLabel(row())"
-            [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
-            (click)="$event.stopPropagation(); action.onClick(row())"
-          >
-            <ix-icon [name]="action.iconName"></ix-icon>
-          </button>
-        }
-      </div>
-    }
-    @if (!action.requiredRoles?.length && !action.dynamicRequiredRoles) {
-      <div
-        [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || ''"
-      >
-        @if (action.hidden ? !(action.hidden(row()) | async) : true) {
-          <button
-            mat-icon-button
-            [ixTest]="[uniqueRowTag(row()), action.iconName, 'row-action']"
-            [attr.aria-label]="(action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '') + ' ' + getAriaLabel(row())"
-            [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
-            (click)="$event.stopPropagation(); action.onClick(row())"
-          >
-            <ix-icon [name]="action.iconName"></ix-icon>
-          </button>
-        }
-      </div>
-    }
+    <div [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || ''">
+      @if (action.hidden ? !(action.hidden(row()) | async) : true) {
+        <button
+          *ixRequiresRoles="(action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row()) | async) : action.requiredRoles) || []"
+          mat-icon-button
+          [ixTest]="[uniqueRowTag(row()), action.iconName, 'row-action']"
+          [attr.aria-label]="(action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip || '') + ' ' + getAriaLabel(row())"
+          [disabled]="action.disabled ? (action.disabled(row()) | async) : false"
+          (click)="$event.stopPropagation(); action.onClick(row())"
+        >
+          <ix-icon [name]="action.iconName"></ix-icon>
+        </button>
+      }
+    </div>
   }
 </div>
