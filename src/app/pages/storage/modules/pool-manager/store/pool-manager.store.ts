@@ -261,18 +261,18 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       this.api.call('enclosure2.query'),
       this.diskStore.loadDisks(),
     ]).pipe(
-      tapResponse(
-        ([enclosures]) => {
+      tapResponse({
+        next: ([enclosures]) => {
           this.patchState({
             isLoading: false,
             enclosures,
           });
         },
-        (error: unknown) => {
+        error: (error: unknown) => {
           this.patchState({ isLoading: false });
           this.errorHandler.showErrorModal(error);
         },
-      ),
+      }),
     );
   }
 
