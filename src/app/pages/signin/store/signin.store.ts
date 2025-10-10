@@ -165,7 +165,14 @@ export class SigninStore extends ComponentStore<SigninState> {
       try {
         const url = new URL(redirectUrl, this.window.location.origin);
         url.searchParams.delete(tokenParam);
-        return url.pathname + url.search;
+        const finalUrl = url.pathname + url.search;
+
+        // Don't redirect to signin page - use dashboard instead
+        if (finalUrl.startsWith('/signin')) {
+          return '/dashboard';
+        }
+
+        return finalUrl;
       } catch {
         console.error('Invalid redirect URL:', redirectUrl);
       }

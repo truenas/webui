@@ -39,6 +39,12 @@ export class WebSocketConnectionGuard {
   private resetUi(): void {
     this.closeAllDialogs();
     if (!this.wsManager.isSystemShuttingDown) {
+      // Store current URL before redirecting to signin so user can return after login
+      const currentUrl = this.window.location.pathname + this.window.location.search;
+      if (currentUrl !== '/signin') {
+        this.window.sessionStorage.setItem('redirectUrl', currentUrl);
+      }
+
       // manually preserve query params
       const params = new URLSearchParams(this.window.location.search);
       this.router.navigate(['/signin'], { queryParams: Object.fromEntries(params) });
