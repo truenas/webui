@@ -1,4 +1,6 @@
 @use '@angular/material' as mat;
+@use 'sass:color';
+@use 'sass:map';
 @import 'scss-imports/cssvars';
 $standard-height: 40px;
 @include mat.all-component-typographies();
@@ -26,7 +28,7 @@ $ix-theme: mat.m2-define-light-theme((
   typography: $ix-typography,
 ));
 
-$primary-dark: darken(map-get($md-primary, 500), 8%);
+$primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
 
 // include the custom theme object into the angular material theme
 .ix-dark {
@@ -34,13 +36,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-bg-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret) {
-    background: map-get($md-primary, 500) !important;
+    background: map.get($md-primary, 500) !important;
     color: #fff !important;
   }
 
   .mat-color-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-mdc-list-item.selected a {
-    color: map-get($md-primary, 500) !important;
+    color: map.get($md-primary, 500) !important;
   }
 
   .sidebar-panel .mat-nav-list .mat-mdc-list-item {
@@ -125,7 +127,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mini-fab.mat-accent {
     @include variable(background, --accent, $accent, !important);
     @include variable(color, #000, #000, !important);
-    background-color: map-get($md-accent, 500);
+    background-color: map.get($md-accent, 500);
     color: black;
   }
 
@@ -726,9 +728,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow-x: auto;
     padding: 5px;
     white-space: pre-wrap;
-    white-space: -moz-pre-wrap;
+    white-space: pre-wrap;
     white-space: -pre-wrap;
-    white-space: -o-pre-wrap;
+    white-space: pre-wrap;
     word-wrap: break-word;
   }
 

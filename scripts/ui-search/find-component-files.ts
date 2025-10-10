@@ -1,13 +1,9 @@
-import glob from 'glob';
+import { glob } from 'fs/promises';
 
-export function findComponentFiles(pattern: string): Promise<string[]> {
-  return new Promise((resolve, reject) => {
-    glob(pattern, (error: Error, files: string[] | PromiseLike<string[]>) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-      resolve(files);
-    });
-  });
+export async function findComponentFiles(pattern: string): Promise<string[]> {
+  const files: string[] = [];
+  for await (const file of glob(pattern)) {
+    files.push(file);
+  }
+  return files;
 }
