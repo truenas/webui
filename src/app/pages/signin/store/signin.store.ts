@@ -12,6 +12,7 @@ import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
+import { isSigninUrl } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -168,13 +169,14 @@ export class SigninStore extends ComponentStore<SigninState> {
         const finalUrl = url.pathname + url.search;
 
         // Don't redirect to signin page - use dashboard instead
-        if (finalUrl.startsWith('/signin')) {
+        if (isSigninUrl(finalUrl)) {
           return '/dashboard';
         }
 
         return finalUrl;
-      } catch {
-        console.error('Invalid redirect URL:', redirectUrl);
+      } catch (error) {
+        console.error('Invalid redirect URL:', redirectUrl, error);
+        return '/dashboard';
       }
     }
 
