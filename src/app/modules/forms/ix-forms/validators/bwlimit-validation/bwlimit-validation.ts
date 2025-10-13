@@ -19,12 +19,18 @@ export function bwlimitValidator(): ValidatorFn {
       return null;
     }
 
+    // prepare the bwlimit for submission to the API
+    // `parsed` requires further validation, which we do in this function
     const parsed = prepareBwlimit(value);
-    // a parsed bandwidth limit is invalid if it is `NaN`, since that means
-    // that `prepareBwlimit` failed to parse it as a number at all.
+
+    // predicate that checks whether or not the bandwidth value is invalid.
+    // returns `true` if the bandwidth is invalid.
     const invalidBandwidthPredicate = (limit: BwLimitUpdate): boolean => {
       return Number.isNaN(limit.bandwidth) || limit.bandwidth < 0;
     };
+
+    // predicate that checks whether or not the time string is invalid
+    // returns `true` if the time is invalid.
     const invalidTimePredicate = (limit: BwLimitUpdate): boolean => {
       const timeComponents = limit.time.split(':');
       if (timeComponents.length !== 2) {
@@ -44,10 +50,10 @@ export function bwlimitValidator(): ValidatorFn {
       return false;
     };
 
+    // return the first validation error
     const invalidBwLimit = parsed.findIndex((limit) => {
       return invalidTimePredicate(limit) || invalidBandwidthPredicate(limit);
     });
-
     return invalidBwLimit >= 0 ? { invalidRcloneBandwidthLimit: { value: value[invalidBwLimit] } } : null;
   };
 }

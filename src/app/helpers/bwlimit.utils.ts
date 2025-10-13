@@ -41,12 +41,15 @@ function getByte(data: string): number {
  * takes a list of strings like '09:00,100M' or '23:30,off' and returns a list of
  * `BwLimitUpdate`. the return value has the following properties:
  *   * `time` is a string like '09:00' or '23:30'. technically-invalid values like
- *     '36:00' are still returned from the function to be
- *     submitted (and rejected) to the API.
- *   * `bandwidth` is a number or null including `NaN` representing total bytes. (i.e. 1000 instead of 1K)
- *   * if `bandwidth` is `NaN`, then the actual bandwidth speed specification was *not valid*. it is
+ *     '36:00' are still returned from the function and **require further validation
+ *     to avoid invalid times**.
+ *   * `bandwidth` is a number, null, or NaN representing total bytes. (i.e. 1000 instead of 1K)
+ *   * if `bandwidth` is `NaN`, then the actual bandwidth speed specification was *not able to be parsed*. it is
  *     **on the caller to handle returned NaN values** so as to distinguish between deliberately
  *     `null` values and invalid values.
+ *
+ * in general, it is on the caller to handle invalid time/bandwidth specifications. this function *only*
+ * creates a list for submission to the API and makes no promises about its validity.
  */
 export function prepareBwlimit(bwlimit: string[] | undefined): BwLimitUpdate[] {
   const bwlimtResult: BwLimitUpdate[] = [];
