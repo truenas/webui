@@ -13,6 +13,10 @@ describe('isSigninUrl', () => {
     expect(isSigninUrl('/signin/foo')).toBe(true);
   });
 
+  it('returns true for signin with trailing slash', () => {
+    expect(isSigninUrl('/signin/')).toBe(true);
+  });
+
   it('returns false for dashboard', () => {
     expect(isSigninUrl('/dashboard')).toBe(false);
   });
@@ -23,5 +27,19 @@ describe('isSigninUrl', () => {
 
   it('returns false for routes containing signin but not starting with it', () => {
     expect(isSigninUrl('/app/signin')).toBe(false);
+  });
+
+  it('returns false for empty string', () => {
+    expect(isSigninUrl('')).toBe(false);
+  });
+
+  it('returns false for root path', () => {
+    expect(isSigninUrl('/')).toBe(false);
+  });
+
+  it('returns false for signin-like routes that are not signin', () => {
+    expect(isSigninUrl('/signin-admin')).toBe(false);
+    expect(isSigninUrl('/signin123')).toBe(false);
+    expect(isSigninUrl('/signinpage')).toBe(false);
   });
 });
