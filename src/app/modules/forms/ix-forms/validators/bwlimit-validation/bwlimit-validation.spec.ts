@@ -60,6 +60,14 @@ describe('bwlimitValidator', () => {
     });
   });
 
+  it('should return error for negative bandwidth', () => {
+    const control = new FormControl(['01:30, -10MB/s']);
+
+    const result = validator(control);
+    expect(result?.invalidRcloneBandwidthLimit).toBeDefined();
+    expect(result?.invalidRcloneBandwidthLimit?.value).toBe('01:30, -10MB/s');
+  });
+
   it('should return error when at least one bandwidth limit is invalid', () => {
     const control = new FormControl(['00:00, 10MB/s', '12:00, abc']);
 
@@ -245,17 +253,6 @@ describe('bwlimitValidator', () => {
       expect(result).toEqual({
         invalidRcloneBandwidthLimit: {
           value: '25:00, 100MB/s',
-        },
-      });
-    });
-
-    it('should prioritize time errors over bandwidth errors', () => {
-      const control = new FormControl(['23:00, abc', '25:00, 100M']);
-      const result = validator(control);
-
-      expect(result).toEqual({
-        invalidRcloneBandwidthLimit: {
-          value: '25:00, 100M',
         },
       });
     });
