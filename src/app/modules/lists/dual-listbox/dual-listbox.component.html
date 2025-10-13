@@ -4,8 +4,8 @@
 
     <div class="record-picker">
       <mat-list
-        cdkDropList
         #availableDropList="cdkDropList"
+        cdkDropList
         id="available-list"
         [cdkDropListData]="availableList()"
         [cdkDropListConnectedTo]="[selectedDropList]"
@@ -95,8 +95,8 @@
 
     <div class="record-picker">
       <mat-list
-        cdkDropList
         #selectedDropList="cdkDropList"
+        cdkDropList
         id="selected-list"
         [cdkDropListData]="selectedList()"
         [cdkDropListConnectedTo]="[availableDropList]"

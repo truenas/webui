@@ -45,7 +45,7 @@ interface ListState<T> {
     TranslateModule,
   ],
 })
-export class DualListBoxComponent<T extends Record<string, unknown> = Record<string, unknown>> {
+export class DualListBoxComponent<T = Record<string, unknown>> {
   private detectBrowser = inject(DetectBrowserService);
   private destroyRef = inject(DestroyRef);
   private injector = inject(Injector);
@@ -139,7 +139,7 @@ export class DualListBoxComponent<T extends Record<string, unknown> = Record<str
       return;
     }
 
-    const firstItem = items[0];
+    const firstItem = items[0] as Record<string, unknown>;
 
     if (!(keyProp in firstItem)) {
       throw new Error(`DualListBox: key property "${keyProp}" not found in source items. Available properties: ${Object.keys(firstItem).join(', ')}`);
@@ -151,11 +151,11 @@ export class DualListBoxComponent<T extends Record<string, unknown> = Record<str
   }
 
   private getItemKey(item: T, keyProp: string): unknown {
-    return item[keyProp];
+    return (item as Record<string, unknown>)[keyProp];
   }
 
   private getItemDisplay(item: T, displayProp: string): string {
-    return String(item[displayProp] || '');
+    return String((item as Record<string, unknown>)[displayProp] || '');
   }
 
   protected getDisplayValue(item: T): string {
