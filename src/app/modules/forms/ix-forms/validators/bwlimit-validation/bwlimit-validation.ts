@@ -46,7 +46,7 @@ export function bwlimitValidator(): ValidatorFn {
 
     const invalidBwLimit = parsed.findIndex((limit) => {
       return invalidTimePredicate(limit) || invalidBandwidthPredicate(limit);
-    })
+    });
 
     return invalidBwLimit >= 0 ? { invalidRcloneBandwidthLimit: { value: value[invalidBwLimit] } } : null;
   };
