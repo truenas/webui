@@ -225,19 +225,13 @@ describe('DualListBoxComponent', () => {
       } as unknown as CdkDragDrop<typeof listState>;
 
       spectator.component.onDrop(event);
+      spectator.detectChanges();
 
-      // Wait for microtask to complete
-      return new Promise<void>((resolve) => {
-        queueMicrotask(() => {
-          spectator.detectChanges();
-          const newItems = spectator.component.availableList().items;
-          expect(newItems).toHaveLength(3);
-          expect(newItems[0]).toEqual(initialItems[1]);
-          expect(newItems[1]).toEqual(initialItems[2]);
-          expect(newItems[2]).toEqual(initialItems[0]);
-          resolve();
-        });
-      });
+      const newItems = spectator.component.availableList().items;
+      expect(newItems).toHaveLength(3);
+      expect(newItems[0]).toEqual(initialItems[1]);
+      expect(newItems[1]).toEqual(initialItems[2]);
+      expect(newItems[2]).toEqual(initialItems[0]);
     });
 
     it('should handle drag and drop from available to selected list', () => {
@@ -437,59 +431,63 @@ describe('DualListBoxComponent', () => {
 
   describe('Custom key and display properties', () => {
     it('should use custom key property', () => {
-      // Mock console methods since validation and trackBy will run with mismatched keys initially
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
-
       const customData = [
         { uuid: 'a1', label: 'First' },
         { uuid: 'a2', label: 'Second' },
       ];
 
-      spectator.setInput('source', customData);
-      spectator.setInput('key', 'uuid');
-      spectator.setInput('display', 'label');
-      spectator.detectChanges();
+      // Create a new component with custom key/display from the start
+      const customSpectator = createComponent({
+        props: {
+          sourceName: 'Available Items',
+          targetName: 'Selected Items',
+          source: customData,
+          destination: [],
+          key: 'uuid',
+          display: 'label',
+        },
+      });
 
-      const items = spectator.component.availableList().items;
+      const items = customSpectator.component.availableList().items;
       expect(items).toHaveLength(2);
 
-      const displayText = spectator.queryAll('mat-list-item label');
+      const displayText = customSpectator.queryAll('mat-list-item label');
       expect(displayText[0]).toHaveText('First');
       expect(displayText[1]).toHaveText('Second');
-
-      consoleErrorSpy.mockRestore();
-      consoleWarnSpy.mockRestore();
     });
 
-    it('should log error for invalid key property', () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    it('should throw error for invalid key property', () => {
       const invalidData = [{ name: 'Item' }];
 
-      spectator.setInput('source', invalidData);
-      spectator.setInput('key', 'invalidKey');
-      spectator.detectChanges();
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'DualListBox: key property "invalidKey" not found in source items',
-      );
-
-      consoleErrorSpy.mockRestore();
+      expect(() => {
+        createComponent({
+          props: {
+            sourceName: 'Available Items',
+            targetName: 'Selected Items',
+            source: invalidData,
+            destination: [],
+            key: 'invalidKey',
+            display: 'name',
+          },
+        });
+      }).toThrow('DualListBox: key property "invalidKey" not found in source items. Available properties: name');
     });
 
-    it('should log error for invalid display property', () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    it('should throw error for invalid display property', () => {
       const invalidData = [{ id: 1 }];
 
-      spectator.setInput('source', invalidData);
-      spectator.setInput('display', 'invalidDisplay');
-      spectator.detectChanges();
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'DualListBox: display property "invalidDisplay" not found in source items',
-      );
-
-      consoleErrorSpy.mockRestore();
+      expect(() => {
+        createComponent({
+          props: {
+            sourceName: 'Available Items',
+            targetName: 'Selected Items',
+            source: invalidData,
+            destination: [],
+            key: 'id',
+            display: 'invalidDisplay',
+          },
+        });
+      }).toThrow('DualListBox: display property "invalidDisplay" not found in source items. Available properties: id');
     });
   });
 

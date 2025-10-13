@@ -1,15 +1,17 @@
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { NgClass, NgStyle } from '@angular/common';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
   effect,
+  inject,
+  Injector,
   input,
   model,
   signal,
-  inject,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
@@ -43,9 +45,10 @@ interface ListState<T> {
     TranslateModule,
   ],
 })
-export class DualListBoxComponent<T = Record<string, unknown>> {
+export class DualListBoxComponent<T extends Record<string, unknown> = Record<string, unknown>> {
   private detectBrowser = inject(DetectBrowserService);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
 
   // Inputs
   sourceName = input.required<string>();
@@ -97,16 +100,8 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
       const keyProp = this.key();
       const displayProp = this.display();
 
-      // Validate that key property exists in items
-      if (sourceItems.length > 0) {
-        const firstItem = sourceItems[0] as Record<string, unknown>;
-        if (!(keyProp in firstItem)) {
-          console.error(`DualListBox: key property "${keyProp}" not found in source items`);
-        }
-        if (!(displayProp in firstItem)) {
-          console.error(`DualListBox: display property "${displayProp}" not found in source items`);
-        }
-      }
+      // Validate that key and display properties exist in items
+      this.validateInputs(sourceItems, keyProp, displayProp);
 
       // Get IDs of destination items
       const destIds = new Set(destItems.map((item) => this.getItemKey(item, keyProp)));
@@ -139,12 +134,28 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
     });
   }
 
+  private validateInputs(items: T[], keyProp: string, displayProp: string): void {
+    if (items.length === 0) {
+      return;
+    }
+
+    const firstItem = items[0];
+
+    if (!(keyProp in firstItem)) {
+      throw new Error(`DualListBox: key property "${keyProp}" not found in source items. Available properties: ${Object.keys(firstItem).join(', ')}`);
+    }
+
+    if (!(displayProp in firstItem)) {
+      throw new Error(`DualListBox: display property "${displayProp}" not found in source items. Available properties: ${Object.keys(firstItem).join(', ')}`);
+    }
+  }
+
   private getItemKey(item: T, keyProp: string): unknown {
-    return (item as Record<string, unknown>)[keyProp];
+    return item[keyProp];
   }
 
   private getItemDisplay(item: T, displayProp: string): string {
-    return String((item as Record<string, unknown>)[displayProp] || '');
+    return String(item[displayProp] || '');
   }
 
   protected getDisplayValue(item: T): string {
@@ -378,10 +389,10 @@ export class DualListBoxComponent<T = Record<string, unknown>> {
       this.announceChange(`Item moved to ${targetListName}`);
     }
 
-    // Reset flag after a microtask to allow the effect to run on next change
-    queueMicrotask(() => {
+    // Reset flag after next render to ensure proper synchronization with Angular's change detection
+    afterNextRender(() => {
       this.isUpdatingFromDrag = false;
-    });
+    }, { injector: this.injector });
   }
 
   private updateDestination(): void {
