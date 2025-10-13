@@ -1,5 +1,6 @@
 import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
+import { BwLimitUpdate } from 'app/interfaces/cloud-sync-task.interface';
 
 /**
  * validator that ensures *rclone bandwidth limit strings*
@@ -19,16 +20,12 @@ export function bwlimitValidator(): ValidatorFn {
     }
 
     const parsed = prepareBwlimit(value);
-
     // a parsed bandwidth limit is invalid if it is `NaN`, since that means
     // that `prepareBwlimit` failed to parse it as a number at all.
-    const invalidBandwidthIndex = parsed.findIndex((limit) => {
-      return Number.isNaN(limit.bandwidth);
-    });
-
-    // a parsed time is in valid if its hour or minute components are NaN, non-integer, or outside
-    // of the 24 hour time range. 0 <= hour <= 23 and 0 <= minute <= 59
-    const invalidTimeIndex = parsed.findIndex((limit) => {
+    const invalidBandwidthPredicate = (limit: BwLimitUpdate): boolean => {
+      return Number.isNaN(limit.bandwidth) || limit.bandwidth < 0;
+    };
+    const invalidTimePredicate = (limit: BwLimitUpdate): boolean => {
       const timeComponents = limit.time.split(':');
       if (timeComponents.length !== 2) {
         return true;
@@ -45,26 +42,12 @@ export function bwlimitValidator(): ValidatorFn {
       }
 
       return false;
-    });
+    };
 
-    // we're only able to return one validation error of one kind at a time, so we check for invalid times first,
-    // then we check for invalid bandwidths.
-    if (invalidTimeIndex !== -1) {
-      return {
-        invalidRcloneBandwidthLimit: {
-          value: value[invalidTimeIndex],
-        },
-      };
-    }
+    const invalidBwLimit = parsed.findIndex((limit) => {
+      return invalidTimePredicate(limit) || invalidBandwidthPredicate(limit);
+    })
 
-    if (invalidBandwidthIndex !== -1) {
-      return {
-        invalidRcloneBandwidthLimit: {
-          value: value[invalidBandwidthIndex],
-        },
-      };
-    }
-
-    return null;
+    return invalidBwLimit >= 0 ? { invalidRcloneBandwidthLimit: { value: value[invalidBwLimit] } } : null;
   };
 }
