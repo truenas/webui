@@ -136,7 +136,7 @@ export class SnapshotTaskCardComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const snapshotTasks$ = this.api.call('pool.snapshottask.query').pipe(
+    const snapshotTasks$ = this.api.callAndSubscribe('pool.snapshottask.query').pipe(
       map((snapshotTasks) => snapshotTasks as PeriodicSnapshotTaskUi[]),
       untilDestroyed(this),
     );
