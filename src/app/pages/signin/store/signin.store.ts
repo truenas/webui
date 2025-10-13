@@ -163,12 +163,17 @@ export class SigninStore extends ComponentStore<SigninState> {
   getRedirectUrl(): string {
     const redirectUrl = this.window.sessionStorage.getItem('redirectUrl');
     if (redirectUrl) {
+      // Validate redirect URL before processing to prevent malicious URLs
+      if (isSigninUrl(redirectUrl)) {
+        return '/dashboard';
+      }
+
       try {
         const url = new URL(redirectUrl, this.window.location.origin);
         url.searchParams.delete(tokenParam);
         const finalUrl = url.pathname + url.search;
 
-        // Don't redirect to signin page - use dashboard instead
+        // Double-check after query param removal (defense in depth)
         if (isSigninUrl(finalUrl)) {
           return '/dashboard';
         }
