@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import { filter, tap } from 'rxjs';
+import { isSigninUrl } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -70,8 +71,8 @@ export class AppComponent implements OnInit {
       // save currenturl
       if (event instanceof NavigationEnd) {
         this.slideIn.closeAll();
-        const navigation = this.router.getCurrentNavigation();
-        if (this.isAuthenticated && event.url !== '/signin' && !navigation?.extras?.skipLocationChange) {
+        const navigation = this.router.currentNavigation();
+        if (this.isAuthenticated && !isSigninUrl(event.url) && !navigation?.extras?.skipLocationChange) {
           this.window.sessionStorage.setItem('redirectUrl', event.url);
         }
       }

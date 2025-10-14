@@ -12,6 +12,7 @@ import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
+import { isSigninUrl } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -167,12 +168,25 @@ export class SigninStore extends ComponentStore<SigninState> {
   getRedirectUrl(): string {
     const redirectUrl = this.window.sessionStorage.getItem('redirectUrl');
     if (redirectUrl) {
+      // Validate redirect URL before processing to prevent malicious URLs
+      if (isSigninUrl(redirectUrl)) {
+        return '/dashboard';
+      }
+
       try {
         const url = new URL(redirectUrl, this.window.location.origin);
         url.searchParams.delete(tokenParam);
-        return url.pathname + url.search;
-      } catch {
-        console.error('Invalid redirect URL:', redirectUrl);
+        const finalUrl = url.pathname + url.search;
+
+        // Double-check after query param removal (defense in depth)
+        if (isSigninUrl(finalUrl)) {
+          return '/dashboard';
+        }
+
+        return finalUrl;
+      } catch (error) {
+        console.error('Invalid redirect URL:', redirectUrl, error);
+        return '/dashboard';
       }
     }
 

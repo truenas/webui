@@ -419,6 +419,35 @@ describe('SigninStore', () => {
       const result = spectator.service.getRedirectUrl();
       expect(result).toBe('/some-url');
     });
+
+    it('should redirect to dashboard when redirectUrl is signin page', () => {
+      jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValueOnce('/signin');
+      const result = spectator.service.getRedirectUrl();
+      expect(result).toBe('/dashboard');
+    });
+
+    it('should redirect to dashboard when redirectUrl is signin page with query params', () => {
+      jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValueOnce('/signin?username=root');
+      const result = spectator.service.getRedirectUrl();
+      expect(result).toBe('/dashboard');
+    });
+
+    it('should redirect to dashboard when redirectUrl is signin sub-route', () => {
+      jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValueOnce('/signin/foo');
+      const result = spectator.service.getRedirectUrl();
+      expect(result).toBe('/dashboard');
+    });
+
+    it('should return dashboard on invalid redirect URL with special characters', () => {
+      jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValueOnce('http://[invalid');
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      const result = spectator.service.getRedirectUrl();
+
+      expect(result).toBe('/dashboard');
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
+    });
   });
 
   describe('showSnackbar', () => {
