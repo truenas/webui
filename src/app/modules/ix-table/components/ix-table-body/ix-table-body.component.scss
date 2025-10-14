@@ -13,11 +13,6 @@
   height: 48px;
   position: relative;
 
-  @media (max-width: $breakpoint-sm) {
-    height: inherit;
-    min-height: 48px;
-  }
-
   &:focus {
     box-shadow: 0 0 0 1.5px var(--focus-bg) inset;
     outline-width: 0;
