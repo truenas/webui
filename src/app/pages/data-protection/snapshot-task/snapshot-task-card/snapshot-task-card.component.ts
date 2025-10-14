@@ -6,7 +6,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, map, switchMap } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs';
 import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -136,12 +136,17 @@ export class SnapshotTaskCardComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const snapshotTasks$ = this.api.callAndSubscribe('pool.snapshottask.query').pipe(
+    const snapshotTasks$ = this.api.call('pool.snapshottask.query').pipe(
       map((snapshotTasks) => snapshotTasks as PeriodicSnapshotTaskUi[]),
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(snapshotTasks$);
     this.getSnapshotTasks();
+
+    this.api.subscribe('pool.snapshottask.query').pipe(
+      tap(() => this.getSnapshotTasks()),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   protected getSnapshotTasks(): void {
