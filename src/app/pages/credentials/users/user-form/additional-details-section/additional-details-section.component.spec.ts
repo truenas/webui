@@ -323,6 +323,42 @@ describe('AdditionalDetailsSectionComponent', () => {
       const hiddenPerms = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
       expect(hiddenPerms).toBeNull();
     });
+
+    it('remains visible when home directory path is cleared and defaults to /var/empty', async () => {
+      spectator = createComponent({
+        props: { editingUser: mockUser },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+
+      // Open the editable field
+      await homeEditable.open();
+
+      // Get the explorer and clear the value
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      await explorer.setValue('');
+      spectator.detectChanges();
+
+      // Close the editable by pressing escape
+      await homeEditable.tryToClose();
+
+      // The field should still be visible and show the user's original home as placeholder
+      expect(await homeEditable.getShownValue()).toBe('/home/test');
+
+      // Verify that the store was updated with the default path
+      expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(
+        expect.objectContaining({
+          home: '/var/empty',
+        }),
+      );
+
+      // Should be able to open and edit again
+      await homeEditable.open();
+      const reopenedExplorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      expect(await reopenedExplorer.isDisabled()).toBe(false);
+    });
   });
 
   describe('immutable user', () => {
