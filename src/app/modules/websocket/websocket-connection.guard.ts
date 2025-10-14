@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { isSigninUrl } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
@@ -39,6 +40,12 @@ export class WebSocketConnectionGuard {
   private resetUi(): void {
     this.closeAllDialogs();
     if (!this.wsManager.isSystemShuttingDown) {
+      // Store current URL before redirecting to signin so user can return after login
+      const currentUrl = this.window.location.pathname + this.window.location.search;
+      if (!isSigninUrl(currentUrl)) {
+        this.window.sessionStorage.setItem('redirectUrl', currentUrl);
+      }
+
       // manually preserve query params
       const params = new URLSearchParams(this.window.location.search);
       this.router.navigate(['/signin'], { queryParams: Object.fromEntries(params) });
