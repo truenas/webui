@@ -161,6 +161,26 @@ describe('AuthSectionComponent', () => {
       expect(await disablePasswordCheckbox.getValue()).toBe(false);
     });
 
+    it('enables "Disable Password" checkbox when smbAccess is disabled', async () => {
+      // Start with SMB enabled
+      smbAccess.set(true);
+      spectator.detectChanges();
+
+      const disablePasswordCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Disable Password' }));
+      expect(await disablePasswordCheckbox.isDisabled()).toBe(true);
+
+      // Disable SMB access
+      smbAccess.set(false);
+      spectator.detectChanges();
+
+      // Checkbox should now be enabled
+      expect(await disablePasswordCheckbox.isDisabled()).toBe(false);
+
+      // Should be able to toggle the checkbox
+      await disablePasswordCheckbox.setValue(true);
+      expect(await disablePasswordCheckbox.getValue()).toBe(true);
+    });
+
     // TODO: it shows "Change Password" field when editing a user that has a password
     // TODO: shows Disable Password ticked when editing a user that has no password
 
