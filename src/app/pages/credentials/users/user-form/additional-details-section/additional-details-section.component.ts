@@ -107,8 +107,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     if (this.form.controls.home_create.value && path) {
       return this.translate.instant('New directory under {path}', { path });
     }
-    // Return path if it exists, otherwise return a placeholder to keep the field visible
-    return path || this.homeDirectoryEmptyValue();
+    // Form value is always normalized to defaultHomePath if empty, so we can return it directly
+    return path;
   }
 
   readonly groupOptions$ = this.api.call('group.query', [[
@@ -167,16 +167,13 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (values) => {
-          // Ensure home is never empty - default to /var/empty if cleared
-          const home = values.home || defaultHomePath;
-
           this.userFormStore.updateUserConfig({
             group_create: values.group_create,
             home_create: values.home_create,
             full_name: values.full_name,
             groups: values.groups.map((grp) => (+grp)),
             group: values.group_create ? null : values.group,
-            home,
+            home: values.home,
             home_mode: values.home_mode,
             email: values.email,
             uid: values.uid,
@@ -507,7 +504,13 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   private detectHomeDirectoryChanges(): void {
     this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
-      if (isEmptyHomeDirectory(home) || this.editingUser()?.immutable) {
+      // Normalize empty home directory values to default path
+      if (!home || home.trim() === '') {
+        this.form.controls.home.setValue(defaultHomePath, { emitEvent: false });
+      }
+
+      const normalizedHome = this.form.controls.home.value;
+      if (isEmptyHomeDirectory(normalizedHome) || this.editingUser()?.immutable) {
         this.form.controls.home_mode.disable();
       } else {
         this.form.controls.home_mode.enable();
