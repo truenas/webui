@@ -1,5 +1,9 @@
-<span
+<button
+  mat-stroked-button
+  class="state-button"
+  matTooltipPosition="above"
+  [ngClass]="getButtonClass()"
   [matTooltip]="tooltip"
 >
   {{ state().state | translate }}
-</span>
+</button>
