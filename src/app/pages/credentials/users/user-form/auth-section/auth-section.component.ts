@@ -92,9 +92,7 @@ export class AuthSectionComponent implements OnInit {
         const rawValue = this.form.getRawValue();
         this.userStore.updateUserConfig({
           ssh_password_enabled: rawValue.ssh_password_enabled,
-          password_disabled: this.smbAccess()
-            ? false
-            : rawValue.password_disabled,
+          password_disabled: rawValue.password_disabled,
           password: rawValue.password,
           sshpubkey: rawValue.sshpubkey,
         });
