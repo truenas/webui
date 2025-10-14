@@ -7,7 +7,7 @@
     <div
       class="details-container"
       ixDetailsHeight
-      [class.details-container-mobile]="showMobileDetails()"
+      [class.details-container-mobile]="showMobileDetails() && isMobileView()"
     >
       <div class="header-container">
         @if (isMobileView()) {

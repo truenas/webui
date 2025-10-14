@@ -52,8 +52,8 @@ export class AppDetailViewComponent implements OnInit {
   private router = inject(Router);
 
   readonly app = signal<AvailableApp | null>(null);
-  readonly appId = toSignal(this.activatedRoute.params.pipe(map((params) => params['appId'])));
-  readonly train = toSignal(this.activatedRoute.params.pipe(map((params) => params['train'])));
+  readonly appId = toSignal<string | undefined>(this.activatedRoute.params.pipe(map((params) => params['appId'])));
+  readonly train = toSignal<string | undefined>(this.activatedRoute.params.pipe(map((params) => params['train'])));
   readonly isLoading = signal(true);
   readonly imagePlaceholder = appImagePlaceholder;
   readonly items = signal<GalleryItem[]>([]);

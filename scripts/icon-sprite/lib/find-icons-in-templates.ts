@@ -1,11 +1,10 @@
 import fs from 'fs';
 import * as cheerio from 'cheerio';
-import glob from 'glob';
 
 export function findIconsInTemplates(path: string): Set<string> {
   const iconNames = new Set<string>();
 
-  const templates = glob.sync(`${path}/**/*.html`);
+  const templates = fs.globSync(`${path}/**/*.html`);
 
   templates.forEach((template) => {
     const content = fs.readFileSync(template, 'utf-8');

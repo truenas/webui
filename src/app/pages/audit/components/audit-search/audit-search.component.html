@@ -24,28 +24,19 @@
         >
           {{ 'Search' | translate }}
         </button>
-        @if (isMobileView()) {
-          <ng-container [ngTemplateOutlet]="exportButton"></ng-container>
-        }
       </div>
     </div>
-    @if (!isMobileView()) {
-      <ng-container [ngTemplateOutlet]="exportButton"></ng-container>
+    @if (dataProvider().totalRows) {
+      <ix-export-button
+        jobMethod="audit.export"
+        downloadMethod="audit.download_report"
+        [addReportNameArgument]="true"
+        [searchQuery]="searchQuery()"
+        [sorting]="dataProvider().sorting"
+        [defaultFilters]="basicQueryFilters()"
+        [controllerType]="dataProvider().selectedControllerType"
+      ></ix-export-button>
     }
   </div>
 </div>
 
-
-<ng-template #exportButton>
-  @if (dataProvider().totalRows) {
-    <ix-export-button
-      jobMethod="audit.export"
-      downloadMethod="audit.download_report"
-      [addReportNameArgument]="true"
-      [searchQuery]="searchQuery()"
-      [sorting]="dataProvider().sorting"
-      [defaultFilters]="basicQueryFilters()"
-      [controllerType]="dataProvider().selectedControllerType"
-    ></ix-export-button>
-  }
-</ng-template>

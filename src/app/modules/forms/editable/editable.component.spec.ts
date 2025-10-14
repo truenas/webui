@@ -146,7 +146,7 @@ describe('EditableComponent', () => {
 
       await editable.open();
       spectator.component.tryToClose();
-      tick();
+      tick(200);
 
       expect(document.activeElement).toBe(focusedElement);
 
@@ -262,6 +262,42 @@ describe('EditableComponent', () => {
       tick();
 
       expect(await editable.isOpen()).toBe(false);
+    }));
+
+    it('stops propagation of Escape key event to prevent parent handlers from receiving it', fakeAsync(async () => {
+      await editable.open();
+      expect(await editable.isOpen()).toBe(true);
+
+      const parentHandler = (): void => {};
+      document.addEventListener('keydown', parentHandler);
+
+      const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+      const stopPropagationSpy = jest.spyOn(escapeEvent, 'stopPropagation');
+
+      document.dispatchEvent(escapeEvent);
+      tick();
+
+      expect(stopPropagationSpy).toHaveBeenCalled();
+      expect(await editable.isOpen()).toBe(false);
+
+      document.removeEventListener('keydown', parentHandler);
+    }));
+
+    it('does not close when global search is open (prioritizes global search)', fakeAsync(async () => {
+      await editable.open();
+      expect(await editable.isOpen()).toBe(true);
+
+      const globalSearchOverlay = document.createElement('div');
+      globalSearchOverlay.classList.add('topbar-panel');
+      document.body.appendChild(globalSearchOverlay);
+
+      const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+      document.dispatchEvent(escapeEvent);
+      tick();
+
+      expect(await editable.isOpen()).toBe(true);
+
+      document.body.removeChild(globalSearchOverlay);
     }));
 
     it('does not close when other keys are pressed', fakeAsync(async () => {

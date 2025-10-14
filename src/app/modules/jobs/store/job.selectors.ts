@@ -106,8 +106,7 @@ export const selectWaitingJobsCount = createSelector(
 );
 
 
-// TODO: Fix selector to return single item or rename selector.
-export const selectUpdateJob = createSelector(
+export const selectUpdateJobs = createSelector(
   selectRunningJobs,
   (jobs: Job[]) => jobs.filter((job) => job.method === 'update.run' || job.method === 'failover.upgrade'),
 );

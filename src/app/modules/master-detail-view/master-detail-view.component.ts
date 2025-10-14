@@ -1,6 +1,6 @@
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
-import { Component, ChangeDetectionStrategy, AfterViewInit, signal, ChangeDetectorRef, input, DOCUMENT, inject } from '@angular/core';
-import { NavigationStart, Router } from '@angular/router';
+import { Component, ChangeDetectionStrategy, AfterViewInit, signal, ChangeDetectorRef, input, output, DOCUMENT, inject } from '@angular/core';
+import { NavigationSkipped, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
@@ -30,17 +30,17 @@ export class MasterDetailViewComponent<T> implements AfterViewInit {
 
   readonly selectedItem = input<T | null>(null);
   readonly showDetails = input<boolean | null>(true);
+  readonly mobileDetailsClosed = output();
   readonly showMobileDetails = signal<boolean>(false);
   readonly isMobileView = signal<boolean>(false);
 
   constructor() {
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
-      .subscribe(() => {
-        if (this.router.currentNavigation()?.extras?.state?.hideMobileDetails) {
-          this.toggleShowMobileDetails(false);
-        }
-      });
+      .pipe(
+        filter((event) => event instanceof NavigationSkipped || event instanceof NavigationStart),
+        untilDestroyed(this),
+      )
+      .subscribe(() => this.toggleShowMobileDetails(false));
   }
 
   ngAfterViewInit(): void {
@@ -48,18 +48,16 @@ export class MasterDetailViewComponent<T> implements AfterViewInit {
       .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
       .pipe(untilDestroyed(this))
       .subscribe((state: BreakpointState) => {
-        if (state.matches) {
-          this.isMobileView.set(true);
-        } else {
-          this.isMobileView.set(false);
-          this.toggleShowMobileDetails(false);
-        }
-        this.cdr.markForCheck();
+        this.isMobileView.set(!!state.matches);
       });
   }
 
   toggleShowMobileDetails(value: boolean): void {
     this.showMobileDetails.set(value);
+
+    if (!value) {
+      this.mobileDetailsClosed.emit();
+    }
 
     setTimeout(() => {
       if (value) {

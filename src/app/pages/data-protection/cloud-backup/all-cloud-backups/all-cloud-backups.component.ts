@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, OnInit, ChangeDetectorRef, inject, viewChild } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -43,6 +43,8 @@ export class AllCloudBackupsComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private router = inject(Router);
 
+  protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
+
   dataProvider: AsyncDataProvider<CloudBackup>;
   protected readonly cloudBackups = signal<CloudBackup[]>([]);
   protected readonly searchableElements = cloudBackupListElements;
@@ -83,12 +85,15 @@ export class AllCloudBackupsComponent implements OnInit {
           ? cloudBackups.find((cloudBackup) => cloudBackup.id.toString() === id)
           : cloudBackups.find((cloudBackup) => cloudBackup.id === this.dataProvider?.expandedRow?.id);
 
-        if (selectedBackup) {
-          this.dataProvider.expandedRow = selectedBackup;
-        } else if (cloudBackups.length) {
-          const [firstBackup] = cloudBackups;
-          this.dataProvider.expandedRow = firstBackup;
+        if (!this.masterDetailView().isMobileView()) {
+          if (selectedBackup) {
+            this.dataProvider.expandedRow = selectedBackup;
+          } else if (cloudBackups.length) {
+            const [firstBackup] = cloudBackups;
+            this.dataProvider.expandedRow = firstBackup;
+          }
         }
+
         this.cdr.markForCheck();
       }),
     );

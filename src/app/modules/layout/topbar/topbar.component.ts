@@ -25,7 +25,7 @@ import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
+import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
@@ -134,7 +134,7 @@ export class TopbarComponent implements OnInit {
       });
     }
 
-    this.store$.select(selectUpdateJob).pipe(untilDestroyed(this)).subscribe((jobs) => {
+    this.store$.select(selectUpdateJobs).pipe(untilDestroyed(this)).subscribe((jobs) => {
       const job = jobs[0];
       if (!job) {
         this.updateIsRunning = false;
