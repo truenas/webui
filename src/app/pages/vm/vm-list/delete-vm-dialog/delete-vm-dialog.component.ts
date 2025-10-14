@@ -78,9 +78,9 @@ export class DeleteVmDialogComponent implements OnInit {
       )
       .subscribe((devices) => {
         // Only show DISK and RAW devices
-        const filteredDevices = devices.filter((device) =>
-          [VmDeviceType.Disk, VmDeviceType.Raw].includes(device.attributes.dtype),
-        );
+        const filteredDevices = devices.filter((device) => {
+          return [VmDeviceType.Disk, VmDeviceType.Raw].includes(device.attributes.dtype);
+        });
         this.devices.set(filteredDevices);
       });
   }
