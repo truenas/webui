@@ -17,6 +17,7 @@ export const helptextVmList = {
     forceTooltip: T('Set to ignore the Virtual \
  Machine status during the delete operation. Unset to prevent deleting \
  the Virtual Machine when it is still active or has an undefined state.'),
+    devicesListHeader: T('The following disks will be deleted:'),
   },
 
   stop_dialog: {
