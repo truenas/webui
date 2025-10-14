@@ -107,7 +107,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     if (this.form.controls.home_create.value && path) {
       return this.translate.instant('New directory under {path}', { path });
     }
-    return path;
+    // Return path if it exists, otherwise return a placeholder to keep the field visible
+    return path || this.homeDirectoryEmptyValue();
   }
 
   readonly groupOptions$ = this.api.call('group.query', [[
@@ -166,13 +167,16 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (values) => {
+          // Ensure home is never empty - default to /var/empty if cleared
+          const home = values.home || defaultHomePath;
+
           this.userFormStore.updateUserConfig({
             group_create: values.group_create,
             home_create: values.home_create,
             full_name: values.full_name,
             groups: values.groups.map((grp) => (+grp)),
             group: values.group_create ? null : values.group,
-            home: values.home,
+            home,
             home_mode: values.home_mode,
             email: values.email,
             uid: values.uid,
