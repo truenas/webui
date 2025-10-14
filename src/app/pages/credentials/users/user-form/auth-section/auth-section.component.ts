@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, OnInit, inject } from '@angular/core';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -63,7 +63,6 @@ export class AuthSectionComponent implements OnInit {
   });
 
   protected readonly tooltips = {
-    password_disabled: helptextUsers.disablePasswordTooltip,
     one_time_password: helptextUsers.oneTimePasswordTooltip,
     password: helptextUsers.passwordTooltip,
     password_edit: helptextUsers.passwordTooltip,
@@ -71,11 +70,18 @@ export class AuthSectionComponent implements OnInit {
     sshpubkey: helptextUsers.publicKeyTooltip,
   };
 
+  protected passwordDisabledTooltip = computed(() => {
+    if (this.smbAccess()) {
+      return this.translate.instant('Password cannot be disabled when SMB access is enabled. SMB authentication requires a password.');
+    }
+    return helptextUsers.disablePasswordTooltip;
+  });
+
   protected stigPasswordOptions$ = of([
     {
       label: this.translate.instant('Disable Password'),
       value: UserStigPasswordOption.DisablePassword,
-      tooltip: this.translate.instant(this.tooltips.password_disabled),
+      tooltip: this.translate.instant(helptextUsers.disablePasswordTooltip),
     },
     {
       label: this.translate.instant('Generate Temporary One-Time Password'),
