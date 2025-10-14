@@ -152,10 +152,13 @@ describe('AuthSectionComponent', () => {
       expect(value).toBe('Generate Temporary One-Time Password');
     });
 
-    it('does not show "Disable Password" when smbAccess is enabled', async () => {
+    it('shows "Disable Password" as disabled and unchecked when smbAccess is enabled', async () => {
       smbAccess.set(true);
+      spectator.detectChanges();
 
-      expect(await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Disable Password' }))).toBeNull();
+      const disablePasswordCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Disable Password' }));
+      expect(await disablePasswordCheckbox.isDisabled()).toBe(true);
+      expect(await disablePasswordCheckbox.getValue()).toBe(false);
     });
 
     // TODO: it shows "Change Password" field when editing a user that has a password
