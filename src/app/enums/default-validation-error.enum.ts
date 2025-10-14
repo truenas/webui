@@ -17,5 +17,6 @@ export enum DefaultValidationError {
   ContainsSlash = 'containsSlash',
   InvalidCharacters = 'invalidCharacters',
   OrphanedPercent = 'orphanedPercent',
+  InvalidRcloneBandwidthLimit = 'invalidRcloneBandwidthLimit',
   Empty = 'empty',
 }

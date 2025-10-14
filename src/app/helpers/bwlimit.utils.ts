@@ -37,6 +37,20 @@ function getByte(data: string): number {
   return -1;
 }
 
+/**
+ * takes a list of strings like '09:00,100M' or '23:30,off' and returns a list of
+ * `BwLimitUpdate`. the return value has the following properties:
+ *   * `time` is a string like '09:00' or '23:30'. technically-invalid values like
+ *     '36:00' are still returned from the function and **require further validation
+ *     to avoid invalid times**.
+ *   * `bandwidth` is a number, null, or NaN representing total bytes. (i.e. 1000 instead of 1K)
+ *   * if `bandwidth` is `NaN`, then the actual bandwidth speed specification was *not able to be parsed*. it is
+ *     **on the caller to handle returned NaN values** so as to distinguish between deliberately
+ *     `null` values and invalid values.
+ *
+ * in general, it is on the caller to handle invalid time/bandwidth specifications. this function *only*
+ * creates a list for submission to the API and makes no promises about its validity.
+ */
 export function prepareBwlimit(bwlimit: string[] | undefined): BwLimitUpdate[] {
   const bwlimtResult: BwLimitUpdate[] = [];
 
@@ -53,13 +67,23 @@ export function prepareBwlimit(bwlimit: string[] | undefined): BwLimitUpdate[] {
       if (sublimitArr[1].toLowerCase().endsWith('/s')) {
         sublimitArr[1] = sublimitArr[1].substring(0, sublimitArr[1].length - 2);
       }
+      // note: `sublimitArr[1]` remains unchanged if `getByte` fails (returns -1)
       if (getByte(sublimitArr[1]) !== -1) {
         sublimitArr[1] = getByte(sublimitArr[1]).toFixed(0);
       }
     }
+    let parsedBandwidth: number | null;
+    if (sublimitArr[1] === 'off' || sublimitArr[1] === undefined) {
+      parsedBandwidth = null;
+    } else {
+      // validate that the `parsed` string is a number *if it isn't `off` or not there at all (`undefined`)*.
+      // this returns `NaN` if we're unable to convert it into a number, so strings like 'abc' or '1o0'
+      // don't slip by.
+      parsedBandwidth = Number(sublimitArr[1]);
+    }
     const subLimit: BwLimitUpdate = {
       time: sublimitArr[0],
-      bandwidth: sublimitArr[1] === 'off' ? null : sublimitArr[1],
+      bandwidth: parsedBandwidth,
     };
 
     bwlimtResult.push(subLimit);
