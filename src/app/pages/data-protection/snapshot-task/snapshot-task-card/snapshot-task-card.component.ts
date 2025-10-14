@@ -148,7 +148,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.getSnapshotTasks();
-      }
+      },
     });
   }
 
