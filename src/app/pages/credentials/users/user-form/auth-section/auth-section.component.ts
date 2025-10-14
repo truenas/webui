@@ -127,7 +127,10 @@ export class AuthSectionComponent implements OnInit {
     effect(() => {
       if (this.smbAccess()) {
         this.form.controls.password.enable({ emitEvent: false });
+        this.form.controls.password_disabled.disable({ emitEvent: false });
         this.form.patchValue({ password_disabled: false });
+      } else {
+        this.form.controls.password_disabled.enable({ emitEvent: false });
       }
     });
 
