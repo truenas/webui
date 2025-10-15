@@ -51,7 +51,7 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   private clickOutsideSubscription?: Subscription;
   private keydownSubscription?: Subscription;
   private previouslyFocusedElement?: HTMLElement;
-
+  private mousedownTarget: HTMLElement | null = null;
 
   readonly emptyValue = input(this.translate.instant('Not Set'));
 
@@ -202,14 +202,41 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
     // Remove existing listener to prevent duplicates
     this.removeClickOutsideListener();
 
-    this.clickOutsideSubscription = fromEvent(this.document, 'click', { capture: true })
+    // Track where mousedown occurred to prevent closing on text selection
+    const mousedown$ = fromEvent<MouseEvent>(this.document, 'mousedown', { capture: true });
+    const mouseup$ = fromEvent<MouseEvent>(this.document, 'mouseup', { capture: true });
+
+    // Subscribe to mousedown to track where the click started
+    const mousedownSubscription = mousedown$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((event: Event) => {
-        const target = event.target as HTMLElement;
-        if (!this.isElementWithin(target)) {
+      .subscribe((event) => {
+        this.mousedownTarget = event.target as HTMLElement;
+      });
+
+    // Subscribe to mouseup to detect actual "click outside" behavior
+    const mouseupSubscription = mouseup$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        const mouseupTarget = event.target as HTMLElement;
+
+        // Only close if both mousedown AND mouseup occurred outside the editable
+        // This prevents closing when selecting text that ends outside the input
+        if (
+          this.mousedownTarget
+          && !this.isElementWithin(this.mousedownTarget)
+          && !this.isElementWithin(mouseupTarget)
+        ) {
           this.tryToClose();
         }
+
+        // Reset the mousedown target after handling
+        this.mousedownTarget = null;
       });
+
+    // Combine both subscriptions
+    this.clickOutsideSubscription = new Subscription();
+    this.clickOutsideSubscription.add(mousedownSubscription);
+    this.clickOutsideSubscription.add(mouseupSubscription);
   }
 
   private addKeydownListener(): void {
