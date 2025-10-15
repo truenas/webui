@@ -62,10 +62,14 @@
         >
           <a
             ixTest="manage-credentials"
+            [matTooltip]="'Open Manage Credentials in full page' | translate"
             (click)="goToManageCredentials()"
           >
             <div class="link">
-              {{ 'Manage Credentials' | translate }}<ix-icon name="open_in_new"></ix-icon>
+              {{ 'Manage Credentials' | translate }}<ix-icon
+                name="open_in_new"
+                [attr.aria-label]="'Open Manage Credentials in full page' | translate"
+              ></ix-icon>
             </div>
           </a>
           @if (form.controls.credentials.enabled) {
