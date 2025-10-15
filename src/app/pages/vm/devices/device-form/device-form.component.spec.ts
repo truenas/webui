@@ -515,10 +515,110 @@ describe('DeviceFormComponent', () => {
             size: 5,
             type: VmDiskMode.Ahci,
             dtype: VmDeviceType.Raw,
+            exists: true,
           },
           order: 5,
           vm: 45,
         }]);
+      });
+
+      it('sets exists field to true when editing existing raw file device', () => {
+        expect(spectator.component.rawFileForm.value.exists).toBe(true);
+      });
+    });
+
+    describe('adds raw file with existing file', () => {
+      beforeEach(async () => {
+        spectator = createComponent({
+          providers: [
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+          ],
+        });
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        api = spectator.inject(ApiService);
+      });
+
+      it('includes exists: true when selecting existing file from path input', async () => {
+        await form.fillForm(
+          {
+            Type: 'Raw File',
+            'Raw File': '/mnt/bassein/existingfile.raw',
+            'Disk Sector Size': 'Default',
+            Mode: 'AHCI',
+            'Device Order': '7',
+          },
+        );
+
+        // Manually trigger path change to simulate file selection
+        spectator.component.rawFileForm.patchValue({ path: '/mnt/bassein/existingfile.raw' });
+        spectator.detectChanges();
+
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.create', [{
+          attributes: {
+            logical_sectorsize: null,
+            physical_sectorsize: null,
+            path: '/mnt/bassein/existingfile.raw',
+            size: null,
+            type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
+            exists: true,
+          },
+          order: 7,
+          vm: 45,
+        }]);
+      });
+    });
+
+    describe('adds raw file with size (new file creation)', () => {
+      beforeEach(async () => {
+        spectator = createComponent({
+          providers: [
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+          ],
+        });
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        api = spectator.inject(ApiService);
+      });
+
+      it('does not include exists field when creating new file with size specified', async () => {
+        await form.fillForm(
+          {
+            Type: 'Raw File',
+            'Raw File': '/mnt/bassein/newfile.raw',
+            'Disk Sector Size': 'Default',
+            Mode: 'AHCI',
+            'Raw Filesize': 10,
+            'Device Order': '8',
+          },
+        );
+
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.create', [{
+          attributes: {
+            logical_sectorsize: null,
+            physical_sectorsize: null,
+            path: '/mnt/bassein/newfile.raw',
+            size: 10,
+            type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
+            // exists should NOT be present
+          },
+          order: 8,
+          vm: 45,
+        }]);
+
+        // Verify exists is not in the attributes
+        const callArgs = (api.call as jest.Mock).mock.calls[
+          (api.call as jest.Mock).mock.calls.length - 1
+        ][1][0];
+        expect(callArgs.attributes).not.toHaveProperty('exists');
       });
     });
   });
