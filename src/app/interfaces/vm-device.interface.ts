@@ -119,6 +119,7 @@ interface VmCdRomAttributes {
 
 interface VmRawFileAttributes {
   boot: boolean;
+  exists?: boolean;
   logical_sectorsize: number;
   path: string;
   physical_sectorsize: number;
