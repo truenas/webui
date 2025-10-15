@@ -1,3 +1,4 @@
+// cspell:ignore newuser validuser
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
@@ -6,7 +7,9 @@ import {
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TranslateModule } from '@ngx-translate/core';
 import { MockComponents, MockInstance } from 'ng-mocks';
+import { of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -14,11 +17,13 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User } from 'app/interfaces/user.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/user-form/additional-details-section/additional-details-section.component';
@@ -113,6 +118,7 @@ describe('UserFormComponent', () => {
     component: UserFormComponent,
     imports: [
       ReactiveFormsModule,
+      TranslateModule.forRoot(),
     ],
     declarations: [
       MockComponents(
@@ -142,6 +148,10 @@ describe('UserFormComponent', () => {
       ]),
       UserFormStore,
       mockProvider(ErrorHandlerService),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(SnackbarService),
       mockProvider(SlideInRef, slideInRef),
       provideMockStore({
         selectors: [{
@@ -292,6 +302,54 @@ describe('UserFormComponent', () => {
 
         const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         expect(await saveButton.isDisabled()).toBe(false);
+      });
+    });
+
+    describe('creating new user', () => {
+      beforeEach(async () => {
+        spectator = createComponent();
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+      });
+
+      it('should call user.create API when saving new user', async () => {
+        await form.fillForm({
+          Username: 'newuser',
+        });
+
+        spectator.detectChanges();
+        await spectator.fixture.whenStable();
+
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+
+        spectator.detectChanges();
+        await spectator.fixture.whenStable();
+
+        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.create', [
+          expect.objectContaining({
+            username: 'newuser',
+          }),
+        ]);
+      });
+
+      it('should close slide-in after successful creation', async () => {
+        await form.fillForm({
+          Username: 'newuser',
+        });
+
+        spectator.detectChanges();
+        await spectator.fixture.whenStable();
+
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+
+        spectator.detectChanges();
+        await spectator.fixture.whenStable();
+
+        expect(slideInRef.close).toHaveBeenCalledWith({
+          response: expect.objectContaining({ username: 'new-user' }),
+        });
       });
     });
 
