@@ -248,7 +248,7 @@ describe('AdditionalDetailsSectionComponent', () => {
   });
 
   describe('home directory fields', () => {
-    it('disables permissions when home directory is empty', async () => {
+    it('normalizes empty home directory to default path and hides permissions', async () => {
       spectator = createComponent({
         props: { editingUser: { ...mockUser, home: '' } },
       });
@@ -258,13 +258,12 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
 
-      const checkbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Default Permissions' }));
-      if (checkbox) {
-        await checkbox.setValue(false);
-      }
+      // Empty home should be normalized to /var/empty
+      expect(spectator.component.form.controls.home.value).toBe('/var/empty');
 
-      const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
-      expect(await perms.isDisabled()).toBe(true);
+      // Permissions should not be shown for /var/empty
+      const perms = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      expect(perms).toBeNull();
     });
 
     it('enables permissions after setting a home directory', async () => {
@@ -322,6 +321,83 @@ describe('AdditionalDetailsSectionComponent', () => {
       // The permissions component should be hidden when default_permissions is true
       const hiddenPerms = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
       expect(hiddenPerms).toBeNull();
+    });
+
+    it('remains visible when home directory path is cleared and defaults to /var/empty', async () => {
+      spectator = createComponent({
+        props: { editingUser: mockUser },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+
+      // Open the editable field
+      await homeEditable.open();
+
+      // Get the explorer and clear the value
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      await explorer.setValue('');
+      spectator.detectChanges();
+
+      // Close the editable by pressing escape
+      await homeEditable.tryToClose();
+
+      // The field should still be visible and show the normalized default path
+      expect(await homeEditable.getShownValue()).toBe('/var/empty');
+
+      // Verify that the form control was normalized to the default path
+      expect(spectator.component.form.controls.home.value).toBe('/var/empty');
+
+      // Verify that the store was updated with the default path
+      expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(
+        expect.objectContaining({
+          home: '/var/empty',
+        }),
+      );
+
+      // Should be able to open and edit again
+      await homeEditable.open();
+      const reopenedExplorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      expect(await reopenedExplorer.isDisabled()).toBe(false);
+    });
+
+    it('handles empty → valid → empty flow correctly', async () => {
+      spectator = createComponent({
+        props: { editingUser: { ...mockUser, home: '' } },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      // Start with empty home - should be normalized to /var/empty
+      expect(spectator.component.form.controls.home.value).toBe('/var/empty');
+
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+      await homeEditable.open();
+
+      // Set a valid path
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      await explorer.setValue('/mnt/tank/users/testuser');
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.home.value).toBe('/mnt/tank/users/testuser');
+      expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(
+        expect.objectContaining({
+          home: '/mnt/tank/users/testuser',
+        }),
+      );
+
+      // Clear the path again
+      await explorer.setValue('');
+      spectator.detectChanges();
+
+      // Should be normalized back to /var/empty
+      expect(spectator.component.form.controls.home.value).toBe('/var/empty');
+      expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(
+        expect.objectContaining({
+          home: '/var/empty',
+        }),
+      );
     });
   });
 
