@@ -6706,18 +6706,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"angular-dual-listbox@npm:~7.0.0":
-  version: 7.0.0
-  resolution: "angular-dual-listbox@npm:7.0.0"
-  dependencies:
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    "@angular/common": ">=14.0.0"
-    "@angular/core": ">=14.0.0"
-  checksum: 10/54aa8e18da33c4c11e0d90b866274c4341bb9acf97ed450ce7dd79804c65c71759a1f8a54438469606f85d1e68ef7c99ede1925486c4b8c4bb2e2c7614c32319
-  languageName: node
-  linkType: hard
-
 "angular-eslint@npm:~20.1.1":
   version: 20.1.1
   resolution: "angular-eslint@npm:20.1.1"
@@ -18160,7 +18148,6 @@ __metadata:
     "@vendure/ngx-translate-extract": "npm:~9.2.1"
     "@xterm/addon-fit": "npm:~0.10.0"
     "@xterm/xterm": "npm:~5.5.0"
-    angular-dual-listbox: "npm:~7.0.0"
     angular-eslint: "npm:~20.3.0"
     angular-resize-event: "npm:^3.2.0"
     chart.js: "npm:~4.4.4"
