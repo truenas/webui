@@ -1,5 +1,5 @@
-import { Directive, ElementRef, HostListener, OnDestroy, OnInit, OnChanges, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, Directive, ElementRef, OnDestroy, OnInit, OnChanges, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -13,11 +13,14 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
  * to fill the bottom space, which becomes available when user scrolls the page down,
  * so the page's heading is shifted off the screen
  */
-@UntilDestroy()
 @Directive({
   selector: '[ixDetailsHeight]',
+  host: {
+    '(window:resize)': 'onResize()',
+  },
 })
 export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
+  private readonly destroyRef = inject(DestroyRef);
   private window = inject<Window>(WINDOW);
   private element = inject<ElementRef<HTMLElement>>(ElementRef);
   private layoutService = inject(LayoutService);
@@ -61,7 +64,6 @@ export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     this.window.removeEventListener('scroll', this.onScroll, true);
   }
 
-  @HostListener('window:resize')
   onResize(): void {
     this.precalculateHeights();
     this.applyHeight();
@@ -143,7 +145,7 @@ export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
 
   private listenForConsoleFooterChanges(): void {
     this.store$
-      .pipe(waitForAdvancedConfig, untilDestroyed(this))
+      .pipe(waitForAdvancedConfig, takeUntilDestroyed(this.destroyRef))
       .subscribe((advancedConfig) => {
         this.hasConsoleFooter = advancedConfig.consolemsg;
         this.precalculateHeights();
