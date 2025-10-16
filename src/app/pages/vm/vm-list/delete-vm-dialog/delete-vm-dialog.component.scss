@@ -2,3 +2,29 @@
   display: block;
   min-width: 370px;
 }
+
+.devices-section {
+  margin: 8px 0 4px;
+  padding: 8px 12px;
+  background-color: var(--bg2);
+  border-radius: 4px;
+
+  h3 {
+    margin: 0 0 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fg1);
+  }
+}
+
+.devices-list {
+  margin: 0;
+  padding-left: 20px;
+  list-style-type: disc;
+
+  li {
+    padding: 4px 0;
+    color: var(--fg2);
+    font-size: 13px;
+  }
+}
