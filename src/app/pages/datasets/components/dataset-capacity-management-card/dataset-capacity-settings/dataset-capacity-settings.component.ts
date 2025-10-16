@@ -11,7 +11,6 @@ import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
-import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -24,7 +23,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { getUserProperty, isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @UntilDestroy()
 @Component({
@@ -145,11 +144,10 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   }
 
   private setDatasetForEdit(dataset: DatasetDetails): void {
-    // These properties are now always in user_properties
-    const refquotaWarning = dataset.user_properties?.refquota_warning as ZfsProperty<string, number> | undefined;
-    const refquotaCritical = dataset.user_properties?.refquota_critical as ZfsProperty<string, number> | undefined;
-    const quotaWarning = dataset.user_properties?.quota_warning as ZfsProperty<string, number> | undefined;
-    const quotaCritical = dataset.user_properties?.quota_critical as ZfsProperty<string, number> | undefined;
+    const refquotaWarning = getUserProperty<number>(dataset, 'refquota_warning');
+    const refquotaCritical = getUserProperty<number>(dataset, 'refquota_critical');
+    const quotaWarning = getUserProperty<number>(dataset, 'quota_warning');
+    const quotaCritical = getUserProperty<number>(dataset, 'quota_critical');
 
     this.oldValues = {
       refquota: dataset.refquota.parsed,
