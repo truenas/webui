@@ -135,6 +135,10 @@ export class AuthSectionComponent implements OnInit {
         this.form.patchValue({ password_disabled: false });
       } else {
         this.form.controls.password_disabled.enable({ emitEvent: false });
+        // Ensure password field state is consistent when SMB is disabled
+        if (!this.form.value.password_disabled) {
+          this.form.controls.password.enable({ emitEvent: false });
+        }
       }
     });
 
