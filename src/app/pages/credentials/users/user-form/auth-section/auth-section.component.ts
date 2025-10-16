@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, OnInit, inject } from '@angular/core';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -63,7 +63,6 @@ export class AuthSectionComponent implements OnInit {
   });
 
   protected readonly tooltips = {
-    password_disabled: helptextUsers.disablePasswordTooltip,
     one_time_password: helptextUsers.oneTimePasswordTooltip,
     password: helptextUsers.passwordTooltip,
     password_edit: helptextUsers.passwordTooltip,
@@ -71,11 +70,18 @@ export class AuthSectionComponent implements OnInit {
     sshpubkey: helptextUsers.publicKeyTooltip,
   };
 
+  protected passwordDisabledTooltip = computed(() => {
+    if (this.smbAccess()) {
+      return this.translate.instant('Password cannot be disabled when SMB access is enabled. SMB authentication requires a password.');
+    }
+    return helptextUsers.disablePasswordTooltip;
+  });
+
   protected stigPasswordOptions$ = of([
     {
       label: this.translate.instant('Disable Password'),
       value: UserStigPasswordOption.DisablePassword,
-      tooltip: this.translate.instant(this.tooltips.password_disabled),
+      tooltip: this.translate.instant(helptextUsers.disablePasswordTooltip),
     },
     {
       label: this.translate.instant('Generate Temporary One-Time Password'),
@@ -92,9 +98,7 @@ export class AuthSectionComponent implements OnInit {
         const rawValue = this.form.getRawValue();
         this.userStore.updateUserConfig({
           ssh_password_enabled: rawValue.ssh_password_enabled,
-          password_disabled: this.smbAccess()
-            ? false
-            : rawValue.password_disabled,
+          password_disabled: rawValue.password_disabled,
           password: rawValue.password,
           sshpubkey: rawValue.sshpubkey,
         });
@@ -127,7 +131,14 @@ export class AuthSectionComponent implements OnInit {
     effect(() => {
       if (this.smbAccess()) {
         this.form.controls.password.enable({ emitEvent: false });
+        this.form.controls.password_disabled.disable({ emitEvent: false });
         this.form.patchValue({ password_disabled: false });
+      } else {
+        this.form.controls.password_disabled.enable({ emitEvent: false });
+        // Ensure password field state is consistent when SMB is disabled
+        if (!this.form.value.password_disabled) {
+          this.form.controls.password.enable({ emitEvent: false });
+        }
       }
     });
 
