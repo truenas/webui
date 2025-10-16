@@ -92,6 +92,14 @@ export class MyComponent {
 
 **ESLint enforcement**: The `@angular-eslint/prefer-inject` rule is enabled to ensure consistent usage across the codebase.
 
+### Modern Angular Patterns
+
+**RxJS Cleanup**: Use `takeUntilDestroyed(this.destroyRef)` from `@angular/core/rxjs-interop` instead of `@ngneat/until-destroy`.
+
+**Host Metadata**: Use `host: { '(click)': 'onClick()', '[class]': 'cssClass' }` instead of `@HostListener` and `@HostBinding` decorators.
+
+**Dynamic Components**: Use `inputBinding('prop', () => value)` with `createComponent` instead of `componentRef.setInput()`.
+
 ## Testing Guidelines
 - Cover main happy paths.
 - Write tests using Jest and Spectator.
