@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, HostBinding, input, inject } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
@@ -6,6 +8,7 @@ export enum VmwareSnapshotStatus {
   Pending = 'PENDING',
   Error = 'ERROR',
   Success = 'SUCCESS',
+  Blocked = 'BLOCKED',
 }
 
 export interface VmwareState {
@@ -19,7 +22,7 @@ export interface VmwareState {
   templateUrl: './vmware-status-cell.component.html',
   styleUrls: ['./vmware-status-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatTooltip, TranslateModule],
+  imports: [MatButton, MatTooltip, NgClass, TranslateModule],
 })
 export class VmwareStatusCellComponent {
   private translate = inject(TranslateService);
@@ -27,16 +30,38 @@ export class VmwareStatusCellComponent {
   readonly state = input.required<VmwareState>();
 
   get tooltip(): string {
-    if (this.state().state === VmwareSnapshotStatus.Error) {
+    const status = this.state().state;
+
+    if (status === VmwareSnapshotStatus.Error) {
       const error = this.state().error;
       return error ? this.translate.instant(error) : this.translate.instant('Error');
     }
-    return this.state().state === VmwareSnapshotStatus.Pending
-      ? this.translate.instant('Pending')
-      : this.translate.instant('Success');
+
+    if (status === VmwareSnapshotStatus.Blocked) {
+      return this.translate.instant('Blocked due to outbound network restrictions');
+    }
+
+    if (status === VmwareSnapshotStatus.Pending) {
+      return this.translate.instant('Pending');
+    }
+
+    return this.translate.instant('Success');
   }
 
-  @HostBinding('class') get hostClasses(): string[] {
-    return ['status', this.state()?.state.toLowerCase()];
+  protected getButtonClass(): string {
+    const status = this.state().state;
+
+    switch (status) {
+      case VmwareSnapshotStatus.Success:
+        return 'fn-theme-green';
+      case VmwareSnapshotStatus.Pending:
+        return 'fn-theme-orange';
+      case VmwareSnapshotStatus.Error:
+        return 'fn-theme-red';
+      case VmwareSnapshotStatus.Blocked:
+        return 'fn-theme-yellow';
+      default:
+        return 'fn-theme-primary';
+    }
   }
 }

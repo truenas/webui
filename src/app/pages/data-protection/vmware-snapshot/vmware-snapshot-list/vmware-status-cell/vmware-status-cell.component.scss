@@ -1,25 +1,4 @@
-:host {
-  border: 1px solid transparent;
-  border-radius: 20px;
-  box-sizing: border-box;
-  display: flex;
-  font-weight: bold;
-  gap: 6px;
-  justify-content: center;
-  padding: 3px 8px;
-
-  &.success {
-    border-color: var(--status-active);
-    color: var(--status-active);
-  }
-
-  &.pending {
-    border-color: var(--status-in-progress);
-    color: var(--status-in-progress);
-  }
-
-  &.error {
-    border-color: var(--status-error);
-    color: var(--status-error);
-  }
+.state-button {
+  line-height: initial;
+  padding: 0 8px;
 }

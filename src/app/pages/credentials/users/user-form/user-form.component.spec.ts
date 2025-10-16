@@ -1,20 +1,30 @@
+// cspell:ignore newuser validuser
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
   FormControl, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TranslateModule } from '@ngx-translate/core';
 import { MockComponents, MockInstance } from 'ng-mocks';
+import { of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
+import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User } from 'app/interfaces/user.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/user-form/additional-details-section/additional-details-section.component';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/users/user-form/allowed-access-section/allowed-access-section.component';
@@ -56,6 +66,7 @@ describe('UserFormComponent', () => {
 
   let spectator: Spectator<UserFormComponent>;
   let loader: HarnessLoader;
+  let form: IxFormHarness;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
@@ -107,6 +118,7 @@ describe('UserFormComponent', () => {
     component: UserFormComponent,
     imports: [
       ReactiveFormsModule,
+      TranslateModule.forRoot(),
     ],
     declarations: [
       MockComponents(
@@ -116,6 +128,7 @@ describe('UserFormComponent', () => {
       ),
     ],
     providers: [
+      mockAuth(),
       mockApi([
         mockCall('group.query', [{
           id: 101,
@@ -128,16 +141,17 @@ describe('UserFormComponent', () => {
           '/usr/bin/bash': 'bash',
           '/usr/bin/zsh': 'zsh',
         } as Choices),
+        mockCall('user.create', { username: 'new-user' } as User),
+        mockCall('user.update', { username: 'test' } as User),
+        mockCall('system.security.config', { enable_gpos_stig: false } as SystemSecurityConfig),
+        mockCall('user.get_next_uid', 1005),
       ]),
-      mockProvider(UserFormStore, {
-        updateUserConfig: jest.fn(),
-        updateSetupDetails: jest.fn(),
-        createUser: jest.fn(),
-        updateUser: jest.fn(),
-        isNewUser: jest.fn(() => true),
-        isStigMode: jest.fn(() => false),
-      }),
+      UserFormStore,
       mockProvider(ErrorHandlerService),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(SnackbarService),
       mockProvider(SlideInRef, slideInRef),
       provideMockStore({
         selectors: [{
@@ -209,5 +223,167 @@ describe('UserFormComponent', () => {
     });
   });
 
-  // TODO: Add more tests
+  describe('username field', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('should show error when username is empty', async () => {
+      await form.fillForm({ Username: '' });
+
+      const usernameInput = await form.getControl('Username') as IxInputHarness;
+      expect(await usernameInput.getErrorText()).toBe('Username is required');
+    });
+
+    it('should show error for invalid username pattern', async () => {
+      await form.fillForm({ Username: 'invalid@user' });
+
+      const usernameInput = await form.getControl('Username') as IxInputHarness;
+      const error = await usernameInput.getErrorText();
+      expect(error).toBe('Invalid format or character');
+    });
+
+    it('should show error for username exceeding 32 characters', async () => {
+      await form.fillForm({ Username: 'a'.repeat(33) });
+
+      const usernameInput = await form.getControl('Username') as IxInputHarness;
+      expect(await usernameInput.getErrorText()).toBe('The length of Username should be no more than 32');
+    });
+
+    it('should accept valid username', async () => {
+      await form.fillForm({ Username: 'validuser' });
+
+      const usernameInput = await form.getControl('Username') as IxInputHarness;
+      expect(await usernameInput.getErrorText()).toBe('');
+    });
+  });
+
+  describe('editing existing user', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => mockUser }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('should populate username field with existing user data', async () => {
+      const usernameInput = await form.getControl('Username') as IxInputHarness;
+      expect(await usernameInput.getValue()).toBe('test');
+    });
+
+    it('should disable username field for immutable user', async () => {
+      const usernameInput = await form.getControl('Username') as IxInputHarness;
+      expect(await usernameInput.isDisabled()).toBe(true);
+    });
+  });
+
+  describe('form submission', () => {
+    describe('save button', () => {
+      beforeEach(() => {
+        spectator = createComponent();
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      });
+
+      it('should be disabled when form is invalid', async () => {
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        expect(await saveButton.isDisabled()).toBe(true);
+      });
+
+      it('should be enabled when form has valid username', async () => {
+        const testForm = await loader.getHarness(IxFormHarness);
+        await testForm.fillForm({
+          Username: 'validuser',
+        });
+
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        expect(await saveButton.isDisabled()).toBe(false);
+      });
+    });
+
+    describe('creating new user', () => {
+      beforeEach(async () => {
+        spectator = createComponent();
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+      });
+
+      it('should call user.create API when saving new user', async () => {
+        await form.fillForm({
+          Username: 'newuser',
+        });
+
+        spectator.detectChanges();
+        await spectator.fixture.whenStable();
+
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+
+        spectator.detectChanges();
+        await spectator.fixture.whenStable();
+
+        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.create', [
+          expect.objectContaining({
+            username: 'newuser',
+          }),
+        ]);
+      });
+
+      it('should close slide-in after successful creation', async () => {
+        await form.fillForm({
+          Username: 'newuser',
+        });
+
+        spectator.detectChanges();
+        await spectator.fixture.whenStable();
+
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+
+        spectator.detectChanges();
+        await spectator.fixture.whenStable();
+
+        expect(slideInRef.close).toHaveBeenCalledWith({
+          response: expect.objectContaining({ username: 'new-user' }),
+        });
+      });
+    });
+
+    describe('editing existing user', () => {
+      beforeEach(async () => {
+        spectator = createComponent({
+          providers: [
+            mockProvider(SlideInRef, { ...slideInRef, getData: () => mockUser }),
+          ],
+        });
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+      });
+
+      it('should call user.update API when saving changes', async () => {
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+
+        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [
+          69,
+          expect.objectContaining({
+            username: 'test',
+          }),
+        ]);
+      });
+
+      it('should close slide-in after successful update', async () => {
+        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        await saveButton.click();
+
+        expect(slideInRef.close).toHaveBeenCalledWith({
+          response: expect.objectContaining({ username: 'test' }),
+        });
+      });
+    });
+  });
 });
