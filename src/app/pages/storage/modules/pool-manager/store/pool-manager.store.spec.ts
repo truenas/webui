@@ -68,6 +68,7 @@ describe('PoolManagerStore', () => {
       mockProvider(DiskStore, {
         loadDisks: () => of(disks),
         selectableDisks$: of(disks),
+        hasSedCapableDisks$: of(false),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -300,6 +301,7 @@ describe('PoolManagerStore', () => {
           vdevs: topologyCategory.vdevs,
           layout: topologyCategory.layout,
           vdevsLimit: null,
+          isSedEncryption: false,
         } as ManualDiskSelectionParams,
         panelClass: 'manual-selection-dialog',
       });

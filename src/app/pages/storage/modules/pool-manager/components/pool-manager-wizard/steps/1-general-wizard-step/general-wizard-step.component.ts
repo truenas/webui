@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  map, combineLatest,
+  combineLatest, map, Observable,
 } from 'rxjs';
 import { startWith, take } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -151,15 +151,23 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
     });
   }
 
-  private resetForm(): void {
-    // Determine default encryption type
-    combineLatest([this.hasSedCapableDisks$, this.isEnterprise$])
-      .pipe(take(1), untilDestroyed(this))
-      .subscribe(([hasSedDisks, isEnterprise]) => {
-        const defaultEncryptionType = (hasSedDisks && isEnterprise)
-          ? EncryptionType.Sed
-          : EncryptionType.None;
+  /**
+   * Returns an observable that emits the default encryption type based on
+   * available SED-capable disks and Enterprise license status.
+   */
+  private getDefaultEncryptionType$(): Observable<EncryptionType> {
+    return combineLatest([this.hasSedCapableDisks$, this.isEnterprise$]).pipe(
+      take(1),
+      map(([hasSedDisks, isEnterprise]) => {
+        return (hasSedDisks && isEnterprise) ? EncryptionType.Sed : EncryptionType.None;
+      }),
+    );
+  }
 
+  private resetForm(): void {
+    this.getDefaultEncryptionType$()
+      .pipe(untilDestroyed(this))
+      .subscribe((defaultEncryptionType) => {
         this.form.reset({
           encryptionType: defaultEncryptionType,
           encryptionStandard: defaultEncryptionStandard,
@@ -173,11 +181,11 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
       return;
     }
 
-    combineLatest([this.hasSedCapableDisks$, this.isEnterprise$])
-      .pipe(take(1), untilDestroyed(this))
-      .subscribe(([hasSedDisks, isEnterprise]) => {
-        if (hasSedDisks && isEnterprise) {
-          this.form.patchValue({ encryptionType: EncryptionType.Sed });
+    this.getDefaultEncryptionType$()
+      .pipe(untilDestroyed(this))
+      .subscribe((defaultEncryptionType) => {
+        if (defaultEncryptionType === EncryptionType.Sed) {
+          this.form.patchValue({ encryptionType: defaultEncryptionType });
         }
       });
   }
