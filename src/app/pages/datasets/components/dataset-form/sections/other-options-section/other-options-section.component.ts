@@ -34,6 +34,7 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -245,8 +246,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       specialSmallBlockSize = this.formatter.convertHumanStringToNum(specialSmallBlockSize.toString());
     }
 
+    const comments = existing.user_properties?.comments as ZfsProperty<string> | undefined;
     this.form.patchValue({
-      comments: existing.comments?.source === ZfsPropertySource.Local ? existing.comments.value : '',
+      comments: comments?.source === ZfsPropertySource.Local ? comments.value : '',
       sync: getFieldValue(existing.sync, this.parent()),
       compression: getFieldValue(existing.compression, this.parent()),
       atime: getFieldValue(existing.atime, this.parent()),
