@@ -52,54 +52,8 @@ jobs:
         run: yarn lint
 
   check-ux-team:
-    name: Check UX Team Membership
-    runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    outputs:
-      is_member: ${{ steps.check.outputs.result }}
-    steps:
-      - name: Check membership
-        id: check
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
-          script: |
-            try {
-              const username = context.payload.pull_request.user.login;
-              console.log(`Checking repository access for user: ${username}`);
-              
-              // Check if user has write access to the repository
-              const { data: permissionLevel } = await github.rest.repos.getCollaboratorPermissionLevel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                username: username
-              });
-              
-              console.log(`User ${username} has permission: ${permissionLevel.permission}`);
-              
-              // Users with write or admin access are considered team members
-              const hasWriteAccess = ['write', 'admin'].includes(permissionLevel.permission);
-              console.log(`Has write access: ${hasWriteAccess}`);
-              
-              return hasWriteAccess ? 'true' : 'false';
-            } catch (error) {
-              console.log(`Error checking permissions: ${error.message}`);
-              
-              // If we can't check permissions, check if it's the PR author's association
-              const association = context.payload.pull_request.author_association;
-              console.log(`PR author association: ${association}`);
-              
-              // MEMBER, OWNER, and COLLABORATOR associations indicate team members
-              const isTeamMember = ['MEMBER', 'OWNER', 'COLLABORATOR'].includes(association);
-              console.log(`Is team member based on association: ${isTeamMember}`);
-              
-              return isTeamMember ? 'true' : 'false';
-            }
-      - name: Output result
-        run: |
-          echo "Check result: ${{ steps.check.outputs.result }}"
-          echo "Is member output: ${{ steps.check.outputs.result == 'true' }}"
+    uses: ./.github/workflows/check-ux-team.yml
 
   test-ux-team:
     name: Run tests (UX Team - Self-hosted)
