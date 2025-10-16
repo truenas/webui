@@ -3,6 +3,7 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
+import { SedStatus } from 'app/enums/sed-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnclosureAndSlot, TemperatureAgg } from 'app/interfaces/storage.interface';
 
@@ -22,6 +23,7 @@ export interface Disk {
   passwd?: string;
   pool: string;
   rotationrate: number | null;
+  sed_status?: SedStatus;
   serial: string;
   size: number;
   subsystem: string;
@@ -86,6 +88,7 @@ export interface DetailsDisk {
   blocks: number;
   serial_lunid: string;
   rotationrate: number | null;
+  sed_status?: SedStatus;
   stripesize: number;
   parts: unknown[];
   dif: boolean;

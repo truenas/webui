@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, input, output, inject, OnChanges } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { redundantListToUniqueOptions } from 'app/helpers/operators/options.operators';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -26,19 +27,22 @@ export type ManualDiskSelectionFilters = ManualSelectionDiskFiltersComponent['fi
     ReactiveFormsModule,
     IxInputComponent,
     IxSelectComponent,
+    IxCheckboxComponent,
     TranslateModule,
   ],
 })
-export class ManualSelectionDiskFiltersComponent implements OnInit {
+export class ManualSelectionDiskFiltersComponent implements OnInit, OnChanges {
   private formBuilder = inject(FormBuilder);
   store$ = inject(ManualDiskSelectionStore);
 
+  readonly isSedEncryption = input<boolean>(false);
   readonly filtersUpdated = output<ManualDiskSelectionFilters>();
 
   protected filterForm = this.formBuilder.group({
     search: [''],
     diskType: ['' as DiskType],
     diskSize: [''],
+    sedCapable: [false],
   });
 
   readonly typeOptions$ = this.store$.inventory$.pipe(
@@ -55,12 +59,28 @@ export class ManualSelectionDiskFiltersComponent implements OnInit {
     }),
   );
 
+  ngOnChanges(): void {
+    this.updateSedFilter();
+  }
+
   ngOnInit(): void {
     this.filterForm.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((value) => {
         this.filtersUpdated.emit(value);
       });
+
+    // Initialize SED filter based on encryption type
+    this.updateSedFilter();
+  }
+
+  private updateSedFilter(): void {
+    if (this.isSedEncryption()) {
+      this.filterForm.controls.sedCapable.setValue(true);
+      this.filterForm.controls.sedCapable.disable();
+    } else {
+      this.filterForm.controls.sedCapable.enable();
+    }
   }
 
   protected readonly iconMarker = iconMarker;
