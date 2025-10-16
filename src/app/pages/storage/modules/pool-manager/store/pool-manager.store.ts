@@ -10,7 +10,7 @@ import {
   forkJoin, Observable, of, Subject,
 } from 'rxjs';
 import {
-  filter, switchMap, take, tap,
+  filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
@@ -273,17 +273,24 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       this.api.call('enclosure2.query'),
       this.diskStore.loadDisks(),
     ]).pipe(
+      switchMap(([enclosures, diskDetails]) => {
+        // After disks are loaded, get the SED capability status reactively
+        return this.diskStore.hasSedCapableDisks$.pipe(
+          take(1),
+          tap((hasSedCapableDisks) => {
+            this.patchState({
+              isLoading: false,
+              enclosures,
+              hasSedCapableDisks,
+            });
+          }),
+          // Return the original tuple type to maintain method signature
+          map(() => [enclosures, diskDetails] as [Enclosure[], DiskDetailsResponse]),
+        );
+      }),
       tapResponse({
-        next: ([enclosures]) => {
-          this.patchState({
-            isLoading: false,
-            enclosures,
-          });
-
-          // Set hasSedCapableDisks from disk store
-          this.diskStore.hasSedCapableDisks$.pipe(take(1)).subscribe((hasSedCapableDisks) => {
-            this.setHasSedCapableDisks(hasSedCapableDisks);
-          });
+        next: () => {
+          // State already set in switchMap
         },
         error: (error: unknown) => {
           this.patchState({ isLoading: false });
