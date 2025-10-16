@@ -94,6 +94,7 @@ export interface DetailsDisk {
   blocks: number;
   serial_lunid: string;
   rotationrate: number | null;
+  sed_status?: SedStatus;
   stripesize: number;
   parts: unknown[];
   dif: boolean;

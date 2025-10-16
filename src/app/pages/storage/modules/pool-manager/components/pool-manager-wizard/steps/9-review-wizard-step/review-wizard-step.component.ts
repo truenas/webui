@@ -17,6 +17,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   InspectVdevsDialog,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
+import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
 import { PoolCreationError } from 'app/pages/storage/modules/pool-manager/interfaces/pool-creation-error';
 import { TopologyCategoryDescriptionPipe } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
@@ -69,9 +70,14 @@ export class ReviewWizardStepComponent implements OnInit {
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
 
   protected readonly Role = Role;
+  protected readonly EncryptionType = EncryptionType;
 
   get showStartOver(): boolean {
-    return Boolean(this.state.name || this.state.encryption || this.nonEmptyTopologyCategories?.length);
+    return Boolean(
+      this.state.name
+      || this.state.encryptionType !== EncryptionType.None
+      || this.nonEmptyTopologyCategories?.length,
+    );
   }
 
   get hasVdevs(): boolean {

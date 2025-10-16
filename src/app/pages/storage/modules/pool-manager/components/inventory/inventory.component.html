@@ -1,6 +1,11 @@
 <mat-card class="card">
   <mat-card-header>
-    <h3 mat-card-title>{{ 'Unassigned Disks' | translate }}</h3>
+    <h3 mat-card-title>
+      {{ 'Unassigned Disks' | translate }}
+      @if ((encryptionType$ | async) === EncryptionType.Sed) {
+        <span class="sed-badge">{{ 'SED' | translate }}</span>
+      }
+    </h3>
   </mat-card-header>
   @if (!(isLoading$| async)) {
     <mat-card-content>

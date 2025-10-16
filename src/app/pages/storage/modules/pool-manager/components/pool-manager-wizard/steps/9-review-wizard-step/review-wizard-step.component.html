@@ -7,10 +7,16 @@
       <div class="value">{{ state.name || ('Not Set' | translate) }}</div>
     </div>
 
-    @if (state.encryption) {
+    @if (state.encryptionType !== EncryptionType.None) {
       <div class="summary-item">
         <div class="label">{{ 'Encryption' | translate }}</div>
-        <div class="value">{{ state.encryption }}</div>
+        <div class="value">
+          @if (state.encryptionType === EncryptionType.Software) {
+            {{ 'Software (ZFS)' | translate }} - {{ state.encryption }}
+          } @else if (state.encryptionType === EncryptionType.Sed) {
+            {{ 'Hardware (SED)' | translate }}
+          }
+        </div>
       </div>
     }
   </div>

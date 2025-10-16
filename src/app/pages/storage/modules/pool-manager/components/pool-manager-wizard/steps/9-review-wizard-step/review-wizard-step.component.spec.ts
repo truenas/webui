@@ -21,6 +21,7 @@ import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/compon
 import {
   ReviewWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
+import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
 import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 import {
@@ -37,7 +38,8 @@ describe('ReviewWizardStepComponent', () => {
   let loader: HarnessLoader;
   const state = {
     name: 'test-pool',
-    encryption: 'SHA95',
+    encryption: 'aes-256-gcm',
+    encryptionType: EncryptionType.Software,
     topology: {
       [VDevType.Data]: {
         diskSize: 2 * GiB,
@@ -130,8 +132,30 @@ describe('ReviewWizardStepComponent', () => {
       expect(getSummaryItem('Pool Name')).toBe('test-pool');
     });
 
-    it('shows encryption', () => {
-      expect(getSummaryItem('Encryption')).toBe('SHA95');
+    it('shows software encryption', () => {
+      expect(getSummaryItem('Encryption')).toBe('Software (ZFS) - aes-256-gcm');
+    });
+
+    it('shows hardware (SED) encryption', () => {
+      state$.next({
+        ...state,
+        encryptionType: EncryptionType.Sed,
+        encryption: null,
+      });
+      spectator.detectChanges();
+
+      expect(getSummaryItem('Encryption')).toBe('Hardware (SED)');
+    });
+
+    it('does not show encryption when encryption type is None', () => {
+      state$.next({
+        ...state,
+        encryptionType: EncryptionType.None,
+        encryption: null,
+      });
+      spectator.detectChanges();
+
+      expect(spectator.query(byTextContent('Encryption', { selector: '.summary-item .label' }))).toBeNull();
     });
 
     it('shows vdev summary', () => {
