@@ -16,6 +16,7 @@ import { Role } from 'app/enums/role.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { datasetDetailsHelptext } from 'app/helptext/storage/volumes/datasets/dataset-details';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -83,7 +84,13 @@ export class DatasetDetailsCardComponent {
   protected readonly helptext = datasetDetailsHelptext;
 
   protected readonly hasComments = computed(() => {
-    return this.dataset().comments?.source === ZfsPropertySource.Local && !!this.dataset().comments?.value?.length;
+    const comments = this.dataset().user_properties?.comments as ZfsProperty<string> | undefined;
+    return comments?.source === ZfsPropertySource.Local && !!comments?.value?.length;
+  });
+
+  protected readonly commentsValue = computed(() => {
+    const comments = this.dataset().user_properties?.comments as ZfsProperty<string> | undefined;
+    return comments?.value || '';
   });
 
   protected readonly canBePromoted = computed(() => Boolean(this.dataset().origin?.parsed));
