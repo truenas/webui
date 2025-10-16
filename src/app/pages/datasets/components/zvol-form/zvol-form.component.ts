@@ -25,6 +25,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -282,7 +283,8 @@ export class ZvolFormComponent implements OnInit {
 
   private copyParentProperties(parent: Dataset): void {
     this.form.controls.name.setValue(parent.name);
-    this.form.controls.comments.setValue(parent.comments?.value || '');
+    const comments = parent.user_properties?.comments as ZfsProperty<string> | undefined;
+    this.form.controls.comments.setValue(comments?.value || '');
 
     this.form.controls.volsize.setValue(parent.volsize.rawvalue);
   }

@@ -11,6 +11,7 @@ import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -144,17 +145,23 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   }
 
   private setDatasetForEdit(dataset: DatasetDetails): void {
+    // These properties are now always in user_properties
+    const refquotaWarning = dataset.user_properties?.refquota_warning as ZfsProperty<string, number> | undefined;
+    const refquotaCritical = dataset.user_properties?.refquota_critical as ZfsProperty<string, number> | undefined;
+    const quotaWarning = dataset.user_properties?.quota_warning as ZfsProperty<string, number> | undefined;
+    const quotaCritical = dataset.user_properties?.quota_critical as ZfsProperty<string, number> | undefined;
+
     this.oldValues = {
       refquota: dataset.refquota.parsed,
-      refquota_warning: dataset.refquota_warning?.parsed ?? this.defaultQuotaWarning,
-      refquota_warning_inherit: isPropertyInherited(dataset.refquota_warning),
-      refquota_critical: dataset.refquota_critical?.parsed ?? this.defaultQuotaCritical,
-      refquota_critical_inherit: isPropertyInherited(dataset.refquota_critical),
+      refquota_warning: refquotaWarning?.parsed ?? this.defaultQuotaWarning,
+      refquota_warning_inherit: isPropertyInherited(refquotaWarning),
+      refquota_critical: refquotaCritical?.parsed ?? this.defaultQuotaCritical,
+      refquota_critical_inherit: isPropertyInherited(refquotaCritical),
       quota: dataset.quota.parsed,
-      quota_warning: dataset.quota_warning?.parsed ?? this.defaultQuotaWarning,
-      quota_warning_inherit: isPropertyInherited(dataset.quota_warning),
-      quota_critical: dataset.quota_critical?.parsed ?? this.defaultQuotaCritical,
-      quota_critical_inherit: isPropertyInherited(dataset.quota_critical),
+      quota_warning: quotaWarning?.parsed ?? this.defaultQuotaWarning,
+      quota_warning_inherit: isPropertyInherited(quotaWarning),
+      quota_critical: quotaCritical?.parsed ?? this.defaultQuotaCritical,
+      quota_critical_inherit: isPropertyInherited(quotaCritical),
       refreservation: dataset.refreservation.parsed,
       reservation: dataset.reservation.parsed,
     };
