@@ -21,6 +21,7 @@ import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pag
 import {
   DispersalStrategy,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
+import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { categoryCapacity } from 'app/pages/storage/modules/pool-manager/utils/capacity.utils';
 import { filterAllowedDisks } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
@@ -68,6 +69,9 @@ export interface PoolManagerState {
   name: string;
   nameErrors: ValidationErrors | null;
   encryption: string | null;
+  encryptionType: EncryptionType;
+  sedPassword: string | null;
+  hasSedCapableDisks: boolean;
   diskSettings: PoolManagerDiskSettings;
   enclosureSettings: PoolManagerEnclosureSettings;
   topology: PoolManagerTopology;
@@ -101,6 +105,9 @@ export const initialState: PoolManagerState = {
   name: '',
   nameErrors: null,
   encryption: null,
+  encryptionType: EncryptionType.None,
+  sedPassword: null,
+  hasSedCapableDisks: false,
 
   diskSettings: {
     allowNonUniqueSerialDisks: false,
@@ -139,6 +146,9 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly name$ = this.select((state) => state.name);
   readonly nameErrors$ = this.select((state) => state.nameErrors);
   readonly encryption$ = this.select((state) => state.encryption);
+  readonly encryptionType$ = this.select((state) => state.encryptionType);
+  readonly sedPassword$ = this.select((state) => state.sedPassword);
+  readonly hasSedCapableDisks$ = this.select((state) => state.hasSedCapableDisks);
   readonly enclosures$ = this.select((state) => state.enclosures);
   readonly topology$ = this.select((state) => state.topology);
   readonly diskSettings$ = this.select((state) => state.diskSettings);
@@ -152,9 +162,11 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.diskStore.selectableDisks$,
     this.diskSettings$,
     this.enclosureSettings$,
-    (unusedDisks, diskOptions, enclosureOptions) => filterAllowedDisks(unusedDisks, {
+    this.encryptionType$,
+    (unusedDisks, diskOptions, enclosureOptions, encryptionType) => filterAllowedDisks(unusedDisks, {
       ...diskOptions,
       ...enclosureOptions,
+      requireSedCapable: encryptionType === EncryptionType.Sed,
     }),
   );
 
@@ -267,6 +279,11 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
             isLoading: false,
             enclosures,
           });
+
+          // Set hasSedCapableDisks from disk store
+          this.diskStore.hasSedCapableDisks$.pipe(take(1)).subscribe((hasSedCapableDisks) => {
+            this.setHasSedCapableDisks(hasSedCapableDisks);
+          });
         },
         error: (error: unknown) => {
           this.patchState({ isLoading: false });
@@ -301,6 +318,24 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     return {
       ...state,
       ...options,
+    };
+  });
+
+  readonly setEncryptionOptions = this.updater((state, options: {
+    encryptionType: EncryptionType;
+    encryption: string | null;
+    sedPassword: string | null;
+  }) => {
+    return {
+      ...state,
+      ...options,
+    };
+  });
+
+  readonly setHasSedCapableDisks = this.updater((state, hasSedCapableDisks: boolean) => {
+    return {
+      ...state,
+      hasSedCapableDisks,
     };
   });
 
@@ -434,6 +469,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
             enclosures: state.enclosures,
             vdevs: state.topology[type].vdevs,
             vdevsLimit: isVdevsLimitedToOne ? 1 : null,
+            isSedEncryption: state.encryptionType === EncryptionType.Sed,
           } as ManualDiskSelectionParams,
           panelClass: 'manual-selection-dialog',
         }).afterClosed();

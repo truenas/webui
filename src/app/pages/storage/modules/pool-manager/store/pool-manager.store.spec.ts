@@ -12,6 +12,7 @@ import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
+import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import {
   initialState, PoolManagerState, PoolManagerStore, PoolManagerTopologyCategory,
@@ -318,6 +319,93 @@ describe('PoolManagerStore', () => {
       });
       spectator.service.openManualSelectionDialog(VDevType.Data);
       expect(spectator.service.resetTopologyCategory).toHaveBeenCalledWith(VDevType.Data);
+    });
+  });
+
+  describe('SED encryption', () => {
+    describe('setEncryptionOptions', () => {
+      it('sets encryption type, encryption algorithm, and SED password', async () => {
+        spectator.service.setEncryptionOptions({
+          encryptionType: EncryptionType.Sed,
+          encryption: null,
+          sedPassword: 'mypassword',
+        });
+
+        const state = await firstValueFrom(spectator.service.state$);
+        expect(state.encryptionType).toBe(EncryptionType.Sed);
+        expect(state.encryption).toBeNull();
+        expect(state.sedPassword).toBe('mypassword');
+      });
+
+      it('sets software encryption with algorithm', async () => {
+        spectator.service.setEncryptionOptions({
+          encryptionType: EncryptionType.Software,
+          encryption: 'AES-256-GCM',
+          sedPassword: null,
+        });
+
+        const state = await firstValueFrom(spectator.service.state$);
+        expect(state.encryptionType).toBe(EncryptionType.Software);
+        expect(state.encryption).toBe('AES-256-GCM');
+        expect(state.sedPassword).toBeNull();
+      });
+
+      it('sets no encryption', async () => {
+        spectator.service.setEncryptionOptions({
+          encryptionType: EncryptionType.None,
+          encryption: null,
+          sedPassword: null,
+        });
+
+        const state = await firstValueFrom(spectator.service.state$);
+        expect(state.encryptionType).toBe(EncryptionType.None);
+        expect(state.encryption).toBeNull();
+        expect(state.sedPassword).toBeNull();
+      });
+    });
+
+    describe('setHasSedCapableDisks', () => {
+      it('sets hasSedCapableDisks to true', async () => {
+        spectator.service.setHasSedCapableDisks(true);
+
+        const state = await firstValueFrom(spectator.service.state$);
+        expect(state.hasSedCapableDisks).toBe(true);
+      });
+
+      it('sets hasSedCapableDisks to false', async () => {
+        spectator.service.setHasSedCapableDisks(false);
+
+        const state = await firstValueFrom(spectator.service.state$);
+        expect(state.hasSedCapableDisks).toBe(false);
+      });
+    });
+
+    describe('selectors', () => {
+      it('encryptionType$ - returns encryption type', async () => {
+        spectator.service.setEncryptionOptions({
+          encryptionType: EncryptionType.Sed,
+          encryption: null,
+          sedPassword: 'password',
+        });
+
+        expect(await firstValueFrom(spectator.service.encryptionType$)).toBe(EncryptionType.Sed);
+      });
+
+      it('sedPassword$ - returns SED password', async () => {
+        spectator.service.setEncryptionOptions({
+          encryptionType: EncryptionType.Sed,
+          encryption: null,
+          sedPassword: 'mypassword',
+        });
+
+        expect(await firstValueFrom(spectator.service.sedPassword$)).toBe('mypassword');
+      });
+
+      it('hasSedCapableDisks$ - returns whether SED-capable disks are available', async () => {
+        spectator.service.setHasSedCapableDisks(true);
+
+        expect(await firstValueFrom(spectator.service.hasSedCapableDisks$)).toBe(true);
+      });
     });
   });
 });

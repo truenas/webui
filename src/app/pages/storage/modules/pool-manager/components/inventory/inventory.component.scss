@@ -15,3 +15,17 @@
 .loading {
   padding: 16px;
 }
+
+.sed-badge {
+  background-color: var(--primary);
+  border-radius: 4px;
+  color: var(--contrast-darkest);
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  margin-left: 8px;
+  padding: 4px 8px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
