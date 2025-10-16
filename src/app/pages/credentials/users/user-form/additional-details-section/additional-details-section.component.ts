@@ -107,6 +107,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     if (this.form.controls.home_create.value && path) {
       return this.translate.instant('New directory under {path}', { path });
     }
+    // Form value is always normalized to defaultHomePath if empty, so we can return it directly
     return path;
   }
 
@@ -503,7 +504,13 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   private detectHomeDirectoryChanges(): void {
     this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
-      if (isEmptyHomeDirectory(home) || this.editingUser()?.immutable) {
+      // Normalize empty home directory values to default path
+      if (!home || home.trim() === '') {
+        this.form.controls.home.setValue(defaultHomePath, { emitEvent: false });
+      }
+
+      const normalizedHome = this.form.controls.home.value;
+      if (isEmptyHomeDirectory(normalizedHome) || this.editingUser()?.immutable) {
         this.form.controls.home_mode.disable();
       } else {
         this.form.controls.home_mode.enable();

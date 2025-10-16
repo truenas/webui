@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, viewChild } from '@angular/core';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -10,6 +10,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -146,6 +147,8 @@ export class DeviceFormComponent implements OnInit {
   existingDevice: VmDevice;
   protected slideInData: { virtualMachineId?: number; device?: VmDevice } | undefined;
 
+  readonly rawFileExplorer = viewChild<IxExplorerComponent>('rawFileExplorer');
+
   typeControl = new FormControl(VmDeviceType.Cdrom, Validators.required);
   orderControl = new FormControl(null as number | null);
 
@@ -171,6 +174,7 @@ export class DeviceFormComponent implements OnInit {
     sectorsize: [0],
     type: [null as VmDiskMode | null],
     size: [null as number | null],
+    exists: [false as boolean | null],
   });
 
   pciForm = this.formBuilder.nonNullable.group({
@@ -331,6 +335,7 @@ export class DeviceFormComponent implements OnInit {
     }
 
     this.handleDeviceTypeChange();
+    this.setupRawFileExistsTracking();
   }
 
   setVirtualMachineId(): void {
@@ -350,6 +355,7 @@ export class DeviceFormComponent implements OnInit {
           sectorsize: this.existingDevice.attributes.logical_sectorsize === null
             ? 0
             : this.existingDevice.attributes.logical_sectorsize,
+          exists: true,
         });
         break;
       case VmDeviceType.Nic:
@@ -405,6 +411,66 @@ export class DeviceFormComponent implements OnInit {
         this.generateMacAddress();
       }
     });
+  }
+
+  /**
+   * Tracks when a file is selected from the explorer and updates the exists field.
+   * - Sets exists to true when a file is selected from the tree
+   * - Sets exists to false when a directory is selected or path is cleared
+   * - Does not update exists when path is manually typed (handled by shouldIncludeExistsField)
+   */
+  setupRawFileExistsTracking(): void {
+    this.rawFileForm.controls.path.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      const explorer = this.rawFileExplorer();
+      const selectedNode = explorer?.lastSelectedNode();
+
+      if (selectedNode?.data?.type === ExplorerNodeType.File) {
+        // User selected an existing file from the tree
+        this.rawFileForm.patchValue({ exists: true }, { emitEvent: false });
+      } else if (selectedNode?.data?.type === ExplorerNodeType.Directory) {
+        // User selected a directory - reset exists
+        this.rawFileForm.patchValue({ exists: false }, { emitEvent: false });
+      } else if (!this.rawFileForm.value.path) {
+        // Path was cleared - reset exists
+        this.rawFileForm.patchValue({ exists: false }, { emitEvent: false });
+      }
+      // Note: if no node selected (manual typing), don't update exists here
+    });
+  }
+
+  /**
+   * Determines whether to include the 'exists' field in the raw file device attributes.
+   *
+   * Logic:
+   * 1. Editing existing device: always include exists: true
+   * 2. File selected from explorer: include exists: true
+   * 3. Creating new file (size specified): omit exists (backend will create file)
+   * 4. Manual path without size: assume existing file, include exists: true
+   *
+   * @returns true if exists field should be included in the API call
+   */
+  private shouldIncludeExistsField(): boolean {
+    // If editing an existing device, always include exists: true
+    if (!this.isNew) {
+      return true;
+    }
+
+    const explorer = this.rawFileExplorer();
+    const selectedNode = explorer?.lastSelectedNode();
+    const hasSize = !!this.rawFileForm.value.size;
+
+    // User selected an existing file from the tree
+    if (selectedNode?.data?.type === ExplorerNodeType.File) {
+      return true;
+    }
+
+    // Creating a new file (size is specified) - don't include exists
+    if (hasSize) {
+      return false;
+    }
+
+    // Path was typed manually and no size specified - assume existing file
+    return true;
   }
 
   onSubmit(event: SubmitEvent): void {
@@ -478,13 +544,26 @@ export class DeviceFormComponent implements OnInit {
     if ('device' in values && values.device === specifyCustom) {
       values.device = null;
     }
+
     if ('sectorsize' in values) {
       const { sectorsize, ...otherAttributes } = values;
-      return {
+      // Remove exists from otherAttributes if present
+      if ('exists' in otherAttributes) {
+        delete (otherAttributes as { exists?: boolean }).exists;
+      }
+
+      const attributes = {
         ...otherAttributes,
         logical_sectorsize: sectorsize === 0 ? null : sectorsize,
         physical_sectorsize: sectorsize === 0 ? null : sectorsize,
-      } as VmDeviceUpdate['attributes'];
+      };
+
+      // Include exists field for raw file devices when file exists
+      if (this.typeControl.value === VmDeviceType.Raw && this.shouldIncludeExistsField()) {
+        (attributes as { exists?: boolean }).exists = true;
+      }
+
+      return attributes as VmDeviceUpdate['attributes'];
     }
 
     // Handle display device attributes
