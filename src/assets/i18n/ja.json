@@ -1,9 +1,9 @@
 {
   "0": "0",
   "": "",
-  "Cannot be enabled without a valid home path and login shell.": "",
-  "Password must be reset in order to enable SMB authentication": "",
-  "We are working in the background to generate relevant data. Please try again in a few minutes.": "",
+  "Cannot be enabled without a valid home path and login shell.": "有効なホーム パスとログイン シェルがないと有効にできません。",
+  "Password must be reset in order to enable SMB authentication": "SMB認証を有効にするにはパスワードをリセットする必要があります",
+  "We are working in the background to generate relevant data. Please try again in a few minutes.": "関連するデータを生成するためにバックグラウンドで作業が行われています。数分後にもう一度試してください。",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              セッションが{lifetime}秒以上アクティブでないようです。<br>\n              セキュリティ上の理由から、{time}でログアウトします。\n            ",
   " as of {dateTime}": " {dateTime} 現在",
   " bytes.": "バイト。",
