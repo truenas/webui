@@ -16,7 +16,6 @@ import { Role } from 'app/enums/role.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { datasetDetailsHelptext } from 'app/helptext/storage/volumes/datasets/dataset-details';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -28,7 +27,7 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { getDatasetLabel, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { getDatasetLabel, getUserProperty, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -84,12 +83,12 @@ export class DatasetDetailsCardComponent {
   protected readonly helptext = datasetDetailsHelptext;
 
   protected readonly hasComments = computed(() => {
-    const comments = this.dataset().user_properties?.comments as ZfsProperty<string> | undefined;
+    const comments = getUserProperty<string>(this.dataset(), 'comments');
     return comments?.source === ZfsPropertySource.Local && !!comments?.value?.length;
   });
 
   protected readonly commentsValue = computed(() => {
-    const comments = this.dataset().user_properties?.comments as ZfsProperty<string> | undefined;
+    const comments = getUserProperty<string>(this.dataset(), 'comments');
     return comments?.value || '';
   });
 

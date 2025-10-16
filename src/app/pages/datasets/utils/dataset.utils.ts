@@ -78,3 +78,21 @@ export function datasetNameSortComparer(a: DatasetDetails, b: DatasetDetails): n
 
   return partsA.length - partsB.length;
 }
+
+/**
+ * Known user property keys that are commonly accessed in the application
+ */
+export type UserPropertyKey = 'comments' | 'managedby' | 'refquota_warning' | 'refquota_critical' | 'quota_warning' | 'quota_critical';
+
+/**
+ * Safely retrieves a user property from a dataset with proper type casting
+ * @param dataset The dataset or dataset details object
+ * @param key The user property key to retrieve
+ * @returns The ZfsProperty or undefined if not found
+ */
+export function getUserProperty<T>(
+  dataset: Pick<Dataset | DatasetDetails, 'user_properties'>,
+  key: UserPropertyKey,
+): ZfsProperty<string, T> | undefined {
+  return dataset.user_properties?.[key] as ZfsProperty<string, T> | undefined;
+}
