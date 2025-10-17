@@ -938,7 +938,7 @@ export interface ApiCallDirectory {
   // LXC (actual available endpoints only)
   'lxc.bridge_choices': { params: []; response: Choices };
   'lxc.config': { params: []; response: ContainerGlobalConfig };
-  'lxc.update': { params: [Partial<ContainerGlobalConfig>]; response: ContainerGlobalConfig };
+  'lxc.update': { params: [ContainerGlobalConfig]; response: ContainerGlobalConfig };
 
   // VM
   'vm.bootloader_options': { params: void; response: Choices };
