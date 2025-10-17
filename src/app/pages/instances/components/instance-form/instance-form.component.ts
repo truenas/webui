@@ -61,6 +61,7 @@ import {
   SelectImageDialog,
   VirtualizationImageWithId,
 } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -86,6 +87,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     FormActionsComponent,
   ],
+  providers: [VirtualizationConfigStore],
 })
 export class InstanceFormComponent implements OnInit {
   private api = inject(ApiService);
@@ -100,6 +102,7 @@ export class InstanceFormComponent implements OnInit {
   slideInRef = inject<SlideInRef<ContainerInstance | undefined, boolean>>(SlideInRef);
   private instancesStore = inject(VirtualizationInstancesStore, { optional: true });
   private router = inject(Router);
+  private virtualizationConfigStore = inject(VirtualizationConfigStore);
 
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.LxcConfigWrite];
@@ -139,6 +142,11 @@ export class InstanceFormComponent implements OnInit {
     return this.translate.instant('Add Container');
   });
 
+  protected readonly hasPreferredPool = computed(() => {
+    const config = this.virtualizationConfigStore.config();
+    return Boolean(config?.preferred_pool);
+  });
+
   poolOptions$ = this.api.call('container.pool_choices').pipe(
     choicesToOptions(),
     tap((options) => {
@@ -154,6 +162,7 @@ export class InstanceFormComponent implements OnInit {
       [Validators.required, Validators.minLength(1), Validators.maxLength(200), Validators.pattern(/^[a-zA-Z0-9-]+$/)],
       [forbiddenAsyncValues(this.forbiddenNames$)],
     ],
+    use_preferred_pool: [true],
     pool: [''],
     description: [''],
     autostart: [true],
@@ -198,6 +207,9 @@ export class InstanceFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Initialize config store to load preferred pool settings
+    this.virtualizationConfigStore.initialize();
+
     if (this.editingInstance) {
       this.loadInstanceForEditing(this.editingInstance.id);
     } else {
@@ -213,8 +225,10 @@ export class InstanceFormComponent implements OnInit {
     this.isEditMode.set(false);
     this.editingInstance = null;
 
-    this.form.controls.pool.setValidators(Validators.required);
     this.form.controls.image.setValidators([Validators.required, Validators.minLength(1), Validators.maxLength(200)]);
+
+    // Determine initial value for use_preferred_pool based on whether a preferred pool is configured
+    const initialUsePreferredPool = this.hasPreferredPool();
 
     this.form.reset({
       autostart: true,
@@ -226,9 +240,29 @@ export class InstanceFormComponent implements OnInit {
       initgroup: null,
       capabilities_policy: ContainerCapabilitiesPolicy.Default,
       use_default_network: true,
+      use_preferred_pool: initialUsePreferredPool,
       usb_devices: [],
       gpu_devices: [],
     });
+
+    // Set up pool validators based on use_preferred_pool checkbox
+    this.form.controls.use_preferred_pool.valueChanges.pipe(untilDestroyed(this)).subscribe((usePreferred) => {
+      if (usePreferred && this.hasPreferredPool()) {
+        this.form.controls.pool.clearValidators();
+        this.form.controls.pool.setValue('');
+      } else {
+        this.form.controls.pool.setValidators(Validators.required);
+      }
+      this.form.controls.pool.updateValueAndValidity();
+    });
+
+    // Initialize validators based on initial value
+    if (this.form.controls.use_preferred_pool.value && this.hasPreferredPool()) {
+      this.form.controls.pool.clearValidators();
+    } else {
+      this.form.controls.pool.setValidators(Validators.required);
+    }
+    this.form.controls.pool.updateValueAndValidity();
   }
 
   private loadInstanceForEditing(instanceId: number): void {
@@ -421,7 +455,7 @@ export class InstanceFormComponent implements OnInit {
     const payload: CreateContainerInstance = {
       uuid: crypto.randomUUID(),
       name: form.name,
-      pool: form.pool,
+      pool: (form.use_preferred_pool && this.hasPreferredPool()) ? '' : form.pool,
       image: this.parseImageField(form.image),
       autostart: form.autostart,
     };

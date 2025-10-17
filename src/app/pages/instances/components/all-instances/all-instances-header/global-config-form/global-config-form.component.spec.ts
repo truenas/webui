@@ -20,9 +20,19 @@ describe('GlobalConfigFormComponent', () => {
     component: GlobalConfigFormComponent,
     providers: [
       mockApi([
+        mockCall('lxc.config', {
+          bridge: 'bridge1',
+          v4_network: '1.2.3.4/24',
+          v6_network: null,
+          preferred_pool: 'tank',
+        }),
         mockCall('lxc.bridge_choices', {
           bridge1: 'bridge1',
           '': 'Automatic',
+        }),
+        mockCall('container.pool_choices', {
+          tank: 'tank',
+          pool2: 'pool2',
         }),
         mockCall('lxc.update'),
       ]),
@@ -30,10 +40,10 @@ describe('GlobalConfigFormComponent', () => {
         close: jest.fn(),
         requireConfirmationWhen: jest.fn(),
         getData: jest.fn(() => ({
-          storage_pools: ['poolio'],
           bridge: 'bridge1',
           v4_network: '1.2.3.4/24',
           v6_network: null as string | null,
+          preferred_pool: 'tank',
         })),
       }),
       mockAuth(),
@@ -46,22 +56,24 @@ describe('GlobalConfigFormComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
-  it('shows current global settings from the slide-in data', async () => {
-    // Wait for the bridge options to load and set the bridge value
+  it('shows current global settings from the API', async () => {
     await spectator.fixture.whenStable();
 
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.config');
+
     expect(await form.getValues()).toEqual({
+      'Preferred Pool': 'tank',
       Bridge: 'bridge1',
     });
 
-    const v4NetworkInput = await form.getControl('v4_network');
+    // Network fields should not be visible when bridge is not auto
+    const v4NetworkInput = await form.getControl('IPv4 Network');
     expect(v4NetworkInput).toBeFalsy();
-    const v6NetworkInput = await form.getControl('v6_network');
+    const v6NetworkInput = await form.getControl('IPv6 Network');
     expect(v6NetworkInput).toBeFalsy();
   });
 
   it('updates global settings and shows network fields when bridge is [AUTO] and closes slide-in', async () => {
-    // Wait for the bridge options to load and set the bridge value
     await spectator.fixture.whenStable();
 
     await form.fillForm({
@@ -75,9 +87,28 @@ describe('GlobalConfigFormComponent', () => {
       bridge: '',
       v4_network: '1.2.3.4/24',
       v6_network: null,
+      preferred_pool: 'tank',
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
       response: true,
     });
+  });
+
+  it('allows updating preferred pool', async () => {
+    await spectator.fixture.whenStable();
+
+    await form.fillForm({
+      'Preferred Pool': 'pool2',
+    });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
+      bridge: 'bridge1',
+      v4_network: '1.2.3.4/24',
+      v6_network: null,
+      preferred_pool: 'pool2',
+    }]);
   });
 });

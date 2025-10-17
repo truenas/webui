@@ -77,6 +77,12 @@ describe('InstanceFormComponent', () => {
       mockAuth(),
       mockApi([
         mockCall('container.pool_choices', { pool1: 'pool1', pool2: 'pool2' }),
+        mockCall('lxc.config', {
+          bridge: 'lxdbr0',
+          v4_network: null,
+          v6_network: null,
+          preferred_pool: 'pool1',
+        }),
         mockJob('container.create', fakeSuccessfulJob(createdInstance)),
         mockCall('container.update', existingInstance),
         mockCall('container.get_instance', existingInstance),
@@ -177,6 +183,12 @@ describe('InstanceFormComponent', () => {
         mockAuth(),
         mockApi([
           mockCall('container.pool_choices', { pool1: 'pool1', pool2: 'pool2' }),
+          mockCall('lxc.config', {
+            bridge: 'lxdbr0',
+            v4_network: null,
+            v6_network: null,
+            preferred_pool: 'pool1',
+          }),
           mockCall('container.create'),
           mockCall('container.update', existingInstance),
           mockCall('container.get_instance', existingInstance),
@@ -331,6 +343,12 @@ describe('InstanceFormComponent', () => {
         mockAuth(),
         mockApi([
           mockCall('container.pool_choices', { pool1: 'pool1', pool2: 'pool2' }),
+          mockCall('lxc.config', {
+            bridge: 'lxdbr0',
+            v4_network: null,
+            v6_network: null,
+            preferred_pool: 'pool1',
+          }),
           mockCall('container.create'),
           mockCall('container.update', { ...existingInstance, name: 'updated-container', vcpus: 4 } as ContainerInstance),
           mockCall('container.get_instance', existingInstance),
@@ -393,6 +411,139 @@ describe('InstanceFormComponent', () => {
       expect(instancesStore.instanceUpdated).toHaveBeenCalledWith(
         expect.objectContaining({ name: 'updated-container', vcpus: 4 }),
       );
+    });
+  });
+
+  describe('preferred pool functionality', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('shows "Use Preferred Pool" checkbox when creating a new container with preferred pool configured', async () => {
+      await spectator.fixture.whenStable();
+      const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use Preferred Pool' }));
+      expect(checkbox).toBeTruthy();
+      expect(await checkbox.getValue()).toBe(true);
+    });
+
+    it('hides pool selector when "Use Preferred Pool" checkbox is checked', async () => {
+      await spectator.fixture.whenStable();
+      const poolSelect = spectator.query('ix-select[formControlName="pool"]');
+      expect(poolSelect).toBeNull();
+    });
+
+    it('shows pool selector when "Use Preferred Pool" checkbox is unchecked', async () => {
+      await spectator.fixture.whenStable();
+      const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use Preferred Pool' }));
+      await checkbox.setValue(false);
+      spectator.detectChanges();
+
+      await spectator.fixture.whenStable();
+      const poolSelect = spectator.query('ix-select[formControlName="pool"]');
+      expect(poolSelect).toBeTruthy();
+    });
+
+    it('sends empty string for pool when using preferred pool', async () => {
+      const dialogService = spectator.inject(DialogService);
+
+      const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+      await nameInput.setValue('new-container');
+
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({
+        image: 'ubuntu:22.04',
+        use_preferred_pool: true,
+      });
+      spectator.detectChanges();
+
+      const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await submitButton.click();
+
+      expect(dialogService.jobDialog).toHaveBeenCalled();
+      const jobDialogCall = (dialogService.jobDialog as jest.Mock).mock.calls[0];
+      const jobObservable = jobDialogCall[0];
+
+      // Subscribe to get the actual job parameters
+      jobObservable.subscribe((job: { params: unknown[] }) => {
+        const payload = job.params[0];
+        expect(payload).toMatchObject({
+          pool: '',
+          name: 'new-container',
+        });
+      });
+    });
+  });
+
+  describe('preferred pool functionality without configured pool', () => {
+    const createComponentWithoutPreferredPool = createComponentFactory({
+      component: InstanceFormComponent,
+      imports: [
+        ReactiveFormsModule,
+      ],
+      providers: [
+        mockAuth(),
+        mockApi([
+          mockCall('container.pool_choices', { pool1: 'pool1', pool2: 'pool2' }),
+          mockCall('lxc.config', {
+            bridge: 'lxdbr0',
+            v4_network: null,
+            v6_network: null,
+            preferred_pool: null,
+          }),
+          mockJob('container.create', fakeSuccessfulJob(createdInstance)),
+          mockCall('container.update', existingInstance),
+          mockCall('container.get_instance', existingInstance),
+          mockCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
+          mockCall('container.query', []),
+        ]),
+        mockProvider(SlideInRef, {
+          getData: jest.fn(() => undefined as ContainerInstance | undefined),
+          close: jest.fn(),
+          requireConfirmationWhen: jest.fn(),
+        }),
+        mockProvider(VirtualizationInstancesStore, {
+          initialize: jest.fn(),
+        }),
+        mockProvider(MatDialog, {
+          open: jest.fn(() => ({
+            afterClosed: () => of({
+              name: 'ubuntu',
+              version: '22.04',
+            }),
+          })),
+        }),
+        mockProvider(DialogService, {
+          jobDialog: jest.fn(() => ({
+            afterClosed: () => of({ result: createdInstance }),
+          })),
+        }),
+        mockProvider(Router, {
+          navigate: jest.fn(),
+        }),
+        mockProvider(SnackbarService, {
+          success: jest.fn(),
+        }),
+      ],
+    });
+
+    beforeEach(() => {
+      spectator = createComponentWithoutPreferredPool();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('hides "Use Preferred Pool" checkbox when no preferred pool is configured', async () => {
+      await spectator.fixture.whenStable();
+
+      await expect(
+        loader.getHarness(IxCheckboxHarness.with({ label: 'Use Preferred Pool' })),
+      ).rejects.toThrow();
+    });
+
+    it('shows pool selector when no preferred pool is configured', async () => {
+      await spectator.fixture.whenStable();
+      const poolSelect = spectator.query('ix-select[formControlName="pool"]');
+      expect(poolSelect).toBeTruthy();
     });
   });
 });
