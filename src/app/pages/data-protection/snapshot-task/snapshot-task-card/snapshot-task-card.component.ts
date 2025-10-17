@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -52,6 +53,7 @@ import { TaskService } from 'app/services/task.service';
     TestDirective,
     RouterLink,
     IxIconComponent,
+    MatTooltip,
     RequiresRolesDirective,
     MatButton,
     IxTableComponent,
