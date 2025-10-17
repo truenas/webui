@@ -3,10 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
+import { provideRouter } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -24,8 +24,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
-import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { selectServices } from 'app/store/services/services.selectors';
 
@@ -64,12 +62,6 @@ describe('NfsCardComponent', () => {
     imports: [
       IxTablePagerShowMoreComponent,
     ],
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-        ServiceExtraActionsComponent,
-      ),
-    ],
     providers: [
       mockAuth(),
       mockApi([
@@ -102,6 +94,7 @@ describe('NfsCardComponent', () => {
           },
         ],
       }),
+      provideRouter([]),
     ],
   });
 
@@ -150,5 +143,22 @@ describe('NfsCardComponent', () => {
       'sharing.nfs.update',
       [10, { enabled: false }],
     );
+  });
+
+  it('returns correct card title', () => {
+    expect(spectator.component.cardTitle()).toBe('UNIX (NFS) Shares');
+  });
+
+  it('returns correct header status for stopped service', () => {
+    const status = spectator.component.headerStatus();
+    expect(status).toEqual({
+      label: 'STOPPED',
+      type: 'error',
+    });
+  });
+
+  it('returns correct footer link with shares count', () => {
+    const footerLink = spectator.component.footerLink();
+    expect(footerLink.label).toBe('View All 1');
   });
 });

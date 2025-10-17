@@ -1,22 +1,29 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit, inject,
+  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject,
 } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
-import { MatToolbarRow } from '@angular/material/toolbar';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  map, filter, switchMap, BehaviorSubject, of,
+  map, filter, switchMap, BehaviorSubject, of, tap,
 } from 'rxjs';
+import {
+  IxCardComponent,
+  IxCardHeaderStatus,
+  IxCardAction,
+  IxCardFooterLink,
+  IxMenuItem,
+} from 'truenas-ui';
 import { smbCardEmptyConfig } from 'app/constants/empty-configs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
+import { Service } from 'app/interfaces/service.interface';
 import {
   ExternalSmbShareOptions, LegacySmbShareOptions, SmbShare, SmbSharesec,
 } from 'app/interfaces/smb-share.interface';
@@ -24,7 +31,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsWithMenuColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions-with-menu/ix-cell-actions-with-menu.component';
@@ -39,11 +45,11 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
@@ -58,14 +64,7 @@ import { selectService } from 'app/store/services/services.selectors';
   styleUrls: ['./smb-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatToolbarRow,
-    TestDirective,
-    IxIconComponent,
-    ServiceStateButtonComponent,
-    RequiresRolesDirective,
-    MatButton,
-    ServiceExtraActionsComponent,
+    IxCardComponent,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,
@@ -86,12 +85,17 @@ export class SmbCardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private router = inject(Router);
   private store$ = inject<Store<ServicesState>>(Store);
+  private loader = inject(LoaderService);
+  private snackbar = inject(SnackbarService);
 
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   protected readonly emptyConfig = smbCardEmptyConfig;
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
+  private service = toSignal(this.service$);
+
+  private sharesCount = signal(0);
 
   dataProvider: AsyncDataProvider<SmbShare>;
 
@@ -150,8 +154,61 @@ export class SmbCardComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('SMB Share')],
   });
 
+  readonly cardTitle = computed(() => {
+    return this.translate.instant('Windows (SMB) Shares');
+  });
+
+  readonly headerStatus = computed<IxCardHeaderStatus | undefined>(() => {
+    const service = this.service();
+    if (!service) {
+      return undefined;
+    }
+
+    switch (service.state) {
+      case ServiceStatus.Running:
+        return { label: this.translate.instant('RUNNING'), type: 'success' };
+      case ServiceStatus.Stopped:
+        return { label: this.translate.instant('STOPPED'), type: 'error' };
+      default:
+        return { label: service.state, type: 'warning' };
+    }
+  });
+
+  readonly footerLink = computed<IxCardFooterLink>(() => {
+    const count = this.sharesCount();
+    return {
+      label: this.translate.instant('View All {count}', { count }),
+      handler: () => this.router.navigate(['/sharing', 'smb']),
+    };
+  });
+
+  readonly headerMenu = computed<IxMenuItem[]>(() => [
+    {
+      id: 'toggle-service',
+      label: this.service()?.state === ServiceStatus.Running
+        ? this.translate.instant('Turn Off Service')
+        : this.translate.instant('Turn On Service'),
+      action: () => this.changeServiceState(),
+    },
+    {
+      id: 'config-service',
+      label: this.translate.instant('Config Service'),
+      action: () => this.configureService(),
+    },
+  ]);
+
+  readonly primaryAction: IxCardAction = {
+    label: this.translate.instant('Add'),
+    handler: () => this.openForm(),
+  };
+
   ngOnInit(): void {
-    const smbShares$ = this.api.call('sharing.smb.query').pipe(untilDestroyed(this));
+    const smbShares$ = this.api.call('sharing.smb.query').pipe(
+      tap((shares) => {
+        this.sharesCount.set(shares.length);
+      }),
+      untilDestroyed(this),
+    );
     this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
     this.setDefaultSort();
     this.dataProvider.load();
@@ -251,5 +308,48 @@ export class SmbCardComponent implements OnInit {
       direction: SortDirection.Asc,
       propertyName: 'name',
     });
+  }
+
+  private changeServiceState(): void {
+    const service = this.service();
+    if (!service) {
+      return;
+    }
+
+    if (service.state === ServiceStatus.Running) {
+      this.stopService(service);
+    } else {
+      this.startService(service);
+    }
+  }
+
+  private configureService(): void {
+    this.slideIn.open(ServiceSmbComponent);
+  }
+
+  private startService(service: Service): void {
+    this.api.job('service.control', [ServiceOperation.Start, service.service, { silent: false }])
+      .pipe(
+        observeJob(),
+        this.loader.withLoader(),
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        complete: () => this.snackbar.success(this.translate.instant('Service started')),
+      });
+  }
+
+  private stopService(service: Service): void {
+    this.api.job('service.control', [ServiceOperation.Stop, service.service, { silent: false }])
+      .pipe(
+        observeJob(),
+        this.loader.withLoader(),
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        complete: () => this.snackbar.success(this.translate.instant('Service stopped')),
+      });
   }
 }

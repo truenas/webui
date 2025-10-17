@@ -3,11 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
-import { Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -23,8 +22,6 @@ import {
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
@@ -63,12 +60,6 @@ describe('SmbCardComponent', () => {
     imports: [
       IxTablePagerShowMoreComponent,
     ],
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-        ServiceExtraActionsComponent,
-      ),
-    ],
     providers: [
       mockAuth(),
       mockApi([
@@ -102,6 +93,7 @@ describe('SmbCardComponent', () => {
           },
         ],
       }),
+      provideRouter([]),
     ],
   });
 
@@ -177,5 +169,22 @@ describe('SmbCardComponent', () => {
       ['/', 'datasets', 'acl', 'edit'],
       { queryParams: { path: '/mnt/APPS/smb1' } },
     );
+  });
+
+  it('returns correct card title', () => {
+    expect(spectator.component.cardTitle()).toBe('Windows (SMB) Shares');
+  });
+
+  it('returns correct header status for stopped service', () => {
+    const status = spectator.component.headerStatus();
+    expect(status).toEqual({
+      label: 'STOPPED',
+      type: 'error',
+    });
+  });
+
+  it('returns correct footer link with shares count', () => {
+    const footerLink = spectator.component.footerLink();
+    expect(footerLink.label).toBe('View All 1');
   });
 });

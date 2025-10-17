@@ -1,37 +1,11 @@
-<mat-card>
-  <mat-toolbar-row>
-    <div class="toolbar-row-title">
-      <a [ixTest]="['nfs-share', 'open-in-new']" [routerLink]="['/sharing', 'nfs']">
-        <h3 class="card-title">
-          {{ 'UNIX (NFS) Shares' | translate }}
-          <ix-icon name="open_in_new" class="title-icon"></ix-icon>
-        </h3>
-      </a>
-
-      <ix-service-state-button
-        [service]="(service$ | async) || undefined"
-        [count]="+(dataProvider.currentPageCount$ | async)"
-      ></ix-service-state-button>
-    </div>
-
-    <div class="actions">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['nfs-share', 'add']"
-        [attr.aria-label]="'Add NFS Share' | translate"
-        (click)="openForm()"
-      >
-        {{ 'Add' | translate }}
-      </button>
-
-      <ix-service-extra-actions
-        [service]="service$ | async"
-        [requiredRoles]="requiredRoles"
-      ></ix-service-extra-actions>
-    </div>
-  </mat-toolbar-row>
-
+<ix-card
+  [title]="cardTitle()"
+  [titleLink]="'/sharing/nfs'"
+  [headerStatus]="headerStatus()"
+  [headerMenu]="headerMenu()"
+  [primaryAction]="primaryAction"
+  [footerLink]="footerLink()"
+>
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <ix-empty [conf]="emptyConfig"></ix-empty>
   } @else {
@@ -60,4 +34,4 @@
     [ixTestOverride]="['nfs']"
     [routerLink]="['/sharing', 'nfs']"
   ></ix-table-pager-show-more>
-</mat-card>
+</ix-card>

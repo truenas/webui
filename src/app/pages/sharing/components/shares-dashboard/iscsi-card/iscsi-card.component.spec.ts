@@ -2,10 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
+import { provideRouter } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -19,17 +19,14 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
-import {
-  ServiceExtraActionsComponent,
-} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import {
-  ServiceStateButtonComponent,
-} from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { LicenseService } from 'app/services/license.service';
 import { selectServices } from 'app/store/services/services.selectors';
 
@@ -67,13 +64,8 @@ describe('IscsiCardComponent', () => {
     imports: [
       IxTablePagerShowMoreComponent,
     ],
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-        ServiceExtraActionsComponent,
-      ),
-    ],
     providers: [
+      provideRouter([]),
       mockAuth(),
       mockApi([
         mockCall('iscsi.target.query', iscsiShares),
@@ -94,6 +86,9 @@ describe('IscsiCardComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
+      mockProvider(LoaderService),
+      mockProvider(SnackbarService),
+      mockProvider(ErrorHandlerService),
       provideMockStore({
         selectors: [
           {
@@ -117,7 +112,20 @@ describe('IscsiCardComponent', () => {
   });
 
   it('should render title', () => {
-    expect(spectator.query('h3')).toHaveText('Block (iSCSI/FC) Shares Targets');
+    const cardTitle = spectator.component.cardTitle();
+    expect(cardTitle).toBe('Block (iSCSI/FC) Shares Targets');
+  });
+
+  it('should display header status based on service state', () => {
+    const headerStatus = spectator.component.headerStatus();
+    expect(headerStatus).toEqual({ label: 'STOPPED', type: 'error' });
+  });
+
+  it('should display footer link with count', () => {
+    spectator.detectChanges();
+    const footerLink = spectator.component.footerLink();
+    expect(footerLink.label).toContain('View All');
+    expect(footerLink.label).toContain('1');
   });
 
   it('should show table rows', async () => {

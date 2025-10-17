@@ -3366,31 +3366,6 @@
   },
   {
     "hierarchy": [
-      "Shares",
-      "iSCSI Wizard"
-    ],
-    "synonyms": [
-      "FC",
-      "Add iSCSI",
-      "New iSCSI",
-      "Create iSCSI",
-      "iSCSI Share",
-      "Create Share",
-      "Add Share",
-      "New Share"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/sharing"
-    ],
-    "routerLink": null,
-    "anchor": "iscsi-wizard",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
       "System",
       "Services",
       "SMB"

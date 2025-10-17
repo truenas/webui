@@ -44,6 +44,7 @@
             },
             "styles": [
               "node_modules/@bugsplat/angular-tree-component/css/angular-tree-component.css",
+              "node_modules/truenas-ui/dist/truenas-ui/src/styles/themes.css",
               "src/assets/styles/index.scss"
             ],
             "scripts": [

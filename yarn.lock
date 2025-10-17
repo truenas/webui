@@ -3602,6 +3602,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mdi/angular-material@npm:^7.2.96":
+  version: 7.2.96
+  resolution: "@mdi/angular-material@npm:7.2.96"
+  checksum: 10/78b4d14c3ff6e51458ca8b06b8563b781493a5f2fa181236e42804109863a5d0ac17da92a17ba004816a387b7f1d8c706e813d87eb8c1c5a80b13343418a66a0
+  languageName: node
+  linkType: hard
+
+"@mdi/js@npm:^7.4.47":
+  version: 7.4.47
+  resolution: "@mdi/js@npm:7.4.47"
+  checksum: 10/c1a8fc82f23030bccc0cf324b13b73a0034d06140e79f8bc7b0e4e59275624c470e5ca6524d6141ad8c4fe3ad0f314c7af99afb3e38df163eb50d3b13b9eab17
+  languageName: node
+  linkType: hard
+
 "@mdi/svg@npm:~7.4.47":
   version: 7.4.47
   resolution: "@mdi/svg@npm:7.4.47"
@@ -18065,6 +18079,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"truenas-ui@git@github.com:iXsystems/truenas-ui-components.git#ux-based-api":
+  version: 0.0.0
+  resolution: "truenas-ui@git@github.com:iXsystems/truenas-ui-components.git#commit=79262cf6f02c5592f1c30e52b22eccaf0ddc30cf"
+  dependencies:
+    "@mdi/angular-material": "npm:^7.2.96"
+    "@mdi/js": "npm:^7.4.47"
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/animations": ^20.0.0
+    "@angular/cdk": ^20.0.0
+    "@angular/common": ^20.0.0
+    "@angular/core": ^20.0.0
+    "@angular/forms": ^20.0.0
+    "@angular/platform-browser": ^20.0.0
+    "@angular/platform-browser-dynamic": ^20.0.0
+    "@angular/router": ^20.0.0
+    rxjs: ^7.5.0
+    zone.js: ^0.15.0
+  checksum: 10/ad9a6613a497abb88f7e094beed154786101af0b97fca3c398fcaa90839cb4f234463c4fa6c9812535b6b5b20b4b14b5888e9c48d578823ff7ace371dd99e045
+  languageName: node
+  linkType: hard
+
 "truenas-webui@workspace:.":
   version: 0.0.0-use.local
   resolution: "truenas-webui@workspace:."
@@ -18221,6 +18257,7 @@ __metadata:
     stylelint-config-standard: "npm:^36.0.0"
     svg-sprite: "npm:~2.0.4"
     text-security: "npm:~3.2.1"
+    truenas-ui: "git@github.com:iXsystems/truenas-ui-components.git#ux-based-api"
     ts-jest: "npm:~29.2.5"
     tsconfig-paths: "npm:~4.2.0"
     tsx: "npm:~4.19.1"

@@ -2,11 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
-import { Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -19,8 +18,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
-import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 import { SubsystemDeleteDialogComponent } from 'app/pages/sharing/nvme-of/subsystem-details-header/subsystem-delete-dialog/subsystem-delete-dialog.component';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -48,12 +45,6 @@ describe('NvmeOfCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: NvmeOfCardComponent,
-    declarations: [
-      MockComponents(
-        ServiceStateButtonComponent,
-        ServiceExtraActionsComponent,
-      ),
-    ],
     providers: [
       mockAuth(),
       mockProvider(SlideIn, {
@@ -84,6 +75,7 @@ describe('NvmeOfCardComponent', () => {
           },
         ],
       }),
+      provideRouter([]),
     ],
   });
 
@@ -124,5 +116,22 @@ describe('NvmeOfCardComponent', () => {
     await menu.clickItem({ text: 'View' });
 
     expect(router.navigate).toHaveBeenCalledWith(['/sharing/nvme-of', 'subsys-1']);
+  });
+
+  it('returns correct card title', () => {
+    expect(spectator.component.cardTitle()).toBe('NVMe-oF Subsystems');
+  });
+
+  it('returns correct header status for stopped service', () => {
+    const status = spectator.component.headerStatus();
+    expect(status).toEqual({
+      label: 'STOPPED',
+      type: 'error',
+    });
+  });
+
+  it('returns correct footer link with subsystems count', () => {
+    const footerLink = spectator.component.footerLink();
+    expect(footerLink.label).toBe('View All 1');
   });
 });
