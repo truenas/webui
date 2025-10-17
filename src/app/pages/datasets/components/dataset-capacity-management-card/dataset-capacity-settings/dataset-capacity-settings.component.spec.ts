@@ -9,6 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
@@ -29,13 +30,35 @@ describe('DatasetCapacitySettingsComponent', () => {
     id: 'root/path',
     name: 'root/path',
     refquota: { parsed: 50 * GiB },
-    refquota_warning: { parsed: 50, source: ZfsPropertySource.Local },
-    refquota_critical: { parsed: 0, source: ZfsPropertySource.Default },
     quota: { parsed: 100 * GiB },
-    quota_warning: { parsed: null, source: ZfsPropertySource.Local },
-    quota_critical: { parsed: 0, source: ZfsPropertySource.Inherited },
     refreservation: { parsed: 10 * GiB },
     reservation: { parsed: 20 * GiB },
+    user_properties: {
+      refquota_warning: {
+        parsed: 50,
+        rawvalue: '50',
+        value: '50',
+        source: ZfsPropertySource.Local,
+      },
+      refquota_critical: {
+        parsed: 0,
+        rawvalue: '0',
+        value: '0',
+        source: ZfsPropertySource.Default,
+      },
+      quota_warning: {
+        parsed: null,
+        rawvalue: '',
+        value: '',
+        source: ZfsPropertySource.Local,
+      },
+      quota_critical: {
+        parsed: 0,
+        rawvalue: '0',
+        value: '0',
+        source: ZfsPropertySource.Inherited,
+      },
+    } as Record<string, ZfsProperty<string, string | number | null>>,
   } as DatasetDetails;
 
   const slideInRef: SlideInRef<DatasetDetails | undefined, unknown> = {

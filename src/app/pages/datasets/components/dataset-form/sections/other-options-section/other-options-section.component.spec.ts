@@ -38,11 +38,14 @@ describe('OtherOptionsSectionComponent', () => {
   let loader: HarnessLoader;
   let form: IxFieldsetHarness;
   const existingDataset = {
-    comments: {
-      value: 'comments',
-      source: ZfsPropertySource.Inherited,
-      parsed: 'comments',
-    },
+    user_properties: {
+      comments: {
+        parsed: 'comments',
+        rawvalue: 'comments',
+        value: 'comments',
+        source: ZfsPropertySource.Inherited,
+      },
+    } as Record<string, ZfsProperty<string>>,
     sync: {
       parsed: 'standard',
       source: ZfsPropertySource.Inherited,
@@ -107,11 +110,14 @@ describe('OtherOptionsSectionComponent', () => {
 
   const parentDataset = {
     id: 'root/parent',
-    comments: {
-      value: 'comments',
-      source: ZfsPropertySource.Local,
-      parsed: 'comments',
-    },
+    user_properties: {
+      comments: {
+        parsed: 'comments',
+        rawvalue: 'comments',
+        value: 'comments',
+        source: ZfsPropertySource.Local,
+      },
+    } as Record<string, ZfsProperty<string>>,
     sync: {
       parsed: 'standard',
       source: ZfsPropertySource.Default,
