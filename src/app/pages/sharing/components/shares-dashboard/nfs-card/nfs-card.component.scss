@@ -11,6 +11,11 @@ mat-card {
   }
 }
 
+ix-card {
+  display: block;
+  height: 100%;
+}
+
 :host ::ng-deep {
   .tight-actions {
     width: 80px;

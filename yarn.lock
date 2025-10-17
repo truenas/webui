@@ -18081,7 +18081,7 @@ __metadata:
 
 "truenas-ui@git@github.com:iXsystems/truenas-ui-components.git#ux-based-api":
   version: 0.0.0
-  resolution: "truenas-ui@git@github.com:iXsystems/truenas-ui-components.git#commit=79262cf6f02c5592f1c30e52b22eccaf0ddc30cf"
+  resolution: "truenas-ui@git@github.com:iXsystems/truenas-ui-components.git#commit=73044dafd8f81f0401a29f1cbcbefe4fd1c05a99"
   dependencies:
     "@mdi/angular-material": "npm:^7.2.96"
     "@mdi/js": "npm:^7.4.47"
@@ -18097,7 +18097,7 @@ __metadata:
     "@angular/router": ^20.0.0
     rxjs: ^7.5.0
     zone.js: ^0.15.0
-  checksum: 10/ad9a6613a497abb88f7e094beed154786101af0b97fca3c398fcaa90839cb4f234463c4fa6c9812535b6b5b20b4b14b5888e9c48d578823ff7ace371dd99e045
+  checksum: 10/d5bff6a3d3580dd42ab29da72e29dd3c1a64cf792257da71564ff1b7baa0dbb4d8adf5809da649d3cc40a65568a92a458fe65131ece35c16c5cd1498fa634b09
   languageName: node
   linkType: hard
 
