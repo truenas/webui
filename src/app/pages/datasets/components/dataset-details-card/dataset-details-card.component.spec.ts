@@ -12,6 +12,7 @@ import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -46,10 +47,14 @@ const dataset = {
     value: DatasetCaseSensitivity.Insensitive,
     source: ZfsPropertySource.Local,
   },
-  comments: {
-    value: 'Test comment',
-    source: ZfsPropertySource.Local,
-  },
+  user_properties: {
+    comments: {
+      parsed: 'Test comment',
+      rawvalue: 'Test comment',
+      value: 'Test comment',
+      source: ZfsPropertySource.Local,
+    },
+  } as Record<string, ZfsProperty<string>>,
 } as DatasetDetails;
 
 const zvol = {
