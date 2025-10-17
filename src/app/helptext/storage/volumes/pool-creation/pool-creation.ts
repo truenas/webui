@@ -40,4 +40,17 @@ export const helptextPoolCreation = {
 
   addVdevStripeSpecialWarning: T('Adding a stripe metadata VDEV introduces a single point of failure to your pool.'),
   addVdevStripeDedupWarning: T('Adding a stripe dedup VDEV introduces a single point of failure to your pool.'),
+
+  // SED Encryption
+  sedInfoMessage: T('SED-capable (Self-Encrypting Drive) disks detected. Hardware-based encryption provides better performance and security.'),
+  sedGlobalPasswordInfo: T('The Global SED Password is a system-wide setting that applies to all pools using SED encryption.'),
+  sedGlobalPasswordWarning: T('The Global SED Password is a system-wide setting. A password is already configured. Entering a new password here will update it for all pools using SED encryption.'),
+  sedPasswordLabel: T('Global SED Password'),
+  sedPasswordConfirmLabel: T('Confirm SED Password'),
+  sedPasswordTooltip: T('This password will be used to configure all SED-capable disks in this pool.'),
+  sedPasswordsMustMatch: T('SED passwords must match.'),
+  encryptionTypeNone: T('None'),
+  encryptionTypeSoftware: T('Software Encryption (ZFS)'),
+  encryptionTypeSed: T('Self Encrypting Drives (SED)'),
+  sedPoolVdevMessage: T('This pool uses SED encryption. Only SED-capable disks will be available for selection.'),
 };

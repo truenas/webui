@@ -26,5 +26,26 @@
   .spacer-bottom {
     margin-bottom: 16px;
   }
+
+  .sed-info-message {
+    background-color: var(--alt-bg2);
+    border-left: 4px solid var(--primary);
+    color: var(--fg2);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 16px 0;
+    padding: 12px 16px;
+  }
+
+  .sed-global-password-warning {
+    background-color: var(--yellow);
+    border-left: 4px solid var(--orange);
+    color: var(--bg1);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin: 16px 0;
+    padding: 12px 16px;
+  }
 }
 

@@ -14,6 +14,7 @@ import {
 import {
   ConfigurationPreviewHarness,
 } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.harness';
+import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import {
   TopologyCategoryDescriptionPipe,
 } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
@@ -38,6 +39,7 @@ describe('ConfigurationPreviewComponent', () => {
       mockProvider(PoolManagerStore, {
         name$: of('tank'),
         encryption$: of('AES-256'),
+        encryptionType$: of(EncryptionType.Software),
         totalUsableCapacity$: of(10 * GiB),
         topology$: of({
           [VDevType.Data]: {
@@ -117,15 +119,126 @@ describe('ConfigurationPreviewComponent', () => {
     });
   });
 
-  it('shows encryption', async () => {
+  it('shows software encryption with algorithm', async () => {
     expect(await configurationPreview.getItems()).toMatchObject({
-      'Encryption:': 'AES-256',
+      'Encryption:': 'Software (ZFS) - AES-256',
     });
   });
 
   it('shows total raw capacity', async () => {
     expect(await configurationPreview.getItems()).toMatchObject({
       'Total Raw Capacity:': '10 GiB',
+    });
+  });
+});
+
+describe('ConfigurationPreviewComponent with no encryption', () => {
+  let spectator: Spectator<ConfigurationPreviewComponent>;
+  let configurationPreview: ConfigurationPreviewHarness;
+  const createComponent = createComponentFactory({
+    component: ConfigurationPreviewComponent,
+    imports: [
+      FileSizePipe,
+      MapValuePipe,
+      CastPipe,
+      TopologyCategoryDescriptionPipe,
+    ],
+    providers: [
+      mockProvider(PoolManagerStore, {
+        name$: of('tank'),
+        encryption$: of(null),
+        encryptionType$: of(EncryptionType.None),
+        totalUsableCapacity$: of(10 * GiB),
+        topology$: of({} as PoolManagerTopology),
+      }),
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent();
+    configurationPreview = await TestbedHarnessEnvironment.harnessForFixture(
+      spectator.fixture,
+      ConfigurationPreviewHarness,
+    );
+  });
+
+  it('shows "None" when encryption type is None', async () => {
+    expect(await configurationPreview.getItems()).toMatchObject({
+      'Encryption:': 'None',
+    });
+  });
+});
+
+describe('ConfigurationPreviewComponent with different software encryption algorithm', () => {
+  let spectator: Spectator<ConfigurationPreviewComponent>;
+  let configurationPreview: ConfigurationPreviewHarness;
+  const createComponent = createComponentFactory({
+    component: ConfigurationPreviewComponent,
+    imports: [
+      FileSizePipe,
+      MapValuePipe,
+      CastPipe,
+      TopologyCategoryDescriptionPipe,
+    ],
+    providers: [
+      mockProvider(PoolManagerStore, {
+        name$: of('tank'),
+        encryption$: of('AES-256-GCM'),
+        encryptionType$: of(EncryptionType.Software),
+        totalUsableCapacity$: of(10 * GiB),
+        topology$: of({} as PoolManagerTopology),
+      }),
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent();
+    configurationPreview = await TestbedHarnessEnvironment.harnessForFixture(
+      spectator.fixture,
+      ConfigurationPreviewHarness,
+    );
+  });
+
+  it('shows "Software (ZFS) - [algorithm]" when encryption type is Software', async () => {
+    expect(await configurationPreview.getItems()).toMatchObject({
+      'Encryption:': 'Software (ZFS) - AES-256-GCM',
+    });
+  });
+});
+
+describe('ConfigurationPreviewComponent with SED encryption', () => {
+  let spectator: Spectator<ConfigurationPreviewComponent>;
+  let configurationPreview: ConfigurationPreviewHarness;
+  const createComponent = createComponentFactory({
+    component: ConfigurationPreviewComponent,
+    imports: [
+      FileSizePipe,
+      MapValuePipe,
+      CastPipe,
+      TopologyCategoryDescriptionPipe,
+    ],
+    providers: [
+      mockProvider(PoolManagerStore, {
+        name$: of('tank'),
+        encryption$: of(null),
+        encryptionType$: of(EncryptionType.Sed),
+        totalUsableCapacity$: of(10 * GiB),
+        topology$: of({} as PoolManagerTopology),
+      }),
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent();
+    configurationPreview = await TestbedHarnessEnvironment.harnessForFixture(
+      spectator.fixture,
+      ConfigurationPreviewHarness,
+    );
+  });
+
+  it('shows "Hardware (SED)" when encryption type is SED', async () => {
+    expect(await configurationPreview.getItems()).toMatchObject({
+      'Encryption:': 'Hardware (SED)',
     });
   });
 });

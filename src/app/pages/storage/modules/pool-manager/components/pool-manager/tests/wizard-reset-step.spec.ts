@@ -130,6 +130,7 @@ describe('PoolManagerComponent – wizard step reset', () => {
         mockCall('enclosure2.query', [] as Enclosure[]),
         mockCall('pool.query', []),
         mockCall('pool.dataset.encryption_algorithm_choices', {}),
+        mockCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
@@ -147,6 +148,10 @@ describe('PoolManagerComponent – wizard step reset', () => {
   });
 
   it('sets wizard steps and then resets them', async () => {
+    // Fill in name to make form valid
+    await wizard.fillStep({
+      Name: 'testpool',
+    });
     await wizard.clickNext();
     await wizard.clickNext();
 
@@ -215,7 +220,7 @@ describe('PoolManagerComponent – wizard step reset', () => {
     });
 
     expect(await wizard.getConfigurationPreviewSummary()).toEqual({
-      'Name:': 'None',
+      'Name:': 'testpool',
       'Encryption:': 'None',
       'Total Raw Capacity:': '0 B',
     });
