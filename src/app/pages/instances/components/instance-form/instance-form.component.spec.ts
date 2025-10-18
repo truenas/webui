@@ -264,13 +264,31 @@ describe('InstanceFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('has all CPU fields visible by default', async () => {
+    it('has Virtual CPUs field visible in basic view', async () => {
       const vcpusInput = await loader.getHarness(IxInputHarness.with({ label: 'Virtual CPUs' }));
+      expect(vcpusInput).toBeTruthy();
+    });
+
+    it('hides advanced CPU fields (Cores, Threads, CPU Set) in basic view', async () => {
+      await expect(
+        loader.getHarness(IxInputHarness.with({ label: 'Cores' })),
+      ).rejects.toThrow();
+      await expect(
+        loader.getHarness(IxInputHarness.with({ label: 'Threads' })),
+      ).rejects.toThrow();
+      await expect(
+        loader.getHarness(IxInputHarness.with({ label: 'CPU Set' })),
+      ).rejects.toThrow();
+    });
+
+    it('shows advanced CPU fields in Advanced Settings', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
       const coresInput = await loader.getHarness(IxInputHarness.with({ label: 'Cores' }));
       const threadsInput = await loader.getHarness(IxInputHarness.with({ label: 'Threads' }));
       const cpusetInput = await loader.getHarness(IxInputHarness.with({ label: 'CPU Set' }));
 
-      expect(vcpusInput).toBeTruthy();
       expect(coresInput).toBeTruthy();
       expect(threadsInput).toBeTruthy();
       expect(cpusetInput).toBeTruthy();
@@ -420,23 +438,39 @@ describe('InstanceFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('shows "Use Preferred Pool" checkbox when creating a new container with preferred pool configured', async () => {
-      await spectator.fixture.whenStable();
-      const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use Preferred Pool' }));
-      expect(checkbox).toBeTruthy();
-      expect(await checkbox.getValue()).toBe(true);
-    });
-
-    it('hides pool selector when "Use Preferred Pool" checkbox is checked', async () => {
+    it('hides pool selector in basic view when preferred pool is configured', async () => {
       await spectator.fixture.whenStable();
       const poolSelect = spectator.query('ix-select[formControlName="pool"]');
       expect(poolSelect).toBeNull();
     });
 
-    it('shows pool selector when "Use Preferred Pool" checkbox is unchecked', async () => {
+    it('shows "Use Preferred Pool" checkbox in Advanced Settings when preferred pool is configured', async () => {
       await spectator.fixture.whenStable();
-      const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use Preferred Pool' }));
-      await checkbox.setValue(false);
+
+      // Click Advanced Options button
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+      spectator.detectChanges();
+
+      await spectator.fixture.whenStable();
+      const usePreferredPoolCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use Preferred Pool' }));
+      expect(usePreferredPoolCheckbox).toBeTruthy();
+      expect(await usePreferredPoolCheckbox.getValue()).toBe(true);
+    });
+
+    it('shows pool selector when "Use Preferred Pool" is unchecked', async () => {
+      await spectator.fixture.whenStable();
+
+      // Click Advanced Options button
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+      spectator.detectChanges();
+
+      await spectator.fixture.whenStable();
+
+      // Uncheck "Use Preferred Pool"
+      const usePreferredPoolCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use Preferred Pool' }));
+      await usePreferredPoolCheckbox.setValue(false);
       spectator.detectChanges();
 
       await spectator.fixture.whenStable();
@@ -444,7 +478,7 @@ describe('InstanceFormComponent', () => {
       expect(poolSelect).toBeTruthy();
     });
 
-    it('sends empty string for pool when using preferred pool', async () => {
+    it('sends empty string for pool when no pool is selected (uses preferred pool)', async () => {
       const dialogService = spectator.inject(DialogService);
 
       const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
@@ -453,7 +487,6 @@ describe('InstanceFormComponent', () => {
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['form'].patchValue({
         image: 'ubuntu:22.04',
-        use_preferred_pool: true,
       });
       spectator.detectChanges();
 
@@ -532,18 +565,25 @@ describe('InstanceFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('hides "Use Preferred Pool" checkbox when no preferred pool is configured', async () => {
-      await spectator.fixture.whenStable();
-
-      await expect(
-        loader.getHarness(IxCheckboxHarness.with({ label: 'Use Preferred Pool' })),
-      ).rejects.toThrow();
-    });
-
-    it('shows pool selector when no preferred pool is configured', async () => {
+    it('shows pool selector in basic view when no preferred pool is configured', async () => {
       await spectator.fixture.whenStable();
       const poolSelect = spectator.query('ix-select[formControlName="pool"]');
       expect(poolSelect).toBeTruthy();
+    });
+
+    it('does not show pool selector in Advanced Settings when no preferred pool is configured', async () => {
+      await spectator.fixture.whenStable();
+
+      // Click Advanced Options button
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+      spectator.detectChanges();
+
+      await spectator.fixture.whenStable();
+
+      // Should still only show one pool selector (in basic view)
+      const poolSelects = spectator.queryAll('ix-select[formControlName="pool"]');
+      expect(poolSelects).toHaveLength(1);
     });
   });
 });

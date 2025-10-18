@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, HostListener,
+  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, HostListener, effect,
 } from '@angular/core';
 import {
   FormArray,
@@ -162,8 +162,8 @@ export class InstanceFormComponent implements OnInit {
       [Validators.required, Validators.minLength(1), Validators.maxLength(200), Validators.pattern(/^[a-zA-Z0-9-]+$/)],
       [forbiddenAsyncValues(this.forbiddenNames$)],
     ],
-    use_preferred_pool: [true],
     pool: [''],
+    use_preferred_pool: [true],
     description: [''],
     autostart: [true],
     image: [''],
@@ -197,7 +197,18 @@ export class InstanceFormComponent implements OnInit {
 
   constructor() {
     this.editingInstance = this.slideInRef.getData();
+
+    // Setup form validators when config is loaded
+    effect(() => {
+      const config = this.virtualizationConfigStore.config();
+      if (config !== null && !this.isEditMode() && !this.hasSetupValidators) {
+        this.hasSetupValidators = true;
+        this.setupValidatorsForCreation();
+      }
+    });
   }
+
+  private hasSetupValidators = false;
 
   @HostListener('window:beforeunload', ['$event'])
   onBeforeUnload(event: BeforeUnloadEvent): void {
@@ -216,6 +227,19 @@ export class InstanceFormComponent implements OnInit {
       this.setupForCreation();
     }
 
+    // Handle pool validation based on use_preferred_pool checkbox
+    this.form.controls.use_preferred_pool.valueChanges.pipe(untilDestroyed(this)).subscribe((usePreferredPool) => {
+      if (this.hasPreferredPool() && !this.isEditMode()) {
+        if (usePreferredPool) {
+          this.form.controls.pool.clearValidators();
+          this.form.controls.pool.setValue('');
+        } else {
+          this.form.controls.pool.setValidators(Validators.required);
+        }
+        this.form.controls.pool.updateValueAndValidity();
+      }
+    });
+
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
@@ -227,11 +251,9 @@ export class InstanceFormComponent implements OnInit {
 
     this.form.controls.image.setValidators([Validators.required, Validators.minLength(1), Validators.maxLength(200)]);
 
-    // Determine initial value for use_preferred_pool based on whether a preferred pool is configured
-    const initialUsePreferredPool = this.hasPreferredPool();
-
     this.form.reset({
       autostart: true,
+      use_preferred_pool: true,
       time: ContainerTime.Local,
       shutdown_timeout: 30,
       init: null,
@@ -240,24 +262,14 @@ export class InstanceFormComponent implements OnInit {
       initgroup: null,
       capabilities_policy: ContainerCapabilitiesPolicy.Default,
       use_default_network: true,
-      use_preferred_pool: initialUsePreferredPool,
       usb_devices: [],
       gpu_devices: [],
     });
+  }
 
-    // Set up pool validators based on use_preferred_pool checkbox
-    this.form.controls.use_preferred_pool.valueChanges.pipe(untilDestroyed(this)).subscribe((usePreferred) => {
-      if (usePreferred && this.hasPreferredPool()) {
-        this.form.controls.pool.clearValidators();
-        this.form.controls.pool.setValue('');
-      } else {
-        this.form.controls.pool.setValidators(Validators.required);
-      }
-      this.form.controls.pool.updateValueAndValidity();
-    });
-
-    // Initialize validators based on initial value
-    if (this.form.controls.use_preferred_pool.value && this.hasPreferredPool()) {
+  private setupValidatorsForCreation(): void {
+    // Set pool validators: required only if no preferred pool is set
+    if (this.hasPreferredPool()) {
       this.form.controls.pool.clearValidators();
     } else {
       this.form.controls.pool.setValidators(Validators.required);
@@ -455,7 +467,7 @@ export class InstanceFormComponent implements OnInit {
     const payload: CreateContainerInstance = {
       uuid: crypto.randomUUID(),
       name: form.name,
-      pool: (form.use_preferred_pool && this.hasPreferredPool()) ? '' : form.pool,
+      pool: (this.hasPreferredPool() && form.use_preferred_pool) ? '' : form.pool,
       image: this.parseImageField(form.image),
       autostart: form.autostart,
     };

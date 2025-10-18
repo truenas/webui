@@ -15,26 +15,6 @@
           [tooltip]="'Container name' | translate"
         ></ix-input>
 
-        @if (!isEditMode()) {
-          @if (hasPreferredPool()) {
-            <ix-checkbox
-              formControlName="use_preferred_pool"
-              [label]="'Use Preferred Pool' | translate"
-              [tooltip]="'Use the preferred pool from global settings. Uncheck to select a custom pool.' | translate"
-            ></ix-checkbox>
-          }
-
-          @if (!hasPreferredPool() || !form.controls.use_preferred_pool.value) {
-            <ix-select
-              formControlName="pool"
-              [label]="'Pool' | translate"
-              [required]="true"
-              [tooltip]="'Pool to use for this container' | translate"
-              [options]="poolOptions$"
-            ></ix-select>
-          }
-        }
-
         <ix-input
           formControlName="description"
           [label]="'Description' | translate"
@@ -65,6 +45,17 @@
             >{{ 'Browse Catalog' | translate }}</button>
           </div>
         }
+
+        @if (!isEditMode() && !hasPreferredPool()) {
+          <ix-select
+            formControlName="pool"
+            [label]="'Pool' | translate"
+            [required]="true"
+            [tooltip]="'Pool to use for this container' | translate"
+            [options]="poolOptions$"
+          ></ix-select>
+        }
+
       </ix-fieldset>
 
       <ix-fieldset [title]="'CPU Configuration' | translate">
@@ -73,26 +64,6 @@
           type="number"
           [label]="'Virtual CPUs' | translate"
           [tooltip]="'Number of virtual CPUs (greater or equal to 1)' | translate"
-        ></ix-input>
-
-        <ix-input
-          formControlName="cores"
-          type="number"
-          [label]="'Cores' | translate"
-          [tooltip]="'Number of cores per socket' | translate"
-        ></ix-input>
-
-        <ix-input
-          formControlName="threads"
-          type="number"
-          [label]="'Threads' | translate"
-          [tooltip]="'Number of threads per core' | translate"
-        ></ix-input>
-
-        <ix-input
-          formControlName="cpuset"
-          [label]="'CPU Set' | translate"
-          [tooltip]="'List of physical CPU numbers to bind container to (e.g., 0-3,5)' | translate"
         ></ix-input>
       </ix-fieldset>
 
@@ -106,6 +77,48 @@
       </ix-fieldset>
 
       @if (isAdvancedMode) {
+        @if (!isEditMode() && hasPreferredPool()) {
+          <ix-fieldset [title]="'Storage' | translate">
+            <ix-checkbox
+              formControlName="use_preferred_pool"
+              [label]="'Use Preferred Pool' | translate"
+              [tooltip]="'Use the system preferred pool for this container' | translate"
+            ></ix-checkbox>
+
+            @if (!form.controls.use_preferred_pool.value) {
+              <ix-select
+                formControlName="pool"
+                [label]="'Pool' | translate"
+                [required]="true"
+                [tooltip]="'Pool to use for this container' | translate"
+                [options]="poolOptions$"
+              ></ix-select>
+            }
+          </ix-fieldset>
+        }
+
+        <ix-fieldset [title]="'Advanced CPU Configuration' | translate">
+          <ix-input
+            formControlName="cores"
+            type="number"
+            [label]="'Cores' | translate"
+            [tooltip]="'Number of cores per socket' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="threads"
+            type="number"
+            [label]="'Threads' | translate"
+            [tooltip]="'Number of threads per core' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="cpuset"
+            [label]="'CPU Set' | translate"
+            [tooltip]="'List of physical CPU numbers to bind container to (e.g., 0-3,5)' | translate"
+          ></ix-input>
+        </ix-fieldset>
+
         <ix-fieldset [title]="'Time Configuration' | translate">
           <ix-select
             formControlName="time"
