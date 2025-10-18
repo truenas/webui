@@ -69,6 +69,7 @@ export class AllInstancesHeaderComponent {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
+          this.configStore.initialize();
           this.instanceStore.initialize();
         },
       });

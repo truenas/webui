@@ -61,10 +61,15 @@ export class GlobalConfigFormComponent implements OnInit {
     bridge: [this.autoBridge],
     v4_network: [null as string | null, Validators.required],
     v6_network: [null as string | null],
+    preferred_pool: [null as string | null],
   });
 
 
   protected bridgeOptions$ = this.api.call('lxc.bridge_choices').pipe(
+    choicesToOptions(),
+  );
+
+  protected poolOptions$ = this.api.call('container.pool_choices').pipe(
     choicesToOptions(),
   );
 
@@ -79,12 +84,21 @@ export class GlobalConfigFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const currentConfig = this.currentConfig();
+    this.isLoading.set(true);
 
-    this.form.patchValue({
-      bridge: currentConfig.bridge ?? this.autoBridge,
-      v4_network: currentConfig.v4_network,
-      v6_network: currentConfig.v6_network,
+    // Fetch fresh config from API to ensure we have the latest values
+    this.api.call('lxc.config').pipe(
+      this.errorHandler.withErrorHandler(),
+      finalize(() => this.isLoading.set(false)),
+      untilDestroyed(this),
+    ).subscribe((config) => {
+      this.currentConfig.set(config);
+      this.form.patchValue({
+        bridge: config.bridge ?? this.autoBridge,
+        v4_network: config.v4_network,
+        v6_network: config.v6_network,
+        preferred_pool: config.preferred_pool,
+      });
     });
   }
 
@@ -96,6 +110,7 @@ export class GlobalConfigFormComponent implements OnInit {
       bridge: controls.bridge.value,
       v4_network: controls.v4_network.value,
       v6_network: controls.v6_network.value,
+      preferred_pool: controls.preferred_pool.value,
     };
 
     this.api.call('lxc.update', [values])

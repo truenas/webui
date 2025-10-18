@@ -219,6 +219,7 @@ export interface ContainerGlobalConfig {
   bridge: string | null;
   v4_network: string | null;
   v6_network: string | null;
+  preferred_pool: string | null;
 }
 
 export interface VirtualizationNetwork {

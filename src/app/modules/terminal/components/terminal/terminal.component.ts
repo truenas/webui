@@ -248,7 +248,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   isInstanceShell(): boolean {
-    return 'virt_instance_id' in this.conf().connectionData;
+    const data = this.conf().connectionData;
+    return 'container_id' in data && 'use_console' in data;
   }
 
   ngOnDestroy(): void {

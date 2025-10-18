@@ -8,6 +8,15 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
 
+      <ix-fieldset [title]="'Preferred Pool' | translate">
+        <ix-select
+          formControlName="preferred_pool"
+          [label]="'Preferred Pool' | translate"
+          [tooltip]="'Default pool to use when creating containers if pool is not explicitly specified.' | translate"
+          [options]="poolOptions$"
+        ></ix-select>
+      </ix-fieldset>
+
       <ix-fieldset [title]="'Default Network' | translate">
         <ix-select
           formControlName="bridge"
