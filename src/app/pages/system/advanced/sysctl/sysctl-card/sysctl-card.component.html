@@ -1,9 +1,17 @@
 <mat-card [ixUiSearch]="searchableElements.elements.sysctl">
   <mat-toolbar-row>
-    <a [ixTest]="['sysctl', 'open-in-new']" [routerLink]="['/system', 'sysctl']">
+    <a
+      [ixTest]="['sysctl', 'open-in-new']"
+      [routerLink]="['/system', 'sysctl']"
+      [matTooltip]="'Open Sysctl list in full page' | translate"
+    >
       <h3 class="card-title">
         {{ 'Sysctl' | translate }}
-        <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+        <ix-icon
+          name="open_in_new"
+          class="title-icon"
+          [attr.aria-label]="'Open Sysctl list in full page' | translate"
+        ></ix-icon>
       </h3>
     </a>
     <div class="actions">

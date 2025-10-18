@@ -1,9 +1,17 @@
 <mat-card>
   <mat-toolbar-row>
-    <a [ixTest]="['rsync-task', 'open-in-new']" [routerLink]="['/data-protection', 'rsync']">
+    <a
+      [ixTest]="['rsync-task', 'open-in-new']"
+      [routerLink]="['/data-protection', 'rsync']"
+      [matTooltip]="'Open Rsync Tasks list in full page' | translate"
+    >
       <h3 class="card-title">
         {{ 'Rsync Tasks' | translate }}
-        <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+        <ix-icon
+          name="open_in_new"
+          class="title-icon"
+          [attr.aria-label]="'Open Rsync Tasks list in full page' | translate"
+        ></ix-icon>
       </h3>
     </a>
     <div class="actions">

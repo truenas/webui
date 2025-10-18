@@ -1,9 +1,17 @@
 <mat-card>
   <mat-toolbar-row>
-    <a [ixTest]="['replication-task', 'open-in-new']" [routerLink]="['/data-protection', 'replication']">
+    <a
+      [ixTest]="['replication-task', 'open-in-new']"
+      [routerLink]="['/data-protection', 'replication']"
+      [matTooltip]="'Open Replication Tasks list in full page' | translate"
+    >
       <h3 class="card-title">
         {{ 'Replication Tasks' | translate }}
-        <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+        <ix-icon
+          name="open_in_new"
+          class="title-icon"
+          [attr.aria-label]="'Open Replication Tasks list in full page' | translate"
+        ></ix-icon>
       </h3>
     </a>
     <div class="actions">

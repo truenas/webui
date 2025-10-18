@@ -17,9 +17,16 @@
 <div class="table-container" [ixUiSearch]="searchableElements.elements.kerberosRealms">
   @if (inCard()) {
     <mat-toolbar-row class="table-header">
-      <div class="heading" [routerLink]="['/', 'directoryservice', 'kerberosrealms']">
+      <div
+        class="heading"
+        [routerLink]="['/', 'directoryservice', 'kerberosrealms']"
+        [matTooltip]="'Open Kerberos Realms list in full page' | translate"
+      >
         <h3>{{ 'Kerberos Realms' | translate }}</h3>
-        <ix-icon name="open_in_new"></ix-icon>
+        <ix-icon
+          name="open_in_new"
+          [attr.aria-label]="'Open Kerberos Realms list in full page' | translate"
+        ></ix-icon>
       </div>
       <div class="action">
         <button

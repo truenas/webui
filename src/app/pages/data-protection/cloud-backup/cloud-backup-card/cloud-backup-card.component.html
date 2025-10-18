@@ -1,9 +1,17 @@
 <mat-card>
   <mat-toolbar-row>
-    <a [ixTest]="['cloud-backup-task', 'open']" [routerLink]="['/data-protection', 'cloud-backup']">
+    <a
+      [ixTest]="['cloud-backup-task', 'open']"
+      [routerLink]="['/data-protection', 'cloud-backup']"
+      [matTooltip]="'Open TrueCloud Backup Tasks list in full page' | translate"
+    >
       <h3 class="card-title">
         {{ 'TrueCloud Backup Tasks' | translate }}
-        <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+        <ix-icon
+          name="open_in_new"
+          class="title-icon"
+          [attr.aria-label]="'Open TrueCloud Backup Tasks list in full page' | translate"
+        ></ix-icon>
       </h3>
     </a>
     <div class="actions">

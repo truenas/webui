@@ -4,6 +4,7 @@ import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -92,6 +93,7 @@ type FormValue = CloudSyncFormComponent['form']['value'];
     IxExplorerComponent,
     TestDirective,
     IxIconComponent,
+    MatTooltip,
     CloudCredentialsSelectComponent,
     IxCheckboxComponent,
     SchedulerComponent,
