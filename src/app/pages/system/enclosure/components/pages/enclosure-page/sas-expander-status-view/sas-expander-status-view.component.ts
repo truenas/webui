@@ -1,3 +1,4 @@
+import { TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
@@ -10,7 +11,7 @@ import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
   templateUrl: './sas-expander-status-view.component.html',
   styleUrl: './sas-expander-status-view.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslateModule],
+  imports: [TranslateModule, TitleCasePipe],
 })
 export class SasExpanderStatusViewComponent {
   readonly enclosure = input.required<DashboardEnclosure>();

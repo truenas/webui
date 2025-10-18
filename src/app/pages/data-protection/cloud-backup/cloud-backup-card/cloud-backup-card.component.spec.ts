@@ -120,8 +120,8 @@ describe('CloudBackupCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', ''],
-      ['test one', '', 'No', 'FINISHED', '1 min. ago', ''],
-      ['test two', '', 'No', 'FINISHED', '1 min. ago', ''],
+      ['test one', '', 'No', 'Finished', '1 min. ago', ''],
+      ['test two', '', 'No', 'Finished', '1 min. ago', ''],
     ];
 
     const cells = await table.getCellTexts();

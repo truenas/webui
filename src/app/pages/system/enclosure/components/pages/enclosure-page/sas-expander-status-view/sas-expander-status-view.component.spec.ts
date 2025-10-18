@@ -37,7 +37,7 @@ describe('SasExpanderStatusViewComponent', () => {
     expect(expanders).toHaveLength(2);
     expect(expanders[0]).toHaveDescendantWithText({
       selector: '.status-value',
-      text: 'OK',
+      text: 'Ok',
     });
     expect(expanders[0]).toHaveDescendantWithText({
       selector: '.descriptor',
@@ -46,7 +46,7 @@ describe('SasExpanderStatusViewComponent', () => {
 
     expect(expanders[1]).toHaveDescendantWithText({
       selector: '.status-value',
-      text: 'OK',
+      text: 'Ok',
     });
     expect(expanders[1]).toHaveDescendantWithText({
       selector: '.descriptor',

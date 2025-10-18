@@ -1,3 +1,4 @@
+import { TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
@@ -10,7 +11,7 @@ import { Pool } from 'app/interfaces/pool.interface';
   templateUrl: './pool-status.component.html',
   styleUrls: ['../pool-stats.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgxSkeletonLoaderModule, TranslateModule],
+  imports: [NgxSkeletonLoaderModule, TranslateModule, TitleCasePipe],
 })
 export class PoolStatusComponent {
   readonly pool = input<Pool>();

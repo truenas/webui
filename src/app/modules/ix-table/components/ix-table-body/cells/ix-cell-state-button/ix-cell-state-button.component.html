@@ -9,7 +9,7 @@
     [attr.aria-label]="getAriaLabel(row())"
     (click)="$event.stopPropagation(); onButtonClick()"
   >
-    {{ state() }}
+    {{ state() | titlecase }}
     @if (warnings.length > 0) {
       <div class="label-warning-icon">
         <ix-icon name="mdi-alert"></ix-icon>

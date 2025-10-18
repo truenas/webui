@@ -1,6 +1,6 @@
 @for (expander of expanders(); track expander) {
   <div class="expander">
-    <div class="status-value">{{ expander.status }}</div>
+    <div class="status-value">{{ expander.status | titlecase }}</div>
     <div class="title">{{ 'Expander Status' | translate }}</div>
     @if (expander.descriptor) {
       <div class="descriptor">{{ expander.descriptor }}</div>

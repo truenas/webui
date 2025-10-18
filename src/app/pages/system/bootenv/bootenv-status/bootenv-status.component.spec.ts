@@ -95,12 +95,12 @@ describe('BootStatusListComponent', () => {
 
     const firstNodeText = await nodes[0].getText();
     expect(firstNodeText).toContain('boot-pool');
-    expect(firstNodeText).toContain('ONLINE');
+    expect(firstNodeText).toContain('Online');
     expect(firstNodeText).toContain('No Errors');
 
     const secondNodeText = await nodes[1].getText();
     expect(secondNodeText).toContain('sda3');
-    expect(secondNodeText).toContain('ONLINE');
+    expect(secondNodeText).toContain('Online');
     expect(secondNodeText).toContain('No Errors');
   });
 });

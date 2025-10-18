@@ -147,8 +147,8 @@ describe('AllCloudBackupsComponent', () => {
     it('should show table rows', async () => {
       const expectedRows = [
         ['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', ''],
-        ['UA', '', 'No', 'FINISHED', '1 min. ago', ''],
-        ['UAH', '', 'No', 'FINISHED', '1 min. ago', ''],
+        ['UA', '', 'No', 'Finished', '1 min. ago', ''],
+        ['UAH', '', 'No', 'Finished', '1 min. ago', ''],
       ];
       const cells = await table.getCellTexts();
       expect(cells).toEqual(expectedRows);

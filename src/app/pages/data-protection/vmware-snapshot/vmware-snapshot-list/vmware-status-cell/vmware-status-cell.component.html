@@ -6,5 +6,5 @@
   [ngClass]="getButtonClass()"
   [matTooltip]="tooltip"
 >
-  {{ state().state | translate }}
+  {{ state().state | translate | titlecase }}
 </button>

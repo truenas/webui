@@ -1,4 +1,4 @@
-import { NgClass, LowerCasePipe } from '@angular/common';
+import { NgClass, LowerCasePipe, TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
@@ -24,6 +24,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
     MapValuePipe,
     LowerCasePipe,
+    TitleCasePipe,
   ],
 })
 export class ServiceStateButtonComponent {

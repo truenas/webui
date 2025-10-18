@@ -3,7 +3,7 @@
     <span class="name">{{ ownName() }}</span>
   </div>
   <div class="cell cell-status" [style.background-color]="statusColor()">
-    <span>{{ topologyItem().status }}</span>
+    <span>{{ topologyItem().status | titlecase }}</span>
     @if (!isDisk() && !isMirror() && poolInstance()?.status_detail) {
       <ix-icon
         name="mdi-information-outline"

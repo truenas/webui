@@ -173,7 +173,7 @@ describe('ReplicationListComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Direction', 'Last Run', 'State', 'Enabled', 'Last Snapshot'],
-      ['pewl - pewl', 'PUSH', '1 min. ago', 'HOLD', '', 'No snapshots sent yet'],
+      ['pewl - pewl', 'PUSH', '1 min. ago', 'Hold', '', 'No snapshots sent yet'],
     ];
 
     const cells = await table.getCellTexts();
