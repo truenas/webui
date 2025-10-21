@@ -61,6 +61,10 @@ export class AuthService implements OnDestroy {
   // Flag to prevent premature adminUiInitialized dispatch
   private sessionInitialized = false;
 
+  // Track whether logout was manual to avoid showing "session expired" message
+  private isManualLogout = new BehaviorSubject<boolean>(false);
+  readonly isManualLogout$ = this.isManualLogout.asObservable();
+
   /**
    * This is 10 seconds less than 300 seconds which is the default life
    * time of a token generated with auth.generate_token. The 10 seconds
@@ -234,6 +238,7 @@ export class AuthService implements OnDestroy {
   }
 
   logout(): Observable<void> {
+    this.isManualLogout.next(true);
     return this.api.call('auth.logout').pipe(
       tap(() => {
         this.clearAuthToken();
@@ -244,6 +249,8 @@ export class AuthService implements OnDestroy {
         this.pendingAuthData = null;
         this.loggedInUser$.next(null); // Clear user data on logout
         this.cachedGlobalTwoFactorConfig$.next(null); // Clear cached 2FA config
+        // Reset manual logout flag after a short delay to allow app.component to read it
+        setTimeout(() => this.isManualLogout.next(false), 100);
       }),
     );
   }

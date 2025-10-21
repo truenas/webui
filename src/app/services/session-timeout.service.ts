@@ -1,6 +1,5 @@
 import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -18,8 +17,9 @@ import {
   SessionExpiringDialogOptions,
 } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -33,10 +33,9 @@ export class SessionTimeoutService {
   private matDialog = inject(MatDialog);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private snackbar = inject(MatSnackBar);
+  private snackbar = inject(SnackbarService);
   private appStore$ = inject<Store<AppState>>(Store);
   private tokenLastUsedService = inject(TokenLastUsedService);
-  private wsStatus = inject(WebSocketStatusService);
   private window = inject<Window>(WINDOW);
 
   protected actionWaitTimeout: Timeout;
@@ -84,12 +83,20 @@ export class SessionTimeoutService {
     this.authService.clearAuthToken();
     this.router.navigate(['/signin']);
     this.dialogService.closeAllDialogs();
-    this.snackbar.open(
-      this.translate.instant('Session expired'),
-      this.translate.instant('Close'),
-      { duration: 4000, verticalPosition: 'bottom' },
-    );
+
     this.authService.logout().pipe(untilDestroyed(this)).subscribe();
+  }
+
+  showSessionExpiredMessage(): void {
+    this.snackbar.open({
+      message: this.translate.instant('Session expired'),
+      icon: iconMarker('mdi-clock-alert-outline'),
+      iconCssColor: 'var(--orange)',
+      duration: 99999,
+      button: {
+        title: this.translate.instant('Close'),
+      },
+    });
   }
 
   start(): void {
