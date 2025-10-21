@@ -5,7 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { switchMap, filter, tap } from 'rxjs';
+import { EMPTY, switchMap, filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -23,6 +23,7 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -62,6 +63,7 @@ export class SshConnectionCardComponent implements OnInit {
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private keychainCredentialService = inject(KeychainCredentialService);
+  private loader = inject(LoaderService);
 
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
   protected readonly searchableElements = sshConnectionsCardElements;
@@ -101,6 +103,10 @@ export class SshConnectionCardComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<KeychainSshCredentials>(credentials$);
     this.setDefaultSort();
     this.getCredentials();
+
+    this.keychainCredentialService.refetchSshConnections
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.getCredentials());
   }
 
   getCredentials(): void {
@@ -128,6 +134,9 @@ export class SshConnectionCardComponent implements OnInit {
   }
 
   protected doDelete(credential: KeychainSshCredentials): void {
+    // Check if this connection has an associated keypair
+    const hasAssociatedKeypair = !!credential.attributes.private_key;
+
     this.dialog
       .confirm({
         title: this.translate.instant('Delete SSH Connection'),
@@ -136,11 +145,29 @@ export class SshConnectionCardComponent implements OnInit {
         }),
         buttonColor: 'warn',
         buttonText: this.translate.instant('Delete'),
+        secondaryCheckbox: hasAssociatedKeypair,
+        secondaryCheckboxText: this.translate.instant('Delete associated SSH Keypair'),
       })
       .pipe(
-        filter(Boolean),
-        switchMap(() => {
-          return this.api.call('keychaincredential.delete', [credential.id]).pipe(
+        filter((result) => result.confirmed),
+        switchMap((result) => {
+          const shouldDeleteKeypair = result.secondaryCheckbox;
+          const keypairId = credential.attributes.private_key;
+
+          // First, delete the SSH connection (cascade: false since cascade doesn't work in reverse direction)
+          return this.api.call('keychaincredential.delete', [credential.id, { cascade: false }]).pipe(
+            switchMap(() => {
+              // If user wants to delete the associated keypair, delete it separately
+              if (shouldDeleteKeypair && keypairId) {
+                return this.api.call('keychaincredential.delete', [keypairId, { cascade: false }]).pipe(
+                  tap(() => {
+                    this.keychainCredentialService.refetchSshKeys.next();
+                  }),
+                );
+              }
+              return EMPTY;
+            }),
+            this.loader.withLoader(),
             this.errorHandler.withErrorHandler(),
           );
         }),

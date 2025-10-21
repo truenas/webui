@@ -5,10 +5,11 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import { filter, map, Observable, switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { KeychainCredential, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -23,6 +24,7 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -66,6 +68,7 @@ export class SshKeypairCardComponent implements OnInit {
   private keychainCredentialService = inject(KeychainCredentialService);
   private download = inject(DownloadService);
   private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
 
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
   protected readonly searchableElements = sshKeypairsCardElements;
@@ -147,27 +150,59 @@ export class SshKeypairCardComponent implements OnInit {
   }
 
   doDelete(credential: KeychainSshKeyPair): void {
-    this.dialog
-      .confirm({
-        title: this.translate.instant('Delete SSH Keypair'),
-        message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', {
-          name: credential.name,
-        }),
-        buttonColor: 'warn',
-        buttonText: this.translate.instant('Delete'),
-      })
-      .pipe(
-        filter(Boolean),
-        switchMap(() => {
-          return this.api.call('keychaincredential.delete', [credential.id]).pipe(
-            this.errorHandler.withErrorHandler(),
-          );
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.getCredentials();
+    this.checkKeypairUsage(credential.id).pipe(
+      switchMap((hasAssociatedConnections) => this.confirmDeletion(credential.name, hasAssociatedConnections)),
+      filter((confirmation) => (typeof confirmation === 'boolean' ? confirmation : confirmation.confirmed)),
+      switchMap((confirmation) => this.deleteKeypair(credential.id, confirmation)),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.getCredentials();
+    });
+  }
+
+  private checkKeypairUsage(keypairId: number): Observable<boolean> {
+    return this.api.call('keychaincredential.used_by', [keypairId]).pipe(
+      map((usedBy) => usedBy.length > 0),
+    );
+  }
+
+  private confirmDeletion(
+    name: string,
+    hasAssociatedConnections: boolean,
+  ): Observable<boolean | DialogWithSecondaryCheckboxResult> {
+    const baseOptions = {
+      title: this.translate.instant('Delete SSH Keypair'),
+      message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', { name }),
+      buttonColor: 'warn' as const,
+      buttonText: this.translate.instant('Delete'),
+    };
+
+    if (hasAssociatedConnections) {
+      return this.dialog.confirm({
+        ...baseOptions,
+        secondaryCheckbox: true,
+        secondaryCheckboxText: this.translate.instant('Delete associated SSH connections'),
       });
+    }
+
+    return this.dialog.confirm(baseOptions);
+  }
+
+  private deleteKeypair(
+    keypairId: number,
+    confirmation: boolean | DialogWithSecondaryCheckboxResult,
+  ): Observable<void> {
+    const cascade = typeof confirmation === 'boolean' ? false : confirmation.secondaryCheckbox;
+
+    return this.api.call('keychaincredential.delete', [keypairId, { cascade }]).pipe(
+      tap(() => {
+        if (cascade) {
+          this.keychainCredentialService.refetchSshConnections.next();
+        }
+      }),
+      this.loader.withLoader(),
+      this.errorHandler.withErrorHandler(),
+    );
   }
 
   doDownload(credential: KeychainSshKeyPair): void {
