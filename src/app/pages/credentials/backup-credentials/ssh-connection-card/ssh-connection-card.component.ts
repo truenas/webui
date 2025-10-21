@@ -5,7 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { defaultIfEmpty, EMPTY, filter, Observable, switchMap, tap } from 'rxjs';
+import { filter, Observable, switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -164,16 +164,17 @@ export class SshConnectionCardComponent implements OnInit {
   }
 
   private deleteConnection(connectionId: number, keypairId: number | null): Observable<void> {
+    if (keypairId) {
+      // Delete keypair with cascade, which will also delete the connection
+      return this.api.call('keychaincredential.delete', [keypairId, { cascade: true }]).pipe(
+        tap(() => this.keychainCredentialService.refetchSshKeys.next()),
+        this.loader.withLoader(),
+        this.errorHandler.withErrorHandler(),
+      );
+    }
+
+    // Just delete the connection
     return this.api.call('keychaincredential.delete', [connectionId]).pipe(
-      switchMap(() => {
-        if (keypairId) {
-          return this.api.call('keychaincredential.delete', [keypairId]).pipe(
-            tap(() => this.keychainCredentialService.refetchSshKeys.next()),
-          );
-        }
-        return EMPTY;
-      }),
-      defaultIfEmpty(undefined),
       this.loader.withLoader(),
       this.errorHandler.withErrorHandler(),
     );

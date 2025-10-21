@@ -174,9 +174,8 @@ describe('SshConnectionCardComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
     await deleteButton.click();
 
-    // Should delete connection first, then the keypair (both with cascade: false)
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [5]);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [4]); // keypair ID
+    // Should delete keypair with cascade, which also deletes the connection
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [4, { cascade: true }]);
     expect(refetchSpy).toHaveBeenCalled();
   });
 
