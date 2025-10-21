@@ -5,10 +5,11 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { switchMap, filter, tap, take } from 'rxjs';
+import { filter, Observable, switchMap, take, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -134,49 +135,54 @@ export class SshConnectionCardComponent implements OnInit {
   }
 
   protected doDelete(credential: KeychainSshCredentials): void {
-    // Check if this connection has an associated keypair
     const hasAssociatedKeypair = !!credential.attributes.private_key;
 
-    this.dialog
-      .confirm({
-        title: this.translate.instant('Delete SSH Connection'),
-        message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> SSH Connection?', {
-          name: credential.name,
-        }),
-        buttonColor: 'warn',
-        buttonText: this.translate.instant('Delete'),
-        secondaryCheckbox: hasAssociatedKeypair,
-        secondaryCheckboxText: this.translate.instant('Delete associated SSH Keypair'),
-      })
-      .pipe(
-        filter((result) => result.confirmed),
-        switchMap((result) => {
-          const shouldDeleteKeypair = result.secondaryCheckbox;
-          const keypairId = credential.attributes.private_key;
+    this.confirmConnectionDeletion(credential.name, hasAssociatedKeypair).pipe(
+      filter((result) => result.confirmed),
+      switchMap((result) => this.deleteConnection(
+        credential.id,
+        result.secondaryCheckbox ? credential.attributes.private_key : null,
+      )),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.getCredentials();
+    });
+  }
 
-          // First, delete the SSH connection (cascade: false since cascade doesn't work in reverse direction)
-          return this.api.call('keychaincredential.delete', [credential.id, { cascade: false }]).pipe(
-            tap(() => {
-              // If user wants to delete the associated keypair, delete it separately
-              if (shouldDeleteKeypair && keypairId) {
-                this.api.call('keychaincredential.delete', [keypairId, { cascade: false }]).pipe(
-                  tap(() => {
-                    this.keychainCredentialService.refetchSshKeys.next();
-                  }),
-                  this.errorHandler.withErrorHandler(),
-                  take(1),
-                  untilDestroyed(this),
-                ).subscribe();
-              }
-            }),
-            this.loader.withLoader(),
-            this.errorHandler.withErrorHandler(),
-          );
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.getCredentials();
-      });
+  private confirmConnectionDeletion(
+    name: string,
+    hasAssociatedKeypair: boolean,
+  ): Observable<DialogWithSecondaryCheckboxResult> {
+    return this.dialog.confirm({
+      title: this.translate.instant('Delete SSH Connection'),
+      message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> SSH Connection?', { name }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
+      secondaryCheckbox: hasAssociatedKeypair,
+      secondaryCheckboxText: this.translate.instant('Delete associated SSH Keypair'),
+    });
+  }
+
+  private deleteConnection(connectionId: number, keypairId: number | null): Observable<void> {
+    return this.api.call('keychaincredential.delete', [connectionId, { cascade: false }]).pipe(
+      tap(() => {
+        if (keypairId) {
+          this.deleteAssociatedKeypair(keypairId);
+        }
+      }),
+      this.loader.withLoader(),
+      this.errorHandler.withErrorHandler(),
+    );
+  }
+
+  private deleteAssociatedKeypair(keypairId: number): void {
+    this.api.call('keychaincredential.delete', [keypairId, { cascade: false }]).pipe(
+      tap(() => {
+        this.keychainCredentialService.refetchSshKeys.next();
+      }),
+      this.errorHandler.withErrorHandler(),
+      take(1),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }
