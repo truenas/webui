@@ -135,7 +135,7 @@ describe('SshConnectionCardComponent', () => {
         secondaryCheckbox: true, // Connection has private_key: 4
       }),
     );
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [5, { cascade: false }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [5]);
   });
 
   it('hides cascade checkbox when connection has no associated keypair', async () => {
@@ -175,8 +175,8 @@ describe('SshConnectionCardComponent', () => {
     await deleteButton.click();
 
     // Should delete connection first, then the keypair (both with cascade: false)
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [5, { cascade: false }]);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [4, { cascade: false }]); // keypair ID
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [5]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [4]); // keypair ID
     expect(refetchSpy).toHaveBeenCalled();
   });
 

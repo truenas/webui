@@ -9,7 +9,7 @@ import { filter, map, Observable, switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { KeychainCredential, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -210,7 +210,7 @@ export class SshKeypairCardComponent implements OnInit {
   doDownload(credential: KeychainSshKeyPair): void {
     const name = credential.name;
     Object.keys(credential.attributes).forEach((keyType) => {
-      const key = credential.attributes[keyType as keyof KeychainCredential['attributes']];
+      const key = credential.attributes[keyType as keyof typeof credential.attributes];
       const blob = new Blob([key as BlobPart], { type: 'text/plain' });
       this.download.downloadBlob(blob, `${name}_${keyType}_rsa`);
     });

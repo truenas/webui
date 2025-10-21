@@ -164,10 +164,10 @@ export class SshConnectionCardComponent implements OnInit {
   }
 
   private deleteConnection(connectionId: number, keypairId: number | null): Observable<void> {
-    return this.api.call('keychaincredential.delete', [connectionId, { cascade: false }]).pipe(
+    return this.api.call('keychaincredential.delete', [connectionId]).pipe(
       switchMap(() => {
         if (keypairId) {
-          return this.api.call('keychaincredential.delete', [keypairId, { cascade: false }]).pipe(
+          return this.api.call('keychaincredential.delete', [keypairId]).pipe(
             tap(() => this.keychainCredentialService.refetchSshKeys.next()),
           );
         }
