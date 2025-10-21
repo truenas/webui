@@ -32,7 +32,7 @@ describe('VmwareStatusCellComponent', () => {
 
     it('should display the state text', async () => {
       const button = await loader.getHarness(MatButtonHarness);
-      expect(await button.getText()).toBe('SUCCESS');
+      expect(await button.getText()).toBe('Success');
     });
 
     it('should have state-button class', async () => {
@@ -145,7 +145,7 @@ describe('VmwareStatusCellComponent', () => {
       });
 
       const button = await loader.getHarness(MatButtonHarness);
-      expect(await button.getText()).toBe('SUCCESS');
+      expect(await button.getText()).toBe('Success');
     });
 
     it('should display PENDING state', async () => {
@@ -155,7 +155,7 @@ describe('VmwareStatusCellComponent', () => {
       });
 
       const button = await loader.getHarness(MatButtonHarness);
-      expect(await button.getText()).toBe('PENDING');
+      expect(await button.getText()).toBe('Pending');
     });
 
     it('should display ERROR state', async () => {
@@ -166,7 +166,7 @@ describe('VmwareStatusCellComponent', () => {
       });
 
       const button = await loader.getHarness(MatButtonHarness);
-      expect(await button.getText()).toBe('ERROR');
+      expect(await button.getText()).toBe('Error');
     });
 
     it('should display BLOCKED state', async () => {
@@ -176,7 +176,7 @@ describe('VmwareStatusCellComponent', () => {
       });
 
       const button = await loader.getHarness(MatButtonHarness);
-      expect(await button.getText()).toBe('BLOCKED');
+      expect(await button.getText()).toBe('Blocked');
     });
   });
 });
