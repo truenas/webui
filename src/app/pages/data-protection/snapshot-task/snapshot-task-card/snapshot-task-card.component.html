@@ -1,9 +1,17 @@
 <mat-card>
   <mat-toolbar-row>
-    <a [ixTest]="['snapshot-task', 'open-in-new']" [routerLink]="['/data-protection', 'snapshot']">
+    <a
+      [ixTest]="['snapshot-task', 'open-in-new']"
+      [routerLink]="['/data-protection', 'snapshot']"
+      [matTooltip]="'Open Periodic Snapshot Tasks list in full page' | translate"
+    >
       <h3 class="card-title">
         {{ 'Periodic Snapshot Tasks' | translate }}
-        <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+        <ix-icon
+          name="open_in_new"
+          class="title-icon"
+          [attr.aria-label]="'Open Periodic Snapshot Tasks list in full page' | translate"
+        ></ix-icon>
       </h3>
     </a>
     <div class="actions">
