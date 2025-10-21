@@ -3,9 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -17,6 +18,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SshConnectionCardComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.component';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
+import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
 describe('SshConnectionCardComponent', () => {
   let spectator: Spectator<SshConnectionCardComponent>;
@@ -63,7 +65,7 @@ describe('SshConnectionCardComponent', () => {
         mockCall('keychaincredential.delete'),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -72,6 +74,11 @@ describe('SshConnectionCardComponent', () => {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
         })),
+      }),
+      mockProvider(KeychainCredentialService, {
+        getSshConnections: jest.fn(() => of(connections)),
+        refetchSshKeys: new Subject<void>(),
+        refetchSshConnections: new Subject<void>(),
       }),
       mockAuth(),
     ],
@@ -119,11 +126,58 @@ describe('SshConnectionCardComponent', () => {
     );
   });
 
-  it('opens delete dialog when "Delete" button is pressed', async () => {
+  it('shows cascade checkbox when connection has associated keypair', async () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
     await deleteButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [5]);
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        secondaryCheckbox: true, // Connection has private_key: 4
+      }),
+    );
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [5, { cascade: false }]);
+  });
+
+  it('hides cascade checkbox when connection has no associated keypair', async () => {
+    const connectionWithoutKeypair: KeychainSshCredentials = {
+      id: 7,
+      name: 'test-conn-no-key',
+      type: KeychainCredentialType.SshCredentials,
+      attributes: {
+        host: 'fake.host.name',
+        port: 22,
+        username: 'root',
+        private_key: null,
+        remote_host_key: 'ssh-rsa FAAAKE',
+        connect_timeout: 10,
+      },
+    };
+
+    spectator.component.credentials = [connectionWithoutKeypair];
+    spectator.component.dataProvider.setRows([connectionWithoutKeypair]);
+    spectator.detectChanges();
+
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+    await deleteButton.click();
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        secondaryCheckbox: false,
+      }),
+    );
+  });
+
+  it('deletes connection and keypair when cascade checkbox is selected', async () => {
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of({ confirmed: true, secondaryCheckbox: true }));
+    const refetchSpy = jest.spyOn(spectator.inject(KeychainCredentialService).refetchSshKeys, 'next');
+
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+    await deleteButton.click();
+
+    // Should delete connection first, then the keypair (both with cascade: false)
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [5, { cascade: false }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [4, { cascade: false }]); // keypair ID
+    expect(refetchSpy).toHaveBeenCalled();
   });
 
   it('should show table rows', async () => {

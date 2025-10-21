@@ -62,9 +62,10 @@ describe('SshKeypairCardComponent', () => {
       mockApi([
         mockCall('keychaincredential.query', credentials),
         mockCall('keychaincredential.delete'),
+        mockCall('keychaincredential.used_by', []),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -79,6 +80,7 @@ describe('SshKeypairCardComponent', () => {
       mockProvider(KeychainCredentialService, {
         getSshKeys: jest.fn(() => of(credentials)),
         refetchSshKeys: new Subject<void>(),
+        refetchSshConnections: new Subject<void>(),
       }),
       mockAuth(),
     ],
@@ -112,12 +114,77 @@ describe('SshKeypairCardComponent', () => {
     });
   });
 
-  it('opens delete dialog when "Delete" button is pressed', async () => {
+  it('deletes keypair without cascade when no associations exist', async () => {
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+      if (method === 'keychaincredential.used_by') {
+        return of([]);
+      }
+      return of(null);
+    });
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true) as never);
+
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [10]);
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        secondaryCheckbox: expect.anything(),
+      }),
+    );
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: false }]);
+  });
+
+  it('shows cascade checkbox when keypair is used by an SSH connection', async () => {
+    const usedByResponse = [{
+      title: 'SSH Connection (test-connection)',
+      unbind_method: 'keychaincredential.update',
+    }];
+
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+      if (method === 'keychaincredential.used_by') {
+        return of(usedByResponse);
+      }
+      return of(null);
+    });
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of({ confirmed: true, secondaryCheckbox: true }));
+    const refetchSpy = jest.spyOn(spectator.inject(KeychainCredentialService).refetchSshConnections, 'next');
+
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Delete' });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [10]);
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        secondaryCheckbox: true,
+      }),
+    );
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: true }]);
+    expect(refetchSpy).toHaveBeenCalled();
+  });
+
+  it('deletes keypair without cascade when user does not check the box even if in use', async () => {
+    const usedByResponse = [{
+      title: 'SSH Connection (test-connection)',
+      unbind_method: 'keychaincredential.update',
+    }];
+
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+      if (method === 'keychaincredential.used_by') {
+        return of(usedByResponse);
+      }
+      return of(null);
+    });
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of({ confirmed: true, secondaryCheckbox: false }));
+
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Delete' });
+
+    // Should still attempt delete with cascade: false (backend will show error)
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: false }]);
   });
 
   it('checks when "Download" button is pressed', async () => {
