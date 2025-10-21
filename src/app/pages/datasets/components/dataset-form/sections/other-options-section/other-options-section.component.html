@@ -126,10 +126,44 @@
 
     <ix-select
       formControlName="special_small_block_size"
-      [label]="'Metadata (Special) Small Block Size' | translate"
-      [required]="true"
+      [label]="'Use Metadata (Special) VDEVs' | translate"
+      [tooltip]="helptext.useSpecialVdevsTooltip | translate"
       [options]="specialSmallBlockSizeOptions$"
-      [tooltip]="helptext.specialSmallBlocksTooltip | translate"
+      [required]="true"
     ></ix-select>
+
+    @if (form.value.special_small_block_size === 'ON') {
+      <button
+        type="button"
+        class="customize-link"
+        [attr.aria-label]="
+          showCustomizeSpecialSmallBlockSize
+            ? ('Hide special vdev threshold customization' | translate)
+            : form.value.special_small_block_size_custom
+              ? ('Set special vdev threshold, current value is ' + (form.value.special_small_block_size_custom | ixFileSize) | translate)
+              : ('Set special vdev threshold' | translate)
+        "
+        (click)="toggleCustomizeSpecialSmallBlockSize()"
+      >
+        @if (showCustomizeSpecialSmallBlockSize) {
+          {{ 'Hide Threshold' | translate }}
+        } @else if (form.value.special_small_block_size_custom) {
+          {{ 'Set Threshold' | translate }} ({{ form.value.special_small_block_size_custom | ixFileSize }})
+        } @else {
+          {{ 'Set Threshold' | translate }}
+        }
+      </button>
+    }
+
+    @if (form.value.special_small_block_size === 'ON' && showCustomizeSpecialSmallBlockSize) {
+      <ix-input
+        formControlName="special_small_block_size_custom"
+        [label]="'Threshold' | translate"
+        [tooltip]="helptext.specialSmallBlocksCustomTooltip | translate"
+        [required]="true"
+        [parse]="formatter.memorySizeParsing"
+        [format]="formatter.memorySizeFormatting"
+      ></ix-input>
+    }
   </ix-fieldset>
 }

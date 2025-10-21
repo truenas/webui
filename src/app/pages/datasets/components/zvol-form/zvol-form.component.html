@@ -150,6 +150,62 @@
               </div>
             </ix-editable>
           </ix-details-item>
+
+          <ix-details-item
+            [label]="'Use Metadata (Special) VDEVs' | translate"
+            [tooltip]="helptext.useSpecialVdevsTooltip | translate"
+          >
+            <ix-editable>
+              <div view>
+                {{ getOptionLabel(specialSmallBlockSizeOptions, form.controls.special_small_block_size.value) }}
+                @if (form.value.special_small_block_size === 'ON' && form.value.special_small_block_size_custom) {
+                  <span> ({{ form.value.special_small_block_size_custom | ixFileSize }})</span>
+                }
+              </div>
+              <div edit>
+                <ix-select
+                  formControlName="special_small_block_size"
+                  [attr.aria-label]="'Use Metadata (Special) VDEVs' | translate"
+                  [options]="specialSmallBlockSizeOptions$"
+                  [required]="true"
+                ></ix-select>
+
+                @if (form.value.special_small_block_size === 'ON') {
+                  <button
+                    type="button"
+                    class="customize-link"
+                    [attr.aria-label]="
+                      showCustomizeSpecialSmallBlockSize
+                        ? ('Hide special vdev threshold customization' | translate)
+                        : form.value.special_small_block_size_custom
+                          ? ('Set special vdev threshold, current value is ' + (form.value.special_small_block_size_custom | ixFileSize) | translate)
+                          : ('Set special vdev threshold' | translate)
+                    "
+                    (click)="toggleCustomizeSpecialSmallBlockSize()"
+                  >
+                    @if (showCustomizeSpecialSmallBlockSize) {
+                      {{ 'Hide Threshold' | translate }}
+                    } @else if (form.value.special_small_block_size_custom) {
+                      {{ 'Set Threshold' | translate }} ({{ form.value.special_small_block_size_custom | ixFileSize }})
+                    } @else {
+                      {{ 'Set Threshold' | translate }}
+                    }
+                  </button>
+                }
+
+                @if (form.value.special_small_block_size === 'ON' && showCustomizeSpecialSmallBlockSize) {
+                  <ix-input
+                    formControlName="special_small_block_size_custom"
+                    [label]="'Threshold' | translate"
+                    [tooltip]="helptext.specialSmallBlocksCustomTooltip | translate"
+                    [required]="true"
+                    [parse]="formatter.memorySizeParsing"
+                    [format]="formatter.memorySizeFormatting"
+                  ></ix-input>
+                }
+              </div>
+            </ix-editable>
+          </ix-details-item>
         </ix-details-table>
       </ix-fieldset>
 
