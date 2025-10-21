@@ -129,14 +129,14 @@ describe('SshKeypairCardComponent', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [10]);
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
-      expect.not.objectContaining({
-        secondaryCheckbox: expect.anything(),
+      expect.objectContaining({
+        message: 'Are you sure you want to delete the <b>test1234</b>?',
       }),
     );
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: false }]);
   });
 
-  it('shows cascade checkbox when keypair is used by an SSH connection', async () => {
+  it('automatically cascades delete when keypair is used by SSH Connections', async () => {
     const usedByResponse = [{
       title: 'SSH Connection (test-connection)',
       unbind_method: 'keychaincredential.update',
@@ -148,7 +148,7 @@ describe('SshKeypairCardComponent', () => {
       }
       return of(null);
     });
-    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of({ confirmed: true, secondaryCheckbox: true }));
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true) as never);
     const refetchSpy = jest.spyOn(spectator.inject(KeychainCredentialService).refetchSshConnections, 'next');
 
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
@@ -158,33 +158,11 @@ describe('SshKeypairCardComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [10]);
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
       expect.objectContaining({
-        secondaryCheckbox: true,
+        message: 'The SSH Keypair <b>test1234</b> is being used by SSH Connections.<br>Deleting it will also delete all associated SSH Connections.',
       }),
     );
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: true }]);
     expect(refetchSpy).toHaveBeenCalled();
-  });
-
-  it('deletes keypair without cascade when user does not check the box even if in use', async () => {
-    const usedByResponse = [{
-      title: 'SSH Connection (test-connection)',
-      unbind_method: 'keychaincredential.update',
-    }];
-
-    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
-      if (method === 'keychaincredential.used_by') {
-        return of(usedByResponse);
-      }
-      return of(null);
-    });
-    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of({ confirmed: true, secondaryCheckbox: false }));
-
-    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete' });
-
-    // Should still attempt delete with cascade: false (backend will show error)
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: false }]);
   });
 
   it('checks when "Download" button is pressed', async () => {

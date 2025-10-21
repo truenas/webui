@@ -5,7 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { EMPTY, switchMap, filter, tap } from 'rxjs';
+import { switchMap, filter, tap, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -156,16 +156,18 @@ export class SshConnectionCardComponent implements OnInit {
 
           // First, delete the SSH connection (cascade: false since cascade doesn't work in reverse direction)
           return this.api.call('keychaincredential.delete', [credential.id, { cascade: false }]).pipe(
-            switchMap(() => {
+            tap(() => {
               // If user wants to delete the associated keypair, delete it separately
               if (shouldDeleteKeypair && keypairId) {
-                return this.api.call('keychaincredential.delete', [keypairId, { cascade: false }]).pipe(
+                this.api.call('keychaincredential.delete', [keypairId, { cascade: false }]).pipe(
                   tap(() => {
                     this.keychainCredentialService.refetchSshKeys.next();
                   }),
-                );
+                  this.errorHandler.withErrorHandler(),
+                  take(1),
+                  untilDestroyed(this),
+                ).subscribe();
               }
-              return EMPTY;
             }),
             this.loader.withLoader(),
             this.errorHandler.withErrorHandler(),
