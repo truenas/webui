@@ -1,3 +1,4 @@
+import { TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output, computed, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -30,6 +31,7 @@ import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/booten
     RequiresRolesDirective,
     MatMenuItem,
     TranslateModule,
+    TitleCasePipe,
   ],
 })
 export class BootenvNodeItemComponent {
