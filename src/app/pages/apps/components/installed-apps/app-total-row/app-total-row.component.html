@@ -1,0 +1,26 @@
+<div class="cell cell-checkbox"></div>
+<div class="cell cell-name">
+  <strong>{{ 'Overall Utilization' | translate }}</strong>
+</div>
+<div class="cell cell-status"></div>
+<div class="cell cell-cpu" [matTooltip]="'Total percentage of core utilization across all apps' | translate">
+  <strong>{{ totalCpu().toFixed(0) }}%</strong>
+</div>
+<div class="cell cell-ram" [matTooltip]="'Total memory usage across all apps' | translate">
+  <strong>{{ totalMemory() | ixFileSize }}</strong>
+</div>
+<div class="cell cell-io" [matTooltip]="'Total block I/O read and writes across all apps' | translate">
+  <strong>
+    {{ totalBlkioRead() | ixFileSize }} - {{ totalBlkioWrite() | ixFileSize }}
+  </strong>
+</div>
+<div class="cell cell-network" [matTooltip]="'Total incoming / outgoing network traffic across all apps' | translate">
+  <strong>
+    {{ totalIncomingTrafficBits() | ixNetworkSpeed }}
+    -
+    {{ totalOutgoingTrafficBits() | ixNetworkSpeed }}
+  </strong>
+</div>
+<div class="cell cell-update"></div>
+<div class="cell cell-action"></div>
+<div class="cell-clickable"></div>

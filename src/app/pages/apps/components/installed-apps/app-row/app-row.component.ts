@@ -75,6 +75,10 @@ export class AppRowComponent {
     return this.stats().networks.reduce((sum, stats) => sum + this.bytesToBits(stats.tx_bytes), 0);
   });
 
+  readonly isExternalApp = computed(() => {
+    return this.app().source === 'external';
+  });
+
   toggleAppChecked(): void {
     this.selectionChange.emit();
   }

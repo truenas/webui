@@ -1,11 +1,13 @@
 <div class="cell cell-checkbox">
-  <mat-checkbox
-    color="primary"
-    [ixTest]="app().name"
-    [checked]="selected()"
-    (click)="$event.stopPropagation()"
-    (change)="toggleAppChecked()"
-  ></mat-checkbox>
+  @if (!isExternalApp()) {
+    <mat-checkbox
+      color="primary"
+      [ixTest]="app().name"
+      [checked]="selected()"
+      (click)="$event.stopPropagation()"
+      (change)="toggleAppChecked()"
+    ></mat-checkbox>
+  }
 </div>
 <div class="cell cell-name">
   <div class="name">
@@ -58,44 +60,58 @@
   }
 </div>
 <div class="cell cell-update">
-  <ix-app-update-cell [app]="app()" [showIcon]="true"></ix-app-update-cell>
+  @if (!isExternalApp()) {
+    <ix-app-update-cell [app]="app()" [showIcon]="true"></ix-app-update-cell>
+  } @else {
+    <span class="external-label">{{ 'External' | translate }}</span>
+  }
 </div>
 <div class="cell cell-action">
-  @if (isAppStopped()) {
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-icon-button
-      matTooltipPosition="above"
-      [ixTest]="[app().name, 'start']"
-      [matTooltip]="'Start' | translate"
-      [disabled]="inProgress()"
-      (click)="start(); $event.stopPropagation()"
-    >
-      <ix-icon name="mdi-play-circle"></ix-icon>
-    </button>
-  } @else {
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-icon-button
-      matTooltipPosition="above"
-      [ixTest]="[app().name, 'restart']"
-      [attr.aria-label]="'Restart App' | translate"
-      [matTooltip]="'Restart App' | translate"
-      (click)="restart(); $event.stopPropagation()"
-    >
-      <ix-icon name="mdi-restart"></ix-icon>
-    </button>
+  @if (!isExternalApp()) {
+    @if (isAppStopped()) {
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-icon-button
+        matTooltipPosition="above"
+        [ixTest]="[app().name, 'start']"
+        [matTooltip]="'Start' | translate"
+        [disabled]="inProgress()"
+        (click)="start(); $event.stopPropagation()"
+      >
+        <ix-icon name="mdi-play-circle"></ix-icon>
+      </button>
+    } @else {
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-icon-button
+        matTooltipPosition="above"
+        [ixTest]="[app().name, 'restart']"
+        [attr.aria-label]="'Restart App' | translate"
+        [matTooltip]="'Restart App' | translate"
+        (click)="restart(); $event.stopPropagation()"
+      >
+        <ix-icon name="mdi-restart"></ix-icon>
+      </button>
 
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-icon-button
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-icon-button
+        matTooltipPosition="above"
+        [ixTest]="[app().name, 'stop']"
+        [matTooltip]="'Stop' | translate"
+        (click)="stop(); $event.stopPropagation()"
+      >
+        <ix-icon name="mdi-stop-circle"></ix-icon>
+      </button>
+    }
+  } @else {
+    <span
+      class="external-controls-message"
       matTooltipPosition="above"
-      [ixTest]="[app().name, 'stop']"
-      [matTooltip]="'Stop' | translate"
-      (click)="stop(); $event.stopPropagation()"
+      [matTooltip]="'Managed externally via Docker CLI, Portainer, or other tools' | translate"
     >
-      <ix-icon name="mdi-stop-circle"></ix-icon>
-    </button>
+      {{ 'Read-only' | translate }}
+    </span>
   }
 </div>
 

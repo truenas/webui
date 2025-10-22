@@ -1,0 +1,63 @@
+@import 'scss-imports/variables';
+
+:host {
+  align-items: center;
+  background-color: var(--alt-bg1);
+  border-bottom: 2px solid var(--primary);
+  color: var(--fg1);
+  display: grid;
+  font-weight: 600;
+  grid-gap: 8px;
+  grid-template-columns: 5% minmax(18%, auto) 10.5% 4% 7% 10.5% 11% 13% 10%;
+  min-height: 48px;
+  min-width: fit-content;
+  position: sticky;
+  top: 48px;
+  width: 100%;
+  z-index: 1;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: 45px auto 0 0 0 0 0 0;
+  }
+
+  .cell {
+    align-items: center;
+    display: inline-flex;
+    min-height: 48px;
+
+    @media (max-width: $breakpoint-tablet) {
+      display: none;
+    }
+
+    &:first-child {
+      left: 0;
+      position: sticky;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+      }
+    }
+
+    &:nth-child(2) {
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+      }
+    }
+  }
+
+  .cell-checkbox {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .cell-name {
+    padding-left: 6px;
+  }
+
+  .cell-clickable {
+    @media (max-width: $breakpoint-tablet) {
+      display: inline;
+    }
+    display: none;
+  }
+}

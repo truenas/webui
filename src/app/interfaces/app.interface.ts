@@ -80,6 +80,10 @@ export interface App {
   migrated: boolean;
   custom_app: boolean;
   /**
+   * Source of the app deployment
+   */
+  source?: 'truenas' | 'external';
+  /**
    * Present with `retrieve_config` query param.
    */
   config?: Record<string, ChartFormValue>;
@@ -173,6 +177,11 @@ export type AppQueryParams = QueryParams<App, {
      * is a boolean which can be set to retrieve app configuration used to install/manage app.
      */
     retrieve_config?: boolean;
+
+    /**
+     * include_external is a boolean which can be set to include external Docker containers not managed by TrueNAS.
+     */
+    include_external?: boolean;
   };
 }>;
 

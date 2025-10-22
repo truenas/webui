@@ -123,3 +123,14 @@
   }
   display: none;
 }
+
+.external-label {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.external-controls-message {
+  color: var(--text-secondary);
+  cursor: help;
+  font-size: 0.875rem;
+}

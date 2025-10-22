@@ -94,25 +94,67 @@
     (matSortChange)="setDatasourceWithSort($event)"
   >
     <div class="app-inner">
-      <div class="apps-rows">
-        @for (app of filteredApps; track app.name) {
-          <ix-app-row
-            tabindex="0"
-            [app]="app"
-            [stats]="getAppStats(app.name) | async"
-            [class.selected]="selectedApp?.id === app.id"
-            [selected]="selection.isSelected(app.id)"
-            [job]="appJobs.get(app.name)"
-            (startApp)="start(app.name)"
-            (stopApp)="stop(app.name)"
-            (restartApp)="restart(app.name)"
-            (clickStatus)="openStatusDialog(app.name)"
-            (selectionChange)="selection.toggle(app.id)"
-            (click)="viewDetails(app)"
-            (keydown.enter)="viewDetails(app)"
-          ></ix-app-row>
-        }
-      </div>
+      <!-- Total Row -->
+      @if (filteredApps.length) {
+        <ix-app-total-row [allStats]="getAllStats() | async"></ix-app-total-row>
+      }
+
+      <!-- TrueNAS Apps Section -->
+      @if (truenasApps.length) {
+        <div class="apps-section">
+          <div class="section-header">
+            <h3>{{ 'TrueNAS Apps' | translate }}</h3>
+          </div>
+          <div class="apps-rows">
+            @for (app of truenasApps; track app.name) {
+              <ix-app-row
+                tabindex="0"
+                [app]="app"
+                [stats]="getAppStats(app.name) | async"
+                [class.selected]="selectedApp?.id === app.id"
+                [selected]="selection.isSelected(app.id)"
+                [job]="appJobs.get(app.name)"
+                (startApp)="start(app.name)"
+                (stopApp)="stop(app.name)"
+                (restartApp)="restart(app.name)"
+                (clickStatus)="openStatusDialog(app.name)"
+                (selectionChange)="selection.toggle(app.id)"
+                (click)="viewDetails(app)"
+                (keydown.enter)="viewDetails(app)"
+              ></ix-app-row>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- External Apps Section -->
+      @if (externalApps.length) {
+        <div class="apps-section">
+          <div class="section-header">
+            <h3>{{ 'External Apps' | translate }}</h3>
+            <p class="section-description">{{ 'Apps deployed via Docker CLI, Dockage, Portainer, or other external tools' | translate }}</p>
+          </div>
+          <div class="apps-rows">
+            @for (app of externalApps; track app.name) {
+              <ix-app-row
+                tabindex="0"
+                [app]="app"
+                [stats]="getAppStats(app.name) | async"
+                [class.selected]="selectedApp?.id === app.id"
+                [selected]="selection.isSelected(app.id)"
+                [job]="appJobs.get(app.name)"
+                (startApp)="start(app.name)"
+                (stopApp)="stop(app.name)"
+                (restartApp)="restart(app.name)"
+                (clickStatus)="openStatusDialog(app.name)"
+                (selectionChange)="selection.toggle(app.id)"
+                (click)="viewDetails(app)"
+                (keydown.enter)="viewDetails(app)"
+              ></ix-app-row>
+            }
+          </div>
+        </div>
+      }
     </div>
   </div>
 }

@@ -67,6 +67,7 @@ export class ApplicationsService {
       extra: {
         retrieve_config: true,
         host_ip: this.window.location.hostname,
+        include_external: true,
       },
     }]);
   }

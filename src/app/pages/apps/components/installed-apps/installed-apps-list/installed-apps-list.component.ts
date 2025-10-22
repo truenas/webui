@@ -14,7 +14,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, forkJoin, map, Observable, switchMap,
+  combineLatest, filter, forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
 import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
 import { AppState } from 'app/enums/app-state.enum';
@@ -41,6 +41,7 @@ import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { AppBulkUpdateComponent } from 'app/pages/apps/components/installed-apps/app-bulk-update/app-bulk-update.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
+import { AppTotalRowComponent } from 'app/pages/apps/components/installed-apps/app-total-row/app-total-row.component';
 import { InstalledAppsListBulkActionsComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list-bulk-actions/installed-apps-list-bulk-actions.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -77,6 +78,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     MatColumnDef,
     MatSortHeader,
     AppRowComponent,
+    AppTotalRowComponent,
     EmptyComponent,
     MatTooltip,
     TestDirective,
@@ -134,6 +136,14 @@ export class InstalledAppsListComponent implements OnInit {
   get filteredApps(): App[] {
     return this.dataSource
       .filter((app) => app?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase()));
+  }
+
+  get truenasApps(): App[] {
+    return this.filteredApps.filter((app) => app.source !== 'external');
+  }
+
+  get externalApps(): App[] {
+    return this.filteredApps.filter((app) => app.source === 'external');
   }
 
   get allAppsChecked(): boolean {
@@ -495,5 +505,16 @@ export class InstalledAppsListComponent implements OnInit {
 
   getAppStats(name: string): Observable<AppStats> {
     return this.appsStats.getStatsForApp(name);
+  }
+
+  getAllStats(): Observable<AppStats[]> {
+    if (!this.filteredApps.length) {
+      return of([]);
+    }
+    return combineLatest(
+      this.filteredApps.map((app) => this.getAppStats(app.name)),
+    ).pipe(
+      map((stats) => stats.filter((stat) => !!stat)),
+    );
   }
 }
