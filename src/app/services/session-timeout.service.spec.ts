@@ -102,4 +102,21 @@ describe('SessionTimeoutService', () => {
     expect(window.removeEventListener).toHaveBeenCalledWith('mouseover', expect.any(Function), false);
     expect(window.removeEventListener).toHaveBeenCalledWith('keypress', expect.any(Function), false);
   });
+
+  it('shows session expired message with snackbar', () => {
+    const snackbar = spectator.inject(SnackbarService);
+    jest.spyOn(snackbar, 'open');
+
+    spectator.service.showSessionExpiredMessage();
+
+    expect(snackbar.open).toHaveBeenCalledWith({
+      message: 'Session expired',
+      icon: 'mdi-clock-alert-outline',
+      iconCssColor: 'var(--orange)',
+      duration: 99999,
+      button: {
+        title: 'Close',
+      },
+    });
+  });
 });

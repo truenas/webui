@@ -8,6 +8,7 @@ import {
   catchError,
   combineLatest,
   filter,
+  finalize,
   map,
   Observable,
   of,
@@ -249,9 +250,8 @@ export class AuthService implements OnDestroy {
         this.pendingAuthData = null;
         this.loggedInUser$.next(null); // Clear user data on logout
         this.cachedGlobalTwoFactorConfig$.next(null); // Clear cached 2FA config
-        // Reset manual logout flag after a short delay to allow app.component to read it
-        setTimeout(() => this.isManualLogout.next(false), 100);
       }),
+      finalize(() => this.isManualLogout.next(false)),
     );
   }
 
