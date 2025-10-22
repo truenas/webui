@@ -5,12 +5,12 @@ import {
 } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils/get-disk-type-size-map.utils';
@@ -38,17 +38,19 @@ export class InventoryComponent implements OnInit {
 
   protected sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
   protected readonly DiskType = DiskType;
+  protected readonly EncryptionType = EncryptionType;
 
   protected isLoading$ = this.poolManagerStore.isLoading$;
   protected hasDisks$ = this.poolManagerStore.inventory$.pipe(
     map((unusedDisks) => unusedDisks.length),
   );
 
+  protected encryptionType$ = this.poolManagerStore.encryptionType$;
+
   ngOnInit(): void {
-    this.isLoading$.pipe(
-      filter((isLoading) => isLoading !== undefined && !isLoading),
-      switchMap(() => this.poolManagerStore.inventory$),
-    ).pipe(untilDestroyed(this))
+    // Continuously react to inventory changes (including encryption type changes)
+    this.poolManagerStore.inventory$
+      .pipe(untilDestroyed(this))
       .subscribe((unusedDisks) => {
         this.sizeDisksMap = getDiskTypeSizeMap(unusedDisks);
         this.cdr.markForCheck();

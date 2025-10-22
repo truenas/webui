@@ -4,6 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { DndModule } from 'ngx-drag-drop';
 import { of } from 'rxjs';
+import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
@@ -50,6 +51,7 @@ describe('ManualSelectionDisksComponent', () => {
         inventory$: of([
           {
             name: 'sda',
+            sed_status: SedStatus.Unlocked,
             enclosure: {
               id: 'id1',
               drive_bay_number: 1,
@@ -57,9 +59,11 @@ describe('ManualSelectionDisksComponent', () => {
           },
           {
             name: 'sdb',
+            sed_status: SedStatus.Unsupported,
           },
           {
             name: 'sdc',
+            sed_status: SedStatus.Uninitialized,
           },
         ] as DetailsDisk[]),
       }),
@@ -114,5 +118,23 @@ describe('ManualSelectionDisksComponent', () => {
 
     const disks = spectator.queryAll('.unused-disk');
     expect(disks).toHaveLength(1);
+  });
+
+  it('filters disks by SED Capable when sedCapable filter is enabled', async () => {
+    const filters = spectator.query(ManualSelectionDiskFiltersComponent)!;
+    filters.filtersUpdated.emit({
+      sedCapable: true,
+    } as ManualDiskSelectionFilters);
+    spectator.detectChanges();
+
+    const tree = await loader.getHarness(TreeHarness);
+    const nodes = await tree.getNodes();
+
+    await nodes[0].expand();
+    await nodes[1].expand();
+
+    const disks = spectator.queryAll('.unused-disk');
+    // Should show only sda and sdc (both SED capable)
+    expect(disks).toHaveLength(2);
   });
 });

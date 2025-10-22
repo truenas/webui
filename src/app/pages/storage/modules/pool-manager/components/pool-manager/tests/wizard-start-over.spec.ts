@@ -231,7 +231,11 @@ describe('PoolManagerComponent – start over functionality', () => {
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('General Info');
     expect(await wizard.getStepValues()).toStrictEqual({
       Name: '',
-      Encryption: false,
+      Encryption: 'None',
+    });
+    // Fill in name before proceeding
+    await wizard.fillStep({
+      Name: 'newpool',
     });
     await wizard.clickNext();
 
@@ -296,7 +300,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     });
 
     expect(await wizard.getConfigurationPreviewSummary()).toEqual({
-      'Name:': 'None',
+      'Name:': 'newpool',
       'Encryption:': 'None',
       'Total Raw Capacity:': '0 B',
     });

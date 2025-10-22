@@ -12,6 +12,7 @@ import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { TopologyCategoryDescriptionPipe } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
 import {
   PoolManagerStore,
@@ -43,9 +44,11 @@ export class ConfigurationPreviewComponent {
 
   protected readonly vdevTypeLabels = vdevTypeLabels;
   readonly vDevType = VDevType;
+  protected readonly EncryptionType = EncryptionType;
 
   protected name$ = this.store.name$;
   protected encryption$ = this.store.encryption$;
+  protected encryptionType$ = this.store.encryptionType$;
 
   protected topology$ = this.store.topology$.pipe(
     map((topology) => {

@@ -30,6 +30,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
 import { ManualDiskDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
+import { isSedCapable } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import { ManualSelectionDiskFiltersComponent } from './manual-selection-disk-filters/manual-selection-disk-filters.component';
 
 interface EnclosureDisk extends DetailsDisk {
@@ -78,6 +79,7 @@ export class ManualSelectionDisksComponent implements OnInit {
   protected dragToggleStore$ = inject(ManualDiskDragToggleStore);
 
   readonly enclosures = input.required<Enclosure[]>();
+  readonly isSedEncryption = input<boolean>(false);
 
   dataSource: NestedTreeDataSource<DiskOrGroup>;
   treeControl: TreeExpansion<DiskOrGroup, string> = createNestedTreeControl<DiskOrGroup, string>(
@@ -175,8 +177,9 @@ export class ManualSelectionDisksComponent implements OnInit {
             || diskNameNormalized.includes(searchStringNormalized)
           )
         : true;
+      const sedCapableMatches = filterValues.sedCapable ? isSedCapable(disk) : true;
 
-      return typeMatches && sizeMatches && searchMatches;
+      return typeMatches && sizeMatches && searchMatches && sedCapableMatches;
     });
   }
 
