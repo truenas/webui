@@ -21,7 +21,7 @@ export class SnackbarService {
     const config: MatSnackBarConfig = {
       announcementMessage: options.message,
       politeness: options.politeness ?? 'polite',
-      duration: options.duration ?? 5000,
+      duration: options.duration ?? 4000,
       verticalPosition: options.verticalPosition ?? 'bottom',
       panelClass: options.panelClass,
       data: {
@@ -56,7 +56,6 @@ export class SnackbarService {
       icon: iconMarker('mdi-alert-circle'),
       iconCssColor: 'var(--red)',
       politeness: 'assertive',
-      duration: 4000,
       button: {
         title: this.translate.instant('Close'),
       },

@@ -25,7 +25,7 @@ describe('SnackbarService', () => {
         announcementMessage: 'All good',
         politeness: 'assertive',
         panelClass: 'ix-snackbar-high-priority',
-        duration: 5000,
+        duration: 4000,
         verticalPosition: 'top',
         data: {
           message: 'All good',

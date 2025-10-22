@@ -113,7 +113,6 @@ describe('SessionTimeoutService', () => {
       message: 'Session expired',
       icon: 'mdi-clock-alert-outline',
       iconCssColor: 'var(--orange)',
-      duration: 99999,
       button: {
         title: 'Close',
       },

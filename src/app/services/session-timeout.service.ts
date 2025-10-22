@@ -92,7 +92,6 @@ export class SessionTimeoutService {
       message: this.translate.instant('Session expired'),
       icon: iconMarker('mdi-clock-alert-outline'),
       iconCssColor: 'var(--orange)',
-      duration: 99999,
       button: {
         title: this.translate.instant('Close'),
       },
