@@ -30,7 +30,7 @@
           [disabled]="!app().upgrade_available"
           (click)="updateButtonPressed()"
         >
-          {{ 'Update' | translate }}
+          {{ (isExternalApp() ? 'Update Image' : 'Update') | translate }}
         </button>
         @if (!isExternalApp()) {
           <button
