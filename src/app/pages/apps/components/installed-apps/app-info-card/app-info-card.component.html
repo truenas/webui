@@ -3,8 +3,8 @@
     <h3 mat-card-title>
       {{ 'Application Info' | translate }}
     </h3>
-    @if (!isExternalApp()) {
-      <div class="actions">
+    <div class="actions">
+      @if (!isExternalApp()) {
         <button
           id="edit-app"
           mat-button
@@ -13,24 +13,26 @@
         >
           {{ 'Edit' | translate }}
         </button>
+      }
 
+      <button
+        mat-icon-button
+        ixTest="app-info-menu"
+        [matMenuTriggerFor]="appInfoMenu"
+      >
+        <ix-icon name="more_vert"></ix-icon>
+      </button>
+      <mat-menu #appInfoMenu="matMenu">
         <button
-          mat-icon-button
-          ixTest="app-info-menu"
-          [matMenuTriggerFor]="appInfoMenu"
+          *ixRequiresRoles="requiredRoles"
+          mat-menu-item
+          [ixTest]="[app().name, 'update']"
+          [disabled]="!app().upgrade_available"
+          (click)="updateButtonPressed()"
         >
-          <ix-icon name="more_vert"></ix-icon>
+          {{ 'Update' | translate }}
         </button>
-        <mat-menu #appInfoMenu="matMenu">
-          <button
-            *ixRequiresRoles="requiredRoles"
-            mat-menu-item
-            [ixTest]="[app().name, 'update']"
-            [disabled]="!app().upgrade_available"
-            (click)="updateButtonPressed()"
-          >
-            {{ 'Update' | translate }}
-          </button>
+        @if (!isExternalApp()) {
           <button
             *ixRequiresRoles="requiredRoles"
             mat-menu-item
@@ -38,9 +40,9 @@
             [disabled]="app().custom_app"
             (click)="openConvertDialog()"
           >{{ 'Convert to custom app' | translate}}</button>
-        </mat-menu>
-      </div>
-    }
+        }
+      </mat-menu>
+    </div>
   </mat-card-header>
   <mat-card-content>
     <div class="info-container">
