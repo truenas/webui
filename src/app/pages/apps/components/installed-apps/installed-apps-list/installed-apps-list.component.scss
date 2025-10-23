@@ -47,17 +47,10 @@
   display: flex;
   flex-direction: column;
 
-  &:not(:first-child) {
-    margin-top: 24px;
-  }
-
   .section-header {
     background-color: var(--bg1);
     border-bottom: 2px solid var(--primary);
     padding: 16px 12px 12px;
-    position: sticky;
-    top: 96px;
-    z-index: 2;
 
     h3 {
       color: var(--fg1);
@@ -101,7 +94,7 @@ ix-app-row,
   position: sticky;
   top: 0;
   width: 100%;
-  z-index: 1;
+  z-index: 3;
 
   > div {
     align-items: center;
