@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -50,6 +51,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
     IxIconComponent,
     RequiresRolesDirective,
     MatButton,
+    MatTooltip,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableHeadComponent,

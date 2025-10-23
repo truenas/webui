@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+import { NgClass, TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -22,7 +22,7 @@ export interface VmwareState {
   templateUrl: './vmware-status-cell.component.html',
   styleUrls: ['./vmware-status-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatButton, MatTooltip, NgClass, TranslateModule],
+  imports: [MatButton, MatTooltip, NgClass, TranslateModule, TitleCasePipe],
 })
 export class VmwareStatusCellComponent {
   private translate = inject(TranslateService);

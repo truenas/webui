@@ -1,5 +1,5 @@
-import { Directive, TemplateRef, ViewContainerRef, OnInit, input, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, Directive, TemplateRef, ViewContainerRef, OnInit, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -10,11 +10,11 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
  * <div *isHa="true"> Shown on HA licensed systems </div>
  * ```
  */
-@UntilDestroy()
 @Directive({
   selector: '[isHa]',
 })
 export class IsHaDirective implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private templateRef = inject<TemplateRef<unknown>>(TemplateRef);
   private viewContainer = inject(ViewContainerRef);
   private store$ = inject<Store<AppState>>(Store);
@@ -23,7 +23,7 @@ export class IsHaDirective implements OnInit {
 
   ngOnInit(): void {
     this.store$.select(selectIsHaLicensed).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((isHa) => {
       this.viewContainer.clear();
 

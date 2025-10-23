@@ -163,6 +163,11 @@ export class NfsCardComponent implements OnInit {
       label: this.translate.instant('Config Service'),
       action: () => this.configureService(),
     },
+    {
+      id: 'view-sessions',
+      label: this.translate.instant('View Sessions'),
+      action: () => this.viewSessions(),
+    },
   ]);
 
   readonly primaryAction: IxCardAction = {
@@ -276,5 +281,9 @@ export class NfsCardComponent implements OnInit {
       .subscribe({
         complete: () => this.snackbar.success(this.translate.instant('Service stopped')),
       });
+  }
+
+  private viewSessions(): void {
+    this.router.navigate(['/sharing', 'nfs', 'sessions']);
   }
 }

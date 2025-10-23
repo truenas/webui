@@ -1,10 +1,11 @@
-import { Directive, HostListener, input, inject } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { Directive, input, inject } from '@angular/core';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 
-@UntilDestroy()
 @Directive({
   selector: '[ixNavigateAndHighlight]',
+  host: {
+    '(click)': 'onClick()',
+  },
 })
 export class NavigateAndHighlightDirective {
   private navigateAndHighlight = inject(NavigateAndHighlightService);
@@ -12,7 +13,6 @@ export class NavigateAndHighlightDirective {
   readonly navigateRoute = input.required<string[]>();
   readonly navigateHash = input.required<string>();
 
-  @HostListener('click')
   onClick(): void {
     this.navigateAndHighlight.navigateAndHighlight(this.navigateRoute(), this.navigateHash());
   }

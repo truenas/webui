@@ -1,23 +1,23 @@
-import { EventEmitter, Injectable, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, EventEmitter, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store, select } from '@ngrx/store';
 import { NewFeatureIndicator } from 'app/directives/new-feature-indicator/new-feature-indicator.interface';
 import { AppState } from 'app/store';
 import { shownNewIndicatorKeysUpdated } from 'app/store/preferences/preferences.actions';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class NewFeatureIndicatorService {
+  private readonly destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
 
   onShown = new EventEmitter<NewFeatureIndicator>();
   private shownIndicatorKeys: string[] = [];
 
   constructor() {
-    this.store$.pipe(select(selectPreferencesState), untilDestroyed(this)).subscribe((prefs) => {
+    this.store$.pipe(select(selectPreferencesState), takeUntilDestroyed(this.destroyRef)).subscribe((prefs) => {
       this.shownIndicatorKeys = prefs?.preferences?.shownNewFeatureIndicatorKeys || [];
     });
   }

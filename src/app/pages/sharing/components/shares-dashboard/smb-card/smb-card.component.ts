@@ -18,6 +18,7 @@ import {
   IxMenuItem,
 } from 'truenas-ui';
 import { smbCardEmptyConfig } from 'app/constants/empty-configs';
+import { AuditService } from 'app/enums/audit.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -54,6 +55,7 @@ import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { UrlOptionsService } from 'app/services/url-options.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -87,6 +89,7 @@ export class SmbCardComponent implements OnInit {
   private store$ = inject<Store<ServicesState>>(Store);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
+  private urlOptions = inject(UrlOptionsService);
 
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
@@ -194,6 +197,16 @@ export class SmbCardComponent implements OnInit {
       id: 'config-service',
       label: this.translate.instant('Config Service'),
       action: () => this.configureService(),
+    },
+    {
+      id: 'view-sessions',
+      label: this.translate.instant('View Sessions'),
+      action: () => this.viewSessions(),
+    },
+    {
+      id: 'view-logs',
+      label: this.translate.instant('View Logs'),
+      action: () => this.viewLogs(),
     },
   ]);
 
@@ -351,5 +364,19 @@ export class SmbCardComponent implements OnInit {
       .subscribe({
         complete: () => this.snackbar.success(this.translate.instant('Service stopped')),
       });
+  }
+
+  private viewSessions(): void {
+    this.router.navigate(['/sharing', 'smb', 'status', 'sessions']);
+  }
+
+  private viewLogs(): void {
+    const url = this.urlOptions.buildUrl('/system/audit', {
+      searchQuery: {
+        isBasicQuery: false,
+        filters: [['service', '=', AuditService.Smb]],
+      },
+    });
+    this.router.navigateByUrl(url);
   }
 }

@@ -46,6 +46,7 @@ import {
   specialSmallBlockSizeOptions,
 } from 'app/pages/datasets/components/dataset-form/utils/special-small-block-size-options.constant';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
+import { getUserProperty } from 'app/pages/datasets/utils/dataset.utils';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -245,8 +246,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       specialSmallBlockSize = this.formatter.convertHumanStringToNum(specialSmallBlockSize.toString());
     }
 
+    const comments = getUserProperty<string>(existing, 'comments');
     this.form.patchValue({
-      comments: existing.comments?.source === ZfsPropertySource.Local ? existing.comments.value : '',
+      comments: comments?.source === ZfsPropertySource.Local ? comments.value : '',
       sync: getFieldValue(existing.sync, this.parent()),
       compression: getFieldValue(existing.compression, this.parent()),
       atime: getFieldValue(existing.atime, this.parent()),

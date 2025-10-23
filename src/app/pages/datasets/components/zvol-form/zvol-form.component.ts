@@ -49,6 +49,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
+import { getUserProperty } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -282,7 +283,8 @@ export class ZvolFormComponent implements OnInit {
 
   private copyParentProperties(parent: Dataset): void {
     this.form.controls.name.setValue(parent.name);
-    this.form.controls.comments.setValue(parent.comments?.value || '');
+    const comments = getUserProperty<string>(parent, 'comments');
+    this.form.controls.comments.setValue(comments?.value || '');
 
     this.form.controls.volsize.setValue(parent.volsize.rawvalue);
   }
