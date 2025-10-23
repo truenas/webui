@@ -12,6 +12,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
@@ -41,6 +42,7 @@ export class SetAdminPasswordFormComponent {
   private errorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   private signinStore = inject(SigninStore);
+  private snackbar = inject(SnackbarService);
 
   isLoading$ = this.signinStore.isLoading$;
 
@@ -76,7 +78,7 @@ export class SetAdminPasswordFormComponent {
         if (loginResult === LoginResult.Success) {
           this.signinStore.handleSuccessfulLogin();
         } else {
-          this.signinStore.showSnackbar(this.translate.instant('Login error. Please try again.'));
+          this.snackbar.error(this.translate.instant('Login error. Please try again.'));
         }
       },
       error: (error: unknown) => {

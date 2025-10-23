@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -13,6 +14,7 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
 export class WebSocketConnectionGuard {
   private wsManager = inject(WebSocketHandlerService);
   protected router = inject(Router);
+  private location = inject(Location);
   private matDialog = inject(MatDialog);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
@@ -41,7 +43,8 @@ export class WebSocketConnectionGuard {
     this.closeAllDialogs();
     if (!this.wsManager.isSystemShuttingDown) {
       // Store current URL before redirecting to signin so user can return after login
-      const currentUrl = this.window.location.pathname + this.window.location.search;
+      // Use location.path() which returns the path without base href and includes query params
+      const currentUrl = this.location.path();
       if (!isSigninUrl(currentUrl)) {
         this.window.sessionStorage.setItem('redirectUrl', currentUrl);
       }

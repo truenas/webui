@@ -1144,7 +1144,7 @@
   "Backup": "Sauvegarde",
   "Backup Config": "Sauvegarde de la configuration",
   "Backup Credential": "Identifiants de sauvegarde",
-  "Backup Credentials": "Informations d'identification de sauvegarde",
+  "Backup Credentials": "Informations d'identification de   sauvegarde",
   "Backup Tasks": "Tâches de sauvegarde",
   "Backup to Cloud or another TrueNAS via links below": "Sauvegarde vers le Cloud ou un autre TrueNAS via les liens ci-dessous",
   "Bandwidth": "Bande passante",

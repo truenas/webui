@@ -1,6 +1,5 @@
 import { fakeAsync, tick } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject, of } from 'rxjs';
@@ -9,6 +8,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { SessionExpiringDialog } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -42,7 +42,7 @@ describe('SessionTimeoutService', () => {
       mockProvider(WebSocketStatusService, {
         setReconnectAllowed: jest.fn(),
       }),
-      mockProvider(MatSnackBar),
+      mockProvider(SnackbarService),
       mockProvider(DialogService, {
         closeAllDialogs: jest.fn(),
       }),
@@ -101,5 +101,21 @@ describe('SessionTimeoutService', () => {
 
     expect(window.removeEventListener).toHaveBeenCalledWith('mouseover', expect.any(Function), false);
     expect(window.removeEventListener).toHaveBeenCalledWith('keypress', expect.any(Function), false);
+  });
+
+  it('shows session expired message with snackbar', () => {
+    const snackbar = spectator.inject(SnackbarService);
+    jest.spyOn(snackbar, 'open');
+
+    spectator.service.showSessionExpiredMessage();
+
+    expect(snackbar.open).toHaveBeenCalledWith({
+      message: 'Session expired',
+      icon: 'mdi-clock-alert-outline',
+      iconCssColor: 'var(--orange)',
+      button: {
+        title: 'Close',
+      },
+    });
   });
 });

@@ -309,6 +309,17 @@ describe('AuthService', () => {
       });
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.logout');
     });
+
+    it('sets isManualLogout to true during logout', async () => {
+      const isManualLogoutValues: boolean[] = [];
+      spectator.service.isManualLogout$.subscribe((value) => {
+        isManualLogoutValues.push(value);
+      });
+
+      await firstValueFrom(spectator.service.logout());
+
+      expect(isManualLogoutValues).toContain(true);
+    });
   });
 
   async function setUserRoles(roles: Role[]): Promise<void> {

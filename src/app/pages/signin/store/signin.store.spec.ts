@@ -1,4 +1,3 @@
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
@@ -17,7 +16,6 @@ import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailoverValidationService } from 'app/services/failover-validation.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -62,7 +60,6 @@ describe('SigninStore', () => {
       mockProvider(UpdateService, {
         hardRefreshIfNeeded: () => of(undefined),
       }),
-      mockProvider(SystemGeneralService),
       {
         provide: WINDOW,
         useValue: {
@@ -442,21 +439,6 @@ describe('SigninStore', () => {
     });
   });
 
-  describe('showSnackbar', () => {
-    it('displays a snackbar with the provided message', () => {
-      const snackbarSpy = jest.spyOn(spectator.inject(MatSnackBar), 'open');
-      const message = 'Test Message';
-
-      spectator.service.showSnackbar(message);
-
-      expect(snackbarSpy).toHaveBeenCalledWith(
-        message,
-        'Close',
-        { duration: 4000, verticalPosition: 'bottom' },
-      );
-    });
-  });
-
   describe('getLoginErrorMessage', () => {
     it('returns correct error message for NoAccess result', () => {
       const message = spectator.service.getLoginErrorMessage(LoginResult.NoAccess);
@@ -513,12 +495,12 @@ describe('SigninStore', () => {
         of({ success: false, error: 'Failover check failed' }),
       );
       jest.spyOn(spectator.service, 'setLoadingState');
-      jest.spyOn(spectator.service, 'showSnackbar');
+      const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'error');
 
       const result = await firstValueFrom(spectator.service.performFailoverChecksAndCompleteLogin());
       expect(result).toBe(LoginResult.NoAccess);
       expect(spectator.service.setLoadingState).toHaveBeenCalledWith(false);
-      expect(spectator.service.showSnackbar).toHaveBeenCalledWith('Failover check failed');
+      expect(snackbarSpy).toHaveBeenCalledWith('Failover check failed');
     });
 
     it('handles failover validation errors gracefully', async () => {
@@ -527,12 +509,12 @@ describe('SigninStore', () => {
         throwError(() => new Error('Network error')),
       );
       jest.spyOn(spectator.service, 'setLoadingState');
-      jest.spyOn(spectator.service, 'showSnackbar');
+      const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'error');
 
       const result = await firstValueFrom(spectator.service.performFailoverChecksAndCompleteLogin());
       expect(result).toBe(LoginResult.NoAccess);
       expect(spectator.service.setLoadingState).toHaveBeenCalledWith(false);
-      expect(spectator.service.showSnackbar).toHaveBeenCalledWith(
+      expect(snackbarSpy).toHaveBeenCalledWith(
         'Unable to check failover status. Please try again later or contact the system administrator.',
       );
     });
@@ -569,7 +551,7 @@ describe('SigninStore', () => {
       );
       jest.spyOn(api, 'call').mockReturnValueOnce(of({ enabled: false }));
       jest.spyOn(spectator.service, 'setLoadingState');
-      jest.spyOn(spectator.service, 'showSnackbar');
+      const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'error');
 
       spectator.service.handleSuccessfulLogin();
 
@@ -579,7 +561,7 @@ describe('SigninStore', () => {
       });
 
       expect(spectator.service.setLoadingState).toHaveBeenCalledWith(false);
-      expect(spectator.service.showSnackbar).toHaveBeenCalledWith('Failover check failed');
+      expect(snackbarSpy).toHaveBeenCalledWith('Failover check failed');
     });
   });
 
