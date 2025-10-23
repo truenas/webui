@@ -6,6 +6,9 @@ export const helptextNvmeOf = {
 Requires an Enterprise license, RDMA-capable system and network equipment.'),
   rdmaDisabledTooltip: T('Not enabled, because this system does not support RDMA.'),
   anaDisabledTooltip: T('Not enabled, because this feature requires an HA license.'),
+  implementationTooltip: T('Experimental. This option is geared towards experimentation with client compatibility. \
+Try this if having issues with certain clients, such as hypervisors that may require specific capabilities.'),
+  implementationDisabledTooltip: T('This field cannot be changed while the NVMe service is running. Please stop the service first.'),
 
   dhchapKeyTooltip: T('DH-CHAP key to be used to authenticate the host.'),
   noDhText: T("Don't use DH key exchange."),

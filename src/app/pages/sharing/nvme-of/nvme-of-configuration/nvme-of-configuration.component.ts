@@ -7,14 +7,17 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { finalize, forkJoin } from 'rxjs';
+import { finalize, forkJoin, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -24,6 +27,7 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -35,6 +39,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     TranslateModule,
     IxFieldsetComponent,
     IxInputComponent,
+    IxRadioGroupComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -59,14 +64,27 @@ export class NvmeOfConfigurationComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
   protected isLoading = signal(false);
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
+  protected readonly service = toSignal(this.store$.select(selectService(ServiceName.NvmeOf)));
 
   protected form = this.formBuilder.nonNullable.group({
     basenqn: [''],
     ana: [false],
     rdma: [false],
+    kernel: [true],
   });
 
   protected readonly helptext = helptextNvmeOf;
+
+  protected readonly implementationOptions$ = of([
+    {
+      label: this.translate.instant('Linux Kernel'),
+      value: true,
+    },
+    {
+      label: this.translate.instant('SPDK (userspace)'),
+      value: false,
+    },
+  ]);
 
   ngOnInit(): void {
     this.loadConfiguration();
@@ -91,6 +109,11 @@ export class NvmeOfConfigurationComponent implements OnInit {
 
       if (!this.isHaLicensed()) {
         this.form.controls.ana.disable();
+      }
+
+      const service = this.service();
+      if (service?.state === ServiceStatus.Running) {
+        this.form.controls.kernel.disable();
       }
     });
   }

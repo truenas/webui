@@ -325,6 +325,23 @@ html .ix-dark {
       --mat-radio-unselected-hover-icon-color: var(--primary);
       --mat-radio-unselected-icon-color: var(--primary);
     }
+
+    &.mat-mdc-radio-disabled .mdc-label {
+      color: var(--fg2);
+      opacity: 0.7;
+    }
+  }
+
+  .mdc-radio--disabled {
+    .mdc-radio__outer-circle {
+      border-color: var(--fg2) !important;
+      opacity: 0.5;
+    }
+
+    .mdc-radio__inner-circle {
+      background-color: var(--fg2) !important;
+      opacity: 0.6;
+    }
   }
 
   .mat-button-toggle-button {
