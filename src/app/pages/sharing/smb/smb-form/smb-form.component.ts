@@ -17,6 +17,13 @@ import {
 import {
   debounceTime, filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
+import {
+  IxFormFieldComponent,
+  IxInputComponent,
+  IxCheckboxComponent,
+  IxSelectComponent,
+  InputType,
+} from 'truenas-ui';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
@@ -37,14 +44,11 @@ import {
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
@@ -83,6 +87,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxFieldsetComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
+    IxFormFieldComponent,
     IxInputComponent,
     IxSelectComponent,
     IxCheckboxComponent,
@@ -133,6 +138,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   protected SmbPresetType = SmbSharePurpose;
+  protected InputType = InputType;
   protected isAdvancedMode = false;
   private namesInUse: string[] = [];
   protected readonly helptextSharingSmb = helptextSharingSmb;
@@ -172,7 +178,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     includeSnapshots: false,
   });
 
-  protected purposeOptions$: Observable<SelectOption<SmbSharePurpose>[]>;
+  protected purposeOptions = signal<SelectOption<SmbSharePurpose>[]>([]);
 
   get hasAddedAllowDenyHosts(): boolean {
     const hostsAllow = this.form.controls.hostsallow.value ?? [];
@@ -311,7 +317,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.existingSmbShare = this.slideInRef.getData()?.existingSmbShare;
     this.defaultSmbShare = this.slideInRef.getData()?.defaultSmbShare;
     this.setupExplorerRootNodes();
-    this.purposeOptions$ = of(this.buildPurposeOptions());
+    this.purposeOptions.set(this.buildPurposeOptions());
   }
 
   get shouldShowNamingSchema(): boolean {

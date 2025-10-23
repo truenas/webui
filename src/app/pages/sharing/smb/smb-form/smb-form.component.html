@@ -10,14 +10,16 @@
       <ix-smb-users-warning></ix-smb-users-warning>
 
       <ix-fieldset [title]="'Basic' | translate">
-        <ix-select
-          formControlName="purpose"
-          emptyValue=""
+        <ix-form-field
           [label]="helptextSharingSmb.purposeLabel | translate"
-          [tooltip]="helptextSharingSmb.purposeTooltip | translate"
+          [hint]="helptextSharingSmb.purposeTooltip | translate"
           [required]="true"
-          [options]="purposeOptions$"
-        ></ix-select>
+        >
+          <ix-select
+            formControlName="purpose"
+            [options]="purposeOptions()"
+          ></ix-select>
+        </ix-form-field>
 
         @if (showLegacyWarning()) {
           <ix-warning [message]="legacyWarningMessage"></ix-warning>
@@ -42,11 +44,14 @@
           </ix-explorer>
         }
 
-        <ix-input
-          formControlName="name"
+        <ix-form-field
           [label]="helptextSharingSmb.nameLabel | translate"
           [required]="true"
-        ></ix-input>
+        >
+          <ix-input
+            formControlName="name"
+          ></ix-input>
+        </ix-form-field>
 
         @if (form.controls.remote_path.enabled) {
           <ix-chips
@@ -57,57 +62,78 @@
           ></ix-chips>
         }
 
-        <ix-input
-          formControlName="comment"
+        <ix-form-field
           [label]="helptextSharingSmb.commentLabel | translate"
-        ></ix-input>
+        >
+          <ix-input
+            formControlName="comment"
+          ></ix-input>
+        </ix-form-field>
 
-        <ix-checkbox
-          formControlName="enabled"
+        <ix-form-field
           [label]="helptextSharingSmb.enabledLabel | translate"
-        ></ix-checkbox>
+        >
+          <ix-checkbox
+            formControlName="enabled"
+          ></ix-checkbox>
+        </ix-form-field>
       </ix-fieldset>
 
       @if (isAdvancedMode) {
         <ix-fieldset [title]="'Access' | translate">
           @if (form.controls.acl.enabled) {
-            <ix-checkbox
-              formControlName="acl"
+            <ix-form-field
               [label]="helptextSharingSmb.aclLabel | translate"
-              [tooltip]="helptextSharingSmb.aclTooltip | translate"
-            ></ix-checkbox>
+              [hint]="helptextSharingSmb.aclTooltip | translate"
+            >
+              <ix-checkbox
+                formControlName="acl"
+              ></ix-checkbox>
+            </ix-form-field>
           }
 
           @if (form.controls.readonly.enabled) {
-            <ix-checkbox
-              formControlName="readonly"
+            <ix-form-field
               [label]="helptextSharingSmb.readOnlyLabel | translate"
-              [tooltip]="helptextSharingSmb.readOnlyTooltip | translate"
-            ></ix-checkbox>
+              [hint]="helptextSharingSmb.readOnlyTooltip | translate"
+            >
+              <ix-checkbox
+                formControlName="readonly"
+              ></ix-checkbox>
+            </ix-form-field>
           }
 
           @if (form.controls.browsable.enabled) {
-            <ix-checkbox
-              formControlName="browsable"
+            <ix-form-field
               [label]="helptextSharingSmb.browsableLabel | translate"
-              [tooltip]="helptextSharingSmb.browsableTooltip | translate"
-            ></ix-checkbox>
+              [hint]="helptextSharingSmb.browsableTooltip | translate"
+            >
+              <ix-checkbox
+                formControlName="browsable"
+              ></ix-checkbox>
+            </ix-form-field>
           }
 
           @if (form.controls.guestok.enabled) {
-            <ix-checkbox
-              formControlName="guestok"
+            <ix-form-field
               [label]="helptextSharingSmb.guestokLabel | translate"
-              [tooltip]="helptextSharingSmb.guestokTooltip | translate"
-            ></ix-checkbox>
+              [hint]="helptextSharingSmb.guestokTooltip | translate"
+            >
+              <ix-checkbox
+                formControlName="guestok"
+              ></ix-checkbox>
+            </ix-form-field>
           }
 
           @if (form.controls.access_based_share_enumeration.enabled) {
-            <ix-checkbox
-              formControlName="access_based_share_enumeration"
+            <ix-form-field
               [label]="helptextSharingSmb.abeLabel | translate"
-              [tooltip]="helptextSharingSmb.abeTooltip | translate"
-            ></ix-checkbox>
+              [hint]="helptextSharingSmb.abeTooltip | translate"
+            >
+              <ix-checkbox
+                formControlName="access_based_share_enumeration"
+              ></ix-checkbox>
+            </ix-form-field>
           }
 
           @if (form.controls.hostsallow.enabled) {
@@ -128,11 +154,14 @@
         </ix-fieldset>
 
         <ix-fieldset formGroupName="audit" [title]="'Audit Logging' | translate">
-          <ix-checkbox
-            formControlName="enable"
+          <ix-form-field
             [label]="'Enable Logging' | translate"
-            [tooltip]="helptextSharingSmb.auditLogTooltip | translate"
-          ></ix-checkbox>
+            [hint]="helptextSharingSmb.auditLogTooltip | translate"
+          >
+            <ix-checkbox
+              formControlName="enable"
+            ></ix-checkbox>
+          </ix-form-field>
 
           @if (form.value.audit.enable) {
             <ix-chips
@@ -157,154 +186,207 @@
         @if (showOtherOptions) {
           <ix-fieldset [title]="'Other Options' | translate">
             @if (form.controls.home.enabled) {
-              <ix-checkbox
-                formControlName="home"
+              <ix-form-field
                 [label]="helptextSharingSmb.homeLabel | translate"
-                [tooltip]="helptextSharingSmb.homeTooltip | translate"
-              ></ix-checkbox>
+                [hint]="helptextSharingSmb.homeTooltip | translate"
+              >
+                <ix-checkbox
+                  formControlName="home"
+                ></ix-checkbox>
+              </ix-form-field>
             }
 
             @if (form.controls.timemachine.enabled) {
-              <ix-checkbox
-                formControlName="timemachine"
+              <ix-form-field
                 [label]="helptextSharingSmb.timemachineLabel | translate"
-                [tooltip]="helptextSharingSmb.timemachineTooltip | translate"
-              ></ix-checkbox>
+                [hint]="helptextSharingSmb.timemachineTooltip | translate"
+              >
+                <ix-checkbox
+                  formControlName="timemachine"
+                ></ix-checkbox>
+              </ix-form-field>
             }
 
             @if (
               (form.controls.timemachine_quota.enabled && form.value.timemachine && form.controls.timemachine.enabled) ||
               (form.controls.timemachine_quota.enabled && !form.controls.timemachine.enabled)
             ) {
-              <ix-input
-                formControlName="timemachine_quota"
+              <ix-form-field
                 [label]="helptextSharingSmb.timemachineQuotaLabel | translate"
-                [tooltip]="helptextSharingSmb.timemachineQuotaTooltip | translate"
-                [format]="formatter.memorySizeFormatting"
-                [parse]="formatter.memorySizeParsing"
-              ></ix-input>
+                [hint]="helptextSharingSmb.timemachineQuotaTooltip | translate"
+              >
+                <ix-input
+                  formControlName="timemachine_quota"
+                  [inputType]="InputType.PlainText"
+                ></ix-input>
+              </ix-form-field>
             }
 
             @if (form.controls.afp.enabled) {
-              <ix-checkbox
-                formControlName="afp"
+              <ix-form-field
                 [label]="helptextSharingSmb.afpLabel | translate"
-                [tooltip]="helptextSharingSmb.afpTooltip | translate"
-              ></ix-checkbox>
+                [hint]="helptextSharingSmb.afpTooltip | translate"
+              >
+                <ix-checkbox
+                  formControlName="afp"
+                ></ix-checkbox>
+              </ix-form-field>
             }
 
             @if (form.controls.shadowcopy.enabled) {
-              <ix-checkbox
-                formControlName="shadowcopy"
+              <ix-form-field
                 [label]="helptextSharingSmb.shadowcopyLabel | translate"
-                [tooltip]="helptextSharingSmb.shadowcopyTooltip | translate"
-              ></ix-checkbox>
+                [hint]="helptextSharingSmb.shadowcopyTooltip | translate"
+              >
+                <ix-checkbox
+                  formControlName="shadowcopy"
+                ></ix-checkbox>
+              </ix-form-field>
             }
 
             @if (form.controls.recyclebin.enabled) {
-              <ix-checkbox
-                formControlName="recyclebin"
+              <ix-form-field
                 [label]="helptextSharingSmb.recyclebinLabel | translate"
-                [tooltip]="helptextSharingSmb.recyclebinTooltip | translate"
-              ></ix-checkbox>
+                [hint]="helptextSharingSmb.recyclebinTooltip | translate"
+              >
+                <ix-checkbox
+                  formControlName="recyclebin"
+                ></ix-checkbox>
+              </ix-form-field>
             }
 
             @if (form.controls.aapl_name_mangling.enabled) {
-              <ix-checkbox
-                formControlName="aapl_name_mangling"
+              <ix-form-field
                 [label]="helptextSharingSmb.aaplNameManglingLabel | translate"
-                [tooltip]="helptextSharingSmb.aaplNameManglingTooltip | translate"
-              ></ix-checkbox>
+                [hint]="helptextSharingSmb.aaplNameManglingTooltip | translate"
+              >
+                <ix-checkbox
+                  formControlName="aapl_name_mangling"
+                ></ix-checkbox>
+              </ix-form-field>
             }
 
             @if (form.controls.streams.enabled) {
-              <ix-checkbox
-                formControlName="streams"
+              <ix-form-field
                 [label]="helptextSharingSmb.streamsLabel | translate"
-                [tooltip]="helptextSharingSmb.streamsTooltip | translate"
-              ></ix-checkbox>
+                [hint]="helptextSharingSmb.streamsTooltip | translate"
+              >
+                <ix-checkbox
+                  formControlName="streams"
+                ></ix-checkbox>
+              </ix-form-field>
             }
 
             @if (form.controls.durablehandle.enabled) {
-              <ix-checkbox
-                formControlName="durablehandle"
+              <ix-form-field
                 [label]="helptextSharingSmb.durablehandleLabel | translate"
-                [tooltip]="helptextSharingSmb.durablehandleTooltip | translate"
-              ></ix-checkbox>
+                [hint]="helptextSharingSmb.durablehandleTooltip | translate"
+              >
+                <ix-checkbox
+                  formControlName="durablehandle"
+                ></ix-checkbox>
+              </ix-form-field>
             }
 
             @if (form.controls.fsrvp.enabled) {
-              <ix-checkbox
-                formControlName="fsrvp"
+              <ix-form-field
                 [label]="helptextSharingSmb.fsrvpLabel | translate"
-                [tooltip]="helptextSharingSmb.fsrvpTooltip | translate"
-              ></ix-checkbox>
+                [hint]="helptextSharingSmb.fsrvpTooltip | translate"
+              >
+                <ix-checkbox
+                  formControlName="fsrvp"
+                ></ix-checkbox>
+              </ix-form-field>
             }
 
             @if (form.controls.path_suffix.enabled) {
-              <ix-input
-                formControlName="path_suffix"
+              <ix-form-field
                 [label]="helptextSharingSmb.pathSuffixLabel | translate"
-                [tooltip]="helptextSharingSmb.pathSuffixTooltip | translate"
-              ></ix-input>
+                [hint]="helptextSharingSmb.pathSuffixTooltip | translate"
+              >
+                <ix-input
+                  formControlName="path_suffix"
+                ></ix-input>
+              </ix-form-field>
             }
 
             @if (form.controls.auxsmbconf.enabled) {
-              <ix-input
-                formControlName="auxsmbconf"
+              <ix-form-field
                 [label]="helptextSharingSmb.auxsmbconfLabel | translate"
-                [tooltip]="helptextSharingSmb.auxsmbconfTooltip | translate"
-              ></ix-input>
+                [hint]="helptextSharingSmb.auxsmbconfTooltip | translate"
+              >
+                <ix-input
+                  formControlName="auxsmbconf"
+                ></ix-input>
+              </ix-form-field>
             }
 
             @if (form.controls.vuid.enabled) {
-              <ix-input
-                formControlName="vuid"
+              <ix-form-field
                 [label]="'VUID' | translate"
-                [tooltip]="'Unique identifier for user session. Enter a valid UUID4 string.' | translate"
-              ></ix-input>
+                [hint]="'Unique identifier for user session. Enter a valid UUID4 string.' | translate"
+              >
+                <ix-input
+                  formControlName="vuid"
+                ></ix-input>
+              </ix-form-field>
             }
 
             @if (form.controls.auto_snapshot.enabled) {
-              <ix-checkbox
-                formControlName="auto_snapshot"
+              <ix-form-field
                 [label]="'Auto Snapshot' | translate"
-                [tooltip]="'Enable automatic snapshot creation for Time Machine shares.' | translate"
-              ></ix-checkbox>
+                [hint]="'Enable automatic snapshot creation for Time Machine shares.' | translate"
+              >
+                <ix-checkbox
+                  formControlName="auto_snapshot"
+                ></ix-checkbox>
+              </ix-form-field>
             }
 
             @if (form.controls.auto_dataset_creation.enabled) {
-              <ix-checkbox
-                formControlName="auto_dataset_creation"
+              <ix-form-field
                 [label]="helptextSharingSmb.autoDatasetCreationLabel | translate"
-                [tooltip]="helptextSharingSmb.autoDatasetCreationTooltip | translate"
-              ></ix-checkbox>
+                [hint]="helptextSharingSmb.autoDatasetCreationTooltip | translate"
+              >
+                <ix-checkbox
+                  formControlName="auto_dataset_creation"
+                ></ix-checkbox>
+              </ix-form-field>
             }
 
             @if (shouldShowNamingSchema) {
-              <ix-input
-                formControlName="dataset_naming_schema"
+              <ix-form-field
                 [label]="helptextSharingSmb.datasetNamingSchemaLabel | translate"
-                [tooltip]="helptextSharingSmb.datasetNamingSchemaTooltip | translate"
-              ></ix-input>
+                [hint]="helptextSharingSmb.datasetNamingSchemaTooltip | translate"
+              >
+                <ix-input
+                  formControlName="dataset_naming_schema"
+                ></ix-input>
+              </ix-form-field>
             }
 
             @if (form.controls.grace_period.enabled) {
-              <ix-input
-                type="number"
-                formControlName="grace_period"
+              <ix-form-field
                 [label]="'Grace Period' | translate"
-                [tooltip]="'Specify delay before access timeout or share lock.' | translate"
-              ></ix-input>
+                [hint]="'Specify delay before access timeout or share lock.' | translate"
+              >
+                <ix-input
+                  formControlName="grace_period"
+                  [inputType]="InputType.PlainText"
+                ></ix-input>
+              </ix-form-field>
             }
 
             @if (form.controls.auto_quota.enabled) {
-              <ix-input
-                type="number"
-                formControlName="auto_quota"
+              <ix-form-field
                 [label]="helptextSharingSmb.autoQuotaLabel | translate"
-                [tooltip]="helptextSharingSmb.autoQuotaTooltip | translate"
-              ></ix-input>
+                [hint]="helptextSharingSmb.autoQuotaTooltip | translate"
+              >
+                <ix-input
+                  formControlName="auto_quota"
+                  [inputType]="InputType.PlainText"
+                ></ix-input>
+              </ix-form-field>
             }
           </ix-fieldset>
         }
