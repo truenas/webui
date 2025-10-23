@@ -60,11 +60,7 @@
   }
 </div>
 <div class="cell cell-update">
-  @if (!isExternalApp()) {
-    <ix-app-update-cell [app]="app()" [showIcon]="true"></ix-app-update-cell>
-  } @else {
-    <span class="external-label">{{ 'External' | translate }}</span>
-  }
+  <ix-app-update-cell [app]="app()" [showIcon]="true"></ix-app-update-cell>
 </div>
 <div class="cell cell-action">
   @if (isAppStopped()) {
