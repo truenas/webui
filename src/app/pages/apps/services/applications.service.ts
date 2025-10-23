@@ -78,6 +78,7 @@ export class ApplicationsService {
         include_app_schema: true,
         retrieve_config: true,
         host_ip: this.window.location.hostname,
+        include_external: true,
       },
     }]);
   }
