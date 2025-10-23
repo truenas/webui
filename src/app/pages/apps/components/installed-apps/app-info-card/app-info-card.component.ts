@@ -93,7 +93,9 @@ export class AppInfoCardComponent {
   protected rollbackUpdateButtonSetEffect = effect(() => {
     const app = this.app();
     this.isRollbackPossible.set(false);
-    this.updateRollbackSetup(app.name);
+    if (app.source !== 'external') {
+      this.updateRollbackSetup(app.name);
+    }
   });
 
   readonly sortedPortals = computed(() => {
@@ -112,6 +114,10 @@ export class AppInfoCardComponent {
   protected readonly appDetailsRouterUrl = computed<string[]>(() => {
     const app = this.app();
     return ['/apps', 'available', app.metadata.train, app.metadata.name];
+  });
+
+  readonly isExternalApp = computed(() => {
+    return this.app().source === 'external';
   });
 
   protected readonly name = computed(() => {

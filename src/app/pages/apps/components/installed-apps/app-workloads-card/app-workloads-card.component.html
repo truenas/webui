@@ -53,7 +53,7 @@
             <div class="container-state">
               {{ container.state | mapValue: appContainerStateLabels | translate  }}
             </div>
-            @if (app().state === AppState.Running || app().state === AppState.Deploying || app().state === AppState.Crashed) {
+            @if ((app().state === AppState.Running || app().state === AppState.Deploying || app().state === AppState.Crashed) && !isExternalApp()) {
               <div class="container-action">
                 <a
                   *ixRequiresRoles="requiredRoles"

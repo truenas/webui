@@ -191,7 +191,9 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   viewDetails(app: App): void {
-    this.layoutService.navigatePreservingScroll(this.router, ['/apps/installed', app.metadata.train, app.id]);
+    if (app.metadata.train && app.id) {
+      this.layoutService.navigatePreservingScroll(this.router, ['/apps/installed', app.metadata.train, app.id]);
+    }
 
     this.selectAppForDetails(app.id);
   }

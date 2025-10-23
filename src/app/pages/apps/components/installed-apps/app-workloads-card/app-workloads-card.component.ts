@@ -59,6 +59,10 @@ export class AppWorkloadsCardComponent {
   protected readonly appContainerStateLabels = appContainerStateLabels;
   protected readonly helptext = helptextApps;
 
+  readonly isExternalApp = computed(() => {
+    return this.app().source === 'external';
+  });
+
   protected readonly hostPorts = computed(() => {
     const hostPorts: { hostIp: string; hostPort: string; containerPort: string; protocol: string }[] = [];
 
