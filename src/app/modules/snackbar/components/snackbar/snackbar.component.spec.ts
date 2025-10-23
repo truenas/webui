@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
+import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -30,6 +30,7 @@ describe('SnackbarComponent', () => {
           },
         } as SnackbarConfig,
       },
+      mockProvider(MatSnackBarRef),
     ],
   });
 
@@ -50,7 +51,11 @@ describe('SnackbarComponent', () => {
     const testButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Test Button' }));
     expect(testButton).not.toBeNull();
 
+    const snackBarRef = spectator.inject(MatSnackBarRef);
+    const dismissSpy = jest.spyOn(snackBarRef, 'dismiss');
+
     await testButton!.click();
     expect(fakeAction).toHaveBeenCalled();
+    expect(dismissSpy).toHaveBeenCalled();
   });
 });

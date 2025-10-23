@@ -18,17 +18,20 @@ describe('SnackbarService', () => {
   });
 
   describe('success', () => {
-    it('opens a snackbar with message', () => {
+    it('opens a snackbar with message at top position', () => {
       spectator.service.success(ignoreTranslation('All good'));
 
       expect(spectator.inject(MatSnackBar).openFromComponent).toHaveBeenCalledWith(SnackbarComponent, {
         announcementMessage: 'All good',
         politeness: 'assertive',
         panelClass: 'ix-snackbar-high-priority',
+        duration: 4000,
+        verticalPosition: 'top',
         data: {
           message: 'All good',
           icon: 'mdi-check',
           iconCssColor: 'var(--green)',
+          button: undefined,
         },
       });
     });
