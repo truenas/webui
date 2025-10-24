@@ -29,6 +29,13 @@
   overflow: auto;
 }
 
+.sticky-header {
+  background-color: var(--bg1);
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
 .app-inner {
   background-color: var(--bg2);
   display: flex;
@@ -52,8 +59,8 @@
     border-bottom: 2px solid var(--primary);
     padding: 16px 12px 12px;
     position: sticky;
-    top: 96px;
-    z-index: 1;
+    top: 48px;
+    z-index: 2;
 
     h3 {
       color: var(--fg1);
@@ -93,11 +100,7 @@ ix-app-row,
   grid-gap: 8px;
   min-height: 48px;
   min-width: fit-content;
-
-  position: sticky;
-  top: 0;
   width: 100%;
-  z-index: 3;
 
   > div {
     align-items: center;
