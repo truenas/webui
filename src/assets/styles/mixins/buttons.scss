@@ -9,3 +9,19 @@
     background-color: var(--hover-bg) !important;
   }
 }
+
+@mixin customize-link-button {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  display: inline-block;
+  font-size: 0.875rem;
+  margin-top: 0;
+  padding: 0;
+  text-decoration: underline;
+
+  &:hover {
+    color: var(--primary-darker);
+  }
+}

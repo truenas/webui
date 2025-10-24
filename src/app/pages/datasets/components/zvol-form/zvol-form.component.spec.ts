@@ -3,6 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
@@ -20,6 +22,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('ZvolFormComponent', () => {
   let loader: HarnessLoader;
@@ -318,6 +321,7 @@ describe('ZvolFormComponent', () => {
         'Read-only': 'Inherit (off)',
         Snapdev: 'Inherit (hidden)',
         Sync: 'Inherit (standard)',
+        'Use Metadata (Special) VDEVs': 'Inherit',
         'ZFS Deduplication': 'Inherit (off)',
       });
     });
@@ -343,5 +347,164 @@ describe('ZvolFormComponent', () => {
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
+  });
+
+  describe('Use Metadata (Special) VDEVs', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(ApiService, {
+            call: jest.fn((method) => {
+              if (method === 'pool.dataset.query') {
+                return of([dataset]);
+              }
+              if (method === 'pool.dataset.encryption_algorithm_choices') {
+                return of({});
+              }
+              if (method === 'pool.dataset.recommended_zvol_blocksize') {
+                return of('16K');
+              }
+              return of(null);
+            }),
+          }),
+          mockProvider(SlideInRef, {
+            getData: () => ({ isNew: true, parentOrZvolId: 'parentId' }),
+            requireConfirmationWhen: jest.fn(),
+            close: jest.fn(),
+          }),
+          mockProvider(DialogService),
+          mockProvider(ErrorHandlerService, {
+            withErrorHandler: () => tap(),
+          }),
+        ],
+      });
+
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      mainDetails = await loader.getHarness(DetailsTableHarness);
+    });
+
+    it('does not send special_small_block_size when set to Inherit', async () => {
+      await form.fillForm({
+        Name: 'zvol1',
+        Size: '1 GiB',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.create');
+      const payload = callArgs[1][0];
+
+      expect(payload.special_small_block_size).toBeUndefined();
+    });
+
+    it('sends 0 when set to Off', async () => {
+      await form.fillForm({
+        Name: 'zvol1',
+        Size: '1 GiB',
+      });
+
+      spectator.component.form.patchValue({
+        special_small_block_size: 'OFF',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.create');
+      const payload = callArgs[1][0];
+
+      expect(payload.special_small_block_size).toBe(0);
+    });
+
+    it('sends 128 KiB when set to On but not customized', async () => {
+      await form.fillForm({
+        Name: 'zvol1',
+        Size: '1 GiB',
+      });
+
+      spectator.component.form.patchValue({
+        special_small_block_size: 'ON',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.create');
+      const payload = callArgs[1][0];
+
+      expect(payload.special_small_block_size).toBe(131072); // 128 KiB in bytes
+    });
+
+    it('allows toggling customize section', () => {
+      spectator.component.form.patchValue({
+        special_small_block_size: 'ON',
+      });
+
+      expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(false);
+
+      spectator.component.toggleCustomizeSpecialSmallBlockSize();
+      expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(true);
+      expect(spectator.component.form.value.special_small_block_size_custom).toBe(131072); // Default 128 KiB
+
+      spectator.component.toggleCustomizeSpecialSmallBlockSize();
+      expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(false);
+    });
+
+    it('sends custom value when specified', async () => {
+      await form.fillForm({
+        Name: 'zvol1',
+        Size: '1 GiB',
+      });
+
+      spectator.component.form.patchValue({
+        special_small_block_size: 'ON',
+        special_small_block_size_custom: 262144, // 256 KiB
+      });
+      spectator.component.showCustomizeSpecialSmallBlockSize = true;
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.create');
+      const payload = callArgs[1][0];
+
+      expect(payload.special_small_block_size).toBe(262144);
+    });
+
+    it('preserves custom value even when customize section is collapsed', async () => {
+      await form.fillForm({
+        Name: 'zvol1',
+        Size: '1 GiB',
+      });
+
+      // Simulate loading an existing zvol with custom value
+      spectator.component.form.patchValue({
+        special_small_block_size: 'ON',
+        special_small_block_size_custom: 65536, // 64 KiB
+      });
+      spectator.component.showCustomizeSpecialSmallBlockSize = false; // Collapsed
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.create');
+      const payload = callArgs[1][0];
+
+      // Should preserve the custom value, not default to 128 KiB
+      expect(payload.special_small_block_size).toBe(65536);
+    });
+
+    // Note: Editing zvol form value reading tests are not included here due to complexity
+    // of mocking dual async API calls (zvol + parent dataset queries). The core logic for
+    // reading special_small_block_size values is identical to dataset form and is fully
+    // tested in other-options-section.component.spec.ts (see "editing existing dataset" tests).
+    // The zvol payload generation is tested above in creation tests.
   });
 });
