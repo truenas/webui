@@ -5,12 +5,12 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, Observable, switchMap, tap } from 'rxjs';
+import { filter, Observable, of, switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
-import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
+import { KeychainCredentialUsedBy, KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -27,6 +27,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { sshConnectionsCardElements } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.elements';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
@@ -135,13 +136,27 @@ export class SshConnectionCardComponent implements OnInit {
   }
 
   protected doDelete(credential: KeychainSshCredentials): void {
-    const hasAssociatedKeypair = !!credential.attributes.private_key;
+    const keypairId = credential.attributes.private_key;
+    const hasAssociatedKeypair = !!keypairId;
 
-    this.confirmConnectionDeletion(credential.name, hasAssociatedKeypair).pipe(
+    const usedBy$ = hasAssociatedKeypair
+      ? this.api.call('keychaincredential.used_by', [keypairId]).pipe(this.loader.withLoader())
+      : of([] as KeychainCredentialUsedBy[]);
+
+    usedBy$.pipe(
+      switchMap((usedBy: KeychainCredentialUsedBy[]) => {
+        // Exclude the current connection from the list
+        const otherItems = usedBy.filter((item) => item.title !== credential.name);
+        return this.confirmConnectionDeletion(
+          credential.name,
+          hasAssociatedKeypair,
+          otherItems,
+        );
+      }),
       filter((result) => result.confirmed),
       switchMap((result) => this.deleteConnection(
         credential.id,
-        result.secondaryCheckbox ? credential.attributes.private_key : null,
+        result.secondaryCheckbox ? keypairId : null,
       )),
       untilDestroyed(this),
     ).subscribe(() => {
@@ -152,14 +167,28 @@ export class SshConnectionCardComponent implements OnInit {
   private confirmConnectionDeletion(
     name: string,
     hasAssociatedKeypair: boolean,
+    otherItems: KeychainCredentialUsedBy[],
   ): Observable<DialogWithSecondaryCheckboxResult> {
+    let message = this.translate.instant('Are you sure you want to delete the <b>{name}</b> SSH Connection?', { name });
+    const secondaryCheckboxText = this.translate.instant('Delete associated SSH Keypair');
+
+    if (hasAssociatedKeypair && otherItems.length > 0) {
+      const itemsList = otherItems.map((item) => item.title).join('<br>• ');
+      message = ignoreTranslation(
+        this.translate.instant(
+          'Are you sure you want to delete the <b>{name}</b> SSH Connection?<br><br>The associated SSH Keypair is also used by:<br><br>• {items}<br><br>If you delete the keypair, all these SSH connections will also be deleted.',
+          { name, items: itemsList },
+        ),
+      );
+    }
+
     return this.dialog.confirm({
       title: this.translate.instant('Delete SSH Connection'),
-      message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> SSH Connection?', { name }),
+      message,
       buttonColor: 'warn',
       buttonText: this.translate.instant('Delete'),
       secondaryCheckbox: hasAssociatedKeypair,
-      secondaryCheckboxText: this.translate.instant('Delete associated SSH Keypair'),
+      secondaryCheckboxText,
     });
   }
 
