@@ -27,6 +27,7 @@ describe('AllInstancesHeaderComponent', () => {
   const storeMock = {
     isLoading: signal(false),
     config: signal({ dataset: 'pool1/dataset1' }),
+    initialize: jest.fn(),
   };
 
   const createComponent = createComponentFactory({
@@ -77,6 +78,7 @@ describe('AllInstancesHeaderComponent', () => {
         GlobalConfigFormComponent,
         { data: { dataset: 'pool1/dataset1' } },
       );
+      expect(spectator.inject(VirtualizationConfigStore).initialize).toHaveBeenCalled();
       expect(spectator.inject(VirtualizationInstancesStore).initialize).toHaveBeenCalled();
     });
 

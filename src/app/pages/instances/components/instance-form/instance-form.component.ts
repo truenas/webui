@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, HostListener,
+  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, HostListener, effect,
 } from '@angular/core';
 import {
   FormArray,
@@ -61,6 +61,7 @@ import {
   SelectImageDialog,
   VirtualizationImageWithId,
 } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -86,6 +87,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     FormActionsComponent,
   ],
+  providers: [VirtualizationConfigStore],
 })
 export class InstanceFormComponent implements OnInit {
   private api = inject(ApiService);
@@ -100,6 +102,7 @@ export class InstanceFormComponent implements OnInit {
   slideInRef = inject<SlideInRef<ContainerInstance | undefined, boolean>>(SlideInRef);
   private instancesStore = inject(VirtualizationInstancesStore, { optional: true });
   private router = inject(Router);
+  private virtualizationConfigStore = inject(VirtualizationConfigStore);
 
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.LxcConfigWrite];
@@ -139,6 +142,11 @@ export class InstanceFormComponent implements OnInit {
     return this.translate.instant('Add Container');
   });
 
+  protected readonly hasPreferredPool = computed(() => {
+    const config = this.virtualizationConfigStore.config();
+    return Boolean(config?.preferred_pool);
+  });
+
   poolOptions$ = this.api.call('container.pool_choices').pipe(
     choicesToOptions(),
     tap((options) => {
@@ -155,6 +163,7 @@ export class InstanceFormComponent implements OnInit {
       [forbiddenAsyncValues(this.forbiddenNames$)],
     ],
     pool: [''],
+    use_preferred_pool: [true],
     description: [''],
     autostart: [true],
     image: [''],
@@ -165,10 +174,10 @@ export class InstanceFormComponent implements OnInit {
     memory: [null as number | null, [Validators.min(20)]],
     time: [ContainerTime.Local],
     shutdown_timeout: [30, [Validators.min(5), Validators.max(300)]],
-    init: ['/sbin/init'],
-    initdir: [''],
-    inituser: [''],
-    initgroup: [''],
+    init: [null as string | null],
+    initdir: [null as string | null],
+    inituser: [null as string | null],
+    initgroup: [null as string | null],
     capabilities_policy: [ContainerCapabilitiesPolicy.Default],
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
     use_default_network: [true],
@@ -188,7 +197,18 @@ export class InstanceFormComponent implements OnInit {
 
   constructor() {
     this.editingInstance = this.slideInRef.getData();
+
+    // Setup form validators when config is loaded
+    effect(() => {
+      const config = this.virtualizationConfigStore.config();
+      if (config !== null && !this.isEditMode() && !this.hasSetupValidators) {
+        this.hasSetupValidators = true;
+        this.setupValidatorsForCreation();
+      }
+    });
   }
+
+  private hasSetupValidators = false;
 
   @HostListener('window:beforeunload', ['$event'])
   onBeforeUnload(event: BeforeUnloadEvent): void {
@@ -198,11 +218,27 @@ export class InstanceFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Initialize config store to load preferred pool settings
+    this.virtualizationConfigStore.initialize();
+
     if (this.editingInstance) {
       this.loadInstanceForEditing(this.editingInstance.id);
     } else {
       this.setupForCreation();
     }
+
+    // Handle pool validation based on use_preferred_pool checkbox
+    this.form.controls.use_preferred_pool.valueChanges.pipe(untilDestroyed(this)).subscribe((usePreferredPool) => {
+      if (this.hasPreferredPool() && !this.isEditMode()) {
+        if (usePreferredPool) {
+          this.form.controls.pool.clearValidators();
+          this.form.controls.pool.setValue('');
+        } else {
+          this.form.controls.pool.setValidators(Validators.required);
+        }
+        this.form.controls.pool.updateValueAndValidity();
+      }
+    });
 
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -213,20 +249,32 @@ export class InstanceFormComponent implements OnInit {
     this.isEditMode.set(false);
     this.editingInstance = null;
 
-    this.form.controls.pool.setValidators(Validators.required);
     this.form.controls.image.setValidators([Validators.required, Validators.minLength(1), Validators.maxLength(200)]);
-    this.form.controls.init.setValue('/sbin/init');
 
     this.form.reset({
       autostart: true,
+      use_preferred_pool: true,
       time: ContainerTime.Local,
       shutdown_timeout: 30,
-      init: '/sbin/init',
+      init: null,
+      initdir: null,
+      inituser: null,
+      initgroup: null,
       capabilities_policy: ContainerCapabilitiesPolicy.Default,
       use_default_network: true,
       usb_devices: [],
       gpu_devices: [],
     });
+  }
+
+  private setupValidatorsForCreation(): void {
+    // Set pool validators: required only if no preferred pool is set
+    if (this.hasPreferredPool()) {
+      this.form.controls.pool.clearValidators();
+    } else {
+      this.form.controls.pool.setValidators(Validators.required);
+    }
+    this.form.controls.pool.updateValueAndValidity();
   }
 
   private loadInstanceForEditing(instanceId: number): void {
@@ -419,7 +467,7 @@ export class InstanceFormComponent implements OnInit {
     const payload: CreateContainerInstance = {
       uuid: crypto.randomUUID(),
       name: form.name,
-      pool: form.pool,
+      pool: (this.hasPreferredPool() && form.use_preferred_pool) ? '' : form.pool,
       image: this.parseImageField(form.image),
       autostart: form.autostart,
     };
@@ -436,10 +484,10 @@ export class InstanceFormComponent implements OnInit {
     if (form.time) payload.time = form.time;
     if (form.shutdown_timeout) payload.shutdown_timeout = form.shutdown_timeout;
 
-    if (form.init) payload.init = form.init;
-    if (form.initdir) payload.initdir = form.initdir;
-    if (form.inituser) payload.inituser = form.inituser;
-    if (form.initgroup) payload.initgroup = form.initgroup;
+    if (form.init !== null && form.init !== '') payload.init = form.init;
+    if (form.initdir !== null && form.initdir !== '') payload.initdir = form.initdir;
+    if (form.inituser !== null && form.inituser !== '') payload.inituser = form.inituser;
+    if (form.initgroup !== null && form.initgroup !== '') payload.initgroup = form.initgroup;
 
     if (form.capabilities_policy) payload.capabilities_policy = form.capabilities_policy;
 
