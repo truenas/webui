@@ -157,7 +157,10 @@ import {
 import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
 import {
   KeychainCredential,
-  KeychainCredentialCreate, KeychainCredentialUpdate,
+  KeychainCredentialCreate,
+  KeychainCredentialDeleteOptions,
+  KeychainCredentialUpdate,
+  KeychainCredentialUsedBy,
   KeychainSshCredentials,
   SshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
@@ -619,12 +622,13 @@ export interface ApiCallDirectory {
 
   // Keychain credential
   'keychaincredential.create': { params: [KeychainCredentialCreate]; response: KeychainCredential };
-  'keychaincredential.delete': { params: [id: number]; response: void };
+  'keychaincredential.delete': { params: [id: number, options?: KeychainCredentialDeleteOptions]; response: void };
   'keychaincredential.generate_ssh_key_pair': { params: void; response: SshKeyPair };
   'keychaincredential.query': { params: QueryParams<KeychainCredential>; response: KeychainCredential[] };
   'keychaincredential.remote_ssh_host_key_scan': { params: [RemoteSshScanParams]; response: string };
   'keychaincredential.setup_ssh_connection': { params: [SshConnectionSetup]; response: KeychainSshCredentials };
   'keychaincredential.update': { params: [id: number, credential: KeychainCredentialUpdate]; response: KeychainCredential };
+  'keychaincredential.used_by': { params: [id: number]; response: KeychainCredentialUsedBy[] };
 
   // KMIP
   'kmip.clear_sync_pending_keys': { params: void; response: void };

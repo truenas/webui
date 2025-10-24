@@ -62,9 +62,10 @@ describe('SshKeypairCardComponent', () => {
       mockApi([
         mockCall('keychaincredential.query', credentials),
         mockCall('keychaincredential.delete'),
+        mockCall('keychaincredential.used_by', []),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -79,6 +80,7 @@ describe('SshKeypairCardComponent', () => {
       mockProvider(KeychainCredentialService, {
         getSshKeys: jest.fn(() => of(credentials)),
         refetchSshKeys: new Subject<void>(),
+        refetchSshConnections: new Subject<void>(),
       }),
       mockAuth(),
     ],
@@ -112,12 +114,61 @@ describe('SshKeypairCardComponent', () => {
     });
   });
 
-  it('opens delete dialog when "Delete" button is pressed', async () => {
+  it('deletes keypair without cascade when no associations exist', async () => {
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+      if (method === 'keychaincredential.used_by') {
+        return of([]);
+      }
+      return of(null);
+    });
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true) as never);
+
     const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
     await menu.open();
     await menu.clickItem({ text: 'Delete' });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [10]);
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Are you sure you want to delete the <b>test1234</b>?',
+      }),
+    );
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: false }]);
+  });
+
+  it('automatically cascades delete when keypair is used by other credentials', async () => {
+    const usedByResponse = [
+      {
+        title: 'test-connection-1',
+        unbind_method: 'keychaincredential.update',
+      },
+      {
+        title: 'test-connection-2',
+        unbind_method: 'keychaincredential.update',
+      },
+    ];
+
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+      if (method === 'keychaincredential.used_by') {
+        return of(usedByResponse);
+      }
+      return of(null);
+    });
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true) as never);
+    const refetchSpy = jest.spyOn(spectator.inject(KeychainCredentialService).refetchSshConnections, 'next');
+
+    const [menu] = await loader.getAllHarnesses(MatMenuHarness.with({ selector: '[mat-icon-button]' }));
+    await menu.open();
+    await menu.clickItem({ text: 'Delete' });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [10]);
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'The SSH Keypair <b>test1234</b> is being used by the following:<br><br>• test-connection-1<br>• test-connection-2<br><br>Deleting it will also delete all associated SSH connections.',
+      }),
+    );
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: true }]);
+    expect(refetchSpy).toHaveBeenCalled();
   });
 
   it('checks when "Download" button is pressed', async () => {

@@ -26,3 +26,12 @@ export interface KeychainSshCredentials {
 
 export type KeychainCredentialCreate = Omit<KeychainCredential, 'id'>;
 export type KeychainCredentialUpdate = Omit<KeychainCredential, 'id' | 'type'>;
+
+export interface KeychainCredentialDeleteOptions {
+  cascade?: boolean;
+}
+
+export interface KeychainCredentialUsedBy {
+  title: string;
+  unbind_method: string;
+}

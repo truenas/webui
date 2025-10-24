@@ -11,6 +11,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class KeychainCredentialService {
   protected api = inject(ApiService);
   refetchSshKeys = new Subject<void>();
+  refetchSshConnections = new Subject<void>();
 
 
   getSshKeys(): Observable<KeychainSshKeyPair[]> {
