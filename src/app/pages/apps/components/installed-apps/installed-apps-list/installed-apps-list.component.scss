@@ -51,6 +51,9 @@
     background-color: var(--bg1);
     border-bottom: 2px solid var(--primary);
     padding: 16px 12px 12px;
+    position: sticky;
+    top: 96px;
+    z-index: 1;
 
     h3 {
       color: var(--fg1);
