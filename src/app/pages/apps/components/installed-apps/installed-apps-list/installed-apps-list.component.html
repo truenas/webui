@@ -100,32 +100,30 @@
       }
 
       <!-- TrueNAS Apps Section -->
-      @if (filteredApps.length) {
+      @if (truenasApps.length) {
         <div class="apps-section">
           <div class="section-header">
             <h3>{{ 'TrueNAS Apps' | translate }}</h3>
           </div>
-          @if (truenasApps.length) {
-            <div class="apps-rows">
-              @for (app of truenasApps; track app.name) {
-                <ix-app-row
-                  tabindex="0"
-                  [app]="app"
-                  [stats]="getAppStats(app.name) | async"
-                  [class.selected]="selectedApp?.id === app.id"
-                  [selected]="selection.isSelected(app.id)"
-                  [job]="appJobs.get(app.name)"
-                  (startApp)="start(app.name)"
-                  (stopApp)="stop(app.name)"
-                  (restartApp)="restart(app.name)"
-                  (clickStatus)="openStatusDialog(app.name)"
-                  (selectionChange)="selection.toggle(app.id)"
-                  (click)="viewDetails(app)"
-                  (keydown.enter)="viewDetails(app)"
-                ></ix-app-row>
-              }
-            </div>
-          }
+          <div class="apps-rows">
+            @for (app of truenasApps; track app.name) {
+              <ix-app-row
+                tabindex="0"
+                [app]="app"
+                [stats]="getAppStats(app.name) | async"
+                [class.selected]="selectedApp?.id === app.id"
+                [selected]="selection.isSelected(app.id)"
+                [job]="appJobs.get(app.name)"
+                (startApp)="start(app.name)"
+                (stopApp)="stop(app.name)"
+                (restartApp)="restart(app.name)"
+                (clickStatus)="openStatusDialog(app.name)"
+                (selectionChange)="selection.toggle(app.id)"
+                (click)="viewDetails(app)"
+                (keydown.enter)="viewDetails(app)"
+              ></ix-app-row>
+            }
+          </div>
         </div>
       }
 
