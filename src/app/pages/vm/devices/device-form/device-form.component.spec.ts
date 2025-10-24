@@ -185,6 +185,8 @@ describe('DeviceFormComponent', () => {
         await form.fillForm({
           'CD-ROM Path': '/mnt/newcdrom',
         });
+        spectator.component.cdromForm.markAsDirty();
+        spectator.detectChanges();
         await saveButton.click();
 
         expect(api.call).toHaveBeenLastCalledWith('vm.device.update', [5, {

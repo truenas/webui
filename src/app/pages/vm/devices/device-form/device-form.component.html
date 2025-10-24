@@ -125,6 +125,7 @@
                 type="number"
                 [label]="'Raw Filesize' | translate"
                 [tooltip]="helptext.raw_size_tooltip | translate"
+                [hint]="'Must be specified if the raw file needs to be created' | translate"
               ></ix-input>
             }
             @case (VmDeviceType.Pci) {
@@ -258,6 +259,7 @@
           mat-button
           color="primary"
           ixTest="save"
+          [disabled]="typeSpecificForm.invalid || (!isNew && typeSpecificForm.pristine) || isLoading"
         >
           {{ 'Save' | translate }}
         </button>

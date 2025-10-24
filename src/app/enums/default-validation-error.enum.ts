@@ -18,5 +18,6 @@ export enum DefaultValidationError {
   InvalidCharacters = 'invalidCharacters',
   OrphanedPercent = 'orphanedPercent',
   InvalidRcloneBandwidthLimit = 'invalidRcloneBandwidthLimit',
+  SelectionMustBeFile = 'selectionMustBeFile',
   Empty = 'empty',
 }
