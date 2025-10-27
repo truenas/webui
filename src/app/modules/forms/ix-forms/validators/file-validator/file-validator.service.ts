@@ -12,7 +12,7 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 export class FileValidatorService {
   private translate = inject(TranslateService);
 
-  /*
+  /**
    * validator that, given a function to retrieve the explorer component (like a signal),
    * ensures the given explorer has a *file* selected. this is used specifically when
    * something like a directory *must not* be selected. */
