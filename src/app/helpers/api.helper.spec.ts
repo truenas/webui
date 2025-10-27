@@ -246,4 +246,18 @@ describe('transformApiCallError', () => {
 
     expect(result.error.data.extra).toEqual([]);
   });
+
+  it('should return an identical error if the data field does not exist', () => {
+    const error = new ApiCallError({
+      message: 'Validation error',
+    } as JsonRpcError);
+
+    const result = transformApiCallError(
+      error,
+      'any message',
+      'replacement',
+    );
+
+    expect(result).toBe(error);
+  });
 });

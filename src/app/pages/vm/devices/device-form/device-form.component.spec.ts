@@ -641,12 +641,22 @@ describe('DeviceFormComponent', () => {
         trace: { class: 'something', formatted: 'something', frames: [] },
         message: null,
       };
-      const apiError = new ApiCallError({ code: JsonRpcErrorCode.InvalidParams, message: 'something', data: errorDetails });
+      const otherErrorDetails = { ...errorDetails, extra: [['something', 'other message', 0]] };
+      const apiErrorToGetTransformed = new ApiCallError({ code: JsonRpcErrorCode.InvalidParams, message: 'something', data: errorDetails });
       const transformedApiError = transformApiCallError(
-        apiError,
+        apiErrorToGetTransformed,
         'Path must exist when "exists" is set',
         'The specified file path does not exist. Please select an existing file or specify a file size to create a new file.',
       );
+
+      const apiErrorWontGetTransformed = new ApiCallError({ code: JsonRpcErrorCode.InvalidParams, message: 'something', data: otherErrorDetails });
+      const mockApiCall = (err: ApiCallError, fallback: jest.Mock) => (method: string) => {
+        if (method === 'vm.device.create') {
+          return throwError(() => err);
+        }
+
+        return fallback(method);
+      };
 
       beforeEach(async () => {
         spectator = createComponent({
@@ -658,20 +668,12 @@ describe('DeviceFormComponent', () => {
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
-
-        const mockApiCall = (fallback: jest.Mock) => (method: string) => {
-          if (method === 'vm.device.create') {
-            return throwError(() => apiError);
-          }
-
-          return fallback(method);
-        };
-
-        const spy = spectator.inject(MockApiService);
-        spy.call.mockImplementation(mockApiCall(spy.call));
       });
 
       it('properly transforms and displays an error', async () => {
+        const spy = spectator.inject(MockApiService);
+        spy.call.mockImplementation(mockApiCall(apiErrorToGetTransformed, spy.call));
+
         await form.fillForm(
           {
             Type: 'Raw File',
@@ -705,6 +707,45 @@ describe('DeviceFormComponent', () => {
         // see `change-password-form.component.spec.ts`.
         expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
           .toHaveBeenCalledWith(transformedApiError, expect.any(FormGroup));
+      });
+
+      it('still handles an error that is not transformed', async () => {
+        const spy = spectator.inject(MockApiService);
+        spy.call.mockImplementation(mockApiCall(apiErrorToGetTransformed, spy.call));
+
+        await form.fillForm(
+          {
+            Type: 'Raw File',
+            'Raw File': '/mnt/bassein/newfile.raw',
+            'Disk Sector Size': 'Default',
+            Mode: 'AHCI',
+            'Raw Filesize': null,
+            'Device Order': '8',
+          },
+        );
+
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.create', [{
+          attributes: {
+            logical_sectorsize: null,
+            physical_sectorsize: null,
+            path: '/mnt/bassein/newfile.raw',
+            size: null,
+            type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
+            exists: true,
+          },
+          order: 8,
+          vm: 45,
+        }]);
+
+        // we can't actually detect any form changes, but detecting whether or not
+        // `handleValidationErrors` was called is sufficient to ensure that the errors
+        // *are* actually being handled.
+        // see `change-password-form.component.spec.ts`.
+        expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
+          .toHaveBeenCalledWith(apiErrorWontGetTransformed, expect.any(FormGroup));
       });
     });
   });
