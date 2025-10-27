@@ -11,7 +11,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { EMPTY, Observable, Subscription } from 'rxjs';
-import { catchError, debounceTime, tap } from 'rxjs/operators';
+import { catchError, debounceTime, shareReplay, tap } from 'rxjs/operators';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -176,6 +176,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
           this.isLoading = false;
           this.cdr.markForCheck();
         }),
+        shareReplay(1),
       );
 
       this.optsSubscription?.unsubscribe();
