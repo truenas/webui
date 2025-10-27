@@ -96,7 +96,7 @@ export function makeRequestMessage(message: Pick<RequestMessage, 'id' | 'method'
  *          or if the `extra` property is not an array.
  */
 export function transformApiCallError(error: ApiCallError, msg: string, replace: string): ApiCallError {
-  if (!error.error.data) {
+  if (!error.error.data || !Array.isArray(error.error.data.extra)) {
     return error;
   }
 
