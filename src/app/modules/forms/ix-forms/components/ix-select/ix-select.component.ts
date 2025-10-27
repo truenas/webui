@@ -176,7 +176,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
           this.isLoading = false;
           this.cdr.markForCheck();
         }),
-        shareReplay(1),
+        shareReplay({ bufferSize: 1, refCount: true }),
       );
 
       this.optsSubscription?.unsubscribe();
