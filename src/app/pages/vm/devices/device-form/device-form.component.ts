@@ -17,7 +17,7 @@ import {
   VmDeviceType, vmDeviceTypeLabels, VmDiskMode, vmDiskModeLabels, VmNicType, vmNicTypeLabels,
   VmDisplayType,
 } from 'app/enums/vm.enum';
-import { isApiCallError, transformApiCallError } from 'app/helpers/api.helper';
+import { isApiCallError, transformApiCallErrorMessage } from 'app/helpers/api.helper';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -561,7 +561,7 @@ export class DeviceFormComponent implements OnInit {
    */
   private handleFormError(error: unknown): void {
     if (this.typeControl.value === VmDeviceType.Raw && isApiCallError(error)) {
-      const transformedError = transformApiCallError(
+      const transformedError = transformApiCallErrorMessage(
         error,
         'Path must exist when "exists" is set',
         this.translate.instant('The specified file path does not exist. Please select an existing file or specify a file size to create a new file.'),

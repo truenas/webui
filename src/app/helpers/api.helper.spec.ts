@@ -8,7 +8,7 @@ import {
   isFailedJob,
   isFailedJobError,
   isIncomingMessage,
-  isSuccessfulResponse, makeRequestMessage, transformApiCallError,
+  isSuccessfulResponse, makeRequestMessage, transformApiCallErrorMessage,
 } from 'app/helpers/api.helper';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { IncomingMessage, JsonRpcError, RequestMessage } from 'app/interfaces/api-message.interface';
@@ -153,7 +153,7 @@ describe('transformApiCallError', () => {
       } as ApiErrorDetails,
     } as JsonRpcError);
 
-    const result = transformApiCallError(
+    const result = transformApiCallErrorMessage(
       error,
       'Path must exist when "exists" is set',
       'The file path does not exist. Please select an existing file.',
@@ -175,7 +175,7 @@ describe('transformApiCallError', () => {
       } as ApiErrorDetails,
     } as JsonRpcError);
 
-    const result = transformApiCallError(
+    const result = transformApiCallErrorMessage(
       error,
       'specific text',
       'Replaced message',
@@ -197,7 +197,7 @@ describe('transformApiCallError', () => {
       } as ApiErrorDetails,
     } as JsonRpcError);
 
-    const result = transformApiCallError(
+    const result = transformApiCallErrorMessage(
       error,
       'non-existent message',
       'Replacement',
@@ -219,7 +219,7 @@ describe('transformApiCallError', () => {
       } as ApiErrorDetails,
     } as JsonRpcError);
 
-    const result = transformApiCallError(
+    const result = transformApiCallErrorMessage(
       error,
       'Error message to replace',
       'New error message',
@@ -238,7 +238,7 @@ describe('transformApiCallError', () => {
       } as ApiErrorDetails,
     } as JsonRpcError);
 
-    const result = transformApiCallError(
+    const result = transformApiCallErrorMessage(
       error,
       'any message',
       'replacement',
@@ -252,7 +252,7 @@ describe('transformApiCallError', () => {
       message: 'Validation error',
     } as JsonRpcError);
 
-    const result = transformApiCallError(
+    const result = transformApiCallErrorMessage(
       error,
       'any message',
       'replacement',

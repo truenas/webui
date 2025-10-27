@@ -95,7 +95,7 @@ export function makeRequestMessage(message: Pick<RequestMessage, 'id' | 'method'
  * @returns a new `ApiCallError` with the transformed message *or* the original error if the message is not found
  *          or if the `extra` property is not an array.
  */
-export function transformApiCallError(error: ApiCallError, msg: string, replace: string): ApiCallError {
+export function transformApiCallErrorMessage(error: ApiCallError, msg: string, replace: string): ApiCallError {
   if (!error.error.data || !Array.isArray(error.error.data.extra)) {
     return error;
   }

@@ -11,7 +11,7 @@ import { JsonRpcErrorCode, ApiErrorName } from 'app/enums/api.enum';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
-import { transformApiCallError } from 'app/helpers/api.helper';
+import { transformApiCallErrorMessage } from 'app/helpers/api.helper';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import {
@@ -643,7 +643,7 @@ describe('DeviceFormComponent', () => {
       };
       const otherErrorDetails = { ...errorDetails, extra: [['something', 'other message', 0]] };
       const apiErrorToGetTransformed = new ApiCallError({ code: JsonRpcErrorCode.InvalidParams, message: 'something', data: errorDetails });
-      const transformedApiError = transformApiCallError(
+      const transformedApiError = transformApiCallErrorMessage(
         apiErrorToGetTransformed,
         'Path must exist when "exists" is set',
         'The specified file path does not exist. Please select an existing file or specify a file size to create a new file.',
