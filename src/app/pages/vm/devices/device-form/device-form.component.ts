@@ -17,7 +17,7 @@ import {
   VmDeviceType, vmDeviceTypeLabels, VmDiskMode, vmDiskModeLabels, VmNicType, vmNicTypeLabels,
   VmDisplayType,
 } from 'app/enums/vm.enum';
-import { isApiCallError } from 'app/helpers/api.helper';
+import { isApiCallError, transformApiCallError } from 'app/helpers/api.helper';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -43,7 +43,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { NetworkService } from 'app/services/network.service';
 
@@ -556,54 +555,21 @@ export class DeviceFormComponent implements OnInit {
   /**
    * helper function for processing form errors coming from the API.
    * currently has the following behavior:
-   *   * if we get an API error while on the raw device form, call `transformRawFileError` to create
-   *     a new error, then propagate it normally to `handleValidationErrors`.
+   *   * if we get an API error while on the raw device form, transform the error message
+   *     'Path must exist when "exists" is set' to something more user-friendly.
    *   * otherwise, propagate the error normally to `handleValidationErrors`.
    */
   private handleFormError(error: unknown): void {
-    if (this.typeControl.value === VmDeviceType.Raw) {
-      const transformedError = this.transformRawFileError(error);
+    if (this.typeControl.value === VmDeviceType.Raw && isApiCallError(error)) {
+      const transformedError = transformApiCallError(
+        error,
+        'Path must exist when "exists" is set',
+        this.translate.instant('The specified file path does not exist. Please select an existing file or specify a file size to create a new file.'),
+      );
       this.formErrorHandler.handleValidationErrors(transformedError, this.rawFileForm);
     } else {
       this.formErrorHandler.handleValidationErrors(error, this.typeSpecificForm);
     }
-  }
-
-  /**
-   * helper function for transforming unintuitive error messages from the API into something
-   * more user-friendly.
-   * currently, the only message we patch here is: 'Path must exist when "exists" is set'.
-   */
-  private transformRawFileError(error: unknown): unknown {
-    // bail if the error doesn't match a specific shape we're looking for
-    if (!isApiCallError(error) || !Array.isArray(error.error.data.extra)) {
-      return error;
-    }
-
-    // grab the `extra` array from the error and, since it looks like
-    // it's an array of tuples, each with the 1st element being the message we *may* be looking for,
-    // we map over it and replace the message we're looking for.
-    const extra = error.error.data.extra as [string, string, number?][];
-    const transformedExtra = extra.map(([field, message, code]) => {
-      if (message.includes('Path must exist when "exists" is set')) {
-        return [
-          field,
-          this.translate.instant('The specified file path does not exist. Please select an existing file or specify a file size to create a new file.'),
-          code,
-        ] as [string, string, number?];
-      }
-      return [field, message, code] as [string, string, number?];
-    });
-
-    // after generating the transformed `extra` parameter, return a *new* `ApiCallError` to propagate
-    // to `handleValidationErrors`.
-    return new ApiCallError({
-      ...error.error,
-      data: {
-        ...error.error.data,
-        extra: transformedExtra,
-      },
-    });
   }
 
   private getUpdateAttributes(): VmDeviceUpdate['attributes'] {

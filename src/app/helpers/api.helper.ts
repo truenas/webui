@@ -83,3 +83,39 @@ export function makeRequestMessage(message: Pick<RequestMessage, 'id' | 'method'
     ...message,
   };
 }
+
+/**
+ * transforms an `ApiCallError` into a new error by replacing an error message `msg` with
+ * the string `replace`. the `ApiCallError` is expected to have the property `error.error.data.extra`
+ * with type `Array<[string, string, number?]>`. `msg` should be in the 2nd string in the tuple.
+ *
+ * @param error - the `ApiCallError` to transform
+ * @param msg - the message string to search for and replace
+ * @param replace - the replacement message string
+ * @returns a new `ApiCallError` with the transformed message *or* the original error if the message is not found
+ *          or if the `extra` property is not an array.
+ */
+export function transformApiCallError(error: ApiCallError, msg: string, replace: string): ApiCallError {
+  if (!error.error.data) {
+    return error;
+  }
+
+  const extra = error.error.data.extra as [string, string, number?][];
+
+  // we have an array of tuples, so we map over it and replace any tuple that contains the message
+  // with an identical tuple with the message changed.
+  const transformedExtra = extra.map(([field, message, code]) => {
+    if (message.includes(msg)) {
+      return [field, replace, code] as [string, string, number?];
+    }
+    return [field, message, code] as [string, string, number?];
+  });
+
+  return new ApiCallError({
+    ...error.error,
+    data: {
+      ...error.error.data,
+      extra: transformedExtra,
+    },
+  });
+}

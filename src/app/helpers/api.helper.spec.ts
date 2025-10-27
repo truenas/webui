@@ -8,7 +8,7 @@ import {
   isFailedJob,
   isFailedJobError,
   isIncomingMessage,
-  isSuccessfulResponse, makeRequestMessage,
+  isSuccessfulResponse, makeRequestMessage, transformApiCallError,
 } from 'app/helpers/api.helper';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { IncomingMessage, JsonRpcError, RequestMessage } from 'app/interfaces/api-message.interface';
@@ -138,5 +138,112 @@ describe('makeRequestMessage', () => {
       jsonrpc: '2.0',
       id: '123',
     });
+  });
+});
+
+describe('transformApiCallError', () => {
+  it('should replace a message in the error extra data', () => {
+    const error = new ApiCallError({
+      message: 'Validation error',
+      data: {
+        extra: [
+          ['attributes.path', 'Path must exist when "exists" is set', 22],
+          ['attributes.size', 'Size must be positive', 22],
+        ],
+      } as ApiErrorDetails,
+    } as JsonRpcError);
+
+    const result = transformApiCallError(
+      error,
+      'Path must exist when "exists" is set',
+      'The file path does not exist. Please select an existing file.',
+    );
+
+    expect(result.error.data.extra).toEqual([
+      ['attributes.path', 'The file path does not exist. Please select an existing file.', 22],
+      ['attributes.size', 'Size must be positive', 22],
+    ]);
+  });
+
+  it('should use partial matching to replace messages', () => {
+    const error = new ApiCallError({
+      message: 'Validation error',
+      data: {
+        extra: [
+          ['field1', 'This is a very long error message that contains specific text', 22],
+        ],
+      } as ApiErrorDetails,
+    } as JsonRpcError);
+
+    const result = transformApiCallError(
+      error,
+      'specific text',
+      'Replaced message',
+    );
+
+    expect(result.error.data.extra).toEqual([
+      ['field1', 'Replaced message', 22],
+    ]);
+  });
+
+  it('should not modify messages that do not match', () => {
+    const error = new ApiCallError({
+      message: 'Validation error',
+      data: {
+        extra: [
+          ['field1', 'Some error message', 22],
+          ['field2', 'Another error message', 22],
+        ],
+      } as ApiErrorDetails,
+    } as JsonRpcError);
+
+    const result = transformApiCallError(
+      error,
+      'non-existent message',
+      'Replacement',
+    );
+
+    expect(result.error.data.extra).toEqual([
+      ['field1', 'Some error message', 22],
+      ['field2', 'Another error message', 22],
+    ]);
+  });
+
+  it('should handle errors without code parameter', () => {
+    const error = new ApiCallError({
+      message: 'Validation error',
+      data: {
+        extra: [
+          ['field1', 'Error message to replace'],
+        ],
+      } as ApiErrorDetails,
+    } as JsonRpcError);
+
+    const result = transformApiCallError(
+      error,
+      'Error message to replace',
+      'New error message',
+    );
+
+    expect(result.error.data.extra).toEqual([
+      ['field1', 'New error message'],
+    ]);
+  });
+
+  it('should handle empty extra array', () => {
+    const error = new ApiCallError({
+      message: 'Validation error',
+      data: {
+        extra: [],
+      } as ApiErrorDetails,
+    } as JsonRpcError);
+
+    const result = transformApiCallError(
+      error,
+      'any message',
+      'replacement',
+    );
+
+    expect(result.error.data.extra).toEqual([]);
   });
 });

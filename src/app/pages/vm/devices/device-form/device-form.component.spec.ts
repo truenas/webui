@@ -1,16 +1,19 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { JsonRpcErrorCode, ApiErrorName } from 'app/enums/api.enum';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
+import { transformApiCallError } from 'app/helpers/api.helper';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import {
   VmDevice,
   VmDiskDevice,
@@ -23,11 +26,13 @@ import {
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
+import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { VmService } from 'app/services/vm.service';
 
@@ -109,6 +114,9 @@ describe('DeviceFormComponent', () => {
       mockProvider(VmService, {
         hasVirtualizationSupport$: of(true),
       }),
+      // we can only detect whether or not validation errors are being handled
+      // correctly if we mock the `FormErrorHandlerService`
+      mockProvider(FormErrorHandlerService),
     ],
   });
 
@@ -621,6 +629,82 @@ describe('DeviceFormComponent', () => {
           (api.call as jest.Mock).mock.calls.length - 1
         ][1][0];
         expect(callArgs.attributes).not.toHaveProperty('exists');
+      });
+    });
+
+    describe('gracefully handles errors', () => {
+      const errorDetails: ApiErrorDetails = {
+        errname: ApiErrorName.Validation,
+        error: 400,
+        extra: [['something', 'Path must exist when "exists" is set', 0]],
+        reason: 'something',
+        trace: { class: 'something', formatted: 'something', frames: [] },
+        message: null,
+      };
+      const apiError = new ApiCallError({ code: JsonRpcErrorCode.InvalidParams, message: 'something', data: errorDetails });
+      const transformedApiError = transformApiCallError(
+        apiError,
+        'Path must exist when "exists" is set',
+        'The specified file path does not exist. Please select an existing file or specify a file size to create a new file.',
+      );
+
+      beforeEach(async () => {
+        spectator = createComponent({
+          providers: [
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+          ],
+        });
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        api = spectator.inject(ApiService);
+
+        const mockApiCall = (fallback: jest.Mock) => (method: string) => {
+          if (method === 'vm.device.create') {
+            return throwError(() => apiError);
+          }
+
+          return fallback(method);
+        };
+
+        const spy = spectator.inject(MockApiService);
+        spy.call.mockImplementation(mockApiCall(spy.call));
+      });
+
+      it('properly transforms and displays an error', async () => {
+        await form.fillForm(
+          {
+            Type: 'Raw File',
+            'Raw File': '/mnt/bassein/newfile.raw',
+            'Disk Sector Size': 'Default',
+            Mode: 'AHCI',
+            'Raw Filesize': null,
+            'Device Order': '8',
+          },
+        );
+
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.create', [{
+          attributes: {
+            logical_sectorsize: null,
+            physical_sectorsize: null,
+            path: '/mnt/bassein/newfile.raw',
+            size: null,
+            type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
+            exists: true,
+          },
+          order: 8,
+          vm: 45,
+        }]);
+
+        // we can't actually detect any form changes, but detecting whether or not
+        // `handleValidationErrors` was called is sufficient to ensure that the errors
+        // *are* actually being handled.
+        // see `change-password-form.component.spec.ts`.
+        expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
+          .toHaveBeenCalledWith(transformedApiError, expect.any(FormGroup));
       });
     });
   });
