@@ -79,6 +79,7 @@ export interface App {
   version: string;
   migrated: boolean;
   custom_app: boolean;
+  source: 'truenas' | 'external';
   /**
    * Present with `retrieve_config` query param.
    */
