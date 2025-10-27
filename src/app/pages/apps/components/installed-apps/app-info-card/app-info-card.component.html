@@ -8,6 +8,8 @@
         id="edit-app"
         mat-button
         [ixTest]="[app().name, 'edit']"
+        [disabled]="isExternalApp()"
+        [matTooltip]="isExternalApp() ? ('Manage by deployment tool' | translate) : ''"
         (click)="editButtonPressed()"
       >
         {{ 'Edit' | translate }}
@@ -25,7 +27,8 @@
           *ixRequiresRoles="requiredRoles"
           mat-menu-item
           [ixTest]="[app().name, 'update']"
-          [disabled]="!app().upgrade_available"
+          [disabled]="!app().upgrade_available || isExternalApp()"
+          [matTooltip]="isExternalApp() ? ('Manage by deployment tool' | translate) : ''"
           (click)="updateButtonPressed()"
         >
           {{ 'Update' | translate }}
@@ -34,7 +37,8 @@
           *ixRequiresRoles="requiredRoles"
           mat-menu-item
           [ixTest]="[app().name, 'convert']"
-          [disabled]="app().custom_app"
+          [disabled]="app().custom_app || isExternalApp()"
+          [matTooltip]="isExternalApp() ? ('Manage by deployment tool' | translate) : ''"
           (click)="openConvertDialog()"
         >{{ 'Convert to custom app' | translate}}</button>
       </mat-menu>
@@ -124,8 +128,8 @@
               mat-button
               matTooltipPosition="above"
               [ixTest]="[app().name, 'start']"
-              [matTooltip]="'Start' | translate"
-              [disabled]="inProgress()"
+              [matTooltip]="isExternalApp() ? ('Manage by deployment tool' | translate) : ('Start' | translate)"
+              [disabled]="inProgress() || isExternalApp()"
               (click)="startApp.emit(); $event.stopPropagation()"
             >
               <ix-icon name="mdi-play-circle"></ix-icon> {{ 'Start' | translate }}
@@ -138,8 +142,8 @@
               mat-button
               matTooltipPosition="above"
               [ixTest]="[app().name, 'stop']"
-              [matTooltip]="'Stop' | translate"
-              [disabled]="inProgress()"
+              [matTooltip]="isExternalApp() ? ('Manage by deployment tool' | translate) : ('Stop' | translate)"
+              [disabled]="inProgress() || isExternalApp()"
               (click)="stopApp.emit(); $event.stopPropagation()"
             >
               <ix-icon name="mdi-stop-circle"></ix-icon> {{ 'Stop' | translate }}
@@ -148,7 +152,7 @@
         </ng-container>
       </div>
 
-      @if (isRollbackPossible()) {
+      @if (isRollbackPossible() && !isExternalApp()) {
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
@@ -163,6 +167,8 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="[app().name, 'delete']"
+        [disabled]="isExternalApp()"
+        [matTooltip]="isExternalApp() ? ('Manage by deployment tool' | translate) : ''"
         (click)="deleteButtonPressed()"
       >
         {{ 'Delete' | translate }}

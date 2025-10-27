@@ -67,8 +67,8 @@
       mat-icon-button
       matTooltipPosition="above"
       [ixTest]="[app().name, 'start']"
-      [matTooltip]="'Start' | translate"
-      [disabled]="inProgress()"
+      [matTooltip]="isExternalApp() ? ('Manage by deployment tool' | translate) : ('Start' | translate)"
+      [disabled]="inProgress() || isExternalApp()"
       (click)="start(); $event.stopPropagation()"
     >
       <ix-icon name="mdi-play-circle"></ix-icon>
@@ -80,7 +80,8 @@
       matTooltipPosition="above"
       [ixTest]="[app().name, 'restart']"
       [attr.aria-label]="'Restart App' | translate"
-      [matTooltip]="'Restart App' | translate"
+      [matTooltip]="isExternalApp() ? ('Manage by deployment tool' | translate) : ('Restart App' | translate)"
+      [disabled]="isExternalApp()"
       (click)="restart(); $event.stopPropagation()"
     >
       <ix-icon name="mdi-restart"></ix-icon>
@@ -91,7 +92,8 @@
       mat-icon-button
       matTooltipPosition="above"
       [ixTest]="[app().name, 'stop']"
-      [matTooltip]="'Stop' | translate"
+      [matTooltip]="isExternalApp() ? ('Manage by deployment tool' | translate) : ('Stop' | translate)"
+      [disabled]="isExternalApp()"
       (click)="stop(); $event.stopPropagation()"
     >
       <ix-icon name="mdi-stop-circle"></ix-icon>

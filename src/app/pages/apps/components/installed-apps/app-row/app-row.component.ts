@@ -67,6 +67,10 @@ export class AppRowComponent {
     return [AppState.Deploying].includes(this.app().state);
   });
 
+  readonly isExternalApp = computed(() => {
+    return this.app().source === 'external';
+  });
+
   readonly incomingTrafficBits = computed(() => {
     return this.stats().networks.reduce((sum, stats) => sum + this.bytesToBits(stats.rx_bytes), 0);
   });
