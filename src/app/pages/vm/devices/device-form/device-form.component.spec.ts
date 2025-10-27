@@ -711,7 +711,7 @@ describe('DeviceFormComponent', () => {
 
       it('still handles an error that is not transformed', async () => {
         const spy = spectator.inject(MockApiService);
-        spy.call.mockImplementation(mockApiCall(apiErrorToGetTransformed, spy.call));
+        spy.call.mockImplementation(mockApiCall(apiErrorWontGetTransformed, spy.call));
 
         await form.fillForm(
           {
@@ -740,10 +740,22 @@ describe('DeviceFormComponent', () => {
           vm: 45,
         }]);
 
-        // we can't actually detect any form changes, but detecting whether or not
-        // `handleValidationErrors` was called is sufficient to ensure that the errors
-        // *are* actually being handled.
-        // see `change-password-form.component.spec.ts`.
+        expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
+          .toHaveBeenCalledWith(apiErrorWontGetTransformed, expect.any(FormGroup));
+      });
+
+      it('handles errors *not* in the raw file form', async () => {
+        const spy = spectator.inject(MockApiService);
+        spy.call.mockImplementation(mockApiCall(apiErrorWontGetTransformed, spy.call));
+
+        await form.fillForm({
+          Type: 'CD-ROM',
+          'CD-ROM Path': '/mnt/cdrom',
+          'Device Order': 1002,
+        });
+
+        await saveButton.click();
+
         expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
           .toHaveBeenCalledWith(apiErrorWontGetTransformed, expect.any(FormGroup));
       });
