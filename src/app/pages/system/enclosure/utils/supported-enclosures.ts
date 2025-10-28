@@ -124,6 +124,11 @@ const xSeries = {
   [EnclosureSide.Front]: 'assets/images/new-hardware/x-series/x-series-front.svg',
 };
 
+const vSeries = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/v-series/v-series-front.svg',
+  [EnclosureSide.Rear]: 'assets/images/new-hardware/v-series/v-series-rear.svg',
+};
+
 export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.M30]: mSeries,
   [EnclosureModel.M40]: mSeries,
@@ -160,6 +165,8 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [EnclosureModel.R50B]: r50b,
   [EnclosureModel.R50BM]: r50bm,
   [EnclosureModel.R60]: r60,
+  [EnclosureModel.V140]: vSeries,
+  [EnclosureModel.V160]: vSeries,
   [EnclosureModel.X10]: xSeries,
   [EnclosureModel.X20]: xSeries,
 };
