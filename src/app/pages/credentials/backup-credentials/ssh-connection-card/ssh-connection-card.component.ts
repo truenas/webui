@@ -9,7 +9,7 @@ import { filter, Observable, of, switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
+import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { KeychainCredentialUsedBy, KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -169,27 +169,39 @@ export class SshConnectionCardComponent implements OnInit {
     hasAssociatedKeypair: boolean,
     otherItems: KeychainCredentialUsedBy[],
   ): Observable<DialogWithSecondaryCheckboxResult> {
-    let message = this.translate.instant('Are you sure you want to delete the <b>{name}</b> SSH Connection?', { name });
-    const secondaryCheckboxText = this.translate.instant('Delete associated SSH Keypair');
+    if (!hasAssociatedKeypair) {
+      // No keypair, simple confirmation dialog
+      return this.dialog.confirm({
+        title: this.translate.instant('Delete SSH Connection'),
+        message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> SSH Connection?', { name }),
+        buttonColor: 'warn',
+        buttonText: this.translate.instant('Delete'),
+      }).pipe(
+        switchMap((confirmed) => of({ confirmed, secondaryCheckbox: false })),
+      );
+    }
 
-    if (hasAssociatedKeypair && otherItems.length > 0) {
+    // Has keypair, show secondary checkbox
+    const confirmOptions: ConfirmOptionsWithSecondaryCheckbox = {
+      title: this.translate.instant('Delete SSH Connection'),
+      message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> SSH Connection?', { name }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
+      secondaryCheckbox: true,
+      secondaryCheckboxText: this.translate.instant('Delete associated SSH Keypair'),
+    };
+
+    if (otherItems.length > 0) {
       const itemsList = otherItems.map((item) => item.title).join('<br>• ');
-      message = ignoreTranslation(
+      confirmOptions.secondaryCheckboxMessage = ignoreTranslation(
         this.translate.instant(
-          'Are you sure you want to delete the <b>{name}</b> SSH Connection?<br><br>The associated SSH Keypair is also used by:<br><br>• {items}<br><br>If you delete the keypair, all these SSH connections will also be deleted.',
-          { name, items: itemsList },
+          'The associated SSH Keypair is also used by:<br><br>• {items}<br><br>If you delete the keypair, all these SSH connections will also be deleted.',
+          { items: itemsList },
         ),
       );
     }
 
-    return this.dialog.confirm({
-      title: this.translate.instant('Delete SSH Connection'),
-      message,
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
-      secondaryCheckbox: hasAssociatedKeypair,
-      secondaryCheckboxText,
-    });
+    return this.dialog.confirm(confirmOptions) as unknown as Observable<DialogWithSecondaryCheckboxResult>;
   }
 
   private deleteConnection(connectionId: number, keypairId: number | null): Observable<void> {
