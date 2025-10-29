@@ -136,11 +136,17 @@ describe('SshKeypairCardComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: false }]);
   });
 
-  it('automatically cascades delete when keypair is used by SSH Connections', async () => {
-    const usedByResponse = [{
-      title: 'SSH Connection (test-connection)',
-      unbind_method: 'keychaincredential.update',
-    }];
+  it('automatically cascades delete when keypair is used by other credentials', async () => {
+    const usedByResponse = [
+      {
+        title: 'test-connection-1',
+        unbind_method: 'keychaincredential.update',
+      },
+      {
+        title: 'test-connection-2',
+        unbind_method: 'keychaincredential.update',
+      },
+    ];
 
     jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
       if (method === 'keychaincredential.used_by') {
@@ -158,7 +164,7 @@ describe('SshKeypairCardComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [10]);
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: 'The SSH Keypair <b>test1234</b> is being used by SSH Connections.<br>Deleting it will also delete all associated SSH Connections.',
+        message: 'The SSH Keypair <b>test1234</b> is being used by the following:<br><br>• test-connection-1<br>• test-connection-2<br><br>Deleting it will also delete all associated SSH connections.',
       }),
     );
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: true }]);

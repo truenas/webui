@@ -63,6 +63,7 @@ describe('SshConnectionCardComponent', () => {
       mockApi([
         mockCall('keychaincredential.query', connections),
         mockCall('keychaincredential.delete'),
+        mockCall('keychaincredential.used_by', []),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
@@ -135,7 +136,7 @@ describe('SshConnectionCardComponent', () => {
         secondaryCheckbox: true, // Connection has private_key: 4
       }),
     );
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [5, { cascade: false }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [5]);
   });
 
   it('hides cascade checkbox when connection has no associated keypair', async () => {
@@ -160,9 +161,15 @@ describe('SshConnectionCardComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
     await deleteButton.click();
 
+    // When no keypair, uses simple confirm dialog (no secondaryCheckbox property)
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
       expect.objectContaining({
-        secondaryCheckbox: false,
+        message: 'Are you sure you want to delete the <b>test-conn-no-key</b> SSH Connection?',
+      }),
+    );
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        secondaryCheckbox: expect.anything(),
       }),
     );
   });
@@ -174,10 +181,72 @@ describe('SshConnectionCardComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
     await deleteButton.click();
 
-    // Should delete connection first, then the keypair (both with cascade: false)
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [5, { cascade: false }]);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [4, { cascade: false }]); // keypair ID
+    // Should delete keypair with cascade, which also deletes the connection
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [4, { cascade: true }]);
     expect(refetchSpy).toHaveBeenCalled();
+  });
+
+  it('shows conditional warning message when deleting connection with shared keypair', async () => {
+    const usedByResponse = [
+      {
+        title: 'test-conn-1',
+        unbind_method: 'keychaincredential.update',
+      },
+      {
+        title: 'test-conn-3',
+        unbind_method: 'keychaincredential.update',
+      },
+    ];
+
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+      if (method === 'keychaincredential.used_by') {
+        return of(usedByResponse);
+      }
+      return of(null);
+    });
+
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+    await deleteButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [4]);
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Are you sure you want to delete the <b>test-conn-1</b> SSH Connection?',
+        secondaryCheckbox: true,
+        secondaryCheckboxText: 'Delete associated SSH Keypair',
+        secondaryCheckboxMessage: 'The associated SSH Keypair is also used by:<br><br>• test-conn-3<br><br>If you delete the keypair, all these SSH connections will also be deleted.',
+      }),
+    );
+  });
+
+  it('does not show secondary warning message when keypair is not shared with other connections', async () => {
+    const usedByResponse = [
+      {
+        title: 'test-conn-1', // Only the current connection
+        unbind_method: 'keychaincredential.update',
+      },
+    ];
+
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+      if (method === 'keychaincredential.used_by') {
+        return of(usedByResponse);
+      }
+      return of(null);
+    });
+
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 1);
+    await deleteButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [4]);
+
+    const confirmCall = (spectator.inject(DialogService).confirm as jest.Mock).mock.calls[0][0];
+    expect(confirmCall).toMatchObject({
+      message: 'Are you sure you want to delete the <b>test-conn-1</b> SSH Connection?',
+      secondaryCheckbox: true,
+      secondaryCheckboxText: 'Delete associated SSH Keypair',
+    });
+    // Verify secondaryCheckboxMessage is not present (undefined properties are not included)
+    expect(confirmCall.secondaryCheckboxMessage).toBeUndefined();
   });
 
   it('should show table rows', async () => {
