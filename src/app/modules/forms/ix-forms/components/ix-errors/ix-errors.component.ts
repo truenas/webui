@@ -81,6 +81,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
     invalidCharacters: () => this.translate.instant('Contains invalid characters'),
     orphanedPercent: () => this.translate.instant('Percent sign at end must be escaped as %%'),
     invalidRcloneBandwidthLimit: (value: string) => this.translate.instant('Invalid Rclone bandwidth limit: {value}', { value }),
+    selectionMustBeFile: () => this.translate.instant('Selected path must be a file and not a directory'),
     empty: () => this.translate.instant('Value cannot be empty or whitespace only'),
   };
 
@@ -182,6 +183,8 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
         return this.defaultErrMessages.invalidRcloneBandwidthLimit(
           (errors.invalidRcloneBandwidthLimit as SomeError).value as string,
         );
+      case DefaultValidationError.SelectionMustBeFile:
+        return this.defaultErrMessages.selectionMustBeFile();
       case DefaultValidationError.Empty:
         return this.defaultErrMessages.empty();
       default:
