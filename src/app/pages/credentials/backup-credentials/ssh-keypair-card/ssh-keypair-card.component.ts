@@ -5,11 +5,11 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import { filter, map, Observable, switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { KeychainCredential, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { KeychainCredentialUsedBy, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -23,8 +23,10 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { sshKeypairsCardElements } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.elements';
 import {
@@ -66,6 +68,7 @@ export class SshKeypairCardComponent implements OnInit {
   private keychainCredentialService = inject(KeychainCredentialService);
   private download = inject(DownloadService);
   private errorHandler = inject(ErrorHandlerService);
+  private loader = inject(LoaderService);
 
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
   protected readonly searchableElements = sshKeypairsCardElements;
@@ -147,33 +150,77 @@ export class SshKeypairCardComponent implements OnInit {
   }
 
   doDelete(credential: KeychainSshKeyPair): void {
-    this.dialog
-      .confirm({
+    this.checkKeypairUsage(credential.id).pipe(
+      switchMap((usedBy) => {
+        return this.confirmDeletion(credential.name, usedBy).pipe(
+          map((confirmed) => ({ confirmed, hasAssociatedItems: usedBy.length > 0 })),
+        );
+      }),
+      filter(({ confirmed }) => confirmed),
+      switchMap(({ hasAssociatedItems }) => this.deleteKeypair(credential.id, hasAssociatedItems)),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.getCredentials();
+    });
+  }
+
+  private checkKeypairUsage(keypairId: number): Observable<KeychainCredentialUsedBy[]> {
+    return this.api.call('keychaincredential.used_by', [keypairId]).pipe(
+      this.loader.withLoader(),
+    );
+  }
+
+  private confirmDeletion(
+    name: string,
+    usedBy: KeychainCredentialUsedBy[],
+  ): Observable<boolean> {
+    if (usedBy.length > 0) {
+      const itemsList = usedBy.map((item) => item.title).join('<br>• ');
+      const message = ignoreTranslation(
+        this.translate.instant(
+          'The SSH Keypair <b>{name}</b> is being used by the following:<br><br>• {items}<br><br>Deleting it will also delete all associated SSH connections.',
+          { name, items: itemsList },
+        ),
+      );
+
+      return this.dialog.confirm({
         title: this.translate.instant('Delete SSH Keypair'),
-        message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', {
-          name: credential.name,
-        }),
+        message,
         buttonColor: 'warn',
         buttonText: this.translate.instant('Delete'),
-      })
-      .pipe(
-        filter(Boolean),
-        switchMap(() => {
-          return this.api.call('keychaincredential.delete', [credential.id]).pipe(
-            this.errorHandler.withErrorHandler(),
-          );
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.getCredentials();
       });
+    }
+
+    return this.dialog.confirm({
+      title: this.translate.instant('Delete SSH Keypair'),
+      message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', { name }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
+    });
+  }
+
+  private deleteKeypair(
+    keypairId: number,
+    hasAssociatedConnections: boolean,
+  ): Observable<void> {
+    // Automatically cascade delete when keypair has associated connections
+    const cascade = hasAssociatedConnections;
+
+    return this.api.call('keychaincredential.delete', [keypairId, { cascade }]).pipe(
+      tap(() => {
+        if (cascade) {
+          this.keychainCredentialService.refetchSshConnections.next();
+        }
+      }),
+      this.loader.withLoader(),
+      this.errorHandler.withErrorHandler(),
+    );
   }
 
   doDownload(credential: KeychainSshKeyPair): void {
     const name = credential.name;
     Object.keys(credential.attributes).forEach((keyType) => {
-      const key = credential.attributes[keyType as keyof KeychainCredential['attributes']];
+      const key = credential.attributes[keyType as keyof typeof credential.attributes];
       const blob = new Blob([key as BlobPart], { type: 'text/plain' });
       this.download.downloadBlob(blob, `${name}_${keyType}_rsa`);
     });
