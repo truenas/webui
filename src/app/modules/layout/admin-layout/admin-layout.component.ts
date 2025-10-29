@@ -82,6 +82,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly copyrightHtml = toSignal(this.store$.select(selectCopyrightHtml));
   readonly productType = toSignal(this.store$.select(selectProductType));
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  // angular tooltips are unable to display HTML content, so we just remove the `<br>` tags
+  // credit <https://github.com/JackW6809> for the replace pattern!
+  readonly copyrightText = computed(() => this.copyrightHtml().replace(/<br\s*\/?>/gi, '\n'));
 
   protected currentMessageHref = computed(() => `${exploreNasEnterpriseLink}?m=${hashMessage(this.productType())}`);
 
