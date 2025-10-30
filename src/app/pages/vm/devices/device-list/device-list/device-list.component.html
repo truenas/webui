@@ -65,7 +65,9 @@
             mat-menu-item
             [ixTest]="[device.id, 'export']"
             [attr.aria-label]="'Export disk to image file' | translate"
-            (click)="onExportDisk(device)"
+            [disabled]="isVmRunning()"
+            [matTooltip]="isVmRunning() ? ('Export is not allowed when Virtual Machine is running.' | translate) : ''"
+            (click)="handleExportDisk(device)"
           >
             {{ 'Export to Image' | translate }}
           </a>
