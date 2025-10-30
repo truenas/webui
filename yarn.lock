@@ -3656,11 +3656,11 @@ __metadata:
   linkType: hard
 
 "@messageformat/runtime@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "@messageformat/runtime@npm:3.0.1"
+  version: 3.0.2
+  resolution: "@messageformat/runtime@npm:3.0.2"
   dependencies:
     make-plural: "npm:^7.0.0"
-  checksum: 10/69e57a49f9dc35471ce3cbf6364e196b45e2385cd04cfa837284a704a37834e7d751bd9c8ff426d1d646506bd6acda781fb6ed75d4e66f8de85acc66d2d3efa5
+  checksum: 10/9baf876a98d017ed79fa7ca6da6f43f44e48570b2723d6745df5a1eb31e86bea116b63e23ec1663be493f6188a36b1c81ecfbdac662ab531b2e2d6ee46a6a220
   languageName: node
   linkType: hard
 
