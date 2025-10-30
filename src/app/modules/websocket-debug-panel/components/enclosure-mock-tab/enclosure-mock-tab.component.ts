@@ -10,6 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates/enclosure-mocks';
 import {
   MockEnclosureScenario,
@@ -58,14 +59,14 @@ export class EnclosureMockTabComponent implements OnInit {
     .map((mock) => ({
       label: mock.model,
       value: mock.model,
-    })));
+    }))).pipe(shareReplay({ bufferSize: 1, refCount: false }));
 
   protected readonly expansionOptions = of(enclosureMocks
     .filter((mock) => !mock.controller)
     .map((mock) => ({
       label: mock.model,
       value: mock.model,
-    })));
+    }))).pipe(shareReplay({ bufferSize: 1, refCount: false }));
 
   protected readonly scenarioOptions = of(Array.from(mockEnclosureScenarioLabels).map(([value, label]) => ({
     label,
