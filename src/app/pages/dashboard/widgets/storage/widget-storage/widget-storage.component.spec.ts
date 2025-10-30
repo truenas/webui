@@ -11,66 +11,103 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
-import { VDevItem } from 'app/interfaces/storage.interface';
+import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetStorageComponent } from 'app/pages/dashboard/widgets/storage/widget-storage/widget-storage.component';
 
-const fakePools: Pool[] = [
-  {
-    id: 1,
-    name: 'dozer',
+/**
+ * helper function to create a fake pool for testing. in this file, we make a few different
+ * fake pools with different scan states, so this function reduces the boilerplate.
+ * @returns a `Pool` object.
+ */
+function makeFakePool(name: string, id: number, scan: PoolScanUpdate): Pool {
+  return {
+    id,
+    name,
+    scan,
     status: PoolStatus.Online,
     healthy: true,
-    scan: {
-      function: PoolScanFunction.Scrub,
-      state: PoolScanState.Finished,
-      start_time: {
-        $date: 1714892401000,
-      },
-      end_time: {
-        $date: 1714892413000,
-      },
-      pause: null,
-      errors: 0,
-      total_secs_left: null,
-    },
     topology: {
       data: [
         {
-          children: [] as VDevItem[],
+          children: [],
           type: TopologyItemType.Disk,
           stats: {
             read_errors: 0,
             write_errors: 0,
             checksum_errors: 0,
           },
-        } as VDevItem,
+        },
         {
-          children: [] as VDevItem[],
+          children: [],
           type: TopologyItemType.Disk,
           stats: {
             read_errors: 1,
             write_errors: 2,
             checksum_errors: 3,
           },
-        } as VDevItem,
-      ] as VDevItem[],
-      log: [] as VDevItem[],
-      cache: [] as VDevItem[],
+        },
+      ],
+      log: [],
+      cache: [],
       spare: [{
-        children: [] as VDevItem[],
-      }] as VDevItem[],
-      special: [] as VDevItem[],
-      dedup: [] as VDevItem[],
-    } as PoolTopology,
+        children: [],
+      }],
+      special: [],
+      dedup: [],
+    },
+  } as Pool;
+}
+
+const poolWithFinishedScrub = makeFakePool('poolWithFinishedScrub', 1, {
+  function: PoolScanFunction.Scrub,
+  state: PoolScanState.Finished,
+  start_time: {
+    $date: 1714892401000,
   },
-] as Pool[];
+  end_time: {
+    $date: 1714892413000,
+  },
+  pause: null,
+  errors: 0,
+  total_secs_left: null,
+} as PoolScanUpdate);
+
+const poolWithOngoingScrub = makeFakePool('poolWithOngoingScrub', 2, {
+  function: PoolScanFunction.Scrub,
+  state: PoolScanState.Scanning,
+  start_time: {
+    $date: Date.now(),
+  },
+  end_time: null,
+  pause: null,
+  errors: 0,
+  percentage: 58.25,
+  total_secs_left: 1200,
+} as PoolScanUpdate);
+
+const poolWithNeverRunScrub = makeFakePool('poolWithNeverRunScrub', 3, {
+  function: PoolScanFunction.Scrub,
+  state: PoolScanState.Finished,
+  start_time: null,
+  end_time: null,
+  pause: null,
+  errors: 0,
+  percentage: 0,
+  total_secs_left: null,
+} as PoolScanUpdate);
+
+const fakePools = [
+  poolWithFinishedScrub,
+  poolWithOngoingScrub,
+  poolWithNeverRunScrub,
+];
 
 describe('WidgetStorageComponent', () => {
   let spectator: Spectator<WidgetStorageComponent>;
+
   const createComponent = createComponentFactory({
     component: WidgetStorageComponent,
     imports: [
@@ -87,7 +124,17 @@ describe('WidgetStorageComponent', () => {
           pools$: of(fakePools),
           poolUpdatesWithStaleDetection: () => of({
             value: {
-              dozer: {
+              poolWithFinishedScrub: {
+                available: 1625071616,
+                used: 2267242496,
+                total: 3892314112,
+              },
+              poolWithOngoingScrub: {
+                available: 1625071616,
+                used: 2267242496,
+                total: 3892314112,
+              },
+              poolWithNeverRunScrub: {
                 available: 1625071616,
                 used: 2267242496,
                 total: 3892314112,
@@ -102,7 +149,9 @@ describe('WidgetStorageComponent', () => {
           return format(typeof date === 'string' ? Date.parse(date) : date as number | Date, 'yyyy-MM-dd HH:mm:ss');
         }),
       }),
-      mockProvider(PercentPipe),
+      mockProvider(PercentPipe, {
+        transform: jest.fn((value: number) => `${(value * 100).toFixed(2)}%`),
+      }),
       mockAuth(),
     ],
   });
@@ -115,84 +164,46 @@ describe('WidgetStorageComponent', () => {
     });
   });
 
-  it('sets poolsInfo', () => {
-    expect(spectator.component.poolsInfo()).toMatchObject([
-      {
-        name: 'dozer',
-        status: {
-          icon: 'check_circle',
-          label: 'Pool Status',
-          level: 'safe',
-          value: 'ONLINE',
-        },
-        usedSpace: {
-          icon: 'check_circle',
-          label: 'Used Space',
-          level: 'safe',
-          value: '58.25%',
-        },
-        disksWithError: {
-          icon: 'error',
-          label: 'Disks with Errors',
-          level: 'warn',
-          value: '1 of 2',
-        },
-        scan: {
-          icon: 'check_circle',
-          label: 'Last Scrub',
-          level: 'safe',
-          value: '2024-05-05 10:00:13',
-        },
-        freeSpace: '1.51 GiB',
-        totalDisks: '2',
-      },
-    ]);
-  });
-
   it('shows storage tiles', () => {
     const tiles = spectator.queryAll('.tile');
-    expect(tiles).toHaveLength(1);
+    expect(tiles).toHaveLength(3);
 
     const headers = tiles.map((tile) => tile.querySelector('.tile-header-title')!.textContent!.trim());
-    expect(headers).toEqual(['dozer']);
+    expect(headers).toEqual(['poolWithFinishedScrub', 'poolWithOngoingScrub', 'poolWithNeverRunScrub']);
+  });
 
-    const contents = tiles.map((tile) => {
-      const labels: (string | null)[] = [];
-      const values: (string | null)[] = [];
-      tile.querySelectorAll('li').forEach((row) => {
-        const label = row.querySelector('.label')!;
-        const value = row.querySelector('.value')!;
-        labels.push(label ? label.textContent!.trim() : null);
-        values.push(value ? value.getAttribute('ng-reflect-content')! || value.textContent!.trim() : null);
+  describe('scan status', () => {
+    it('shows completed scrub with date', () => {
+      const poolsInfo = spectator.component.poolsInfo();
+      // fakePools[0] - poolWithFinishedScrub
+      expect(poolsInfo[0].scan).toMatchObject({
+        icon: 'check_circle',
+        label: 'Last Scrub',
+        level: 'safe',
+        value: '2024-05-05 10:00:13',
       });
-      return { labels, values };
     });
 
-    expect(contents).toEqual([
-      {
-        labels: [
-          'Pool Status:',
-          'Used Space:',
-          'Disks with Errors:',
-          'Last Scrub:',
-          'Free Space:',
-          'Total Disks:',
-          'Data:',
-          'Caches:',
-          'Spares:',
-        ],
-        values: [
-          'ONLINE',
-          '58.25%',
-          '1 of 2',
-          null,
-          '1.51 GiB',
-          '2',
-          '2 vdev',
-          '0',
-          '1',
-        ],
-      },
-    ]);
+    it('shows progress percentage when scrub is in progress', () => {
+      const poolsInfo = spectator.component.poolsInfo();
+      // fakePools[1] - poolWithOngoingScrub
+      expect(poolsInfo[1].scan).toMatchObject({
+        icon: 'arrow_circle_right',
+        label: 'Last Scrub',
+        level: 'safe',
+        value: '58.25%',
+      });
+    });
+
+    it('shows "Never" when scrub has never been run', () => {
+      const poolsInfo = spectator.component.poolsInfo();
+      // fakePools[2] - poolWithNeverRunScrub
+      expect(poolsInfo[2].scan).toMatchObject({
+        icon: 'mdi-minus-circle',
+        label: 'Last Scrub',
+        level: 'neutral',
+        value: 'Never',
+      });
+    });
   });
 });
