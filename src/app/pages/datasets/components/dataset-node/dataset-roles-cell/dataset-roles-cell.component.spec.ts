@@ -100,4 +100,13 @@ describe('DatasetRolesCellComponent', () => {
 
     expect(await ixIcon.getName()).toBe('ix-iscsi-share');
   });
+
+  it('shows "NVMe-oF Share" icon for dataset', async () => {
+    await setupTest({
+      name: 'root/nvme-shares',
+      nvme_shares: [{}],
+    } as DatasetDetails, false);
+
+    expect(await ixIcon.getName()).toBe('ix-nvme-share');
+  });
 });
