@@ -297,7 +297,9 @@ describe('DiskStepComponent', () => {
       spectator.component.form.controls.image_source.setValue('/mnt/pool/test.qcow2');
 
       // Wait for debounce
-      await new Promise((resolve) => setTimeout(resolve, 350));
+      await new Promise((resolve) => {
+        setTimeout(resolve, 350);
+      });
 
       // Validation should not be triggered because import is disabled
       expect(volsizeUpdateSpy).not.toHaveBeenCalled();
