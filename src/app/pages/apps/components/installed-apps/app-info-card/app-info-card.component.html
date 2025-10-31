@@ -60,46 +60,57 @@
             </a>
           }
         </div>
-        <div class="details-item">
-          <div class="label">{{ 'App Version' | translate }}:</div>
-          <div class="value">
-            {{ app().metadata.app_version | orNotAvailable }}
-          </div>
-        </div>
-        <div class="details-item">
-          <div class="label">{{ 'Version' | translate }}:</div>
-          <div class="value">
-            {{ app().version | orNotAvailable }}
-          </div>
-        </div>
-        <div class="details-item sources">
-          <div class="label">{{ 'Source' | translate }}:</div>
-          <div class="value">
-            <div>
-              @for (source of app().metadata.sources; track source; let last = $last) {
-                <a
-                  class="source-link"
-                  target="_blank"
-                  [href]="source"
-                  [title]="source"
-                  [ixTest]="[app().name, 'source']"
-                >{{ source | cleanLink }}</a>
-                @if (!last) {
-                  <span>, </span>
-                }
-              } @empty {
-                {{ 'N/A' | translate }}
-              }
+        @if (isExternalApp()) {
+          <div class="details-item">
+            <div class="label">{{ 'Deployment' | translate }}:</div>
+            <div class="value">
+              {{ 'Deployed via External Tool' | translate }}
             </div>
-        </div>
-        </div>
-
-        <div class="details-item">
-          <div class="label">{{ 'Train' | translate }}:</div>
-          <div class="value">
-            {{ app().metadata.train | orNotAvailable }}
           </div>
-        </div>
+        } @else {
+          <div class="details-item">
+            <div class="label">{{ 'App Version' | translate }}:</div>
+            <div class="value">
+              {{ app().metadata.app_version | orNotAvailable }}
+            </div>
+          </div>
+          <div class="details-item">
+            <div class="label">{{ 'Version' | translate }}:</div>
+            <div class="value">
+              {{ app().version | orNotAvailable }}
+            </div>
+          </div>
+        }
+        @if (!isExternalApp()) {
+          <div class="details-item sources">
+            <div class="label">{{ 'Source' | translate }}:</div>
+            <div class="value">
+              <div>
+                @for (source of app().metadata.sources; track source; let last = $last) {
+                  <a
+                    class="source-link"
+                    target="_blank"
+                    [href]="source"
+                    [title]="source"
+                    [ixTest]="[app().name, 'source']"
+                  >{{ source | cleanLink }}</a>
+                  @if (!last) {
+                    <span>, </span>
+                  }
+                } @empty {
+                  {{ 'N/A' | translate }}
+                }
+              </div>
+          </div>
+          </div>
+
+          <div class="details-item">
+            <div class="label">{{ 'Train' | translate }}:</div>
+            <div class="value">
+              {{ app().metadata.train | orNotAvailable }}
+            </div>
+          </div>
+        }
         @if (sortedPortals().length > 0) {
           <div class="portals" [class.has-many]="sortedPortals().length > 1">
             @for (portal of sortedPortals(); track portal.label) {
