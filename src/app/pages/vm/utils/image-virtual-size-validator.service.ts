@@ -21,6 +21,14 @@ export class ImageVirtualSizeValidatorService {
   private virtualSizeCache = new Map<string, Observable<number | null>>();
 
   /**
+   * Clears the virtual size cache. Should be called when the component is destroyed
+   * to prevent memory leaks and ensure fresh data on subsequent uses.
+   */
+  clearCache(): void {
+    this.virtualSizeCache.clear();
+  }
+
+  /**
    * Gets the virtual size of an image with caching to prevent duplicate API calls.
    * The cache is keyed by image path to ensure fresh data when the path changes.
    */
