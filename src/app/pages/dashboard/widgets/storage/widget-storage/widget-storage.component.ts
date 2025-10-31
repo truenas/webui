@@ -273,15 +273,18 @@ export class WidgetStorageComponent {
       ? this.translate.instant('Last Scrub')
       : this.translate.instant('Last Resilver');
 
-    if (endTime && isScanInProgress) {
+    if (!endTime && isScanInProgress) {
+      // case: scan is in progress.
       icon = statusIcons.arrowCircleRight;
       level = StatusLevel.Safe;
-      value = this.percentPipe.transform(pool.scan.percentage, '1.2-2') || '?';
+      value = this.percentPipe.transform(pool.scan.percentage / 100, '1.2-2') || '?';
     } else if (endTime && !isScanInProgress) {
+      // case: scan is finished.
       icon = isScanFinished ? statusIcons.checkCircle : statusIcons.error;
       level = isScanFinished ? StatusLevel.Safe : StatusLevel.Warn;
       value = this.formatDateTimePipe.transform(endTime);
     } else {
+      // case: if it's not done nor in progress, **we assume it has not run**.
       icon = statusIcons.neutral;
       level = StatusLevel.Neutral;
       value = this.translate.instant('Never');
