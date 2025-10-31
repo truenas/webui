@@ -136,6 +136,14 @@ export class InstalledAppsListComponent implements OnInit {
       .filter((app) => app?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase()));
   }
 
+  get filteredTruenasApps(): App[] {
+    return this.filteredApps.filter((app) => app.source === 'truenas');
+  }
+
+  get filteredExternalApps(): App[] {
+    return this.filteredApps.filter((app) => app.source === 'external');
+  }
+
   get allAppsChecked(): boolean {
     return this.selection.selected.length === this.filteredApps.length;
   }
