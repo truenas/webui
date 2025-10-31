@@ -38,7 +38,7 @@ export function selectJobWithCallId(
 ): MemoizedSelector<object, Job | undefined> {
   return createSelector(
     selectJobs,
-    (jobs) => jobs.find((job) => job.message_ids.includes(uuid)) || undefined,
+    (jobs) => jobs.find((job) => job.message_ids?.includes(uuid)) || undefined,
   );
 }
 

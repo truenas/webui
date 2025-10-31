@@ -17,6 +17,7 @@ import {
   VmDeviceType, vmDeviceTypeLabels, VmDiskMode, vmDiskModeLabels, VmNicType, vmNicTypeLabels,
   VmDisplayType,
 } from 'app/enums/vm.enum';
+import { isApiCallError, transformApiCallErrorMessage } from 'app/helpers/api.helper';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -35,6 +36,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -43,6 +45,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { NetworkService } from 'app/services/network.service';
+
 
 const specifyCustom = T('Specify custom');
 
@@ -83,6 +86,7 @@ export class DeviceFormComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
+  private fileValidator = inject(FileValidatorService);
   slideInRef = inject<SlideInRef<{
     virtualMachineId?: number;
     device?: VmDevice;
@@ -170,7 +174,7 @@ export class DeviceFormComponent implements OnInit {
   });
 
   rawFileForm = this.formBuilder.group({
-    path: ['', Validators.required],
+    path: ['', [Validators.required, this.fileValidator.fileIsSelectedInExplorer(this.rawFileExplorer)]],
     sectorsize: [0],
     type: [null as VmDiskMode | null],
     size: [null as number | null],
@@ -436,6 +440,19 @@ export class DeviceFormComponent implements OnInit {
       }
       // Note: if no node selected (manual typing), don't update exists here
     });
+
+    // set up a subscription that updates the *path field's* validity upon changing the size field, since
+    // if the user were to submit a nonexistent path without a size, (which is allowed) it would affect
+    // the path field with an API error asking the user to provide the size. so, providing the size should
+    // clear the error message.
+    this.rawFileForm.controls.size.valueChanges.pipe(untilDestroyed(this)).subscribe((size) => {
+      if (size) {
+        this.rawFileForm.controls.path.updateValueAndValidity();
+      }
+    });
+
+    // update the validity immediately on setup
+    this.rawFileForm.controls.path.updateValueAndValidity({ emitEvent: false });
   }
 
   /**
@@ -528,11 +545,31 @@ export class DeviceFormComponent implements OnInit {
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
-          this.formErrorHandler.handleValidationErrors(error, this.typeSpecificForm);
+          this.handleFormError(error);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
       });
+  }
+
+  /**
+   * helper function for processing form errors coming from the API.
+   * currently has the following behavior:
+   *   * if we get an API error while on the raw device form, transform the error message
+   *     'Path must exist when "exists" is set' to something more user-friendly.
+   *   * otherwise, propagate the error normally to `handleValidationErrors`.
+   */
+  private handleFormError(error: unknown): void {
+    if (this.typeControl.value === VmDeviceType.Raw && isApiCallError(error)) {
+      const transformedError = transformApiCallErrorMessage(
+        error,
+        'Path must exist when "exists" is set',
+        this.translate.instant('The specified file path does not exist. Please select an existing file or specify a file size to create a new file.'),
+      );
+      this.formErrorHandler.handleValidationErrors(transformedError, this.rawFileForm);
+    } else {
+      this.formErrorHandler.handleValidationErrors(error, this.typeSpecificForm);
+    }
   }
 
   private getUpdateAttributes(): VmDeviceUpdate['attributes'] {
