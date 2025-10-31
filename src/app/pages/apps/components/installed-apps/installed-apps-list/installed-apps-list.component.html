@@ -94,6 +94,38 @@
     (matSortChange)="setDatasourceWithSort($event)"
   >
     <div class="app-inner">
+      @if (dataSource.length) {
+        <div class="utilization-summary">
+          @if (totalUtilization$ | async; as utilization) {
+            <div class="cell cell-checkbox"></div>
+            <div class="cell cell-name">
+              <strong>{{ 'Apps Utilization' | translate }}</strong>
+            </div>
+            <div class="cell cell-status"></div>
+            <div class="cell cell-cpu">
+              <strong>{{ utilization.cpu.toFixed(0) }}%</strong>
+            </div>
+            <div class="cell cell-ram">
+              <strong>{{ utilization.memory | ixFileSize }}</strong>
+            </div>
+            <div class="cell cell-io">
+              <strong>
+                {{ utilization.blkioRead | ixFileSize }} - {{ utilization.blkioWrite | ixFileSize }}
+              </strong>
+            </div>
+            <div class="cell cell-network">
+              <strong>
+                {{ utilization.networkRx * 8 | ixNetworkSpeed }}
+                -
+                {{ utilization.networkTx * 8 | ixNetworkSpeed }}
+              </strong>
+            </div>
+            <div class="cell cell-update"></div>
+            <div class="cell cell-action"></div>
+          }
+        </div>
+      }
+
       @if (filteredTruenasApps.length) {
         <div class="apps-section">
           <h3 class="section-header">{{ 'TrueNAS Deployed Apps' | translate }}</h3>

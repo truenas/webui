@@ -113,6 +113,43 @@ ix-app-row,
   }
 }
 
+.utilization-summary {
+  align-items: center;
+  background: var(--alt-bg1);
+  border-bottom: 2px solid var(--primary);
+  color: var(--fg1);
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: 5% minmax(18%, auto) 10.5% 4% 7% 10.5% 11% 13% 10%;
+  min-height: 56px;
+  padding: 8px 0;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: 45px auto 0 0 0 0 0 0;
+  }
+
+  .cell {
+    align-items: center;
+    display: flex;
+    justify-content: flex-start;
+    padding: 4px 0;
+
+    @media (max-width: $breakpoint-tablet) {
+      display: none !important;
+    }
+
+    &.cell-name {
+      @media (max-width: $breakpoint-tablet) {
+        display: flex !important;
+      }
+    }
+
+    strong {
+      font-weight: 600;
+    }
+  }
+}
+
 .apps-section {
   display: flex;
   flex-direction: column;

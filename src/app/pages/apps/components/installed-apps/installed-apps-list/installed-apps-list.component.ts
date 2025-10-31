@@ -33,6 +33,8 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
@@ -81,6 +83,8 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     MatTooltip,
     TestDirective,
     TranslateModule,
+    FileSizePipe,
+    NetworkSpeedPipe,
   ],
 })
 
@@ -503,5 +507,53 @@ export class InstalledAppsListComponent implements OnInit {
 
   getAppStats(name: string): Observable<AppStats> {
     return this.appsStats.getStatsForApp(name);
+  }
+
+  get totalUtilization$(): Observable<{
+    cpu: number;
+    memory: number;
+    blkioRead: number;
+    blkioWrite: number;
+    networkRx: number;
+    networkTx: number;
+  }> {
+    if (!this.dataSource.length) {
+      return new Observable((subscriber) => {
+        subscriber.next({
+          cpu: 0,
+          memory: 0,
+          blkioRead: 0,
+          blkioWrite: 0,
+          networkRx: 0,
+          networkTx: 0,
+        });
+      });
+    }
+
+    return combineLatest(
+      this.dataSource.map((app) => this.getAppStats(app.name)),
+    ).pipe(
+      map((statsArray) => {
+        return statsArray.reduce((totals, stats) => {
+          if (!stats) return totals;
+
+          return {
+            cpu: totals.cpu + (stats.cpu_usage || 0),
+            memory: totals.memory + (stats.memory || 0),
+            blkioRead: totals.blkioRead + (stats.blkio?.read || 0),
+            blkioWrite: totals.blkioWrite + (stats.blkio?.write || 0),
+            networkRx: totals.networkRx + (stats.networks?.reduce((sum, net) => sum + (net.rx_bytes || 0), 0) || 0),
+            networkTx: totals.networkTx + (stats.networks?.reduce((sum, net) => sum + (net.tx_bytes || 0), 0) || 0),
+          };
+        }, {
+          cpu: 0,
+          memory: 0,
+          blkioRead: 0,
+          blkioWrite: 0,
+          networkRx: 0,
+          networkTx: 0,
+        });
+      }),
+    );
   }
 }
