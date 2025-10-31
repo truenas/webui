@@ -43,7 +43,7 @@ export function doesDatasetOrChildrenHaveShares(dataset: DatasetDetails): boolea
     dataset.nfs_shares?.length
     || dataset.smb_shares?.length
     || dataset.iscsi_shares?.length
-    || dataset.nvme_shares?.length
+    || dataset.nvmet_shares?.length
   ) {
     return true;
   }

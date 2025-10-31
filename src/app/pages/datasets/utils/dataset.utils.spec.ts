@@ -48,7 +48,7 @@ describe('doesDatasetOrChildrenHaveShares', () => {
   });
 
   it('returns true when dataset has NVMe-oF shares', () => {
-    const dataset = { name: 'pool/dataset', nvme_shares: [{}] } as DatasetDetails;
+    const dataset = { name: 'pool/dataset', nvmet_shares: [{}] } as DatasetDetails;
     expect(doesDatasetOrChildrenHaveShares(dataset)).toBe(true);
   });
 
@@ -91,7 +91,7 @@ describe('doesDatasetHaveShares', () => {
         {
           name: 'pool/dataset/child',
           children: [
-            { name: 'pool/dataset/child/grandchild', nvme_shares: [{}] } as DatasetDetails,
+            { name: 'pool/dataset/child/grandchild', nvmet_shares: [{}] } as DatasetDetails,
           ],
         } as DatasetDetails,
       ],
