@@ -149,7 +149,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   get allAppsChecked(): boolean {
-    return this.selection.selected.length === this.filteredApps.length;
+    return this.selection.selected.length === this.filteredTruenasApps.length && this.filteredTruenasApps.length > 0;
   }
 
   get hasCheckedApps(): boolean {
@@ -172,18 +172,22 @@ export class InstalledAppsListComponent implements OnInit {
   get checkedApps(): App[] {
     return this.checkedAppsNames
       .map((id) => this.dataSource.find((app) => app.id === id))
-      .filter((app): app is App => !!app);
+      .filter((app): app is App => !!app && app.source !== 'external');
   }
 
   get activeCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => [AppState.Running, AppState.Deploying].includes(app.state) && this.selection.isSelected(app.id),
+      (app) => [AppState.Running, AppState.Deploying].includes(app.state)
+        && this.selection.isSelected(app.id)
+        && app.source !== 'external',
     );
   }
 
   get stoppedCheckedApps(): App[] {
     return this.dataSource.filter(
-      (app) => [AppState.Stopped, AppState.Crashed].includes(app.state) && this.selection.isSelected(app.id),
+      (app) => [AppState.Stopped, AppState.Crashed].includes(app.state)
+        && this.selection.isSelected(app.id)
+        && app.source !== 'external',
     );
   }
 
@@ -208,7 +212,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   toggleAppsChecked(checked: boolean): void {
     if (checked) {
-      this.filteredApps.forEach((app) => this.selection.select(app.id));
+      this.filteredTruenasApps.forEach((app) => this.selection.select(app.id));
     } else {
       this.selection.clear();
     }

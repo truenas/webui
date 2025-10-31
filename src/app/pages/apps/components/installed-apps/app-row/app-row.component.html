@@ -1,11 +1,13 @@
 <div class="cell cell-checkbox">
-  <mat-checkbox
-    color="primary"
-    [ixTest]="app().name"
-    [checked]="selected()"
-    (click)="$event.stopPropagation()"
-    (change)="toggleAppChecked()"
-  ></mat-checkbox>
+  @if (!isExternalApp()) {
+    <mat-checkbox
+      color="primary"
+      [ixTest]="app().name"
+      [checked]="selected()"
+      (click)="$event.stopPropagation()"
+      (change)="toggleAppChecked()"
+    ></mat-checkbox>
+  }
 </div>
 <div class="cell cell-name">
   <div class="name">
