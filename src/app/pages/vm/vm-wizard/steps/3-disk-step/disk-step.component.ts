@@ -5,6 +5,7 @@ import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { VmDiskMode, vmDiskModeLabels } from 'app/enums/vm.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -22,6 +23,7 @@ import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.int
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
+import { ImageVirtualSizeValidatorService } from 'app/pages/vm/utils/image-virtual-size-validator.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 export enum NewOrExistingDisk {
@@ -78,6 +80,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private freeSpaceValidator = inject(FreeSpaceValidatorService);
+  private imageVirtualSizeValidator = inject(ImageVirtualSizeValidatorService);
   private filesystemService = inject(FilesystemService);
   formatter = inject(IxFormatterService);
 
@@ -135,6 +138,24 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
       .valueChanges.pipe(untilDestroyed(this))
       .subscribe(() => this.setConditionalValidators());
 
+    // Trigger validation when image source changes (with debounce to avoid excessive API calls)
+    // Note: Angular async validators cache based on control value changes. When image_source
+    // changes but volsize/hdd_path values remain the same, we need to manually trigger
+    // re-validation to fetch the new image's virtual size and revalidate the disk size.
+    this.form.controls.image_source
+      .valueChanges.pipe(
+        debounceTime(300),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        // Only trigger validation on the relevant control based on current mode
+        if (this.isCreatingNewDisk) {
+          this.form.controls.volsize.updateValueAndValidity();
+        } else {
+          this.form.controls.hdd_path.updateValueAndValidity();
+        }
+      });
+
     this.setConditionalValidators();
   }
 
@@ -182,10 +203,30 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
       this.form.controls.datastore.setValidators(Validators.required);
       this.form.controls.volsize.setValidators(Validators.required);
       this.form.controls.hdd_path.clearValidators();
+      this.form.controls.hdd_path.clearAsyncValidators();
+
+      // Add async validator for volsize when importing image
+      if (this.isImportingImage) {
+        this.form.controls.volsize.setAsyncValidators(
+          this.imageVirtualSizeValidator.validateVolsize(this.form),
+        );
+      } else {
+        this.form.controls.volsize.clearAsyncValidators();
+      }
     } else {
       this.form.controls.datastore.clearValidators();
       this.form.controls.volsize.clearValidators();
+      this.form.controls.volsize.clearAsyncValidators();
       this.form.controls.hdd_path.setValidators(Validators.required);
+
+      // Add async validator for hdd_path when importing image
+      if (this.isImportingImage) {
+        this.form.controls.hdd_path.setAsyncValidators(
+          this.imageVirtualSizeValidator.validateHddPath(this.form),
+        );
+      } else {
+        this.form.controls.hdd_path.clearAsyncValidators();
+      }
     }
 
     if (this.isImportingImage) {
