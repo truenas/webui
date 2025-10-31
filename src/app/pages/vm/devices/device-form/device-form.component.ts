@@ -584,15 +584,15 @@ export class DeviceFormComponent implements OnInit {
     // the formatter and parser we have attached to the size control actually ends up
     // turning `null` into the empty string (which breaks the type contract)
     // in order to enforce the `number | null` type for the size property, we transform
-    // empty strings into null
+    // empty strings into null.
+    //
+    // if the real value of `size` is not `null`, `undefined`, or a string that is not empty,
+    // then we let it pass through to the API.
     if ('size' in values) {
       const size = values.size as unknown;
       if (size === null || size === undefined || (typeof size === 'string' && size.trim() === '')) {
         // case: size is null, undefined, or an empty string (excluding whitespace)
         values.size = null;
-      } else if (typeof size === 'number') {
-        // case: size is actually a number
-        values.size = size;
       }
     }
 
