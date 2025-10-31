@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, output,
+  ChangeDetectionStrategy, Component, computed, input, output,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { App } from 'app/interfaces/app.interface';
@@ -26,4 +26,8 @@ export class AppDetailsPanelComponent {
   readonly startApp = output();
   readonly stopApp = output();
   readonly closeMobileDetails = output();
+
+  protected readonly isExternalApp = computed(() => {
+    return this.app()?.source === 'external';
+  });
 }

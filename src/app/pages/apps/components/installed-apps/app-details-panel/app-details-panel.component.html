@@ -5,19 +5,21 @@
       (startApp)="startApp.emit()"
       (stopApp)="stopApp.emit()"
     ></ix-app-info-card>
-    <ix-app-containers-card [app]="app()"></ix-app-containers-card>
-    @if (app().notes) {
-      <ix-app-notes-card [app]="app()"></ix-app-notes-card>
-    }
-    @if (
-      app().metadata.host_mounts.length
-      || app().metadata.capabilities.length
-      || app().metadata.run_as_context.length
-    ) {
-      <ix-app-metadata-card
-        [appMetadata]="app().metadata"
-        [maxHeight]="180"
-      ></ix-app-metadata-card>
+    @if (!isExternalApp()) {
+      <ix-app-containers-card [app]="app()"></ix-app-containers-card>
+      @if (app().notes) {
+        <ix-app-notes-card [app]="app()"></ix-app-notes-card>
+      }
+      @if (
+        app().metadata.host_mounts.length
+        || app().metadata.capabilities.length
+        || app().metadata.run_as_context.length
+      ) {
+        <ix-app-metadata-card
+          [appMetadata]="app().metadata"
+          [maxHeight]="180"
+        ></ix-app-metadata-card>
+      }
     }
   </div>
 </div>
