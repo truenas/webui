@@ -1,17 +1,18 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, debounceTime, shareReplay } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { VmDiskMode, vmDiskModeLabels } from 'app/enums/vm.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -54,7 +55,7 @@ const validImageExtensions = ['.qcow2', '.qed', '.raw', '.vdi', '.vhdx', '.vmdk'
     TranslateModule,
   ],
 })
-export class DiskStepComponent implements OnInit, OnDestroy, SummaryProvider {
+export class DiskStepComponent implements OnInit, SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -62,6 +63,9 @@ export class DiskStepComponent implements OnInit, OnDestroy, SummaryProvider {
   private imageVirtualSizeValidator = inject(ImageVirtualSizeValidatorService);
   private filesystemService = inject(FilesystemService);
   formatter = inject(IxFormatterService);
+
+  // Cache for virtual size API calls, keyed by image path
+  private virtualSizeCache = new Map<string, Observable<number | null>>();
 
   form = this.formBuilder.group({
     newOrExisting: [NewOrExistingDisk.New],
@@ -108,6 +112,44 @@ export class DiskStepComponent implements OnInit, OnDestroy, SummaryProvider {
     return this.form.controls.import_image.value;
   }
 
+  /**
+   * Gets the virtual size of an image with caching to prevent duplicate API calls.
+   * The cache is automatically cleaned up when the component is destroyed.
+   */
+  private getVirtualSize = (imagePath: string): Observable<number | null> => {
+    const cached$ = this.virtualSizeCache.get(imagePath);
+    if (cached$) {
+      return cached$;
+    }
+
+    const virtualSize$ = this.api.call('vm.device.virtual_size', [{ path: imagePath }]).pipe(
+      shareReplay({ bufferSize: 1, refCount: true }),
+      catchError((error: unknown) => {
+        // By design: If the API call fails, allow proceeding and skip validation
+        console.error('Failed to get virtual size for image:', error);
+        // Remove from cache on error to allow retry
+        this.virtualSizeCache.delete(imagePath);
+        return of(null);
+      }),
+    );
+
+    this.virtualSizeCache.set(imagePath, virtualSize$);
+    return virtualSize$;
+  };
+
+  /**
+   * Queries dataset information for a given dataset path.
+   */
+  private queryDataset = (datasetPath: string): Observable<Dataset[]> => {
+    return this.api.call('pool.dataset.query', [[['id', '=', datasetPath]]]).pipe(
+      catchError((error: unknown) => {
+        // By design: If the dataset query fails, allow proceeding and skip validation
+        console.error('Failed to query dataset for zvol:', error);
+        return of([]);
+      }),
+    );
+  };
+
   ngOnInit(): void {
     this.form.controls.newOrExisting
       .valueChanges.pipe(untilDestroyed(this))
@@ -143,10 +185,6 @@ export class DiskStepComponent implements OnInit, OnDestroy, SummaryProvider {
     this.setConditionalValidators();
   }
 
-  ngOnDestroy(): void {
-    // Clear the cache to prevent memory leaks and ensure fresh data on subsequent uses
-    this.imageVirtualSizeValidator.clearCache();
-  }
 
   getSummary(): SummarySection {
     const values = this.form.value;
@@ -221,7 +259,7 @@ export class DiskStepComponent implements OnInit, OnDestroy, SummaryProvider {
       // Add async validator for volsize when importing image
       if (this.isImportingImage) {
         this.form.controls.volsize.setAsyncValidators(
-          this.imageVirtualSizeValidator.validateVolsize(this.form),
+          this.imageVirtualSizeValidator.validateVolsize(this.form, this.getVirtualSize),
         );
       } else {
         this.form.controls.volsize.clearAsyncValidators();
@@ -235,7 +273,7 @@ export class DiskStepComponent implements OnInit, OnDestroy, SummaryProvider {
       // Add async validator for hdd_path when importing image
       if (this.isImportingImage) {
         this.form.controls.hdd_path.setAsyncValidators(
-          this.imageVirtualSizeValidator.validateHddPath(this.form),
+          this.imageVirtualSizeValidator.validateHddPath(this.form, this.getVirtualSize, this.queryDataset),
         );
       } else {
         this.form.controls.hdd_path.clearAsyncValidators();
