@@ -147,9 +147,11 @@ describe('DiskStepComponent', () => {
 
       expect(spectator.component.form.controls.image_source.errors).toEqual({
         invalidImageFormat: {
-          message: 'File must be one of the following formats: .qcow2, .qed, .raw, .vdi, .vhdx, .vmdk',
+          message: expect.stringContaining('.qcow2'),
         },
       });
+      expect(spectator.component.form.controls.image_source.errors.invalidImageFormat.message)
+        .toContain('.vmdk');
 
       // Set a valid file extension
       spectator.component.form.controls.image_source.setValue('/mnt/pool/valid.qcow2');
@@ -274,6 +276,40 @@ describe('DiskStepComponent', () => {
       // validateVolsize should be called again
       expect(validateVolsizeSpy).toHaveBeenCalledTimes(1);
       expect(validateHddPathSpy).not.toHaveBeenCalled();
+    });
+
+    it('does not trigger validation on image source change if import is disabled', async () => {
+      const importCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Import Image' }));
+      await importCheckbox.setValue(true);
+
+      // Spy on updateValueAndValidity
+      const volsizeUpdateSpy = jest.spyOn(spectator.component.form.controls.volsize, 'updateValueAndValidity');
+      const hddPathUpdateSpy = jest.spyOn(spectator.component.form.controls.hdd_path, 'updateValueAndValidity');
+
+      // Disable import - this will trigger updateValueAndValidity via setConditionalValidators
+      await importCheckbox.setValue(false);
+
+      // Clear spy call history after setup
+      volsizeUpdateSpy.mockClear();
+      hddPathUpdateSpy.mockClear();
+
+      // Change image source
+      spectator.component.form.controls.image_source.setValue('/mnt/pool/test.qcow2');
+
+      // Wait for debounce
+      await new Promise((resolve) => setTimeout(resolve, 350));
+
+      // Validation should not be triggered because import is disabled
+      expect(volsizeUpdateSpy).not.toHaveBeenCalled();
+      expect(hddPathUpdateSpy).not.toHaveBeenCalled();
+    });
+
+    it('clears the validator cache on component destroy', () => {
+      const clearCacheSpy = jest.spyOn(imageVirtualSizeValidator, 'clearCache');
+
+      spectator.component.ngOnDestroy();
+
+      expect(clearCacheSpy).toHaveBeenCalled();
     });
   });
 });

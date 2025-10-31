@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -33,27 +33,6 @@ export enum NewOrExistingDisk {
 
 const validImageExtensions = ['.qcow2', '.qed', '.raw', '.vdi', '.vhdx', '.vmdk'];
 
-function imageFileValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) {
-      return null;
-    }
-
-    const value = control.value.toLowerCase();
-    const hasValidExtension = validImageExtensions.some((ext) => value.endsWith(ext));
-
-    if (!hasValidExtension) {
-      return {
-        invalidImageFormat: {
-          message: `File must be one of the following formats: ${validImageExtensions.join(', ')}`,
-        },
-      };
-    }
-
-    return null;
-  };
-}
-
 @UntilDestroy()
 @Component({
   selector: 'ix-disk-step',
@@ -75,7 +54,7 @@ function imageFileValidator(): ValidatorFn {
     TranslateModule,
   ],
 })
-export class DiskStepComponent implements OnInit, SummaryProvider {
+export class DiskStepComponent implements OnInit, OnDestroy, SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -148,6 +127,11 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
         untilDestroyed(this),
       )
       .subscribe(() => {
+        // Check current state to prevent race conditions when user rapidly changes modes
+        if (!this.isImportingImage) {
+          return;
+        }
+
         // Only trigger validation on the relevant control based on current mode
         if (this.isCreatingNewDisk) {
           this.form.controls.volsize.updateValueAndValidity();
@@ -157,6 +141,11 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
       });
 
     this.setConditionalValidators();
+  }
+
+  ngOnDestroy(): void {
+    // Clear the cache to prevent memory leaks and ensure fresh data on subsequent uses
+    this.imageVirtualSizeValidator.clearCache();
   }
 
   getSummary(): SummarySection {
@@ -198,6 +187,30 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
     return summary;
   }
 
+  private imageFileValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+
+      const value = control.value.toLowerCase();
+      const hasValidExtension = validImageExtensions.some((ext) => value.endsWith(ext));
+
+      if (!hasValidExtension) {
+        return {
+          invalidImageFormat: {
+            message: this.translate.instant(
+              'File must be one of the following formats: {formats}',
+              { formats: validImageExtensions.join(', ') },
+            ),
+          },
+        };
+      }
+
+      return null;
+    };
+  }
+
   private setConditionalValidators(): void {
     if (this.isCreatingNewDisk) {
       this.form.controls.datastore.setValidators(Validators.required);
@@ -230,7 +243,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
     }
 
     if (this.isImportingImage) {
-      this.form.controls.image_source.setValidators([Validators.required, imageFileValidator()]);
+      this.form.controls.image_source.setValidators([Validators.required, this.imageFileValidator()]);
     } else {
       this.form.controls.image_source.clearValidators();
     }

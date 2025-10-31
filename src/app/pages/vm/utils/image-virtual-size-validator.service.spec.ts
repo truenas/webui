@@ -159,6 +159,36 @@ describe('ImageVirtualSizeValidatorService', () => {
     });
   });
 
+  describe('clearCache', () => {
+    it('clears the virtual size cache', async () => {
+      const apiService = spectator.inject(ApiService);
+      jest.spyOn(apiService, 'call').mockReturnValue(of(20 * GiB));
+
+      form.patchValue({
+        import_image: true,
+        image_source: '/mnt/pool/test.qcow2',
+      });
+
+      // First call should hit the API
+      const validator = spectator.service.validateVolsize(form);
+      const control = new FormControl(20 * GiB);
+      await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+
+      expect(apiService.call).toHaveBeenCalledTimes(1);
+
+      // Second call with same image should use cache (no additional API call)
+      await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      expect(apiService.call).toHaveBeenCalledTimes(1);
+
+      // Clear the cache
+      spectator.service.clearCache();
+
+      // Third call should hit the API again after cache clear
+      await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      expect(apiService.call).toHaveBeenCalledTimes(2);
+    });
+  });
+
   describe('validateHddPath', () => {
     describe('when import_image is false', () => {
       it('returns null without validating', async () => {
