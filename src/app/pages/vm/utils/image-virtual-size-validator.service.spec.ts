@@ -1,12 +1,11 @@
 import { FormBuilder, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { firstValueFrom, Observable, of, throwError } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { ImageVirtualSizeValidatorService } from './image-virtual-size-validator.service';
 
 describe('ImageVirtualSizeValidatorService', () => {
@@ -277,7 +276,7 @@ describe('ImageVirtualSizeValidatorService', () => {
     it('handles dataset not found gracefully', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       mockGetVirtualSize.mockReturnValue(of(20 * GiB));
-      mockQueryDataset.mockReturnValue(of([]));
+      mockQueryDataset.mockReturnValue(of([] as Dataset[]));
 
       form.patchValue({
         import_image: true,
@@ -301,7 +300,7 @@ describe('ImageVirtualSizeValidatorService', () => {
       // This test verifies that an empty dataset array is handled gracefully
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       mockGetVirtualSize.mockReturnValue(of(20 * GiB));
-      mockQueryDataset.mockReturnValue(of([]));
+      mockQueryDataset.mockReturnValue(of([] as Dataset[]));
 
       form.patchValue({
         import_image: true,
@@ -316,6 +315,87 @@ describe('ImageVirtualSizeValidatorService', () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Dataset not found for path:',
         'poolio/test-zvol',
+      );
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('handles non-zvol dataset type (filesystem) gracefully', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      mockGetVirtualSize.mockReturnValue(of(20 * GiB));
+      mockQueryDataset.mockReturnValue(of([
+        {
+          type: DatasetType.Filesystem,
+          volsize: { parsed: 20 * GiB },
+        } as Dataset,
+      ]));
+
+      form.patchValue({
+        import_image: true,
+        image_source: '/mnt/pool/test.qcow2',
+      });
+
+      const validator = spectator.service.validateHddPath(form, mockGetVirtualSize, mockQueryDataset);
+      const control = new FormControl('/dev/zvol/poolio/test-dataset');
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+
+      expect(result).toBeNull();
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Selected dataset is not a zvol or has no volsize:',
+        expect.objectContaining({ type: DatasetType.Filesystem }),
+      );
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('handles missing volsize property gracefully', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      mockGetVirtualSize.mockReturnValue(of(20 * GiB));
+      mockQueryDataset.mockReturnValue(of([
+        {
+          type: DatasetType.Volume,
+          volsize: undefined,
+        } as Dataset,
+      ]));
+
+      form.patchValue({
+        import_image: true,
+        image_source: '/mnt/pool/test.qcow2',
+      });
+
+      const validator = spectator.service.validateHddPath(form, mockGetVirtualSize, mockQueryDataset);
+      const control = new FormControl('/dev/zvol/poolio/test-zvol');
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+
+      expect(result).toBeNull();
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Selected dataset is not a zvol or has no volsize:',
+        expect.objectContaining({ type: DatasetType.Volume, volsize: undefined }),
+      );
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('handles missing volsize.parsed property gracefully', async () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      mockGetVirtualSize.mockReturnValue(of(20 * GiB));
+      mockQueryDataset.mockReturnValue(of([
+        {
+          type: DatasetType.Volume,
+          volsize: { parsed: undefined },
+        } as Dataset,
+      ]));
+
+      form.patchValue({
+        import_image: true,
+        image_source: '/mnt/pool/test.qcow2',
+      });
+
+      const validator = spectator.service.validateHddPath(form, mockGetVirtualSize, mockQueryDataset);
+      const control = new FormControl('/dev/zvol/poolio/test-zvol');
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+
+      expect(result).toBeNull();
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Selected dataset is not a zvol or has no volsize:',
+        expect.objectContaining({ type: DatasetType.Volume }),
       );
       consoleErrorSpy.mockRestore();
     });

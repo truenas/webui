@@ -127,8 +127,8 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
       catchError((error: unknown) => {
         // By design: If the API call fails, allow proceeding and skip validation
         console.error('Failed to get virtual size for image:', error);
-        // Remove from cache on error to allow retry
-        this.virtualSizeCache.delete(imagePath);
+        // Note: No need to delete from cache - refCount mechanism handles cleanup
+        // when all subscribers unsubscribe, and caching the error prevents repeated failures
         return of(null);
       }),
     );
