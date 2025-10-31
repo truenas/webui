@@ -951,6 +951,7 @@ export interface ApiCallDirectory {
   'vm.device.update': { params: [id: number, update: VmDeviceUpdate]; response: VmDevice };
   'vm.device.usb_controller_choices': { params: void; response: Choices };
   'vm.device.usb_passthrough_choices': { params: void; response: Record<string, VmUsbPassthroughDeviceChoice> };
+  'vm.device.virtual_size': { params: [{ path: string }]; response: number };
   'vm.get_available_memory': { params: void; response: number };
   'vm.get_display_devices': { params: [id: number]; response: VmDisplayDevice[] };
   'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: VmDisplayWebUri };
