@@ -2,61 +2,34 @@ import { Injectable, inject } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormGroup, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 
 /**
  * Service that creates async validators for checking if disk size is sufficient for imported VM images.
  * Provides separate validators for new disk creation (volsize) and existing disk selection (hdd_path).
+ *
+ * Note: This service is stateless. The component manages caching of virtual size API calls.
  */
 @Injectable({ providedIn: 'root' })
 export class ImageVirtualSizeValidatorService {
-  private api = inject(ApiService);
   private validators = inject(IxValidatorsService);
   private translate = inject(TranslateService);
-  private virtualSizeCache = new Map<string, Observable<number | null>>();
-
-  /**
-   * Clears the virtual size cache. Should be called when the component is destroyed
-   * to prevent memory leaks and ensure fresh data on subsequent uses.
-   */
-  clearCache(): void {
-    this.virtualSizeCache.clear();
-  }
-
-  /**
-   * Gets the virtual size of an image with caching to prevent duplicate API calls.
-   * The cache is keyed by image path to ensure fresh data when the path changes.
-   */
-  private getVirtualSize(imagePath: string): Observable<number | null> {
-    const cached$ = this.virtualSizeCache.get(imagePath);
-    if (cached$) {
-      return cached$;
-    }
-
-    const virtualSize$ = this.api.call('vm.device.virtual_size', [{ path: imagePath }]).pipe(
-      shareReplay({ bufferSize: 1, refCount: true }),
-      catchError((error: unknown) => {
-        // By design: If the API call fails, allow proceeding and skip validation
-        console.error('Failed to get virtual size for image:', error);
-        // Remove from cache on error to allow retry
-        this.virtualSizeCache.delete(imagePath);
-        return of(null);
-      }),
-    );
-    this.virtualSizeCache.set(imagePath, virtualSize$);
-    return virtualSize$;
-  }
 
   /**
    * Creates an async validator for the volsize control (new disk creation).
    * Checks if the specified disk size is sufficient for the imported image.
+   *
+   * @param form The form group containing the import_image and image_source controls
+   * @param getVirtualSize Function to get the virtual size (provided by component with caching)
    */
-  validateVolsize(form: FormGroup): AsyncValidatorFn {
+  validateVolsize(
+    form: FormGroup,
+    getVirtualSize: (imagePath: string) => Observable<number | null>,
+  ): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       const importImage = form.controls.import_image?.value as boolean | undefined;
       const imageSource = form.controls.image_source?.value as string | undefined;
@@ -66,7 +39,7 @@ export class ImageVirtualSizeValidatorService {
         return of(null);
       }
 
-      return this.getVirtualSize(imageSource).pipe(
+      return getVirtualSize(imageSource).pipe(
         map((virtualSize: number | null): ValidationErrors | null => {
           if (virtualSize === null) {
             return null;
@@ -93,8 +66,16 @@ export class ImageVirtualSizeValidatorService {
   /**
    * Creates an async validator for the hdd_path control (existing disk selection).
    * Checks if the selected zvol is large enough for the imported image.
+   *
+   * @param form The form group containing the import_image and image_source controls
+   * @param getVirtualSize Function to get the virtual size (provided by component with caching)
+   * @param queryDataset Function to query dataset information (provided by component)
    */
-  validateHddPath(form: FormGroup): AsyncValidatorFn {
+  validateHddPath(
+    form: FormGroup,
+    getVirtualSize: (imagePath: string) => Observable<number | null>,
+    queryDataset: (datasetPath: string) => Observable<Dataset[]>,
+  ): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       const importImage = form.controls.import_image?.value as boolean | undefined;
       const imageSource = form.controls.image_source?.value as string | undefined;
@@ -105,7 +86,7 @@ export class ImageVirtualSizeValidatorService {
         return of(null);
       }
 
-      return this.getVirtualSize(imageSource).pipe(
+      return getVirtualSize(imageSource).pipe(
         switchMap((virtualSize: number | null) => {
           if (virtualSize === null) {
             return of(null);
@@ -123,7 +104,7 @@ export class ImageVirtualSizeValidatorService {
             return of(null);
           }
 
-          return this.api.call('pool.dataset.query', [[['id', '=', datasetPath]]]).pipe(
+          return queryDataset(datasetPath).pipe(
             map((datasets: Dataset[]): ValidationErrors | null => {
               if (datasets.length === 0) {
                 console.error('Dataset not found for path:', datasetPath);
@@ -151,11 +132,6 @@ export class ImageVirtualSizeValidatorService {
                   },
                 ),
               );
-            }),
-            catchError((error: unknown) => {
-              // By design: If the dataset query fails, allow proceeding and skip validation
-              console.error('Failed to query dataset for zvol:', error);
-              return of(null);
             }),
           );
         }),

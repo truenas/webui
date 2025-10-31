@@ -218,7 +218,7 @@ describe('DiskStepComponent', () => {
       const importCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Import Image' }));
       await importCheckbox.setValue(true);
 
-      expect(validateVolsizeSpy).toHaveBeenCalledWith(spectator.component.form);
+      expect(validateVolsizeSpy).toHaveBeenCalledWith(spectator.component.form, expect.any(Function));
     });
 
     it('attaches hdd_path async validator when using existing disk and importing image', async () => {
@@ -230,7 +230,11 @@ describe('DiskStepComponent', () => {
       const importCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Import Image' }));
       await importCheckbox.setValue(true);
 
-      expect(validateHddPathSpy).toHaveBeenCalledWith(spectator.component.form);
+      expect(validateHddPathSpy).toHaveBeenCalledWith(
+        spectator.component.form,
+        expect.any(Function),
+        expect.any(Function),
+      );
     });
 
     it('does not call validator methods when import image is unchecked', () => {
@@ -304,14 +308,6 @@ describe('DiskStepComponent', () => {
       // Validation should not be triggered because import is disabled
       expect(volsizeUpdateSpy).not.toHaveBeenCalled();
       expect(hddPathUpdateSpy).not.toHaveBeenCalled();
-    });
-
-    it('clears the validator cache on component destroy', () => {
-      const clearCacheSpy = jest.spyOn(imageVirtualSizeValidator, 'clearCache');
-
-      spectator.component.ngOnDestroy();
-
-      expect(clearCacheSpy).toHaveBeenCalled();
     });
   });
 });
