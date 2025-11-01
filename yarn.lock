@@ -4411,17 +4411,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:~1.53.1":
-  version: 1.53.2
-  resolution: "@playwright/test@npm:1.53.2"
-  dependencies:
-    playwright: "npm:1.53.2"
-  bin:
-    playwright: cli.js
-  checksum: 10/063c4fd82e5022db7f53e85a3b31caa1c302e7d3f874b3acc751ee5fcf8f102068693e393dc5146cdeeb5850f2321366de4ebc5ef12ab81dae52e2c7113a6b49
-  languageName: node
-  linkType: hard
-
 "@popperjs/core@npm:^2.11.8, @popperjs/core@npm:^2.9.3":
   version: 2.11.8
   resolution: "@popperjs/core@npm:2.11.8"
@@ -15800,36 +15789,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.53.2":
-  version: 1.53.2
-  resolution: "playwright-core@npm:1.53.2"
-  bin:
-    playwright-core: cli.js
-  checksum: 10/575c37b66aa62e1300d8b42d4b021c9304a35266ea47b6f0c36b429c40674082700b7172ee3641de7451cd2a4c736c42e0e39fd5f6a7ba4c81a6eefd8c104efd
-  languageName: node
-  linkType: hard
-
 "playwright-core@npm:1.55.0-alpha-2025-08-12":
   version: 1.55.0-alpha-2025-08-12
   resolution: "playwright-core@npm:1.55.0-alpha-2025-08-12"
   bin:
     playwright-core: cli.js
   checksum: 10/85949ea01632110ab67f95a52a3dee79bfa1c1ca78d581390e669c809b48007626c2b13a173397bfd9e185754fb3b6671946c5638524b948b6ab12afd1974d9b
-  languageName: node
-  linkType: hard
-
-"playwright@npm:1.53.2":
-  version: 1.53.2
-  resolution: "playwright@npm:1.53.2"
-  dependencies:
-    fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.53.2"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    playwright: cli.js
-  checksum: 10/1c860c52a77f32793d7b1b5f5b15da9b809b8a09a82e5c89f79442fe9708ff6314b6ee6d13aa0961a6c9fddc9209f0a109ac524bdf586e0df52b641e96fa759d
   languageName: node
   linkType: hard
 
@@ -18119,7 +18084,6 @@ __metadata:
     "@ngx-translate/core": "npm:~15.0.0"
     "@ngx-translate/http-loader": "npm:~8.0.0"
     "@playwright/mcp": "npm:latest"
-    "@playwright/test": "npm:~1.53.1"
     "@popperjs/core": "npm:^2.9.3"
     "@sentry/angular": "npm:~9.2.0"
     "@sentry/cli": "npm:~2.42.2"
