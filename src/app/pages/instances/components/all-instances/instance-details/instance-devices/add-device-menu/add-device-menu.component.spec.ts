@@ -5,7 +5,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ContainerDeviceType, ContainerType } from 'app/enums/container.enum';
-import { AvailableGpu, AvailableUsb, VirtualizationDevice } from 'app/interfaces/container.interface';
+import { AvailableUsb, VirtualizationDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -35,14 +35,6 @@ describe('AddDeviceMenuComponent', () => {
             product: 'Card Reader',
           } as AvailableUsb,
         }),
-        mockCall('virt.device.gpu_choices', {
-          pci_0000_01_00_0: {
-            description: 'NDIVIA XTR 2000',
-          } as AvailableGpu,
-          pci_0000_01_00_1: {
-            description: 'MAD Galeon 5000',
-          } as AvailableGpu,
-        }),
         mockCall('container.device.create'),
       ]),
       mockProvider(VirtualizationInstancesStore, {
@@ -54,11 +46,6 @@ describe('AddDeviceMenuComponent', () => {
             dev_type: ContainerDeviceType.Usb,
             product_id: 'already-added',
           } as VirtualizationDevice,
-          {
-            dev_type: ContainerDeviceType.Gpu,
-            pci: 'pci_0000_01_00_0',
-            description: 'NDIVIA XTR 2000',
-          },
         ] as VirtualizationDevice[],
         loadDevices: jest.fn(),
         isLoading: () => false,
@@ -72,14 +59,13 @@ describe('AddDeviceMenuComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows available USB devices and GPUs that have not been already added to this system', async () => {
+  it('shows available USB devices that have not been already added to this system', async () => {
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
     await menu.open();
 
     const menuItems = await menu.getItems();
-    expect(menuItems).toHaveLength(2);
+    expect(menuItems).toHaveLength(1);
     expect(await menuItems[0].getText()).toContain('Card Reader');
-    expect(await menuItems[1].getText()).toContain('MAD Galeon 5000');
   });
 
   it('adds a usb device when it is selected', async () => {
@@ -93,23 +79,6 @@ describe('AddDeviceMenuComponent', () => {
       attributes: {
         dev_type: ContainerDeviceType.Usb,
         product_id: 'new',
-      } as VirtualizationDevice,
-    }]);
-    expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Device was added');
-  });
-
-  it('adds a gpu when it is selected', async () => {
-    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
-    await menu.open();
-
-    await menu.clickItem({ text: 'MAD Galeon 5000' });
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
-      container: 'my-instance',
-      attributes: {
-        dev_type: ContainerDeviceType.Gpu,
-        pci: 'pci_0000_01_00_1',
       } as VirtualizationDevice,
     }]);
     expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();

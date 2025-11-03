@@ -21,7 +21,7 @@ describe('AddNicMenuComponent', () => {
     component: AddNicMenuComponent,
     providers: [
       mockApi([
-        mockCall('virt.device.nic_choices', {
+        mockCall('container.device.nic_attach_choices', {
           nic1: 'Intel E1000',
           nic2: 'Realtek RTL8139',
         }),

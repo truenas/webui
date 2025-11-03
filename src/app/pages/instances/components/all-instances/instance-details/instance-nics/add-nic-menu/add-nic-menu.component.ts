@@ -49,8 +49,8 @@ export class AddNicMenuComponent {
   private instancesStore = inject(VirtualizationInstancesStore);
   private matDialog = inject(MatDialog);
 
-  private readonly bridgedChoices = toSignal(this.getNicChoices(ContainerNicType.Bridged), { initialValue: {} });
-  private readonly macVlanChoices = toSignal(this.getNicChoices(ContainerNicType.Macvlan), { initialValue: {} });
+  private readonly bridgedChoices = toSignal(this.getNicChoices(), { initialValue: {} });
+  private readonly macVlanChoices = toSignal(this.getNicChoices(), { initialValue: {} });
 
   protected readonly bridgedNicTypeLabel = containerNicTypeLabels.get(ContainerNicType.Bridged)
     || ContainerNicType.Bridged;
@@ -98,8 +98,8 @@ export class AddNicMenuComponent {
     } as VirtualizationNic);
   }
 
-  private getNicChoices(nicType: ContainerNicType): Observable<Record<string, string>> {
-    return this.api.call('virt.device.nic_choices', [nicType]);
+  private getNicChoices(): Observable<Record<string, string>> {
+    return this.api.call('container.device.nic_attach_choices', []);
   }
 
   private addDevice(payload: VirtualizationNic): void {
