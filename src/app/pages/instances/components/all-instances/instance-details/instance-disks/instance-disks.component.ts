@@ -8,8 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import { ContainerInstance } from 'app/interfaces/container.interface';
-import { VirtualizationDisk } from 'app/interfaces/virtualization.interface';
+import { ContainerDiskDevice, ContainerInstance } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -45,18 +44,18 @@ export class InstanceDisksComponent {
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly visibleDisks = computed(() => this.devicesStore.devices().filter(
-    (device): device is VirtualizationDisk => device.dev_type === VirtualizationDeviceType.Disk && !!device.source,
+    (device): device is ContainerDiskDevice => device.dev_type === VirtualizationDeviceType.Disk && !!device.source,
   ));
 
   protected addDisk(): void {
     this.openDiskForm();
   }
 
-  protected editDisk(disk: VirtualizationDisk): void {
+  protected editDisk(disk: ContainerDiskDevice): void {
     this.openDiskForm(disk);
   }
 
-  private openDiskForm(disk?: VirtualizationDisk): void {
+  private openDiskForm(disk?: ContainerDiskDevice): void {
     this.slideIn.open(InstanceDiskFormComponent, { data: { disk, instance: this.instance() } })
       .pipe(filter((result) => !!result.response), untilDestroyed(this))
       .subscribe(() => this.devicesStore.loadDevices());

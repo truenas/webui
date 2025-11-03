@@ -72,11 +72,21 @@ import {
   ContainerImage, DeleteContainerImageParams,
 } from 'app/interfaces/container-image.interface';
 import {
+  ContainerDeviceCreate,
+  ContainerDeviceDelete,
+  ContainerDeviceEntry,
+  ContainerDeviceUpdate,
   ContainerGlobalConfig,
+  ContainerImageRegistryResponse,
   ContainerInstance,
   CreateContainerInstance,
+  CreateVirtualizationVolume,
   UpdateContainerInstance,
-  ContainerImageRegistryResponse,
+  VirtualizationImage,
+  VirtualizationImageParams,
+  VirtualizationNetwork,
+  VirtualizationVolume,
+  VirtualizationVolumeUpdate,
 } from 'app/interfaces/container.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { CoreOptions } from 'app/interfaces/core-options.interface';
@@ -274,19 +284,6 @@ import {
   VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
   VmDisplayWebUriParams, VmPortWizardResult,
 } from 'app/interfaces/virtual-machine.interface';
-import {
-  ContainerDeviceEntry,
-  ContainerDeviceCreate,
-  ContainerDeviceDelete,
-  ContainerDeviceUpdate,
-  VirtualizationImage,
-  VirtualizationImageParams,
-  VirtualizationInstance,
-  VirtualizationNetwork,
-  VirtualizationVolume,
-  VirtualizationVolumeUpdate,
-  CreateVirtualizationVolume,
-} from 'app/interfaces/virtualization.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
@@ -920,7 +917,7 @@ export interface ApiCallDirectory {
   'container.device.usb_device': { params: [device: string]; response: unknown };
 
   // Virt
-  'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
+  'virt.instance.query': { params: QueryParams<ContainerInstance>; response: ContainerInstance[] };
   'virt.instance.set_bootable_disk': { params: [instanceId: string, diskId: string]; response: boolean };
   'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: Record<string, VirtualizationImage> };
 

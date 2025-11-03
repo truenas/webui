@@ -19,7 +19,7 @@ import { map } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { VirtualizationPciDeviceOption } from 'app/interfaces/virtualization.interface';
+import { VirtualizationPciDeviceOption } from 'app/interfaces/container.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';

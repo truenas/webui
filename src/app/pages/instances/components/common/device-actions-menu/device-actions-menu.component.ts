@@ -8,7 +8,7 @@ import {
   EMPTY, NEVER, Observable, switchMap, tap,
 } from 'rxjs';
 import { VirtualizationDeviceType, VirtualizationStatus } from 'app/enums/virtualization.enum';
-import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
+import { ContainerDeviceWithId } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -47,7 +47,7 @@ export class DeviceActionsMenuComponent {
   private instancesStore = inject(VirtualizationInstancesStore);
   private loader = inject(LoaderService);
 
-  readonly device = input.required<VirtualizationDevice>();
+  readonly device = input.required<ContainerDeviceWithId>();
   readonly showEdit = input(true);
   readonly isDisabled = input(false);
 

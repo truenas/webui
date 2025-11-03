@@ -8,7 +8,7 @@ import {
   filter,
   map,
 } from 'rxjs';
-import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
+import { ContainerDeviceWithId } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { containerDevicesToVirtualizationDevices } from 'app/pages/instances/utils/container-device.utils';
@@ -16,7 +16,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface ContainerInstanceDeviceState {
   isLoading: boolean;
-  devices: VirtualizationDevice[];
+  devices: ContainerDeviceWithId[];
 }
 
 const initialState: ContainerInstanceDeviceState = {

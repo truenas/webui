@@ -1,8 +1,8 @@
 import { TranslateService } from '@ngx-translate/core';
 import { VirtualizationDeviceType, virtualizationDeviceTypeLabels } from 'app/enums/virtualization.enum';
-import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
+import { ContainerDevice } from 'app/interfaces/container.interface';
 
-export function getDeviceDescription(translate: TranslateService, device: VirtualizationDevice): string {
+export function getDeviceDescription(translate: TranslateService, device: ContainerDevice): string {
   const typeLabel = translate.instant(virtualizationDeviceTypeLabels.get(device.dev_type) || device.dev_type);
 
   if (device.dev_type === VirtualizationDeviceType.Nic) {

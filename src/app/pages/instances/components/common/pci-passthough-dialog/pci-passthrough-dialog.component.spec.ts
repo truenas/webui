@@ -9,7 +9,7 @@ import {
   Spectator,
 } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { VirtualizationPciChoices, VirtualizationPciDeviceOption } from 'app/interfaces/virtualization.interface';
+import { VirtualizationPciChoices, VirtualizationPciDeviceOption } from 'app/interfaces/container.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PciPassthroughDialog } from './pci-passthrough-dialog.component';

@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import { VirtualizationProxy } from 'app/interfaces/virtualization.interface';
+import { ContainerProxyDevice } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -55,11 +55,11 @@ export class InstanceProxiesComponent {
     this.openProxyForm();
   }
 
-  protected editProxy(proxy: VirtualizationProxy): void {
+  protected editProxy(proxy: ContainerProxyDevice): void {
     this.openProxyForm(proxy);
   }
 
-  private openProxyForm(proxy?: VirtualizationProxy): void {
+  private openProxyForm(proxy?: ContainerProxyDevice): void {
     const instanceId = this.instancesStore.selectedInstance()?.id;
     if (!instanceId) {
       return;

@@ -19,8 +19,8 @@ import {
   VirtualizationSource,
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
+import { ContainerGlobalConfig, ContainerInstance } from 'app/interfaces/container.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { VirtualizationGlobalConfig, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import {
@@ -50,7 +50,7 @@ describe('InstanceWizardComponent', () => {
     storage_pools: ['poolio'],
     v4_network: 'v4_network',
     v6_network: 'v6_network',
-  } as VirtualizationGlobalConfig;
+  } as ContainerGlobalConfig;
 
   const createComponent = createRoutingFactory({
     component: InstanceWizardComponent,
@@ -71,7 +71,7 @@ describe('InstanceWizardComponent', () => {
         },
         {
           name: 'testVM',
-        }] as VirtualizationInstance[]),
+        }] as ContainerInstance[]),
         mockCall('interface.has_pending_changes', false),
         mockCall('virt.device.nic_choices', {
           nic1: 'nic1',
@@ -95,7 +95,7 @@ describe('InstanceWizardComponent', () => {
           },
         }),
         mockJob('virt.volume.import_iso', fakeSuccessfulJob({ name: 'image.iso' })),
-        mockJob('virt.instance.create', fakeSuccessfulJob({ id: 'new' } as VirtualizationInstance)),
+        mockJob('virt.instance.create', fakeSuccessfulJob({ id: 'new' } as ContainerInstance)),
         mockCall('virt.global.pool_choices', {}),
       ]),
       mockProvider(SnackbarService),

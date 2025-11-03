@@ -11,7 +11,7 @@ import {
   virtualizationProxyProtocolLabels,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { VirtualizationProxy } from 'app/interfaces/virtualization.interface';
+import { ContainerProxyDevice } from 'app/interfaces/container.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -25,7 +25,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 
 interface InstanceProxyFormOptions {
   instanceId: number;
-  proxy: VirtualizationProxy | undefined;
+  proxy: ContainerProxyDevice | undefined;
 }
 
 @UntilDestroy()
@@ -56,7 +56,7 @@ export class InstanceProxyFormComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   slideInRef = inject<SlideInRef<InstanceProxyFormOptions, boolean>>(SlideInRef);
 
-  private existingProxy = signal<VirtualizationProxy | null>(null);
+  private existingProxy = signal<ContainerProxyDevice | null>(null);
 
   protected readonly isLoading = signal(false);
 
@@ -113,7 +113,7 @@ export class InstanceProxyFormComponent implements OnInit {
     const payload = {
       ...this.form.value,
       dev_type: VirtualizationDeviceType.Proxy,
-    } as VirtualizationProxy;
+    } as ContainerProxyDevice;
     const existingProxy = this.existingProxy();
 
     return existingProxy
@@ -124,7 +124,7 @@ export class InstanceProxyFormComponent implements OnInit {
         },
       }])
       : this.api.call('container.device.create', [{
-        container: instanceId,
+        container: String(instanceId),
         attributes: payload,
       }]);
   }
