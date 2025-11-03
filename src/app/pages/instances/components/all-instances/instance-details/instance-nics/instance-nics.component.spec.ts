@@ -2,7 +2,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { ContainerDeviceType, ContainerNicType, ContainerStatus } from 'app/enums/container.enum';
+import { ContainerDeviceType, ContainerNicDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import {
   AddNicMenuComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
@@ -20,12 +20,12 @@ describe('InstanceNicsComponent', () => {
   const devices = [
     {
       dtype: ContainerDeviceType.Nic,
-      nic_type: ContainerNicType.Bridged,
+      type: ContainerNicDeviceType.Virtio,
       name: 'nic1',
     },
     {
       dtype: ContainerDeviceType.Nic,
-      nic_type: ContainerNicType.Macvlan,
+      type: ContainerNicDeviceType.E1000,
       name: 'nic2',
     },
   ];

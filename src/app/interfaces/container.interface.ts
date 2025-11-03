@@ -3,7 +3,6 @@ import {
   ContainerDeviceType,
   ContainerNetworkType,
   ContainerNicDeviceType,
-  ContainerNicType,
   ContainerRemote,
   ContainerStatus,
   ContainerType,
@@ -140,9 +139,6 @@ export interface ContainerNicDevice {
   mac?: string;
   trust_guest_rx_filters?: boolean;
   mtu?: string;
-  // Legacy fields - may still be used by frontend
-  nic_type?: ContainerNicType;
-  parent?: string;
 }
 
 export interface ContainerUsbDevice {
@@ -157,11 +153,6 @@ export interface ContainerUsbDevice {
   };
   controller_type?: string;
   device?: string | null;
-  // Legacy fields from API response
-  bus?: number;
-  dev?: number;
-  product_id?: string;
-  vendor_id?: string;
 }
 
 export type ContainerDevice =
