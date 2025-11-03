@@ -63,7 +63,7 @@ export class AddNicMenuComponent {
   protected readonly availableBridgedNics = computed(() => {
     const choices = Object.values(this.bridgedChoices());
     const existingItems = this.devicesStore.devices()
-      .filter((device) => device.dev_type === ContainerDeviceType.Nic
+      .filter((device) => device.dtype === ContainerDeviceType.Nic
         && device.nic_type === ContainerNicType.Bridged) as ContainerNicDevice[];
 
     return choices.filter((nic) => !existingItems.find((device) => device.parent === nic));
@@ -72,7 +72,7 @@ export class AddNicMenuComponent {
   protected readonly availableMacVlanNics = computed(() => {
     const choices = Object.values(this.macVlanChoices());
     const existingItems = this.devicesStore.devices()
-      .filter((device) => device.dev_type === ContainerDeviceType.Nic
+      .filter((device) => device.dtype === ContainerDeviceType.Nic
         && device.nic_type === ContainerNicType.Macvlan) as ContainerNicDevice[];
 
     return choices.filter((nic) => !existingItems.find((device) => device.parent === nic));
@@ -84,7 +84,7 @@ export class AddNicMenuComponent {
 
   protected addBridgedNic(nic: string): void {
     this.addDevice({
-      dev_type: ContainerDeviceType.Nic,
+      dtype: ContainerDeviceType.Nic,
       nic_type: ContainerNicType.Bridged,
       parent: nic,
     } as ContainerNicDevice);
@@ -92,7 +92,7 @@ export class AddNicMenuComponent {
 
   protected addMacVlanNic(nic: string): void {
     this.addDevice({
-      dev_type: ContainerDeviceType.Nic,
+      dtype: ContainerDeviceType.Nic,
       nic_type: ContainerNicType.Macvlan,
       parent: nic,
     } as ContainerNicDevice);

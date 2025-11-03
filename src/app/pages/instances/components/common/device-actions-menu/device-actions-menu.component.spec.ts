@@ -50,7 +50,7 @@ describe('DeviceActionsMenuComponent', () => {
         device: {
           id: 123,
           name: 'my-device',
-          dev_type: ContainerDeviceType.Usb,
+          dtype: ContainerDeviceType.Usb,
         } as ContainerDeviceWithId,
       },
     });

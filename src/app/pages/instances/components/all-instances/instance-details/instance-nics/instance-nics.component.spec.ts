@@ -18,12 +18,12 @@ describe('InstanceNicsComponent', () => {
   let spectator: Spectator<InstanceNicsComponent>;
   const devices = [
     {
-      dev_type: ContainerDeviceType.Nic,
+      dtype: ContainerDeviceType.Nic,
       nic_type: 'Intel E1000',
       name: 'nic1',
     },
     {
-      dev_type: ContainerDeviceType.Nic,
+      dtype: ContainerDeviceType.Nic,
       nic_type: 'Realtek RTL8139',
       name: 'nic2',
     },

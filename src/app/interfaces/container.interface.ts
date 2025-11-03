@@ -98,7 +98,7 @@ export interface ContainerDiskDevice {
   id?: number;
   name: string;
   description: string;
-  dev_type: ContainerDeviceType.Disk;
+  dtype: ContainerDeviceType.Disk;
   readonly: boolean;
   source: string | null;
   destination: string | null;
@@ -109,7 +109,7 @@ export interface ContainerRawDevice {
   id?: number;
   name: string;
   description: string;
-  dev_type: ContainerDeviceType.Raw;
+  dtype: ContainerDeviceType.Raw;
   readonly: boolean;
   source: string | null;
   product_id: string;
@@ -119,7 +119,7 @@ export interface ContainerFilesystemDevice {
   id?: number;
   name: string;
   description: string;
-  dev_type: ContainerDeviceType.Filesystem;
+  dtype: ContainerDeviceType.Filesystem;
   readonly: boolean;
   source: string | null;
   destination: string | null;
@@ -130,7 +130,7 @@ export interface ContainerNicDevice {
   id?: number;
   name: string;
   description: string;
-  dev_type: ContainerDeviceType.Nic;
+  dtype: ContainerDeviceType.Nic;
   nic_type: ContainerNicType;
   parent: string;
   readonly: boolean;
@@ -143,7 +143,7 @@ export interface ContainerUsbDevice {
   id?: number;
   name: string;
   description: string;
-  dev_type: ContainerDeviceType.Usb;
+  dtype: ContainerDeviceType.Usb;
   readonly: boolean;
   bus: number;
   dev: number;
@@ -157,11 +157,6 @@ export type ContainerDevice =
   | ContainerFilesystemDevice
   | ContainerUsbDevice
   | ContainerNicDevice;
-
-export interface UserNsIdmap {
-  uid: IdmapUserNsEntry;
-  gid: IdmapUserNsEntry;
-}
 
 export interface IdmapUserNsEntry {
   hostid: number;

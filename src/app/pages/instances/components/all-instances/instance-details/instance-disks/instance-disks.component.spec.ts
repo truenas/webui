@@ -25,12 +25,12 @@ describe('InstanceDisksComponent', () => {
   let loader: HarnessLoader;
   const disks = [
     {
-      dev_type: ContainerDeviceType.Disk,
+      dtype: ContainerDeviceType.Disk,
       source: '/mnt/source-path',
       destination: 'destination',
     } as ContainerDiskDevice,
     {
-      dev_type: ContainerDeviceType.Disk,
+      dtype: ContainerDeviceType.Disk,
       source: null,
       destination: 'destination',
     } as ContainerDiskDevice,

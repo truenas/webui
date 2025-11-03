@@ -67,7 +67,7 @@ describe('InstanceDiskFormComponent', () => {
         attributes: {
           source: '/mnt/path',
           destination: 'destination',
-          dev_type: ContainerDeviceType.Disk,
+          dtype: ContainerDeviceType.Disk,
         },
       }]);
     });
@@ -124,7 +124,7 @@ describe('InstanceDiskFormComponent', () => {
         attributes: {
           source: '/mnt/updated',
           destination: 'new-destination',
-          dev_type: ContainerDeviceType.Disk,
+          dtype: ContainerDeviceType.Disk,
           name: 'existing-disk',
         },
       }]);

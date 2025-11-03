@@ -128,7 +128,7 @@ export class InstanceDiskFormComponent implements OnInit {
   private prepareRequest(): Observable<unknown> {
     const payload = {
       ...this.form.value,
-      dev_type: ContainerDeviceType.Disk,
+      dtype: ContainerDeviceType.Disk,
     } as ContainerDiskDevice;
 
     const existingDisk = this.existingDisk();

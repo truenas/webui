@@ -42,7 +42,7 @@ export class InstanceNicsComponent {
 
   protected readonly shownDevices = computed(() => {
     return this.devicesStore.devices().filter((device) => {
-      return device.dev_type === ContainerDeviceType.Nic && !!device.nic_type;
+      return device.dtype === ContainerDeviceType.Nic && !!device.nic_type;
     });
   });
 

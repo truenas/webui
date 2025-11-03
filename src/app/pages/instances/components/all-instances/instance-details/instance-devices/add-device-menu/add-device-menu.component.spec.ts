@@ -43,7 +43,7 @@ describe('AddDeviceMenuComponent', () => {
       mockProvider(VirtualizationDevicesStore, {
         devices: () => [
           {
-            dev_type: ContainerDeviceType.Usb,
+            dtype: ContainerDeviceType.Usb,
             product_id: 'already-added',
           } as ContainerDevice,
         ] as ContainerDevice[],
@@ -77,7 +77,7 @@ describe('AddDeviceMenuComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
       container: 'my-instance',
       attributes: {
-        dev_type: ContainerDeviceType.Usb,
+        dtype: ContainerDeviceType.Usb,
         product_id: 'new',
       } as ContainerDevice,
     }]);

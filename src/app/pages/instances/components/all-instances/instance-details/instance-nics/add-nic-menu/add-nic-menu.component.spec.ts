@@ -38,7 +38,7 @@ describe('AddNicMenuComponent', () => {
       mockProvider(VirtualizationDevicesStore, {
         devices: () => [
           {
-            dev_type: ContainerDeviceType.Nic,
+            dtype: ContainerDeviceType.Nic,
             nic_type: ContainerNicType.Macvlan,
             parent: 'already-added',
           },
@@ -79,7 +79,7 @@ describe('AddNicMenuComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
       container: 'my-instance',
       attributes: {
-        dev_type: ContainerDeviceType.Nic,
+        dtype: ContainerDeviceType.Nic,
         nic_type: ContainerNicType.Bridged,
         parent: 'Intel E1000',
       } as ContainerDevice,

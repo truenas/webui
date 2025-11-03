@@ -72,6 +72,7 @@ import {
   ContainerImage, DeleteContainerImageParams,
 } from 'app/interfaces/container-image.interface';
 import {
+  AvailableUsb,
   ContainerDeviceCreate,
   ContainerDeviceDelete,
   ContainerDeviceEntry,
@@ -906,7 +907,7 @@ export interface ApiCallDirectory {
   'container.device.nic_attach_choices': { params: []; response: Record<string, string> };
   'container.device.pci_device': { params: [device: string]; response: unknown };
   'container.device.pci_device_choices': { params: []; response: Record<string, string> };
-  'container.device.usb_choices': { params: []; response: Record<string, string> };
+  'container.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
   'container.device.usb_controller_choices': { params: []; response: Record<string, string> };
   'container.device.usb_device': { params: [device: string]; response: unknown };
 

@@ -43,14 +43,14 @@ export class AddDeviceMenuComponent {
   private devicesStore = inject(VirtualizationDevicesStore);
   private instancesStore = inject(VirtualizationInstancesStore);
 
-  private readonly usbChoices = toSignal(this.api.call('container.device.usb_choices'), { initialValue: {} as Record<string, AvailableUsb> });
+  private readonly usbChoices = toSignal(this.api.call('container.device.usb_choices'), { initialValue: {} });
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly availableUsbDevices = computed(() => {
-    const usbChoices = Object.values(this.usbChoices()) as AvailableUsb[];
+    const usbChoices = Object.values(this.usbChoices());
     const existingUsbDevices = this.devicesStore.devices()
-      .filter((device) => device.dev_type === ContainerDeviceType.Usb);
+      .filter((device) => device.dtype === ContainerDeviceType.Usb);
 
     return usbChoices.filter((usb) => {
       return !existingUsbDevices.find((device) => device.product_id === usb.product_id);
@@ -63,7 +63,7 @@ export class AddDeviceMenuComponent {
 
   protected addUsb(usb: AvailableUsb): void {
     this.addDevice({
-      dev_type: ContainerDeviceType.Usb,
+      dtype: ContainerDeviceType.Usb,
       product_id: usb.product_id,
     } as ContainerUsbDevice);
   }

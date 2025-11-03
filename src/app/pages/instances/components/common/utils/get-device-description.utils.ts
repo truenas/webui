@@ -3,9 +3,9 @@ import { ContainerDeviceType, containerDeviceTypeLabels } from 'app/enums/contai
 import { ContainerDevice } from 'app/interfaces/container.interface';
 
 export function getDeviceDescription(translate: TranslateService, device: ContainerDevice): string {
-  const typeLabel = translate.instant(containerDeviceTypeLabels.get(device.dev_type) || device.dev_type);
+  const typeLabel = translate.instant(containerDeviceTypeLabels.get(device.dtype) || device.dtype);
 
-  if (device.dev_type === ContainerDeviceType.Nic) {
+  if (device.dtype === ContainerDeviceType.Nic) {
     const nicMac = device.mac ? device.mac : 'Default Mac Address';
     return `${typeLabel}: ${device.name} (${device.nic_type}) (${nicMac})`;
   }

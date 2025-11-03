@@ -42,7 +42,7 @@ export class InstanceDevicesComponent {
     return this.devicesStore.devices().filter((device) => {
       return [
         ContainerDeviceType.Usb,
-      ].includes(device.dev_type);
+      ].includes(device.dtype);
     });
   });
 

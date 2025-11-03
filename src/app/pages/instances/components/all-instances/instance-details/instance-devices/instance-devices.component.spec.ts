@@ -19,11 +19,11 @@ describe('InstanceDevicesComponent', () => {
   let spectator: Spectator<InstanceDevicesComponent>;
   const devices = [
     {
-      dev_type: ContainerDeviceType.Usb,
+      dtype: ContainerDeviceType.Usb,
       description: 'USB Microphone',
     } as VirtualizationUsb,
     {
-      dev_type: ContainerDeviceType.Gpu,
+      dtype: ContainerDeviceType.Gpu,
       description: 'Matrox G200eW',
     },
     {
