@@ -12,13 +12,13 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  VirtualizationDeviceType,
-  VirtualizationGpuType,
-  VirtualizationNicType,
-  VirtualizationProxyProtocol,
-  VirtualizationSource,
-  VirtualizationType,
-} from 'app/enums/virtualization.enum';
+  ContainerDeviceType,
+  ContainerGpuType,
+  ContainerNicType,
+  ContainerProxyProtocol,
+  ContainerSource,
+  ContainerType,
+} from 'app/enums/container.enum';
 import { ContainerGlobalConfig, ContainerInstance } from 'app/interfaces/container.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -214,27 +214,27 @@ describe('InstanceWizardComponent', () => {
         name: 'new',
         autostart: true,
         cpu: '1-2',
-        instance_type: VirtualizationType.Container,
+        instance_type: ContainerType.Container,
         devices: [
           {
-            dev_type: VirtualizationDeviceType.Disk,
+            dev_type: ContainerDeviceType.Disk,
             source: '/mnt/source',
             destination: 'destination',
           },
           {
-            dev_type: VirtualizationDeviceType.Proxy,
+            dev_type: ContainerDeviceType.Proxy,
             source_port: 3000,
-            source_proto: VirtualizationProxyProtocol.Tcp,
+            source_proto: ContainerProxyProtocol.Tcp,
             dest_port: 2000,
-            dest_proto: VirtualizationProxyProtocol.Udp,
+            dest_proto: ContainerProxyProtocol.Udp,
           },
-          { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
-          { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
-          { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0', gpu_type: VirtualizationGpuType.Physical },
+          { dev_type: ContainerDeviceType.Nic, nic_type: ContainerNicType.Bridged, parent: 'nic1' },
+          { dev_type: ContainerDeviceType.Usb, product_id: '0003' },
+          { dev_type: ContainerDeviceType.Gpu, pci: 'pci_0000_01_00_0', gpu_type: ContainerGpuType.Physical },
         ],
         image: 'almalinux/8/cloud',
         memory: GiB,
-        source_type: VirtualizationSource.Image,
+        source_type: ContainerSource.Image,
         storage_pool: 'poolio',
         environment: {},
       }]);
@@ -277,9 +277,9 @@ describe('InstanceWizardComponent', () => {
         devices: [],
         image: 'almalinux/8/cloud',
         memory: GiB,
-        source_type: VirtualizationSource.Image,
+        source_type: ContainerSource.Image,
         storage_pool: 'poolio',
-        instance_type: VirtualizationType.Container,
+        instance_type: ContainerType.Container,
         environment: {},
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

@@ -5,7 +5,7 @@ import {
   input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { virtualizationStatusLabels } from 'app/enums/virtualization.enum';
+import { containerStatusLabels } from 'app/enums/container.enum';
 import { ContainerInstance } from 'app/interfaces/container.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
@@ -28,5 +28,5 @@ export class InstanceStatusCellComponent {
 
   status = computed(() => this.instance().status?.state);
 
-  protected statusLabels = virtualizationStatusLabels;
+  protected statusLabels = containerStatusLabels;
 }

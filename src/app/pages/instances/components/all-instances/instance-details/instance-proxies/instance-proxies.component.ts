@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
+import { ContainerDeviceType } from 'app/enums/container.enum';
 import { ContainerProxyDevice } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -47,7 +47,7 @@ export class InstanceProxiesComponent {
 
   protected readonly proxies = computed(() => {
     return this.devicesStore.devices().filter((device) => {
-      return device.dev_type === VirtualizationDeviceType.Proxy;
+      return device.dev_type === ContainerDeviceType.Proxy;
     });
   });
 

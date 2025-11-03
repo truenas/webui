@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
+import { ContainerStatus } from 'app/enums/container.enum';
 import {
   ContainerInstanceMetrics,
 } from 'app/interfaces/container.interface';
@@ -27,7 +27,7 @@ const instance = fakeVirtualizationInstance({
   name: 'agi_instance',
   autostart: false,
   status: {
-    state: VirtualizationStatus.Running,
+    state: ContainerStatus.Running,
     pid: 123,
     domain_state: null,
   },
@@ -122,7 +122,7 @@ describe('InstanceRowComponent', () => {
       spectator.setInput('instance', fakeVirtualizationInstance({
         ...instance,
         status: {
-          state: VirtualizationStatus.Running,
+          state: ContainerStatus.Running,
           pid: 123,
           domain_state: null,
         },
@@ -141,7 +141,7 @@ describe('InstanceRowComponent', () => {
       spectator.setInput('instance', fakeVirtualizationInstance({
         ...instance,
         status: {
-          state: VirtualizationStatus.Stopped,
+          state: ContainerStatus.Stopped,
           pid: null,
           domain_state: null,
         },
@@ -194,7 +194,7 @@ describe('InstanceRowComponent', () => {
       spectator.setInput('instance', fakeVirtualizationInstance({
         ...instance,
         status: {
-          state: VirtualizationStatus.Stopped,
+          state: ContainerStatus.Stopped,
           pid: null,
           domain_state: null,
         },

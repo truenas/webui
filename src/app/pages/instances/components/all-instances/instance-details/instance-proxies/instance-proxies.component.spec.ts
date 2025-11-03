@@ -6,7 +6,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { VirtualizationDeviceType, VirtualizationProxyProtocol } from 'app/enums/virtualization.enum';
+import { ContainerDeviceType, ContainerProxyProtocol } from 'app/enums/container.enum';
 import { VirtualizationProxy, VirtualizationUsb } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
@@ -26,24 +26,24 @@ describe('InstanceProxiesComponent', () => {
   let loader: HarnessLoader;
   const devices = [
     {
-      dev_type: VirtualizationDeviceType.Usb,
+      dev_type: ContainerDeviceType.Usb,
       name: 'Some other device',
     } as VirtualizationUsb,
     {
       name: 'proxy1',
-      dev_type: VirtualizationDeviceType.Proxy,
+      dev_type: ContainerDeviceType.Proxy,
       source_port: 4000,
-      source_proto: VirtualizationProxyProtocol.Tcp,
+      source_proto: ContainerProxyProtocol.Tcp,
       dest_port: 3000,
-      dest_proto: VirtualizationProxyProtocol.Udp,
+      dest_proto: ContainerProxyProtocol.Udp,
     } as VirtualizationProxy,
     {
       name: 'proxy2',
-      dev_type: VirtualizationDeviceType.Proxy,
+      dev_type: ContainerDeviceType.Proxy,
       source_port: 5000,
-      source_proto: VirtualizationProxyProtocol.Udp,
+      source_proto: ContainerProxyProtocol.Udp,
       dest_port: 5000,
-      dest_proto: VirtualizationProxyProtocol.Udp,
+      dest_proto: ContainerProxyProtocol.Udp,
     } as VirtualizationProxy,
   ];
 

@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { catchError, Observable, of } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { VirtualizationRemote, VirtualizationType } from 'app/enums/virtualization.enum';
+import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
 import { VirtualizationImage, ContainerImageRegistryResponse } from 'app/interfaces/container.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -56,8 +56,8 @@ export class SelectImageDialog implements OnInit {
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   protected data = inject<{
-    remote: VirtualizationRemote;
-    type: VirtualizationType;
+    remote: ContainerRemote;
+    type: ContainerType;
   }>(MAT_DIALOG_DATA);
 
   protected readonly columns = ['label', 'os', 'release', 'archs', 'variant', 'actions'];
@@ -151,7 +151,7 @@ export class SelectImageDialog implements OnInit {
           os: this.extractOs(registryImage.name),
           release: versionString,
           variant: variantString,
-          instance_types: [VirtualizationType.Container],
+          instance_types: [ContainerType.Container],
           secureboot: null,
         };
 

@@ -8,9 +8,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, Observable, switchMap } from 'rxjs';
 import {
-  VirtualizationDeviceType, VirtualizationNicType,
-  virtualizationNicTypeLabels,
-} from 'app/enums/virtualization.enum';
+  ContainerDeviceType, ContainerNicType,
+  containerNicTypeLabels,
+} from 'app/enums/container.enum';
 import {
   VirtualizationNic,
 } from 'app/interfaces/container.interface';
@@ -49,22 +49,22 @@ export class AddNicMenuComponent {
   private instancesStore = inject(VirtualizationInstancesStore);
   private matDialog = inject(MatDialog);
 
-  private readonly bridgedChoices = toSignal(this.getNicChoices(VirtualizationNicType.Bridged), { initialValue: {} });
-  private readonly macVlanChoices = toSignal(this.getNicChoices(VirtualizationNicType.Macvlan), { initialValue: {} });
+  private readonly bridgedChoices = toSignal(this.getNicChoices(ContainerNicType.Bridged), { initialValue: {} });
+  private readonly macVlanChoices = toSignal(this.getNicChoices(ContainerNicType.Macvlan), { initialValue: {} });
 
-  protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged)
-    || VirtualizationNicType.Bridged;
+  protected readonly bridgedNicTypeLabel = containerNicTypeLabels.get(ContainerNicType.Bridged)
+    || ContainerNicType.Bridged;
 
-  protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan)
-    || VirtualizationNicType.Macvlan;
+  protected readonly macVlanNicTypeLabel = containerNicTypeLabels.get(ContainerNicType.Macvlan)
+    || ContainerNicType.Macvlan;
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly availableBridgedNics = computed(() => {
     const choices = Object.values(this.bridgedChoices());
     const existingItems = this.devicesStore.devices()
-      .filter((device) => device.dev_type === VirtualizationDeviceType.Nic
-        && device.nic_type === VirtualizationNicType.Bridged) as VirtualizationNic[];
+      .filter((device) => device.dev_type === ContainerDeviceType.Nic
+        && device.nic_type === ContainerNicType.Bridged) as VirtualizationNic[];
 
     return choices.filter((nic) => !existingItems.find((device) => device.parent === nic));
   });
@@ -72,8 +72,8 @@ export class AddNicMenuComponent {
   protected readonly availableMacVlanNics = computed(() => {
     const choices = Object.values(this.macVlanChoices());
     const existingItems = this.devicesStore.devices()
-      .filter((device) => device.dev_type === VirtualizationDeviceType.Nic
-        && device.nic_type === VirtualizationNicType.Macvlan) as VirtualizationNic[];
+      .filter((device) => device.dev_type === ContainerDeviceType.Nic
+        && device.nic_type === ContainerNicType.Macvlan) as VirtualizationNic[];
 
     return choices.filter((nic) => !existingItems.find((device) => device.parent === nic));
   });
@@ -84,21 +84,21 @@ export class AddNicMenuComponent {
 
   protected addBridgedNic(nic: string): void {
     this.addDevice({
-      dev_type: VirtualizationDeviceType.Nic,
-      nic_type: VirtualizationNicType.Bridged,
+      dev_type: ContainerDeviceType.Nic,
+      nic_type: ContainerNicType.Bridged,
       parent: nic,
     } as VirtualizationNic);
   }
 
   protected addMacVlanNic(nic: string): void {
     this.addDevice({
-      dev_type: VirtualizationDeviceType.Nic,
-      nic_type: VirtualizationNicType.Macvlan,
+      dev_type: ContainerDeviceType.Nic,
+      nic_type: ContainerNicType.Macvlan,
       parent: nic,
     } as VirtualizationNic);
   }
 
-  private getNicChoices(nicType: VirtualizationNicType): Observable<Record<string, string>> {
+  private getNicChoices(nicType: ContainerNicType): Observable<Record<string, string>> {
     return this.api.call('virt.device.nic_choices', [nicType]);
   }
 

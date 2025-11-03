@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
+import { ContainerDeviceType } from 'app/enums/container.enum';
 import { ContainerDiskDevice, ContainerInstance } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -44,7 +44,7 @@ export class InstanceDisksComponent {
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly visibleDisks = computed(() => this.devicesStore.devices().filter(
-    (device): device is ContainerDiskDevice => device.dev_type === VirtualizationDeviceType.Disk && !!device.source,
+    (device): device is ContainerDiskDevice => device.dev_type === ContainerDeviceType.Disk && !!device.source,
   ));
 
   protected addDisk(): void {

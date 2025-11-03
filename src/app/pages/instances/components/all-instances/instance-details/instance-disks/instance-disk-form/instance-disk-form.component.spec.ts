@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { ContainerDeviceType, ContainerType } from 'app/enums/container.enum';
 import { VirtualizationVolume } from 'app/interfaces/container.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -47,7 +47,7 @@ describe('InstanceDiskFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             getData: () => ({
-              instance: { id: 'my-instance', type: VirtualizationType.Container },
+              instance: { id: 'my-instance', type: ContainerType.Container },
             }),
             close: jest.fn(),
             requireConfirmationWhen: jest.fn(),
@@ -77,7 +77,7 @@ describe('InstanceDiskFormComponent', () => {
         attributes: {
           source: '/mnt/path',
           destination: 'destination',
-          dev_type: VirtualizationDeviceType.Disk,
+          dev_type: ContainerDeviceType.Disk,
         },
       }]);
     });
@@ -89,7 +89,7 @@ describe('InstanceDiskFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             getData: () => ({
-              instance: { id: 'my-instance', type: VirtualizationType.Container },
+              instance: { id: 'my-instance', type: ContainerType.Container },
               disk: {
                 id: 456,
                 name: 'existing-disk',
@@ -134,7 +134,7 @@ describe('InstanceDiskFormComponent', () => {
         attributes: {
           source: '/mnt/updated',
           destination: 'new-destination',
-          dev_type: VirtualizationDeviceType.Disk,
+          dev_type: ContainerDeviceType.Disk,
           name: 'existing-disk',
         },
       }]);
@@ -151,7 +151,7 @@ describe('InstanceDiskFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             getData: () => ({
-              instance: { id: 'my-instance', type: VirtualizationType.Container },
+              instance: { id: 'my-instance', type: ContainerType.Container },
             }),
             close: jest.fn(),
             requireConfirmationWhen: jest.fn(),
@@ -202,7 +202,7 @@ describe('InstanceDiskFormComponent', () => {
         container: 'my-instance',
         attributes: {
           source: 'my-volume',
-          dev_type: VirtualizationDeviceType.Disk,
+          dev_type: ContainerDeviceType.Disk,
           io_bus: DiskIoBus.VirtioBlk,
         },
       }]);

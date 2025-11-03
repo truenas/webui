@@ -8,9 +8,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { pickBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  VirtualizationDeviceType,
-  VirtualizationGpuType,
-} from 'app/enums/virtualization.enum';
+  ContainerDeviceType,
+  ContainerGpuType,
+} from 'app/enums/container.enum';
 import {
   AvailableUsb,
   VirtualizationDevice,
@@ -51,19 +51,19 @@ export class AddDeviceMenuComponent {
   private devicesStore = inject(VirtualizationDevicesStore);
   private instancesStore = inject(VirtualizationInstancesStore);
 
-  protected readonly gpuType = VirtualizationGpuType.Physical;
+  protected readonly gpuType = ContainerGpuType.Physical;
 
   private readonly usbChoices = toSignal(this.api.call('container.device.usb_choices'), { initialValue: {} });
   // Note: GPU choices use virt.device.gpu_choices - this is shared between VMs and containers
   // TODO: Stop hardcoding params
-  private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [VirtualizationGpuType.Physical]), { initialValue: {} });
+  private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [ContainerGpuType.Physical]), { initialValue: {} });
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly availableUsbDevices = computed(() => {
     const usbChoices = Object.values(this.usbChoices());
     const existingUsbDevices = this.devicesStore.devices()
-      .filter((device) => device.dev_type === VirtualizationDeviceType.Usb);
+      .filter((device) => device.dev_type === ContainerDeviceType.Usb);
 
     return usbChoices.filter((usb) => {
       return !existingUsbDevices.find((device) => device.product_id === usb.product_id);
@@ -73,7 +73,7 @@ export class AddDeviceMenuComponent {
   protected readonly availableGpuDevices = computed(() => {
     const gpuChoices = this.gpuChoices();
     const usedGpus = this.devicesStore.devices()
-      .filter((device) => device.dev_type === VirtualizationDeviceType.Gpu);
+      .filter((device) => device.dev_type === ContainerDeviceType.Gpu);
 
     return pickBy(gpuChoices, (_, pci) => {
       return !usedGpus.find((usedGpu) => usedGpu.pci === pci);
@@ -87,14 +87,14 @@ export class AddDeviceMenuComponent {
 
   protected addUsb(usb: AvailableUsb): void {
     this.addDevice({
-      dev_type: VirtualizationDeviceType.Usb,
+      dev_type: ContainerDeviceType.Usb,
       product_id: usb.product_id,
     } as VirtualizationUsb);
   }
 
   protected addGpu(gpuPci: string): void {
     this.addDevice({
-      dev_type: VirtualizationDeviceType.Gpu,
+      dev_type: ContainerDeviceType.Gpu,
       pci: gpuPci,
     } as VirtualizationGpu);
   }

@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
+import { ContainerStatus } from 'app/enums/container.enum';
 import {
   InstanceToolsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-tools/instance-tools.component';
@@ -30,7 +30,7 @@ describe('InstanceToolsComponent', () => {
         instance: fakeVirtualizationInstance({
           id: 1,
           status: {
-            state: VirtualizationStatus.Running,
+            state: ContainerStatus.Running,
             pid: 123,
             domain_state: null,
           },
@@ -53,7 +53,7 @@ describe('InstanceToolsComponent', () => {
       spectator.setInput('instance', fakeVirtualizationInstance({
         id: 1,
         status: {
-          state: VirtualizationStatus.Stopped,
+          state: ContainerStatus.Stopped,
           pid: null,
           domain_state: null,
         },

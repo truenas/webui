@@ -14,14 +14,12 @@ export const imageOsLabels = new Map<ImageOs, string>([
   [ImageOs.Windows, 'Windows'],
 ]);
 
-export enum VirtualizationType {
+export enum ContainerType {
   Container = 'CONTAINER',
-  Vm = 'VM',
 }
 
-export const virtualizationTypeLabels = new Map<VirtualizationType, string>([
-  [VirtualizationType.Container, T('Container')],
-  [VirtualizationType.Vm, T('VM')],
+export const containerTypeLabels = new Map<ContainerType, string>([
+  [ContainerType.Container, T('Container')],
 ]);
 
 export enum DiskIoBus {
@@ -36,23 +34,23 @@ export const diskIoBusLabels = new Map<DiskIoBus, string>([
   [DiskIoBus.VirtioScsi, 'Virtio-SCSI'],
 ]);
 
-export enum VirtualizationStatus {
+export enum ContainerStatus {
   Running = 'RUNNING',
   Stopped = 'STOPPED',
   Unknown = 'UNKNOWN',
 }
 
-export const virtualizationStatusLabels = new Map<VirtualizationStatus, string>([
-  [VirtualizationStatus.Running, T('Running')],
-  [VirtualizationStatus.Stopped, T('Stopped')],
-  [VirtualizationStatus.Unknown, T('Unknown')],
+export const containerStatusLabels = new Map<ContainerStatus, string>([
+  [ContainerStatus.Running, T('Running')],
+  [ContainerStatus.Stopped, T('Stopped')],
+  [ContainerStatus.Unknown, T('Unknown')],
 ]);
 
-export enum VirtualizationRemote {
+export enum ContainerRemote {
   LinuxContainers = 'LINUX_CONTAINERS',
 }
 
-export enum VirtualizationDeviceType {
+export enum ContainerDeviceType {
   Usb = 'USB',
   Tpm = 'TPM',
   Disk = 'DISK',
@@ -62,38 +60,38 @@ export enum VirtualizationDeviceType {
   Proxy = 'PROXY',
 }
 
-export const virtualizationDeviceTypeLabels = new Map<VirtualizationDeviceType, string>([
-  [VirtualizationDeviceType.Usb, 'USB'],
-  [VirtualizationDeviceType.Tpm, 'TPM'],
-  [VirtualizationDeviceType.Pci, 'PCI'],
-  [VirtualizationDeviceType.Disk, T('Disk')],
-  [VirtualizationDeviceType.Gpu, T('GPU')],
-  [VirtualizationDeviceType.Nic, T('NIC')],
-  [VirtualizationDeviceType.Proxy, T('Proxy')],
+export const containerDeviceTypeLabels = new Map<ContainerDeviceType, string>([
+  [ContainerDeviceType.Usb, 'USB'],
+  [ContainerDeviceType.Tpm, 'TPM'],
+  [ContainerDeviceType.Pci, 'PCI'],
+  [ContainerDeviceType.Disk, T('Disk')],
+  [ContainerDeviceType.Gpu, T('GPU')],
+  [ContainerDeviceType.Nic, T('NIC')],
+  [ContainerDeviceType.Proxy, T('Proxy')],
 ]);
 
-export enum VirtualizationGpuType {
+export enum ContainerGpuType {
   Physical = 'PHYSICAL',
   Mdev = 'MDEV',
   Mig = 'MIG',
   Sriov = 'SRIOV',
 }
 
-export enum VirtualizationProxyProtocol {
+export enum ContainerProxyProtocol {
   Udp = 'UDP',
   Tcp = 'TCP',
 }
 
-export const virtualizationProxyProtocolLabels = new Map<VirtualizationProxyProtocol, string>([
-  [VirtualizationProxyProtocol.Udp, 'UDP'],
-  [VirtualizationProxyProtocol.Tcp, 'TCP'],
+export const containerProxyProtocolLabels = new Map<ContainerProxyProtocol, string>([
+  [ContainerProxyProtocol.Udp, 'UDP'],
+  [ContainerProxyProtocol.Tcp, 'TCP'],
 ]);
 
-export enum VirtualizationNetworkType {
+export enum ContainerNetworkType {
   Bridge = 'BRIDGE',
 }
 
-export enum VirtualizationGlobalState {
+export enum ContainerGlobalState {
   NoPool = 'NO_POOL',
   Initializing = 'INITIALIZING',
   Locked = 'LOCKED',
@@ -101,17 +99,17 @@ export enum VirtualizationGlobalState {
   Initialized = 'INITIALIZED',
 }
 
-export enum VirtualizationNicType {
+export enum ContainerNicType {
   Bridged = 'BRIDGED',
   Macvlan = 'MACVLAN',
 }
 
-export const virtualizationNicTypeLabels = new Map<VirtualizationNicType, string>([
-  [VirtualizationNicType.Bridged, T('Bridged Adaptors')],
-  [VirtualizationNicType.Macvlan, T('Macvlan')],
+export const containerNicTypeLabels = new Map<ContainerNicType, string>([
+  [ContainerNicType.Bridged, T('Bridged Adaptors')],
+  [ContainerNicType.Macvlan, T('Macvlan')],
 ]);
 
-export enum VirtualizationSource {
+export enum ContainerSource {
   Image = 'IMAGE',
   Zvol = 'ZVOL',
   Iso = 'ISO',

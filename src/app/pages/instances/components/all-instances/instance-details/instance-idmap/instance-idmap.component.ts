@@ -7,7 +7,7 @@ import {
 } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
+import { ContainerStatus } from 'app/enums/container.enum';
 import { ContainerInstance } from 'app/interfaces/container.interface';
 
 @UntilDestroy()
@@ -27,5 +27,5 @@ import { ContainerInstance } from 'app/interfaces/container.interface';
 export class InstanceIdmapComponent {
   instance = input.required<ContainerInstance>();
 
-  virtualizationStatus = VirtualizationStatus;
+  virtualizationStatus = ContainerStatus;
 }

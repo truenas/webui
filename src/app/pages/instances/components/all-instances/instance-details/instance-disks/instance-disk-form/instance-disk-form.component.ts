@@ -12,8 +12,8 @@ import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import {
   DiskIoBus,
   diskIoBusLabels,
-  VirtualizationDeviceType,
-} from 'app/enums/virtualization.enum';
+  ContainerDeviceType,
+} from 'app/enums/container.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import {
@@ -161,7 +161,7 @@ export class InstanceDiskFormComponent implements OnInit {
   private prepareRequest(): Observable<unknown> {
     const payload = {
       ...this.form.value,
-      dev_type: VirtualizationDeviceType.Disk,
+      dev_type: ContainerDeviceType.Disk,
     } as VirtualizationDisk;
 
     const existingDisk = this.existingDisk();

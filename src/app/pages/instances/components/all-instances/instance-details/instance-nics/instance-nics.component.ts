@@ -5,10 +5,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import {
-  VirtualizationDevice,
-} from 'app/interfaces/container.interface';
+import { ContainerDeviceType } from 'app/enums/container.enum';
+import { ContainerDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddNicMenuComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
 import {
@@ -44,11 +42,11 @@ export class InstanceNicsComponent {
 
   protected readonly shownDevices = computed(() => {
     return this.devicesStore.devices().filter((device) => {
-      return device.dev_type === VirtualizationDeviceType.Nic && !!device.nic_type;
+      return device.dev_type === ContainerDeviceType.Nic && !!device.nic_type;
     });
   });
 
-  protected getDeviceDescription(device: VirtualizationDevice): string {
+  protected getDeviceDescription(device: ContainerDevice): string {
     return getDeviceDescription(this.translate, device);
   }
 }

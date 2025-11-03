@@ -1,5 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
+import { ContainerStatus } from 'app/enums/container.enum';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 import { InstanceIdmapComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-idmap/instance-idmap.component';
 import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
@@ -18,7 +18,7 @@ describe('InstanceIdmapComponent', () => {
         instance: fakeVirtualizationInstance({
           id: 1,
           status: {
-            state: VirtualizationStatus.Running,
+            state: ContainerStatus.Running,
             pid: 123,
             domain_state: null,
           },
@@ -35,7 +35,7 @@ describe('InstanceIdmapComponent', () => {
     spectator.setInput('instance', fakeVirtualizationInstance({
       id: 1,
       status: {
-        state: VirtualizationStatus.Stopped,
+        state: ContainerStatus.Stopped,
         pid: null,
         domain_state: null,
       },

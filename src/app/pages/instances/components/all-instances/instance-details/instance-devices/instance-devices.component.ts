@@ -3,7 +3,7 @@ import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
+import { ContainerDeviceType } from 'app/enums/container.enum';
 import {
   VirtualizationDevice,
 } from 'app/interfaces/container.interface';
@@ -41,8 +41,8 @@ export class InstanceDevicesComponent {
   protected readonly shownDevices = computed(() => {
     return this.devicesStore.devices().filter((device) => {
       return [
-        VirtualizationDeviceType.Usb,
-        VirtualizationDeviceType.Gpu,
+        ContainerDeviceType.Usb,
+        ContainerDeviceType.Gpu,
       ].includes(device.dev_type);
     });
   });

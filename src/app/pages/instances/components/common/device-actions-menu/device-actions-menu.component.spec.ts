@@ -5,7 +5,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { VirtualizationDeviceType, VirtualizationStatus } from 'app/enums/virtualization.enum';
+import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import {
   VirtualizationDevice,
   VirtualizationTpm,
@@ -51,7 +51,7 @@ describe('DeviceActionsMenuComponent', () => {
         device: {
           id: 123,
           name: 'my-device',
-          dev_type: VirtualizationDeviceType.Gpu,
+          dev_type: ContainerDeviceType.Gpu,
         } as VirtualizationDevice,
       },
     });
@@ -71,13 +71,13 @@ describe('DeviceActionsMenuComponent', () => {
 
     it('shows menu as disabled when device is a TPM and the instance is running', async () => {
       spectator.setInput('device', {
-        dev_type: VirtualizationDeviceType.Tpm,
+        dev_type: ContainerDeviceType.Tpm,
       } as VirtualizationTpm);
 
       selectedInstance.set(fakeVirtualizationInstance({
         id: 1,
         status: {
-          state: VirtualizationStatus.Running,
+          state: ContainerStatus.Running,
           pid: 123,
           domain_state: null,
         },

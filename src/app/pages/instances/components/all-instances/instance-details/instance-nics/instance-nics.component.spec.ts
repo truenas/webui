@@ -2,7 +2,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
+import { ContainerDeviceType } from 'app/enums/container.enum';
 import {
   AddNicMenuComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
@@ -18,12 +18,12 @@ describe('InstanceNicsComponent', () => {
   let spectator: Spectator<InstanceNicsComponent>;
   const devices = [
     {
-      dev_type: VirtualizationDeviceType.Nic,
+      dev_type: ContainerDeviceType.Nic,
       nic_type: 'Intel E1000',
       name: 'nic1',
     },
     {
-      dev_type: VirtualizationDeviceType.Nic,
+      dev_type: ContainerDeviceType.Nic,
       nic_type: 'Realtek RTL8139',
       name: 'nic2',
     },

@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { VirtualizationDeviceType, VirtualizationProxyProtocol } from 'app/enums/virtualization.enum';
+import { ContainerDeviceType, ContainerProxyProtocol } from 'app/enums/container.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -68,10 +68,10 @@ describe('InstanceProxyFormComponent', () => {
         container: 'my-instance',
         attributes: {
           source_port: 2000,
-          source_proto: VirtualizationProxyProtocol.Tcp,
+          source_proto: ContainerProxyProtocol.Tcp,
           dest_port: 3000,
-          dest_proto: VirtualizationProxyProtocol.Udp,
-          dev_type: VirtualizationDeviceType.Proxy,
+          dest_proto: ContainerProxyProtocol.Udp,
+          dev_type: ContainerDeviceType.Proxy,
         },
       }]);
     });
@@ -88,9 +88,9 @@ describe('InstanceProxyFormComponent', () => {
                 id: 789,
                 name: 'my-proxy',
                 source_port: 5000,
-                source_proto: VirtualizationProxyProtocol.Tcp,
+                source_proto: ContainerProxyProtocol.Tcp,
                 dest_port: 6000,
-                dest_proto: VirtualizationProxyProtocol.Udp,
+                dest_proto: ContainerProxyProtocol.Udp,
               },
             }),
             close: jest.fn(),
@@ -133,10 +133,10 @@ describe('InstanceProxyFormComponent', () => {
         attributes: {
           name: 'my-proxy',
           source_port: 5001,
-          source_proto: VirtualizationProxyProtocol.Udp,
+          source_proto: ContainerProxyProtocol.Udp,
           dest_port: 6001,
-          dest_proto: VirtualizationProxyProtocol.Udp,
-          dev_type: VirtualizationDeviceType.Proxy,
+          dest_proto: ContainerProxyProtocol.Udp,
+          dev_type: ContainerDeviceType.Proxy,
         },
       }]);
 

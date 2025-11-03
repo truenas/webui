@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
+import { ContainerStatus } from 'app/enums/container.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -29,7 +29,7 @@ const instance = fakeVirtualizationInstance({
   memory: 512,
   cpuset: '0-3',
   status: {
-    state: VirtualizationStatus.Running,
+    state: ContainerStatus.Running,
     pid: 1234,
     domain_state: null,
   },

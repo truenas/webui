@@ -9,8 +9,8 @@ import {
   filter, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import {
   ContainerInstance,
   VirtualizationStopParams,
@@ -58,12 +58,12 @@ export class InstanceRowComponent {
   readonly instance = input.required<ContainerInstance>();
   readonly metrics = input<ContainerInstanceMetrics | undefined>();
   readonly selected = input<boolean>(false);
-  protected readonly isStopped = computed(() => this.instance()?.status?.state === VirtualizationStatus.Stopped);
+  protected readonly isStopped = computed(() => this.instance()?.status?.state === ContainerStatus.Stopped);
 
   readonly hasMetrics = computed(() => {
     const metrics = this.metrics();
 
-    return this.instance()?.status?.state === VirtualizationStatus.Running
+    return this.instance()?.status?.state === ContainerStatus.Running
       && metrics
       && Object.keys(metrics).length > 0;
   });

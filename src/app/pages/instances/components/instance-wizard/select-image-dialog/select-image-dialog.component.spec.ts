@@ -12,7 +12,7 @@ import {
   mockCall,
   mockApi,
 } from 'app/core/testing/utils/mock-api.utils';
-import { VirtualizationRemote, VirtualizationType } from 'app/enums/virtualization.enum';
+import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
 import { ContainerImageRegistryResponse } from 'app/interfaces/container.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -42,8 +42,8 @@ describe('SelectImageDialogComponent', () => {
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
-          remote: VirtualizationRemote.LinuxContainers,
-          type: VirtualizationType.Container,
+          remote: ContainerRemote.LinuxContainers,
+          type: ContainerType.Container,
         },
       },
     ],
@@ -119,7 +119,7 @@ describe('SelectImageDialogComponent', () => {
         os: 'Linux',
         release: '8',
         variant: 'default',
-        instance_types: [VirtualizationType.Container],
+        instance_types: [ContainerType.Container],
         secureboot: null,
       });
 
@@ -132,7 +132,7 @@ describe('SelectImageDialogComponent', () => {
         os: 'Alpine',
         release: '3.18',
         variant: 'default',
-        instance_types: [VirtualizationType.Container],
+        instance_types: [ContainerType.Container],
         secureboot: null,
       });
     });

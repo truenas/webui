@@ -11,7 +11,7 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
+import { ContainerStatus } from 'app/enums/container.enum';
 import { ContainerInstance, VirtualizationStopParams } from 'app/interfaces/container.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -54,25 +54,25 @@ export class InstanceListBulkActionsComponent {
 
   protected readonly isBulkStartDisabled = computed(() => {
     return this.checkedInstances().every(
-      (instance) => [VirtualizationStatus.Running].includes(instance.status?.state),
+      (instance) => [ContainerStatus.Running].includes(instance.status?.state),
     );
   });
 
   protected readonly isBulkStopDisabled = computed(() => {
     return this.checkedInstances().every(
-      (instance) => [VirtualizationStatus.Stopped].includes(instance.status?.state),
+      (instance) => [ContainerStatus.Stopped].includes(instance.status?.state),
     );
   });
 
   protected readonly activeCheckedInstances = computed(() => {
     return this.checkedInstances().filter(
-      (instance) => [VirtualizationStatus.Running].includes(instance.status?.state),
+      (instance) => [ContainerStatus.Running].includes(instance.status?.state),
     );
   });
 
   protected readonly stoppedCheckedInstances = computed(() => {
     return this.checkedInstances().filter(
-      (instance) => [VirtualizationStatus.Stopped].includes(instance.status?.state),
+      (instance) => [ContainerStatus.Stopped].includes(instance.status?.state),
     );
   });
 

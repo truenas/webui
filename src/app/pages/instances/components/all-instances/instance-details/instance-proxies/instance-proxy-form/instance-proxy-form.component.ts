@@ -6,10 +6,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import {
-  VirtualizationDeviceType,
-  VirtualizationProxyProtocol,
-  virtualizationProxyProtocolLabels,
-} from 'app/enums/virtualization.enum';
+  ContainerDeviceType,
+  ContainerProxyProtocol,
+  containerProxyProtocolLabels,
+} from 'app/enums/container.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { ContainerProxyDevice } from 'app/interfaces/container.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -61,9 +61,9 @@ export class InstanceProxyFormComponent implements OnInit {
   protected readonly isLoading = signal(false);
 
   protected form = this.formBuilder.nonNullable.group({
-    source_proto: [VirtualizationProxyProtocol.Tcp],
+    source_proto: [ContainerProxyProtocol.Tcp],
     source_port: [null as number | null, Validators.required],
-    dest_proto: [VirtualizationProxyProtocol.Tcp],
+    dest_proto: [ContainerProxyProtocol.Tcp],
     dest_port: [null as number | null, Validators.required],
   });
 
@@ -71,7 +71,7 @@ export class InstanceProxyFormComponent implements OnInit {
     return this.existingProxy() ? this.translate.instant('Edit Proxy') : this.translate.instant('Add Proxy');
   });
 
-  protected readonly protocolOptions$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
+  protected readonly protocolOptions$ = of(mapToOptions(containerProxyProtocolLabels, this.translate));
 
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -112,7 +112,7 @@ export class InstanceProxyFormComponent implements OnInit {
     const instanceId = this.slideInRef.getData().instanceId;
     const payload = {
       ...this.form.value,
-      dev_type: VirtualizationDeviceType.Proxy,
+      dev_type: ContainerDeviceType.Proxy,
     } as ContainerProxyDevice;
     const existingProxy = this.existingProxy();
 

@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
+import { ContainerStatus } from 'app/enums/container.enum';
 import { ContainerInstance } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -56,7 +56,7 @@ describe('InstanceFormComponent', () => {
     capabilities_policy: 'DEFAULT',
     capabilities_state: {},
     status: {
-      state: VirtualizationStatus.Running,
+      state: ContainerStatus.Running,
       pid: 1234,
       domain_state: null,
     },

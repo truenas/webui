@@ -1,4 +1,4 @@
-import { AllowedImageOs, ImageOs } from 'app/enums/virtualization.enum';
+import { AllowedImageOs, ImageOs } from 'app/enums/container.enum';
 
 export function detectImageOs(value: string | null | undefined): AllowedImageOs {
   if (!value) {

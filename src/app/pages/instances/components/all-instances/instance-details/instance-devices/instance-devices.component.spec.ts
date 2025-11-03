@@ -1,7 +1,7 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
+import { ContainerDeviceType } from 'app/enums/container.enum';
 import { VirtualizationProxy, VirtualizationUsb } from 'app/interfaces/container.interface';
 import {
   AddDeviceMenuComponent,
@@ -19,11 +19,11 @@ describe('InstanceDevicesComponent', () => {
   let spectator: Spectator<InstanceDevicesComponent>;
   const devices = [
     {
-      dev_type: VirtualizationDeviceType.Usb,
+      dev_type: ContainerDeviceType.Usb,
       description: 'USB Microphone',
     } as VirtualizationUsb,
     {
-      dev_type: VirtualizationDeviceType.Gpu,
+      dev_type: ContainerDeviceType.Gpu,
       description: 'Matrox G200eW',
     },
     {

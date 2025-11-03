@@ -24,12 +24,12 @@ import {
   ContainerCapabilitiesPolicy,
   containerTimeLabels,
   ContainerTime,
-  VirtualizationProxyProtocol,
-  virtualizationProxyProtocolLabels,
-  VirtualizationRemote,
-  VirtualizationSource,
-  VirtualizationType,
-} from 'app/enums/virtualization.enum';
+  ContainerProxyProtocol,
+  containerProxyProtocolLabels,
+  ContainerRemote,
+  ContainerSource,
+  ContainerType,
+} from 'app/enums/container.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
@@ -109,7 +109,7 @@ export class InstanceFormComponent implements OnInit {
 
   protected readonly slashRootNode = [slashRootNode];
 
-  protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
+  protected readonly proxyProtocols$ = of(mapToOptions(containerProxyProtocolLabels, this.translate));
 
   protected readonly timeOptions$ = of(mapToOptions(containerTimeLabels, this.translate));
 
@@ -127,7 +127,7 @@ export class InstanceFormComponent implements OnInit {
       .filter((name) => name !== this.editingInstance?.name)),
   );
 
-  readonly VirtualizationSource = VirtualizationSource;
+  readonly ContainerSource = ContainerSource;
 
   protected isAdvancedMode = false;
 
@@ -184,9 +184,9 @@ export class InstanceFormComponent implements OnInit {
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
     proxies: this.formBuilder.array<FormGroup<{
-      source_proto: FormControl<VirtualizationProxyProtocol>;
+      source_proto: FormControl<ContainerProxyProtocol>;
       source_port: FormControl<number | null>;
-      dest_proto: FormControl<VirtualizationProxyProtocol>;
+      dest_proto: FormControl<ContainerProxyProtocol>;
       dest_port: FormControl<number | null>;
     }>>([]),
     disks: this.formBuilder.array<FormGroup<{
@@ -333,8 +333,8 @@ export class InstanceFormComponent implements OnInit {
       .open(SelectImageDialog, {
         minWidth: '90vw',
         data: {
-          remote: VirtualizationRemote.LinuxContainers,
-          type: VirtualizationType.Container,
+          remote: ContainerRemote.LinuxContainers,
+          type: ContainerType.Container,
         },
       })
       .afterClosed()
@@ -346,9 +346,9 @@ export class InstanceFormComponent implements OnInit {
 
   protected addProxy(): void {
     const control = this.formBuilder.group({
-      source_proto: [VirtualizationProxyProtocol.Tcp],
+      source_proto: [ContainerProxyProtocol.Tcp],
       source_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
-      dest_proto: [VirtualizationProxyProtocol.Tcp],
+      dest_proto: [ContainerProxyProtocol.Tcp],
       dest_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
     });
 

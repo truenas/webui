@@ -1,8 +1,8 @@
 import { TranslateService } from '@ngx-translate/core';
 import {
-  VirtualizationDeviceType,
-  VirtualizationNicType,
-} from 'app/enums/virtualization.enum';
+  ContainerDeviceType,
+  ContainerNicType,
+} from 'app/enums/container.enum';
 import {
   VirtualizationDevice,
   VirtualizationNic,
@@ -16,9 +16,9 @@ describe('getDeviceDescription', () => {
 
   it('should return "typeLabel: name (nic_type)" for a NIC device', () => {
     const device: VirtualizationDevice = {
-      dev_type: VirtualizationDeviceType.Nic,
+      dev_type: ContainerDeviceType.Nic,
       name: 'eth0',
-      nic_type: VirtualizationNicType.Bridged,
+      nic_type: ContainerNicType.Bridged,
     } as VirtualizationNic;
 
     const result = getDeviceDescription(mockTranslate as TranslateService, device);
@@ -27,7 +27,7 @@ describe('getDeviceDescription', () => {
 
   it('should return "dev_type: description" if dev_type label is not in the map', () => {
     const device: VirtualizationDevice = {
-      dev_type: 'UNKNOWN_TYPE' as VirtualizationDeviceType,
+      dev_type: 'UNKNOWN_TYPE' as ContainerDeviceType,
       description: 'Unknown device',
     } as VirtualizationDevice;
 

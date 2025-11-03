@@ -5,7 +5,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { VirtualizationDeviceType, VirtualizationNicType } from 'app/enums/virtualization.enum';
+import { ContainerDeviceType, ContainerNicType } from 'app/enums/container.enum';
 import { VirtualizationDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -38,8 +38,8 @@ describe('AddNicMenuComponent', () => {
       mockProvider(VirtualizationDevicesStore, {
         devices: () => [
           {
-            dev_type: VirtualizationDeviceType.Nic,
-            nic_type: VirtualizationNicType.Macvlan,
+            dev_type: ContainerDeviceType.Nic,
+            nic_type: ContainerNicType.Macvlan,
             parent: 'already-added',
           },
         ] as VirtualizationDevice[],
@@ -79,8 +79,8 @@ describe('AddNicMenuComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
       container: 'my-instance',
       attributes: {
-        dev_type: VirtualizationDeviceType.Nic,
-        nic_type: VirtualizationNicType.Bridged,
+        dev_type: ContainerDeviceType.Nic,
+        nic_type: ContainerNicType.Bridged,
         parent: 'Intel E1000',
       } as VirtualizationDevice,
     }]);

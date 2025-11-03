@@ -22,16 +22,16 @@ import {
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import { Role } from 'app/enums/role.enum';
 import {
-  VirtualizationDeviceType,
-  VirtualizationGpuType,
-  VirtualizationNicType,
-  virtualizationNicTypeLabels,
-  VirtualizationProxyProtocol,
-  virtualizationProxyProtocolLabels,
-  VirtualizationRemote,
-  VirtualizationSource,
-  VirtualizationType,
-} from 'app/enums/virtualization.enum';
+  ContainerDeviceType,
+  ContainerGpuType,
+  ContainerNicType,
+  containerNicTypeLabels,
+  ContainerProxyProtocol,
+  containerProxyProtocolLabels,
+  ContainerRemote,
+  ContainerSource,
+  ContainerType,
+} from 'app/enums/container.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
@@ -139,15 +139,15 @@ export class InstanceWizardComponent implements OnInit {
 
   protected readonly slashRootNode = [slashRootNode];
 
-  protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
-  protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
-  protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
+  protected readonly proxyProtocols$ = of(mapToOptions(containerProxyProtocolLabels, this.translate));
+  protected readonly bridgedNicTypeLabel = containerNicTypeLabels.get(ContainerNicType.Bridged);
+  protected readonly macVlanNicTypeLabel = containerNicTypeLabels.get(ContainerNicType.Macvlan);
 
   protected readonly forbiddenNames$ = this.api.call('virt.instance.query', [
     [], { select: ['name'], order_by: ['name'] },
   ]).pipe(map((keys) => keys.map((key) => key.name)));
 
-  readonly VirtualizationSource = VirtualizationSource;
+  readonly ContainerSource = ContainerSource;
 
   protected readonly bridgedNicDevices = signal<NicDeviceOption[]>(undefined);
   protected readonly macVlanNicDevices = signal<NicDeviceOption[]>(undefined);
@@ -161,7 +161,7 @@ export class InstanceWizardComponent implements OnInit {
 
   gpuDevices$ = this.api.call(
     'virt.device.gpu_choices',
-    [VirtualizationGpuType.Physical],
+    [ContainerGpuType.Physical],
   ).pipe(
     map((choices) => Object.entries(choices).map(([pci, gpu]) => ({
       label: gpu.description,
@@ -196,9 +196,9 @@ export class InstanceWizardComponent implements OnInit {
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
     proxies: this.formBuilder.array<FormGroup<{
-      source_proto: FormControl<VirtualizationProxyProtocol>;
+      source_proto: FormControl<ContainerProxyProtocol>;
       source_port: FormControl<number | null>;
-      dest_proto: FormControl<VirtualizationProxyProtocol>;
+      dest_proto: FormControl<ContainerProxyProtocol>;
       dest_port: FormControl<number | null>;
     }>>([]),
     disks: this.formBuilder.array<FormGroup<{
@@ -242,15 +242,15 @@ export class InstanceWizardComponent implements OnInit {
   }
 
   private setupBridgedNicDevices2(): void {
-    this.setupNicDevices(VirtualizationNicType.Bridged, this.bridgedNicDevices);
+    this.setupNicDevices(ContainerNicType.Bridged, this.bridgedNicDevices);
   }
 
   private setupMacVlanNicDevices2(): void {
-    this.setupNicDevices(VirtualizationNicType.Macvlan, this.macVlanNicDevices);
+    this.setupNicDevices(ContainerNicType.Macvlan, this.macVlanNicDevices);
   }
 
   private setupNicDevices(
-    type: VirtualizationNicType,
+    type: ContainerNicType,
     nicDevicesSignal: WritableSignal<NicDeviceOption[]>,
   ): void {
     this.getNicDevicesOptions(type).pipe(
@@ -324,8 +324,8 @@ export class InstanceWizardComponent implements OnInit {
       .open(SelectImageDialog, {
         minWidth: '90vw',
         data: {
-          remote: VirtualizationRemote.LinuxContainers,
-          type: VirtualizationType.Container,
+          remote: ContainerRemote.LinuxContainers,
+          type: ContainerType.Container,
         },
       })
       .afterClosed()
@@ -337,9 +337,9 @@ export class InstanceWizardComponent implements OnInit {
 
   protected addProxy(): void {
     const control = this.formBuilder.group({
-      source_proto: [VirtualizationProxyProtocol.Tcp],
+      source_proto: [ContainerProxyProtocol.Tcp],
       source_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
-      dest_proto: [VirtualizationProxyProtocol.Tcp],
+      dest_proto: [ContainerProxyProtocol.Tcp],
       dest_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
     });
 
@@ -408,12 +408,12 @@ export class InstanceWizardComponent implements OnInit {
     const payload = {
       devices: this.getDevicesPayload(),
       autostart: true,
-      instance_type: VirtualizationType.Container,
+      instance_type: ContainerType.Container,
       name: form.name,
       cpu: form.cpu,
       memory: form.memory || null,
       storage_pool: form.storage_pool,
-      source_type: VirtualizationSource.Image,
+      source_type: ContainerSource.Image,
       image: form.image,
       environment: this.environmentVariablesPayload,
     } as CreateVirtualizationInstance;
@@ -421,7 +421,7 @@ export class InstanceWizardComponent implements OnInit {
     return payload;
   }
 
-  private getNicDevicesOptions(nicType: VirtualizationNicType): Observable<Option[]> {
+  private getNicDevicesOptions(nicType: ContainerNicType): Observable<Option[]> {
     return this.api.call('virt.device.nic_choices', [nicType]).pipe(choicesToOptions(), delay(5 * 1000));
   }
 
@@ -439,25 +439,25 @@ export class InstanceWizardComponent implements OnInit {
 
   private getDevicesPayload(): VirtualizationDevice[] {
     const disks = this.form.controls.disks.value.map((disk) => ({
-      dev_type: VirtualizationDeviceType.Disk,
+      dev_type: ContainerDeviceType.Disk,
       source: disk.source,
       destination: disk.destination,
     }));
 
-    const usbDevices: { dev_type: VirtualizationDeviceType; product_id: string }[] = [];
+    const usbDevices: { dev_type: ContainerDeviceType; product_id: string }[] = [];
     for (const productId of this.form.controls.usb_devices.value) {
       usbDevices.push({
-        dev_type: VirtualizationDeviceType.Usb,
+        dev_type: ContainerDeviceType.Usb,
         product_id: productId,
       });
     }
 
-    const gpuDevices: { pci: string; dev_type: VirtualizationDeviceType; gpu_type: VirtualizationGpuType }[] = [];
+    const gpuDevices: { pci: string; dev_type: ContainerDeviceType; gpu_type: ContainerGpuType }[] = [];
     for (const pci of this.form.controls.gpu_devices.value) {
       gpuDevices.push({
         pci,
-        dev_type: VirtualizationDeviceType.Gpu,
-        gpu_type: VirtualizationGpuType.Physical,
+        dev_type: ContainerDeviceType.Gpu,
+        gpu_type: ContainerGpuType.Physical,
       });
     }
     const macVlanNics: Partial<VirtualizationNic>[] = [];
@@ -472,8 +472,8 @@ export class InstanceWizardComponent implements OnInit {
       for (const deviceOption of selectedValues) {
         const macVlanNic: Partial<VirtualizationNic> = {
           parent: deviceOption.value,
-          dev_type: VirtualizationDeviceType.Nic,
-          nic_type: VirtualizationNicType.Macvlan,
+          dev_type: ContainerDeviceType.Nic,
+          nic_type: ContainerNicType.Macvlan,
         };
         if (deviceOption.mac) {
           macVlanNic.mac = deviceOption.mac;
@@ -494,8 +494,8 @@ export class InstanceWizardComponent implements OnInit {
       for (const deviceOption of selectedValues) {
         const bridgedNic: Partial<VirtualizationNic> = {
           parent: deviceOption.value,
-          dev_type: VirtualizationDeviceType.Nic,
-          nic_type: VirtualizationNicType.Bridged,
+          dev_type: ContainerDeviceType.Nic,
+          nic_type: ContainerNicType.Bridged,
         };
         if (deviceOption.mac) {
           bridgedNic.mac = deviceOption.mac;
@@ -505,7 +505,7 @@ export class InstanceWizardComponent implements OnInit {
     }
 
     const proxies = this.form.controls.proxies.value.map((proxy) => ({
-      dev_type: VirtualizationDeviceType.Proxy,
+      dev_type: ContainerDeviceType.Proxy,
       source_proto: proxy.source_proto,
       source_port: proxy.source_port,
       dest_proto: proxy.dest_proto,

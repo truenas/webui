@@ -1,17 +1,18 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import {
+  ContainerDeviceType,
+  ContainerGpuType,
+  ContainerNetworkType,
+  ContainerNicType,
+  ContainerProxyProtocol,
+  ContainerRemote,
+  ContainerStatus,
+  ContainerType,
   DiskIoBus,
   ImageOs,
-  VirtualizationDeviceType,
-  VirtualizationGpuType,
-  VirtualizationNetworkType,
-  VirtualizationNicType,
-  VirtualizationProxyProtocol,
-  VirtualizationRemote,
-  VirtualizationStatus,
-  VirtualizationType, VolumeContentType,
-} from 'app/enums/virtualization.enum';
+  VolumeContentType,
+} from 'app/enums/container.enum';
 
 export type ContainerMetrics = Record<string, ContainerInstanceMetrics>;
 
@@ -52,7 +53,7 @@ export interface ContainerInstance {
   capabilities_policy: string;
   capabilities_state: Record<string, unknown>;
   status: {
-    state: VirtualizationStatus;
+    state: ContainerStatus;
     pid: number | null;
     domain_state: string | null;
   };
@@ -102,7 +103,7 @@ export interface ContainerDiskDevice {
   id?: number;
   name: string;
   description: string;
-  dev_type: VirtualizationDeviceType.Disk;
+  dev_type: ContainerDeviceType.Disk;
   readonly: boolean;
   source: string | null;
   destination: string | null;
@@ -115,7 +116,7 @@ export interface ContainerPciDevice {
   id?: number;
   name: string;
   description: string;
-  dev_type: VirtualizationDeviceType.Pci;
+  dev_type: ContainerDeviceType.Pci;
   readonly: boolean;
   address: string;
 }
@@ -125,8 +126,8 @@ export interface ContainerGpuDevice {
   name: string;
   description: string;
   readonly: boolean;
-  dev_type: VirtualizationDeviceType.Gpu;
-  gpu_type: VirtualizationGpuType;
+  dev_type: ContainerDeviceType.Gpu;
+  gpu_type: ContainerGpuType;
   gid: number;
   uid: number;
   mode: string;
@@ -140,11 +141,11 @@ export interface ContainerProxyDevice {
   id?: number;
   name: string;
   description: string;
-  dev_type: VirtualizationDeviceType.Proxy;
+  dev_type: ContainerDeviceType.Proxy;
   readonly: boolean;
-  source_proto: VirtualizationProxyProtocol;
+  source_proto: ContainerProxyProtocol;
   source_port: number;
-  dest_proto: VirtualizationProxyProtocol;
+  dest_proto: ContainerProxyProtocol;
   dest_port: number;
   product_id: string;
 }
@@ -153,8 +154,8 @@ export interface ContainerNicDevice {
   id?: number;
   name: string;
   description: string;
-  dev_type: VirtualizationDeviceType.Nic;
-  nic_type: VirtualizationNicType;
+  dev_type: ContainerDeviceType.Nic;
+  nic_type: ContainerNicType;
   parent: string;
   readonly: boolean;
   network: string;
@@ -166,7 +167,7 @@ export interface ContainerTpmDevice {
   id?: number;
   name: string;
   description: string;
-  dev_type: VirtualizationDeviceType.Tpm;
+  dev_type: ContainerDeviceType.Tpm;
   readonly: boolean;
   path: string;
   pathrm: string;
@@ -177,7 +178,7 @@ export interface ContainerUsbDevice {
   id?: number;
   name: string;
   description: string;
-  dev_type: VirtualizationDeviceType.Usb;
+  dev_type: ContainerDeviceType.Usb;
   readonly: boolean;
   bus: number;
   dev: number;
@@ -212,7 +213,7 @@ export interface VirtualizationImage {
   os: ImageOs | null | string;
   release: string;
   variant: string;
-  instance_types: VirtualizationType[];
+  instance_types: ContainerType[];
   secureboot: boolean | null;
 }
 
@@ -229,7 +230,7 @@ export interface ContainerGlobalConfig {
 }
 
 export interface VirtualizationNetwork {
-  type: VirtualizationNetworkType;
+  type: ContainerNetworkType;
   managed: boolean;
   ipv4_address: string;
   ipv4_nat: boolean;
@@ -238,7 +239,7 @@ export interface VirtualizationNetwork {
 }
 
 export interface VirtualizationImageParams {
-  remote: VirtualizationRemote;
+  remote: ContainerRemote;
 }
 
 export interface ContainerImageRegistryResponse {

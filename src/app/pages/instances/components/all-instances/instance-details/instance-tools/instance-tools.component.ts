@@ -6,7 +6,7 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
+import { ContainerStatus } from 'app/enums/container.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ContainerInstance } from 'app/interfaces/container.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -35,5 +35,5 @@ export class InstanceToolsComponent {
 
   readonly instance = input.required<ContainerInstance>();
 
-  protected readonly isInstanceStopped = computed(() => this.instance().status?.state !== VirtualizationStatus.Running);
+  protected readonly isInstanceStopped = computed(() => this.instance().status?.state !== ContainerStatus.Running);
 }

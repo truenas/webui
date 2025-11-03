@@ -1,5 +1,5 @@
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
+import { ContainerStatus } from 'app/enums/container.enum';
 import { ContainerInstance } from 'app/interfaces/container.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { InstanceStatusCellComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-status-cell/instance-status-cell.component';
@@ -24,7 +24,7 @@ describe('InstanceStatusCellComponent', () => {
   it('checks status for running instance', () => {
     setupTest(fakeVirtualizationInstance({
       status: {
-        state: VirtualizationStatus.Running,
+        state: ContainerStatus.Running,
         pid: 123,
         domain_state: null,
       },
@@ -36,7 +36,7 @@ describe('InstanceStatusCellComponent', () => {
   it('checks status for stopped instance', () => {
     setupTest(fakeVirtualizationInstance({
       status: {
-        state: VirtualizationStatus.Stopped,
+        state: ContainerStatus.Stopped,
         pid: null,
         domain_state: null,
       },
@@ -48,7 +48,7 @@ describe('InstanceStatusCellComponent', () => {
   it('checks status for deploying instance', () => {
     setupTest(fakeVirtualizationInstance({
       status: {
-        state: VirtualizationStatus.Stopped,
+        state: ContainerStatus.Stopped,
         pid: null,
         domain_state: null,
       },
@@ -60,7 +60,7 @@ describe('InstanceStatusCellComponent', () => {
   it('checks status for stopping instance', () => {
     setupTest(fakeVirtualizationInstance({
       status: {
-        state: VirtualizationStatus.Unknown,
+        state: ContainerStatus.Unknown,
         pid: null,
         domain_state: null,
       },

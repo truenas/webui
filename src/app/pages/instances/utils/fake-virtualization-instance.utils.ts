@@ -1,4 +1,4 @@
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
+import { ContainerStatus } from 'app/enums/container.enum';
 import { ContainerInstance } from 'app/interfaces/container.interface';
 
 export function fakeVirtualizationInstance(overrides: Partial<ContainerInstance> = {}): ContainerInstance {
@@ -25,7 +25,7 @@ export function fakeVirtualizationInstance(overrides: Partial<ContainerInstance>
     capabilities_policy: 'DEFAULT',
     capabilities_state: {},
     status: {
-      state: VirtualizationStatus.Stopped,
+      state: ContainerStatus.Stopped,
       pid: null,
       domain_state: null,
     },

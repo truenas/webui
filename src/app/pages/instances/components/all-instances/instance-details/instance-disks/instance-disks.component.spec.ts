@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
+import { ContainerDeviceType } from 'app/enums/container.enum';
 import { VirtualizationDisk, VirtualizationProxy } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
@@ -25,12 +25,12 @@ describe('InstanceDisksComponent', () => {
   let loader: HarnessLoader;
   const disks = [
     {
-      dev_type: VirtualizationDeviceType.Disk,
+      dev_type: ContainerDeviceType.Disk,
       source: '/mnt/source-path',
       destination: 'destination',
     } as VirtualizationDisk,
     {
-      dev_type: VirtualizationDeviceType.Disk,
+      dev_type: ContainerDeviceType.Disk,
       source: null,
       destination: 'destination',
     } as VirtualizationDisk,

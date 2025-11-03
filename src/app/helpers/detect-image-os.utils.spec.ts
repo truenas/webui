@@ -1,4 +1,4 @@
-import { ImageOs } from 'app/enums/virtualization.enum';
+import { ImageOs } from 'app/enums/container.enum';
 import { detectImageOs } from 'app/helpers/detect-image-os.utils';
 
 describe('detectImageOs', () => {
