@@ -7,7 +7,6 @@ import {
   ContainerStatus,
   ContainerType,
   ImageOs,
-  VolumeContentType,
 } from 'app/enums/container.enum';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 
@@ -238,38 +237,12 @@ export type InstanceEnvVariablesFormGroup = FormGroup<{
   value: FormControl<string>;
 }>;
 
-export interface VirtualizationVolume {
-  id: string;
-  name: string;
-  content_type: VolumeContentType;
-  created_at: string;
-  type: string;
-  config: {
-    size?: number;
-  };
-  used_by: string[];
-  storage_pool: string;
-}
-
 export interface VirtualizationImportIsoParams {
   name: string;
   iso_location?: string | null;
   upload_iso?: boolean;
   storage_pool: string | null;
 }
-
-export interface CreateVirtualizationVolume {
-  name: string;
-  content_type?: VolumeContentType;
-  size?: number;
-}
-
-export type VirtualizationVolumeUpdate = [
-  id: string,
-  update: {
-    size: number;
-  },
-];
 
 export type VirtualizationPciChoices = Record<string, VirtualizationPciDeviceOption>;
 
@@ -293,16 +266,6 @@ export interface VirtualizationPciDeviceCapability {
   function: string;
   product: string;
   vendor: string;
-}
-
-export interface ImportZvolParams {
-  to_import: ZvolToImport[];
-  clone: boolean;
-}
-
-export interface ZvolToImport {
-  virt_volume_name: string;
-  zvol_path: string;
 }
 
 export interface ContainerDeviceCreate {

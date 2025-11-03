@@ -13,7 +13,7 @@ import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
 import { PullContainerImageParams, PullContainerImageResponse } from 'app/interfaces/container-image.interface';
 import {
-  CreateContainerInstance, ImportZvolParams,
+  CreateContainerInstance,
   ContainerInstance,
 } from 'app/interfaces/container.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -193,9 +193,6 @@ export interface ApiJobDirectory {
   // Update
   'update.file': { params: [{ resume: boolean }?]; response: void };
   'update.run': { params: [UpdateParams]; response: void };
-
-  // Virt
-  'virt.volume.import_zvol': { params: [ImportZvolParams]; response: void };
 
   // Container
   'container.create': { params: [CreateContainerInstance]; response: ContainerInstance };

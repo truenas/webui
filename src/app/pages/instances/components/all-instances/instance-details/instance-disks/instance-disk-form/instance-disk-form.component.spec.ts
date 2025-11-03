@@ -1,13 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerDeviceType, ContainerType } from 'app/enums/container.enum';
-import { VirtualizationVolume } from 'app/interfaces/container.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -31,13 +28,6 @@ describe('InstanceDiskFormComponent', () => {
       ]),
       mockProvider(SnackbarService),
       mockProvider(FilesystemService),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => ({
-          afterClosed: () => of({
-            id: 'my-volume',
-          } as VirtualizationVolume),
-        })),
-      }),
     ],
   });
 
@@ -180,26 +170,6 @@ describe('InstanceDiskFormComponent', () => {
 
     it('shows form title for new disk', () => {
       expect(spectator.query(ModalHeaderComponent)).toExist();
-    });
-
-    it('creates a new disk for a container', async () => {
-      const selectVolumeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Select Volume' }));
-      await selectVolumeButton.click();
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-        response: true,
-      });
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
-        container: 'my-instance',
-        attributes: {
-          source: 'my-volume',
-          dev_type: ContainerDeviceType.Disk,
-        },
-      }]);
     });
   });
 });

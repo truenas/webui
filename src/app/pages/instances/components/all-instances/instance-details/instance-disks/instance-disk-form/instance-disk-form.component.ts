@@ -4,19 +4,17 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import {
   ContainerDeviceType,
 } from 'app/enums/container.enum';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import {
-  VirtualizationDisk,
+  ContainerDiskDevice,
   ContainerInstance,
-  VirtualizationVolume,
 } from 'app/interfaces/container.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
@@ -32,15 +30,11 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import {
-  VolumesDialog,
-  VolumesDialogOptions,
-} from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 interface InstanceDiskFormOptions {
   instance: ContainerInstance;
-  disk: VirtualizationDisk | undefined;
+  disk: ContainerDiskDevice | undefined;
 }
 
 @UntilDestroy()
@@ -71,11 +65,10 @@ export class InstanceDiskFormComponent implements OnInit {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
-  private matDialog = inject(MatDialog);
   private filesystem = inject(FilesystemService);
   slideInRef = inject<SlideInRef<InstanceDiskFormOptions, boolean>>(SlideInRef);
 
-  private existingDisk = signal<VirtualizationDisk | null>(null);
+  private existingDisk = signal<ContainerDiskDevice | null>(null);
 
   protected readonly isLoading = signal(false);
 
@@ -115,22 +108,6 @@ export class InstanceDiskFormComponent implements OnInit {
     }
   }
 
-  protected onSelectVolume(): void {
-    this.matDialog
-      .open<VolumesDialog, VolumesDialogOptions, VirtualizationVolume>(VolumesDialog, {
-        minWidth: '90vw',
-        data: {
-          selectionMode: true,
-          config: null,
-        },
-      })
-      .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((volume) => {
-        this.form.patchValue({ source: volume.id });
-      });
-  }
-
   protected onSubmit(): void {
     this.isLoading.set(true);
     this.prepareRequest()
@@ -154,7 +131,7 @@ export class InstanceDiskFormComponent implements OnInit {
     const payload = {
       ...this.form.value,
       dev_type: ContainerDeviceType.Disk,
-    } as VirtualizationDisk;
+    } as ContainerDiskDevice;
 
     const existingDisk = this.existingDisk();
     return existingDisk

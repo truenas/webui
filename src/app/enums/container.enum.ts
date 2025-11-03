@@ -77,11 +77,6 @@ export enum ContainerSource {
   Volume = 'VOLUME',
 }
 
-export enum VolumeContentType {
-  Block = 'BLOCK',
-  Iso = 'ISO',
-}
-
 export enum ContainerTime {
   Local = 'LOCAL',
   Utc = 'UTC',

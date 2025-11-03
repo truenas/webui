@@ -80,13 +80,10 @@ import {
   ContainerImageRegistryResponse,
   ContainerInstance,
   CreateContainerInstance,
-  CreateVirtualizationVolume,
   UpdateContainerInstance,
   VirtualizationImage,
   VirtualizationImageParams,
   VirtualizationNetwork,
-  VirtualizationVolume,
-  VirtualizationVolumeUpdate,
 } from 'app/interfaces/container.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { CoreOptions } from 'app/interfaces/core-options.interface';
@@ -922,11 +919,6 @@ export interface ApiCallDirectory {
   'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: Record<string, VirtualizationImage> };
 
   'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
-
-  'virt.volume.create': { params: [CreateVirtualizationVolume]; response: VirtualizationVolume };
-  'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
-  'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
-  'virt.volume.delete': { params: [id: string]; response: true };
 
   // Container (actual available endpoints only)
   'container.create': { params: [CreateContainerInstance]; response: ContainerInstance };
