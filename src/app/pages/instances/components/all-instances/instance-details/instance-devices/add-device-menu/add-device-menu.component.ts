@@ -76,7 +76,7 @@ export class AddDeviceMenuComponent {
 
     this.api.call('container.device.create', [{
       container: instanceId,
-      attributes: payload,
+      attributes: payload as ContainerUsbDevice,
     }])
       .pipe(
         this.loader.withLoader(),

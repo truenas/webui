@@ -901,12 +901,12 @@ export interface ApiCallDirectory {
   'container.device.delete': { params: [id: number, options?: ContainerDeviceDelete]; response: boolean };
   'container.device.query': { params: QueryParams<ContainerDeviceEntry>; response: ContainerDeviceEntry[] };
   'container.device.update': { params: [id: number, update: ContainerDeviceUpdate]; response: ContainerDeviceEntry };
-  'container.device.disk_choices': { params: []; response: Record<string, unknown> };
+  'container.device.disk_choices': { params: []; response: Record<string, string> };
   'container.device.iotype_choices': { params: []; response: Record<string, string> };
-  'container.device.nic_attach_choices': { params: []; response: Record<string, unknown> };
+  'container.device.nic_attach_choices': { params: []; response: Record<string, string> };
   'container.device.pci_device': { params: [device: string]; response: unknown };
-  'container.device.pci_device_choices': { params: []; response: Record<string, unknown> };
-  'container.device.usb_choices': { params: []; response: Record<string, unknown> };
+  'container.device.pci_device_choices': { params: []; response: Record<string, string> };
+  'container.device.usb_choices': { params: []; response: Record<string, string> };
   'container.device.usb_controller_choices': { params: []; response: Record<string, string> };
   'container.device.usb_device': { params: [device: string]; response: unknown };
 

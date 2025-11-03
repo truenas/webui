@@ -43,9 +43,13 @@ export class InstanceDisksComponent {
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
-  protected readonly visibleDisks = computed(() => this.devicesStore.devices().filter(
-    (device): device is ContainerDiskDevice => device.dev_type === ContainerDeviceType.Disk && !!device.source,
-  ));
+  protected readonly visibleDisks = computed(() => {
+    return this.devicesStore.devices().filter(
+      (device): device is ContainerDiskDevice & { id: number } => {
+        return device.dev_type === ContainerDeviceType.Disk && 'source' in device && !!device.source;
+      },
+    );
+  });
 
   protected addDisk(): void {
     this.openDiskForm();

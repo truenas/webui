@@ -99,7 +99,7 @@ export class AddNicMenuComponent {
   }
 
   private getNicChoices(): Observable<Record<string, string>> {
-    return this.api.call('container.device.nic_attach_choices', []);
+    return this.api.call('container.device.nic_attach_choices', []) as Observable<Record<string, string>>;
   }
 
   private addDevice(payload: ContainerNicDevice): void {
