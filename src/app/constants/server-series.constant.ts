@@ -40,6 +40,11 @@ export const rSeries = [
   EnclosureModel.R60,
 ];
 
+export const vSeries = [
+  EnclosureModel.V140,
+  EnclosureModel.V160,
+];
+
 export const fSeries = [
   EnclosureModel.F60,
   EnclosureModel.F100,
@@ -58,6 +63,7 @@ export const serverSeries = [
   ...xSeries,
   ...zSeries,
   ...rSeries,
+  ...vSeries,
   ...fSeries,
 ];
 
