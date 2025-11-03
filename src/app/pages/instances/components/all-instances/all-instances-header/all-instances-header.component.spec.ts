@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -11,9 +10,6 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/instances/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
-import {
-  MapUserGroupIdsDialog,
-} from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/map-user-group-ids-dialog.component';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { AllInstancesHeaderComponent } from './all-instances-header.component';
@@ -39,7 +35,6 @@ describe('AllInstancesHeaderComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of(undefined)),
       }),
-      mockProvider(MatDialog),
     ],
   });
 
@@ -77,17 +72,6 @@ describe('AllInstancesHeaderComponent', () => {
       );
       expect(spectator.inject(VirtualizationConfigStore).initialize).toHaveBeenCalled();
       expect(spectator.inject(VirtualizationInstancesStore).initialize).toHaveBeenCalled();
-    });
-
-    it('opens MapUserGroupIdsDialog when Map User/Group IDs is pressed', async () => {
-      const configurationMenu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Configuration' }));
-      await configurationMenu.open();
-      await configurationMenu.clickItem({ text: 'Map User/Group IDs' });
-
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-        MapUserGroupIdsDialog,
-        expect.anything(),
-      );
     });
   });
 });

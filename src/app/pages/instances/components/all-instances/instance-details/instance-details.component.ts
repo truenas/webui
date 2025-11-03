@@ -15,7 +15,6 @@ import {
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
-import { InstanceIdmapComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-idmap/instance-idmap.component';
 import { InstanceNicsComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/instance-nics.component';
 import {
   InstanceToolsComponent,
@@ -33,7 +32,6 @@ import {
     InstanceToolsComponent,
     InstanceNicsComponent,
     UiSearchDirective,
-    InstanceIdmapComponent,
   ],
 })
 export class InstanceDetailsComponent {

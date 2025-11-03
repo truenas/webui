@@ -23,10 +23,6 @@ export const instanceDetailsElements = {
       hierarchy: [T('NIC')],
       anchor: 'nic',
     },
-    idmap: {
-      hierarchy: [T('Idmap')],
-      anchor: 'idmap',
-    },
     tools: {
       hierarchy: [T('Tools')],
       anchor: 'tools',

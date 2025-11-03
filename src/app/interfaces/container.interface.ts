@@ -158,12 +158,6 @@ export type ContainerDevice =
   | ContainerUsbDevice
   | ContainerNicDevice;
 
-export interface IdmapUserNsEntry {
-  hostid: number;
-  maprange: number;
-  nsid: number;
-}
-
 export interface VirtualizationImage {
   archs: string[];
   description: string;

@@ -1952,24 +1952,6 @@
   {
     "hierarchy": [
       "Containers",
-      "Idmap"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers/view/def"
-    ],
-    "routerLink": null,
-    "anchor": "idmap",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
       "Tools"
     ],
     "synonyms": [],

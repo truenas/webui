@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,9 +13,6 @@ import { allInstancesHeaderElements } from 'app/pages/instances/components/all-i
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/instances/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
-import {
-  MapUserGroupIdsDialog,
-} from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/map-user-group-ids-dialog.component';
 import { InstanceFormComponent } from 'app/pages/instances/components/instance-form/instance-form.component';
 import {
   VirtualizationConfigStore,
@@ -43,7 +39,6 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 })
 export class AllInstancesHeaderComponent {
   private slideIn = inject(SlideIn);
-  private matDialog = inject(MatDialog);
   private configStore = inject(VirtualizationConfigStore);
   private instanceStore = inject(VirtualizationInstancesStore);
 
@@ -68,11 +63,5 @@ export class AllInstancesHeaderComponent {
           this.instanceStore.initialize();
         },
       });
-  }
-
-  protected onMapUserGroupIds(): void {
-    this.matDialog.open(MapUserGroupIdsDialog, {
-      minWidth: '80vw',
-    });
   }
 }
