@@ -6,10 +6,12 @@ import {
   switchMap, catchError, tap,
   EMPTY,
   filter,
+  map,
 } from 'rxjs';
-import { VirtualizationDevice } from 'app/interfaces/container.interface';
+import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { containerDevicesToVirtualizationDevices } from 'app/pages/instances/utils/container-device.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface ContainerInstanceDeviceState {
@@ -49,7 +51,8 @@ export class VirtualizationDevicesStore extends ComponentStore<ContainerInstance
     return trigger$.pipe(
       switchMap(() => {
         this.patchState({ isLoading: true });
-        return this.api.call('virt.instance.device_list', [this.selectedInstance().id.toString()]).pipe(
+        return this.api.call('container.device.query', [[['container', '=', this.selectedInstance().id]]]).pipe(
+          map((containerDevices) => containerDevicesToVirtualizationDevices(containerDevices)),
           tap((devices) => {
             this.patchState({
               devices,
@@ -66,8 +69,8 @@ export class VirtualizationDevicesStore extends ComponentStore<ContainerInstance
     );
   });
 
-  deviceDeleted(deviceName: string): void {
-    const devices = this.devices().filter((device) => device.name !== deviceName);
+  deviceDeleted(deviceId: number): void {
+    const devices = this.devices().filter((device) => device.id !== deviceId);
     this.patchState({ devices });
   }
 }

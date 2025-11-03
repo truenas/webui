@@ -20,8 +20,8 @@ describe('InstanceProxyFormComponent', () => {
     component: InstanceProxyFormComponent,
     providers: [
       mockApi([
-        mockCall('virt.instance.device_add'),
-        mockCall('virt.instance.device_update'),
+        mockCall('container.device.create'),
+        mockCall('container.device.update'),
       ]),
       mockProvider(SnackbarService),
     ],
@@ -64,12 +64,15 @@ describe('InstanceProxyFormComponent', () => {
         response: true,
       });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
-        source_port: 2000,
-        source_proto: VirtualizationProxyProtocol.Tcp,
-        dest_port: 3000,
-        dest_proto: VirtualizationProxyProtocol.Udp,
-        dev_type: VirtualizationDeviceType.Proxy,
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+        container: 'my-instance',
+        attributes: {
+          source_port: 2000,
+          source_proto: VirtualizationProxyProtocol.Tcp,
+          dest_port: 3000,
+          dest_proto: VirtualizationProxyProtocol.Udp,
+          dev_type: VirtualizationDeviceType.Proxy,
+        },
       }]);
     });
   });
@@ -82,6 +85,7 @@ describe('InstanceProxyFormComponent', () => {
             getData: () => ({
               instanceId: 'my-instance',
               proxy: {
+                id: 789,
                 name: 'my-proxy',
                 source_port: 5000,
                 source_proto: VirtualizationProxyProtocol.Tcp,
@@ -125,13 +129,15 @@ describe('InstanceProxyFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_update', ['my-instance', {
-        name: 'my-proxy',
-        source_port: 5001,
-        source_proto: VirtualizationProxyProtocol.Udp,
-        dest_port: 6001,
-        dest_proto: VirtualizationProxyProtocol.Udp,
-        dev_type: VirtualizationDeviceType.Proxy,
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.update', [789, {
+        attributes: {
+          name: 'my-proxy',
+          source_port: 5001,
+          source_proto: VirtualizationProxyProtocol.Udp,
+          dest_port: 6001,
+          dest_proto: VirtualizationProxyProtocol.Udp,
+          dev_type: VirtualizationDeviceType.Proxy,
+        },
       }]);
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({

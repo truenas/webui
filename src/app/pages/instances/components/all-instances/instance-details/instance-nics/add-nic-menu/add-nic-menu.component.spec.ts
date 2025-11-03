@@ -25,7 +25,7 @@ describe('AddNicMenuComponent', () => {
           nic1: 'Intel E1000',
           nic2: 'Realtek RTL8139',
         }),
-        mockCall('virt.instance.device_add'),
+        mockCall('container.device.create'),
       ]),
       mockProvider(VirtualizationInstancesStore, {
         selectedInstance: () => ({ id: 'my-instance' }),
@@ -76,11 +76,14 @@ describe('AddNicMenuComponent', () => {
       minWidth: '500px',
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
-      dev_type: VirtualizationDeviceType.Nic,
-      nic_type: VirtualizationNicType.Bridged,
-      parent: 'Intel E1000',
-    } as VirtualizationDevice]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+      container: 'my-instance',
+      attributes: {
+        dev_type: VirtualizationDeviceType.Nic,
+        nic_type: VirtualizationNicType.Bridged,
+        parent: 'Intel E1000',
+      } as VirtualizationDevice,
+    }]);
     expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('NIC was added');
   });

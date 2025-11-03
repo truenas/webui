@@ -10,7 +10,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import { VirtualizationGpuType, VirtualizationNicType } from 'app/enums/virtualization.enum';
 import {
   Acl,
   AclQueryParams,
@@ -73,16 +72,8 @@ import {
   ContainerImage, DeleteContainerImageParams,
 } from 'app/interfaces/container-image.interface';
 import {
-  VirtualizationDevice,
-
-  ContainerGlobalConfig, VirtualizationImage,
-  VirtualizationImageParams,
+  ContainerGlobalConfig,
   ContainerInstance,
-  VirtualizationNetwork,
-  AvailableUsb,
-  AvailableGpus, VirtualizationVolume,
-  VirtualizationVolumeUpdate,
-  CreateVirtualizationVolume,
   CreateContainerInstance,
   UpdateContainerInstance,
   ContainerImageRegistryResponse,
@@ -283,6 +274,19 @@ import {
   VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
   VmDisplayWebUriParams, VmPortWizardResult,
 } from 'app/interfaces/virtual-machine.interface';
+import {
+  ContainerDeviceEntry,
+  ContainerDeviceCreate,
+  ContainerDeviceDelete,
+  ContainerDeviceUpdate,
+  VirtualizationImage,
+  VirtualizationImageParams,
+  VirtualizationInstance,
+  VirtualizationNetwork,
+  VirtualizationVolume,
+  VirtualizationVolumeUpdate,
+  CreateVirtualizationVolume,
+} from 'app/interfaces/virtualization.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
@@ -901,20 +905,24 @@ export interface ApiCallDirectory {
   'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
 
-  // Virt
-  'virt.instance.device_add': { params: [instanceId: number, device: VirtualizationDevice]; response: true };
-  'virt.instance.device_update': { params: [instanceId: number, device: VirtualizationDevice]; response: true };
-  'virt.instance.device_delete': { params: [instanceId: number, name: string]; response: true };
-  'virt.instance.device_list': { params: [instanceId: string]; response: VirtualizationDevice[] };
-  'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: Record<string, VirtualizationImage> };
+  // Container
+  'container.device.create': { params: [ContainerDeviceCreate]; response: ContainerDeviceEntry };
+  'container.device.delete': { params: [id: number, options?: ContainerDeviceDelete]; response: boolean };
+  'container.device.query': { params: QueryParams<ContainerDeviceEntry>; response: ContainerDeviceEntry[] };
+  'container.device.update': { params: [id: number, update: ContainerDeviceUpdate]; response: ContainerDeviceEntry };
+  'container.device.disk_choices': { params: []; response: Record<string, unknown> };
+  'container.device.iotype_choices': { params: []; response: Record<string, string> };
+  'container.device.nic_attach_choices': { params: []; response: Record<string, unknown> };
+  'container.device.pci_device': { params: [device: string]; response: unknown };
+  'container.device.pci_device_choices': { params: []; response: Record<string, unknown> };
+  'container.device.usb_choices': { params: []; response: Record<string, unknown> };
+  'container.device.usb_controller_choices': { params: []; response: Record<string, string> };
+  'container.device.usb_device': { params: [device: string]; response: unknown };
 
-  'virt.device.disk_choices': { params: []; response: Choices };
-  'virt.device.gpu_choices': {
-    params: [gpuType: VirtualizationGpuType];
-    response: AvailableGpus;
-  };
-  'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
-  'virt.device.nic_choices': { params: [nicType: VirtualizationNicType]; response: Record<string, string> };
+  // Virt
+  'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
+  'virt.instance.set_bootable_disk': { params: [instanceId: string, diskId: string]; response: boolean };
+  'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: Record<string, VirtualizationImage> };
 
   'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
 

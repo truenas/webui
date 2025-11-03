@@ -26,8 +26,8 @@ describe('InstanceDiskFormComponent', () => {
     providers: [
       mockAuth(),
       mockApi([
-        mockCall('virt.instance.device_add'),
-        mockCall('virt.instance.device_update'),
+        mockCall('container.device.create'),
+        mockCall('container.device.update'),
       ]),
       mockProvider(SnackbarService),
       mockProvider(FilesystemService),
@@ -72,10 +72,13 @@ describe('InstanceDiskFormComponent', () => {
         response: true,
       });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
-        source: '/mnt/path',
-        destination: 'destination',
-        dev_type: VirtualizationDeviceType.Disk,
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+        container: 'my-instance',
+        attributes: {
+          source: '/mnt/path',
+          destination: 'destination',
+          dev_type: VirtualizationDeviceType.Disk,
+        },
       }]);
     });
   });
@@ -88,6 +91,7 @@ describe('InstanceDiskFormComponent', () => {
             getData: () => ({
               instance: { id: 'my-instance', type: VirtualizationType.Container },
               disk: {
+                id: 456,
                 name: 'existing-disk',
                 source: '/mnt/from',
                 destination: 'to',
@@ -126,11 +130,13 @@ describe('InstanceDiskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_update', ['my-instance', {
-        source: '/mnt/updated',
-        destination: 'new-destination',
-        dev_type: VirtualizationDeviceType.Disk,
-        name: 'existing-disk',
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.update', [456, {
+        attributes: {
+          source: '/mnt/updated',
+          destination: 'new-destination',
+          dev_type: VirtualizationDeviceType.Disk,
+          name: 'existing-disk',
+        },
       }]);
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
@@ -174,6 +180,32 @@ describe('InstanceDiskFormComponent', () => {
 
     it('shows form title for new disk', () => {
       expect(spectator.query(ModalHeaderComponent)).toExist();
+    });
+
+    it('creates a new disk for a VM', async () => {
+      const selectVolumeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Select Volume' }));
+      await selectVolumeButton.click();
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'I/O Bus': 'Virtio-BLK',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
+        response: true,
+      });
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+        container: 'my-instance',
+        attributes: {
+          source: 'my-volume',
+          dev_type: VirtualizationDeviceType.Disk,
+          io_bus: DiskIoBus.VirtioBlk,
+        },
+      }]);
     });
   });
 });

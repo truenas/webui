@@ -53,8 +53,10 @@ export class AddDeviceMenuComponent {
 
   protected readonly gpuType = VirtualizationGpuType.Physical;
 
-  private readonly usbChoices = toSignal(this.api.call('virt.device.usb_choices'), { initialValue: {} });
-  private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [this.gpuType]), { initialValue: {} });
+  private readonly usbChoices = toSignal(this.api.call('container.device.usb_choices'), { initialValue: {} });
+  // Note: GPU choices use virt.device.gpu_choices - this is shared between VMs and containers
+  // TODO: Stop hardcoding params
+  private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [VirtualizationGpuType.Physical]), { initialValue: {} });
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
@@ -103,7 +105,10 @@ export class AddDeviceMenuComponent {
       return;
     }
 
-    this.api.call('virt.instance.device_add', [instanceId, payload])
+    this.api.call('container.device.create', [{
+      container: instanceId,
+      attributes: payload,
+    }])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),

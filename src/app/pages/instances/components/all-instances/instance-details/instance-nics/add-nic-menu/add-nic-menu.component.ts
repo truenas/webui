@@ -117,7 +117,10 @@ export class AddNicMenuComponent {
         if (macConfig.mac) {
           payload.mac = macConfig.mac;
         }
-        return this.api.call('virt.instance.device_add', [instanceId, payload]).pipe(
+        return this.api.call('container.device.create', [{
+          container: instanceId,
+          attributes: payload,
+        }]).pipe(
           this.loader.withLoader(),
           this.errorHandler.withErrorHandler(),
         );

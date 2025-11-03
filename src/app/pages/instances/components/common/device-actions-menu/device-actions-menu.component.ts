@@ -92,17 +92,17 @@ export class DeviceActionsMenuComponent {
   }
 
   private deleteDevice(): Observable<unknown> {
-    const selectedInstanceId = this.instancesStore.selectedInstance()?.id;
-    if (!selectedInstanceId) {
+    const deviceId = this.device().id;
+    if (!deviceId) {
       return NEVER;
     }
-    return this.api.call('virt.instance.device_delete', [selectedInstanceId, this.device().name])
+    return this.api.call('container.device.delete', [deviceId])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         tap(() => {
           this.snackbar.success(this.translate.instant('Device deleted'));
-          this.devicesStore.deviceDeleted(this.device().name);
+          this.devicesStore.deviceDeleted(deviceId);
         }),
       );
   }

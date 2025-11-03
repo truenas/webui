@@ -34,7 +34,7 @@ describe('DeviceActionsMenuComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockApi([
-        mockCall('virt.instance.device_delete'),
+        mockCall('container.device.delete'),
       ]),
       mockProvider(VirtualizationInstancesStore, {
         selectedInstance,
@@ -49,6 +49,7 @@ describe('DeviceActionsMenuComponent', () => {
     spectator = createComponent({
       props: {
         device: {
+          id: 123,
           name: 'my-device',
           dev_type: VirtualizationDeviceType.Gpu,
         } as VirtualizationDevice,
@@ -95,8 +96,8 @@ describe('DeviceActionsMenuComponent', () => {
       await menu.clickItem({ text: 'Delete' });
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_delete', [1, 'my-device']);
-      expect(spectator.inject(VirtualizationDevicesStore).deviceDeleted).toHaveBeenCalledWith('my-device');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.delete', [123]);
+      expect(spectator.inject(VirtualizationDevicesStore).deviceDeleted).toHaveBeenCalledWith(123);
     });
   });
 

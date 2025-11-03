@@ -98,16 +98,8 @@ export type UpdateContainerInstance = Partial<Pick<ContainerInstance,
   | 'capabilities_state'
 >>;
 
-export type VirtualizationDevice =
-  | VirtualizationDisk
-  | VirtualizationGpu
-  | VirtualizationProxy
-  | VirtualizationTpm
-  | VirtualizationUsb
-  | VirtualizationNic
-  | VirtualizationPciDevice;
-
-export interface VirtualizationDisk {
+export interface ContainerDiskDevice {
+  id?: number;
   name: string;
   description: string;
   dev_type: VirtualizationDeviceType.Disk;
@@ -119,7 +111,8 @@ export interface VirtualizationDisk {
   boot_priority?: number;
 }
 
-export interface VirtualizationPciDevice {
+export interface ContainerPciDevice {
+  id?: number;
   name: string;
   description: string;
   dev_type: VirtualizationDeviceType.Pci;
@@ -127,13 +120,13 @@ export interface VirtualizationPciDevice {
   address: string;
 }
 
-export interface VirtualizationGpu {
+export interface ContainerGpuDevice {
+  id?: number;
   name: string;
   description: string;
   readonly: boolean;
   dev_type: VirtualizationDeviceType.Gpu;
   gpu_type: VirtualizationGpuType;
-  id: string;
   gid: number;
   uid: number;
   mode: string;
@@ -143,7 +136,8 @@ export interface VirtualizationGpu {
   product_id: string;
 }
 
-export interface VirtualizationProxy {
+export interface ContainerProxyDevice {
+  id?: number;
   name: string;
   description: string;
   dev_type: VirtualizationDeviceType.Proxy;
@@ -155,7 +149,8 @@ export interface VirtualizationProxy {
   product_id: string;
 }
 
-export interface VirtualizationNic {
+export interface ContainerNicDevice {
+  id?: number;
   name: string;
   description: string;
   dev_type: VirtualizationDeviceType.Nic;
@@ -167,7 +162,8 @@ export interface VirtualizationNic {
   mac?: string;
 }
 
-export interface VirtualizationTpm {
+export interface ContainerTpmDevice {
+  id?: number;
   name: string;
   description: string;
   dev_type: VirtualizationDeviceType.Tpm;
@@ -177,7 +173,8 @@ export interface VirtualizationTpm {
   product_id: string;
 }
 
-export interface VirtualizationUsb {
+export interface ContainerUsbDevice {
+  id?: number;
   name: string;
   description: string;
   dev_type: VirtualizationDeviceType.Usb;
@@ -187,6 +184,34 @@ export interface VirtualizationUsb {
   product_id: string;
   vendor_id: string;
 }
+
+export type ContainerDevice =
+  | ContainerDiskDevice
+  | ContainerGpuDevice
+  | ContainerProxyDevice
+  | ContainerTpmDevice
+  | ContainerUsbDevice
+  | ContainerNicDevice
+  | ContainerPciDevice;
+
+// Backwards compatibility aliases - old Virtualization* naming
+// eslint-disable-next-line sonarjs/redundant-type-aliases
+export type VirtualizationDevice = ContainerDevice;
+export type VirtualizationDisk = ContainerDiskDevice;
+export type VirtualizationGpu = ContainerGpuDevice;
+export type VirtualizationProxy = ContainerProxyDevice;
+export type VirtualizationTpm = ContainerTpmDevice;
+export type VirtualizationUsb = ContainerUsbDevice;
+export type VirtualizationNic = ContainerNicDevice;
+export type VirtualizationPciDevice = ContainerPciDevice;
+
+// Backwards compatibility aliases - Container* without Device suffix
+export type ContainerDisk = ContainerDiskDevice;
+export type ContainerGpu = ContainerGpuDevice;
+export type ContainerProxy = ContainerProxyDevice;
+export type ContainerTpm = ContainerTpmDevice;
+export type ContainerUsb = ContainerUsbDevice;
+export type ContainerNic = ContainerNicDevice;
 
 export interface UserNsIdmap {
   uid: IdmapUserNsEntry;
@@ -332,3 +357,30 @@ export interface ZvolToImport {
   virt_volume_name: string;
   zvol_path: string;
 }
+
+export interface ContainerDeviceCreate {
+  container: string;
+  attributes: VirtualizationDevice;
+  order?: number;
+}
+
+export interface ContainerDeviceUpdate {
+  attributes?: VirtualizationDevice;
+  container?: string;
+  order?: number;
+}
+
+export interface ContainerDeviceDelete {
+  force?: boolean;
+  raw_file?: boolean;
+  zvol?: boolean;
+}
+
+export interface ContainerDeviceEntry {
+  id: number;
+  attributes: ContainerDevice;
+  container: string;
+  order: number;
+}
+
+export type VirtualizationDeviceWithId = VirtualizationDevice & { id: number };

@@ -117,10 +117,15 @@ export class InstanceProxyFormComponent implements OnInit {
     const existingProxy = this.existingProxy();
 
     return existingProxy
-      ? this.api.call('virt.instance.device_update', [instanceId, {
-        ...payload,
-        name: existingProxy.name,
+      ? this.api.call('container.device.update', [existingProxy.id, {
+        attributes: {
+          ...payload,
+          name: existingProxy.name,
+        },
       }])
-      : this.api.call('virt.instance.device_add', [instanceId, payload]);
+      : this.api.call('container.device.create', [{
+        container: instanceId,
+        attributes: payload,
+      }]);
   }
 }
