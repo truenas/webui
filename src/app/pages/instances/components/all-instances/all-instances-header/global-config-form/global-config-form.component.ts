@@ -99,6 +99,8 @@ export class GlobalConfigFormComponent implements OnInit {
         v6_network: config.v6_network,
         preferred_pool: config.preferred_pool,
       });
+
+      this.form.markAsUntouched();
     });
   }
 
