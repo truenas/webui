@@ -28,6 +28,20 @@
       [rawStatus]="tnc.config()?.status"
     ></ix-truenas-connect-status-display>
   }
+  @if (!isLoading()) {
+    <div class="documentation-link">
+      <a
+        href="https://connect.truenas.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+        ixTest="tnc-documentation-link"
+      >
+        {{ "Learn more about TrueNAS Connect" | translate }}
+        <ix-icon name="mdi-open-in-new" aria-hidden="true"></ix-icon>
+        <span class="sr-only">{{ "(opens in a new tab)" | translate }}</span>
+      </a>
+    </div>
+  }
 </mat-dialog-content>
 <div mat-dialog-actions>
   @if (isLoading()) {

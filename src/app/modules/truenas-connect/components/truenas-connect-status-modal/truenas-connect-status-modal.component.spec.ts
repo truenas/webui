@@ -451,4 +451,62 @@ describe('TruenasConnectStatusModalComponent', () => {
     expect(statusElement).toBeTruthy();
     expect(statusElement!.textContent).toContain('Power Up your TrueNAS Experience!');
   });
+
+  describe('Documentation link', () => {
+    it('should show documentation link in Active state with security and accessibility attributes', () => {
+      config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
+      spectator.detectChanges();
+
+      const docLink = spectator.query('[ixTest="tnc-documentation-link"]') as HTMLAnchorElement;
+      expect(docLink).toBeTruthy();
+      expect(docLink.href).toBe('https://connect.truenas.com/');
+      expect(docLink.target).toBe('_blank');
+      expect(docLink.rel).toBe('noopener noreferrer');
+      expect(docLink.textContent).toContain('Learn more about TrueNAS Connect');
+      expect(docLink.textContent).toContain('(opens in a new tab)');
+
+      // Check for external link icon
+      const icon = docLink.querySelector('ix-icon[name="mdi-open-in-new"]');
+      expect(icon).toBeTruthy();
+      expect(icon.getAttribute('aria-hidden')).toBe('true');
+
+      // Check for screen reader text
+      const srText = docLink.querySelector('.sr-only');
+      expect(srText).toBeTruthy();
+      expect(srText.textContent).toContain('(opens in a new tab)');
+    });
+
+    it('should show documentation link in Waiting state', () => {
+      config.update((conf) => ({ ...conf, status: TruenasConnectStatus.ClaimTokenMissing }));
+      spectator.detectChanges();
+
+      const docLink = spectator.query('[ixTest="tnc-documentation-link"]') as HTMLAnchorElement;
+      expect(docLink).toBeTruthy();
+      expect(docLink.href).toBe('https://connect.truenas.com/');
+      expect(docLink.target).toBe('_blank');
+      expect(docLink.rel).toBe('noopener noreferrer');
+    });
+
+    it('should show documentation link in Failed state', () => {
+      config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationFailed }));
+      spectator.detectChanges();
+
+      const docLink = spectator.query('[ixTest="tnc-documentation-link"]') as HTMLAnchorElement;
+      expect(docLink).toBeTruthy();
+      expect(docLink.href).toBe('https://connect.truenas.com/');
+      expect(docLink.target).toBe('_blank');
+      expect(docLink.rel).toBe('noopener noreferrer');
+    });
+
+    it('should show documentation link in Connecting state', () => {
+      config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertGenerationInProgress }));
+      spectator.detectChanges();
+
+      const docLink = spectator.query('[ixTest="tnc-documentation-link"]') as HTMLAnchorElement;
+      expect(docLink).toBeTruthy();
+      expect(docLink.href).toBe('https://connect.truenas.com/');
+      expect(docLink.target).toBe('_blank');
+      expect(docLink.rel).toBe('noopener noreferrer');
+    });
+  });
 });
