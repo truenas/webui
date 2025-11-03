@@ -19,17 +19,15 @@ import {
   filter, map, Observable, of, tap,
 } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
-import { Role } from 'app/enums/role.enum';
 import {
   ContainerCapabilitiesPolicy,
   containerTimeLabels,
   ContainerTime,
-  ContainerProxyProtocol,
-  containerProxyProtocolLabels,
   ContainerRemote,
   ContainerSource,
   ContainerType,
 } from 'app/enums/container.enum';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
@@ -109,8 +107,6 @@ export class InstanceFormComponent implements OnInit {
 
   protected readonly slashRootNode = [slashRootNode];
 
-  protected readonly proxyProtocols$ = of(mapToOptions(containerProxyProtocolLabels, this.translate));
-
   protected readonly timeOptions$ = of(mapToOptions(containerTimeLabels, this.translate));
 
   protected readonly capabilitiesPolicyOptions$ = of([
@@ -182,13 +178,6 @@ export class InstanceFormComponent implements OnInit {
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
     use_default_network: [true],
     usb_devices: [[] as string[]],
-    gpu_devices: [[] as string[]],
-    proxies: this.formBuilder.array<FormGroup<{
-      source_proto: FormControl<ContainerProxyProtocol>;
-      source_port: FormControl<number | null>;
-      dest_proto: FormControl<ContainerProxyProtocol>;
-      dest_port: FormControl<number | null>;
-    }>>([]),
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
       destination?: FormControl<string>;
@@ -263,7 +252,6 @@ export class InstanceFormComponent implements OnInit {
       capabilities_policy: ContainerCapabilitiesPolicy.Default,
       use_default_network: true,
       usb_devices: [],
-      gpu_devices: [],
     });
   }
 
@@ -342,21 +330,6 @@ export class InstanceFormComponent implements OnInit {
       .subscribe((image: VirtualizationImageWithId) => {
         this.form.controls.image.setValue(image.id);
       });
-  }
-
-  protected addProxy(): void {
-    const control = this.formBuilder.group({
-      source_proto: [ContainerProxyProtocol.Tcp],
-      source_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
-      dest_proto: [ContainerProxyProtocol.Tcp],
-      dest_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
-    });
-
-    this.form.controls.proxies.push(control);
-  }
-
-  protected removeProxy(index: number): void {
-    this.form.controls.proxies.removeAt(index);
   }
 
   protected addDisk(): void {

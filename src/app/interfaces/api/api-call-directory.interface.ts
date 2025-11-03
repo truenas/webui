@@ -81,9 +81,6 @@ import {
   ContainerInstance,
   CreateContainerInstance,
   UpdateContainerInstance,
-  VirtualizationImage,
-  VirtualizationImageParams,
-  VirtualizationNetwork,
 } from 'app/interfaces/container.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { CoreOptions } from 'app/interfaces/core-options.interface';
@@ -912,13 +909,6 @@ export interface ApiCallDirectory {
   'container.device.usb_choices': { params: []; response: Record<string, unknown> };
   'container.device.usb_controller_choices': { params: []; response: Record<string, string> };
   'container.device.usb_device': { params: [device: string]; response: unknown };
-
-  // Virt
-  'virt.instance.query': { params: QueryParams<ContainerInstance>; response: ContainerInstance[] };
-  'virt.instance.set_bootable_disk': { params: [instanceId: string, diskId: string]; response: boolean };
-  'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: Record<string, VirtualizationImage> };
-
-  'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
 
   // Container (actual available endpoints only)
   'container.create': { params: [CreateContainerInstance]; response: ContainerInstance };
