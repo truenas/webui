@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { allInstancesHeaderElements } from 'app/pages/instances/components/all-instances/all-instances-header/all-instances-header.elements';
@@ -30,10 +28,6 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
     MatButton,
     TestDirective,
     UiSearchDirective,
-    IxIconComponent,
-    MatMenu,
-    MatMenuItem,
-    MatMenuTrigger,
     RequiresRolesDirective,
   ],
 })

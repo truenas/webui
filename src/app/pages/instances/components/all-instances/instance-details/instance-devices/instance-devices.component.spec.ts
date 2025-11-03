@@ -1,8 +1,8 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { ContainerDeviceType } from 'app/enums/container.enum';
-import { VirtualizationProxy, VirtualizationUsb } from 'app/interfaces/container.interface';
+import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
+import { ContainerUsbDevice } from 'app/interfaces/container.interface';
 import {
   AddDeviceMenuComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
@@ -14,6 +14,7 @@ import {
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
 
 describe('InstanceDevicesComponent', () => {
   let spectator: Spectator<InstanceDevicesComponent>;
@@ -21,14 +22,13 @@ describe('InstanceDevicesComponent', () => {
     {
       dtype: ContainerDeviceType.Usb,
       description: 'USB Microphone',
-    } as VirtualizationUsb,
+      name: 'usb1',
+    } as ContainerUsbDevice,
     {
-      dtype: ContainerDeviceType.Gpu,
-      description: 'Matrox G200eW',
-    },
-    {
-      name: 'gpu1',
-    } as VirtualizationProxy,
+      dtype: ContainerDeviceType.Usb,
+      description: 'USB Keyboard',
+      name: 'usb2',
+    } as ContainerUsbDevice,
   ];
 
   const createComponent = createComponentFactory({
@@ -42,7 +42,10 @@ describe('InstanceDevicesComponent', () => {
     ],
     providers: [
       mockProvider(VirtualizationInstancesStore, {
-        selectedInstance: () => ({ id: 'my-instance' }),
+        selectedInstance: () => fakeVirtualizationInstance({
+          id: 1,
+          status: { state: ContainerStatus.Stopped, pid: 0, domain_state: 'stopped' },
+        }),
       }),
       mockProvider(VirtualizationDevicesStore, {
         isLoading: () => false,
@@ -56,12 +59,12 @@ describe('InstanceDevicesComponent', () => {
     spectator = createComponent();
   });
 
-  it('shows a list of USB or GPU devices', () => {
+  it('shows a list of USB devices', () => {
     const deviceRows = spectator.queryAll('.device');
 
     expect(deviceRows).toHaveLength(2);
     expect(deviceRows[0]).toHaveText('USB Microphone');
-    expect(deviceRows[1]).toHaveText('Matrox G200eW');
+    expect(deviceRows[1]).toHaveText('USB Keyboard');
   });
 
   it('renders a menu to delete the device', () => {

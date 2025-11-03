@@ -29,6 +29,8 @@
 
           <ix-device-actions-menu
             [device]="disk"
+            [isDisabled]="isContainerRunning()"
+            [disabledTooltip]="isContainerRunning() ? ('Cannot modify devices while container is running. Please stop the container first.' | translate) : null"
             (edit)="editDisk(disk)"
           ></ix-device-actions-menu>
         </div>

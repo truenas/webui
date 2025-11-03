@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -44,9 +43,9 @@ describe('AllInstancesHeaderComponent', () => {
   });
 
   describe('elements visibility', () => {
-    it('shows Configuration and Create New Container buttons', async () => {
-      const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configuration' }));
-      expect(configurationButton).toExist();
+    it('shows Settings and Create New Container buttons', async () => {
+      const settingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
+      expect(settingsButton).toExist();
 
       const createNewButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create New Container' }));
       expect(createNewButton).not.toBeDisabled();
@@ -61,10 +60,9 @@ describe('AllInstancesHeaderComponent', () => {
   });
 
   describe('actions', () => {
-    it('opens GlobalConfigFormComponent when Global Settings in Configuration menu is pressed', async () => {
-      const configurationMenu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Configuration' }));
-      await configurationMenu.open();
-      await configurationMenu.clickItem({ text: 'Global Settings' });
+    it('opens GlobalConfigFormComponent when Settings button is pressed', async () => {
+      const settingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
+      await settingsButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
         GlobalConfigFormComponent,

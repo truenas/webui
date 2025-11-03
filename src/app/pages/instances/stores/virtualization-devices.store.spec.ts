@@ -71,7 +71,7 @@ describe('VirtualizationDevicesStore', () => {
       { id: 2, name: 'device2' },
     ]);
     expect(spectator.inject(ApiService).call)
-      .toHaveBeenCalledWith('container.device.query', [[['container', '=', 'instance1']]]);
+      .toHaveBeenCalledWith('container.device.query', [[['container', '=', 1]]]);
   });
 
   it('deviceDeleted – removes a device from list of devices for selected instance', () => {
@@ -92,13 +92,10 @@ describe('VirtualizationDevicesStore', () => {
   });
 
   describe('constructor behavior with signal changes', () => {
-    it('automatically loads devices when instance is selected on init', () => {
+    it('starts with empty devices until loadDevices is called', () => {
       // Store is created in beforeEach with instances[0] selected
-      // The constructor should automatically call loadDevices
-      expect(spectator.service.devices()).toEqual([
-        { id: 1, name: 'device1' },
-        { id: 2, name: 'device2' },
-      ]);
+      // Devices start empty until explicitly loaded
+      expect(spectator.service.devices()).toEqual([]);
     });
   });
 

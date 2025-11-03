@@ -4,7 +4,7 @@ import { of, Subject } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import {
-  VirtualizationDevice, ContainerMetrics,
+  ContainerDeviceWithId, ContainerMetrics,
 } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
@@ -23,7 +23,7 @@ describe('VirtualizationInstancesStore', () => {
   const devices = [
     { name: 'device1' },
     { name: 'device2' },
-  ] as VirtualizationDevice[];
+  ] as ContainerDeviceWithId[];
 
   const routerEvents$ = new Subject<NavigationEnd>();
 

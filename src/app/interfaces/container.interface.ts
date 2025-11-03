@@ -1,12 +1,12 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import {
+  AllowedImageOs,
   ContainerDeviceType,
   ContainerNetworkType,
   ContainerNicDeviceType,
   ContainerRemote,
   ContainerStatus,
   ContainerType,
-  ImageOs,
 } from 'app/enums/container.enum';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 
@@ -166,7 +166,7 @@ export interface VirtualizationImage {
   archs: string[];
   description: string;
   label: string;
-  os: ImageOs | null | string;
+  os: AllowedImageOs;
   release: string;
   variant: string;
   instance_types: ContainerType[];

@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { ContainerDeviceType } from 'app/enums/container.enum';
+import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerFilesystemDevice } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
@@ -42,15 +42,16 @@ describe('InstanceDisksComponent', () => {
     ],
     providers: [
       mockProvider(VirtualizationInstancesStore, {
-        selectedInstance: () => fakeVirtualizationInstance({ id: 1 }),
+        selectedInstance: () => fakeVirtualizationInstance({
+          id: 1,
+          status: { state: ContainerStatus.Stopped, pid: 0, domain_state: 'stopped' },
+        }),
+        instanceUpdated: jest.fn(),
       }),
       mockProvider(VirtualizationDevicesStore, {
         isLoading: () => false,
         devices: () => disks,
         loadDevices: jest.fn(),
-      }),
-      mockProvider(VirtualizationInstancesStore, {
-        instanceUpdated: jest.fn(),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({

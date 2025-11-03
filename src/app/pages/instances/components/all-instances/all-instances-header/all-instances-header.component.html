@@ -1,23 +1,11 @@
 <button
   mat-button
-  ixTest="settings-menu"
-  [matMenuTriggerFor]="menu"
+  ixTest="global-configuration"
+  [ixUiSearch]="searchableElements.elements.globalSettings"
+  (click)="onGlobalConfiguration()"
 >
-  {{ 'Configuration' | translate }}
-  <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
+  {{ 'Settings' | translate }}
 </button>
-
-<mat-menu #menu="matMenu" overlapTrigger="false">
-  <button
-    mat-menu-item
-    ixTest="global-configuration"
-    [ixUiSearch]="searchableElements.elements.globalSettings"
-    (click)="onGlobalConfiguration()"
-  >
-    {{ 'Global Settings' | translate }}
-  </button>
-</mat-menu>
-
 
 @if (config()) {
   <button

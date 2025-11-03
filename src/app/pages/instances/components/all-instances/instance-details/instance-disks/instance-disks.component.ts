@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
-import { ContainerDeviceType } from 'app/enums/container.enum';
+import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerFilesystemDevice, ContainerInstance } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -16,6 +16,7 @@ import {
 } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
 import { DeviceActionsMenuComponent } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 @UntilDestroy()
 @Component({
@@ -38,10 +39,15 @@ import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualiz
 export class InstanceDisksComponent {
   private slideIn = inject(SlideIn);
   private devicesStore = inject(VirtualizationDevicesStore);
+  private instancesStore = inject(VirtualizationInstancesStore);
 
   readonly instance = input.required<ContainerInstance>();
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
+  protected readonly isContainerRunning = computed(() => {
+    const instance = this.instancesStore.selectedInstance();
+    return instance?.status.state === ContainerStatus.Running;
+  });
 
   protected readonly visibleDisks = computed(() => {
     return this.devicesStore.devices().filter(
