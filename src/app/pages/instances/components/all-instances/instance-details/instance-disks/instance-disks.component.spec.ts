@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ContainerDeviceType } from 'app/enums/container.enum';
-import { ContainerDiskDevice } from 'app/interfaces/container.interface';
+import { ContainerFilesystemDevice } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   InstanceDiskFormComponent,
@@ -25,15 +25,15 @@ describe('InstanceDisksComponent', () => {
   let loader: HarnessLoader;
   const disks = [
     {
-      dtype: ContainerDeviceType.Disk,
+      dtype: ContainerDeviceType.Filesystem,
       source: '/mnt/source-path',
-      destination: 'destination',
-    } as ContainerDiskDevice,
+      target: 'target',
+    } as ContainerFilesystemDevice,
     {
-      dtype: ContainerDeviceType.Disk,
+      dtype: ContainerDeviceType.Filesystem,
       source: null,
-      destination: 'destination',
-    } as ContainerDiskDevice,
+      target: 'target',
+    } as ContainerFilesystemDevice,
   ];
   const createComponent = createComponentFactory({
     component: InstanceDisksComponent,
@@ -73,7 +73,7 @@ describe('InstanceDisksComponent', () => {
     const diskRows = spectator.queryAll('.disk');
 
     expect(diskRows).toHaveLength(1);
-    expect(diskRows[0]).toHaveText('/mnt/source-path → destination');
+    expect(diskRows[0]).toHaveText('/mnt/source-path → target');
   });
 
   it('renders a menu to manage the disk', () => {

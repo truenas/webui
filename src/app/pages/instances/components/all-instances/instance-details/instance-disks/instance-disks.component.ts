@@ -8,7 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
 import { ContainerDeviceType } from 'app/enums/container.enum';
-import { ContainerDiskDevice, ContainerInstance } from 'app/interfaces/container.interface';
+import { ContainerFilesystemDevice, ContainerInstance } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -45,8 +45,8 @@ export class InstanceDisksComponent {
 
   protected readonly visibleDisks = computed(() => {
     return this.devicesStore.devices().filter(
-      (device): device is ContainerDiskDevice & { id: number } => {
-        return device.dtype === ContainerDeviceType.Disk && 'source' in device && !!device.source;
+      (device): device is ContainerFilesystemDevice & { id: number } => {
+        return device.dtype === ContainerDeviceType.Filesystem && 'source' in device && !!device.source;
       },
     );
   });
@@ -55,11 +55,11 @@ export class InstanceDisksComponent {
     this.openDiskForm();
   }
 
-  protected editDisk(disk: ContainerDiskDevice): void {
+  protected editDisk(disk: ContainerFilesystemDevice): void {
     this.openDiskForm(disk);
   }
 
-  private openDiskForm(disk?: ContainerDiskDevice): void {
+  private openDiskForm(disk?: ContainerFilesystemDevice): void {
     this.slideIn.open(InstanceDiskFormComponent, { data: { disk, instance: this.instance() } })
       .pipe(filter((result) => !!result.response), untilDestroyed(this))
       .subscribe(() => this.devicesStore.loadDevices());

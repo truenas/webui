@@ -122,8 +122,8 @@ export interface ContainerFilesystemDevice {
   description: string;
   dtype: ContainerDeviceType.Filesystem;
   readonly: boolean;
-  source: string | null;
-  destination: string | null;
+  source: string;
+  target: string;
   product_id: string;
 }
 
@@ -151,10 +151,17 @@ export interface ContainerUsbDevice {
   description: string;
   dtype: ContainerDeviceType.Usb;
   readonly: boolean;
-  bus: number;
-  dev: number;
-  product_id: string;
-  vendor_id: string;
+  usb: {
+    vendor_id: string;
+    product_id: string;
+  };
+  controller_type?: string;
+  device?: string | null;
+  // Legacy fields from API response
+  bus?: number;
+  dev?: number;
+  product_id?: string;
+  vendor_id?: string;
 }
 
 export type ContainerDevice =

@@ -27,10 +27,12 @@ describe('AddDeviceMenuComponent', () => {
       mockApi([
         mockCall('container.device.usb_choices', {
           usb1: {
+            vendor_id: '046d',
             product_id: 'already-added',
             product: 'Web Cam',
           } as AvailableUsb,
           usb2: {
+            vendor_id: '0781',
             product_id: 'new',
             product: 'Card Reader',
           } as AvailableUsb,
@@ -78,7 +80,10 @@ describe('AddDeviceMenuComponent', () => {
       container: 'my-instance',
       attributes: {
         dtype: ContainerDeviceType.Usb,
-        product_id: 'new',
+        usb: {
+          vendor_id: '0781',
+          product_id: 'new',
+        },
       } as ContainerDevice,
     }]);
     expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();

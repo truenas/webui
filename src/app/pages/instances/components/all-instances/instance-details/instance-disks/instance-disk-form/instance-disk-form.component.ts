@@ -13,7 +13,7 @@ import {
 } from 'app/enums/container.enum';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import {
-  ContainerDiskDevice,
+  ContainerFilesystemDevice,
   ContainerInstance,
 } from 'app/interfaces/container.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -33,7 +33,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 
 interface InstanceDiskFormOptions {
   instance: ContainerInstance;
-  disk: ContainerDiskDevice | undefined;
+  disk: ContainerFilesystemDevice | undefined;
 }
 
 @UntilDestroy()
@@ -66,7 +66,7 @@ export class InstanceDiskFormComponent implements OnInit {
   private filesystem = inject(FilesystemService);
   slideInRef = inject<SlideInRef<InstanceDiskFormOptions, boolean>>(SlideInRef);
 
-  private existingDisk = signal<ContainerDiskDevice | null>(null);
+  private existingDisk = signal<ContainerFilesystemDevice | null>(null);
 
   protected readonly isLoading = signal(false);
 
@@ -74,7 +74,7 @@ export class InstanceDiskFormComponent implements OnInit {
 
   protected form = this.formBuilder.nonNullable.group({
     source: ['', Validators.required],
-    destination: ['', Validators.required],
+    target: ['', Validators.required],
   });
 
   protected readonly slashRootNode = [slashRootNode];
@@ -101,7 +101,7 @@ export class InstanceDiskFormComponent implements OnInit {
       this.existingDisk.set(disk);
       this.form.patchValue({
         source: disk.source || '',
-        destination: disk.destination || '',
+        target: disk.target || '',
       });
     }
   }
@@ -128,8 +128,8 @@ export class InstanceDiskFormComponent implements OnInit {
   private prepareRequest(): Observable<unknown> {
     const payload = {
       ...this.form.value,
-      dtype: ContainerDeviceType.Disk,
-    } as ContainerDiskDevice;
+      dtype: ContainerDeviceType.Filesystem,
+    } as ContainerFilesystemDevice;
 
     const existingDisk = this.existingDisk();
     return existingDisk

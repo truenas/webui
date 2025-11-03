@@ -52,7 +52,7 @@ describe('InstanceDiskFormComponent', () => {
 
       await form.fillForm({
         Source: '/mnt/path',
-        Destination: 'destination',
+        Target: 'target',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -66,8 +66,8 @@ describe('InstanceDiskFormComponent', () => {
         container: 1,
         attributes: {
           source: '/mnt/path',
-          destination: 'destination',
-          dtype: ContainerDeviceType.Disk,
+          target: 'target',
+          dtype: ContainerDeviceType.Filesystem,
         },
       }]);
     });
@@ -84,7 +84,7 @@ describe('InstanceDiskFormComponent', () => {
                 id: 456,
                 name: 'existing-disk',
                 source: '/mnt/from',
-                destination: 'to',
+                target: 'to',
               },
             }),
             close: jest.fn(),
@@ -105,7 +105,7 @@ describe('InstanceDiskFormComponent', () => {
 
       expect(values).toEqual({
         Source: '/mnt/from',
-        Destination: 'to',
+        Target: 'to',
       });
     });
 
@@ -114,7 +114,7 @@ describe('InstanceDiskFormComponent', () => {
 
       await form.fillForm({
         Source: '/mnt/updated',
-        Destination: 'new-destination',
+        Target: 'new-target',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -123,8 +123,8 @@ describe('InstanceDiskFormComponent', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.update', [456, {
         attributes: {
           source: '/mnt/updated',
-          destination: 'new-destination',
-          dtype: ContainerDeviceType.Disk,
+          target: 'new-target',
+          dtype: ContainerDeviceType.Filesystem,
           name: 'existing-disk',
         },
       }]);
@@ -151,7 +151,7 @@ describe('InstanceDiskFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('requires source and destination fields', async () => {
+    it('requires source and target fields', async () => {
       const form = await loader.getHarness(IxFormHarness);
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
 
@@ -163,7 +163,7 @@ describe('InstanceDiskFormComponent', () => {
       expect(await saveButton.isDisabled()).toBe(true);
 
       await form.fillForm({
-        Destination: 'dest',
+        Target: 'dest',
       });
       expect(await saveButton.isDisabled()).toBe(false);
     });
