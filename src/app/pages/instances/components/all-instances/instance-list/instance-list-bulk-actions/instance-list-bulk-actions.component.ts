@@ -10,8 +10,8 @@ import {
   tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { Role } from 'app/enums/role.enum';
 import { ContainerStatus } from 'app/enums/container.enum';
+import { Role } from 'app/enums/role.enum';
 import { ContainerInstance, VirtualizationStopParams } from 'app/interfaces/container.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
