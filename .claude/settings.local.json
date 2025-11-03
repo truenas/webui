@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git cherry-pick:*)",
+      "Bash(git -c core.hooksPath=/dev/null cherry-pick --continue)",
+      "Bash(git -c core.hooksPath=/dev/null commit -m \"$(cat <<''EOF''\nNAS-137713: Remove backwards compatibility aliases from container.interface.ts\n\n- Removed VirtualizationDevice and other backwards compatibility aliases\n- Updated all imports to use types from virtualization.interface.ts\n- Changed ContainerDeviceCreate/Update to use ContainerDevice instead of VirtualizationDevice\n- Renamed VirtualizationDeviceWithId to ContainerDeviceWithId\nEOF\n)\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

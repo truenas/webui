@@ -1,4 +1,5 @@
-import { ContainerDeviceEntry, VirtualizationDevice } from 'app/interfaces/virtualization.interface';
+import { ContainerDeviceEntry } from 'app/interfaces/container.interface';
+import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 
 /**
  * Maps ContainerDeviceEntry to VirtualizationDevice with ID

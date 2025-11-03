@@ -194,25 +194,6 @@ export type ContainerDevice =
   | ContainerNicDevice
   | ContainerPciDevice;
 
-// Backwards compatibility aliases - old Virtualization* naming
-// eslint-disable-next-line sonarjs/redundant-type-aliases
-export type VirtualizationDevice = ContainerDevice;
-export type VirtualizationDisk = ContainerDiskDevice;
-export type VirtualizationGpu = ContainerGpuDevice;
-export type VirtualizationProxy = ContainerProxyDevice;
-export type VirtualizationTpm = ContainerTpmDevice;
-export type VirtualizationUsb = ContainerUsbDevice;
-export type VirtualizationNic = ContainerNicDevice;
-export type VirtualizationPciDevice = ContainerPciDevice;
-
-// Backwards compatibility aliases - Container* without Device suffix
-export type ContainerDisk = ContainerDiskDevice;
-export type ContainerGpu = ContainerGpuDevice;
-export type ContainerProxy = ContainerProxyDevice;
-export type ContainerTpm = ContainerTpmDevice;
-export type ContainerUsb = ContainerUsbDevice;
-export type ContainerNic = ContainerNicDevice;
-
 export interface UserNsIdmap {
   uid: IdmapUserNsEntry;
   gid: IdmapUserNsEntry;
@@ -360,12 +341,12 @@ export interface ZvolToImport {
 
 export interface ContainerDeviceCreate {
   container: string;
-  attributes: VirtualizationDevice;
+  attributes: ContainerDevice;
   order?: number;
 }
 
 export interface ContainerDeviceUpdate {
-  attributes?: VirtualizationDevice;
+  attributes?: ContainerDevice;
   container?: string;
   order?: number;
 }
@@ -383,4 +364,4 @@ export interface ContainerDeviceEntry {
   order: number;
 }
 
-export type VirtualizationDeviceWithId = VirtualizationDevice & { id: number };
+export type ContainerDeviceWithId = ContainerDevice & { id: number };

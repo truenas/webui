@@ -8,7 +8,7 @@ import {
   EMPTY, NEVER, Observable, switchMap, tap,
 } from 'rxjs';
 import { VirtualizationDeviceType, VirtualizationStatus } from 'app/enums/virtualization.enum';
-import { VirtualizationDevice } from 'app/interfaces/container.interface';
+import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
