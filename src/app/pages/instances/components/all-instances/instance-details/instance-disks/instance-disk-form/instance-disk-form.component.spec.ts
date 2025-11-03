@@ -182,14 +182,9 @@ describe('InstanceDiskFormComponent', () => {
       expect(spectator.query(ModalHeaderComponent)).toExist();
     });
 
-    it('creates a new disk for a VM', async () => {
+    it('creates a new disk for a container', async () => {
       const selectVolumeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Select Volume' }));
       await selectVolumeButton.click();
-
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'I/O Bus': 'Virtio-BLK',
-      });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -203,7 +198,6 @@ describe('InstanceDiskFormComponent', () => {
         attributes: {
           source: 'my-volume',
           dev_type: ContainerDeviceType.Disk,
-          io_bus: DiskIoBus.VirtioBlk,
         },
       }]);
     });

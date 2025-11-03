@@ -8,30 +8,12 @@ export enum ImageOs {
 
 export type AllowedImageOs = ImageOs | string | null;
 
-export const imageOsLabels = new Map<ImageOs, string>([
-  [ImageOs.Linux, 'Linux'],
-  [ImageOs.FreeBsd, 'FreeBSD'],
-  [ImageOs.Windows, 'Windows'],
-]);
-
 export enum ContainerType {
   Container = 'CONTAINER',
 }
 
 export const containerTypeLabels = new Map<ContainerType, string>([
   [ContainerType.Container, T('Container')],
-]);
-
-export enum DiskIoBus {
-  Nvme = 'NVME',
-  VirtioBlk = 'VIRTIO-BLK',
-  VirtioScsi = 'VIRTIO-SCSI',
-}
-
-export const diskIoBusLabels = new Map<DiskIoBus, string>([
-  [DiskIoBus.Nvme, 'NVMe'],
-  [DiskIoBus.VirtioBlk, 'Virtio-BLK'],
-  [DiskIoBus.VirtioScsi, 'Virtio-SCSI'],
 ]);
 
 export enum ContainerStatus {
@@ -52,9 +34,7 @@ export enum ContainerRemote {
 
 export enum ContainerDeviceType {
   Usb = 'USB',
-  Tpm = 'TPM',
   Disk = 'DISK',
-  Pci = 'PCI',
   Gpu = 'GPU',
   Nic = 'NIC',
   Proxy = 'PROXY',
@@ -62,8 +42,6 @@ export enum ContainerDeviceType {
 
 export const containerDeviceTypeLabels = new Map<ContainerDeviceType, string>([
   [ContainerDeviceType.Usb, 'USB'],
-  [ContainerDeviceType.Tpm, 'TPM'],
-  [ContainerDeviceType.Pci, 'PCI'],
   [ContainerDeviceType.Disk, T('Disk')],
   [ContainerDeviceType.Gpu, T('GPU')],
   [ContainerDeviceType.Nic, T('NIC')],
@@ -72,9 +50,6 @@ export const containerDeviceTypeLabels = new Map<ContainerDeviceType, string>([
 
 export enum ContainerGpuType {
   Physical = 'PHYSICAL',
-  Mdev = 'MDEV',
-  Mig = 'MIG',
-  Sriov = 'SRIOV',
 }
 
 export enum ContainerProxyProtocol {

@@ -10,11 +10,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, Observable, of } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import {
-  DiskIoBus,
-  diskIoBusLabels,
   ContainerDeviceType,
 } from 'app/enums/container.enum';
-import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import {
   VirtualizationDisk,
@@ -80,7 +77,6 @@ export class InstanceDiskFormComponent implements OnInit {
 
   private existingDisk = signal<VirtualizationDisk | null>(null);
 
-  protected readonly diskIoBusOptions$ = of(mapToOptions(diskIoBusLabels, this.translate));
   protected readonly isLoading = signal(false);
 
   readonly datasetProvider = this.filesystem.getFilesystemNodeProvider({ datasetsOnly: true });
@@ -88,7 +84,6 @@ export class InstanceDiskFormComponent implements OnInit {
   protected form = this.formBuilder.nonNullable.group({
     source: ['', Validators.required],
     destination: ['', Validators.required],
-    io_bus: [DiskIoBus.Nvme, Validators.required],
   });
 
   protected readonly slashRootNode = [slashRootNode];
@@ -116,11 +111,8 @@ export class InstanceDiskFormComponent implements OnInit {
       this.form.patchValue({
         source: disk.source || '',
         destination: disk.destination || '',
-        io_bus: disk.io_bus || null,
       });
     }
-
-    this.form.controls.io_bus.disable();
   }
 
   protected onSelectVolume(): void {

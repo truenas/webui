@@ -7,7 +7,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, NEVER, Observable, switchMap, tap,
 } from 'rxjs';
-import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerDeviceWithId } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';

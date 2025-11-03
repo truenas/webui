@@ -5,10 +5,9 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
+import { ContainerDeviceType } from 'app/enums/container.enum';
 import {
   VirtualizationDevice,
-  VirtualizationTpm,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -64,24 +63,6 @@ describe('DeviceActionsMenuComponent', () => {
         name: 'my-device',
         readonly: true,
       } as VirtualizationDevice);
-
-      const menu = await loader.getHarness(MatMenuHarness);
-      expect(await menu.isDisabled()).toBe(true);
-    });
-
-    it('shows menu as disabled when device is a TPM and the instance is running', async () => {
-      spectator.setInput('device', {
-        dev_type: ContainerDeviceType.Tpm,
-      } as VirtualizationTpm);
-
-      selectedInstance.set(fakeVirtualizationInstance({
-        id: 1,
-        status: {
-          state: ContainerStatus.Running,
-          pid: 123,
-          domain_state: null,
-        },
-      }));
 
       const menu = await loader.getHarness(MatMenuHarness);
       expect(await menu.isDisabled()).toBe(true);

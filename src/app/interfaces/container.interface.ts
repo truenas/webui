@@ -1,5 +1,4 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import {
   ContainerDeviceType,
   ContainerGpuType,
@@ -9,10 +8,10 @@ import {
   ContainerRemote,
   ContainerStatus,
   ContainerType,
-  DiskIoBus,
   ImageOs,
   VolumeContentType,
 } from 'app/enums/container.enum';
+import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 
 export type ContainerMetrics = Record<string, ContainerInstanceMetrics>;
 
@@ -108,17 +107,6 @@ export interface ContainerDiskDevice {
   source: string | null;
   destination: string | null;
   product_id: string;
-  io_bus: DiskIoBus;
-  boot_priority?: number;
-}
-
-export interface ContainerPciDevice {
-  id?: number;
-  name: string;
-  description: string;
-  dev_type: ContainerDeviceType.Pci;
-  readonly: boolean;
-  address: string;
 }
 
 export interface ContainerGpuDevice {
@@ -163,17 +151,6 @@ export interface ContainerNicDevice {
   mac?: string;
 }
 
-export interface ContainerTpmDevice {
-  id?: number;
-  name: string;
-  description: string;
-  dev_type: ContainerDeviceType.Tpm;
-  readonly: boolean;
-  path: string;
-  pathrm: string;
-  product_id: string;
-}
-
 export interface ContainerUsbDevice {
   id?: number;
   name: string;
@@ -190,10 +167,8 @@ export type ContainerDevice =
   | ContainerDiskDevice
   | ContainerGpuDevice
   | ContainerProxyDevice
-  | ContainerTpmDevice
   | ContainerUsbDevice
-  | ContainerNicDevice
-  | ContainerPciDevice;
+  | ContainerNicDevice;
 
 export interface UserNsIdmap {
   uid: IdmapUserNsEntry;
