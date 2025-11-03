@@ -14,9 +14,6 @@ import {
 import {
   MapUserGroupIdsDialog,
 } from 'app/pages/instances/components/all-instances/all-instances-header/map-user-group-ids-dialog/map-user-group-ids-dialog.component';
-import {
-  VolumesDialog,
-} from 'app/pages/instances/components/common/volumes-dialog/volumes-dialog.component';
 import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { AllInstancesHeaderComponent } from './all-instances-header.component';
@@ -80,17 +77,6 @@ describe('AllInstancesHeaderComponent', () => {
       );
       expect(spectator.inject(VirtualizationConfigStore).initialize).toHaveBeenCalled();
       expect(spectator.inject(VirtualizationInstancesStore).initialize).toHaveBeenCalled();
-    });
-
-    it('opens VolumesDialogComponent when Manage Volumes in Configuration menu is pressed', async () => {
-      const configurationMenu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Configuration' }));
-      await configurationMenu.open();
-      await configurationMenu.clickItem({ text: 'Manage Volumes' });
-
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-        VolumesDialog,
-        expect.anything(),
-      );
     });
 
     it('opens MapUserGroupIdsDialog when Map User/Group IDs is pressed', async () => {

@@ -1952,24 +1952,6 @@
   {
     "hierarchy": [
       "Containers",
-      "Proxies"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers/view/def"
-    ],
-    "routerLink": null,
-    "anchor": "proxies",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
       "Idmap"
     ],
     "synonyms": [],
