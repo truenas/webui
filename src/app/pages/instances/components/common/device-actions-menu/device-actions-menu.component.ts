@@ -49,6 +49,7 @@ export class DeviceActionsMenuComponent {
   readonly device = input.required<ContainerDeviceWithId>();
   readonly showEdit = input(true);
   readonly isDisabled = input(false);
+  readonly disabledTooltip = input<string | null>(null);
 
   readonly edit = output();
 
@@ -59,6 +60,10 @@ export class DeviceActionsMenuComponent {
   protected readonly manageRestrictedExplanation = computed(() => {
     if (this.device().readonly) {
       return this.translate.instant('This device is read-only and cannot be edited.');
+    }
+
+    if (this.isDisabled() && this.disabledTooltip()) {
+      return this.disabledTooltip();
     }
 
     return null;

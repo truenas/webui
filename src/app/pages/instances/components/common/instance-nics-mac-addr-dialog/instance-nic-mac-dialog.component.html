@@ -1,6 +1,13 @@
 <h1 mat-dialog-title>{{ 'Add NIC Device: {nic}' | translate: { nic: nic() } }}</h1>
 <div mat-dialog-content>
   <form [formGroup]="form">
+    <ix-select
+      formControlName="type"
+      [label]="'NIC Type' | translate"
+      [required]="true"
+      [options]="nicTypeOptions"
+    ></ix-select>
+
     <ix-checkbox
       formControlName="use_default"
       [label]="'Use Default Mac Address' | translate"
@@ -11,6 +18,14 @@
         [required]="true"
         [label]="'Mac Address' | translate"
       ></ix-input>
+    }
+
+    @if (isVirtio()) {
+      <ix-checkbox
+        formControlName="trust_guest_rx_filters"
+        [label]="'Trust Guest RX Filters' | translate"
+        [tooltip]="'Whether to trust guest OS receive filter settings for better performance.' | translate"
+      ></ix-checkbox>
     }
   </form>
 </div>

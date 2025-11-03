@@ -8,8 +8,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, Observable, switchMap } from 'rxjs';
 import {
-  ContainerDeviceType, ContainerNicType,
-  containerNicTypeLabels,
+  ContainerDeviceType,
+  ContainerNicDeviceType,
 } from 'app/enums/container.enum';
 import {
   ContainerNicDevice,
@@ -49,77 +49,67 @@ export class AddNicMenuComponent {
   private instancesStore = inject(VirtualizationInstancesStore);
   private matDialog = inject(MatDialog);
 
-  private readonly bridgedChoices = toSignal(this.getNicChoices(), { initialValue: {} });
-  private readonly macVlanChoices = toSignal(this.getNicChoices(), { initialValue: {} });
-
-  protected readonly bridgedNicTypeLabel = containerNicTypeLabels.get(ContainerNicType.Bridged)
-    || ContainerNicType.Bridged;
-
-  protected readonly macVlanNicTypeLabel = containerNicTypeLabels.get(ContainerNicType.Macvlan)
-    || ContainerNicType.Macvlan;
+  private readonly nicChoices = toSignal(this.getNicChoices(), { initialValue: {} });
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
-  protected readonly availableBridgedNics = computed(() => {
-    const choices = Object.values(this.bridgedChoices());
-    const existingItems = this.devicesStore.devices()
-      .filter((device) => device.dtype === ContainerDeviceType.Nic
-        && device.nic_type === ContainerNicType.Bridged) as ContainerNicDevice[];
+  protected readonly availableNics = computed(() => {
+    const choices = this.nicChoices();
+    const existingNics = this.devicesStore.devices()
+      .filter((device) => device.dtype === ContainerDeviceType.Nic) as ContainerNicDevice[];
 
-    return choices.filter((nic) => !existingItems.find((device) => device.parent === nic));
-  });
-
-  protected readonly availableMacVlanNics = computed(() => {
-    const choices = Object.values(this.macVlanChoices());
-    const existingItems = this.devicesStore.devices()
-      .filter((device) => device.dtype === ContainerDeviceType.Nic
-        && device.nic_type === ContainerNicType.Macvlan) as ContainerNicDevice[];
-
-    return choices.filter((nic) => !existingItems.find((device) => device.parent === nic));
+    return Object.entries(choices)
+      .filter(([key]) => !existingNics.find((device) => (device.nic_attach || device.parent) === key))
+      .map(([key, label]) => ({ key, label }));
   });
 
   protected readonly hasNicsToAdd = computed(() => {
-    return this.availableBridgedNics().length > 0 || Object.keys(this.availableMacVlanNics()).length > 0;
+    return this.availableNics().length > 0;
   });
 
-  protected addBridgedNic(nic: string): void {
-    this.addDevice({
-      dtype: ContainerDeviceType.Nic,
-      nic_type: ContainerNicType.Bridged,
-      parent: nic,
-    } as ContainerNicDevice);
-  }
-
-  protected addMacVlanNic(nic: string): void {
-    this.addDevice({
-      dtype: ContainerDeviceType.Nic,
-      nic_type: ContainerNicType.Macvlan,
-      parent: nic,
-    } as ContainerNicDevice);
+  protected addNic(nicKey: string): void {
+    this.addDevice(nicKey);
   }
 
   private getNicChoices(): Observable<Record<string, string>> {
     return this.api.call('container.device.nic_attach_choices', []) as Observable<Record<string, string>>;
   }
 
-  private addDevice(payload: ContainerNicDevice): void {
+  private addDevice(nicKey: string): void {
     const instanceId = this.instancesStore.selectedInstance()?.id;
     if (!instanceId) {
       return;
     }
 
     this.matDialog.open(InstanceNicMacDialog, {
-      data: payload.parent,
+      data: nicKey,
       minWidth: '500px',
     }).afterClosed().pipe(
       filter(Boolean),
-      switchMap((macConfig: { mac: string; useDefault: boolean }) => {
-        if (macConfig.mac) {
-          payload.mac = macConfig.mac;
+      switchMap((config: {
+        mac?: string;
+        useDefault: boolean;
+        type: ContainerNicDeviceType;
+        trust_guest_rx_filters: boolean;
+      }) => {
+        const payload: Partial<ContainerNicDevice> = {
+          dtype: ContainerDeviceType.Nic,
+          type: config.type,
+          nic_attach: nicKey,
+        };
+
+        if (config.mac) {
+          payload.mac = config.mac;
         }
+
+        // trust_guest_rx_filters can only be set for VIRTIO NICs
+        if (config.type === ContainerNicDeviceType.Virtio) {
+          payload.trust_guest_rx_filters = config.trust_guest_rx_filters;
+        }
+
         return this.api.call('container.device.create', [{
           container: instanceId,
-          attributes: payload,
+          attributes: payload as ContainerNicDevice,
         }]).pipe(
           this.loader.withLoader(),
           this.errorHandler.withErrorHandler(),

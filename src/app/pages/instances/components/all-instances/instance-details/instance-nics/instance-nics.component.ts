@@ -5,7 +5,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { ContainerDeviceType } from 'app/enums/container.enum';
+import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddNicMenuComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
@@ -14,6 +14,7 @@ import {
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 @UntilDestroy()
 @Component({
@@ -34,15 +35,21 @@ import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualiz
 })
 export class InstanceNicsComponent {
   private devicesStore = inject(VirtualizationDevicesStore);
+  private instancesStore = inject(VirtualizationInstancesStore);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
 
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
+  protected readonly isContainerRunning = computed(() => {
+    const instance = this.instancesStore.selectedInstance();
+    return instance?.status.state === ContainerStatus.Running;
+  });
+
   protected readonly shownDevices = computed(() => {
     return this.devicesStore.devices().filter((device) => {
-      return device.dtype === ContainerDeviceType.Nic && !!device.nic_type;
+      return device.dtype === ContainerDeviceType.Nic;
     });
   });
 

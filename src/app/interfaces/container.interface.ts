@@ -2,6 +2,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import {
   ContainerDeviceType,
   ContainerNetworkType,
+  ContainerNicDeviceType,
   ContainerNicType,
   ContainerRemote,
   ContainerStatus,
@@ -131,12 +132,17 @@ export interface ContainerNicDevice {
   name: string;
   description: string;
   dtype: ContainerDeviceType.Nic;
-  nic_type: ContainerNicType;
-  parent: string;
+  type: ContainerNicDeviceType;
+  nic_attach?: string;
   readonly: boolean;
   network: string;
   product_id: string;
   mac?: string;
+  trust_guest_rx_filters?: boolean;
+  mtu?: string;
+  // Legacy fields - may still be used by frontend
+  nic_type?: ContainerNicType;
+  parent?: string;
 }
 
 export interface ContainerUsbDevice {

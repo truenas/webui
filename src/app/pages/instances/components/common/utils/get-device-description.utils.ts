@@ -6,8 +6,10 @@ export function getDeviceDescription(translate: TranslateService, device: Contai
   const typeLabel = translate.instant(containerDeviceTypeLabels.get(device.dtype) || device.dtype);
 
   if (device.dtype === ContainerDeviceType.Nic) {
-    const nicMac = device.mac ? device.mac : 'Default Mac Address';
-    return `${typeLabel}: ${device.name} (${device.nic_type}) (${nicMac})`;
+    const nicMac = device.mac ? device.mac : translate.instant('Default Mac Address');
+    const nicAttach = device.nic_attach || device.parent || translate.instant('Unknown');
+    const nicName = device.name || nicAttach;
+    return `${typeLabel}: ${nicName} (${nicMac})`;
   }
 
   return `${typeLabel}: ${device.description}`;

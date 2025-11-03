@@ -2,7 +2,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { ContainerDeviceType } from 'app/enums/container.enum';
+import { ContainerDeviceType, ContainerNicType, ContainerStatus } from 'app/enums/container.enum';
 import {
   AddNicMenuComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
@@ -13,18 +13,19 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
 describe('InstanceNicsComponent', () => {
   let spectator: Spectator<InstanceNicsComponent>;
   const devices = [
     {
       dtype: ContainerDeviceType.Nic,
-      nic_type: 'Intel E1000',
+      nic_type: ContainerNicType.Bridged,
       name: 'nic1',
     },
     {
       dtype: ContainerDeviceType.Nic,
-      nic_type: 'Realtek RTL8139',
+      nic_type: ContainerNicType.Macvlan,
       name: 'nic2',
     },
   ];
@@ -41,6 +42,11 @@ describe('InstanceNicsComponent', () => {
         isLoading: () => false,
         devices: () => devices,
       }),
+      mockProvider(VirtualizationInstancesStore, {
+        selectedInstance: () => ({
+          status: { state: ContainerStatus.Stopped },
+        }),
+      }),
       mockApi([
         mockCall('interface.has_pending_changes', false),
       ]),
@@ -55,8 +61,8 @@ describe('InstanceNicsComponent', () => {
     const deviceRows = spectator.queryAll('.device');
 
     expect(deviceRows).toHaveLength(2);
-    expect(deviceRows[0]).toHaveText('Intel E1000');
-    expect(deviceRows[1]).toHaveText('Realtek RTL8139');
+    expect(deviceRows[0]).toHaveText('BRIDGED');
+    expect(deviceRows[1]).toHaveText('MACVLAN');
   });
 
   it('renders a menu to delete or manage the device', () => {

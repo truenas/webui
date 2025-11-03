@@ -6,6 +6,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('VirtualizationDevicesStore', () => {
   let spectator: SpectatorService<VirtualizationDevicesStore>;
@@ -34,6 +35,7 @@ describe('VirtualizationDevicesStore', () => {
         instances: jest.fn(() => instances),
         selectedInstance: jest.fn(() => instances[0]),
       }),
+      mockProvider(ErrorHandlerService),
     ],
   });
 
@@ -92,8 +94,11 @@ describe('VirtualizationDevicesStore', () => {
   describe('constructor behavior with signal changes', () => {
     it('automatically loads devices when instance is selected on init', () => {
       // Store is created in beforeEach with instances[0] selected
-      // The constructor should not automatically call loadDevices
-      expect(spectator.service.devices()).toEqual([]);
+      // The constructor should automatically call loadDevices
+      expect(spectator.service.devices()).toEqual([
+        { id: 1, name: 'device1' },
+        { id: 2, name: 'device2' },
+      ]);
     });
   });
 

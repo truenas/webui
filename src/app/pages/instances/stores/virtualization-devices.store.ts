@@ -43,7 +43,7 @@ export class VirtualizationDevicesStore extends ComponentStore<ContainerInstance
         }
       }),
       filter(Boolean),
-      // tap(() => this.loadDevices()),
+      tap(() => this.loadDevices()),
     ).pipe(untilDestroyed(this)).subscribe();
   }
 

@@ -1,7 +1,6 @@
 import { TranslateService } from '@ngx-translate/core';
 import {
   ContainerDeviceType,
-  ContainerNicType,
 } from 'app/enums/container.enum';
 import {
   ContainerDevice,
@@ -14,15 +13,26 @@ describe('getDeviceDescription', () => {
     instant: jest.fn((key: string) => key),
   } as unknown as TranslateService;
 
-  it('should return "typeLabel: name (nic_type)" for a NIC device', () => {
+  it('should return "typeLabel: name (mac)" for a NIC device with name', () => {
     const device: ContainerDevice = {
       dtype: ContainerDeviceType.Nic,
       name: 'eth0',
-      nic_type: ContainerNicType.Bridged,
+      nic_attach: 'br0',
     } as ContainerNicDevice;
 
     const result = getDeviceDescription(mockTranslate as TranslateService, device);
-    expect(result).toBe('NIC: eth0 (BRIDGED) (Default Mac Address)');
+    expect(result).toBe('NIC: eth0 (Default Mac Address)');
+  });
+
+  it('should use nic_attach as name fallback for a NIC device without name', () => {
+    const device: ContainerDevice = {
+      dtype: ContainerDeviceType.Nic,
+      nic_attach: 'ens1',
+      mac: '00:11:22:33:44:55',
+    } as ContainerNicDevice;
+
+    const result = getDeviceDescription(mockTranslate as TranslateService, device);
+    expect(result).toBe('NIC: ens1 (00:11:22:33:44:55)');
   });
 
   it('should return "dtype: description" if dev_type label is not in the map', () => {

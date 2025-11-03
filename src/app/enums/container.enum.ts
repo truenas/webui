@@ -70,6 +70,16 @@ export const containerNicTypeLabels = new Map<ContainerNicType, string>([
   [ContainerNicType.Macvlan, T('Macvlan')],
 ]);
 
+export enum ContainerNicDeviceType {
+  E1000 = 'E1000',
+  Virtio = 'VIRTIO',
+}
+
+export const containerNicDeviceTypeLabels = new Map<ContainerNicDeviceType, string>([
+  [ContainerNicDeviceType.E1000, 'Intel e82585 (e1000)'],
+  [ContainerNicDeviceType.Virtio, 'VirtIO'],
+]);
+
 export enum ContainerSource {
   Image = 'IMAGE',
   Zvol = 'ZVOL',

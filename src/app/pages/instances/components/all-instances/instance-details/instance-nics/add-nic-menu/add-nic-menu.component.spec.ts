@@ -1,11 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { ContainerDeviceType, ContainerNicType } from 'app/enums/container.enum';
+import { ContainerDeviceType, ContainerNicDeviceType } from 'app/enums/container.enum';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -22,8 +22,8 @@ describe('AddNicMenuComponent', () => {
     providers: [
       mockApi([
         mockCall('container.device.nic_attach_choices', {
-          nic1: 'Intel E1000',
-          nic2: 'Realtek RTL8139',
+          truenasbr0: 'TrueNAS Bridge',
+          ens1: 'Intel E1000',
         }),
         mockCall('container.device.create'),
       ]),
@@ -32,15 +32,14 @@ describe('AddNicMenuComponent', () => {
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of({ useDefault: true })),
+          afterClosed: jest.fn(() => of({ useDefault: true, trust_guest_rx_filters: false })),
         })),
       }),
       mockProvider(VirtualizationDevicesStore, {
         devices: () => [
           {
             dtype: ContainerDeviceType.Nic,
-            nic_type: ContainerNicType.Macvlan,
-            parent: 'already-added',
+            nic_attach: 'already-added',
           },
         ] as ContainerDevice[],
         loadDevices: jest.fn(),
@@ -55,24 +54,32 @@ describe('AddNicMenuComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows available NIC devices that have not been already added to this system', async () => {
+  it('shows available NIC devices in a single list', async () => {
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
     await menu.open();
 
     const menuItems = await menu.getItems();
-    expect(menuItems).toHaveLength(4);
-    expect(await menuItems[0].getText()).toContain('Intel E1000');
-    expect(await menuItems[1].getText()).toContain('Realtek RTL8139');
+    expect(menuItems).toHaveLength(2);
+    expect(await menuItems[0].getText()).toContain('TrueNAS Bridge');
+    expect(await menuItems[1].getText()).toContain('Intel E1000');
   });
 
-  it('adds a NIC device when it is selected', async () => {
+  it('adds a NIC device with selected type when it is selected', async () => {
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
     await menu.open();
 
-    await menu.clickItem({ text: 'Intel E1000' });
+    spectator.inject(MatDialog).open = jest.fn(() => ({
+      afterClosed: jest.fn(() => of({
+        useDefault: true,
+        type: ContainerNicDeviceType.Virtio,
+        trust_guest_rx_filters: false,
+      })),
+    })) as jest.Mock<Partial<MatDialogRef<InstanceNicMacDialog>>>;
+
+    await menu.clickItem({ text: 'TrueNAS Bridge' });
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(InstanceNicMacDialog, {
-      data: 'Intel E1000',
+      data: 'truenasbr0',
       minWidth: '500px',
     });
 
@@ -80,11 +87,37 @@ describe('AddNicMenuComponent', () => {
       container: 'my-instance',
       attributes: {
         dtype: ContainerDeviceType.Nic,
-        nic_type: ContainerNicType.Bridged,
-        parent: 'Intel E1000',
+        type: ContainerNicDeviceType.Virtio,
+        nic_attach: 'truenasbr0',
+        trust_guest_rx_filters: false,
       } as ContainerDevice,
     }]);
     expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('NIC was added');
+  });
+
+  it('adds a NIC device without trust_guest_rx_filters when E1000 is selected', async () => {
+    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
+    await menu.open();
+
+    spectator.inject(MatDialog).open = jest.fn(() => ({
+      afterClosed: jest.fn(() => of({
+        useDefault: true,
+        type: ContainerNicDeviceType.E1000,
+        trust_guest_rx_filters: true,
+      })),
+    })) as jest.Mock<Partial<MatDialogRef<InstanceNicMacDialog>>>;
+
+    await menu.clickItem({ text: 'TrueNAS Bridge' });
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+      container: 'my-instance',
+      attributes: {
+        dtype: ContainerDeviceType.Nic,
+        type: ContainerNicDeviceType.E1000,
+        nic_attach: 'truenasbr0',
+        // trust_guest_rx_filters should NOT be included for E1000
+      } as ContainerDevice,
+    }]);
   });
 });
