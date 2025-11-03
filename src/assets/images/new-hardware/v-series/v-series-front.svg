@@ -1,0 +1,53 @@
+<!-- Placeholder SVG for V-Series Front View -->
+<!-- This is a placeholder. Replace with actual hardware SVG when available. -->
+<!-- Front view shows 24 drive slots (slots 1-24) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <style>
+    .tint-target { fill: #cccccc; }
+    .drive-cage { stroke: #333; stroke-width: 2; }
+    text { font-family: Arial, sans-serif; font-size: 12px; fill: #333; }
+  </style>
+
+  <rect width="800" height="600" fill="#e0e0e0"/>
+  <text x="400" y="30" text-anchor="middle" font-size="20" font-weight="bold">V-Series Front View (Placeholder)</text>
+  <text x="400" y="50" text-anchor="middle" font-size="14">24 Drive Slots - Replace with actual SVG</text>
+
+  <!-- Placeholder drive cages (6 rows x 4 columns = 24 drives) -->
+  <g id="drive-slots">
+    <!-- Row 1 -->
+    <g id="DRIVE_CAGE_1" class="drive-cage"><rect x="50" y="100" width="150" height="60" class="tint-target"/><text x="125" y="135">Slot 1</text></g>
+    <g id="DRIVE_CAGE_2" class="drive-cage"><rect x="220" y="100" width="150" height="60" class="tint-target"/><text x="295" y="135">Slot 2</text></g>
+    <g id="DRIVE_CAGE_3" class="drive-cage"><rect x="390" y="100" width="150" height="60" class="tint-target"/><text x="465" y="135">Slot 3</text></g>
+    <g id="DRIVE_CAGE_4" class="drive-cage"><rect x="560" y="100" width="150" height="60" class="tint-target"/><text x="635" y="135">Slot 4</text></g>
+
+    <!-- Row 2 -->
+    <g id="DRIVE_CAGE_5" class="drive-cage"><rect x="50" y="170" width="150" height="60" class="tint-target"/><text x="125" y="205">Slot 5</text></g>
+    <g id="DRIVE_CAGE_6" class="drive-cage"><rect x="220" y="170" width="150" height="60" class="tint-target"/><text x="295" y="205">Slot 6</text></g>
+    <g id="DRIVE_CAGE_7" class="drive-cage"><rect x="390" y="170" width="150" height="60" class="tint-target"/><text x="465" y="205">Slot 7</text></g>
+    <g id="DRIVE_CAGE_8" class="drive-cage"><rect x="560" y="170" width="150" height="60" class="tint-target"/><text x="635" y="205">Slot 8</text></g>
+
+    <!-- Row 3 -->
+    <g id="DRIVE_CAGE_9" class="drive-cage"><rect x="50" y="240" width="150" height="60" class="tint-target"/><text x="125" y="275">Slot 9</text></g>
+    <g id="DRIVE_CAGE_10" class="drive-cage"><rect x="220" y="240" width="150" height="60" class="tint-target"/><text x="295" y="275">Slot 10</text></g>
+    <g id="DRIVE_CAGE_11" class="drive-cage"><rect x="390" y="240" width="150" height="60" class="tint-target"/><text x="465" y="275">Slot 11</text></g>
+    <g id="DRIVE_CAGE_12" class="drive-cage"><rect x="560" y="240" width="150" height="60" class="tint-target"/><text x="635" y="275">Slot 12</text></g>
+
+    <!-- Row 4 -->
+    <g id="DRIVE_CAGE_13" class="drive-cage"><rect x="50" y="310" width="150" height="60" class="tint-target"/><text x="125" y="345">Slot 13</text></g>
+    <g id="DRIVE_CAGE_14" class="drive-cage"><rect x="220" y="310" width="150" height="60" class="tint-target"/><text x="295" y="345">Slot 14</text></g>
+    <g id="DRIVE_CAGE_15" class="drive-cage"><rect x="390" y="310" width="150" height="60" class="tint-target"/><text x="465" y="345">Slot 15</text></g>
+    <g id="DRIVE_CAGE_16" class="drive-cage"><rect x="560" y="310" width="150" height="60" class="tint-target"/><text x="635" y="345">Slot 16</text></g>
+
+    <!-- Row 5 -->
+    <g id="DRIVE_CAGE_17" class="drive-cage"><rect x="50" y="380" width="150" height="60" class="tint-target"/><text x="125" y="415">Slot 17</text></g>
+    <g id="DRIVE_CAGE_18" class="drive-cage"><rect x="220" y="380" width="150" height="60" class="tint-target"/><text x="295" y="415">Slot 18</text></g>
+    <g id="DRIVE_CAGE_19" class="drive-cage"><rect x="390" y="380" width="150" height="60" class="tint-target"/><text x="465" y="415">Slot 19</text></g>
+    <g id="DRIVE_CAGE_20" class="drive-cage"><rect x="560" y="380" width="150" height="60" class="tint-target"/><text x="635" y="415">Slot 20</text></g>
+
+    <!-- Row 6 -->
+    <g id="DRIVE_CAGE_21" class="drive-cage"><rect x="50" y="450" width="150" height="60" class="tint-target"/><text x="125" y="485">Slot 21</text></g>
+    <g id="DRIVE_CAGE_22" class="drive-cage"><rect x="220" y="450" width="150" height="60" class="tint-target"/><text x="295" y="485">Slot 22</text></g>
+    <g id="DRIVE_CAGE_23" class="drive-cage"><rect x="390" y="450" width="150" height="60" class="tint-target"/><text x="465" y="485">Slot 23</text></g>
+    <g id="DRIVE_CAGE_24" class="drive-cage"><rect x="560" y="450" width="150" height="60" class="tint-target"/><text x="635" y="485">Slot 24</text></g>
+  </g>
+</svg>
