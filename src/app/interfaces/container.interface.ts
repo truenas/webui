@@ -70,7 +70,6 @@ export type CreateContainerInstance = Partial<Omit<ContainerInstance, 'id' | 'da
     name: string;
     version: string;
   };
-  gpu_devices?: string[];
   usb_devices?: string[];
 };
 
@@ -269,7 +268,7 @@ export interface VirtualizationPciDeviceCapability {
 }
 
 export interface ContainerDeviceCreate {
-  container: string;
+  container: number;
   attributes: ContainerDevice;
   order?: number;
 }

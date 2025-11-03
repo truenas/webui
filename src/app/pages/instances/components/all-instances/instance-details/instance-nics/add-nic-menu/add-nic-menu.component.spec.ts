@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ContainerDeviceType, ContainerNicType } from 'app/enums/container.enum';
-import { VirtualizationDevice } from 'app/interfaces/container.interface';
+import { ContainerDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddNicMenuComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
@@ -42,7 +42,7 @@ describe('AddNicMenuComponent', () => {
             nic_type: ContainerNicType.Macvlan,
             parent: 'already-added',
           },
-        ] as VirtualizationDevice[],
+        ] as ContainerDevice[],
         loadDevices: jest.fn(),
         isLoading: () => false,
       }),
@@ -82,7 +82,7 @@ describe('AddNicMenuComponent', () => {
         dev_type: ContainerDeviceType.Nic,
         nic_type: ContainerNicType.Bridged,
         parent: 'Intel E1000',
-      } as VirtualizationDevice,
+      } as ContainerDevice,
     }]);
     expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('NIC was added');

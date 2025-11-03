@@ -12,7 +12,7 @@ import {
   containerNicTypeLabels,
 } from 'app/enums/container.enum';
 import {
-  VirtualizationNic,
+  ContainerNicDevice,
 } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -64,7 +64,7 @@ export class AddNicMenuComponent {
     const choices = Object.values(this.bridgedChoices());
     const existingItems = this.devicesStore.devices()
       .filter((device) => device.dev_type === ContainerDeviceType.Nic
-        && device.nic_type === ContainerNicType.Bridged) as VirtualizationNic[];
+        && device.nic_type === ContainerNicType.Bridged) as ContainerNicDevice[];
 
     return choices.filter((nic) => !existingItems.find((device) => device.parent === nic));
   });
@@ -73,7 +73,7 @@ export class AddNicMenuComponent {
     const choices = Object.values(this.macVlanChoices());
     const existingItems = this.devicesStore.devices()
       .filter((device) => device.dev_type === ContainerDeviceType.Nic
-        && device.nic_type === ContainerNicType.Macvlan) as VirtualizationNic[];
+        && device.nic_type === ContainerNicType.Macvlan) as ContainerNicDevice[];
 
     return choices.filter((nic) => !existingItems.find((device) => device.parent === nic));
   });
@@ -87,7 +87,7 @@ export class AddNicMenuComponent {
       dev_type: ContainerDeviceType.Nic,
       nic_type: ContainerNicType.Bridged,
       parent: nic,
-    } as VirtualizationNic);
+    } as ContainerNicDevice);
   }
 
   protected addMacVlanNic(nic: string): void {
@@ -95,14 +95,14 @@ export class AddNicMenuComponent {
       dev_type: ContainerDeviceType.Nic,
       nic_type: ContainerNicType.Macvlan,
       parent: nic,
-    } as VirtualizationNic);
+    } as ContainerNicDevice);
   }
 
   private getNicChoices(): Observable<Record<string, string>> {
     return this.api.call('container.device.nic_attach_choices', []);
   }
 
-  private addDevice(payload: VirtualizationNic): void {
+  private addDevice(payload: ContainerNicDevice): void {
     const instanceId = this.instancesStore.selectedInstance()?.id;
     if (!instanceId) {
       return;

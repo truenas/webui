@@ -37,7 +37,7 @@ describe('InstanceDiskFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             getData: () => ({
-              instance: { id: 'my-instance', type: ContainerType.Container },
+              instance: { id: 1, type: ContainerType.Container },
             }),
             close: jest.fn(),
             requireConfirmationWhen: jest.fn(),
@@ -63,7 +63,7 @@ describe('InstanceDiskFormComponent', () => {
       });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
-        container: 'my-instance',
+        container: 1,
         attributes: {
           source: '/mnt/path',
           destination: 'destination',
@@ -79,7 +79,7 @@ describe('InstanceDiskFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             getData: () => ({
-              instance: { id: 'my-instance', type: ContainerType.Container },
+              instance: { id: 1, type: ContainerType.Container },
               disk: {
                 id: 456,
                 name: 'existing-disk',
@@ -141,7 +141,7 @@ describe('InstanceDiskFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             getData: () => ({
-              instance: { id: 'my-instance', type: ContainerType.Container },
+              instance: { id: 1, type: ContainerType.Container },
             }),
             close: jest.fn(),
             requireConfirmationWhen: jest.fn(),

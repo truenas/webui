@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ContainerDeviceType } from 'app/enums/container.enum';
-import { VirtualizationDisk, VirtualizationProxy } from 'app/interfaces/container.interface';
+import { ContainerDiskDevice } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   InstanceDiskFormComponent,
@@ -28,15 +28,12 @@ describe('InstanceDisksComponent', () => {
       dev_type: ContainerDeviceType.Disk,
       source: '/mnt/source-path',
       destination: 'destination',
-    } as VirtualizationDisk,
+    } as ContainerDiskDevice,
     {
       dev_type: ContainerDeviceType.Disk,
       source: null,
       destination: 'destination',
-    } as VirtualizationDisk,
-    {
-      name: 'proxy2',
-    } as VirtualizationProxy,
+    } as ContainerDiskDevice,
   ];
   const createComponent = createComponentFactory({
     component: InstanceDisksComponent,

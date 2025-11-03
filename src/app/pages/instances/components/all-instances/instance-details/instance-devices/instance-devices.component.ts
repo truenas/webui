@@ -5,7 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import {
-  VirtualizationDevice,
+  ContainerDevice,
 } from 'app/interfaces/container.interface';
 import {
   AddDeviceMenuComponent,
@@ -42,12 +42,11 @@ export class InstanceDevicesComponent {
     return this.devicesStore.devices().filter((device) => {
       return [
         ContainerDeviceType.Usb,
-        ContainerDeviceType.Gpu,
       ].includes(device.dev_type);
     });
   });
 
-  protected getDeviceDescription(device: VirtualizationDevice): string {
+  protected getDeviceDescription(device: ContainerDevice): string {
     return getDeviceDescription(this.translate, device);
   }
 }

@@ -5,7 +5,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ContainerDeviceType, ContainerType } from 'app/enums/container.enum';
-import { AvailableUsb, VirtualizationDevice } from 'app/interfaces/container.interface';
+import { AvailableUsb, ContainerDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -45,8 +45,8 @@ describe('AddDeviceMenuComponent', () => {
           {
             dev_type: ContainerDeviceType.Usb,
             product_id: 'already-added',
-          } as VirtualizationDevice,
-        ] as VirtualizationDevice[],
+          } as ContainerDevice,
+        ] as ContainerDevice[],
         loadDevices: jest.fn(),
         isLoading: () => false,
       }),
@@ -79,7 +79,7 @@ describe('AddDeviceMenuComponent', () => {
       attributes: {
         dev_type: ContainerDeviceType.Usb,
         product_id: 'new',
-      } as VirtualizationDevice,
+      } as ContainerDevice,
     }]);
     expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Device was added');
