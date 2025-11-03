@@ -1,21 +1,14 @@
-import { KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { pickBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import {
-  ContainerDeviceType,
-  ContainerGpuType,
-} from 'app/enums/container.enum';
+import { ContainerDeviceType } from 'app/enums/container.enum';
 import {
   AvailableUsb,
-  VirtualizationDevice,
-  VirtualizationGpu,
-  VirtualizationUsb,
+  ContainerUsbDevice,
 } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -39,7 +32,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     MatMenuTrigger,
     NgxSkeletonLoaderModule,
-    KeyValuePipe,
   ],
 })
 export class AddDeviceMenuComponent {
@@ -51,17 +43,12 @@ export class AddDeviceMenuComponent {
   private devicesStore = inject(VirtualizationDevicesStore);
   private instancesStore = inject(VirtualizationInstancesStore);
 
-  protected readonly gpuType = ContainerGpuType.Physical;
-
-  private readonly usbChoices = toSignal(this.api.call('container.device.usb_choices'), { initialValue: {} });
-  // Note: GPU choices use virt.device.gpu_choices - this is shared between VMs and containers
-  // TODO: Stop hardcoding params
-  private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [ContainerGpuType.Physical]), { initialValue: {} });
+  private readonly usbChoices = toSignal(this.api.call('container.device.usb_choices'), { initialValue: {} as Record<string, AvailableUsb> });
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly availableUsbDevices = computed(() => {
-    const usbChoices = Object.values(this.usbChoices());
+    const usbChoices = Object.values(this.usbChoices()) as AvailableUsb[];
     const existingUsbDevices = this.devicesStore.devices()
       .filter((device) => device.dev_type === ContainerDeviceType.Usb);
 
@@ -70,36 +57,18 @@ export class AddDeviceMenuComponent {
     });
   });
 
-  protected readonly availableGpuDevices = computed(() => {
-    const gpuChoices = this.gpuChoices();
-    const usedGpus = this.devicesStore.devices()
-      .filter((device) => device.dev_type === ContainerDeviceType.Gpu);
-
-    return pickBy(gpuChoices, (_, pci) => {
-      return !usedGpus.find((usedGpu) => usedGpu.pci === pci);
-    });
-  });
-
   protected readonly hasDevicesToAdd = computed(() => {
-    return this.availableUsbDevices().length > 0
-      || Object.keys(this.availableGpuDevices()).length > 0;
+    return this.availableUsbDevices().length > 0;
   });
 
   protected addUsb(usb: AvailableUsb): void {
     this.addDevice({
       dev_type: ContainerDeviceType.Usb,
       product_id: usb.product_id,
-    } as VirtualizationUsb);
+    } as ContainerUsbDevice);
   }
 
-  protected addGpu(gpuPci: string): void {
-    this.addDevice({
-      dev_type: ContainerDeviceType.Gpu,
-      pci: gpuPci,
-    } as VirtualizationGpu);
-  }
-
-  private addDevice(payload: VirtualizationDevice): void {
+  private addDevice(payload: Partial<ContainerUsbDevice>): void {
     const instanceId = this.instancesStore.selectedInstance()?.id;
     if (!instanceId) {
       return;

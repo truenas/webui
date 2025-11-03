@@ -18,9 +18,6 @@ import {
 import { InstanceIdmapComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-idmap/instance-idmap.component';
 import { InstanceNicsComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/instance-nics.component';
 import {
-  InstanceProxiesComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-proxies/instance-proxies.component';
-import {
   InstanceToolsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-tools/instance-tools.component';
 
@@ -32,7 +29,6 @@ import {
     TranslateModule,
     InstanceDevicesComponent,
     InstanceGeneralInfoComponent,
-    InstanceProxiesComponent,
     InstanceDisksComponent,
     InstanceToolsComponent,
     InstanceNicsComponent,

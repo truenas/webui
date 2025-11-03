@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import {
-  VirtualizationDevice,
+  ContainerDeviceWithId,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -50,8 +50,8 @@ describe('DeviceActionsMenuComponent', () => {
         device: {
           id: 123,
           name: 'my-device',
-          dev_type: ContainerDeviceType.Gpu,
-        } as VirtualizationDevice,
+          dev_type: ContainerDeviceType.Usb,
+        } as ContainerDeviceWithId,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -62,7 +62,7 @@ describe('DeviceActionsMenuComponent', () => {
       spectator.setInput('device', {
         name: 'my-device',
         readonly: true,
-      } as VirtualizationDevice);
+      } as ContainerDeviceWithId);
 
       const menu = await loader.getHarness(MatMenuHarness);
       expect(await menu.isDisabled()).toBe(true);

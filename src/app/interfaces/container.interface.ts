@@ -1,10 +1,8 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import {
   ContainerDeviceType,
-  ContainerGpuType,
   ContainerNetworkType,
   ContainerNicType,
-  ContainerProxyProtocol,
   ContainerRemote,
   ContainerStatus,
   ContainerType,
@@ -109,32 +107,24 @@ export interface ContainerDiskDevice {
   product_id: string;
 }
 
-export interface ContainerGpuDevice {
+export interface ContainerRawDevice {
   id?: number;
   name: string;
   description: string;
+  dev_type: ContainerDeviceType.Raw;
   readonly: boolean;
-  dev_type: ContainerDeviceType.Gpu;
-  gpu_type: ContainerGpuType;
-  gid: number;
-  uid: number;
-  mode: string;
-  mdev: string;
-  mig_uuid: string;
-  pci: string;
+  source: string | null;
   product_id: string;
 }
 
-export interface ContainerProxyDevice {
+export interface ContainerFilesystemDevice {
   id?: number;
   name: string;
   description: string;
-  dev_type: ContainerDeviceType.Proxy;
+  dev_type: ContainerDeviceType.Filesystem;
   readonly: boolean;
-  source_proto: ContainerProxyProtocol;
-  source_port: number;
-  dest_proto: ContainerProxyProtocol;
-  dest_port: number;
+  source: string | null;
+  destination: string | null;
   product_id: string;
 }
 
@@ -165,8 +155,8 @@ export interface ContainerUsbDevice {
 
 export type ContainerDevice =
   | ContainerDiskDevice
-  | ContainerGpuDevice
-  | ContainerProxyDevice
+  | ContainerRawDevice
+  | ContainerFilesystemDevice
   | ContainerUsbDevice
   | ContainerNicDevice;
 

@@ -35,31 +35,17 @@ export enum ContainerRemote {
 export enum ContainerDeviceType {
   Usb = 'USB',
   Disk = 'DISK',
-  Gpu = 'GPU',
   Nic = 'NIC',
-  Proxy = 'PROXY',
+  Raw = 'RAW',
+  Filesystem = 'FILESYSTEM',
 }
 
 export const containerDeviceTypeLabels = new Map<ContainerDeviceType, string>([
   [ContainerDeviceType.Usb, 'USB'],
   [ContainerDeviceType.Disk, T('Disk')],
-  [ContainerDeviceType.Gpu, T('GPU')],
   [ContainerDeviceType.Nic, T('NIC')],
-  [ContainerDeviceType.Proxy, T('Proxy')],
-]);
-
-export enum ContainerGpuType {
-  Physical = 'PHYSICAL',
-}
-
-export enum ContainerProxyProtocol {
-  Udp = 'UDP',
-  Tcp = 'TCP',
-}
-
-export const containerProxyProtocolLabels = new Map<ContainerProxyProtocol, string>([
-  [ContainerProxyProtocol.Udp, 'UDP'],
-  [ContainerProxyProtocol.Tcp, 'TCP'],
+  [ContainerDeviceType.Raw, T('Raw')],
+  [ContainerDeviceType.Filesystem, T('Filesystem')],
 ]);
 
 export enum ContainerNetworkType {

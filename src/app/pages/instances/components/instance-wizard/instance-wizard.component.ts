@@ -20,29 +20,26 @@ import {
   filter, map, Observable, of, switchMap, tap,
 } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
-import { Role } from 'app/enums/role.enum';
 import {
   ContainerDeviceType,
-  ContainerGpuType,
   ContainerNicType,
   containerNicTypeLabels,
-  ContainerProxyProtocol,
-  containerProxyProtocolLabels,
   ContainerRemote,
   ContainerSource,
   ContainerType,
 } from 'app/enums/container.enum';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import { mapToOptions } from 'app/helpers/options.helper';
 import { instancesHelptext } from 'app/helptext/instances/instances';
-import { Option } from 'app/interfaces/option.interface';
 import {
-  CreateVirtualizationInstance,
+  CreateContainerInstance,
   InstanceEnvVariablesFormGroup,
-  VirtualizationDevice,
-  VirtualizationInstance,
-  VirtualizationNic,
-} from 'app/interfaces/virtualization.interface';
+  ContainerInstance,
+  ContainerUsbDevice,
+  ContainerNicDevice,
+  ContainerDiskDevice,
+} from 'app/interfaces/container.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -139,7 +136,6 @@ export class InstanceWizardComponent implements OnInit {
 
   protected readonly slashRootNode = [slashRootNode];
 
-  protected readonly proxyProtocols$ = of(mapToOptions(containerProxyProtocolLabels, this.translate));
   protected readonly bridgedNicTypeLabel = containerNicTypeLabels.get(ContainerNicType.Bridged);
   protected readonly macVlanNicTypeLabel = containerNicTypeLabels.get(ContainerNicType.Macvlan);
 
@@ -156,16 +152,6 @@ export class InstanceWizardComponent implements OnInit {
     map((choices) => Object.values(choices).map((choice) => ({
       label: ignoreTranslation(`${choice.product} (${choice.product_id})`),
       value: choice.product_id.toString(),
-    }))),
-  );
-
-  gpuDevices$ = this.api.call(
-    'virt.device.gpu_choices',
-    [ContainerGpuType.Physical],
-  ).pipe(
-    map((choices) => Object.entries(choices).map(([pci, gpu]) => ({
-      label: gpu.description,
-      value: pci,
     }))),
   );
 
@@ -194,13 +180,6 @@ export class InstanceWizardComponent implements OnInit {
     storage_pool: [null as string | null, [Validators.required]],
     use_default_network: [true],
     usb_devices: [[] as string[]],
-    gpu_devices: [[] as string[]],
-    proxies: this.formBuilder.array<FormGroup<{
-      source_proto: FormControl<ContainerProxyProtocol>;
-      source_port: FormControl<number | null>;
-      dest_proto: FormControl<ContainerProxyProtocol>;
-      dest_port: FormControl<number | null>;
-    }>>([]),
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
       destination?: FormControl<string>;
@@ -335,21 +314,6 @@ export class InstanceWizardComponent implements OnInit {
       });
   }
 
-  protected addProxy(): void {
-    const control = this.formBuilder.group({
-      source_proto: [ContainerProxyProtocol.Tcp],
-      source_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
-      dest_proto: [ContainerProxyProtocol.Tcp],
-      dest_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
-    });
-
-    this.form.controls.proxies.push(control);
-  }
-
-  protected removeProxy(index: number): void {
-    this.form.controls.proxies.removeAt(index);
-  }
-
   protected addDisk(): void {
     const control = this.formBuilder.group({
       source: ['', Validators.required],
@@ -392,7 +356,7 @@ export class InstanceWizardComponent implements OnInit {
     this.form.controls.environment_variables.removeAt(index);
   }
 
-  private createInstance(): Observable<VirtualizationInstance> {
+  private createInstance(): Observable<ContainerInstance> {
     const payload = this.getPayload();
 
     const job$ = this.api.job('virt.instance.create', [payload]);
@@ -402,7 +366,7 @@ export class InstanceWizardComponent implements OnInit {
       .afterClosed().pipe(map((job) => job.result));
   }
 
-  private getPayload(): CreateVirtualizationInstance {
+  private getPayload(): CreateContainerInstance {
     const form = this.form.getRawValue();
 
     const payload = {
@@ -416,7 +380,7 @@ export class InstanceWizardComponent implements OnInit {
       source_type: ContainerSource.Image,
       image: form.image,
       environment: this.environmentVariablesPayload,
-    } as CreateVirtualizationInstance;
+    } as CreateContainerInstance;
 
     return payload;
   }
@@ -444,23 +408,15 @@ export class InstanceWizardComponent implements OnInit {
       destination: disk.destination,
     }));
 
-    const usbDevices: { dev_type: ContainerDeviceType; product_id: string }[] = [];
+    const usbDevices: Partial<ContainerUsbDevice>[] = [];
     for (const productId of this.form.controls.usb_devices.value) {
       usbDevices.push({
         dev_type: ContainerDeviceType.Usb,
         product_id: productId,
-      });
+      } as Partial<ContainerUsbDevice>);
     }
 
-    const gpuDevices: { pci: string; dev_type: ContainerDeviceType; gpu_type: ContainerGpuType }[] = [];
-    for (const pci of this.form.controls.gpu_devices.value) {
-      gpuDevices.push({
-        pci,
-        dev_type: ContainerDeviceType.Gpu,
-        gpu_type: ContainerGpuType.Physical,
-      });
-    }
-    const macVlanNics: Partial<VirtualizationNic>[] = [];
+    const macVlanNics: Partial<ContainerNicDevice>[] = [];
     if (!this.form.controls.use_default_network.value) {
       const macVlanDeviceOptions = this.macVlanNicDevices();
       const selectedValues: NicDeviceOption[] = [];
@@ -470,7 +426,7 @@ export class InstanceWizardComponent implements OnInit {
         }
       }
       for (const deviceOption of selectedValues) {
-        const macVlanNic: Partial<VirtualizationNic> = {
+        const macVlanNic: Partial<ContainerNicDevice> = {
           parent: deviceOption.value,
           dev_type: ContainerDeviceType.Nic,
           nic_type: ContainerNicType.Macvlan,
@@ -482,7 +438,7 @@ export class InstanceWizardComponent implements OnInit {
       }
     }
 
-    const bridgedNics: Partial<VirtualizationNic>[] = [];
+    const bridgedNics: Partial<ContainerNicDevice>[] = [];
     if (!this.form.controls.use_default_network.value) {
       const bridgedDeviceOptions = this.bridgedNicDevices();
       const selectedValues: NicDeviceOption[] = [];
@@ -492,7 +448,7 @@ export class InstanceWizardComponent implements OnInit {
         }
       }
       for (const deviceOption of selectedValues) {
-        const bridgedNic: Partial<VirtualizationNic> = {
+        const bridgedNic: Partial<ContainerNicDevice> = {
           parent: deviceOption.value,
           dev_type: ContainerDeviceType.Nic,
           nic_type: ContainerNicType.Bridged,
@@ -504,22 +460,12 @@ export class InstanceWizardComponent implements OnInit {
       }
     }
 
-    const proxies = this.form.controls.proxies.value.map((proxy) => ({
-      dev_type: ContainerDeviceType.Proxy,
-      source_proto: proxy.source_proto,
-      source_port: proxy.source_port,
-      dest_proto: proxy.dest_proto,
-      dest_port: proxy.dest_port,
-    }));
-
     return [
       ...disks,
-      ...proxies,
       ...macVlanNics,
       ...bridgedNics,
       ...usbDevices,
-      ...gpuDevices,
-    ] as VirtualizationDevice[];
+    ] as Partial<ContainerDiskDevice | ContainerNicDevice | ContainerUsbDevice>[];
   }
 
   protected readonly instancesHelptext = instancesHelptext;

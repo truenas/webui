@@ -23,10 +23,6 @@ export const instanceDetailsElements = {
       hierarchy: [T('NIC')],
       anchor: 'nic',
     },
-    proxies: {
-      hierarchy: [T('Proxies')],
-      anchor: 'proxies',
-    },
     idmap: {
       hierarchy: [T('Idmap')],
       anchor: 'idmap',

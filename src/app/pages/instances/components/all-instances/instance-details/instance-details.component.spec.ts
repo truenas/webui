@@ -21,9 +21,6 @@ import {
   InstanceNicsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/instance-nics.component';
 import {
-  InstanceProxiesComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-proxies/instance-proxies.component';
-import {
   InstanceToolsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-tools/instance-tools.component';
 import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
@@ -39,7 +36,6 @@ describe('InstanceDetailsComponent', () => {
         InstanceDevicesComponent,
         InstanceDisksComponent,
         InstanceNicsComponent,
-        InstanceProxiesComponent,
         InstanceIdmapComponent,
         InstanceToolsComponent,
       ),
@@ -63,7 +59,6 @@ describe('InstanceDetailsComponent', () => {
       InstanceDevicesComponent,
       InstanceDisksComponent,
       InstanceNicsComponent,
-      InstanceProxiesComponent,
       InstanceIdmapComponent,
       InstanceToolsComponent,
     ];
