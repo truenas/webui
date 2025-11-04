@@ -98,6 +98,21 @@
             [tooltip]="tooltips.spotlight_search | translate"
           ></ix-checkbox>
 
+          @if (shouldShowTruenasConnectNotice()) {
+            <div class="truenas-connect-notice">
+              <span
+                class="truenas-connect-link"
+                role="button"
+                tabindex="0"
+                [aria-label]="'Configure TrueNAS Connect to enable Spotlight Search feature' | translate"
+                (click)="openTruenasConnectModal()"
+                (keydown)="onTruenasConnectLinkKeydown($event)"
+              >
+                {{ 'Configure TrueNAS Connect to enable this feature.' | translate }}
+              </span>
+            </div>
+          }
+
           <ix-combobox
             formControlName="admin_group"
             [label]="'Administrators Group' | translate"
