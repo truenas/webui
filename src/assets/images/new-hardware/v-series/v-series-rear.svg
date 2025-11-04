@@ -1,0 +1,23 @@
+<!-- Placeholder SVG for V-Series Rear View -->
+<!-- This is a placeholder. Replace with actual hardware SVG when available. -->
+<!-- Rear view shows 4 NVMe slots (slots 25-28) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800" height="400">
+  <style>
+    .tint-target { fill: #cccccc; }
+    .drive-cage { stroke: #333; stroke-width: 2; }
+    text { font-family: Arial, sans-serif; font-size: 12px; fill: #333; }
+  </style>
+
+  <rect width="800" height="400" fill="#e0e0e0"/>
+  <text x="400" y="30" text-anchor="middle" font-size="20" font-weight="bold">V-Series Rear View (Placeholder)</text>
+  <text x="400" y="50" text-anchor="middle" font-size="14">4 NVMe Slots - Replace with actual SVG</text>
+
+  <!-- Placeholder NVMe drive cages (1 row x 4 slots = 4 NVMe drives) -->
+  <g id="nvme-slots">
+    <!-- Slot numbering continues from front: 25-28 -->
+    <g id="DRIVE_CAGE_25" class="drive-cage"><rect x="100" y="150" width="120" height="150" class="tint-target"/><text x="160" y="235">NVMe 25</text></g>
+    <g id="DRIVE_CAGE_26" class="drive-cage"><rect x="250" y="150" width="120" height="150" class="tint-target"/><text x="310" y="235">NVMe 26</text></g>
+    <g id="DRIVE_CAGE_27" class="drive-cage"><rect x="400" y="150" width="120" height="150" class="tint-target"/><text x="460" y="235">NVMe 27</text></g>
+    <g id="DRIVE_CAGE_28" class="drive-cage"><rect x="550" y="150" width="120" height="150" class="tint-target"/><text x="610" y="235">NVMe 28</text></g>
+  </g>
+</svg>

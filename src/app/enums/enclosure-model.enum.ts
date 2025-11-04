@@ -46,6 +46,9 @@ export enum EnclosureModel {
   R50BM = 'R50BM',
   R60 = 'R60',
 
+  V140 = 'V140',
+  V160 = 'V160',
+
   X10 = 'X10',
   X20 = 'X20',
 }
