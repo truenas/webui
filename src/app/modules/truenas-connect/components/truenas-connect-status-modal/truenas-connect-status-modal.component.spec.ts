@@ -463,7 +463,7 @@ describe('TruenasConnectStatusModalComponent', () => {
       expect(docLink.target).toBe('_blank');
       expect(docLink.rel).toBe('noopener noreferrer');
       expect(docLink.textContent).toContain('Learn more about TrueNAS Connect');
-      expect(docLink.textContent).toContain('(opens in a new tab)');
+      expect(docLink.textContent).toContain('opens in a new tab');
 
       // Check for external link icon
       const icon = docLink.querySelector('ix-icon[name="mdi-open-in-new"]');
@@ -473,7 +473,7 @@ describe('TruenasConnectStatusModalComponent', () => {
       // Check for screen reader text
       const srText = docLink.querySelector('.sr-only');
       expect(srText).toBeTruthy();
-      expect(srText.textContent).toContain('(opens in a new tab)');
+      expect(srText.textContent).toContain('opens in a new tab');
     });
 
     it('should show documentation link in Waiting state', () => {
