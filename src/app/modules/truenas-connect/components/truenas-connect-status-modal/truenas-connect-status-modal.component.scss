@@ -109,3 +109,28 @@
     color: var(--blue);
   }
 }
+
+.documentation-link {
+  margin-top: 12px;
+  text-align: center;
+
+  ix-icon {
+    height: 12px;
+    margin: 0;
+    position: relative;
+    top: 2px;
+    width: 12px;
+  }
+}
+
+.sr-only {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
