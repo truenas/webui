@@ -457,7 +457,7 @@ describe('TruenasConnectStatusModalComponent', () => {
       config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
       spectator.detectChanges();
 
-      const docLink = spectator.query('[ixTest="tnc-documentation-link"]') as HTMLAnchorElement;
+      const docLink = spectator.query('.documentation-link a') as HTMLAnchorElement;
       expect(docLink).toBeTruthy();
       expect(docLink.href).toBe('https://connect.truenas.com/');
       expect(docLink.target).toBe('_blank');
@@ -480,7 +480,7 @@ describe('TruenasConnectStatusModalComponent', () => {
       config.update((conf) => ({ ...conf, status: TruenasConnectStatus.ClaimTokenMissing }));
       spectator.detectChanges();
 
-      const docLink = spectator.query('[ixTest="tnc-documentation-link"]') as HTMLAnchorElement;
+      const docLink = spectator.query('.documentation-link a') as HTMLAnchorElement;
       expect(docLink).toBeTruthy();
       expect(docLink.href).toBe('https://connect.truenas.com/');
       expect(docLink.target).toBe('_blank');
@@ -491,7 +491,7 @@ describe('TruenasConnectStatusModalComponent', () => {
       config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationFailed }));
       spectator.detectChanges();
 
-      const docLink = spectator.query('[ixTest="tnc-documentation-link"]') as HTMLAnchorElement;
+      const docLink = spectator.query('.documentation-link a') as HTMLAnchorElement;
       expect(docLink).toBeTruthy();
       expect(docLink.href).toBe('https://connect.truenas.com/');
       expect(docLink.target).toBe('_blank');
@@ -502,7 +502,7 @@ describe('TruenasConnectStatusModalComponent', () => {
       config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertGenerationInProgress }));
       spectator.detectChanges();
 
-      const docLink = spectator.query('[ixTest="tnc-documentation-link"]') as HTMLAnchorElement;
+      const docLink = spectator.query('.documentation-link a') as HTMLAnchorElement;
       expect(docLink).toBeTruthy();
       expect(docLink.href).toBe('https://connect.truenas.com/');
       expect(docLink.target).toBe('_blank');
