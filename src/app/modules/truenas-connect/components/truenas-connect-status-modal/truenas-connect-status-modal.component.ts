@@ -100,7 +100,10 @@ export class TruenasConnectStatusModalComponent {
       .pipe(
         // NOW check if we need token generation based on updated config
         switchMap((config) => {
-          if (config?.status === TruenasConnectStatus.ClaimTokenMissing) {
+          if (
+            config?.status === TruenasConnectStatus.ClaimTokenMissing
+            || config?.status === TruenasConnectStatus.RegistrationFinalizationTimeout
+          ) {
             return this.tnc.generateToken();
           }
           return of('');

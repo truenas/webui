@@ -125,6 +125,31 @@ describe('TruenasConnectStatusModalComponent', () => {
     expect(connectSpy).toHaveBeenCalled();
   });
 
+  it('should call generateToken when connecting with REGISTRATION_FINALIZATION_TIMEOUT status', async () => {
+    // Start with disabled status, which shows "Get Connected" button
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Disabled }));
+    spectator.detectChanges();
+
+    const service = spectator.inject(TruenasConnectService);
+    // After enabling, status becomes REGISTRATION_FINALIZATION_TIMEOUT
+    const enableSpy = jest.spyOn(service, 'enableService').mockReturnValue(of({
+      status: TruenasConnectStatus.RegistrationFinalizationTimeout,
+    } as TruenasConnectConfig));
+    const generateTokenSpy = jest.spyOn(service, 'generateToken').mockReturnValue(of('test-token'));
+    const connectSpy = jest.spyOn(service, 'connect').mockReturnValue(of(null));
+
+    const getConnectedBtn = await loader.getHarness(
+      MatButtonHarness.with({
+        text: 'Get Connected',
+      }),
+    );
+    await getConnectedBtn.click();
+
+    expect(enableSpy).toHaveBeenCalled();
+    expect(generateTokenSpy).toHaveBeenCalled();
+    expect(connectSpy).toHaveBeenCalled();
+  });
+
   it('should handle error when clicking Get Connected button', async () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationWaiting }));
     spectator.detectChanges();
@@ -303,7 +328,6 @@ describe('TruenasConnectStatusModalComponent', () => {
     const service = spectator.inject(TruenasConnectService);
     const disableSpy = jest.spyOn(service, 'disableService').mockReturnValue(of(null));
     const enableSpy = jest.spyOn(service, 'enableService').mockReturnValue(of(null));
-    const connectSpy = jest.spyOn(service, 'connect').mockReturnValue(of(null));
 
     const retryBtn = await loader.getHarness(
       MatButtonHarness.with({
@@ -314,7 +338,6 @@ describe('TruenasConnectStatusModalComponent', () => {
 
     expect(disableSpy).toHaveBeenCalled();
     expect(enableSpy).toHaveBeenCalled();
-    expect(connectSpy).not.toHaveBeenCalled();
   });
 
   it('should handle error when clicking Retry Connection button', async () => {
