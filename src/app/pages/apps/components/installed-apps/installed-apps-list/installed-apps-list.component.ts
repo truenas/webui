@@ -122,6 +122,8 @@ export class InstalledAppsListComponent implements OnInit {
     active: SortableField.Application,
     direction: SortDirection.Asc,
   };
+  truenasAppsExpanded = signal(true);
+  externalAppsExpanded = signal(true);
 
   readonly sortableField = SortableField;
 

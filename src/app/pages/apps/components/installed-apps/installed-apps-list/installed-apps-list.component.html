@@ -128,51 +128,63 @@
 
       @if (filteredTruenasApps.length) {
         <div class="apps-section">
-          <h3 class="section-header">{{ 'TrueNAS Apps' | translate }}</h3>
-          <div class="apps-rows">
-            @for (app of filteredTruenasApps; track app.name) {
-              <ix-app-row
-                tabindex="0"
-                [app]="app"
-                [stats]="getAppStats(app.name) | async"
-                [class.selected]="selectedApp?.id === app.id"
-                [selected]="selection.isSelected(app.id)"
-                [job]="appJobs.get(app.name)"
-                (startApp)="start(app.name)"
-                (stopApp)="stop(app.name)"
-                (restartApp)="restart(app.name)"
-                (clickStatus)="openStatusDialog(app.name)"
-                (selectionChange)="selection.toggle(app.id)"
-                (click)="viewDetails(app)"
-                (keydown.enter)="viewDetails(app)"
-              ></ix-app-row>
-            }
-          </div>
+          <h3 class="section-header" (click)="truenasAppsExpanded.set(!truenasAppsExpanded())">
+            <ix-icon [name]="truenasAppsExpanded() ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
+            {{ 'TrueNAS Apps' | translate }}
+            <span class="app-count">({{ filteredTruenasApps.length }})</span>
+          </h3>
+          @if (truenasAppsExpanded()) {
+            <div class="apps-rows">
+              @for (app of filteredTruenasApps; track app.name) {
+                <ix-app-row
+                  tabindex="0"
+                  [app]="app"
+                  [stats]="getAppStats(app.name) | async"
+                  [class.selected]="selectedApp?.id === app.id"
+                  [selected]="selection.isSelected(app.id)"
+                  [job]="appJobs.get(app.name)"
+                  (startApp)="start(app.name)"
+                  (stopApp)="stop(app.name)"
+                  (restartApp)="restart(app.name)"
+                  (clickStatus)="openStatusDialog(app.name)"
+                  (selectionChange)="selection.toggle(app.id)"
+                  (click)="viewDetails(app)"
+                  (keydown.enter)="viewDetails(app)"
+                ></ix-app-row>
+              }
+            </div>
+          }
         </div>
       }
 
       @if (filteredExternalApps.length) {
         <div class="apps-section">
-          <h3 class="section-header">{{ 'Other Apps' | translate }}</h3>
-          <div class="apps-rows">
-            @for (app of filteredExternalApps; track app.name) {
-              <ix-app-row
-                tabindex="0"
-                [app]="app"
-                [stats]="getAppStats(app.name) | async"
-                [class.selected]="selectedApp?.id === app.id"
-                [selected]="selection.isSelected(app.id)"
-                [job]="appJobs.get(app.name)"
-                (startApp)="start(app.name)"
-                (stopApp)="stop(app.name)"
-                (restartApp)="restart(app.name)"
-                (clickStatus)="openStatusDialog(app.name)"
-                (selectionChange)="selection.toggle(app.id)"
-                (click)="viewDetails(app)"
-                (keydown.enter)="viewDetails(app)"
-              ></ix-app-row>
-            }
-          </div>
+          <h3 class="section-header" (click)="externalAppsExpanded.set(!externalAppsExpanded())">
+            <ix-icon [name]="externalAppsExpanded() ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
+            {{ 'Other Apps' | translate }}
+            <span class="app-count">({{ filteredExternalApps.length }})</span>
+          </h3>
+          @if (externalAppsExpanded()) {
+            <div class="apps-rows">
+              @for (app of filteredExternalApps; track app.name) {
+                <ix-app-row
+                  tabindex="0"
+                  [app]="app"
+                  [stats]="getAppStats(app.name) | async"
+                  [class.selected]="selectedApp?.id === app.id"
+                  [selected]="selection.isSelected(app.id)"
+                  [job]="appJobs.get(app.name)"
+                  (startApp)="start(app.name)"
+                  (stopApp)="stop(app.name)"
+                  (restartApp)="restart(app.name)"
+                  (clickStatus)="openStatusDialog(app.name)"
+                  (selectionChange)="selection.toggle(app.id)"
+                  (click)="viewDetails(app)"
+                  (keydown.enter)="viewDetails(app)"
+                ></ix-app-row>
+              }
+            </div>
+          }
         </div>
       }
     </div>

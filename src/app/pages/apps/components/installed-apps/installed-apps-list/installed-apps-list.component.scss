@@ -159,12 +159,32 @@ ix-app-row,
   }
 
   .section-header {
+    align-items: center;
     background: var(--bg1);
     border-bottom: 1px solid var(--lines);
     color: var(--fg1);
+    cursor: pointer;
+    display: flex;
     font-size: 16px;
     font-weight: 600;
+    gap: 8px;
     margin: 0;
     padding: 12px 16px;
+    user-select: none;
+
+    &:hover {
+      background: var(--hover-bg);
+    }
+
+    ix-icon {
+      font-size: 20px;
+    }
+
+    .app-count {
+      color: var(--fg2);
+      font-size: 14px;
+      font-weight: 400;
+      margin-left: 4px;
+    }
   }
 }
