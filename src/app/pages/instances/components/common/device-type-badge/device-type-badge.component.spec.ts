@@ -30,7 +30,7 @@ describe('DeviceTypeBadgeComponent', () => {
 
     const icon = spectator.query(IxIconComponent);
     expect(icon).toBeTruthy();
-    expect(icon.name()).toBe('mdi-file-document');
+    expect(icon.name()).toBe('mdi-file');
   });
 
   it('should display icon for FILESYSTEM device type', () => {

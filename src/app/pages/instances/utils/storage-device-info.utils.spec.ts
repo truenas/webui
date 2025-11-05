@@ -32,7 +32,8 @@ describe('Storage Device Info Utils', () => {
       expect(info.deviceType).toBe('disk');
       expect(info.presentedAs).toContain('/dev/sda');
       expect(info.description).toContain('raw file');
-      expect(info.example).toContain('<source file=');
+      expect(info.example).toContain('path=');
+      expect(info.example).toContain('type=');
     });
 
     it('should return correct info for FILESYSTEM device', () => {
