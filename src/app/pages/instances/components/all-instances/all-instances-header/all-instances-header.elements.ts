@@ -6,8 +6,8 @@ export const allInstancesHeaderElements = {
   hierarchy: [T('Containers')],
   anchorRouterLink: ['/containers'],
   elements: {
-    globalSettings: {
-      hierarchy: [T('Global Settings')],
+    settings: {
+      hierarchy: [T('GlobalSettings')],
       synonyms: [T('Container Settings')],
       anchor: 'container-global-settings',
     },

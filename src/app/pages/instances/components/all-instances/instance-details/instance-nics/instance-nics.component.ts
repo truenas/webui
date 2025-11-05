@@ -12,6 +12,9 @@ import { AddNicMenuComponent } from 'app/pages/instances/components/all-instance
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
+import {
+  DeviceTypeBadgeComponent,
+} from 'app/pages/instances/components/common/device-type-badge/device-type-badge.component';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
@@ -31,6 +34,7 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
     NgxSkeletonLoaderModule,
     DeviceActionsMenuComponent,
     AddNicMenuComponent,
+    DeviceTypeBadgeComponent,
   ],
 })
 export class InstanceNicsComponent {

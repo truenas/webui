@@ -4,11 +4,11 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerUsbDevice } from 'app/interfaces/container.interface';
 import {
-  AddDeviceMenuComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
+  AddUsbDeviceMenuComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-usb-devices/add-usb-device-menu/add-usb-device-menu.component';
 import {
-  InstanceDevicesComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-devices/instance-devices.component';
+  InstanceUsbDevicesComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-usb-devices/instance-usb-devices.component';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
@@ -16,8 +16,8 @@ import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualiz
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
 
-describe('InstanceDevicesComponent', () => {
-  let spectator: Spectator<InstanceDevicesComponent>;
+describe('InstanceUsbDevicesComponent', () => {
+  let spectator: Spectator<InstanceUsbDevicesComponent>;
   const devices = [
     {
       dtype: ContainerDeviceType.Usb,
@@ -32,12 +32,12 @@ describe('InstanceDevicesComponent', () => {
   ];
 
   const createComponent = createComponentFactory({
-    component: InstanceDevicesComponent,
+    component: InstanceUsbDevicesComponent,
     imports: [
       NgxSkeletonLoaderComponent,
       MockComponents(
         DeviceActionsMenuComponent,
-        AddDeviceMenuComponent,
+        AddUsbDeviceMenuComponent,
       ),
     ],
     providers: [
@@ -74,7 +74,7 @@ describe('InstanceDevicesComponent', () => {
   });
 
   it('renders a menu to add a new device', () => {
-    const addMenu = spectator.query(AddDeviceMenuComponent);
+    const addMenu = spectator.query(AddUsbDeviceMenuComponent);
     expect(addMenu).toExist();
   });
 });

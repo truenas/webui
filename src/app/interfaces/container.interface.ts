@@ -11,6 +11,7 @@ import {
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 
 export type ContainerMetrics = Record<string, ContainerInstanceMetrics>;
+export type SectorSize = 512 | 4096 | null;
 
 export interface ContainerInstanceMetrics {
   cpu: {
@@ -99,10 +100,16 @@ export interface ContainerDiskDevice {
   name: string;
   description: string;
   dtype: ContainerDeviceType.Disk;
-  readonly: boolean;
-  source: string | null;
-  destination: string | null;
-  product_id: string;
+  path: string;
+  type: 'AHCI' | 'VIRTIO';
+  create_zvol?: boolean;
+  zvol_name?: string;
+  zvol_volsize?: number;
+  logical_sectorsize?: SectorSize;
+  physical_sectorsize?: SectorSize;
+  iotype?: 'NATIVE' | 'THREADS' | 'IO_URING';
+  serial?: string | null;
+  product_id?: string;
 }
 
 export interface ContainerRawDevice {
@@ -110,9 +117,16 @@ export interface ContainerRawDevice {
   name: string;
   description: string;
   dtype: ContainerDeviceType.Raw;
-  readonly: boolean;
-  source: string | null;
-  product_id: string;
+  path: string;
+  type: 'AHCI' | 'VIRTIO';
+  exists?: boolean;
+  boot?: boolean;
+  size?: number;
+  logical_sectorsize?: SectorSize;
+  physical_sectorsize?: SectorSize;
+  iotype?: 'NATIVE' | 'THREADS' | 'IO_URING';
+  serial?: string | null;
+  product_id?: string;
 }
 
 export interface ContainerFilesystemDevice {
@@ -120,11 +134,12 @@ export interface ContainerFilesystemDevice {
   name: string;
   description: string;
   dtype: ContainerDeviceType.Filesystem;
-  readonly: boolean;
   source: string;
   target: string;
-  product_id: string;
+  product_id?: string;
 }
+
+export type StorageDevice = ContainerDiskDevice | ContainerRawDevice | ContainerFilesystemDevice;
 
 export interface ContainerNicDevice {
   id?: number;

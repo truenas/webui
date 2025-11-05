@@ -1,10 +1,10 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>
-      {{ 'Devices' | translate }}
+      {{ 'USB Devices' | translate }}
     </h3>
 
-    <ix-add-device-menu></ix-add-device-menu>
+    <ix-add-usb-device-menu></ix-add-usb-device-menu>
   </mat-card-header>
 
   <mat-card-content>
@@ -23,7 +23,7 @@
           ></ix-device-actions-menu>
         </div>
       } @empty {
-         {{ 'No devices added.' | translate }}
+         {{ 'No USB devices added.' | translate }}
       }
     }
   </mat-card-content>

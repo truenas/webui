@@ -1819,7 +1819,7 @@
   {
     "hierarchy": [
       "Containers",
-      "Global Settings"
+      "GlobalSettings"
     ],
     "synonyms": [
       "Container Settings"
@@ -1898,7 +1898,7 @@
   {
     "hierarchy": [
       "Containers",
-      "Devices"
+      "USB Devices"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -1909,7 +1909,7 @@
       "/containers/view/def"
     ],
     "routerLink": null,
-    "anchor": "devices",
+    "anchor": "usb-devices",
     "triggerAnchor": null,
     "section": "ui"
   },

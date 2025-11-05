@@ -9,20 +9,20 @@ import { AvailableUsb, ContainerDevice } from 'app/interfaces/container.interfac
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  AddDeviceMenuComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
+  AddUsbDeviceMenuComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-usb-devices/add-usb-device-menu/add-usb-device-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
-describe('AddDeviceMenuComponent', () => {
-  let spectator: Spectator<AddDeviceMenuComponent>;
+describe('AddUsbDeviceMenuComponent', () => {
+  let spectator: Spectator<AddUsbDeviceMenuComponent>;
   let loader: HarnessLoader;
   const selectedInstance = signal({
     id: 'my-instance',
     type: ContainerType.Container,
   });
   const createComponent = createComponentFactory({
-    component: AddDeviceMenuComponent,
+    component: AddUsbDeviceMenuComponent,
     providers: [
       mockApi([
         mockCall('container.device.usb_choices', {
@@ -45,8 +45,14 @@ describe('AddDeviceMenuComponent', () => {
       mockProvider(VirtualizationDevicesStore, {
         devices: () => [
           {
+            name: 'usb-device',
+            description: 'USB Device',
             dtype: ContainerDeviceType.Usb,
-            product_id: 'already-added',
+            readonly: false,
+            usb: {
+              vendor_id: '046d',
+              product_id: 'already-added',
+            },
           } as ContainerDevice,
         ] as ContainerDevice[],
         loadDevices: jest.fn(),

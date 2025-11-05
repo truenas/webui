@@ -7,22 +7,192 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
-        <ix-explorer
-          formControlName="source"
-          [rootNodes]="slashRootNode"
-          [label]="'Source' | translate"
-          [required]="true"
-          [nodeProvider]="datasetProvider"
-        >
-          @if (isNew()) {
-            <ix-explorer-create-dataset></ix-explorer-create-dataset>
-          }
-        </ix-explorer>
+        <!-- Device Type Selection - only show when adding new device -->
+        @if (isNew()) {
+          <ix-radio-group
+            formControlName="device_type"
+            [label]="'Storage Device Type' | translate"
+            [required]="true"
+            [options]="deviceTypeOptions$"
+          ></ix-radio-group>
+        }
 
-        @if (form.controls.target.enabled) {
+        <!-- Path Field for DISK and RAW devices -->
+        @if (isDiskDevice || isRawDevice) {
+          @if (isDiskDevice) {
+            <ix-checkbox
+              formControlName="create_zvol"
+              [label]="'Create New Zvol' | translate"
+              [tooltip]="'If checked, create a new zvol with the specified name and size' | translate"
+            ></ix-checkbox>
+
+            @if (form.controls.create_zvol.value) {
+              <ix-explorer
+                formControlName="zvol_parent"
+                [rootNodes]="datasetsRootNode"
+                [label]="'Parent Dataset' | translate"
+                [tooltip]="'Select the parent dataset where the zvol will be created' | translate"
+                [required]="true"
+                [nodeProvider]="datasetProvider"
+              >
+                @if (isNew()) {
+                  <ix-explorer-create-dataset></ix-explorer-create-dataset>
+                }
+              </ix-explorer>
+
+              <ix-input
+                formControlName="zvol_name"
+                [label]="'Zvol Name' | translate"
+                [tooltip]="'Name for the new zvol (without parent path)' | translate"
+                [required]="true"
+              ></ix-input>
+
+              <ix-input
+                formControlName="zvol_volsize"
+                type="number"
+                [label]="'Zvol Size (GiB)' | translate"
+                [tooltip]="'Size of the zvol in GiB' | translate"
+                [required]="true"
+              ></ix-input>
+            } @else {
+              <ix-explorer
+                formControlName="path"
+                [rootNodes]="zvolsRootNode"
+                [label]="'Zvol Path' | translate"
+                [tooltip]="'Select the zvol to be presented as a block device' | translate"
+                [required]="true"
+                [nodeProvider]="datasetProvider"
+              ></ix-explorer>
+            }
+
+            <ix-select
+              formControlName="logical_sectorsize"
+              [label]="'Logical Sector Size' | translate"
+              [tooltip]="'Logical sector size for the disk' | translate"
+              [options]="sectorsizeOptions$"
+              [emptyLabel]="'Default' | translate"
+            ></ix-select>
+
+            <ix-select
+              formControlName="physical_sectorsize"
+              [label]="'Physical Sector Size' | translate"
+              [tooltip]="'Physical sector size for the disk' | translate"
+              [options]="sectorsizeOptions$"
+              [emptyLabel]="'Default' | translate"
+            ></ix-select>
+
+            <ix-select
+              formControlName="iotype"
+              [label]="'I/O Type' | translate"
+              [tooltip]="'I/O backend type for disk operations' | translate"
+              [options]="iotypeOptions$"
+              [emptyLabel]="'Default' | translate"
+            ></ix-select>
+
+            <ix-input
+              formControlName="serial"
+              [label]="'Serial Number' | translate"
+              [tooltip]="'Serial number to assign to the virtual disk. null for auto-generated.' | translate"
+            ></ix-input>
+          } @else {
+            <ix-checkbox
+              formControlName="exists"
+              [label]="'Use Existing File' | translate"
+              [tooltip]="'If checked, use an existing file. If unchecked, create a new file with the specified size.' | translate"
+            ></ix-checkbox>
+
+            @if (form.controls.exists.value) {
+              <ix-explorer
+                formControlName="path"
+                [rootNodes]="datasetsRootNode"
+                [label]="'Raw File Path' | translate"
+                [tooltip]="'Select an existing raw file to use as a block device' | translate"
+                [required]="true"
+                [nodeProvider]="fileProvider"
+              >
+                <ix-explorer-create-dataset></ix-explorer-create-dataset>
+              </ix-explorer>
+            } @else {
+              <ix-input
+                formControlName="path"
+                [label]="'Raw File Path' | translate"
+                [tooltip]="'Path to the raw file to be created (must start with /mnt/)' | translate"
+                [required]="true"
+              ></ix-input>
+
+              <ix-input
+                formControlName="size"
+                type="number"
+                [label]="'Size (GiB)' | translate"
+                [tooltip]="'Size of the raw disk file in GiB' | translate"
+                [required]="true"
+              ></ix-input>
+            }
+
+            <ix-checkbox
+              formControlName="boot"
+              [label]="'Bootable' | translate"
+              [tooltip]="'Whether this disk should be marked as bootable' | translate"
+            ></ix-checkbox>
+
+            <ix-select
+              formControlName="logical_sectorsize"
+              [label]="'Logical Sector Size' | translate"
+              [tooltip]="'Logical sector size for the disk' | translate"
+              [options]="sectorsizeOptions$"
+              [emptyLabel]="'Default' | translate"
+            ></ix-select>
+
+            <ix-select
+              formControlName="physical_sectorsize"
+              [label]="'Physical Sector Size' | translate"
+              [tooltip]="'Physical sector size for the disk' | translate"
+              [options]="sectorsizeOptions$"
+              [emptyLabel]="'Default' | translate"
+            ></ix-select>
+
+            <ix-select
+              formControlName="iotype"
+              [label]="'I/O Type' | translate"
+              [tooltip]="'I/O backend type for disk operations' | translate"
+              [options]="iotypeOptions$"
+              [emptyLabel]="'Default' | translate"
+            ></ix-select>
+
+            <ix-input
+              formControlName="serial"
+              [label]="'Serial Number' | translate"
+              [tooltip]="'Serial number to assign to the virtual disk. null for auto-generated.' | translate"
+            ></ix-input>
+          }
+
+          <!-- Disk controller type -->
+          <ix-radio-group
+            formControlName="type"
+            [label]="'Disk Controller Type' | translate"
+            [tooltip]="'VirtIO provides better performance, AHCI provides better compatibility' | translate"
+            [required]="true"
+            [options]="diskTypeOptions$"
+          ></ix-radio-group>
+        }
+
+        <!-- Source and Target fields for FILESYSTEM devices -->
+        @if (isFilesystemDevice) {
+          <ix-explorer
+            formControlName="source"
+            [rootNodes]="datasetsRootNode"
+            [label]="'Host Directory Source' | translate"
+            [tooltip]="'Select the host directory to mount inside the container' | translate"
+            [required]="true"
+            [nodeProvider]="fileProvider"
+          >
+            <ix-explorer-create-dataset></ix-explorer-create-dataset>
+          </ix-explorer>
+
           <ix-input
             formControlName="target"
-            [label]="'Target' | translate"
+            [label]="'Container Mount Path' | translate"
+            [tooltip]="'Path where the directory will be mounted inside the container (e.g., /data)' | translate"
             [required]="true"
           ></ix-input>
         }

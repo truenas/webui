@@ -8,8 +8,8 @@ import {
   ContainerDevice,
 } from 'app/interfaces/container.interface';
 import {
-  AddDeviceMenuComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
+  AddUsbDeviceMenuComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-usb-devices/add-usb-device-menu/add-usb-device-menu.component';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
@@ -19,9 +19,9 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-instance-devices',
-  templateUrl: './instance-devices.component.html',
-  styleUrls: ['./instance-devices.component.scss'],
+  selector: 'ix-instance-usb-devices',
+  templateUrl: './instance-usb-devices.component.html',
+  styleUrls: ['./instance-usb-devices.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
@@ -30,10 +30,10 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
     MatCardContent,
     NgxSkeletonLoaderModule,
     DeviceActionsMenuComponent,
-    AddDeviceMenuComponent,
+    AddUsbDeviceMenuComponent,
   ],
 })
-export class InstanceDevicesComponent {
+export class InstanceUsbDevicesComponent {
   private devicesStore = inject(VirtualizationDevicesStore);
   private instancesStore = inject(VirtualizationInstancesStore);
   private translate = inject(TranslateService);

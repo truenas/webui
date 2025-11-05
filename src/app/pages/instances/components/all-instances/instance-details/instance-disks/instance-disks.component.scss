@@ -1,31 +1,24 @@
-.disk {
+.device {
   align-items: center;
   display: flex;
   justify-content: space-between;
+  padding: 12px 0;
 }
 
-.root-disk-size {
+.device-info {
+  align-items: center;
   display: flex;
-  margin-bottom: 6px;
-
-  .action {
-    color: var(--primary);
-    margin-left: auto;
-    text-decoration: underline;
-
-    a {
-      cursor: pointer;
-
-      &.disabled {
-        cursor: not-allowed;
-        opacity: var(--disabled-opacity);
-        pointer-events: none;
-      }
-    }
-  }
+  gap: 12px;
 }
 
-.label {
-  font-weight: bold;
-  margin-right: 2px;
+.device-description {
+  flex: 1;
+  font-size: 14px;
+}
+
+.no-devices {
+  color: var(--fg2);
+  font-style: italic;
+  padding: 16px 0;
+  text-align: center;
 }

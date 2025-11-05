@@ -61,8 +61,8 @@ describe('InstanceNicsComponent', () => {
     const deviceRows = spectator.queryAll('.device');
 
     expect(deviceRows).toHaveLength(2);
-    expect(deviceRows[0]).toHaveText('BRIDGED');
-    expect(deviceRows[1]).toHaveText('MACVLAN');
+    expect(deviceRows[0]).toHaveText('nic1 (Default Mac Address)');
+    expect(deviceRows[1]).toHaveText('nic2 (Default Mac Address)');
   });
 
   it('renders a menu to delete or manage the device', () => {

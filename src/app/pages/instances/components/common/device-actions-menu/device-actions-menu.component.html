@@ -19,7 +19,7 @@
       mat-menu-item
       type="button"
       [ixTest]="['edit', device().description]"
-      (click)="edit.emit()"
+      (click)="editPressed()"
     >{{ 'Edit' | translate }}</button>
   }
 

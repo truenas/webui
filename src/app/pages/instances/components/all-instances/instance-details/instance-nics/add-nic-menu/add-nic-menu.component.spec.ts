@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -68,13 +68,13 @@ describe('AddNicMenuComponent', () => {
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
     await menu.open();
 
-    spectator.inject(MatDialog).open = jest.fn(() => ({
+    (spectator.inject(MatDialog).open as jest.Mock) = jest.fn(() => ({
       afterClosed: jest.fn(() => of({
         useDefault: true,
         type: ContainerNicDeviceType.Virtio,
         trust_guest_rx_filters: false,
       })),
-    })) as jest.Mock<Partial<MatDialogRef<InstanceNicMacDialog>>>;
+    }));
 
     await menu.clickItem({ text: 'TrueNAS Bridge' });
 
@@ -100,13 +100,13 @@ describe('AddNicMenuComponent', () => {
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
     await menu.open();
 
-    spectator.inject(MatDialog).open = jest.fn(() => ({
+    (spectator.inject(MatDialog).open as jest.Mock) = jest.fn(() => ({
       afterClosed: jest.fn(() => of({
         useDefault: true,
         type: ContainerNicDeviceType.E1000,
         trust_guest_rx_filters: true,
       })),
-    })) as jest.Mock<Partial<MatDialogRef<InstanceNicMacDialog>>>;
+    }));
 
     await menu.clickItem({ text: 'TrueNAS Bridge' });
 

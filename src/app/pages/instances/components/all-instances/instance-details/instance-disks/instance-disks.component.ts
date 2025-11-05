@@ -4,17 +4,21 @@ import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
-import { ContainerFilesystemDevice, ContainerInstance } from 'app/interfaces/container.interface';
+import { ContainerDevice, ContainerFilesystemDevice, ContainerInstance } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
 import { DeviceActionsMenuComponent } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
+import {
+  DeviceTypeBadgeComponent,
+} from 'app/pages/instances/components/common/device-type-badge/device-type-badge.component';
+import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
 
@@ -34,12 +38,14 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
     TestDirective,
     TranslateModule,
     DeviceActionsMenuComponent,
+    DeviceTypeBadgeComponent,
   ],
 })
 export class InstanceDisksComponent {
   private slideIn = inject(SlideIn);
   private devicesStore = inject(VirtualizationDevicesStore);
   private instancesStore = inject(VirtualizationInstancesStore);
+  private translate = inject(TranslateService);
 
   readonly instance = input.required<ContainerInstance>();
 
@@ -50,11 +56,13 @@ export class InstanceDisksComponent {
   });
 
   protected readonly visibleDisks = computed(() => {
-    return this.devicesStore.devices().filter(
-      (device): device is ContainerFilesystemDevice & { id: number } => {
-        return device.dtype === ContainerDeviceType.Filesystem && 'source' in device && !!device.source;
-      },
-    );
+    return this.devicesStore.devices().filter((device) => {
+      return [
+        ContainerDeviceType.Disk,
+        ContainerDeviceType.Raw,
+        ContainerDeviceType.Filesystem,
+      ].includes(device.dtype);
+    });
   });
 
   protected addDisk(): void {
@@ -63,6 +71,10 @@ export class InstanceDisksComponent {
 
   protected editDisk(disk: ContainerFilesystemDevice): void {
     this.openDiskForm(disk);
+  }
+
+  protected getDeviceDescription(device: ContainerDevice): string {
+    return getDeviceDescription(this.translate, device);
   }
 
   private openDiskForm(disk?: ContainerFilesystemDevice): void {

@@ -28,6 +28,40 @@ export const instancesHelptext = {
   disksDestinationLabel: T('Destination'),
   disksDestinationTooltip: T('Specify the container filesystem path where the disk will be mounted.'),
 
+  deviceTypes: {
+    diskTooltip: T('<b>Disk Device</b><br />A zvol from the host presented as a block device inside the container (e.g., /dev/sda).\
+<br />Ideal for creating virtual disks with ZFS features like snapshots and compression.'),
+    rawTooltip: T('<b>Raw Device</b><br />A raw file from the host presented as a block device inside the container (e.g., /dev/sdb).\
+<br />Useful for mounting existing disk images or ISO files.'),
+    filesystemTooltip: T('<b>Filesystem Device</b><br />A bind mount that makes a host directory available inside the container at a specific mount point.\
+<br />Use this for sharing data between host and container or persisting container data.'),
+  },
+
+  deviceBadgeTooltips: {
+    disk: T('Zvol block device'),
+    raw: T('Raw file block device'),
+    filesystem: T('Filesystem bind mount'),
+    usb: T('USB device'),
+    nic: T('Network interface'),
+    unknown: T('Unknown device'),
+  },
+
+  deviceDescriptions: {
+    defaultMacAddress: T('Default Mac Address'),
+    unknown: T('Unknown'),
+    unknownPath: T('Unknown path'),
+    unknownSource: T('Unknown source'),
+    unknownTarget: T('Unknown target'),
+  },
+
+  diskFormOptions: {
+    virtio: T('VirtIO'),
+    ahci: T('AHCI'),
+    native: T('Native'),
+    threads: T('Threads'),
+    ioUring: T('IO_URING'),
+  },
+
   proxiesLabel: T('Proxies'),
 
   hostProtocolLabel: T('Host Protocol'),
@@ -86,5 +120,18 @@ export const instancesHelptext = {
  Leaving this field empty is allowed. \n \n When creating a Windows VM, make sure to set the this field to Windows.\
  Doing so will tell us to expect Windows to be running inside of the virtual machine\
  and to tweak behavior accordingly.'),
+  },
+
+  validators: {
+    blockDeviceName: T('Invalid block device name. Use format like: sda, vda, or nvme0n1'),
+    containerPathMustStartWithSlash: T('Container path must start with /'),
+    containerPathCannotEndWithSlash: T('Container path cannot end with /'),
+    containerPathCannotContainDoubleSlash: T('Container path cannot contain //'),
+    containerPathInvalidCharacters: T('Invalid characters in container path'),
+    targetMustNotContainBraces: T('Target must not contain braces'),
+    diskPathMustStartWithDevZvol: T('Disk path must start with "/dev/zvol/"'),
+    rawFilePathMustStartWithMnt: T('Raw file path must reside within a pool mount point (start with /mnt/)'),
+    poolPathMustStartWithMnt: T('Path must reside within a pool mount point (start with /mnt/)'),
+    sourceMustNotContainBraces: T('Source must not contain braces'),
   },
 };

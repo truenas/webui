@@ -7,13 +7,23 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, NEVER, Observable, switchMap, tap,
 } from 'rxjs';
-import { ContainerDeviceWithId } from 'app/interfaces/container.interface';
+import { ContainerDeviceType } from 'app/enums/container.enum';
+import {
+  ContainerDeviceWithId,
+  ContainerDiskDevice,
+  ContainerFilesystemDevice,
+  ContainerRawDevice,
+} from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  InstanceDiskFormComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
@@ -45,6 +55,7 @@ export class DeviceActionsMenuComponent {
   private devicesStore = inject(VirtualizationDevicesStore);
   private instancesStore = inject(VirtualizationInstancesStore);
   private loader = inject(LoaderService);
+  private slideIn = inject(SlideIn);
 
   readonly device = input.required<ContainerDeviceWithId>();
   readonly showEdit = input(true);
@@ -53,21 +64,53 @@ export class DeviceActionsMenuComponent {
 
   readonly edit = output();
 
+  protected readonly isStorageDevice = computed(() => {
+    const dtype = this.device().dtype;
+    return [
+      ContainerDeviceType.Disk,
+      ContainerDeviceType.Raw,
+      ContainerDeviceType.Filesystem,
+    ].includes(dtype);
+  });
+
   protected readonly canManage = computed(() => {
     return !this.manageRestrictedExplanation() && !this.isDisabled();
   });
 
   protected readonly manageRestrictedExplanation = computed(() => {
-    if (this.device().readonly) {
-      return this.translate.instant('This device is read-only and cannot be edited.');
-    }
-
     if (this.isDisabled() && this.disabledTooltip()) {
       return this.disabledTooltip();
     }
 
     return null;
   });
+
+  protected editPressed(): void {
+    const device = this.device();
+
+    // For storage devices, open the form
+    if (this.isStorageDevice()) {
+      const instance = this.instancesStore.selectedInstance();
+      if (!instance) {
+        return;
+      }
+
+      this.slideIn.open(InstanceDiskFormComponent, {
+        data: {
+          instance,
+          disk: device as ContainerDiskDevice | ContainerRawDevice | ContainerFilesystemDevice,
+        },
+      }).pipe(untilDestroyed(this)).subscribe((result) => {
+        if (result.response) {
+          this.devicesStore.loadDevices();
+        }
+      });
+      return;
+    }
+
+    // For other devices, emit the edit event
+    this.edit.emit();
+  }
 
   protected deletePressed(): void {
     this.dialog.confirm({
