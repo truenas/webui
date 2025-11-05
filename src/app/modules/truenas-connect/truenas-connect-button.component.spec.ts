@@ -2,11 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
-import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
 
@@ -27,6 +25,7 @@ describe('TruenasConnectButtonComponent', () => {
     providers: [
       mockProvider(TruenasConnectService, {
         config: signal(config),
+        openStatusModal: jest.fn(),
       }),
     ],
   });
@@ -37,19 +36,11 @@ describe('TruenasConnectButtonComponent', () => {
   });
 
   it('should popup the TNC service status', async () => {
-    const openSpy = jest.spyOn(spectator.inject(MatDialog), 'open');
+    const truenasConnectService = spectator.inject(TruenasConnectService);
     const statusBtn = await loader.getHarness(
       MatButtonHarness.with({ selector: '[ixTest="tnc-show-status"]' }),
     );
     await statusBtn.click();
-    expect(openSpy).toHaveBeenCalledWith(TruenasConnectStatusModalComponent, {
-      width: '400px',
-      hasBackdrop: true,
-      panelClass: 'topbar-panel',
-      position: {
-        top: '48px',
-        right: '16px',
-      },
-    });
+    expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
   });
 });
