@@ -5,13 +5,14 @@ import { format } from 'date-fns';
 import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { of, BehaviorSubject } from 'rxjs';
+import { of, map, BehaviorSubject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
+import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -108,6 +109,7 @@ const poolWithNeverRunScrub = makeFakePool('poolWithNeverRunScrub', 3, {
 describe('WidgetStorageComponent', () => {
   let spectator: Spectator<WidgetStorageComponent>;
   const pools$ = new BehaviorSubject<Pool[]>([]);
+  const scans$ = new BehaviorSubject<PoolScan>(null);
   const createComponent = createComponentFactory({
     component: WidgetStorageComponent,
     imports: [
@@ -134,6 +136,11 @@ describe('WidgetStorageComponent', () => {
             },
             isStale: false,
           }),
+          scans$,
+          // instead of *actually* doing any stale detection, just always say it's not stale.
+          scanUpdatesWithStaleDetection: () => scans$.pipe(
+            map((update) => { return { isStale: false, value: update }; }),
+          ),
         },
       ),
       mockProvider(FormatDateTimePipe, {
@@ -280,6 +287,45 @@ describe('WidgetStorageComponent', () => {
         label: 'Last Scrub',
         level: 'neutral',
         value: 'Never',
+      });
+    });
+  });
+
+  describe('Live Updates', () => {
+    beforeEach(() => {
+      pools$.next([poolWithOngoingScrub]);
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Full,
+        },
+      });
+    });
+
+    it('updates the percentage live', () => {
+      let poolsInfo = spectator.component.poolsInfo();
+      expect(poolsInfo[0].scan).toMatchObject({
+        icon: 'arrow_circle_right',
+        label: 'Last Scrub',
+        level: 'safe',
+        value: '65.19%',
+      });
+
+      scans$.next({
+        name: 'poolWithOngoingScrub',
+        scan: {
+          ...poolWithOngoingScrub.scan,
+          percentage: 0.71234,
+        },
+      });
+
+      spectator.detectChanges();
+      poolsInfo = spectator.component.poolsInfo();
+
+      expect(poolsInfo[0].scan).toMatchObject({
+        icon: 'arrow_circle_right',
+        label: 'Last Scrub',
+        level: 'safe',
+        value: '71.23%',
       });
     });
   });

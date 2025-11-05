@@ -15,7 +15,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { isTopologyDisk } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
@@ -61,6 +61,8 @@ export class WidgetStorageComponent {
   protected poolDataState = toSignal(
     this.resources.poolUpdatesWithStaleDetection().pipe(takeUntilDestroyed()),
   );
+
+  protected scanState = toSignal(this.resources.scanUpdatesWithStaleDetection().pipe(takeUntilDestroyed()));
 
   protected isStale = computed(() => this.poolDataState()?.isStale ?? false);
   protected isLoading = computed(() => (!this.pools() || !this.poolStats()) && !this.isStale());
@@ -259,15 +261,36 @@ export class WidgetStorageComponent {
     };
   }
 
+  /** helper function to format the scrub/resilver percentage displayed on the dashboard.
+   * in some cases, we get an API value that is already a percentage (i.e. not a fraction between 0 and 1)
+   * and in other cases we get a fraction between 0 and 1. the discrepancy here is due to us getting
+   * scan data from two different places: `pool.query` and `zfs.pool.scan`. the former gives us a percentage,
+   * while the latter gives us a fraction between 0 and 1.
+   */
+  private formatScanPercentage(scan: PoolScanUpdate): string {
+    let donePercentage = scan.percentage;
+    if (donePercentage >= 1) {
+      donePercentage /= 100;
+    }
+
+    return this.percentPipe.transform(donePercentage, '1.2-2') || '?';
+  }
+
   private getScanItemInfo(pool: Pool): ItemInfo {
     let level: StatusLevel;
     let icon: MarkedIcon;
     let value: string;
 
-    const isScrub = pool.scan?.function === PoolScanFunction.Scrub;
-    const isScanFinished = pool.scan?.state === PoolScanState.Finished;
-    const isScanInProgress = pool.scan?.state === PoolScanState.Scanning;
-    const endTime = pool?.scan?.end_time?.$date;
+    const scanUpdate = this.scanState();
+    let scan = pool.scan;
+    if (!scanUpdate.isStale && scanUpdate?.value?.name === pool.name) {
+      scan = scanUpdate.value.scan;
+    }
+
+    const isScrub = scan?.function === PoolScanFunction.Scrub;
+    const isScanFinished = scan?.state === PoolScanState.Finished;
+    const isScanInProgress = scan?.state === PoolScanState.Scanning;
+    const endTime = scan?.end_time?.$date;
 
     const label = isScrub
       ? this.translate.instant('Last Scrub')
@@ -277,7 +300,7 @@ export class WidgetStorageComponent {
       // case: scan is in progress.
       icon = statusIcons.arrowCircleRight;
       level = StatusLevel.Safe;
-      value = this.percentPipe.transform(pool.scan.percentage / 100, '1.2-2') || '?';
+      value = this.formatScanPercentage(scan);
     } else if (endTime && !isScanInProgress) {
       // case: scan is finished.
       icon = isScanFinished ? statusIcons.checkCircle : statusIcons.error;
