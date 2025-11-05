@@ -14,17 +14,9 @@ export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<
   isHaLicensed: boolean;
   selectedControllerType: ControllerType;
   service: AuditService = AuditService.Middleware;
-  isInitializing = true;
 
   constructor(api: ApiService) {
     super(api, 'audit.query');
-  }
-
-  override load(): void {
-    if (this.isInitializing) {
-      return;
-    }
-    super.load();
   }
 
   protected override countRows(): Observable<number> {

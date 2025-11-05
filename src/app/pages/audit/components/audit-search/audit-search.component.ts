@@ -10,7 +10,7 @@ import {
   combineLatest,
   distinctUntilChanged,
   filter,
-  map, Observable, of, shareReplay, take,
+  map, Observable, of, ReplaySubject, shareReplay, skip, switchMap, take, tap,
 } from 'rxjs';
 import {
   AuditEvent, auditEventLabels, AuditService, auditServiceLabels,
@@ -69,7 +69,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
   protected readonly serviceControl = new FormControl<AuditService>(AuditService.Middleware);
   protected readonly serviceOptions$ = of(mapToOptions(auditServiceLabels, this.translate));
 
-  private pendingInitialLoad = false;
+  private readonly viewInitialized$ = new ReplaySubject<void>(1);
 
   private userSuggestions$ = this.api.call('user.query').pipe(
     map((users) => this.mapUsersForSuggestions(users)),
@@ -95,6 +95,46 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     return [['OR', [['event', '~', term], ['username', '~', term]]]] as QueryFilters<AuditEntry>;
   });
 
+  /**
+   * Coordinates initialization flow:
+   * 1. Load URL params (pagination, sorting, search query, service)
+   * 2. Wait for view initialization (ensures child components are ready)
+   * 3. Perform initial search with loaded params
+   */
+  private readonly initialization$ = combineLatest([
+    this.activatedRoute.params.pipe(take(1)),
+    this.viewInitialized$,
+  ]).pipe(
+    tap(([params]) => {
+      const options = this.urlOptionsService.parseUrlOptions(params.options as string) as AuditUrlOptions;
+
+      this.dataProvider().setPagination({
+        pageSize: options.pagination?.pageSize || 50,
+        pageNumber: options.pagination?.pageNumber || 1,
+      }, true);
+
+      if (options.sorting) {
+        this.dataProvider().setSorting(options.sorting, true);
+      }
+
+      if (options.searchQuery) {
+        this.searchQuery.set(options.searchQuery as SearchQuery<AuditEntry>);
+      }
+
+      if (options.service) {
+        this.serviceControl.setValue(options.service);
+      }
+
+      this.dataProvider().service = this.serviceControl.value;
+    }),
+    switchMap(() => {
+      // Perform initial search with loaded query
+      this.onSearch(this.searchQuery());
+      return of(undefined);
+    }),
+    shareReplay({ refCount: false, bufferSize: 1 }),
+  );
+
   ngOnInit(): void {
     this.dataProvider().sortingOrPaginationUpdate
       .pipe(untilDestroyed(this))
@@ -108,26 +148,19 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
         this.setSearchProperties(auditEntries);
       });
 
-    // Subscribe to service changes and update data provider
-    // distinctUntilChanged ensures we only react to actual value changes, not duplicate emissions
-    this.serviceControl.value$
-      .pipe(
-        distinctUntilChanged(),
-        untilDestroyed(this),
-      )
-      .subscribe((service) => {
-        // Skip if still initializing - only react to user-initiated changes
-        if (this.dataProvider().isInitializing) {
-          return;
-        }
-        this.dataProvider().service = service;
-        this.updateUrlOptions();
-        this.dataProvider().load();
-      });
+    // Subscribe to service changes after initialization
+    // skip(1) prevents duplicate load - initial value was already handled during initialization
+    this.initialization$.pipe(
+      switchMap(() => this.serviceControl.value$.pipe(distinctUntilChanged(), skip(1))),
+      untilDestroyed(this),
+    ).subscribe((service) => {
+      this.dataProvider().service = service;
+      this.updateUrlOptions();
+      this.dataProvider().load();
+    });
 
-    // Load params from route and perform initial search
-    // This happens after all subscriptions are set up
-    this.loadParamsFromRoute();
+    // Trigger initialization
+    this.initialization$.pipe(untilDestroyed(this)).subscribe();
   }
 
   updateUrlOptions(): void {
@@ -235,42 +268,10 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     ]));
   }
 
-  private loadParamsFromRoute(): void {
-    this.activatedRoute.params.pipe(take(1), untilDestroyed(this)).subscribe((params) => {
-      const options = this.urlOptionsService.parseUrlOptions(params.options as string) as AuditUrlOptions;
-
-      this.dataProvider().setPagination({
-        pageSize: options.pagination?.pageSize || 50,
-        pageNumber: options.pagination?.pageNumber || 1,
-      }, true);
-
-      if (options.sorting) {
-        this.dataProvider().setSorting(options.sorting, true);
-      }
-
-      if (options.searchQuery) this.searchQuery.set(options.searchQuery as SearchQuery<AuditEntry>);
-
-      if (options.service) {
-        this.serviceControl.setValue(options.service);
-      }
-
-      // Set service on data provider
-      this.dataProvider().service = this.serviceControl.value;
-
-      // Mark that we need to perform initial load after view init
-      this.pendingInitialLoad = true;
-    });
-  }
-
   ngAfterViewInit(): void {
-    // Mark initialization complete after all child components (including ix-table-pager) initialize
-    this.dataProvider().isInitializing = false;
-
-    // Perform initial load if params were loaded from route
-    if (this.pendingInitialLoad) {
-      this.pendingInitialLoad = false;
-      this.onSearch(this.searchQuery());
-    }
+    // Signal that view and child components (including ix-table-pager) are initialized
+    this.viewInitialized$.next();
+    this.viewInitialized$.complete();
   }
 
   private mapUsersForSuggestions(users: User[] | AuditEntry[]): Option[] {
