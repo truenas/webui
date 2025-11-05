@@ -35,15 +35,57 @@
       </div>
     </div>
     @if (dataProvider().totalRows) {
-      <ix-export-button
-        jobMethod="audit.export"
-        downloadMethod="audit.download_report"
-        [addReportNameArgument]="true"
-        [searchQuery]="searchQuery()"
-        [sorting]="dataProvider().sorting"
-        [defaultFilters]="basicQueryFilters()"
-        [controllerType]="dataProvider().selectedControllerType"
-      ></ix-export-button>
+      <div class="export-container">
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="formatMenu"
+          ixTest="export-format-selector"
+          [attr.aria-label]="'Select Export Format' | translate"
+        >
+          <ix-icon name="mdi-menu-down"></ix-icon>
+        </button>
+        <mat-menu #formatMenu="matMenu">
+          <button
+            mat-menu-item
+            ixTest="format-csv"
+            (click)="onFormatChange(ExportFormat.Csv)"
+            [class.selected]="exportFormat() === ExportFormat.Csv"
+          >
+            CSV
+          </button>
+          <button
+            mat-menu-item
+            ixTest="format-json"
+            (click)="onFormatChange(ExportFormat.Json)"
+            [class.selected]="exportFormat() === ExportFormat.Json"
+          >
+            JSON
+          </button>
+          <button
+            mat-menu-item
+            ixTest="format-yaml"
+            (click)="onFormatChange(ExportFormat.Yaml)"
+            [class.selected]="exportFormat() === ExportFormat.Yaml"
+          >
+            YAML
+          </button>
+        </mat-menu>
+        <ix-export-button
+          jobMethod="audit.export"
+          downloadMethod="audit.download_report"
+          [addReportNameArgument]="true"
+          [searchQuery]="searchQuery()"
+          [sorting]="dataProvider().sorting"
+          [defaultFilters]="basicQueryFilters()"
+          [controllerType]="dataProvider().selectedControllerType"
+          [filename]="exportFilename()"
+          [fileType]="exportFileType()"
+          [fileMimeType]="exportMimeType"
+          [exportFormat]="exportFormat()"
+          [displayFormat]="exportFormatDisplayLabel()"
+          [ariaLabel]="'Export audit logs as {format}' | translate:{ format: exportFormatDisplayLabel() }"
+        ></ix-export-button>
+      </div>
     }
   </div>
 </div>
