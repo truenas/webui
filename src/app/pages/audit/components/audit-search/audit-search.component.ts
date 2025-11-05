@@ -16,7 +16,6 @@ import {
   AuditEvent, auditEventLabels, AuditService, auditServiceLabels,
 } from 'app/enums/audit.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -148,21 +147,9 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     this.searchQuery.set(query);
 
     if (query?.isBasicQuery) {
-      const searchTerm = query.query?.trim() || '';
-
-      if (searchTerm) {
-        const term = `(?i)${searchTerm}`;
-        const params = new ParamsBuilder<AuditEntry>()
-          .filter('event', '~', term)
-          .orFilter('username', '~', term)
-          .getParams();
-
-        // TODO: Incorrect cast, because of incorrect typing inside of DataProvider
-        this.dataProvider().setParams(params as unknown as [AuditQueryParams]);
-      } else {
-        // No search term, send empty filters
-        this.dataProvider().setParams([] as unknown as [AuditQueryParams]);
-      }
+      // Use the computed basicQueryFilters instead of duplicating the logic
+      // TODO: Incorrect cast, because of incorrect typing inside of DataProvider
+      this.dataProvider().setParams([this.basicQueryFilters()] as unknown as [AuditQueryParams]);
     }
 
     if (query && !query.isBasicQuery) {
