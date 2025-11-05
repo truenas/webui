@@ -180,7 +180,9 @@ export class DeviceFormComponent implements OnInit {
     path: ['', [Validators.required, this.fileValidator.fileIsSelectedInExplorer(this.rawFileExplorer)]],
     sectorsize: [0],
     type: [null as VmDiskMode | null],
-    size: [null as number | null],
+    // formatter causes size to become a string sometimes, but we do convert it to a number
+    // before submitting.
+    size: [null as number | string | null],
     exists: [false as boolean | null],
   });
 
@@ -586,7 +588,7 @@ export class DeviceFormComponent implements OnInit {
     // in order to enforce the `number | null` type for the size property, we transform
     // empty strings into null.
     if ('size' in values) {
-      const size = values.size as number | string | null;
+      const size = values.size;
       if (typeof size === 'string' && size.trim() === '') {
         // case: size is an empty string (excluding whitespace)
         values.size = null;
