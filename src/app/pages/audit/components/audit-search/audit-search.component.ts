@@ -70,6 +70,8 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
   protected readonly serviceControl = new FormControl<AuditService>(AuditService.Middleware);
   protected readonly serviceOptions$ = of(mapToOptions(auditServiceLabels, this.translate));
 
+  private pendingInitialLoad = false;
+
   private userSuggestions$ = this.api.call('user.query').pipe(
     map((users) => this.mapUsersForSuggestions(users)),
     take(1),
@@ -265,17 +267,23 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
         this.serviceControl.setValue(options.service);
       }
 
-      // Set service on data provider and perform initial search
+      // Set service on data provider
       this.dataProvider().service = this.serviceControl.value;
-      this.dataProvider().isInitializing = false; // Temporarily allow initial search
-      this.onSearch(this.searchQuery());
-      this.dataProvider().isInitializing = true; // Re-block until after view init
+
+      // Mark that we need to perform initial load after view init
+      this.pendingInitialLoad = true;
     });
   }
 
   ngAfterViewInit(): void {
     // Mark initialization complete after all child components (including ix-table-pager) initialize
     this.dataProvider().isInitializing = false;
+
+    // Perform initial load if params were loaded from route
+    if (this.pendingInitialLoad) {
+      this.pendingInitialLoad = false;
+      this.onSearch(this.searchQuery());
+    }
   }
 
   private mapUsersForSuggestions(users: User[] | AuditEntry[]): Option[] {
