@@ -1,10 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { AuditService } from 'app/enums/audit.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
@@ -24,6 +27,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { AuditComponent } from 'app/pages/audit/audit.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
 import { auditEntries } from 'app/pages/audit/testing/mock-audit-api-data-provider';
+import { UrlOptionsService } from 'app/services/url-options.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -54,6 +58,13 @@ describe('AuditComponent', () => {
     providers: [
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
+      }),
+      mockProvider(ActivatedRoute, {
+        params: of({ options: '' }),
+      }),
+      mockProvider(UrlOptionsService, {
+        parseUrlOptions: () => ({}),
+        setUrlOptions: jest.fn(),
       }),
       mockApi([
         mockCall('audit.query', (params) => {
@@ -244,6 +255,28 @@ describe('AuditComponent', () => {
           services: ['SMB'],
           remote_controller: false,
         }],
+      );
+    });
+
+    it('persists service selection in URL when changed', async () => {
+      const urlOptionsService = spectator.inject(UrlOptionsService);
+      const setUrlOptionsSpy = jest.spyOn(urlOptionsService, 'setUrlOptions');
+
+      // Clear previous calls
+      jest.clearAllMocks();
+
+      // Change service selection
+      const serviceSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Service' }));
+      await serviceSelect.setValue('SMB');
+
+      spectator.detectChanges();
+
+      // Verify setUrlOptions was called with the service in the options
+      expect(setUrlOptionsSpy).toHaveBeenCalledWith(
+        '/system/audit',
+        expect.objectContaining({
+          service: AuditService.Smb,
+        }),
       );
     });
 
