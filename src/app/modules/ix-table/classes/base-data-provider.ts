@@ -58,6 +58,12 @@ export class BaseDataProvider<T> implements DataProvider<T> {
     this.updateCurrentPage(this.allRows);
   }
 
+  /**
+   * Sets the sorting configuration for the data provider.
+   * @param sorting - The sorting configuration to apply
+   * @param skipLoad - When true, prevents triggering a data reload. Useful during component
+   *                   initialization to set multiple parameters before the first load.
+   */
   setSorting(sorting: TableSort<T>, skipLoad = false): void {
     this.sorting = sorting;
     if (!skipLoad) {
@@ -72,6 +78,12 @@ export class BaseDataProvider<T> implements DataProvider<T> {
     this.setRows(filteredRows);
   }
 
+  /**
+   * Sets the pagination configuration for the data provider.
+   * @param pagination - The pagination configuration to apply
+   * @param skipLoad - When true, prevents triggering a data reload. Useful during component
+   *                   initialization to set multiple parameters before the first load.
+   */
   setPagination(pagination: TablePagination, skipLoad = false): void {
     this.pagination = pagination;
     if (!skipLoad) {
