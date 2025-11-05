@@ -58,6 +58,7 @@
 }
 
 // Extracted to reduce nesting depth
+// Note: !important is required here to override Material's highly specific default styles
 .actions-bar .search-container .service-select {
   ::ng-deep {
     .label {
