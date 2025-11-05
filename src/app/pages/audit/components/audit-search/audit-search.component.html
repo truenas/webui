@@ -6,6 +6,14 @@
 
   <div class="actions-bar">
     <div class="search-container">
+      <ix-select
+        class="service-select"
+        ixTest="audit-service"
+        [formControl]="serviceControl"
+        [label]="'Service' | translate"
+        [options]="serviceOptions$"
+        [required]="true"
+      ></ix-select>
       <ix-search-input
         #searchInput
         class="search-input"

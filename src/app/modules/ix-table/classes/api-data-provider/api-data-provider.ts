@@ -62,20 +62,24 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
     );
   }
 
-  override setSorting(sorting: TableSort<ApiCallResponseType<T>>): void {
+  override setSorting(sorting: TableSort<ApiCallResponseType<T>>, skipLoad = false): void {
     this.sorting = sorting;
-    this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
-      this.sortingStrategy.handleCurrentPage(this.load.bind(this));
-    });
+    if (!skipLoad) {
+      this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
+        this.sortingStrategy.handleCurrentPage(this.load.bind(this));
+      });
+    }
     this.sortingOrPaginationUpdate.emit();
   }
 
-  override setPagination(pagination: TablePagination): void {
+  override setPagination(pagination: TablePagination, skipLoad = false): void {
     this.pagination = pagination;
 
-    this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
-      this.paginationStrategy.handleCurrentPage(this.load.bind(this));
-    });
+    if (!skipLoad) {
+      this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
+        this.paginationStrategy.handleCurrentPage(this.load.bind(this));
+      });
+    }
     this.sortingOrPaginationUpdate.emit();
   }
 

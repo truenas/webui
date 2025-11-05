@@ -58,9 +58,11 @@ export class BaseDataProvider<T> implements DataProvider<T> {
     this.updateCurrentPage(this.allRows);
   }
 
-  setSorting(sorting: TableSort<T>): void {
+  setSorting(sorting: TableSort<T>, skipLoad = false): void {
     this.sorting = sorting;
-    this.updateCurrentPage(this.allRows);
+    if (!skipLoad) {
+      this.updateCurrentPage(this.allRows);
+    }
     this.sortingOrPaginationUpdate.emit();
   }
 
@@ -70,9 +72,11 @@ export class BaseDataProvider<T> implements DataProvider<T> {
     this.setRows(filteredRows);
   }
 
-  setPagination(pagination: TablePagination): void {
+  setPagination(pagination: TablePagination, skipLoad = false): void {
     this.pagination = pagination;
-    this.updateCurrentPage(this.allRows);
+    if (!skipLoad) {
+      this.updateCurrentPage(this.allRows);
+    }
     this.sortingOrPaginationUpdate.emit();
   }
 

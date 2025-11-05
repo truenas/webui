@@ -10,6 +10,8 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
 import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { IxButtonGroupHarness } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.harness';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
@@ -45,8 +47,10 @@ describe('AuditComponent', () => {
         FakeProgressBarComponent,
         PageHeaderComponent,
         MockMasterDetailViewComponent,
+        IxSelectComponent,
       ),
     ],
+    componentMocks: [SearchInputComponent],
     providers: [
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
@@ -98,6 +102,23 @@ describe('AuditComponent', () => {
     expect(spectator.query(FakeProgressBarComponent)).toExist();
   });
 
+  it('makes only 2 API calls during initialization (count + data)', () => {
+    // Count all audit.query calls made during component initialization
+    const auditQueryCalls = (api.call as jest.Mock).mock.calls.filter(
+      (call) => call[0] === 'audit.query',
+    );
+
+    // Should have exactly 2 calls (1 for count, 1 for data) - not duplicated
+    expect(auditQueryCalls).toHaveLength(2);
+
+    // Verify the calls
+    const countCall = auditQueryCalls.find((call) => call[1][0]['query-options']?.count);
+    const dataCall = auditQueryCalls.find((call) => !call[1][0]['query-options']?.count);
+
+    expect(countCall).toBeDefined();
+    expect(dataCall).toBeDefined();
+  });
+
   it('prevents duplicate API calls when controller type changes', async () => {
     // Clear previous calls
     jest.clearAllMocks();
@@ -120,7 +141,27 @@ describe('AuditComponent', () => {
   });
 
   describe('search', () => {
-    it('searches by event, username and service when basic search is used', () => {
+    it('sends empty filters when basic search has no query', () => {
+      const search = spectator.query(SearchInputComponent)!;
+      search.query.set({
+        isBasicQuery: true,
+        query: '',
+      });
+
+      search.runSearch.emit();
+
+      expect(api.call).toHaveBeenLastCalledWith(
+        'audit.query',
+        [{
+          'query-filters': [],
+          'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
+          services: ['MIDDLEWARE'],
+          remote_controller: false,
+        }],
+      );
+    });
+
+    it('searches by event and username when basic search is used', () => {
       const search = spectator.query(SearchInputComponent)!;
       search.query.set({
         isBasicQuery: true,
@@ -132,8 +173,9 @@ describe('AuditComponent', () => {
       expect(api.call).toHaveBeenLastCalledWith(
         'audit.query',
         [{
-          'query-filters': [['OR', [['event', '~', '(?i)search'], ['username', '~', '(?i)search'], ['service', '~', '(?i)search']]]],
+          'query-filters': [['OR', [['event', '~', '(?i)search'], ['username', '~', '(?i)search']]]],
           'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
+          services: ['MIDDLEWARE'],
           remote_controller: false,
         }],
       );
@@ -148,8 +190,9 @@ describe('AuditComponent', () => {
       expect(api.call).toHaveBeenLastCalledWith(
         'audit.query',
         [{
-          'query-filters': [['OR', [['event', '~', '(?i)'], ['username', '~', '(?i)'], ['service', '~', '(?i)']]]],
+          'query-filters': [],
           'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
+          services: ['MIDDLEWARE'],
           remote_controller: true,
         }],
       );
@@ -171,6 +214,54 @@ describe('AuditComponent', () => {
         [{
           'query-filters': [['event', '=', 'Authentication'], ['username', '~', 'bob']],
           'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
+          services: ['MIDDLEWARE'],
+          remote_controller: false,
+        }],
+      );
+    });
+
+    it('filters by selected service', async () => {
+      jest.clearAllMocks();
+
+      const serviceSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Service' }));
+      await serviceSelect.setValue('SMB');
+
+      spectator.detectChanges();
+
+      // Count audit.query calls after service change
+      const auditQueryCalls = (api.call as jest.Mock).mock.calls.filter(
+        (call) => call[0] === 'audit.query',
+      );
+
+      // Should have exactly 2 calls (1 for count, 1 for data) - not duplicated
+      expect(auditQueryCalls).toHaveLength(2);
+
+      expect(api.call).toHaveBeenLastCalledWith(
+        'audit.query',
+        [{
+          'query-filters': [],
+          'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
+          services: ['SMB'],
+          remote_controller: false,
+        }],
+      );
+    });
+
+    it('includes both event and username in filters for basic search', () => {
+      const search = spectator.query(SearchInputComponent)!;
+      search.query.set({
+        isBasicQuery: true,
+        query: 'test-query',
+      });
+
+      search.runSearch.emit();
+
+      expect(api.call).toHaveBeenLastCalledWith(
+        'audit.query',
+        [{
+          'query-filters': [['OR', [['event', '~', '(?i)test-query'], ['username', '~', '(?i)test-query']]]],
+          'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
+          services: ['MIDDLEWARE'],
           remote_controller: false,
         }],
       );
