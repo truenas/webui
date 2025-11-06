@@ -115,7 +115,7 @@ export function transformSpecialSmallBlockSizeForPayload(
   customValue: number | null,
 ): number | typeof inherit | undefined {
   if (uiValue === 'ON') {
-    // Use custom value if set, otherwise default to 128 KiB
+    // Use custom value if set, otherwise default to 16 MiB
     // This preserves existing custom values even when the customize section is collapsed
     return customValue ?? specialVdevDefaultThreshold;
   }
