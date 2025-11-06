@@ -90,11 +90,11 @@ export class ExportDiskDialogComponent {
     const normalizedPath = path.replace(/\/+$/, '');
 
     // Reject /mnt itself or pool root pattern: /mnt/poolname (no subdirectories)
-    const poolRootPattern = /^\/mnt(\/[^/]+)?$/;
-    if (poolRootPattern.test(normalizedPath)) {
+    const poolRootPattern = /^\/mnt\/[^/]+$/;
+    if (normalizedPath === '/mnt' || poolRootPattern.test(normalizedPath)) {
       return {
         poolRoot: {
-          message: this.translate.instant(this.helptext.export_disk_pool_root_error as string),
+          message: this.translate.instant(this.helptext.export_disk_pool_root_error),
         },
       };
     }
