@@ -68,7 +68,7 @@ export class AppRowComponent {
   });
 
   readonly isExternalApp = computed(() => {
-    return this.app().source === 'external';
+    return this.app()?.source === 'external';
   });
 
   readonly incomingTrafficBits = computed(() => {
