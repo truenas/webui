@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
-import { Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, inject, signal, computed } from '@angular/core';
-import { toSignal, toObservable } from '@angular/core/rxjs-interop';
+import { Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, DestroyRef, inject, signal, computed } from '@angular/core';
+import { toSignal, toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
@@ -10,7 +10,6 @@ import { MatTooltip } from '@angular/material/tooltip';
 import {
   ActivatedRoute, Router,
 } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -62,7 +61,6 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-installed-apps-list',
   templateUrl: './installed-apps-list.component.html',
@@ -106,6 +104,7 @@ export class InstalledAppsListComponent implements OnInit {
   private appsStats = inject(AppsStatsService);
   private loader = inject(LoaderService);
   private layoutService = inject(LayoutService);
+  private destroyRef = inject(DestroyRef);
 
   readonly appId = toSignal<string | undefined>(this.activatedRoute.params.pipe(map((params) => params['appId'])));
   readonly toggleShowMobileDetails = output<boolean>();
@@ -295,7 +294,7 @@ export class InstalledAppsListComponent implements OnInit {
         }
         return !!apps.length;
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ([,, apps]) => {
         this.setDatasourceWithSort(this.sortingInfo, apps);
@@ -309,7 +308,7 @@ export class InstalledAppsListComponent implements OnInit {
     this.appService.startApplication(name)
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
         this.appJobs.set(name, job);
@@ -322,7 +321,7 @@ export class InstalledAppsListComponent implements OnInit {
     this.appService.stopApplication(name)
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (job: Job<void, AppStartQueryParams>) => {
@@ -337,7 +336,7 @@ export class InstalledAppsListComponent implements OnInit {
     this.appService.restartApplication(name)
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
         this.appJobs.set(name, job);
@@ -354,7 +353,7 @@ export class InstalledAppsListComponent implements OnInit {
     const job$ = this.store$.select(selectJob(jobId)).pipe(filter((job) => !!job));
     this.dialogService.jobDialog(job$, { title: ignoreTranslation(name), canMinimize: true })
       .afterClosed()
-      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
+      .pipe(this.errorHandler.withErrorHandler(), takeUntilDestroyed(this.destroyRef))
       .subscribe();
   }
 
@@ -376,7 +375,7 @@ export class InstalledAppsListComponent implements OnInit {
     ));
     this.matDialog.open(AppBulkUpdateComponent, { data: apps })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.toggleAppsChecked(false);
       });
@@ -401,7 +400,7 @@ export class InstalledAppsListComponent implements OnInit {
         filter(Boolean),
         switchMap((options) => this.executeBulkDeletion(options)),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((job: Job<CoreBulkResponse[]>) => this.handleDeletionResult(job));
   }
@@ -510,7 +509,7 @@ export class InstalledAppsListComponent implements OnInit {
   private listenForStatusUpdates(): void {
     this.appService
       .getInstalledAppsStatusUpdates()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((event) => {
         const [name] = event.fields.arguments;
         this.appJobs.set(name, event.fields);
