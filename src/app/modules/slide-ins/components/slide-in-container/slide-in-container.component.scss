@@ -1,3 +1,5 @@
+@import 'scss-imports/variables';
+
 :host {
   background-color: var(--bg2);
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3); // default cdk-overlay backdrop background
@@ -7,9 +9,16 @@
   padding-top: 75px;
   position: fixed;
   right: 0;
-  transform: translateX(100%); // Start hidden by default
+  transform: translateX(100%);
   transition: transform 150ms ease-out;
   width: 480px;
+
+  @media (max-width: $breakpoint-sm) {
+    height: 100vh;
+    padding-top: 0;
+    top: 0;
+    width: 100%;
+  }
 
   &.slide-in-hidden {
     transform: translateX(100%);
@@ -35,8 +44,15 @@ body:has(ix-websocket-debug-panel .websocket-debug-panel.open) {
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
-  padding: 0 20px;
+  padding: 0 20px 40px;
   width: 100%;
+
+  @media (max-width: $breakpoint-sm) {
+    height: calc(100vh - 75px);
+    margin-top: 75px;
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+  }
 
   > * {
     box-sizing: border-box;
