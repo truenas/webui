@@ -51,7 +51,6 @@ body:has(ix-websocket-debug-panel .websocket-debug-panel.open) {
     height: calc(100vh - 75px);
     margin-top: 75px;
     -webkit-overflow-scrolling: touch;
-    overflow-y: auto;
   }
 
   > * {
