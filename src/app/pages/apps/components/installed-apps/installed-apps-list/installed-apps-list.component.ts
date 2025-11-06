@@ -522,9 +522,26 @@ export class InstalledAppsListComponent implements OnInit {
     return this.appsStats.getStatsForApp(name);
   }
 
+  private safeAdd(a: number, b: number | null | undefined): number {
+    const numA = typeof a === 'number' && !Number.isNaN(a) ? a : 0;
+    const numB = typeof b === 'number' && !Number.isNaN(b) ? b : 0;
+    return numA + numB;
+  }
+
+  private safeNetworkSum(networks: Array<{ rx_bytes?: number; tx_bytes?: number }> | null | undefined, field: 'rx_bytes' | 'tx_bytes'): number {
+    if (!Array.isArray(networks) || networks.length === 0) {
+      return 0;
+    }
+    return networks.reduce((sum, net) => {
+      const value = net?.[field];
+      return this.safeAdd(sum, value);
+    }, 0);
+  }
+
   readonly totalUtilization$ = this.installedAppsStore.installedApps$.pipe(
     switchMap((apps) => {
-      if (!apps.length) {
+      // Check if apps array is empty or contains only null/undefined values
+      if (!apps?.length || !apps.some((app) => !!app)) {
         return of({
           cpu: 0,
           memory: 0,
@@ -540,15 +557,18 @@ export class InstalledAppsListComponent implements OnInit {
       ).pipe(
         map((statsArray) => {
           return statsArray.reduce((totals, stats) => {
-            if (!stats) return totals;
+            // Return early if stats is null/undefined or doesn't have expected shape
+            if (!stats || typeof stats !== 'object') {
+              return totals;
+            }
 
             return {
-              cpu: totals.cpu + (stats?.cpu_usage || 0),
-              memory: totals.memory + (stats?.memory || 0),
-              blkioRead: totals.blkioRead + (stats?.blkio?.read || 0),
-              blkioWrite: totals.blkioWrite + (stats?.blkio?.write || 0),
-              networkRx: totals.networkRx + (stats?.networks?.reduce((sum, net) => sum + (net?.rx_bytes || 0), 0) || 0),
-              networkTx: totals.networkTx + (stats?.networks?.reduce((sum, net) => sum + (net?.tx_bytes || 0), 0) || 0),
+              cpu: this.safeAdd(totals.cpu, stats.cpu_usage),
+              memory: this.safeAdd(totals.memory, stats.memory),
+              blkioRead: this.safeAdd(totals.blkioRead, stats.blkio?.read),
+              blkioWrite: this.safeAdd(totals.blkioWrite, stats.blkio?.write),
+              networkRx: this.safeAdd(totals.networkRx, this.safeNetworkSum(stats.networks, 'rx_bytes')),
+              networkTx: this.safeAdd(totals.networkTx, this.safeNetworkSum(stats.networks, 'tx_bytes')),
             };
           }, {
             cpu: 0,
