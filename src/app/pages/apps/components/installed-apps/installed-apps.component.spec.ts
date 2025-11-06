@@ -38,6 +38,7 @@ describe('InstalledAppsComponent', () => {
       train: 'test-catalog-train',
     },
     state: AppState.Running,
+    source: 'truenas',
   } as App;
 
   const createComponent = createRoutingFactory({
@@ -100,7 +101,14 @@ describe('InstalledAppsComponent', () => {
       }),
       mockApi([]),
       mockAuth(),
-      mockProvider(AppsStatsService),
+      mockProvider(AppsStatsService, {
+        getStatsForApp: jest.fn(() => of({
+          cpu_usage: 0,
+          memory: 0,
+          blkio: { read: 0, write: 0 },
+          networks: [],
+        })),
+      }),
     ],
     params: { appId: 'ix-test-app' },
   });
