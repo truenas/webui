@@ -9,7 +9,8 @@ export const maxDatasetNesting = 50;
  * - Blocks larger than this value will use regular vdevs
  * - Default recommended value is 16 MiB when enabled
  * - Setting to 0 disables special vdev usage
+ * - Valid range: any positive integer (1 byte to 16 MiB)
  */
 export const specialVdevDefaultThreshold = 16 * 1024 * 1024; // 16 MiB
-export const specialVdevMinThreshold = 512; // 512 bytes (minimum sector size)
+export const specialVdevMinThreshold = 1; // Minimum: 1 byte
 export const specialVdevMaxThreshold = specialVdevDefaultThreshold; // 16 MiB
