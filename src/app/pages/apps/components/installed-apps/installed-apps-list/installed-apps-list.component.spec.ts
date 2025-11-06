@@ -47,6 +47,7 @@ describe('InstalledAppsListComponent', () => {
       },
       state: AppState.Running,
       upgrade_available: true,
+      source: 'truenas',
     },
     {
 
@@ -58,6 +59,7 @@ describe('InstalledAppsListComponent', () => {
       },
       state: AppState.Stopped,
       upgrade_available: true,
+      source: 'truenas',
     },
   ] as App[];
 
@@ -119,7 +121,14 @@ describe('InstalledAppsListComponent', () => {
         mockJob('core.bulk'),
       ]),
       mockAuth(),
-      mockProvider(AppsStatsService),
+      mockProvider(AppsStatsService, {
+        getStatsForApp: jest.fn(() => of({
+          cpu_usage: 0,
+          memory: 0,
+          blkio: { read: 0, write: 0 },
+          networks: [],
+        })),
+      }),
     ],
     params: { appId: 'webdav', train: 'community' },
   });
