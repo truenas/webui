@@ -14,7 +14,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, forkJoin, map, Observable, switchMap,
+  combineLatest, filter, forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
 import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
 import { AppState } from 'app/enums/app-state.enum';
@@ -143,7 +143,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   get filteredTruenasApps(): App[] {
-    return this.filteredApps.filter((app) => app.source === 'truenas');
+    return this.filteredApps.filter((app) => (app.source ?? 'truenas') === 'truenas');
   }
 
   get filteredExternalApps(): App[] {
@@ -174,14 +174,14 @@ export class InstalledAppsListComponent implements OnInit {
   get checkedApps(): App[] {
     return this.checkedAppsNames
       .map((id) => this.dataSource.find((app) => app.id === id))
-      .filter((app): app is App => !!app && app.source !== 'external');
+      .filter((app): app is App => !!app && (app.source ?? 'truenas') !== 'external');
   }
 
   get activeCheckedApps(): App[] {
     return this.dataSource.filter(
       (app) => [AppState.Running, AppState.Deploying].includes(app.state)
         && this.selection.isSelected(app.id)
-        && app.source !== 'external',
+        && (app.source ?? 'truenas') !== 'external',
     );
   }
 
@@ -189,7 +189,7 @@ export class InstalledAppsListComponent implements OnInit {
     return this.dataSource.filter(
       (app) => [AppState.Stopped, AppState.Crashed].includes(app.state)
         && this.selection.isSelected(app.id)
-        && app.source !== 'external',
+        && (app.source ?? 'truenas') !== 'external',
     );
   }
 
@@ -524,15 +524,13 @@ export class InstalledAppsListComponent implements OnInit {
     networkTx: number;
   }> {
     if (!this.dataSource.length) {
-      return new Observable((subscriber) => {
-        subscriber.next({
-          cpu: 0,
-          memory: 0,
-          blkioRead: 0,
-          blkioWrite: 0,
-          networkRx: 0,
-          networkTx: 0,
-        });
+      return of({
+        cpu: 0,
+        memory: 0,
+        blkioRead: 0,
+        blkioWrite: 0,
+        networkRx: 0,
+        networkTx: 0,
       });
     }
 
