@@ -544,12 +544,12 @@ export class InstalledAppsListComponent implements OnInit {
             if (!stats) return totals;
 
             return {
-              cpu: totals.cpu + (stats.cpu_usage || 0),
-              memory: totals.memory + (stats.memory || 0),
-              blkioRead: totals.blkioRead + (stats.blkio?.read || 0),
-              blkioWrite: totals.blkioWrite + (stats.blkio?.write || 0),
-              networkRx: totals.networkRx + (stats.networks?.reduce((sum, net) => sum + (net.rx_bytes || 0), 0) || 0),
-              networkTx: totals.networkTx + (stats.networks?.reduce((sum, net) => sum + (net.tx_bytes || 0), 0) || 0),
+              cpu: totals.cpu + (stats?.cpu_usage || 0),
+              memory: totals.memory + (stats?.memory || 0),
+              blkioRead: totals.blkioRead + (stats?.blkio?.read || 0),
+              blkioWrite: totals.blkioWrite + (stats?.blkio?.write || 0),
+              networkRx: totals.networkRx + (stats?.networks?.reduce((sum, net) => sum + (net?.rx_bytes || 0), 0) || 0),
+              networkTx: totals.networkTx + (stats?.networks?.reduce((sum, net) => sum + (net?.tx_bytes || 0), 0) || 0),
             };
           }, {
             cpu: 0,
