@@ -50,7 +50,6 @@ describe('InstalledAppsListComponent', () => {
       source: 'truenas',
     },
     {
-
       id: 'ix-test-app-2',
       name: 'test-app-2',
       metadata: {
@@ -60,6 +59,17 @@ describe('InstalledAppsListComponent', () => {
       state: AppState.Stopped,
       upgrade_available: true,
       source: 'truenas',
+    },
+    {
+      id: 'external-nginx',
+      name: 'external-nginx',
+      metadata: {
+        name: 'nginx',
+        train: 'external',
+      },
+      state: AppState.Running,
+      upgrade_available: false,
+      source: 'external',
     },
   ] as App[];
 
@@ -142,9 +152,10 @@ describe('InstalledAppsListComponent', () => {
   it('shows a list of apps', () => {
     const appRows = spectator.queryAll(AppRowComponent);
 
-    expect(appRows).toHaveLength(2);
+    expect(appRows).toHaveLength(3);
     expect(appRows[0].app()).toEqual(apps[0]);
     expect(appRows[1].app()).toEqual(apps[1]);
+    expect(appRows[2].app()).toEqual(apps[2]);
   });
 
   it('shows an empty list when there are no search results', () => {
@@ -199,11 +210,14 @@ describe('InstalledAppsListComponent', () => {
   });
 
   it('updates several applications', async () => {
+    spectator.component.dataSource = apps;
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpdate.emit();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, { data: apps });
+    // Should only include selected TrueNAS apps (external apps are excluded from selection)
+    const truenasApps = apps.filter((app) => app.source === 'truenas');
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, { data: truenasApps });
   });
 
   it('removes several applications', async () => {
@@ -263,5 +277,68 @@ describe('InstalledAppsListComponent', () => {
 
     expect(component.dataSource).toHaveLength(1);
     expect(component.dataSource[0].name).toBe('new-app');
+  });
+
+  describe('external apps', () => {
+    it('filters TrueNAS apps and external apps into separate lists', () => {
+      const component = spectator.component;
+      component.dataSource = apps;
+
+      const truenasApps = component.filteredTruenasApps;
+      const externalApps = component.filteredExternalApps;
+
+      expect(truenasApps).toHaveLength(2);
+      expect(truenasApps[0].source).toBe('truenas');
+      expect(truenasApps[1].source).toBe('truenas');
+
+      expect(externalApps).toHaveLength(1);
+      expect(externalApps[0].source).toBe('external');
+      expect(externalApps[0].name).toBe('external-nginx');
+    });
+
+    it('excludes external apps from bulk selection', () => {
+      const component = spectator.component;
+      component.dataSource = apps;
+
+      // Select all apps
+      component.selection.select('ix-test-app-1', 'ix-test-app-2', 'external-nginx');
+
+      const checkedApps = component.checkedApps;
+
+      // Only TrueNAS apps should be in checkedApps
+      expect(checkedApps).toHaveLength(2);
+      expect(checkedApps.every((app) => app.source === 'truenas')).toBe(true);
+      expect(checkedApps.some((app) => app.name === 'external-nginx')).toBe(false);
+    });
+
+    it('excludes external apps from active checked apps', () => {
+      const component = spectator.component;
+      component.dataSource = apps;
+
+      // Select all running apps (including external)
+      component.selection.select('ix-test-app-1', 'external-nginx');
+
+      const activeCheckedApps = component.activeCheckedApps;
+
+      // Only TrueNAS running apps should be included
+      expect(activeCheckedApps).toHaveLength(1);
+      expect(activeCheckedApps[0].name).toBe('test-app-1');
+      expect(activeCheckedApps[0].source).toBe('truenas');
+    });
+
+    it('excludes external apps from stopped checked apps', () => {
+      const component = spectator.component;
+      component.dataSource = apps;
+
+      // Select stopped app
+      component.selection.select('ix-test-app-2');
+
+      const stoppedCheckedApps = component.stoppedCheckedApps;
+
+      // Only TrueNAS stopped apps should be included
+      expect(stoppedCheckedApps).toHaveLength(1);
+      expect(stoppedCheckedApps[0].name).toBe('test-app-2');
+      expect(stoppedCheckedApps[0].source).toBe('truenas');
+    });
   });
 });
