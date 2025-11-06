@@ -128,7 +128,13 @@
 
       @if (filteredTruenasApps.length) {
         <div class="apps-section">
-          <h3 class="section-header" (click)="truenasAppsExpanded.set(!truenasAppsExpanded())">
+          <h3
+            class="section-header"
+            tabindex="0"
+            (click)="truenasAppsExpanded.set(!truenasAppsExpanded())"
+            (keydown.enter)="truenasAppsExpanded.set(!truenasAppsExpanded())"
+            (keydown.space)="truenasAppsExpanded.set(!truenasAppsExpanded()); $event.preventDefault()"
+          >
             <ix-icon [name]="truenasAppsExpanded() ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
             {{ 'TrueNAS Apps' | translate }}
             <span class="app-count">({{ filteredTruenasApps.length }})</span>
@@ -159,7 +165,13 @@
 
       @if (filteredExternalApps.length) {
         <div class="apps-section">
-          <h3 class="section-header" (click)="externalAppsExpanded.set(!externalAppsExpanded())">
+          <h3
+            class="section-header"
+            tabindex="0"
+            (click)="externalAppsExpanded.set(!externalAppsExpanded())"
+            (keydown.enter)="externalAppsExpanded.set(!externalAppsExpanded())"
+            (keydown.space)="externalAppsExpanded.set(!externalAppsExpanded()); $event.preventDefault()"
+          >
             <ix-icon [name]="externalAppsExpanded() ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
             {{ 'Other Apps' | translate }}
             <span class="app-count">({{ filteredExternalApps.length }})</span>
