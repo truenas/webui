@@ -36,6 +36,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -93,6 +94,8 @@ export class DeviceFormComponent implements OnInit {
   } | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.VmDeviceWrite];
+  protected formatter = inject(IxFormatterService);
+
 
   isLoading = false;
 
@@ -177,7 +180,9 @@ export class DeviceFormComponent implements OnInit {
     path: ['', [Validators.required, this.fileValidator.fileIsSelectedInExplorer(this.rawFileExplorer)]],
     sectorsize: [0],
     type: [null as VmDiskMode | null],
-    size: [null as number | null],
+    // formatter causes size to become a string sometimes, but we do convert it to a number
+    // before submitting.
+    size: [null as number | string | null],
     exists: [false as boolean | null],
   });
 
@@ -577,6 +582,19 @@ export class DeviceFormComponent implements OnInit {
       ...this.typeSpecificForm.value,
       dtype: this.typeControl.value,
     };
+
+    // the formatter and parser we have attached to the size control actually ends up
+    // turning `null` into the empty string. (which breaks the type specified in the form)
+    // in order to enforce the `number | null` type for the size property, we transform
+    // empty strings into null.
+    if ('size' in values) {
+      const size = values.size;
+      if (typeof size === 'string' && size.trim() === '') {
+        // case: size is an empty string (excluding whitespace)
+        values.size = null;
+      }
+      // all other cases are valid to pass to the API
+    }
 
     if ('device' in values && values.device === specifyCustom) {
       values.device = null;

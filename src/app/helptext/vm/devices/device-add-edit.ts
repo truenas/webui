@@ -35,7 +35,7 @@ export const helptextDevice = {
  performance, but requires the operating system\
  installed in the VM to support VirtIO disk devices.'),
 
-  raw_size_tooltip: T('Define the size of the raw file in GiB.'),
+  raw_size_tooltip: T('Define the size of the raw file. (e.g. 500 MiB, 10 GiB, etc.)'),
 
   pptdev_tooltip: T('Specify the PCI device to pass thru (bus#/slot#/fcn#).'),
 

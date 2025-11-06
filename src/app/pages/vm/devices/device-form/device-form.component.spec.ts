@@ -36,6 +36,9 @@ import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { VmService } from 'app/services/vm.service';
 
+const threeGibibytes = 3 * (2 ** 30);
+const tenGibibytes = 10 * (2 ** 30);
+
 describe('DeviceFormComponent', () => {
   let spectator: Spectator<DeviceFormComponent>;
   let loader: HarnessLoader;
@@ -433,7 +436,7 @@ describe('DeviceFormComponent', () => {
         dtype: VmDeviceType.Raw,
         path: '/mnt/bassein/raw',
         type: VmDiskMode.Ahci,
-        size: 3,
+        size: threeGibibytes,
         logical_sectorsize: null,
         physical_sectorsize: null,
         boot: false,
@@ -462,7 +465,7 @@ describe('DeviceFormComponent', () => {
             'Raw File': '/mnt/bassein/newraw',
             'Disk Sector Size': '512',
             Mode: 'AHCI',
-            'Raw Filesize': 3,
+            'Raw Filesize': '3 GiB',
             'Device Order': '6',
           },
         );
@@ -473,7 +476,7 @@ describe('DeviceFormComponent', () => {
             logical_sectorsize: 512,
             physical_sectorsize: 512,
             path: '/mnt/bassein/newraw',
-            size: 3,
+            size: threeGibibytes,
             type: VmDiskMode.Ahci,
             dtype: VmDeviceType.Raw,
           },
@@ -506,14 +509,14 @@ describe('DeviceFormComponent', () => {
           'Raw File': '/mnt/bassein/raw',
           'Disk Sector Size': 'Default',
           Mode: 'AHCI',
-          'Raw Filesize': '3',
+          'Raw Filesize': '3 GiB',
           'Device Order': '5',
         });
       });
 
       it('updates an existing Raw File device', async () => {
         await form.fillForm({
-          'Raw Filesize': 5,
+          'Raw Filesize': '10 GiB',
         });
         await saveButton.click();
 
@@ -522,7 +525,7 @@ describe('DeviceFormComponent', () => {
             path: '/mnt/bassein/raw',
             logical_sectorsize: null,
             physical_sectorsize: null,
-            size: 5,
+            size: tenGibibytes,
             type: VmDiskMode.Ahci,
             dtype: VmDeviceType.Raw,
             exists: true,
@@ -534,6 +537,27 @@ describe('DeviceFormComponent', () => {
 
       it('sets exists field to true when editing existing raw file device', () => {
         expect(spectator.component.rawFileForm.value.exists).toBe(true);
+      });
+
+      it('still submits null when size box contains whitespace', async () => {
+        await form.fillForm({
+          'Raw Filesize': '   \n\t',
+        });
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.update', [6, {
+          attributes: {
+            path: '/mnt/bassein/raw',
+            logical_sectorsize: null,
+            physical_sectorsize: null,
+            size: null,
+            type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
+            exists: true,
+          },
+          order: 5,
+          vm: 45,
+        }]);
       });
     });
 
@@ -603,7 +627,7 @@ describe('DeviceFormComponent', () => {
             'Raw File': '/mnt/bassein/newfile.raw',
             'Disk Sector Size': 'Default',
             Mode: 'AHCI',
-            'Raw Filesize': 10,
+            'Raw Filesize': '10 GiB',
             'Device Order': '8',
           },
         );
@@ -615,7 +639,7 @@ describe('DeviceFormComponent', () => {
             logical_sectorsize: null,
             physical_sectorsize: null,
             path: '/mnt/bassein/newfile.raw',
-            size: 10,
+            size: tenGibibytes,
             type: VmDiskMode.Ahci,
             dtype: VmDeviceType.Raw,
             // exists should NOT be present
