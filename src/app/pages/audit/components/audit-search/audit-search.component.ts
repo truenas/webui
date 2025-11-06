@@ -1,24 +1,28 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { Component, OnInit, ChangeDetectionStrategy, input, computed, signal, inject } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ChangeDetectionStrategy, input, computed, signal, inject } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
+import { FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest,
+  distinctUntilChanged,
   filter,
-  map, Observable, of, shareReplay, take,
+  map, Observable, of, ReplaySubject, shareReplay, skip, switchMap, take, tap,
 } from 'rxjs';
 import {
-  AuditService, auditServiceLabels, AuditEvent, auditEventLabels,
+  AuditEvent, auditEventLabels, AuditService, auditServiceLabels,
 } from 'app/enums/audit.enum';
-import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
@@ -27,7 +31,11 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
-import { UrlOptionsService } from 'app/services/url-options.service';
+import { UrlOptions, UrlOptionsService } from 'app/services/url-options.service';
+
+interface AuditUrlOptions extends UrlOptions<AuditEntry> {
+  service?: AuditService;
+}
 
 @UntilDestroy()
 @Component({
@@ -44,9 +52,11 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     TranslateModule,
     ExportButtonComponent,
     TestDirective,
+    IxSelectComponent,
+    ReactiveFormsModule,
   ],
 })
-export class AuditSearchComponent implements OnInit {
+export class AuditSearchComponent implements OnInit, AfterViewInit {
   private api = inject(ApiService);
   private activatedRoute = inject(ActivatedRoute);
   private urlOptionsService = inject(UrlOptionsService);
@@ -57,7 +67,11 @@ export class AuditSearchComponent implements OnInit {
 
   protected readonly searchQuery = signal<SearchQuery<AuditEntry>>({ query: '', isBasicQuery: true });
   protected readonly searchProperties = signal<SearchProperty<AuditEntry>[]>([]);
-  protected readonly advancedSearchPlaceholder = this.translate.instant('Service = "SMB" AND Event = "CLOSE"');
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Event = "CLOSE" AND Username = "admin"');
+  protected readonly serviceControl = new FormControl<AuditService>(AuditService.Middleware);
+  protected readonly serviceOptions$ = of(mapToOptions(auditServiceLabels, this.translate));
+
+  private readonly viewInitialized$ = new ReplaySubject<void>(1);
 
   private userSuggestions$ = this.api.call('user.query').pipe(
     map((users) => this.mapUsersForSuggestions(users)),
@@ -75,12 +89,55 @@ export class AuditSearchComponent implements OnInit {
   });
 
   basicQueryFilters = computed<QueryFilters<AuditEntry>>(() => {
-    return [['event', '~', `(?i)${(this.searchQuery() as { query: string })?.query || ''}`]];
+    const searchTerm = (this.searchQuery() as { query: string })?.query?.trim() || '';
+    if (!searchTerm) {
+      return [];
+    }
+    const term = `(?i)${searchTerm}`;
+    return [['OR', [['event', '~', term], ['username', '~', term]]]] as QueryFilters<AuditEntry>;
   });
 
-  ngOnInit(): void {
-    this.loadParamsFromRoute();
+  /**
+   * Coordinates initialization flow:
+   * 1. Load URL params (pagination, sorting, search query, service)
+   * 2. Wait for view initialization (ensures child components are ready)
+   * 3. Perform initial search with loaded params
+   */
+  private readonly initialization$ = combineLatest([
+    this.activatedRoute.params.pipe(take(1)),
+    this.viewInitialized$,
+  ]).pipe(
+    tap(([params]) => {
+      const options = this.urlOptionsService.parseUrlOptions(params.options as string) as AuditUrlOptions;
 
+      this.dataProvider().setPagination({
+        pageSize: options.pagination?.pageSize || 50,
+        pageNumber: options.pagination?.pageNumber || 1,
+      }, true);
+
+      if (options.sorting) {
+        this.dataProvider().setSorting(options.sorting, true);
+      }
+
+      if (options.searchQuery) {
+        this.searchQuery.set(options.searchQuery as SearchQuery<AuditEntry>);
+      }
+
+      if (options.service) {
+        this.serviceControl.setValue(options.service);
+      }
+
+      this.dataProvider().service = this.serviceControl.value;
+    }),
+    switchMap(() => {
+      // Perform initial search with loaded query
+      this.onSearch(this.searchQuery());
+      return of(undefined);
+    }),
+    shareReplay({ refCount: false, bufferSize: 1 }),
+  );
+
+  ngOnInit(): void {
     this.dataProvider().sortingOrPaginationUpdate
       .pipe(untilDestroyed(this))
       .subscribe(() => {
@@ -92,6 +149,20 @@ export class AuditSearchComponent implements OnInit {
       .subscribe((auditEntries) => {
         this.setSearchProperties(auditEntries);
       });
+
+    // Subscribe to service changes after initialization
+    // skip(1) prevents duplicate load - initial value was already handled during initialization
+    this.initialization$.pipe(
+      switchMap(() => this.serviceControl.value$.pipe(distinctUntilChanged(), skip(1))),
+      untilDestroyed(this),
+    ).subscribe((service) => {
+      this.dataProvider().service = service;
+      this.updateUrlOptions();
+      this.dataProvider().load();
+    });
+
+    // Trigger initialization
+    this.initialization$.pipe(untilDestroyed(this)).subscribe();
   }
 
   updateUrlOptions(): void {
@@ -99,7 +170,8 @@ export class AuditSearchComponent implements OnInit {
       searchQuery: this.searchQuery(),
       sorting: this.dataProvider().sorting,
       pagination: this.dataProvider().pagination,
-    });
+      service: this.serviceControl.value,
+    } as AuditUrlOptions);
   }
 
   onSearch(query: SearchQuery<AuditEntry>): void {
@@ -110,15 +182,9 @@ export class AuditSearchComponent implements OnInit {
     this.searchQuery.set(query);
 
     if (query?.isBasicQuery) {
-      const term = `(?i)${query.query || ''}`;
-      const params = new ParamsBuilder<AuditEntry>()
-        .filter('event', '~', term)
-        .orFilter('username', '~', term)
-        .orFilter('service', '~', term)
-        .getParams();
-
+      // Use the computed basicQueryFilters instead of duplicating the logic
       // TODO: Incorrect cast, because of incorrect typing inside of DataProvider
-      this.dataProvider().setParams(params as unknown as [AuditQueryParams]);
+      this.dataProvider().setParams([this.basicQueryFilters()] as unknown as [AuditQueryParams]);
     }
 
     if (query && !query.isBasicQuery) {
@@ -145,15 +211,6 @@ export class AuditSearchComponent implements OnInit {
           label: log.address,
           value: `"${log.address}"`,
         }))),
-      ),
-      textProperty(
-        'service',
-        this.translate.instant('Service'),
-        of(Object.values(AuditService).map((key) => ({
-          label: this.translate.instant(auditServiceLabels.get(key) || key),
-          value: `"${this.translate.instant(auditServiceLabels.get(key) || key)}"`,
-        }))),
-        auditServiceLabels,
       ),
       textProperty(
         'username',
@@ -213,21 +270,10 @@ export class AuditSearchComponent implements OnInit {
     ]));
   }
 
-  private loadParamsFromRoute(): void {
-    this.activatedRoute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      const options = this.urlOptionsService.parseUrlOptions(params.options as string);
-
-      this.dataProvider().setPagination({
-        pageSize: options.pagination?.pageSize || 50,
-        pageNumber: options.pagination?.pageNumber || 1,
-      });
-
-      if (options.sorting) this.dataProvider().setSorting(options.sorting);
-
-      if (options.searchQuery) this.searchQuery.set(options.searchQuery as SearchQuery<AuditEntry>);
-
-      this.onSearch(this.searchQuery());
-    });
+  ngAfterViewInit(): void {
+    // Signal that view and child components (including ix-table-pager) are initialized
+    this.viewInitialized$.next();
+    this.viewInitialized$.complete();
   }
 
   private mapUsersForSuggestions(users: User[] | AuditEntry[]): Option[] {
