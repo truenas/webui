@@ -130,7 +130,10 @@
         <div class="apps-section">
           <h3
             class="section-header"
+            role="button"
             tabindex="0"
+            [attr.aria-expanded]="truenasAppsExpanded()"
+            [attr.aria-controls]="'truenas-apps-section'"
             (click)="truenasAppsExpanded.set(!truenasAppsExpanded())"
             (keydown.enter)="truenasAppsExpanded.set(!truenasAppsExpanded())"
             (keydown.space)="truenasAppsExpanded.set(!truenasAppsExpanded()); $event.preventDefault()"
@@ -140,7 +143,7 @@
             <span class="app-count">({{ filteredTruenasApps.length }})</span>
           </h3>
           @if (truenasAppsExpanded()) {
-            <div class="apps-rows">
+            <div class="apps-rows" id="truenas-apps-section">
               @for (app of filteredTruenasApps; track app.name) {
                 <ix-app-row
                   tabindex="0"
@@ -167,7 +170,10 @@
         <div class="apps-section">
           <h3
             class="section-header"
+            role="button"
             tabindex="0"
+            [attr.aria-expanded]="externalAppsExpanded()"
+            [attr.aria-controls]="'external-apps-section'"
             (click)="externalAppsExpanded.set(!externalAppsExpanded())"
             (keydown.enter)="externalAppsExpanded.set(!externalAppsExpanded())"
             (keydown.space)="externalAppsExpanded.set(!externalAppsExpanded()); $event.preventDefault()"
@@ -177,7 +183,7 @@
             <span class="app-count">({{ filteredExternalApps.length }})</span>
           </h3>
           @if (externalAppsExpanded()) {
-            <div class="apps-rows">
+            <div class="apps-rows" id="external-apps-section">
               @for (app of filteredExternalApps; track app.name) {
                 <ix-app-row
                   tabindex="0"

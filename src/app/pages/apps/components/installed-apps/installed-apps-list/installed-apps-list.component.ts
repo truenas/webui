@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
-import { Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, inject, signal, computed } from '@angular/core';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
@@ -14,7 +14,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, forkJoin, map, Observable, of, switchMap,
+  combineLatest, filter, forkJoin, map, Observable, of, shareReplay, switchMap,
 } from 'rxjs';
 import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
 import { AppState } from 'app/enums/app-state.enum';
@@ -137,17 +137,25 @@ export class InstalledAppsListComponent implements OnInit {
     return this.filteredApps?.some((app) => app.id === this.selectedApp?.id);
   }
 
+  private isExternalApp(app: App): boolean {
+    return app?.source === 'external';
+  }
+
+  private isTruenasApp(app: App): boolean {
+    return !this.isExternalApp(app);
+  }
+
   get filteredApps(): App[] {
     return this.dataSource
       .filter((app) => app?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase()));
   }
 
   get filteredTruenasApps(): App[] {
-    return this.filteredApps.filter((app) => (app.source ?? 'truenas') === 'truenas');
+    return this.filteredApps.filter((app) => this.isTruenasApp(app));
   }
 
   get filteredExternalApps(): App[] {
-    return this.filteredApps.filter((app) => app.source === 'external');
+    return this.filteredApps.filter((app) => this.isExternalApp(app));
   }
 
   get allAppsChecked(): boolean {
@@ -174,14 +182,14 @@ export class InstalledAppsListComponent implements OnInit {
   get checkedApps(): App[] {
     return this.checkedAppsNames
       .map((id) => this.dataSource.find((app) => app.id === id))
-      .filter((app): app is App => !!app && (app.source ?? 'truenas') !== 'external');
+      .filter((app): app is App => !!app && this.isTruenasApp(app));
   }
 
   get activeCheckedApps(): App[] {
     return this.dataSource.filter(
       (app) => [AppState.Running, AppState.Deploying].includes(app.state)
         && this.selection.isSelected(app.id)
-        && (app.source ?? 'truenas') !== 'external',
+        && this.isTruenasApp(app),
     );
   }
 
@@ -189,7 +197,7 @@ export class InstalledAppsListComponent implements OnInit {
     return this.dataSource.filter(
       (app) => [AppState.Stopped, AppState.Crashed].includes(app.state)
         && this.selection.isSelected(app.id)
-        && (app.source ?? 'truenas') !== 'external',
+        && this.isTruenasApp(app),
     );
   }
 
@@ -515,41 +523,10 @@ export class InstalledAppsListComponent implements OnInit {
     return this.appsStats.getStatsForApp(name);
   }
 
-  get totalUtilization$(): Observable<{
-    cpu: number;
-    memory: number;
-    blkioRead: number;
-    blkioWrite: number;
-    networkRx: number;
-    networkTx: number;
-  }> {
-    if (!this.dataSource.length) {
-      return of({
-        cpu: 0,
-        memory: 0,
-        blkioRead: 0,
-        blkioWrite: 0,
-        networkRx: 0,
-        networkTx: 0,
-      });
-    }
-
-    return combineLatest(
-      this.dataSource.map((app) => this.getAppStats(app.name)),
-    ).pipe(
-      map((statsArray) => {
-        return statsArray.reduce((totals, stats) => {
-          if (!stats) return totals;
-
-          return {
-            cpu: totals.cpu + (stats.cpu_usage || 0),
-            memory: totals.memory + (stats.memory || 0),
-            blkioRead: totals.blkioRead + (stats.blkio?.read || 0),
-            blkioWrite: totals.blkioWrite + (stats.blkio?.write || 0),
-            networkRx: totals.networkRx + (stats.networks?.reduce((sum, net) => sum + (net.rx_bytes || 0), 0) || 0),
-            networkTx: totals.networkTx + (stats.networks?.reduce((sum, net) => sum + (net.tx_bytes || 0), 0) || 0),
-          };
-        }, {
+  readonly totalUtilization$ = this.installedAppsStore.installedApps$.pipe(
+    switchMap((apps) => {
+      if (!apps.length) {
+        return of({
           cpu: 0,
           memory: 0,
           blkioRead: 0,
@@ -557,7 +534,34 @@ export class InstalledAppsListComponent implements OnInit {
           networkRx: 0,
           networkTx: 0,
         });
-      }),
-    );
-  }
+      }
+
+      return combineLatest(
+        apps.map((app) => this.getAppStats(app.name)),
+      ).pipe(
+        map((statsArray) => {
+          return statsArray.reduce((totals, stats) => {
+            if (!stats) return totals;
+
+            return {
+              cpu: totals.cpu + (stats.cpu_usage || 0),
+              memory: totals.memory + (stats.memory || 0),
+              blkioRead: totals.blkioRead + (stats.blkio?.read || 0),
+              blkioWrite: totals.blkioWrite + (stats.blkio?.write || 0),
+              networkRx: totals.networkRx + (stats.networks?.reduce((sum, net) => sum + (net.rx_bytes || 0), 0) || 0),
+              networkTx: totals.networkTx + (stats.networks?.reduce((sum, net) => sum + (net.tx_bytes || 0), 0) || 0),
+            };
+          }, {
+            cpu: 0,
+            memory: 0,
+            blkioRead: 0,
+            blkioWrite: 0,
+            networkRx: 0,
+            networkTx: 0,
+          });
+        }),
+      );
+    }),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 }
