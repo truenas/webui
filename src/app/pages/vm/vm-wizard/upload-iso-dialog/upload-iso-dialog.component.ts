@@ -1,6 +1,6 @@
 import { HttpEventType, HttpProgressEvent, HttpResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -58,8 +58,35 @@ export class UploadIsoDialogComponent implements OnDestroy {
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
 
+  /**
+   * Validates that the selected path is not /mnt itself or a pool root.
+   * Pool roots are paths like /mnt/poolname with no subdirectories.
+   * The backend requires a child dataset to be selected.
+   */
+  private readonly validateNotPoolRoot = (control: AbstractControl): ValidationErrors | null => {
+    const path = control.value?.trim() as string;
+    if (!path) {
+      return null; // Let required validator handle empty values
+    }
+
+    // Normalize path by removing trailing slashes for consistent validation
+    const normalizedPath = path.replace(/\/+$/, '');
+
+    // Reject /mnt itself or pool root pattern: /mnt/poolname (no subdirectories)
+    const poolRootPattern = /^\/mnt\/[^/]+$/;
+    if (normalizedPath === '/mnt' || poolRootPattern.test(normalizedPath)) {
+      return {
+        poolRoot: {
+          message: this.translate.instant(this.helptext.upload_iso_pool_root_error),
+        },
+      };
+    }
+
+    return null;
+  };
+
   form = this.formBuilder.nonNullable.group({
-    path: [mntPath],
+    path: [mntPath, [this.validateNotPoolRoot]],
     files: [[] as File[]],
   });
 

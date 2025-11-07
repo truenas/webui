@@ -107,4 +107,61 @@ describe('UploadIsoDialogComponent', () => {
     expect(uploadEventSpy).toHaveBeenCalled(); // The subject itself still emits
     // But the component's subscription should be cancelled
   });
+
+  describe('path validation', () => {
+    it('rejects /mnt itself', () => {
+      spectator.component.form.patchValue({ path: '/mnt' });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.path.errors).toEqual({
+        poolRoot: {
+          message: 'Cannot upload to /mnt or pool root. Please select a dataset under the pool (e.g., /mnt/pool/dataset).',
+        },
+      });
+      expect(spectator.component.form.valid).toBe(false);
+    });
+
+    it('rejects pool root paths like /mnt/poolname', () => {
+      spectator.component.form.patchValue({ path: '/mnt/tank' });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.path.errors).toEqual({
+        poolRoot: {
+          message: 'Cannot upload to /mnt or pool root. Please select a dataset under the pool (e.g., /mnt/pool/dataset).',
+        },
+      });
+      expect(spectator.component.form.valid).toBe(false);
+    });
+
+    it('rejects pool root paths with trailing slash', () => {
+      spectator.component.form.patchValue({ path: '/mnt/tank/' });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.path.errors).toEqual({
+        poolRoot: {
+          message: 'Cannot upload to /mnt or pool root. Please select a dataset under the pool (e.g., /mnt/pool/dataset).',
+        },
+      });
+    });
+
+    it('accepts dataset paths like /mnt/poolname/dataset', () => {
+      spectator.component.form.patchValue({
+        path: '/mnt/tank/iso',
+      });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.path.errors).toBeNull();
+      expect(spectator.component.form.valid).toBe(true);
+    });
+
+    it('accepts nested dataset paths', () => {
+      spectator.component.form.patchValue({
+        path: '/mnt/tank/iso/images',
+      });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.path.errors).toBeNull();
+      expect(spectator.component.form.valid).toBe(true);
+    });
+  });
 });

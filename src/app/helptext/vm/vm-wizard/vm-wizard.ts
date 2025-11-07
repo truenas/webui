@@ -117,4 +117,6 @@ This will improve CPU cache locality and can reduce possible stutter in GPU pass
   upload_iso_path_tooltip: T('Choose a location to store the installer image file.'),
 
   upload_iso_tooltip: T('Browse to the installer image file and click <b>Upload</b>.'),
+
+  upload_iso_pool_root_error: T('Cannot upload to /mnt or pool root. Please select a dataset under the pool (e.g., /mnt/pool/dataset).'),
 };
