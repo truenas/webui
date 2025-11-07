@@ -1,15 +1,15 @@
 import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
-  AbstractControl, AsyncValidatorFn, ValidationErrors, Validators, ReactiveFormsModule,
+  AbstractControl, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { combineLatest, Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { combineLatest, of } from 'rxjs';
+import { catchError, debounceTime, map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
@@ -109,8 +109,8 @@ export class ServiceSmbComponent implements OnInit {
       return of(this.form.dirty);
     });
 
-    // Add async validator to admin_group field
-    this.form.controls.admin_group.setAsyncValidators(this.validateAdminGroupExists);
+    // Set up debounced validation for admin_group field
+    this.setupAdminGroupValidation();
 
     effect(() => {
       const isEnabled = this.isSpotlightEnabled();
@@ -125,33 +125,49 @@ export class ServiceSmbComponent implements OnInit {
   protected isBasicMode = true;
 
   /**
-   * Async validator to check if the specified admin group exists.
-   * Uses group.get_group_obj to verify the group, which works for both local and AD groups.
+   * Set up debounced validation for the admin_group field.
+   * Listens to value changes and validates the group exists after user stops typing.
+   * Debounces requests to avoid excessive API calls during typing.
    */
-  private validateAdminGroupExists: AsyncValidatorFn = (
-    control: AbstractControl,
-  ): Observable<ValidationErrors | null> => {
-    const groupName = control.value?.trim() as string;
+  private setupAdminGroupValidation(): void {
+    this.form.controls.admin_group.valueChanges.pipe(
+      debounceTime(500), // Wait 500ms after user stops typing
+      switchMap((groupName: string) => {
+        const trimmedName = groupName?.trim();
 
-    // Allow empty values - not a required field
-    if (!groupName) {
-      return of(null);
-    }
+        // Allow empty values - not a required field
+        if (!trimmedName) {
+          return of({ groupName: trimmedName, error: null as Record<string, unknown> | null });
+        }
 
-    return this.userService.getGroupByName(groupName).pipe(
-      map((): null => null), // Group exists, validation passed
-      catchError((): Observable<ValidationErrors> => {
-        // Group doesn't exist
-        return of(this.validatorsService.makeErrorMessage(
-          'groupNotFound',
-          this.translate.instant(
-            'Group "{group}" not found. Please verify the group name.',
-            { group: groupName },
-          ),
-        ));
+        // Validate that the group exists
+        return this.userService.getGroupByName(trimmedName).pipe(
+          map(() => ({ groupName: trimmedName, error: null as Record<string, unknown> | null })),
+          catchError(() => {
+            const errorMessage = this.validatorsService.makeErrorMessage(
+              'groupNotFound',
+              this.translate.instant(
+                'Group "{group}" not found. Please verify the group name.',
+                { group: trimmedName },
+              ),
+            );
+            return of({ groupName: trimmedName, error: errorMessage as Record<string, unknown> });
+          }),
+        );
       }),
-    );
-  };
+      takeUntilDestroyed(this.destroyRef),
+    )
+      // ESLint rule doesn't recognize takeUntilDestroyed with object notation subscribe
+      // eslint-disable-next-line rxjs-angular/prefer-takeuntil
+      .subscribe(({ error }) => {
+        // Manually set the validation error on the control
+        if (error) {
+          this.form.controls.admin_group.setErrors(error);
+        } else {
+          this.form.controls.admin_group.setErrors(null);
+        }
+      });
+  }
 
   form = this.fb.group({
     netbiosname: ['', [Validators.required, Validators.maxLength(15)]],

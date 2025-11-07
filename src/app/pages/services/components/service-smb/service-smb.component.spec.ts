@@ -1,12 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
@@ -16,6 +17,7 @@ import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.inte
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -105,11 +107,11 @@ describe('ServiceSmbComponent', () => {
           username: 'test-username',
         }])),
         getGroupByName: jest.fn((groupName: string) => {
-          // Simulate API behavior: valid groups exist, invalid ones throw error
+          // Simulate API behavior: valid groups exist, invalid ones return error observable
           if (groupName === 'test-group' || groupName === 'valid-ad-group' || groupName === 'administrators') {
             return of({ group: groupName, gid: 1000 });
           }
-          throw new Error('Group not found');
+          return throwError(() => new Error('Group not found'));
         }),
       }),
       mockProvider(SlideInRef, slideInRef),
@@ -575,50 +577,47 @@ describe('ServiceSmbComponent', () => {
   });
 
   describe('Administrators Group validation', () => {
-    it('should allow custom values for Administrators Group field', async () => {
+    it('should allow custom values for Administrators Group field', fakeAsync(async () => {
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
       await advancedButton.click();
 
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Administrators Group': 'valid-ad-group',
-      });
+      const adminGroupControl = await loader.getHarness(IxComboboxHarness.with({ label: 'Administrators Group' }));
+      await adminGroupControl.writeCustomValue('valid-ad-group');
 
-      // Wait for async validation to complete
+      // Wait for debounce (500ms) and async validation
+      tick(500);
       await spectator.fixture.whenStable();
 
       expect(spectator.component.form.controls.admin_group.value).toBe('valid-ad-group');
       expect(spectator.component.form.controls.admin_group.valid).toBe(true);
-    });
+    }));
 
-    it('should validate that admin group exists using async validator', async () => {
+    it('should validate that admin group exists using async validator', fakeAsync(async () => {
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
       await advancedButton.click();
 
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Administrators Group': 'administrators',
-      });
+      const adminGroupControl = await loader.getHarness(IxComboboxHarness.with({ label: 'Administrators Group' }));
+      await adminGroupControl.writeCustomValue('administrators');
 
-      // Wait for async validation to complete
+      // Wait for debounce (500ms) and async validation
+      tick(500);
       await spectator.fixture.whenStable();
 
       const userService = spectator.inject(UserService);
       expect(userService.getGroupByName).toHaveBeenCalledWith('administrators');
       expect(spectator.component.form.controls.admin_group.valid).toBe(true);
       expect(spectator.component.form.controls.admin_group.errors).toBeNull();
-    });
+    }));
 
-    it('should show error when admin group does not exist', async () => {
+    it('should show error when admin group does not exist', fakeAsync(async () => {
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
       await advancedButton.click();
 
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Administrators Group': 'nonexistent-group',
-      });
+      const adminGroupControl = await loader.getHarness(IxComboboxHarness.with({ label: 'Administrators Group' }));
+      await adminGroupControl.writeCustomValue('nonexistent-group');
 
-      // Wait for async validation to complete
+      // Wait for debounce (500ms) and async validation
+      tick(500);
       await spectator.fixture.whenStable();
 
       const userService = spectator.inject(UserService);
@@ -629,18 +628,17 @@ describe('ServiceSmbComponent', () => {
           message: 'Group "nonexistent-group" not found. Please verify the group name.',
         },
       });
-    });
+    }));
 
-    it('should allow empty admin group value', async () => {
+    it('should allow empty admin group value', fakeAsync(async () => {
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
       await advancedButton.click();
 
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Administrators Group': '',
-      });
+      const adminGroupControl = await loader.getHarness(IxComboboxHarness.with({ label: 'Administrators Group' }));
+      await adminGroupControl.writeCustomValue('');
 
-      // Wait for async validation to complete
+      // Wait for debounce (500ms) and async validation
+      tick(500);
       await spectator.fixture.whenStable();
 
       const userService = spectator.inject(UserService);
@@ -648,18 +646,17 @@ describe('ServiceSmbComponent', () => {
       expect(userService.getGroupByName).not.toHaveBeenCalledWith('');
       expect(spectator.component.form.controls.admin_group.valid).toBe(true);
       expect(spectator.component.form.controls.admin_group.errors).toBeNull();
-    });
+    }));
 
-    it('should submit form with valid custom admin group', async () => {
+    it('should submit form with valid custom admin group', fakeAsync(async () => {
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
       await advancedButton.click();
 
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Administrators Group': 'valid-ad-group',
-      });
+      const adminGroupControl = await loader.getHarness(IxComboboxHarness.with({ label: 'Administrators Group' }));
+      await adminGroupControl.writeCustomValue('valid-ad-group');
 
-      // Wait for async validation to complete
+      // Wait for debounce (500ms) and async validation
+      tick(500);
       await spectator.fixture.whenStable();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -670,40 +667,38 @@ describe('ServiceSmbComponent', () => {
           admin_group: 'valid-ad-group',
         }),
       ]);
-    });
+    }));
 
-    it('should disable Save button when admin group validation fails', async () => {
+    it('should disable Save button when admin group validation fails', fakeAsync(async () => {
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
       await advancedButton.click();
 
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Administrators Group': 'invalid-group',
-      });
+      const adminGroupControl = await loader.getHarness(IxComboboxHarness.with({ label: 'Administrators Group' }));
+      await adminGroupControl.writeCustomValue('invalid-group');
 
-      // Wait for async validation to complete
+      // Wait for debounce (500ms) and async validation
+      tick(500);
       await spectator.fixture.whenStable();
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
-    });
+    }));
 
-    it('should work with AD groups that have many members', async () => {
+    it('should work with AD groups that have many members', fakeAsync(async () => {
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
       await advancedButton.click();
 
       // Simulate typing an AD group name
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Administrators Group': 'valid-ad-group',
-      });
+      const adminGroupControl = await loader.getHarness(IxComboboxHarness.with({ label: 'Administrators Group' }));
+      await adminGroupControl.writeCustomValue('valid-ad-group');
 
-      // Wait for async validation to complete
+      // Wait for debounce (500ms) and async validation
+      tick(500);
       await spectator.fixture.whenStable();
 
       const userService = spectator.inject(UserService);
       expect(userService.getGroupByName).toHaveBeenCalledWith('valid-ad-group');
       expect(spectator.component.form.controls.admin_group.valid).toBe(true);
-    });
+    }));
   });
 });
