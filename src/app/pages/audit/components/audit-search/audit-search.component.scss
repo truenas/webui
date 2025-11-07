@@ -55,6 +55,20 @@
       width: 100%;
     }
   }
+
+  .export-container {
+    align-items: center;
+    display: flex;
+
+    @media (max-width: $breakpoint-sm) {
+      margin-top: 8px;
+    }
+  }
+}
+
+:host ::ng-deep .mat-mdc-menu-panel .mat-mdc-menu-item.selected {
+  background-color: var(--alt-bg2);
+  font-weight: 500;
 }
 
 // Extracted to reduce nesting depth
