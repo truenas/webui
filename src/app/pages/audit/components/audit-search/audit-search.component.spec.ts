@@ -61,6 +61,7 @@ describe('AuditSearchComponent', () => {
           isLoading$: of(false),
           sortingOrPaginationUpdate: of(true),
         } as unknown as AuditApiDataProvider,
+        isMobileView: false,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -84,6 +85,7 @@ describe('AuditSearchComponent', () => {
         isLoading$: of(false),
         sortingOrPaginationUpdate: of(true),
       } as unknown as AuditApiDataProvider);
+      spectator.setInput('isMobileView', false);
       spectator.detectChanges();
 
       expect(spectator.query('.export-container')).not.toExist();
