@@ -48,6 +48,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { isExternalApp, isTruenasApp } from 'app/pages/apps/utils/app-type.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState as WebuiAppState } from 'app/store';
 
@@ -136,25 +137,17 @@ export class InstalledAppsListComponent implements OnInit {
     return this.filteredApps?.some((app) => app.id === this.selectedApp?.id);
   }
 
-  private isExternalApp(app: App): boolean {
-    return app?.source === 'external';
-  }
-
-  private isTruenasApp(app: App): boolean {
-    return !this.isExternalApp(app);
-  }
-
   get filteredApps(): App[] {
     return this.dataSource
       .filter((app) => app?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase()));
   }
 
   get filteredTruenasApps(): App[] {
-    return this.filteredApps.filter((app) => this.isTruenasApp(app));
+    return this.filteredApps.filter((app) => isTruenasApp(app));
   }
 
   get filteredExternalApps(): App[] {
-    return this.filteredApps.filter((app) => this.isExternalApp(app));
+    return this.filteredApps.filter((app) => isExternalApp(app));
   }
 
   get allAppsChecked(): boolean {
@@ -181,14 +174,14 @@ export class InstalledAppsListComponent implements OnInit {
   get checkedApps(): App[] {
     return this.checkedAppsNames
       .map((id) => this.dataSource.find((app) => app.id === id))
-      .filter((app): app is App => !!app && this.isTruenasApp(app));
+      .filter((app): app is App => !!app && isTruenasApp(app));
   }
 
   get activeCheckedApps(): App[] {
     return this.dataSource.filter(
       (app) => [AppState.Running, AppState.Deploying].includes(app.state)
         && this.selection.isSelected(app.id)
-        && this.isTruenasApp(app),
+        && isTruenasApp(app),
     );
   }
 
@@ -196,7 +189,7 @@ export class InstalledAppsListComponent implements OnInit {
     return this.dataSource.filter(
       (app) => [AppState.Stopped, AppState.Crashed].includes(app.state)
         && this.selection.isSelected(app.id)
-        && this.isTruenasApp(app),
+        && isTruenasApp(app),
     );
   }
 
@@ -555,6 +548,7 @@ export class InstalledAppsListComponent implements OnInit {
       return combineLatest(
         apps.map((app) => this.getAppStats(app.name)),
       ).pipe(
+        takeUntilDestroyed(this.destroyRef),
         map((statsArray) => {
           return statsArray.reduce((totals, stats) => {
             // Return early if stats is null/undefined or doesn't have expected shape

@@ -136,7 +136,7 @@
             [attr.aria-controls]="'truenas-apps-section'"
             (click)="truenasAppsExpanded.set(!truenasAppsExpanded())"
             (keydown.enter)="truenasAppsExpanded.set(!truenasAppsExpanded())"
-            (keydown.space)="$event.preventDefault(); truenasAppsExpanded.set(!truenasAppsExpanded())"
+            (keydown.space)="truenasAppsExpanded.set(!truenasAppsExpanded()); $event.preventDefault()"
           >
             <ix-icon [name]="truenasAppsExpanded() ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
             {{ 'TrueNAS Apps' | translate }}
@@ -176,7 +176,7 @@
             [attr.aria-controls]="'external-apps-section'"
             (click)="externalAppsExpanded.set(!externalAppsExpanded())"
             (keydown.enter)="externalAppsExpanded.set(!externalAppsExpanded())"
-            (keydown.space)="$event.preventDefault(); externalAppsExpanded.set(!externalAppsExpanded())"
+            (keydown.space)="externalAppsExpanded.set(!externalAppsExpanded()); $event.preventDefault()"
           >
             <ix-icon [name]="externalAppsExpanded() ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
             {{ 'Other Apps' | translate }}

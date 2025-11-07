@@ -19,6 +19,7 @@ import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
+import { isExternalApp } from 'app/pages/apps/utils/app-type.utils';
 
 @Component({
   selector: 'ix-app-row',
@@ -68,7 +69,7 @@ export class AppRowComponent {
   });
 
   readonly isExternalApp = computed(() => {
-    return this.app()?.source === 'external';
+    return isExternalApp(this.app());
   });
 
   readonly incomingTrafficBits = computed(() => {
