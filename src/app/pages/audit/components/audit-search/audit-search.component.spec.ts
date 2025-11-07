@@ -281,7 +281,7 @@ describe('AuditSearchComponent', () => {
 
       const exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.defaultFilters()).toEqual([
-        ['event', '~', '(?i)authentication'],
+        ['OR', [['event', '~', '(?i)authentication'], ['username', '~', '(?i)authentication']]],
       ]);
     });
   });
@@ -298,7 +298,7 @@ describe('AuditSearchComponent', () => {
 
       const exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.defaultFilters()).toEqual([
-        ['event', '~', '(?i)test'],
+        ['OR', [['event', '~', '(?i)test'], ['username', '~', '(?i)test']]],
       ]);
     });
 
@@ -312,9 +312,7 @@ describe('AuditSearchComponent', () => {
       spectator.detectChanges();
 
       const exportButton = spectator.query(ExportButtonComponent);
-      expect(exportButton.defaultFilters()).toEqual([
-        ['event', '~', '(?i)'],
-      ]);
+      expect(exportButton.defaultFilters()).toEqual([]);
     });
 
     it('should call dataProvider load on search', () => {

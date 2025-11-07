@@ -18,7 +18,6 @@ import {
 } from 'app/enums/audit.enum';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 import { Option } from 'app/interfaces/option.interface';
