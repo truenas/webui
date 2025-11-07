@@ -104,6 +104,13 @@ describe('ServiceSmbComponent', () => {
         userQueryDsCache: jest.fn(() => of([{
           username: 'test-username',
         }])),
+        getGroupByName: jest.fn((groupName: string) => {
+          // Simulate API behavior: valid groups exist, invalid ones throw error
+          if (groupName === 'test-group' || groupName === 'valid-ad-group' || groupName === 'administrators') {
+            return of({ group: groupName, gid: 1000 });
+          }
+          throw new Error('Group not found');
+        }),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(TruenasConnectService, {
@@ -564,6 +571,139 @@ describe('ServiceSmbComponent', () => {
 
       const notice = spectator.query('.truenas-connect-notice');
       expect(notice).toBeTruthy();
+    });
+  });
+
+  describe('Administrators Group validation', () => {
+    it('should allow custom values for Administrators Group field', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Administrators Group': 'valid-ad-group',
+      });
+
+      // Wait for async validation to complete
+      await spectator.fixture.whenStable();
+
+      expect(spectator.component.form.controls.admin_group.value).toBe('valid-ad-group');
+      expect(spectator.component.form.controls.admin_group.valid).toBe(true);
+    });
+
+    it('should validate that admin group exists using async validator', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Administrators Group': 'administrators',
+      });
+
+      // Wait for async validation to complete
+      await spectator.fixture.whenStable();
+
+      const userService = spectator.inject(UserService);
+      expect(userService.getGroupByName).toHaveBeenCalledWith('administrators');
+      expect(spectator.component.form.controls.admin_group.valid).toBe(true);
+      expect(spectator.component.form.controls.admin_group.errors).toBeNull();
+    });
+
+    it('should show error when admin group does not exist', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Administrators Group': 'nonexistent-group',
+      });
+
+      // Wait for async validation to complete
+      await spectator.fixture.whenStable();
+
+      const userService = spectator.inject(UserService);
+      expect(userService.getGroupByName).toHaveBeenCalledWith('nonexistent-group');
+      expect(spectator.component.form.controls.admin_group.valid).toBe(false);
+      expect(spectator.component.form.controls.admin_group.errors).toEqual({
+        groupNotFound: {
+          message: 'Group "nonexistent-group" not found. Please verify the group name.',
+        },
+      });
+    });
+
+    it('should allow empty admin group value', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Administrators Group': '',
+      });
+
+      // Wait for async validation to complete
+      await spectator.fixture.whenStable();
+
+      const userService = spectator.inject(UserService);
+      // Should not call validation for empty values
+      expect(userService.getGroupByName).not.toHaveBeenCalledWith('');
+      expect(spectator.component.form.controls.admin_group.valid).toBe(true);
+      expect(spectator.component.form.controls.admin_group.errors).toBeNull();
+    });
+
+    it('should submit form with valid custom admin group', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Administrators Group': 'valid-ad-group',
+      });
+
+      // Wait for async validation to complete
+      await spectator.fixture.whenStable();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith('smb.update', [
+        expect.objectContaining({
+          admin_group: 'valid-ad-group',
+        }),
+      ]);
+    });
+
+    it('should disable Save button when admin group validation fails', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Administrators Group': 'invalid-group',
+      });
+
+      // Wait for async validation to complete
+      await spectator.fixture.whenStable();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    });
+
+    it('should work with AD groups that have many members', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      // Simulate typing an AD group name
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Administrators Group': 'valid-ad-group',
+      });
+
+      // Wait for async validation to complete
+      await spectator.fixture.whenStable();
+
+      const userService = spectator.inject(UserService);
+      expect(userService.getGroupByName).toHaveBeenCalledWith('valid-ad-group');
+      expect(spectator.component.form.controls.admin_group.valid).toBe(true);
     });
   });
 });

@@ -1,13 +1,15 @@
 import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  AbstractControl, AsyncValidatorFn, ValidationErrors, Validators, ReactiveFormsModule,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { combineLatest, Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
@@ -107,6 +109,9 @@ export class ServiceSmbComponent implements OnInit {
       return of(this.form.dirty);
     });
 
+    // Add async validator to admin_group field
+    this.form.controls.admin_group.setAsyncValidators(this.validateAdminGroupExists);
+
     effect(() => {
       const isEnabled = this.isSpotlightEnabled();
       if (isEnabled) {
@@ -118,6 +123,35 @@ export class ServiceSmbComponent implements OnInit {
   }
 
   protected isBasicMode = true;
+
+  /**
+   * Async validator to check if the specified admin group exists.
+   * Uses group.get_group_obj to verify the group, which works for both local and AD groups.
+   */
+  private validateAdminGroupExists: AsyncValidatorFn = (
+    control: AbstractControl,
+  ): Observable<ValidationErrors | null> => {
+    const groupName = control.value?.trim() as string;
+
+    // Allow empty values - not a required field
+    if (!groupName) {
+      return of(null);
+    }
+
+    return this.userService.getGroupByName(groupName).pipe(
+      map((): null => null), // Group exists, validation passed
+      catchError((): Observable<ValidationErrors> => {
+        // Group doesn't exist
+        return of(this.validatorsService.makeErrorMessage(
+          'groupNotFound',
+          this.translate.instant(
+            'Group "{group}" not found. Please verify the group name.',
+            { group: groupName },
+          ),
+        ));
+      }),
+    );
+  };
 
   form = this.fb.group({
     netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
