@@ -8,8 +8,9 @@
     color="accent"
     ixTest="export"
     [disabled]="isLoading"
+    [attr.aria-label]="ariaLabel() || ('Export' | translate)"
     (click)="onExport()"
   >
-    {{ 'Export As {fileType}' | translate:{ fileType: fileType().toUpperCase()} }}
+    {{ 'Export As {fileType}' | translate:{ fileType: displayFormat() || fileType().toUpperCase()} }}
   </button>
 </div>
