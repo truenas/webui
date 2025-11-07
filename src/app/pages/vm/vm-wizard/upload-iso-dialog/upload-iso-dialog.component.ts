@@ -9,7 +9,6 @@ import {
   catchError, of, Subject, Subscription, takeUntil, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -58,6 +57,8 @@ export class UploadIsoDialogComponent implements OnDestroy {
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
 
+  readonly helptext = helptextVmWizard;
+
   /**
    * Validates that the selected path is not /mnt itself or a pool root.
    * Pool roots are paths like /mnt/poolname with no subdirectories.
@@ -86,12 +87,11 @@ export class UploadIsoDialogComponent implements OnDestroy {
   };
 
   form = this.formBuilder.nonNullable.group({
-    path: [mntPath, [this.validateNotPoolRoot]],
+    path: ['', [this.validateNotPoolRoot]],
     files: [[] as File[]],
   });
 
   readonly directoryNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
-  readonly helptext = helptextVmWizard;
   protected readonly requiredRoles = [Role.VmWrite];
 
   private destroy$ = new Subject<void>();

@@ -109,6 +109,11 @@ describe('UploadIsoDialogComponent', () => {
   });
 
   describe('path validation', () => {
+    it('starts with empty path and form is invalid', () => {
+      expect(spectator.component.form.controls.path.value).toBe('');
+      expect(spectator.component.form.valid).toBe(false);
+    });
+
     it('rejects /mnt itself', () => {
       spectator.component.form.patchValue({ path: '/mnt' });
       spectator.detectChanges();
