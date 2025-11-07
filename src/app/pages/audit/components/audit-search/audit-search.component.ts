@@ -1,7 +1,8 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { AfterViewInit, Component, OnInit, ChangeDetectionStrategy, input, computed, signal, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatMenu, MatMenuTrigger, MatMenuItem } from '@angular/material/menu';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -15,6 +16,7 @@ import {
 import {
   AuditEvent, auditEventLabels, AuditService, auditServiceLabels,
 } from 'app/enums/audit.enum';
+import { ExportFormat } from 'app/enums/export-format.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-type.interface';
@@ -27,6 +29,7 @@ import { SearchInputComponent } from 'app/modules/forms/search-input/components/
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { dateProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -47,10 +50,15 @@ interface AuditUrlOptions extends UrlOptions<AuditEntry> {
     AsyncPipe,
     FakeProgressBarComponent,
     MatButton,
+    MatIconButton,
     NgTemplateOutlet,
+    MatMenu,
+    MatMenuTrigger,
+    MatMenuItem,
     SearchInputComponent,
     TranslateModule,
     ExportButtonComponent,
+    IxIconComponent,
     TestDirective,
     IxSelectComponent,
     ReactiveFormsModule,
@@ -67,9 +75,10 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
   protected readonly searchQuery = signal<SearchQuery<AuditEntry>>({ query: '', isBasicQuery: true });
   protected readonly searchProperties = signal<SearchProperty<AuditEntry>[]>([]);
-  protected readonly advancedSearchPlaceholder = this.translate.instant('Event = "CLOSE" AND Username = "admin"');
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Service = "SMB" AND Event = "CLOSE"');
   protected readonly serviceControl = new FormControl<AuditService>(AuditService.Middleware);
   protected readonly serviceOptions$ = of(mapToOptions(auditServiceLabels, this.translate));
+  protected readonly exportFormat = signal<ExportFormat>(ExportFormat.Csv);
 
   private readonly viewInitialized$ = new ReplaySubject<void>(1);
 
@@ -96,6 +105,22 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     const term = `(?i)${searchTerm}`;
     return [['OR', [['event', '~', term], ['username', '~', term]]]] as QueryFilters<AuditEntry>;
   });
+
+  protected readonly exportFilename = computed(() => {
+    const format = this.exportFormat().toLowerCase();
+    return `audit_report.${format}`;
+  });
+
+  // Note: The backend always returns a gzipped tarball (.tgz) regardless of the selected format.
+  // The format selection (CSV/JSON/YAML) determines the content inside the archive before compression.
+  protected readonly exportFileType = computed(() => 'tgz');
+
+  // MIME type is always application/gzip since the backend returns .tgz files
+  protected readonly exportMimeType = 'application/gzip';
+
+  protected readonly exportFormatDisplayLabel = computed(() => this.exportFormat().toUpperCase());
+
+  protected readonly ExportFormat = ExportFormat;
 
   /**
    * Coordinates initialization flow:
@@ -136,6 +161,10 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     }),
     shareReplay({ refCount: false, bufferSize: 1 }),
   );
+
+  onFormatChange(format: ExportFormat): void {
+    this.exportFormat.set(format);
+  }
 
   ngOnInit(): void {
     this.dataProvider().sortingOrPaginationUpdate
