@@ -477,7 +477,7 @@ describe('OtherOptionsSectionComponent', () => {
       });
 
       spectator.component.form.patchValue({
-        special_small_block_size: 'OFF',
+        special_small_block_size: OnOff.Off,
       });
 
       const payload = spectator.component.getPayload();
@@ -490,7 +490,7 @@ describe('OtherOptionsSectionComponent', () => {
       });
 
       spectator.component.form.patchValue({
-        special_small_block_size: 'ON',
+        special_small_block_size: OnOff.On,
       });
 
       const payload = spectator.component.getPayload();
@@ -535,7 +535,7 @@ describe('OtherOptionsSectionComponent', () => {
       });
 
       spectator.component.form.patchValue({
-        special_small_block_size: 'ON',
+        special_small_block_size: OnOff.On,
         special_small_block_size_custom: 131072, // 128 KiB
       });
       spectator.component.showCustomizeSpecialSmallBlockSize = true;
@@ -559,7 +559,7 @@ describe('OtherOptionsSectionComponent', () => {
           parent: parentDataset,
         });
 
-        expect(spectator.component.form.value.special_small_block_size).toBe('OFF');
+        expect(spectator.component.form.value.special_small_block_size).toBe(OnOff.Off);
         expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(false);
       });
 
@@ -577,7 +577,7 @@ describe('OtherOptionsSectionComponent', () => {
           parent: parentDataset,
         });
 
-        expect(spectator.component.form.value.special_small_block_size).toBe('ON');
+        expect(spectator.component.form.value.special_small_block_size).toBe(OnOff.On);
         expect(spectator.component.form.value.special_small_block_size_custom).toBe(131072);
         expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(true);
       });
@@ -597,7 +597,7 @@ describe('OtherOptionsSectionComponent', () => {
         });
 
         // Verify it starts as ON
-        expect(spectator.component.form.value.special_small_block_size).toBe('ON');
+        expect(spectator.component.form.value.special_small_block_size).toBe(OnOff.On);
 
         // Change to Inherit
         spectator.component.form.patchValue({
@@ -622,7 +622,7 @@ describe('OtherOptionsSectionComponent', () => {
           parent: parentDataset,
         });
 
-        expect(spectator.component.form.value.special_small_block_size).toBe('ON');
+        expect(spectator.component.form.value.special_small_block_size).toBe(OnOff.On);
         expect(spectator.component.form.value.special_small_block_size_custom).toBe(16777216);
         // Customize section should be hidden since it matches the default
         expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(false);

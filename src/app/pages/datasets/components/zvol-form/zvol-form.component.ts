@@ -22,7 +22,7 @@ import {
 } from 'app/enums/dataset.enum';
 import { deduplicationSettingLabels } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { onOffLabels } from 'app/enums/on-off.enum';
+import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -114,6 +114,7 @@ export class ZvolFormComponent implements OnInit {
   protected isNew = true;
 
   readonly helptext = helptextZvol;
+  readonly OnOff = OnOff;
   inheritEncryptPlaceholder: string = helptextZvol.encryption.inheritLabel;
   namesInUse: string[] = [];
   volBlockSizeWarning: string | null;
@@ -141,7 +142,7 @@ export class ZvolFormComponent implements OnInit {
     readonly: [null as string | null, Validators.required],
     volblocksize: [null as string | null, Validators.required],
     snapdev: [DatasetSnapdev.Hidden as string],
-    special_small_block_size: [inherit as WithInherit<'ON' | 'OFF'>],
+    special_small_block_size: [inherit as WithInherit<OnOff>],
     special_small_block_size_custom: [null as number | null],
     inherit_encryption: [true],
     encryption: [true],
@@ -182,8 +183,8 @@ export class ZvolFormComponent implements OnInit {
   protected snapdevOptions: Option[] = mapToOptions(datasetSnapdevLabels, this.translate);
   protected readonlyOptions: Option[] = mapToOptions(onOffLabels, this.translate);
   protected specialSmallBlockSizeOptions: Option[] = [
-    { label: this.translate.instant('On'), value: 'ON' },
-    { label: this.translate.instant('Off'), value: 'OFF' },
+    { label: this.translate.instant('On'), value: OnOff.On },
+    { label: this.translate.instant('Off'), value: OnOff.Off },
   ];
 
   protected volblocksizeOptions: Option[] = [
@@ -232,7 +233,7 @@ export class ZvolFormComponent implements OnInit {
     // Set up conditional validation for special_small_block_size_custom
     this.form.controls.special_small_block_size.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const customControl = this.form.controls.special_small_block_size_custom;
-      if (value === 'ON') {
+      if (value === OnOff.On) {
         customControl.setValidators([
           Validators.min(specialVdevMinThreshold),
           Validators.max(specialVdevMaxThreshold),
@@ -330,10 +331,10 @@ export class ZvolFormComponent implements OnInit {
 
       if (specialSmallBlockSize === 0) {
         // 0 means OFF (disabled)
-        this.form.controls.special_small_block_size.setValue('OFF');
+        this.form.controls.special_small_block_size.setValue(OnOff.Off);
       } else if (specialSmallBlockSize > 0) {
         // Any value > 0 means ON
-        this.form.controls.special_small_block_size.setValue('ON');
+        this.form.controls.special_small_block_size.setValue(OnOff.On);
         this.form.controls.special_small_block_size_custom.setValue(specialSmallBlockSize);
         // Only show customize section if value differs from default
         this.showCustomizeSpecialSmallBlockSize = (specialSmallBlockSize !== specialVdevDefaultThreshold);
@@ -614,7 +615,7 @@ export class ZvolFormComponent implements OnInit {
 
     // Handle special_small_block_size transformation
     const transformedValue = transformSpecialSmallBlockSizeForPayload(
-      data.special_small_block_size as WithInherit<'ON' | 'OFF'>,
+      data.special_small_block_size as WithInherit<OnOff>,
       data.special_small_block_size_custom,
     );
     if (transformedValue === undefined || transformedValue === inherit) {
@@ -698,7 +699,7 @@ export class ZvolFormComponent implements OnInit {
 
         // Handle special_small_block_size transformation
         const transformedValue = transformSpecialSmallBlockSizeForPayload(
-          data.special_small_block_size as WithInherit<'ON' | 'OFF'>,
+          data.special_small_block_size as WithInherit<OnOff>,
           data.special_small_block_size_custom,
         );
         if (transformedValue === undefined || transformedValue === inherit) {

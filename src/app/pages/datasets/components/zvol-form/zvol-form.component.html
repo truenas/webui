@@ -158,7 +158,7 @@
             <ix-editable>
               <div view>
                 {{ getOptionLabel(specialSmallBlockSizeOptions, form.controls.special_small_block_size.value) }}
-                @if (form.value.special_small_block_size === 'ON' && form.value.special_small_block_size_custom) {
+                @if (form.value.special_small_block_size === OnOff.On && form.value.special_small_block_size_custom) {
                   <span> ({{ form.value.special_small_block_size_custom | ixFileSize }})</span>
                 }
               </div>
@@ -170,7 +170,7 @@
                   [required]="true"
                 ></ix-select>
 
-                @if (form.value.special_small_block_size === 'ON') {
+                @if (form.value.special_small_block_size === OnOff.On) {
                   <button
                     type="button"
                     class="customize-link"
@@ -193,7 +193,7 @@
                   </button>
                 }
 
-                @if (form.value.special_small_block_size === 'ON' && showCustomizeSpecialSmallBlockSize) {
+                @if (form.value.special_small_block_size === OnOff.On && showCustomizeSpecialSmallBlockSize) {
                   <ix-input
                     formControlName="special_small_block_size_custom"
                     [label]="'Threshold' | translate"

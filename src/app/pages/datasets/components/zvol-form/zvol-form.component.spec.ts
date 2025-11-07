@@ -407,7 +407,7 @@ describe('ZvolFormComponent', () => {
       });
 
       spectator.component.form.patchValue({
-        special_small_block_size: 'OFF',
+        special_small_block_size: OnOff.Off,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -427,7 +427,7 @@ describe('ZvolFormComponent', () => {
       });
 
       spectator.component.form.patchValue({
-        special_small_block_size: 'ON',
+        special_small_block_size: OnOff.On,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -442,7 +442,7 @@ describe('ZvolFormComponent', () => {
 
     it('allows toggling customize section', () => {
       spectator.component.form.patchValue({
-        special_small_block_size: 'ON',
+        special_small_block_size: OnOff.On,
       });
 
       expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(false);
@@ -462,7 +462,7 @@ describe('ZvolFormComponent', () => {
       });
 
       spectator.component.form.patchValue({
-        special_small_block_size: 'ON',
+        special_small_block_size: OnOff.On,
         special_small_block_size_custom: 262144, // 256 KiB
       });
       spectator.component.showCustomizeSpecialSmallBlockSize = true;
@@ -485,7 +485,7 @@ describe('ZvolFormComponent', () => {
 
       // Simulate loading an existing zvol with custom value
       spectator.component.form.patchValue({
-        special_small_block_size: 'ON',
+        special_small_block_size: OnOff.On,
         special_small_block_size_custom: 65536, // 64 KiB
       });
       spectator.component.showCustomizeSpecialSmallBlockSize = false; // Collapsed

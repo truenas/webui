@@ -1,3 +1,4 @@
+import { OnOff } from 'app/enums/on-off.enum';
 import { WithInherit } from 'app/enums/with-inherit.enum';
 
 export interface ZvolFormData {
@@ -12,7 +13,7 @@ export interface ZvolFormData {
   readonly?: string;
   volblocksize?: string;
   snapdev?: string;
-  special_small_block_size?: WithInherit<'ON' | 'OFF'> | number;
+  special_small_block_size?: WithInherit<OnOff> | number;
   special_small_block_size_custom?: number | null;
   inherit_encryption?: boolean;
   encryption?: boolean;

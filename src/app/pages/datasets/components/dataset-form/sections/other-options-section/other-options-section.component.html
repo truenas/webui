@@ -132,7 +132,7 @@
       [required]="true"
     ></ix-select>
 
-    @if (form.value.special_small_block_size === 'ON') {
+    @if (form.value.special_small_block_size === OnOff.On) {
       <button
         type="button"
         class="customize-link"
@@ -155,7 +155,7 @@
       </button>
     }
 
-    @if (form.value.special_small_block_size === 'ON' && showCustomizeSpecialSmallBlockSize) {
+    @if (form.value.special_small_block_size === OnOff.On && showCustomizeSpecialSmallBlockSize) {
       <ix-input
         formControlName="special_small_block_size_custom"
         [label]="'Threshold' | translate"

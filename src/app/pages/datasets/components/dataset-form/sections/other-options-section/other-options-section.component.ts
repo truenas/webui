@@ -110,7 +110,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     acltype: [DatasetAclType.Inherit as DatasetAclType],
     aclmode: [AclMode.Inherit as AclMode],
     casesensitivity: [DatasetCaseSensitivity.Sensitive as DatasetCaseSensitivity],
-    special_small_block_size: [inherit as WithInherit<'ON' | 'OFF'>],
+    special_small_block_size: [inherit as WithInherit<OnOff>],
     special_small_block_size_custom: [null as number | null],
   });
 
@@ -145,8 +145,8 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
 
   private readonly defaultSyncOptions$ = of(mapToOptions(datasetSyncLabels, this.translate));
   private readonly defaultSpecialSmallBlockSizeOptions$ = of([
-    { label: this.translate.instant('On'), value: 'ON' },
-    { label: this.translate.instant('Off'), value: 'OFF' },
+    { label: this.translate.instant('On'), value: OnOff.On },
+    { label: this.translate.instant('Off'), value: OnOff.Off },
   ]);
 
   private readonly defaultCompressionOptions$ = this.api.call('pool.dataset.compression_choices').pipe(choicesToOptions());
@@ -163,6 +163,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   );
 
   readonly helptext = helptextDatasetForm;
+  readonly OnOff = OnOff;
 
   get hasChecksumWarning(): boolean {
     return this.form.value.checksum === DatasetChecksum.Sha256
@@ -200,7 +201,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
 
     this.form.controls.special_small_block_size.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const customControl = this.form.controls.special_small_block_size_custom;
-      if (value === 'ON') {
+      if (value === OnOff.On) {
         customControl.setValidators([
           Validators.min(specialVdevMinThreshold),
           Validators.max(specialVdevMaxThreshold),
@@ -290,7 +291,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       || existing.special_small_block_size.source === ZfsPropertySource.Inherited
       || existing.special_small_block_size.source === ZfsPropertySource.Default;
 
-    let specialSmallBlockSizeValue: WithInherit<'ON' | 'OFF'> = inherit;
+    let specialSmallBlockSizeValue: WithInherit<OnOff> = inherit;
     let customValue: number | null = null;
 
     if (!isInherited && existing.special_small_block_size) {
@@ -298,10 +299,10 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
 
       if (sizeInBytes === 0) {
         // 0 means OFF (disabled)
-        specialSmallBlockSizeValue = 'OFF';
+        specialSmallBlockSizeValue = OnOff.Off;
       } else if (sizeInBytes > 0) {
         // Any value > 0 means ON
-        specialSmallBlockSizeValue = 'ON';
+        specialSmallBlockSizeValue = OnOff.On;
         customValue = sizeInBytes;
         // Only show customize section if value differs from default
         this.showCustomizeSpecialSmallBlockSize = (sizeInBytes !== specialVdevDefaultThreshold);

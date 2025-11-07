@@ -1,5 +1,6 @@
 import { specialVdevDefaultThreshold } from 'app/constants/dataset.constants';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -106,21 +107,21 @@ export function getUserProperty<T>(
 
 /**
  * Transforms the special_small_block_size UI values to API payload format
- * @param uiValue The UI value ('ON', 'OFF', or inherit)
+ * @param uiValue The UI value (OnOff.On, OnOff.Off, or inherit)
  * @param customValue The custom threshold value in bytes (optional)
  * @returns The API payload value (number or inherit), or undefined if should be deleted from payload
  */
 export function transformSpecialSmallBlockSizeForPayload(
-  uiValue: WithInherit<'ON' | 'OFF'>,
+  uiValue: WithInherit<OnOff>,
   customValue: number | null,
 ): number | typeof inherit | undefined {
-  if (uiValue === 'ON') {
+  if (uiValue === OnOff.On) {
     // Use custom value if set, otherwise default to 16 MiB
     // This preserves existing custom values even when the customize section is collapsed
     return customValue ?? specialVdevDefaultThreshold;
   }
 
-  if (uiValue === 'OFF') {
+  if (uiValue === OnOff.Off) {
     // When OFF, set to 0 to disable special vdev usage
     return 0;
   }
