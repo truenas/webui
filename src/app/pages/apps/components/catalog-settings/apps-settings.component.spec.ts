@@ -9,11 +9,8 @@ import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DockerConfig } from 'app/interfaces/docker-config.interface';
-import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
-import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
@@ -35,8 +32,11 @@ describe('AppsSettingsComponent', () => {
       { base: '172.17.0.0/12', size: 12 },
     ],
     enable_image_updates: false,
-    secure_registry_mirrors: ['registry1.example.com', 'registry2.example.com'],
-    insecure_registry_mirrors: ['insecure.example.com'],
+    registry_mirrors: [
+      { url: 'registry1.example.com', insecure: false },
+      { url: 'registry2.example.com', insecure: false },
+      { url: 'insecure.example.com', insecure: true },
+    ],
     pool: 'test-pool',
     dataset: 'test-dataset',
     nvidia: false,
@@ -179,11 +179,10 @@ describe('AppsSettingsComponent', () => {
           Size: '12',
         });
 
-        const detailsTable = await loader.getHarness(DetailsTableHarness);
-        const mirrorItem = await detailsTable.getItemByLabel('Registry Mirrors');
-        const mirrorValue = await mirrorItem.getValueText();
+        const mirrorList = await loader.getHarness(IxListHarness.with({ label: 'Registry Mirrors' }));
+        const mirrorItems = await mirrorList.getListItems();
 
-        expect(mirrorValue).toContain('3 mirrors');
+        expect(mirrorItems).toHaveLength(3);
       });
 
       it('updates docker settings when form is edited', async () => {
@@ -202,19 +201,20 @@ describe('AppsSettingsComponent', () => {
           Size: 12,
         });
 
-        const detailsTable = await loader.getHarness(DetailsTableHarness);
-        const mirrorItem = await detailsTable.getItemByLabel('Registry Mirrors');
-        const editable = await mirrorItem.getHarness(EditableHarness);
+        const mirrorList = await loader.getHarness(IxListHarness.with({ label: 'Registry Mirrors' }));
 
-        await editable.open();
+        // Edit first existing mirror
+        const existingMirrors = await mirrorList.getListItems();
+        await existingMirrors[0].fillForm({
+          'Mirror URL': 'new-secure.example.com',
+          Insecure: false,
+        });
 
-        const secureChips = await editable.getHarness(IxChipsHarness.with({ label: 'Secure Mirror URLs' }));
-        await secureChips.setValue(['new-secure.example.com']);
-
-        const insecureChips = await editable.getHarness(IxChipsHarness.with({ label: 'Insecure Mirror URLs' }));
-        await insecureChips.setValue(['new-insecure.example.com']);
-
-        await editable.tryToClose();
+        // Edit second existing mirror
+        await existingMirrors[1].fillForm({
+          'Mirror URL': 'new-insecure.example.com',
+          Insecure: true,
+        });
 
         const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         await saveButton.click();
@@ -226,8 +226,11 @@ describe('AppsSettingsComponent', () => {
             { base: '173.17.0.0/12', size: 12 },
           ],
           nvidia: false,
-          secure_registry_mirrors: ['new-secure.example.com'],
-          insecure_registry_mirrors: ['new-insecure.example.com'],
+          registry_mirrors: [
+            { url: 'new-secure.example.com', insecure: false },
+            { url: 'new-insecure.example.com', insecure: true },
+            { url: 'insecure.example.com', insecure: true },
+          ],
         }]);
       });
     });

@@ -24,3 +24,22 @@
     width: 80px;
   }
 }
+
+.registry-mirrors {
+  margin-bottom: 0;
+}
+
+.registry-mirror {
+  align-items: flex-end;
+  column-gap: 20px;
+  display: flex;
+
+  ix-input {
+    flex-grow: 1;
+  }
+
+  ix-checkbox {
+    width: auto;
+    padding-bottom: 12px;
+  }
+}
