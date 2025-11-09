@@ -183,6 +183,25 @@ describe('AppsSettingsComponent', () => {
         const mirrorItems = await mirrorList.getListItems();
 
         expect(mirrorItems).toHaveLength(3);
+
+        // Verify mirror content
+        const firstMirrorValues = await mirrorItems[0].getFormValues();
+        expect(firstMirrorValues).toMatchObject({
+          'Mirror URL': 'registry1.example.com',
+          Insecure: false,
+        });
+
+        const secondMirrorValues = await mirrorItems[1].getFormValues();
+        expect(secondMirrorValues).toMatchObject({
+          'Mirror URL': 'registry2.example.com',
+          Insecure: false,
+        });
+
+        const thirdMirrorValues = await mirrorItems[2].getFormValues();
+        expect(thirdMirrorValues).toMatchObject({
+          'Mirror URL': 'insecure.example.com',
+          Insecure: true,
+        });
       });
 
       it('updates docker settings when form is edited', async () => {
