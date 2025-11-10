@@ -46,9 +46,7 @@ export class InstanceUsbDevicesComponent {
 
   protected readonly shownDevices = computed(() => {
     return this.devicesStore.devices().filter((device) => {
-      return [
-        ContainerDeviceType.Usb,
-      ].includes(device.dtype);
+      return device.dtype === ContainerDeviceType.Usb;
     });
   });
 

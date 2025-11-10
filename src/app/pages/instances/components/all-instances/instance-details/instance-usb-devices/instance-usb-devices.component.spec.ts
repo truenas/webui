@@ -2,7 +2,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
-import { ContainerUsbDevice } from 'app/interfaces/container.interface';
+import { ContainerDeviceWithId } from 'app/interfaces/container.interface';
 import {
   AddUsbDeviceMenuComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-usb-devices/add-usb-device-menu/add-usb-device-menu.component';
@@ -18,17 +18,25 @@ import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtu
 
 describe('InstanceUsbDevicesComponent', () => {
   let spectator: Spectator<InstanceUsbDevicesComponent>;
-  const devices = [
+  const devices: ContainerDeviceWithId[] = [
     {
+      id: 1,
       dtype: ContainerDeviceType.Usb,
-      description: 'USB Microphone',
-      name: 'usb1',
-    } as ContainerUsbDevice,
+      usb: {
+        vendor_id: '046d',
+        product_id: '0825',
+      },
+      device: null,
+    },
     {
+      id: 2,
       dtype: ContainerDeviceType.Usb,
-      description: 'USB Keyboard',
-      name: 'usb2',
-    } as ContainerUsbDevice,
+      usb: {
+        vendor_id: '045e',
+        product_id: '07f8',
+      },
+      device: null,
+    },
   ];
 
   const createComponent = createComponentFactory({
@@ -63,8 +71,8 @@ describe('InstanceUsbDevicesComponent', () => {
     const deviceRows = spectator.queryAll('.device');
 
     expect(deviceRows).toHaveLength(2);
-    expect(deviceRows[0]).toHaveText('USB Microphone');
-    expect(deviceRows[1]).toHaveText('USB Keyboard');
+    expect(deviceRows[0]).toHaveText('USB 046d:0825');
+    expect(deviceRows[1]).toHaveText('USB 045e:07f8');
   });
 
   it('renders a menu to delete the device', () => {

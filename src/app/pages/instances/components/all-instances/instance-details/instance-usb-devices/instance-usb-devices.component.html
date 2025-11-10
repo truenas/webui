@@ -11,7 +11,7 @@
     @if (isLoadingDevices()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      @for (device of shownDevices(); track device.name) {
+      @for (device of shownDevices(); track device.id) {
         <div class="device">
           <span>{{ getDeviceDescription(device) }}</span>
 

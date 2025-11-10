@@ -57,11 +57,7 @@ export class InstanceDisksComponent {
 
   protected readonly visibleDisks = computed(() => {
     return this.devicesStore.devices().filter((device) => {
-      return [
-        ContainerDeviceType.Disk,
-        ContainerDeviceType.Raw,
-        ContainerDeviceType.Filesystem,
-      ].includes(device.dtype);
+      return device.dtype === ContainerDeviceType.Filesystem;
     });
   });
 

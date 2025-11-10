@@ -17,7 +17,7 @@
     @if (isLoadingDevices()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      @for (disk of visibleDisks(); track disk.name) {
+      @for (disk of visibleDisks(); track disk.id) {
         <div class="device">
           <div class="device-info">
             <ix-device-type-badge [deviceType]="disk.dtype" [showLabel]="false"></ix-device-type-badge>
