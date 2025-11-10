@@ -23,11 +23,6 @@ export const instancesHelptext = {
   envNameLabel: T('Name'),
   envValueLabel: T('Value'),
 
-  deviceTypes: {
-    filesystemTooltip: T('<b>Filesystem Device</b><br />A bind mount that makes a host directory available inside the container at a specific mount point.\
-<br />Use this for sharing data between host and container or persisting container data.'),
-  },
-
   deviceBadgeTooltips: {
     filesystem: T('Filesystem bind mount'),
     usb: T('USB device'),
