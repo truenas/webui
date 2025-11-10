@@ -67,7 +67,7 @@ describe('InstanceDiskFormComponent', () => {
         attributes: {
           source: '/mnt/path',
           target: '/target',
-          dtype: 'FILESYSTEM',
+          dtype: ContainerDeviceType.Filesystem,
         },
       }]);
     });
@@ -125,7 +125,7 @@ describe('InstanceDiskFormComponent', () => {
         attributes: {
           source: '/mnt/updated',
           target: '/new-target',
-          dtype: 'FILESYSTEM',
+          dtype: ContainerDeviceType.Filesystem,
         },
       }]);
 

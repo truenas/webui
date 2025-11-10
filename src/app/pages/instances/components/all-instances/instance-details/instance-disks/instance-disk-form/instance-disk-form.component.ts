@@ -9,6 +9,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
+import { ContainerDeviceType } from 'app/enums/container.enum';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import {
   ContainerFilesystemDevice,
@@ -127,7 +128,7 @@ export class InstanceDiskFormComponent implements OnInit {
     const formValue = this.form.getRawValue();
 
     const payload: ContainerFilesystemDevice = {
-      dtype: 'FILESYSTEM',
+      dtype: ContainerDeviceType.Filesystem,
       source: formValue.source,
       target: formValue.target,
     };
