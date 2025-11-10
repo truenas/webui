@@ -29,6 +29,7 @@ import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-li
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
+import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -73,6 +74,7 @@ export class AppsSettingsComponent implements OnInit {
   private fb = inject(FormBuilder);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
+  private urlValidationService = inject(UrlValidationService);
 
   protected hasNvidiaCard$ = this.api.call('docker.nvidia_present');
   protected isFormLoading = signal(false);
@@ -160,7 +162,10 @@ export class AppsSettingsComponent implements OnInit {
 
   protected addRegistryMirror(): void {
     const control = this.fb.nonNullable.group({
-      url: ['', [Validators.required]],
+      url: ['', [
+        Validators.required,
+        Validators.pattern(this.urlValidationService.urlRegex),
+      ]],
       insecure: [false],
     });
 

@@ -33,9 +33,9 @@ describe('AppsSettingsComponent', () => {
     ],
     enable_image_updates: false,
     registry_mirrors: [
-      { url: 'registry1.example.com', insecure: false },
-      { url: 'registry2.example.com', insecure: false },
-      { url: 'insecure.example.com', insecure: true },
+      { url: 'https://registry1.example.com', insecure: false },
+      { url: 'https://registry2.example.com', insecure: false },
+      { url: 'http://insecure.example.com', insecure: true },
     ],
     pool: 'test-pool',
     dataset: 'test-dataset',
@@ -187,19 +187,19 @@ describe('AppsSettingsComponent', () => {
         // Verify mirror content
         const firstMirrorValues = await mirrorItems[0].getFormValues();
         expect(firstMirrorValues).toMatchObject({
-          'Mirror URL': 'registry1.example.com',
+          'Mirror URL': 'https://registry1.example.com',
           Insecure: false,
         });
 
         const secondMirrorValues = await mirrorItems[1].getFormValues();
         expect(secondMirrorValues).toMatchObject({
-          'Mirror URL': 'registry2.example.com',
+          'Mirror URL': 'https://registry2.example.com',
           Insecure: false,
         });
 
         const thirdMirrorValues = await mirrorItems[2].getFormValues();
         expect(thirdMirrorValues).toMatchObject({
-          'Mirror URL': 'insecure.example.com',
+          'Mirror URL': 'http://insecure.example.com',
           Insecure: true,
         });
       });
@@ -225,13 +225,13 @@ describe('AppsSettingsComponent', () => {
         // Edit first existing mirror
         const existingMirrors = await mirrorList.getListItems();
         await existingMirrors[0].fillForm({
-          'Mirror URL': 'new-secure.example.com',
+          'Mirror URL': 'https://new-secure.example.com',
           Insecure: false,
         });
 
         // Edit second existing mirror
         await existingMirrors[1].fillForm({
-          'Mirror URL': 'new-insecure.example.com',
+          'Mirror URL': 'http://new-insecure.example.com',
           Insecure: true,
         });
 
@@ -246,9 +246,9 @@ describe('AppsSettingsComponent', () => {
           ],
           nvidia: false,
           registry_mirrors: [
-            { url: 'new-secure.example.com', insecure: false },
-            { url: 'new-insecure.example.com', insecure: true },
-            { url: 'insecure.example.com', insecure: true },
+            { url: 'https://new-secure.example.com', insecure: false },
+            { url: 'http://new-insecure.example.com', insecure: true },
+            { url: 'http://insecure.example.com', insecure: true },
           ],
         }]);
       });
