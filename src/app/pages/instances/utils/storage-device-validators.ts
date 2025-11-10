@@ -2,37 +2,6 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 
 /**
- * Validator for block device names (e.g., sda, sdb, vda, nvme0n1)
- * Used for DISK device destinations
- */
-export function blockDeviceNameValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value as string;
-
-    if (!value) {
-      return null; // Let required validator handle empty values
-    }
-
-    // Valid patterns:
-    // - sda, sdb, sdc... (SATA/SCSI)
-    // - vda, vdb, vdc... (VirtIO)
-    // - hda, hdb, hdc... (IDE)
-    // - nvme0n1, nvme0n2... (NVMe)
-    const validPattern = /^(sd[a-z]|vd[a-z]|hd[a-z]|nvme\d+n\d+)$/;
-
-    if (!validPattern.test(value)) {
-      return {
-        blockDeviceName: {
-          message: instancesHelptext.validators.blockDeviceName,
-        },
-      };
-    }
-
-    return null;
-  };
-}
-
-/**
  * Validator for container mount paths
  * Used for FILESYSTEM device targets
  */
@@ -86,54 +55,6 @@ export function containerPathValidator(): ValidatorFn {
       return {
         containerPath: {
           message: instancesHelptext.validators.containerPathInvalidCharacters,
-        },
-      };
-    }
-
-    return null;
-  };
-}
-
-/**
- * Validator for DISK device paths
- * API requirement: path must start with "/dev/zvol/"
- */
-export function diskPathValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value as string;
-
-    if (!value) {
-      return null; // Let required validator handle empty values
-    }
-
-    if (!value.startsWith('/dev/zvol/')) {
-      return {
-        diskPath: {
-          message: instancesHelptext.validators.diskPathMustStartWithDevZvol,
-        },
-      };
-    }
-
-    return null;
-  };
-}
-
-/**
- * Validator for RAW device paths
- * API requirement: path must reside within a pool mount point (start with /mnt)
- */
-export function rawFilePathValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value as string;
-
-    if (!value) {
-      return null; // Let required validator handle empty values
-    }
-
-    if (!value.startsWith('/mnt/')) {
-      return {
-        rawFilePath: {
-          message: instancesHelptext.validators.rawFilePathMustStartWithMnt,
         },
       };
     }
