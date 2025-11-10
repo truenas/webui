@@ -62,6 +62,10 @@ export class DeviceActionsMenuComponent {
 
   readonly edit = output();
 
+  protected readonly deviceDescription = computed(() => {
+    return getDeviceDescription(this.translate, this.device());
+  });
+
   protected readonly isStorageDevice = computed(() => {
     return this.device().dtype === ContainerDeviceType.Filesystem;
   });
@@ -109,7 +113,7 @@ export class DeviceActionsMenuComponent {
     this.dialog.confirm({
       message: this.translate.instant(
         'Are you sure you want to delete {item}?',
-        { item: getDeviceDescription(this.translate, this.device()) },
+        { item: this.deviceDescription() },
       ),
       title: this.translate.instant('Delete Item'),
     })
