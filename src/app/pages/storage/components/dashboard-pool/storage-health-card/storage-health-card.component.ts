@@ -168,7 +168,7 @@ export class StorageHealthCardComponent implements OnChanges {
     if (this.poolScanSubscription && !this.poolScanSubscription.closed) {
       this.poolScanSubscription.unsubscribe();
     }
-    this.poolScanSubscription = this.api.subscribe('zfs.pool.scan')
+    this.poolScanSubscription = this.api.subscribe('pool.scan')
       .pipe(
         map((apiEvent) => apiEvent.fields),
         filter((scan) => scan.name === this.pool().name),
