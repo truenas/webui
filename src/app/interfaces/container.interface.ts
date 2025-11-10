@@ -1,6 +1,7 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import {
   AllowedImageOs,
+  ContainerDeviceType,
   ContainerNetworkType,
   ContainerRemote,
   ContainerStatus,
@@ -93,13 +94,13 @@ export type UpdateContainerInstance = Partial<Pick<ContainerInstance,
 >>;
 
 export interface ContainerFilesystemDevice {
-  dtype: 'FILESYSTEM';
+  dtype: ContainerDeviceType.Filesystem;
   target: string;
   source: string;
 }
 
 export interface ContainerNicDevice {
-  dtype: 'NIC';
+  dtype: ContainerDeviceType.Nic;
   trust_guest_rx_filters: boolean;
   type: 'E1000' | 'VIRTIO';
   nic_attach: string | null;
@@ -107,7 +108,7 @@ export interface ContainerNicDevice {
 }
 
 export interface ContainerUsbDevice {
-  dtype: 'USB';
+  dtype: ContainerDeviceType.Usb;
   usb: {
     vendor_id: string;
     product_id: string;

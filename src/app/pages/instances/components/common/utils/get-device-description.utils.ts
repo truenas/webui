@@ -1,5 +1,5 @@
 import { TranslateService } from '@ngx-translate/core';
-import { ContainerDeviceType, containerDeviceTypeLabels } from 'app/enums/container.enum';
+import { ContainerDeviceType } from 'app/enums/container.enum';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 
@@ -28,10 +28,9 @@ export function getDeviceDescription(translate: TranslateService, device: Contai
     }
 
     default: {
-      const typeLabel = translate.instant(
-        containerDeviceTypeLabels.get(device.dtype as ContainerDeviceType) || device.dtype,
-      );
-      return typeLabel;
+      // This should never happen due to TypeScript exhaustiveness checking
+      const exhaustiveCheck: never = device;
+      return String(exhaustiveCheck);
     }
   }
 }
