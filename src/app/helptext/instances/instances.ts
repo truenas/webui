@@ -23,11 +23,6 @@ export const instancesHelptext = {
   envNameLabel: T('Name'),
   envValueLabel: T('Value'),
 
-  disksLabel: T('Disks'),
-  disksSourceLabel: T('Source'),
-  disksDestinationLabel: T('Destination'),
-  disksDestinationTooltip: T('Specify the container filesystem path where the disk will be mounted.'),
-
   deviceTypes: {
     filesystemTooltip: T('<b>Filesystem Device</b><br />A bind mount that makes a host directory available inside the container at a specific mount point.\
 <br />Use this for sharing data between host and container or persisting container data.'),
@@ -43,7 +38,6 @@ export const instancesHelptext = {
   deviceDescriptions: {
     defaultMacAddress: T('Default Mac Address'),
     unknown: T('Unknown'),
-    unknownPath: T('Unknown path'),
     unknownSource: T('Unknown source'),
     unknownTarget: T('Unknown target'),
   },
