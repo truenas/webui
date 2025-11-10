@@ -103,7 +103,7 @@ describe('InstanceGeneralInfoComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('container.delete', [1]);
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers'], { state: { hideMobileDetails: true } });
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers']);
   });
 
   it('opens edit instance form when Edit is pressed', async () => {

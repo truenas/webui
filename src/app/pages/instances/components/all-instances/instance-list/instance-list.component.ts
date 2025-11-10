@@ -3,7 +3,6 @@ import {
   Component, ChangeDetectionStrategy,
   computed, inject,
   output,
-  input,
   signal,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
@@ -51,8 +50,7 @@ export class InstanceListComponent {
   private searchDirectives = inject(UiSearchDirectivesService);
   private layoutService = inject(LayoutService);
 
-  readonly instanceId = toSignal(this.activatedRoute.params.pipe(map((params) => (params['id'] ? Number(params['id']) : null))));
-  readonly isMobileView = input<boolean>();
+  readonly instanceId = toSignal(this.activatedRoute.params.pipe(map((params) => +params['id'])));
   readonly toggleShowMobileDetails = output<boolean>();
 
   readonly searchQuery = signal<string>('');
@@ -71,7 +69,7 @@ export class InstanceListComponent {
 
   get checkedInstances(): ContainerInstance[] {
     return this.selection.selected
-      .map((id) => this.instances().find((instance) => instance.id === id))
+      .map((id: number) => this.instances().find((instance) => instance.id === id))
       .filter((instance) => !!instance);
   }
 
@@ -123,9 +121,7 @@ export class InstanceListComponent {
   navigateToDetails(instance: ContainerInstance): void {
     this.layoutService.navigatePreservingScroll(this.router, ['/containers', 'view', instance.id]);
 
-    if (this.isMobileView()) {
-      this.toggleShowMobileDetails.emit(true);
-    }
+    this.toggleShowMobileDetails.emit(true);
   }
 
   resetSelection(): void {

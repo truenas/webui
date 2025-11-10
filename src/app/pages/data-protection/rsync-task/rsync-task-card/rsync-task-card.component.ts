@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -59,6 +60,7 @@ import { AppState } from 'app/store';
     TestDirective,
     RouterLink,
     IxIconComponent,
+    MatTooltip,
     RequiresRolesDirective,
     MatButton,
     IxTableComponent,

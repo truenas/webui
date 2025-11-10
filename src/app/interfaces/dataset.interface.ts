@@ -42,7 +42,6 @@ export interface Dataset {
   usedbyrefreservation: ZfsProperty<string, number>;
   usedbysnapshots: ZfsProperty<string, number>;
   type: DatasetType;
-  managedby: ZfsProperty<string, string>;
   aclmode: ZfsProperty<AclMode, string>;
   acltype: ZfsProperty<DatasetAclType, string>;
   atime: ZfsProperty<OnOff, boolean>;
@@ -66,11 +65,7 @@ export interface Dataset {
   // Absent if extra.retrieve_children is false
   children?: Dataset[];
 
-  refquota_critical?: ZfsProperty<string, string>;
-  refquota_warning?: ZfsProperty<string, string>;
-  quota_critical?: ZfsProperty<string, string>;
-  quota_warning?: ZfsProperty<string, string>;
-  comments?: ZfsProperty<string>;
+  user_properties?: Record<string, ZfsProperty<string, string | number>>;
 
   // Present for type === DatasetType.Volume
   volsize?: ZfsProperty<string, number>;
@@ -194,6 +189,7 @@ export interface DatasetDetails {
   smb_shares?: { enabled: boolean; path: string; share_name: string }[];
   nfs_shares?: { enabled: boolean; path: string }[];
   iscsi_shares?: { enabled: boolean; type: IscsiExtentType; path: string }[];
+  nvmet_shares?: { enabled: boolean; path: string }[];
   vms?: { name: string; path: string }[];
   apps?: { name: string; path: string }[];
   children?: DatasetDetails[];
@@ -206,11 +202,7 @@ export interface DatasetDetails {
   compression: ZfsProperty<string>;
   compressratio: ZfsProperty<string>;
   deduplication: ZfsProperty<string>;
-  refquota_critical?: ZfsProperty<string, number>;
-  refquota_warning?: ZfsProperty<string, number>;
-  quota_critical?: ZfsProperty<string, number | null>;
-  quota_warning?: ZfsProperty<string, number | null>;
-  comments?: ZfsProperty<string>;
+  user_properties?: Record<string, ZfsProperty<string, string | number>>;
 }
 
 export enum DiskSpaceKey {

@@ -1,5 +1,4 @@
 import { Injectable, inject } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
@@ -12,12 +11,14 @@ import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
+import { isSigninUrl } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailoverValidationService } from 'app/services/failover-validation.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -43,9 +44,8 @@ export class SigninStore extends ComponentStore<SigninState> {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private tokenLastUsedService = inject(TokenLastUsedService);
-  private systemGeneralService = inject(SystemGeneralService);
   private router = inject(Router);
-  private snackbar = inject(MatSnackBar);
+  private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
   private authService = inject(AuthService);
   private updateService = inject(UpdateService);
@@ -70,7 +70,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     }
   };
 
-  getLoginErrorMessage(loginResult: LoginResult, isOtpError = false): string {
+  getLoginErrorMessage(loginResult: LoginResult, isOtpError = false): TranslatedString {
     if (loginResult === LoginResult.NoAccess) {
       return this.translate.instant('User is lacking permissions to access WebUI.');
     }
@@ -151,23 +151,28 @@ export class SigninStore extends ComponentStore<SigninState> {
     }),
   ));
 
-  showSnackbar(message: string): void {
-    this.snackbar.open(
-      message,
-      this.translate.instant('Close'),
-      { duration: 4000, verticalPosition: 'bottom' },
-    );
-  }
-
   getRedirectUrl(): string {
     const redirectUrl = this.window.sessionStorage.getItem('redirectUrl');
     if (redirectUrl) {
+      // Validate redirect URL before processing to prevent malicious URLs
+      if (isSigninUrl(redirectUrl)) {
+        return '/dashboard';
+      }
+
       try {
         const url = new URL(redirectUrl, this.window.location.origin);
         url.searchParams.delete(tokenParam);
-        return url.pathname + url.search;
-      } catch {
-        console.error('Invalid redirect URL:', redirectUrl);
+        const finalUrl = url.pathname + url.search;
+
+        // Double-check after query param removal (defense in depth)
+        if (isSigninUrl(finalUrl)) {
+          return '/dashboard';
+        }
+
+        return finalUrl;
+      } catch (error) {
+        console.error('Invalid redirect URL:', redirectUrl, error);
+        return '/dashboard';
       }
     }
 
@@ -247,7 +252,9 @@ export class SigninStore extends ComponentStore<SigninState> {
         }
 
         this.setLoadingState(false);
-        this.showSnackbar(result.error || this.translate.instant('Failover validation failed.'));
+        this.snackbar.error(
+          (result.error as TranslatedString) || this.translate.instant('Failover validation failed.'),
+        );
         return of(LoginResult.NoAccess);
       }),
       catchError(() => {
@@ -255,7 +262,7 @@ export class SigninStore extends ComponentStore<SigninState> {
         const errorMsg = this.translate.instant(
           'Unable to check failover status. Please try again later or contact the system administrator.',
         );
-        this.showSnackbar(errorMsg);
+        this.snackbar.error(errorMsg);
         return of(LoginResult.NoAccess);
       }),
     );
@@ -269,12 +276,12 @@ export class SigninStore extends ComponentStore<SigninState> {
           // The navigation and cleanup is already handled in the handleSuccessfulLogin effect
         } else {
           this.setLoadingState(false);
-          this.showSnackbar(this.translate.instant('Failed to initialize session.'));
+          this.snackbar.error(this.translate.instant('Failed to initialize session.'));
         }
       }),
       catchError(() => {
         this.setLoadingState(false);
-        this.showSnackbar(this.translate.instant('Failed to initialize session.'));
+        this.snackbar.error(this.translate.instant('Failed to initialize session.'));
         return of(LoginResult.NoAccess);
       }),
     );

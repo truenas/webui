@@ -1,16 +1,19 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { JsonRpcErrorCode, ApiErrorName } from 'app/enums/api.enum';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
+import { transformApiCallErrorMessage } from 'app/helpers/api.helper';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import {
   VmDevice,
   VmDiskDevice,
@@ -23,13 +26,18 @@ import {
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
+import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { VmService } from 'app/services/vm.service';
+
+const threeGibibytes = 3 * (2 ** 30);
+const tenGibibytes = 10 * (2 ** 30);
 
 describe('DeviceFormComponent', () => {
   let spectator: Spectator<DeviceFormComponent>;
@@ -109,6 +117,9 @@ describe('DeviceFormComponent', () => {
       mockProvider(VmService, {
         hasVirtualizationSupport$: of(true),
       }),
+      // we can only detect whether or not validation errors are being handled
+      // correctly if we mock the `FormErrorHandlerService`
+      mockProvider(FormErrorHandlerService),
     ],
   });
 
@@ -185,6 +196,8 @@ describe('DeviceFormComponent', () => {
         await form.fillForm({
           'CD-ROM Path': '/mnt/newcdrom',
         });
+        spectator.component.cdromForm.markAsDirty();
+        spectator.detectChanges();
         await saveButton.click();
 
         expect(api.call).toHaveBeenLastCalledWith('vm.device.update', [5, {
@@ -423,7 +436,7 @@ describe('DeviceFormComponent', () => {
         dtype: VmDeviceType.Raw,
         path: '/mnt/bassein/raw',
         type: VmDiskMode.Ahci,
-        size: 3,
+        size: threeGibibytes,
         logical_sectorsize: null,
         physical_sectorsize: null,
         boot: false,
@@ -452,7 +465,7 @@ describe('DeviceFormComponent', () => {
             'Raw File': '/mnt/bassein/newraw',
             'Disk Sector Size': '512',
             Mode: 'AHCI',
-            'Raw Filesize': 3,
+            'Raw Filesize': '3 GiB',
             'Device Order': '6',
           },
         );
@@ -463,7 +476,7 @@ describe('DeviceFormComponent', () => {
             logical_sectorsize: 512,
             physical_sectorsize: 512,
             path: '/mnt/bassein/newraw',
-            size: 3,
+            size: threeGibibytes,
             type: VmDiskMode.Ahci,
             dtype: VmDeviceType.Raw,
           },
@@ -496,14 +509,14 @@ describe('DeviceFormComponent', () => {
           'Raw File': '/mnt/bassein/raw',
           'Disk Sector Size': 'Default',
           Mode: 'AHCI',
-          'Raw Filesize': '3',
+          'Raw Filesize': '3 GiB',
           'Device Order': '5',
         });
       });
 
       it('updates an existing Raw File device', async () => {
         await form.fillForm({
-          'Raw Filesize': 5,
+          'Raw Filesize': '10 GiB',
         });
         await saveButton.click();
 
@@ -512,13 +525,263 @@ describe('DeviceFormComponent', () => {
             path: '/mnt/bassein/raw',
             logical_sectorsize: null,
             physical_sectorsize: null,
-            size: 5,
+            size: tenGibibytes,
             type: VmDiskMode.Ahci,
             dtype: VmDeviceType.Raw,
+            exists: true,
           },
           order: 5,
           vm: 45,
         }]);
+      });
+
+      it('sets exists field to true when editing existing raw file device', () => {
+        expect(spectator.component.rawFileForm.value.exists).toBe(true);
+      });
+
+      it('still submits null when size box contains whitespace', async () => {
+        await form.fillForm({
+          'Raw Filesize': '   \n\t',
+        });
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.update', [6, {
+          attributes: {
+            path: '/mnt/bassein/raw',
+            logical_sectorsize: null,
+            physical_sectorsize: null,
+            size: null,
+            type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
+            exists: true,
+          },
+          order: 5,
+          vm: 45,
+        }]);
+      });
+    });
+
+    describe('adds raw file with existing file', () => {
+      beforeEach(async () => {
+        spectator = createComponent({
+          providers: [
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+          ],
+        });
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        api = spectator.inject(ApiService);
+      });
+
+      it('includes exists: true when selecting existing file from path input', async () => {
+        await form.fillForm(
+          {
+            Type: 'Raw File',
+            'Raw File': '/mnt/bassein/existingfile.raw',
+            'Disk Sector Size': 'Default',
+            Mode: 'AHCI',
+            'Device Order': '7',
+          },
+        );
+
+        // Manually trigger path change to simulate file selection
+        spectator.component.rawFileForm.patchValue({ path: '/mnt/bassein/existingfile.raw' });
+        spectator.detectChanges();
+
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.create', [{
+          attributes: {
+            logical_sectorsize: null,
+            physical_sectorsize: null,
+            path: '/mnt/bassein/existingfile.raw',
+            size: null,
+            type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
+            exists: true,
+          },
+          order: 7,
+          vm: 45,
+        }]);
+      });
+    });
+
+    describe('adds raw file with size (new file creation)', () => {
+      beforeEach(async () => {
+        spectator = createComponent({
+          providers: [
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+          ],
+        });
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        api = spectator.inject(ApiService);
+      });
+
+      it('does not include exists field when creating new file with size specified', async () => {
+        await form.fillForm(
+          {
+            Type: 'Raw File',
+            'Raw File': '/mnt/bassein/newfile.raw',
+            'Disk Sector Size': 'Default',
+            Mode: 'AHCI',
+            'Raw Filesize': '10 GiB',
+            'Device Order': '8',
+          },
+        );
+
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.create', [{
+          attributes: {
+            logical_sectorsize: null,
+            physical_sectorsize: null,
+            path: '/mnt/bassein/newfile.raw',
+            size: tenGibibytes,
+            type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
+            // exists should NOT be present
+          },
+          order: 8,
+          vm: 45,
+        }]);
+
+        // Verify exists is not in the attributes
+        const callArgs = (api.call as jest.Mock).mock.calls[
+          (api.call as jest.Mock).mock.calls.length - 1
+        ][1][0];
+        expect(callArgs.attributes).not.toHaveProperty('exists');
+      });
+    });
+
+    describe('gracefully handles errors', () => {
+      const errorDetails: ApiErrorDetails = {
+        errname: ApiErrorName.Validation,
+        error: 400,
+        extra: [['something', 'Path must exist when "exists" is set', 0]],
+        reason: 'something',
+        trace: { class: 'something', formatted: 'something', frames: [] },
+        message: null,
+      };
+      const otherErrorDetails = { ...errorDetails, extra: [['something', 'other message', 0]] };
+      const apiErrorToGetTransformed = new ApiCallError({ code: JsonRpcErrorCode.InvalidParams, message: 'something', data: errorDetails });
+      const transformedApiError = transformApiCallErrorMessage(
+        apiErrorToGetTransformed,
+        'Path must exist when "exists" is set',
+        'The specified file path does not exist. Please select an existing file or specify a file size to create a new file.',
+      );
+
+      const apiErrorWontGetTransformed = new ApiCallError({ code: JsonRpcErrorCode.InvalidParams, message: 'something', data: otherErrorDetails });
+      const mockApiCall = (err: ApiCallError, fallback: jest.Mock) => (method: string) => {
+        if (method === 'vm.device.create') {
+          return throwError(() => err);
+        }
+
+        return fallback(method);
+      };
+
+      beforeEach(async () => {
+        spectator = createComponent({
+          providers: [
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
+          ],
+        });
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        form = await loader.getHarness(IxFormHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+        api = spectator.inject(ApiService);
+      });
+
+      it('properly transforms and displays an error', async () => {
+        const spy = spectator.inject(MockApiService);
+        spy.call.mockImplementation(mockApiCall(apiErrorToGetTransformed, spy.call));
+
+        await form.fillForm(
+          {
+            Type: 'Raw File',
+            'Raw File': '/mnt/bassein/newfile.raw',
+            'Disk Sector Size': 'Default',
+            Mode: 'AHCI',
+            'Raw Filesize': null,
+            'Device Order': '8',
+          },
+        );
+
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.create', [{
+          attributes: {
+            logical_sectorsize: null,
+            physical_sectorsize: null,
+            path: '/mnt/bassein/newfile.raw',
+            size: null,
+            type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
+            exists: true,
+          },
+          order: 8,
+          vm: 45,
+        }]);
+
+        // we can't actually detect any form changes, but detecting whether or not
+        // `handleValidationErrors` was called is sufficient to ensure that the errors
+        // *are* actually being handled.
+        // see `change-password-form.component.spec.ts`.
+        expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
+          .toHaveBeenCalledWith(transformedApiError, expect.any(FormGroup));
+      });
+
+      it('still handles an error that is not transformed', async () => {
+        const spy = spectator.inject(MockApiService);
+        spy.call.mockImplementation(mockApiCall(apiErrorWontGetTransformed, spy.call));
+
+        await form.fillForm(
+          {
+            Type: 'Raw File',
+            'Raw File': '/mnt/bassein/newfile.raw',
+            'Disk Sector Size': 'Default',
+            Mode: 'AHCI',
+            'Raw Filesize': null,
+            'Device Order': '8',
+          },
+        );
+
+        await saveButton.click();
+
+        expect(api.call).toHaveBeenLastCalledWith('vm.device.create', [{
+          attributes: {
+            logical_sectorsize: null,
+            physical_sectorsize: null,
+            path: '/mnt/bassein/newfile.raw',
+            size: null,
+            type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
+            exists: true,
+          },
+          order: 8,
+          vm: 45,
+        }]);
+
+        expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
+          .toHaveBeenCalledWith(apiErrorWontGetTransformed, expect.any(FormGroup));
+      });
+
+      it('handles errors *not* in the raw file form', async () => {
+        const spy = spectator.inject(MockApiService);
+        spy.call.mockImplementation(mockApiCall(apiErrorWontGetTransformed, spy.call));
+
+        await form.fillForm({
+          Type: 'CD-ROM',
+          'CD-ROM Path': '/mnt/cdrom',
+          'Device Order': 1002,
+        });
+
+        await saveButton.click();
+
+        expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
+          .toHaveBeenCalledWith(apiErrorWontGetTransformed, expect.any(FormGroup));
       });
     });
   });

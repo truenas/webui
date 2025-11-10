@@ -5,12 +5,13 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent, MockPipe } from 'ng-mocks';
-import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
-import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { PeriodicSnapshotTaskUi, PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -43,6 +44,7 @@ describe('SnapshotTaskListComponent', () => {
   let spectator: Spectator<SnapshotTaskListComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
+  const event$ = new Subject<ApiEvent<PeriodicSnapshotTask>>();
 
   const snapshotTasksList = [
     {
@@ -95,9 +97,10 @@ describe('SnapshotTaskListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockCall('pool.snapshottask.query', snapshotTasksList),
-      ]),
+      mockProvider(ApiService, {
+        call: jest.fn().mockReturnValue(of(snapshotTasksList)),
+        subscribe: jest.fn().mockReturnValue(event$),
+      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -136,7 +139,7 @@ describe('SnapshotTaskListComponent', () => {
         'From 00:00 to 23:59',
         'At 12:00 AM, every day',
         'Yes',
-        'PENDING',
+        'Pending',
       ],
     ];
 
@@ -177,5 +180,21 @@ describe('SnapshotTaskListComponent', () => {
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.query');
+  });
+
+  it('reloads the data provider when an event is received from pool.snapshottask.query', () => {
+    const api = spectator.inject(ApiService);
+    expect(api.subscribe).toHaveBeenCalledWith('pool.snapshottask.query');
+
+    jest.spyOn(spectator.component.dataProvider, 'load');
+
+    event$.next({
+      collection: 'pool.snapshottask.query',
+      id: snapshotTasksList[0].id,
+      msg: CollectionChangeType.Changed,
+      fields: { state: { state: JobState.Finished } } as PeriodicSnapshotTask,
+    });
+
+    expect(spectator.component.dataProvider.load).toHaveBeenCalled();
   });
 });

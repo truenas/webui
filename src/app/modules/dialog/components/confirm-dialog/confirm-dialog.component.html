@@ -11,10 +11,17 @@
         class="confirm-checkbox secondary-checkbox"
         ixTest="secondary-confirmation"
         [(ngModel)]="isSecondaryCheckboxChecked"
+        (ngModelChange)="onSecondaryCheckboxChange()"
       >
         <span id="confirm-label">{{ options.secondaryCheckboxText }}</span>
       </mat-checkbox>
     </span>
+  }
+
+  @if (options.secondaryCheckboxMessage && isSecondaryCheckboxChecked) {
+    <div class="message-content secondary-message">
+      <span [innerHTML]="options.secondaryCheckboxMessage"></span>
+    </div>
   }
 </div>
 

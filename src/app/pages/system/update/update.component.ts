@@ -24,7 +24,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { UpdateConfig, UpdateProfileChoices, UpdateStatus } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
+import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -170,7 +170,7 @@ export class UpdateComponent implements OnInit {
     map((info) => info.remote_info.version),
   ));
 
-  protected isUpdateInProgress$ = this.store$.select(selectUpdateJob).pipe(
+  protected isUpdateInProgress$ = this.store$.select(selectUpdateJobs).pipe(
     map((jobs) => jobs.length > 0),
   );
 

@@ -1,11 +1,13 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { MatDialog } from '@angular/material/dialog';
 import {
   filter, map, merge, Observable, switchMap, tap,
 } from 'rxjs';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -24,6 +26,7 @@ export class TruenasConnectService {
   private window = inject<Window>(WINDOW);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
+  private matDialog = inject(MatDialog);
 
   config = signal<TruenasConnectConfig | null>(null);
   config$ = toObservable(this.config);
@@ -44,31 +47,10 @@ export class TruenasConnectService {
       });
   }
 
-  private validateNetworkConfig(ips: string[], interfaces: string[], useAllInterfaces: boolean): boolean {
-    // If no specific IPs or interfaces are configured, must use all interfaces
-    if (ips.length === 0 && interfaces.length === 0) {
-      return true; // Force use_all_interfaces to true
-    }
-    return useAllInterfaces;
-  }
 
   disableService(): Observable<TruenasConnectConfig> {
-    const currentConfig = this.config();
-    if (!currentConfig) {
-      throw new Error('Truenas Connect config is not available');
-    }
-    const ips = currentConfig.ips || [];
-    const interfaces = currentConfig.interfaces || [];
-    const useAllInterfaces = this.validateNetworkConfig(
-      ips,
-      interfaces,
-      currentConfig.use_all_interfaces ?? true,
-    );
     return this.api.call('tn_connect.update', [{
       enabled: false,
-      ips,
-      interfaces,
-      use_all_interfaces: useAllInterfaces,
     }])
       .pipe(
         this.errorHandler.withErrorHandler(),
@@ -76,22 +58,8 @@ export class TruenasConnectService {
   }
 
   enableService(): Observable<TruenasConnectConfig> {
-    const currentConfig = this.config();
-    if (!currentConfig) {
-      throw new Error('Truenas Connect config is not available');
-    }
-    const ips = currentConfig.ips || [];
-    const interfaces = currentConfig.interfaces || [];
-    const useAllInterfaces = this.validateNetworkConfig(
-      ips,
-      interfaces,
-      currentConfig.use_all_interfaces ?? true,
-    );
     return this.api.call('tn_connect.update', [{
       enabled: true,
-      ips,
-      interfaces,
-      use_all_interfaces: useAllInterfaces,
     }])
       .pipe(
         this.errorHandler.withErrorHandler(),
@@ -149,5 +117,17 @@ export class TruenasConnectService {
     if (globalTruenasConnectWindow) {
       globalTruenasConnectWindow.focus();
     }
+  }
+
+  openStatusModal(): void {
+    this.matDialog.open(TruenasConnectStatusModalComponent, {
+      width: '400px',
+      hasBackdrop: true,
+      panelClass: 'topbar-panel',
+      position: {
+        top: '48px',
+        right: '16px',
+      },
+    });
   }
 }

@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { Router, NavigationStart } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -35,24 +33,12 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 export class AllInstancesComponent implements OnInit {
   private configStore = inject(VirtualizationConfigStore);
   private instancesStore = inject(VirtualizationInstancesStore);
-  private router = inject(Router);
   private dialogService = inject(DialogService);
   private window = inject<Window>(WINDOW);
   private translate = inject(TranslateService);
 
   readonly selectedInstance = this.instancesStore.selectedInstance;
-
   protected readonly searchableElements = allInstancesElements;
-
-  constructor() {
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
-      .subscribe(() => {
-        if (this.router.currentNavigation()?.extras?.state?.hideMobileDetails) {
-          this.instancesStore.resetInstance();
-        }
-      });
-  }
 
   ngOnInit(): void {
     this.configStore.initialize();

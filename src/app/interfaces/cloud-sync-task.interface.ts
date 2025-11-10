@@ -7,12 +7,12 @@ import { Schedule } from 'app/interfaces/schedule.interface';
 
 export interface BwLimit {
   time: string;
-  bandwidth: number;
+  bandwidth: number | null;
 }
 
 export interface BwLimitUpdate {
   time: string;
-  bandwidth: string;
+  bandwidth: number | null;
 }
 
 export interface CloudSyncTask {

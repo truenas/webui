@@ -27,7 +27,7 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialog } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { getDatasetLabel, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { getDatasetLabel, getUserProperty, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -83,7 +83,13 @@ export class DatasetDetailsCardComponent {
   protected readonly helptext = datasetDetailsHelptext;
 
   protected readonly hasComments = computed(() => {
-    return this.dataset().comments?.source === ZfsPropertySource.Local && !!this.dataset().comments?.value?.length;
+    const comments = getUserProperty<string>(this.dataset(), 'comments');
+    return comments?.source === ZfsPropertySource.Local && !!comments?.value?.length;
+  });
+
+  protected readonly commentsValue = computed(() => {
+    const comments = getUserProperty<string>(this.dataset(), 'comments');
+    return comments?.value || '';
   });
 
   protected readonly canBePromoted = computed(() => Boolean(this.dataset().origin?.parsed));
@@ -104,7 +110,7 @@ export class DatasetDetailsCardComponent {
         untilDestroyed(this),
       )
       .subscribe((parent) => {
-        this.router.navigate(['/datasets', parent?.id], { state: { hideMobileDetails: true } });
+        this.router.navigate(['/datasets', parent?.id]);
       });
   }
 

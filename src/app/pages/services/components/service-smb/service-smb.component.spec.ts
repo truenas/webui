@@ -1,15 +1,18 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { Router } from '@angular/router';
-import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { SmbConfig, smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -18,15 +21,18 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UserService } from 'app/services/user.service';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('ServiceSmbComponent', () => {
   let spectator: Spectator<ServiceSmbComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+  let store$: MockStore;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
     close: jest.fn(),
@@ -34,7 +40,11 @@ describe('ServiceSmbComponent', () => {
     getData: jest.fn((): undefined => undefined),
   };
 
-  const createComponent = createRoutingFactory({
+  const tncConfigSignal = signal<TruenasConnectConfig>({
+    status: TruenasConnectStatus.Configured,
+  } as TruenasConnectConfig);
+
+  const createComponent = createComponentFactory({
     component: ServiceSmbComponent,
     imports: [
       ReactiveFormsModule,
@@ -85,7 +95,6 @@ describe('ServiceSmbComponent', () => {
       ]),
       mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
-      mockProvider(Router),
       mockProvider(DialogService),
       mockProvider(SystemGeneralService),
       mockProvider(UserService, {
@@ -97,14 +106,27 @@ describe('ServiceSmbComponent', () => {
         }])),
       }),
       mockProvider(SlideInRef, slideInRef),
-      mockAuth(),
+      mockProvider(TruenasConnectService, {
+        config: tncConfigSignal,
+        openStatusModal: jest.fn(),
+      }),
+      provideMockStore({
+        selectors: [
+          { selector: selectIsEnterprise, value: false },
+        ],
+      }),
     ],
   });
 
   beforeEach(() => {
+    tncConfigSignal.set({
+      status: TruenasConnectStatus.Configured,
+    } as TruenasConnectConfig);
+
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
+    store$ = spectator.inject(MockStore);
   });
 
   it('loads and shows current settings for Smb service when form is opened', async () => {
@@ -150,7 +172,7 @@ describe('ServiceSmbComponent', () => {
       'Enable Search (Spotlight)': true,
     });
 
-    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Search (Spotlight)' }));
+    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
     expect(await searchCheckbox.getValue()).toBe(true);
   });
 
@@ -192,7 +214,7 @@ describe('ServiceSmbComponent', () => {
     const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
     await advancedButton.click();
 
-    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Search (Spotlight)' }));
+    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
     expect(await searchCheckbox.getValue()).toBe(false);
   });
 
@@ -209,7 +231,7 @@ describe('ServiceSmbComponent', () => {
 
     const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
     await advancedButton.click();
-    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Search (Spotlight)' }));
+    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
     expect(await searchCheckbox.getValue()).toBe(true);
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -266,7 +288,7 @@ describe('ServiceSmbComponent', () => {
       'Transport Encryption Behavior': 'Default – follow upstream / TrueNAS default',
     });
 
-    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Search (Spotlight)' }));
+    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
     await searchCheckbox.toggle();
     expect(await searchCheckbox.getValue()).toBe(false);
 
@@ -300,5 +322,248 @@ describe('ServiceSmbComponent', () => {
       encryption: SmbEncryption.Default,
       search_protocols: [],
     }]);
+  });
+
+  describe('TrueNAS Connect validation', () => {
+    it('should disable Spotlight checkbox when TrueNAS Connect is not configured', async () => {
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Disabled,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
+      expect(await searchCheckbox.isDisabled()).toBe(true);
+      expect(spectator.component.form.controls.spotlight_search.disabled).toBe(true);
+    });
+
+    it('should enable Spotlight checkbox when TrueNAS Connect is configured', async () => {
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Configured,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
+      expect(await searchCheckbox.isDisabled()).toBe(false);
+      expect(spectator.component.form.controls.spotlight_search.disabled).toBe(false);
+    });
+
+    it('should enable Spotlight checkbox when TrueNAS Connect becomes configured', async () => {
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Disabled,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
+      expect(await searchCheckbox.isDisabled()).toBe(true);
+      expect(spectator.component.form.controls.spotlight_search.disabled).toBe(true);
+
+      // Status changes to configured
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Configured,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      expect(await searchCheckbox.isDisabled()).toBe(false);
+      expect(spectator.component.form.controls.spotlight_search.disabled).toBe(false);
+    });
+
+    it('should show TrueNAS Connect notice when not configured', async () => {
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Disabled,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const notice = spectator.query('.truenas-connect-notice');
+      expect(notice).toBeTruthy();
+      expect(notice.textContent).toContain('Configure TrueNAS Connect to enable this feature.');
+    });
+
+    it('should not show TrueNAS Connect notice when configured', async () => {
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Configured,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const notice = spectator.query('.truenas-connect-notice');
+      expect(notice).toBeFalsy();
+    });
+
+    it('should open TrueNAS Connect modal when clicking the notice link', async () => {
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Disabled,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const truenasConnectService = spectator.inject(TruenasConnectService);
+
+      const noticeLink = spectator.query('.truenas-connect-link');
+      spectator.click(noticeLink);
+
+      expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
+    });
+
+    it('should open TrueNAS Connect modal when pressing Enter on the notice link', async () => {
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Disabled,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const truenasConnectService = spectator.inject(TruenasConnectService);
+
+      const noticeLink = spectator.query('.truenas-connect-link') as HTMLElement;
+      spectator.dispatchKeyboardEvent(noticeLink, 'keydown', 'Enter');
+
+      expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
+    });
+
+    it('should open TrueNAS Connect modal when pressing Space on the notice link', async () => {
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Disabled,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const truenasConnectService = spectator.inject(TruenasConnectService);
+
+      const noticeLink = spectator.query('.truenas-connect-link') as HTMLElement;
+      spectator.dispatchKeyboardEvent(noticeLink, 'keydown', ' ');
+
+      expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
+    });
+
+    it('should not open TrueNAS Connect modal when pressing other keys on the notice link', async () => {
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Disabled,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const truenasConnectService = spectator.inject(TruenasConnectService);
+
+      const noticeLink = spectator.query('.truenas-connect-link') as HTMLElement;
+      spectator.dispatchKeyboardEvent(noticeLink, 'keydown', 'Tab');
+
+      expect(truenasConnectService.openStatusModal).not.toHaveBeenCalled();
+    });
+
+    it('should have proper accessibility attributes on the notice link', async () => {
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Disabled,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const noticeLink = spectator.query('.truenas-connect-link') as HTMLElement;
+      expect(noticeLink.getAttribute('role')).toBe('button');
+      expect(noticeLink.getAttribute('tabindex')).toBe('0');
+    });
+
+    it('should enable Spotlight checkbox on Enterprise system even if TrueNAS Connect is not configured', async () => {
+      store$.overrideSelector(selectIsEnterprise, true);
+      store$.refreshState();
+
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Disabled,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
+      expect(await searchCheckbox.isDisabled()).toBe(false);
+      expect(spectator.component.form.controls.spotlight_search.disabled).toBe(false);
+    });
+
+    it('should not show TrueNAS Connect notice on Enterprise system', async () => {
+      store$.overrideSelector(selectIsEnterprise, true);
+      store$.refreshState();
+
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Disabled,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const notice = spectator.query('.truenas-connect-notice');
+      expect(notice).toBeFalsy();
+    });
+
+    it('should disable Spotlight checkbox on non-Enterprise system without TrueNAS Connect', async () => {
+      store$.overrideSelector(selectIsEnterprise, false);
+      store$.refreshState();
+
+      tncConfigSignal.set({
+        status: TruenasConnectStatus.Disabled,
+      } as TruenasConnectConfig);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="spotlight_search"]' }));
+      expect(await searchCheckbox.isDisabled()).toBe(true);
+      expect(spectator.component.form.controls.spotlight_search.disabled).toBe(true);
+
+      const notice = spectator.query('.truenas-connect-notice');
+      expect(notice).toBeTruthy();
+    });
   });
 });

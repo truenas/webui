@@ -80,6 +80,12 @@ export class UserFormComponent implements OnInit {
 
   protected isFormInvalid = signal<boolean>(false);
 
+  // Signals to track home directory and shell for validation
+  protected homeDirectory = signal<string>(defaultHomePath);
+  protected shell = signal<string | null>(null);
+  protected password = signal<string>('');
+  protected passwordDisabled = signal<boolean>(false);
+
   protected readonly tooltips = tooltips;
   protected readonly Role = Role;
   protected readonly fakeTooltip = '';
@@ -99,10 +105,10 @@ export class UserFormComponent implements OnInit {
 
   protected get formValues(): UserUpdate & { stig_password?: UserStigPasswordOption } {
     return {
-      ...this.form.value,
-      ...this.allowedAccessSection().form.value,
-      ...this.authSection().form.value,
-      ...this.additionalDetailsSection().form.value,
+      ...this.form.getRawValue(),
+      ...this.allowedAccessSection().form.getRawValue(),
+      ...this.authSection().form.getRawValue(),
+      ...this.additionalDetailsSection().form.getRawValue(),
     };
   }
 
@@ -159,6 +165,7 @@ export class UserFormComponent implements OnInit {
   ngOnInit(): void {
     this.setupForm();
     this.setupAccessWatchers();
+    this.setupHomeAndShellWatchers();
   }
 
   private setupForm(): void {
@@ -256,6 +263,54 @@ export class UserFormComponent implements OnInit {
   }
 
   /**
+   * Setup watchers for home directory and shell to update signals for auth validation
+   */
+  private setupHomeAndShellWatchers(): void {
+    this.additionalDetailsSection().form.controls.home.valueChanges.pipe(
+      startWith(this.additionalDetailsSection().form.controls.home.value),
+      untilDestroyed(this),
+    ).subscribe((home) => {
+      this.homeDirectory.set(home || defaultHomePath);
+    });
+
+    this.additionalDetailsSection().form.controls.shell.valueChanges.pipe(
+      startWith(this.additionalDetailsSection().form.controls.shell.value),
+      untilDestroyed(this),
+    ).subscribe((shell) => {
+      this.shell.set(shell);
+    });
+
+    // Watch password and password_disabled for SMB validation
+    this.authSection().form.controls.password.valueChanges.pipe(
+      startWith(this.authSection().form.controls.password.value),
+      untilDestroyed(this),
+    ).subscribe((pwd) => {
+      this.password.set(pwd || '');
+    });
+
+    this.authSection().form.controls.password_disabled.valueChanges.pipe(
+      startWith(this.authSection().form.controls.password_disabled.value),
+      untilDestroyed(this),
+    ).subscribe((disabled) => {
+      this.passwordDisabled.set(disabled || false);
+    });
+  }
+
+  // Field names that need validation clearing based on access type
+  private readonly shellAccessFields = [
+    'shell',
+    'sudo_commands',
+    'sudo_commands_all',
+    'sudo_commands_nopasswd',
+    'sudo_commands_nopasswd_all',
+  ] as const;
+
+  private readonly sshAccessFields = [
+    'sshpubkey',
+    'ssh_password_enabled',
+  ] as const;
+
+  /**
    * Reload validation state for all forms to ensure proper validation after access changes
    */
   private reloadFormValidationState(): void {
@@ -268,21 +323,12 @@ export class UserFormComponent implements OnInit {
 
     // Shell Access controls: shell field and all sudo command fields
     if (!allowedAccess.shellAccess) {
-      fieldsToClear.push(
-        'shell',
-        'sudo_commands',
-        'sudo_commands_all',
-        'sudo_commands_nopasswd',
-        'sudo_commands_nopasswd_all',
-      );
+      fieldsToClear.push(...this.shellAccessFields);
     }
 
     // SSH Access controls: ssh-related fields
     if (!allowedAccess.sshAccess) {
-      fieldsToClear.push(
-        'sshpubkey',
-        'ssh_password_enabled',
-      );
+      fieldsToClear.push(...this.sshAccessFields);
     }
 
     // SMB Access controls: password disable field (shown when SMB is disabled)
@@ -292,8 +338,9 @@ export class UserFormComponent implements OnInit {
     this.formErrorHandler.clearValidationErrorsForHiddenFields(this.allForms, fieldsToClear);
 
     // Update validation for all forms to recalculate based on current access settings
+    // Use emitEvent: false to prevent unnecessary validation cascades
     this.allForms.forEach((form) => {
-      form.updateValueAndValidity();
+      form.updateValueAndValidity({ emitEvent: false });
     });
   }
 

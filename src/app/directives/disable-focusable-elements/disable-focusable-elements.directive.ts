@@ -1,13 +1,13 @@
-import { Directive, Renderer2, ElementRef, OnChanges, input, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, Directive, ElementRef, OnChanges, Renderer2, input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { take, timer } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
-@UntilDestroy()
 @Directive({
   selector: '[disableFocusableElements]',
 })
 export class DisableFocusableElementsDirective implements OnChanges {
+  private readonly destroyRef = inject(DestroyRef);
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private renderer = inject(Renderer2);
 
@@ -20,7 +20,7 @@ export class DisableFocusableElementsDirective implements OnChanges {
   }
 
   private updateFocusableElements(): void {
-    timer(0).pipe(take(1), untilDestroyed(this)).subscribe(() => {
+    timer(0).pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       const tabIndex = this.disableFocusableElements() ? -1 : 0;
       this.updateTabIndex(tabIndex);
     });

@@ -125,6 +125,31 @@ describe('TruenasConnectStatusModalComponent', () => {
     expect(connectSpy).toHaveBeenCalled();
   });
 
+  it('should call generateToken when connecting with REGISTRATION_FINALIZATION_TIMEOUT status', async () => {
+    // Start with disabled status, which shows "Get Connected" button
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Disabled }));
+    spectator.detectChanges();
+
+    const service = spectator.inject(TruenasConnectService);
+    // After enabling, status becomes REGISTRATION_FINALIZATION_TIMEOUT
+    const enableSpy = jest.spyOn(service, 'enableService').mockReturnValue(of({
+      status: TruenasConnectStatus.RegistrationFinalizationTimeout,
+    } as TruenasConnectConfig));
+    const generateTokenSpy = jest.spyOn(service, 'generateToken').mockReturnValue(of('test-token'));
+    const connectSpy = jest.spyOn(service, 'connect').mockReturnValue(of(null));
+
+    const getConnectedBtn = await loader.getHarness(
+      MatButtonHarness.with({
+        text: 'Get Connected',
+      }),
+    );
+    await getConnectedBtn.click();
+
+    expect(enableSpy).toHaveBeenCalled();
+    expect(generateTokenSpy).toHaveBeenCalled();
+    expect(connectSpy).toHaveBeenCalled();
+  });
+
   it('should handle error when clicking Get Connected button', async () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationWaiting }));
     spectator.detectChanges();
@@ -303,7 +328,6 @@ describe('TruenasConnectStatusModalComponent', () => {
     const service = spectator.inject(TruenasConnectService);
     const disableSpy = jest.spyOn(service, 'disableService').mockReturnValue(of(null));
     const enableSpy = jest.spyOn(service, 'enableService').mockReturnValue(of(null));
-    const connectSpy = jest.spyOn(service, 'connect').mockReturnValue(of(null));
 
     const retryBtn = await loader.getHarness(
       MatButtonHarness.with({
@@ -314,7 +338,6 @@ describe('TruenasConnectStatusModalComponent', () => {
 
     expect(disableSpy).toHaveBeenCalled();
     expect(enableSpy).toHaveBeenCalled();
-    expect(connectSpy).not.toHaveBeenCalled();
   });
 
   it('should handle error when clicking Retry Connection button', async () => {
@@ -450,5 +473,63 @@ describe('TruenasConnectStatusModalComponent', () => {
     const statusElement = spectator.query('[ixTest="tnc-status-reason"]');
     expect(statusElement).toBeTruthy();
     expect(statusElement!.textContent).toContain('Power Up your TrueNAS Experience!');
+  });
+
+  describe('Documentation link', () => {
+    it('should show documentation link in Active state with security and accessibility attributes', () => {
+      config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
+      spectator.detectChanges();
+
+      const docLink = spectator.query('.documentation-link a') as HTMLAnchorElement;
+      expect(docLink).toBeTruthy();
+      expect(docLink.href).toBe('https://connect.truenas.com/');
+      expect(docLink.target).toBe('_blank');
+      expect(docLink.rel).toBe('noopener noreferrer');
+      expect(docLink.textContent).toContain('Learn more about TrueNAS Connect');
+      expect(docLink.textContent).toContain('opens in a new tab');
+
+      // Check for external link icon
+      const icon = docLink.querySelector('ix-icon[name="mdi-open-in-new"]');
+      expect(icon).toBeTruthy();
+      expect(icon.getAttribute('aria-hidden')).toBe('true');
+
+      // Check for screen reader text
+      const srText = docLink.querySelector('.sr-only');
+      expect(srText).toBeTruthy();
+      expect(srText.textContent).toContain('opens in a new tab');
+    });
+
+    it('should show documentation link in Waiting state', () => {
+      config.update((conf) => ({ ...conf, status: TruenasConnectStatus.ClaimTokenMissing }));
+      spectator.detectChanges();
+
+      const docLink = spectator.query('.documentation-link a') as HTMLAnchorElement;
+      expect(docLink).toBeTruthy();
+      expect(docLink.href).toBe('https://connect.truenas.com/');
+      expect(docLink.target).toBe('_blank');
+      expect(docLink.rel).toBe('noopener noreferrer');
+    });
+
+    it('should show documentation link in Failed state', () => {
+      config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationFailed }));
+      spectator.detectChanges();
+
+      const docLink = spectator.query('.documentation-link a') as HTMLAnchorElement;
+      expect(docLink).toBeTruthy();
+      expect(docLink.href).toBe('https://connect.truenas.com/');
+      expect(docLink.target).toBe('_blank');
+      expect(docLink.rel).toBe('noopener noreferrer');
+    });
+
+    it('should show documentation link in Connecting state', () => {
+      config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertGenerationInProgress }));
+      spectator.detectChanges();
+
+      const docLink = spectator.query('.documentation-link a') as HTMLAnchorElement;
+      expect(docLink).toBeTruthy();
+      expect(docLink.href).toBe('https://connect.truenas.com/');
+      expect(docLink.target).toBe('_blank');
+      expect(docLink.rel).toBe('noopener noreferrer');
+    });
   });
 });

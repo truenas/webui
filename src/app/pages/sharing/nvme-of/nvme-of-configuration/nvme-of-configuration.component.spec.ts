@@ -6,7 +6,10 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfGlobalConfig } from 'app/interfaces/nvme-of.interface';
+import { Service } from 'app/interfaces/service.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -16,6 +19,7 @@ import {
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectServices } from 'app/store/services/services.selectors';
 
 describe('NvmeOfConfigurationComponent', () => {
   let spectator: Spectator<NvmeOfConfigurationComponent>;
@@ -30,6 +34,7 @@ describe('NvmeOfConfigurationComponent', () => {
         mockCall('nvmet.global.config', {
           ana: true,
           rdma: true,
+          kernel: true,
           xport_referral: false,
           basenqn: 'iqn.2005-10.org.freenas:ctl',
         } as NvmeOfGlobalConfig),
@@ -42,6 +47,16 @@ describe('NvmeOfConfigurationComponent', () => {
           {
             selector: selectIsHaLicensed,
             value: true,
+          },
+          {
+            selector: selectServices,
+            value: [{
+              id: 1,
+              service: ServiceName.NvmeOf,
+              state: ServiceStatus.Stopped,
+              enable: false,
+              pids: [],
+            } as Service],
           },
         ],
       }),
@@ -67,6 +82,7 @@ describe('NvmeOfConfigurationComponent', () => {
 
     expect(formValues).toEqual({
       'Base NQN': 'iqn.2005-10.org.freenas:ctl',
+      'Implementation (Experimental)': 'Linux Kernel',
       'Enable Asymmetric Namespace Access (ANA)': true,
       'Enable Remote Direct Memory Access (RDMA)': true,
     });
@@ -75,6 +91,7 @@ describe('NvmeOfConfigurationComponent', () => {
   it('saves form values when Save is pressed', async () => {
     await form.fillForm({
       'Base NQN': 'new.2005-10.org.freenas:ctl',
+      'Implementation (Experimental)': 'SPDK (userspace)',
       'Enable Asymmetric Namespace Access (ANA)': true,
       'Enable Remote Direct Memory Access (RDMA)': true,
     });
@@ -86,6 +103,7 @@ describe('NvmeOfConfigurationComponent', () => {
       ana: true,
       basenqn: 'new.2005-10.org.freenas:ctl',
       rdma: true,
+      kernel: false,
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
@@ -108,6 +126,23 @@ describe('NvmeOfConfigurationComponent', () => {
     const controls = await form.getDisabledState();
     expect(controls).toMatchObject({
       'Enable Asymmetric Namespace Access (ANA)': true,
+    });
+  });
+
+  it('disables Implementation field when NVMe service is running', async () => {
+    spectator.inject(MockStore).overrideSelector(selectServices, [{
+      id: 1,
+      service: ServiceName.NvmeOf,
+      state: ServiceStatus.Running,
+      enable: true,
+      pids: [1234],
+    } as Service]);
+    spectator.inject(MockStore).refreshState();
+    spectator.component.ngOnInit();
+
+    const controls = await form.getDisabledState();
+    expect(controls).toMatchObject({
+      'Implementation (Experimental)': true,
     });
   });
 });

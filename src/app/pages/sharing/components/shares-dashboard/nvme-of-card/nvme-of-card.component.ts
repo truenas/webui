@@ -4,6 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -59,6 +60,7 @@ import { selectService } from 'app/store/services/services.selectors';
     ServiceStateButtonComponent,
     RequiresRolesDirective,
     MatButton,
+    MatTooltip,
     ServiceExtraActionsComponent,
     IxTableComponent,
     IxTableEmptyDirective,

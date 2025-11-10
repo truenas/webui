@@ -88,14 +88,8 @@ export class InstanceGeneralInfoComponent {
       }),
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.loader.close();
-        this.router.navigate(['/containers'], { state: { hideMobileDetails: true } });
-      },
-      error: () => {
-        this.loader.close();
-      },
+    ).subscribe(() => {
+      this.router.navigate(['/containers']);
     });
   }
 }

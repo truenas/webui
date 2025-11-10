@@ -17,5 +17,7 @@ export enum DefaultValidationError {
   ContainsSlash = 'containsSlash',
   InvalidCharacters = 'invalidCharacters',
   OrphanedPercent = 'orphanedPercent',
+  InvalidRcloneBandwidthLimit = 'invalidRcloneBandwidthLimit',
+  SelectionMustBeFile = 'selectionMustBeFile',
   Empty = 'empty',
 }

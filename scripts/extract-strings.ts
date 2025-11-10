@@ -62,9 +62,9 @@ function processLanguageFiles(languages: string[]): void {
       '--output', ...outputFiles,
       '--string-as-default-value',
       '--fi', '\t',
+      '--clean',
     ];
 
-    // Note: --clean flag removed to prevent over-aggressive removal of translation strings after Angular 20 upgrade
     const child = spawn('./node_modules/.bin/ngx-translate-extract', args, { stdio: 'inherit' });
 
     child.on('close', (code) => {

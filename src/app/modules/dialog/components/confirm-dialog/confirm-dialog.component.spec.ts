@@ -222,4 +222,84 @@ describe('ConfirmDialogComponent', () => {
       });
     });
   });
+
+  describe('secondary checkbox message', () => {
+    const secondaryCheckboxOptions = {
+      ...options,
+      secondaryCheckbox: true,
+      secondaryCheckboxText: 'Delete associated items',
+      secondaryCheckboxMessage: 'This will also delete:<br>• Item 1<br>• Item 2',
+    } as ConfirmOptionsWithSecondaryCheckbox;
+
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: secondaryCheckboxOptions,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('does not show secondary message when secondary checkbox is unchecked', () => {
+      const secondaryMessage = spectator.query('.secondary-message');
+      expect(secondaryMessage).not.toExist();
+    });
+
+    it('shows secondary message when secondary checkbox is checked', async () => {
+      const secondaryCheckbox = await loader.getHarness(MatCheckboxHarness.with({
+        label: secondaryCheckboxOptions.secondaryCheckboxText,
+      }));
+      await secondaryCheckbox.check();
+      spectator.detectChanges();
+
+      const secondaryMessage = spectator.query('.secondary-message');
+      expect(secondaryMessage).toExist();
+      expect(secondaryMessage).toContainText('This will also delete:');
+      expect(secondaryMessage).toContainText('Item 1');
+      expect(secondaryMessage).toContainText('Item 2');
+    });
+
+    it('hides secondary message when secondary checkbox is unchecked after being checked', async () => {
+      const secondaryCheckbox = await loader.getHarness(MatCheckboxHarness.with({
+        label: secondaryCheckboxOptions.secondaryCheckboxText,
+      }));
+
+      // Check it
+      await secondaryCheckbox.check();
+      spectator.detectChanges();
+      expect(spectator.query('.secondary-message')).toExist();
+
+      // Uncheck it
+      await secondaryCheckbox.uncheck();
+      spectator.detectChanges();
+      expect(spectator.query('.secondary-message')).not.toExist();
+    });
+  });
+
+  describe('secondary checkbox without message', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          {
+            provide: MAT_DIALOG_DATA,
+            useValue: {
+              ...options,
+              secondaryCheckbox: true,
+              secondaryCheckboxText: 'Delete associated items',
+              // No secondaryCheckboxMessage
+            } as ConfirmOptionsWithSecondaryCheckbox,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('does not show secondary message section when secondaryCheckboxMessage is not provided', () => {
+      const secondaryMessage = spectator.query('.secondary-message');
+      expect(secondaryMessage).not.toExist();
+    });
+  });
 });

@@ -73,7 +73,6 @@ export class CloudBackupListComponent {
 
   readonly dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
   readonly cloudBackups = input<CloudBackup[]>([]);
-  readonly isMobileView = input<boolean>(false);
 
   readonly toggleShowMobileDetails = output<boolean>();
   readonly searchQuery = signal<string>('');
@@ -221,7 +220,8 @@ export class CloudBackupListComponent {
   }
 
   expanded(row: CloudBackup): void {
-    if (!row || !this.isMobileView()) return;
+    if (!row) return;
+
     this.toggleShowMobileDetails.emit(true);
   }
 

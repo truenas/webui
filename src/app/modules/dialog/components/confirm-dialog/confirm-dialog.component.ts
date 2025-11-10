@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
@@ -31,6 +31,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class ConfirmDialog {
   private dialogRef = inject<MatDialogRef<ConfirmDialog>>(MatDialogRef);
   private translate = inject(TranslateService);
+  private cdr = inject(ChangeDetectorRef);
 
   options: ConfirmOptionsWithSecondaryCheckbox;
 
@@ -61,6 +62,11 @@ export class ConfirmDialog {
 
   toggleSubmit(data: MatCheckboxChange): void {
     this.isSubmitEnabled = data.checked;
+  }
+
+  onSecondaryCheckboxChange(): void {
+    // Trigger change detection to show/hide the secondary message
+    this.cdr.markForCheck();
   }
 
   isDisabled(): boolean {

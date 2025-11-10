@@ -1,7 +1,8 @@
+import { signal } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Subject, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { ContainerDeviceEntry } from 'app/interfaces/container.interface';
+import { ContainerDeviceEntry, ContainerInstance } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
@@ -10,6 +11,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('VirtualizationDevicesStore', () => {
   let spectator: SpectatorService<VirtualizationDevicesStore>;
+  let selectedInstanceSignal: ReturnType<typeof signal<ContainerInstance | undefined>>;
 
   const instances = [
     fakeVirtualizationInstance({ id: 1 }),
@@ -19,10 +21,10 @@ describe('VirtualizationDevicesStore', () => {
   const containerDevices = [
     {
       id: 1, container: 'instance1', attributes: { name: 'device1' }, order: 0,
-    },
+    } as unknown as ContainerDeviceEntry,
     {
       id: 2, container: 'instance1', attributes: { name: 'device2' }, order: 1,
-    },
+    } as unknown as ContainerDeviceEntry,
   ] as ContainerDeviceEntry[];
 
   const createService = createServiceFactory({
@@ -33,13 +35,14 @@ describe('VirtualizationDevicesStore', () => {
       ]),
       mockProvider(VirtualizationInstancesStore, {
         instances: jest.fn(() => instances),
-        selectedInstance: jest.fn(() => instances[0]),
+        selectedInstance: jest.fn(() => selectedInstanceSignal()),
       }),
       mockProvider(ErrorHandlerService),
     ],
   });
 
   beforeEach(() => {
+    selectedInstanceSignal = signal<ContainerInstance | undefined>(instances[0]);
     spectator = createService();
   });
 
