@@ -19,7 +19,7 @@
     @if (isLoadingDevices()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      @for (device of shownDevices(); track device.name) {
+      @for (device of shownDevices(); track device.id) {
         <div class="device">
           <div class="device-info">
             <ix-device-type-badge [deviceType]="device.dtype" [showLabel]="false"></ix-device-type-badge>
