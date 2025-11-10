@@ -38,11 +38,14 @@ describe('OtherOptionsSectionComponent', () => {
   let loader: HarnessLoader;
   let form: IxFieldsetHarness;
   const existingDataset = {
-    comments: {
-      value: 'comments',
-      source: ZfsPropertySource.Inherited,
-      parsed: 'comments',
-    },
+    user_properties: {
+      comments: {
+        parsed: 'comments',
+        rawvalue: 'comments',
+        value: 'comments',
+        source: ZfsPropertySource.Inherited,
+      },
+    } as Record<string, ZfsProperty<string>>,
     sync: {
       parsed: 'standard',
       source: ZfsPropertySource.Inherited,
@@ -107,11 +110,14 @@ describe('OtherOptionsSectionComponent', () => {
 
   const parentDataset = {
     id: 'root/parent',
-    comments: {
-      value: 'comments',
-      source: ZfsPropertySource.Local,
-      parsed: 'comments',
-    },
+    user_properties: {
+      comments: {
+        parsed: 'comments',
+        rawvalue: 'comments',
+        value: 'comments',
+        source: ZfsPropertySource.Local,
+      },
+    } as Record<string, ZfsProperty<string>>,
     sync: {
       parsed: 'standard',
       source: ZfsPropertySource.Default,
@@ -255,7 +261,7 @@ describe('OtherOptionsSectionComponent', () => {
         'Record Size': 'Inherit (128 KiB)',
         'ACL Type': 'POSIX',
         'ACL Mode': 'Discard',
-        'Metadata (Special) Small Block Size': 'Inherit (0)',
+        'Use Metadata (Special) VDEVs': 'Inherit (off)',
       });
     });
 
@@ -303,7 +309,7 @@ describe('OtherOptionsSectionComponent', () => {
         'ACL Type': 'Inherit',
         Copies: '1',
         Exec: 'Inherit (ON)',
-        'Metadata (Special) Small Block Size': 'Inherit (0)',
+        'Use Metadata (Special) VDEVs': 'Inherit (off)',
         'Read-only': 'Inherit (OFF)',
         'Record Size': 'Inherit (128 KiB)',
         Snapdev: 'Inherit (HIDDEN)',
@@ -451,6 +457,176 @@ describe('OtherOptionsSectionComponent', () => {
 
       expect(spectator.query('.recordsize-warning')).toExist();
       expect(spectator.component.advancedModeChange.emit).toHaveBeenCalled();
+    });
+  });
+
+  describe('Use Metadata (Special) VDEVs', () => {
+    it('sends inherit when set to Inherit', () => {
+      spectator.setInput({
+        parent: parentDataset,
+      });
+
+      // Inherit is the default value
+      const payload = spectator.component.getPayload();
+      expect(payload.special_small_block_size).toBe(inherit);
+    });
+
+    it('sends 0 when set to Off', () => {
+      spectator.setInput({
+        parent: parentDataset,
+      });
+
+      spectator.component.form.patchValue({
+        special_small_block_size: OnOff.Off,
+      });
+
+      const payload = spectator.component.getPayload();
+      expect(payload.special_small_block_size).toBe(0);
+    });
+
+    it('sends 16 MiB when set to On but not customized', () => {
+      spectator.setInput({
+        parent: parentDataset,
+      });
+
+      spectator.component.form.patchValue({
+        special_small_block_size: OnOff.On,
+      });
+
+      const payload = spectator.component.getPayload();
+      expect(payload.special_small_block_size).toBe(16777216); // 16 MiB in bytes
+    });
+
+    it('shows customize button when set to On', async () => {
+      spectator.setInput({
+        parent: parentDataset,
+      });
+
+      await form.fillForm({
+        'Use Metadata (Special) VDEVs': 'On',
+      });
+
+      expect(spectator.query('.customize-link')).toExist();
+      expect(spectator.query('.customize-link')).toHaveText('Set Threshold');
+    });
+
+    it('shows custom value field when customize is clicked', async () => {
+      spectator.setInput({
+        parent: parentDataset,
+      });
+
+      await form.fillForm({
+        'Use Metadata (Special) VDEVs': 'On',
+      });
+
+      const customizeButton = spectator.query('.customize-link');
+      expect(customizeButton).toExist();
+
+      spectator.click(customizeButton);
+      spectator.detectChanges();
+
+      expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(true);
+      expect(spectator.query('ix-input[formControlName="special_small_block_size_custom"]')).toExist();
+    });
+
+    it('sends custom value when specified', () => {
+      spectator.setInput({
+        parent: parentDataset,
+      });
+
+      spectator.component.form.patchValue({
+        special_small_block_size: OnOff.On,
+        special_small_block_size_custom: 131072, // 128 KiB
+      });
+      spectator.component.showCustomizeSpecialSmallBlockSize = true;
+
+      const payload = spectator.component.getPayload();
+      expect(payload.special_small_block_size).toBe(131072);
+    });
+
+    describe('editing existing dataset', () => {
+      it('shows Off when existing dataset has special_small_block_size set to 0', () => {
+        const datasetWithZero = {
+          ...existingDataset,
+          special_small_block_size: {
+            value: '0',
+            source: ZfsPropertySource.Local,
+          },
+        } as Dataset;
+
+        spectator.setInput({
+          existing: datasetWithZero,
+          parent: parentDataset,
+        });
+
+        expect(spectator.component.form.value.special_small_block_size).toBe(OnOff.Off);
+        expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(false);
+      });
+
+      it('shows On with custom value when existing dataset has special_small_block_size set to 128K', () => {
+        const datasetWith128K = {
+          ...existingDataset,
+          special_small_block_size: {
+            value: '131072',
+            source: ZfsPropertySource.Local,
+          },
+        } as Dataset;
+
+        spectator.setInput({
+          existing: datasetWith128K,
+          parent: parentDataset,
+        });
+
+        expect(spectator.component.form.value.special_small_block_size).toBe(OnOff.On);
+        expect(spectator.component.form.value.special_small_block_size_custom).toBe(131072);
+        expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(true);
+      });
+
+      it('sends inherit when changing from local value to Inherit', () => {
+        const datasetWith128K = {
+          ...existingDataset,
+          special_small_block_size: {
+            value: '131072',
+            source: ZfsPropertySource.Local,
+          },
+        } as Dataset;
+
+        spectator.setInput({
+          existing: datasetWith128K,
+          parent: parentDataset,
+        });
+
+        // Verify it starts as ON
+        expect(spectator.component.form.value.special_small_block_size).toBe(OnOff.On);
+
+        // Change to Inherit
+        spectator.component.form.patchValue({
+          special_small_block_size: inherit,
+        });
+
+        const payload = spectator.component.getPayload();
+        expect(payload.special_small_block_size).toBe(inherit);
+      });
+
+      it('shows On when existing dataset has special_small_block_size = 16 MiB (default)', () => {
+        const datasetWith16M = {
+          ...existingDataset,
+          special_small_block_size: {
+            value: (16 * 1024 * 1024).toString(),
+            source: ZfsPropertySource.Local,
+          },
+        } as Dataset;
+
+        spectator.setInput({
+          existing: datasetWith16M,
+          parent: parentDataset,
+        });
+
+        expect(spectator.component.form.value.special_small_block_size).toBe(OnOff.On);
+        expect(spectator.component.form.value.special_small_block_size_custom).toBe(16777216);
+        // Customize section should be hidden since it matches the default
+        expect(spectator.component.showCustomizeSpecialSmallBlockSize).toBe(false);
+      });
     });
   });
 });

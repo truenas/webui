@@ -18,7 +18,7 @@ import { selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
+import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
@@ -115,7 +115,7 @@ function createTopbarComponent(options: ComponentOptions = {}): {
             value: fakeRebootInfo,
           },
           {
-            selector: selectUpdateJob,
+            selector: selectUpdateJobs,
             value: updateJob,
           },
           {

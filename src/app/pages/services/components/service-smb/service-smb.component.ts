@@ -1,15 +1,17 @@
-import { Component, OnInit, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { combineLatest, of, Subscription } from 'rxjs';
+import { combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
@@ -30,15 +32,16 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 interface BindIp {
   bindIp: string;
 }
 
-@UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   selector: 'ix-service-smb',
   templateUrl: './service-smb.component.html',
@@ -73,11 +76,48 @@ export class ServiceSmbComponent implements OnInit {
   private userService = inject(UserService);
   private validatorsService = inject(IxValidatorsService);
   private snackbar = inject(SnackbarService);
+  private truenasConnectService = inject(TruenasConnectService);
+  private store$ = inject(Store);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected isFormLoading = signal(false);
-  isBasicMode = true;
-  subscriptions: Subscription[] = [];
+
+  protected isEnterprise = toSignal(this.store$.select(selectIsEnterprise), { initialValue: false });
+
+  protected isTruenasConnectConfigured = computed(() => {
+    const config = this.truenasConnectService.config();
+    return config?.status === TruenasConnectStatus.Configured;
+  });
+
+  protected isSpotlightEnabled = computed(() => {
+    return this.isEnterprise() || this.isTruenasConnectConfigured();
+  });
+
+  protected shouldShowTruenasConnectNotice = computed(() => {
+    return !this.isEnterprise() && !this.isTruenasConnectConfigured();
+  });
+
+  /**
+   * Reactively enable/disable the Spotlight checkbox based on TrueNAS Connect configuration
+   * and Enterprise status. On non-Enterprise systems, Spotlight requires TrueNAS Connect.
+   */
+  constructor() {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+
+    effect(() => {
+      const isEnabled = this.isSpotlightEnabled();
+      if (isEnabled) {
+        this.form.controls.spotlight_search.enable();
+      } else {
+        this.form.controls.spotlight_search.disable();
+      }
+    });
+  }
+
+  protected isBasicMode = true;
 
   form = this.fb.group({
     netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
@@ -158,16 +198,12 @@ export class ServiceSmbComponent implements OnInit {
 
   readonly encryptionOptions$ = of(mapToOptions(smbEncryptionLabels, this.translate));
 
-  constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
-
   ngOnInit(): void {
     this.isFormLoading.set(true);
 
-    this.api.call('smb.config').pipe(untilDestroyed(this)).subscribe({
+    // ESLint rule doesn't recognize takeUntilDestroyed with object notation subscribe
+    // eslint-disable-next-line rxjs-angular/prefer-takeuntil
+    this.api.call('smb.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (config) => {
         const searchProtocolEnabled = config.search_protocols.includes(smbSearchSpotlight);
         config.bindip.forEach(() => this.addBindIp());
@@ -199,6 +235,18 @@ export class ServiceSmbComponent implements OnInit {
     this.isBasicMode = !this.isBasicMode;
   }
 
+  protected openTruenasConnectModal(): void {
+    this.truenasConnectService.openStatusModal();
+  }
+
+  protected onTruenasConnectLinkKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+    event.preventDefault(); // Prevents page scroll on Space
+    this.openTruenasConnectModal();
+  }
+
   protected onSubmit(): void {
     const { spotlight_search: spotlightSearch, ...formValues } = this.form.value;
     const values: SmbConfigUpdate = {
@@ -209,7 +257,9 @@ export class ServiceSmbComponent implements OnInit {
 
     this.isFormLoading.set(true);
     this.api.call('smb.update', [values])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      // ESLint rule doesn't recognize takeUntilDestroyed with object notation subscribe
+      // eslint-disable-next-line rxjs-angular/prefer-takeuntil
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);

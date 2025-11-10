@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, viewChild } from '@angular/core';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
 } from '@angular/forms';
@@ -10,12 +10,14 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import {
   VmDeviceType, vmDeviceTypeLabels, VmDiskMode, vmDiskModeLabels, VmNicType, vmNicTypeLabels,
   VmDisplayType,
 } from 'app/enums/vm.enum';
+import { isApiCallError, transformApiCallErrorMessage } from 'app/helpers/api.helper';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -34,6 +36,8 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -42,6 +46,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { NetworkService } from 'app/services/network.service';
+
 
 const specifyCustom = T('Specify custom');
 
@@ -82,12 +87,15 @@ export class DeviceFormComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
+  private fileValidator = inject(FileValidatorService);
   slideInRef = inject<SlideInRef<{
     virtualMachineId?: number;
     device?: VmDevice;
   } | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.VmDeviceWrite];
+  protected formatter = inject(IxFormatterService);
+
 
   isLoading = false;
 
@@ -146,6 +154,8 @@ export class DeviceFormComponent implements OnInit {
   existingDevice: VmDevice;
   protected slideInData: { virtualMachineId?: number; device?: VmDevice } | undefined;
 
+  readonly rawFileExplorer = viewChild<IxExplorerComponent>('rawFileExplorer');
+
   typeControl = new FormControl(VmDeviceType.Cdrom, Validators.required);
   orderControl = new FormControl(null as number | null);
 
@@ -167,10 +177,13 @@ export class DeviceFormComponent implements OnInit {
   });
 
   rawFileForm = this.formBuilder.group({
-    path: ['', Validators.required],
+    path: ['', [Validators.required, this.fileValidator.fileIsSelectedInExplorer(this.rawFileExplorer)]],
     sectorsize: [0],
     type: [null as VmDiskMode | null],
-    size: [null as number | null],
+    // formatter causes size to become a string sometimes, but we do convert it to a number
+    // before submitting.
+    size: [null as number | string | null],
+    exists: [false as boolean | null],
   });
 
   pciForm = this.formBuilder.nonNullable.group({
@@ -331,6 +344,7 @@ export class DeviceFormComponent implements OnInit {
     }
 
     this.handleDeviceTypeChange();
+    this.setupRawFileExistsTracking();
   }
 
   setVirtualMachineId(): void {
@@ -350,6 +364,7 @@ export class DeviceFormComponent implements OnInit {
           sectorsize: this.existingDevice.attributes.logical_sectorsize === null
             ? 0
             : this.existingDevice.attributes.logical_sectorsize,
+          exists: true,
         });
         break;
       case VmDeviceType.Nic:
@@ -407,6 +422,79 @@ export class DeviceFormComponent implements OnInit {
     });
   }
 
+  /**
+   * Tracks when a file is selected from the explorer and updates the exists field.
+   * - Sets exists to true when a file is selected from the tree
+   * - Sets exists to false when a directory is selected or path is cleared
+   * - Does not update exists when path is manually typed (handled by shouldIncludeExistsField)
+   */
+  setupRawFileExistsTracking(): void {
+    this.rawFileForm.controls.path.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      const explorer = this.rawFileExplorer();
+      const selectedNode = explorer?.lastSelectedNode();
+
+      if (selectedNode?.data?.type === ExplorerNodeType.File) {
+        // User selected an existing file from the tree
+        this.rawFileForm.patchValue({ exists: true }, { emitEvent: false });
+      } else if (selectedNode?.data?.type === ExplorerNodeType.Directory) {
+        // User selected a directory - reset exists
+        this.rawFileForm.patchValue({ exists: false }, { emitEvent: false });
+      } else if (!this.rawFileForm.value.path) {
+        // Path was cleared - reset exists
+        this.rawFileForm.patchValue({ exists: false }, { emitEvent: false });
+      }
+      // Note: if no node selected (manual typing), don't update exists here
+    });
+
+    // set up a subscription that updates the *path field's* validity upon changing the size field, since
+    // if the user were to submit a nonexistent path without a size, (which is allowed) it would affect
+    // the path field with an API error asking the user to provide the size. so, providing the size should
+    // clear the error message.
+    this.rawFileForm.controls.size.valueChanges.pipe(untilDestroyed(this)).subscribe((size) => {
+      if (size) {
+        this.rawFileForm.controls.path.updateValueAndValidity();
+      }
+    });
+
+    // update the validity immediately on setup
+    this.rawFileForm.controls.path.updateValueAndValidity({ emitEvent: false });
+  }
+
+  /**
+   * Determines whether to include the 'exists' field in the raw file device attributes.
+   *
+   * Logic:
+   * 1. Editing existing device: always include exists: true
+   * 2. File selected from explorer: include exists: true
+   * 3. Creating new file (size specified): omit exists (backend will create file)
+   * 4. Manual path without size: assume existing file, include exists: true
+   *
+   * @returns true if exists field should be included in the API call
+   */
+  private shouldIncludeExistsField(): boolean {
+    // If editing an existing device, always include exists: true
+    if (!this.isNew) {
+      return true;
+    }
+
+    const explorer = this.rawFileExplorer();
+    const selectedNode = explorer?.lastSelectedNode();
+    const hasSize = !!this.rawFileForm.value.size;
+
+    // User selected an existing file from the tree
+    if (selectedNode?.data?.type === ExplorerNodeType.File) {
+      return true;
+    }
+
+    // Creating a new file (size is specified) - don't include exists
+    if (hasSize) {
+      return false;
+    }
+
+    // Path was typed manually and no size specified - assume existing file
+    return true;
+  }
+
   onSubmit(event: SubmitEvent): void {
     event.preventDefault();
 
@@ -462,11 +550,31 @@ export class DeviceFormComponent implements OnInit {
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
-          this.formErrorHandler.handleValidationErrors(error, this.typeSpecificForm);
+          this.handleFormError(error);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
       });
+  }
+
+  /**
+   * helper function for processing form errors coming from the API.
+   * currently has the following behavior:
+   *   * if we get an API error while on the raw device form, transform the error message
+   *     'Path must exist when "exists" is set' to something more user-friendly.
+   *   * otherwise, propagate the error normally to `handleValidationErrors`.
+   */
+  private handleFormError(error: unknown): void {
+    if (this.typeControl.value === VmDeviceType.Raw && isApiCallError(error)) {
+      const transformedError = transformApiCallErrorMessage(
+        error,
+        'Path must exist when "exists" is set',
+        this.translate.instant('The specified file path does not exist. Please select an existing file or specify a file size to create a new file.'),
+      );
+      this.formErrorHandler.handleValidationErrors(transformedError, this.rawFileForm);
+    } else {
+      this.formErrorHandler.handleValidationErrors(error, this.typeSpecificForm);
+    }
   }
 
   private getUpdateAttributes(): VmDeviceUpdate['attributes'] {
@@ -475,16 +583,42 @@ export class DeviceFormComponent implements OnInit {
       dtype: this.typeControl.value,
     };
 
+    // the formatter and parser we have attached to the size control actually ends up
+    // turning `null` into the empty string. (which breaks the type specified in the form)
+    // in order to enforce the `number | null` type for the size property, we transform
+    // empty strings into null.
+    if ('size' in values) {
+      const size = values.size;
+      if (typeof size === 'string' && size.trim() === '') {
+        // case: size is an empty string (excluding whitespace)
+        values.size = null;
+      }
+      // all other cases are valid to pass to the API
+    }
+
     if ('device' in values && values.device === specifyCustom) {
       values.device = null;
     }
+
     if ('sectorsize' in values) {
       const { sectorsize, ...otherAttributes } = values;
-      return {
+      // Remove exists from otherAttributes if present
+      if ('exists' in otherAttributes) {
+        delete (otherAttributes as { exists?: boolean }).exists;
+      }
+
+      const attributes = {
         ...otherAttributes,
         logical_sectorsize: sectorsize === 0 ? null : sectorsize,
         physical_sectorsize: sectorsize === 0 ? null : sectorsize,
-      } as VmDeviceUpdate['attributes'];
+      };
+
+      // Include exists field for raw file devices when file exists
+      if (this.typeControl.value === VmDeviceType.Raw && this.shouldIncludeExistsField()) {
+        (attributes as { exists?: boolean }).exists = true;
+      }
+
+      return attributes as VmDeviceUpdate['attributes'];
     }
 
     // Handle display device attributes

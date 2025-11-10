@@ -5,10 +5,10 @@ import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { combineLatest, fromEvent, Subject, Subscription, timer } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, startWith, takeUntil } from 'rxjs/operators';
-import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
 import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FocusService } from 'app/services/focus.service';
 
 /**
  * Editable component that allows inline editing of a value.
@@ -47,10 +47,11 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   private document = inject(DOCUMENT);
   private injector = inject(Injector);
   private validationErrorService = inject(ValidationErrorCommunicationService);
+  private focusService = inject(FocusService);
   private destroy$ = new Subject<void>();
   private clickOutsideSubscription?: Subscription;
   private keydownSubscription?: Subscription;
-  private previouslyFocusedElement?: HTMLElement;
+  private mousedownTarget: HTMLElement | null = null;
 
 
   readonly emptyValue = input(this.translate.instant('Not Set'));
@@ -143,14 +144,13 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   }
 
   open(): void {
-    // Store the currently focused element for restoration later
-    this.previouslyFocusedElement = this.document.activeElement as HTMLElement;
+    this.focusService.captureCurrentFocus();
     this.isOpen.set(true);
     this.addClickOutsideListener();
     this.addKeydownListener();
 
     afterNextRender(() => {
-      this.elementRef.nativeElement.querySelector<HTMLElement>(focusableElements)?.focus();
+      this.focusService.focusFirstFocusableElement(this.elementRef.nativeElement);
       const editSlot = this.elementRef.nativeElement.querySelector<HTMLElement>('.edit-slot');
       if (editSlot) {
         editSlot.scrollIntoView({
@@ -176,18 +176,7 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
     this.removeClickOutsideListener();
     this.removeKeydownListener();
 
-    // Restore focus to the previously focused element
-    if (this.previouslyFocusedElement) {
-      try {
-        if (this.document.contains(this.previouslyFocusedElement)
-          && this.previouslyFocusedElement.isConnected) {
-          this.previouslyFocusedElement.focus();
-        }
-      } catch (error) {
-        console.warn('Failed to restore focus:', error);
-      }
-    }
-    this.previouslyFocusedElement = undefined;
+    this.focusService.restoreFocus();
 
     setTimeout(() => {
       this.checkVisibleValue();
@@ -202,14 +191,41 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
     // Remove existing listener to prevent duplicates
     this.removeClickOutsideListener();
 
-    this.clickOutsideSubscription = fromEvent(this.document, 'click', { capture: true })
+    // Track where mousedown occurred to prevent closing on text selection
+    const mousedown$ = fromEvent<MouseEvent>(this.document, 'mousedown', { capture: true });
+    const mouseup$ = fromEvent<MouseEvent>(this.document, 'mouseup', { capture: true });
+
+    // Subscribe to mousedown to track where the click started
+    const mousedownSubscription = mousedown$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((event: Event) => {
-        const target = event.target as HTMLElement;
-        if (!this.isElementWithin(target)) {
+      .subscribe((event) => {
+        this.mousedownTarget = event.target as HTMLElement;
+      });
+
+    // Subscribe to mouseup to detect actual "click outside" behavior
+    const mouseupSubscription = mouseup$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        const mouseupTarget = event.target as HTMLElement;
+
+        // Only close if both mousedown AND mouseup occurred outside the editable
+        // This prevents closing when selecting text that ends outside the input
+        if (
+          this.mousedownTarget
+          && !this.isElementWithin(this.mousedownTarget)
+          && !this.isElementWithin(mouseupTarget)
+        ) {
           this.tryToClose();
         }
+
+        // Reset the mousedown target after handling
+        this.mousedownTarget = null;
       });
+
+    // Combine both subscriptions
+    this.clickOutsideSubscription = new Subscription();
+    this.clickOutsideSubscription.add(mousedownSubscription);
+    this.clickOutsideSubscription.add(mouseupSubscription);
   }
 
   private addKeydownListener(): void {
@@ -224,6 +240,13 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
 
   private handleKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
+      const globalSearchOverlay = this.document.querySelector('.topbar-panel');
+      if (globalSearchOverlay) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
       this.tryToClose();
     }
   }

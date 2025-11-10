@@ -50,10 +50,13 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   readonly filename = input('data');
   readonly fileType = input('csv');
   readonly fileMimeType = input('text/csv');
+  readonly ariaLabel = input<string>();
+  readonly displayFormat = input<string>(); // Display format for button text (e.g., 'CSV', 'JSON', 'YAML')
   readonly addReportNameArgument = input(false);
   // TODO: Does not belong to generic export button component.
   readonly controllerType = input<ControllerType>();
   readonly downloadMethod = input<keyof ApiCallDirectory>();
+  readonly exportFormat = input<ExportFormat>(ExportFormat.Csv);
 
   isLoading = false;
 
@@ -110,7 +113,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
     return [{
       'query-filters': queryFilters,
       'query-options': queryOptions,
-      export_format: ExportFormat.Csv,
+      export_format: this.exportFormat(),
       ...(this.isHaLicensed() && this.controllerType() && {
         remote_controller: this.controllerType() === ControllerType.Standby,
       }),

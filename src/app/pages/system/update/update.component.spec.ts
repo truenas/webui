@@ -25,7 +25,7 @@ import {
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { jobsInitialState } from 'app/modules/jobs/store/job.reducer';
-import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
+import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SaveConfigDialog,
@@ -95,7 +95,7 @@ describe('UpdateComponent', () => {
             value: false,
           },
           {
-            selector: selectUpdateJob,
+            selector: selectUpdateJobs,
             value: [],
           },
         ],

@@ -1,14 +1,14 @@
-import { ChangeDetectorRef, Directive, OnInit, TemplateRef, ViewContainerRef, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ChangeDetectorRef, DestroyRef, Directive, OnInit, TemplateRef, ViewContainerRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Directive({
   selector: '[ixIfNightly]',
 })
 export class IfNightlyDirective implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private templateRef = inject<TemplateRef<unknown>>(TemplateRef);
   private viewContainer = inject(ViewContainerRef);
   private cdr = inject(ChangeDetectorRef);
@@ -19,7 +19,7 @@ export class IfNightlyDirective implements OnInit {
   ngOnInit(): void {
     this.store$.pipe(
       waitForSystemInfo,
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     )
       .subscribe((systemInfo) => {
         this.viewContainer.clear();

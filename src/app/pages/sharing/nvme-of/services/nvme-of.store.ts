@@ -66,8 +66,8 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
           this.api.call('nvmet.host.query'),
           this.api.call('nvmet.port.query'),
         ]).pipe(
-          tapResponse(
-            ([
+          tapResponse({
+            next: ([
               subsystems,
               namespaces,
               hosts,
@@ -81,14 +81,14 @@ export class NvmeOfStore extends ComponentStore<NvmeOfState> {
                 isLoading: false,
               });
             },
-            (error: unknown) => {
+            error: (error: unknown) => {
               this.errorHandler.showErrorModal(error);
 
               this.patchState({
                 isLoading: false,
               });
             },
-          ),
+          }),
         );
       }),
     );

@@ -146,7 +146,7 @@ describe('EditableComponent', () => {
 
       await editable.open();
       spectator.component.tryToClose();
-      tick();
+      tick(200);
 
       expect(document.activeElement).toBe(focusedElement);
 
@@ -201,11 +201,17 @@ describe('EditableComponent', () => {
       expect(await editable.isOpen()).toBe(true);
 
       // Simulate click outside by mocking isElementWithin
+      const outsideElement = document.createElement('div');
       jest.spyOn(spectator.component, 'isElementWithin').mockReturnValue(false);
-      const clickEvent = new MouseEvent('click', { bubbles: true });
-      Object.defineProperty(clickEvent, 'target', { value: document.createElement('div') });
 
-      document.dispatchEvent(clickEvent);
+      // Both mousedown and mouseup must occur outside for it to close
+      const mousedownEvent = new MouseEvent('mousedown', { bubbles: true });
+      Object.defineProperty(mousedownEvent, 'target', { value: outsideElement });
+      const mouseupEvent = new MouseEvent('mouseup', { bubbles: true });
+      Object.defineProperty(mouseupEvent, 'target', { value: outsideElement });
+
+      document.dispatchEvent(mousedownEvent);
+      document.dispatchEvent(mouseupEvent);
       tick();
 
       expect(await editable.isOpen()).toBe(false);
@@ -216,13 +222,44 @@ describe('EditableComponent', () => {
       expect(await editable.isOpen()).toBe(true);
 
       // Simulate click inside by mocking isElementWithin
+      const insideElement = document.createElement('div');
       jest.spyOn(spectator.component, 'isElementWithin').mockReturnValue(true);
-      const clickEvent = new MouseEvent('click', { bubbles: true });
-      Object.defineProperty(clickEvent, 'target', { value: document.createElement('div') });
 
-      document.dispatchEvent(clickEvent);
+      const mousedownEvent = new MouseEvent('mousedown', { bubbles: true });
+      Object.defineProperty(mousedownEvent, 'target', { value: insideElement });
+      const mouseupEvent = new MouseEvent('mouseup', { bubbles: true });
+      Object.defineProperty(mouseupEvent, 'target', { value: insideElement });
+
+      document.dispatchEvent(mousedownEvent);
+      document.dispatchEvent(mouseupEvent);
       tick();
 
+      expect(await editable.isOpen()).toBe(true);
+    }));
+
+    it('does not close when text selection ends outside the input', fakeAsync(async () => {
+      await editable.open();
+      expect(await editable.isOpen()).toBe(true);
+
+      const insideElement = document.createElement('input');
+      const outsideElement = document.createElement('div');
+
+      // Mock isElementWithin to return true for inside element, false for outside
+      jest.spyOn(spectator.component, 'isElementWithin').mockImplementation((target: HTMLElement) => {
+        return target === insideElement;
+      });
+
+      // Simulate selecting text: mousedown inside, mouseup outside
+      const mousedownEvent = new MouseEvent('mousedown', { bubbles: true });
+      Object.defineProperty(mousedownEvent, 'target', { value: insideElement });
+      const mouseupEvent = new MouseEvent('mouseup', { bubbles: true });
+      Object.defineProperty(mouseupEvent, 'target', { value: outsideElement });
+
+      document.dispatchEvent(mousedownEvent);
+      document.dispatchEvent(mouseupEvent);
+      tick();
+
+      // Should remain open because mousedown was inside
       expect(await editable.isOpen()).toBe(true);
     }));
 
@@ -233,7 +270,9 @@ describe('EditableComponent', () => {
       spectator.component.tryToClose();
       tick();
 
-      expect(removeEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function), { capture: true });
+      // Should remove both mousedown and mouseup listeners
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('mousedown', expect.any(Function), { capture: true });
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('mouseup', expect.any(Function), { capture: true });
     }));
 
     it('removes click outside listener on destroy', () => {
@@ -262,6 +301,42 @@ describe('EditableComponent', () => {
       tick();
 
       expect(await editable.isOpen()).toBe(false);
+    }));
+
+    it('stops propagation of Escape key event to prevent parent handlers from receiving it', fakeAsync(async () => {
+      await editable.open();
+      expect(await editable.isOpen()).toBe(true);
+
+      const parentHandler = (): void => {};
+      document.addEventListener('keydown', parentHandler);
+
+      const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+      const stopPropagationSpy = jest.spyOn(escapeEvent, 'stopPropagation');
+
+      document.dispatchEvent(escapeEvent);
+      tick();
+
+      expect(stopPropagationSpy).toHaveBeenCalled();
+      expect(await editable.isOpen()).toBe(false);
+
+      document.removeEventListener('keydown', parentHandler);
+    }));
+
+    it('does not close when global search is open (prioritizes global search)', fakeAsync(async () => {
+      await editable.open();
+      expect(await editable.isOpen()).toBe(true);
+
+      const globalSearchOverlay = document.createElement('div');
+      globalSearchOverlay.classList.add('topbar-panel');
+      document.body.appendChild(globalSearchOverlay);
+
+      const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true });
+      document.dispatchEvent(escapeEvent);
+      tick();
+
+      expect(await editable.isOpen()).toBe(true);
+
+      document.body.removeChild(globalSearchOverlay);
     }));
 
     it('does not close when other keys are pressed', fakeAsync(async () => {

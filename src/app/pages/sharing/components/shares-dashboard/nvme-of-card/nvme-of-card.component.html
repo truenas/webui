@@ -1,10 +1,18 @@
 <mat-card>
   <mat-toolbar-row>
     <div class="toolbar-row-title">
-      <a [ixTest]="['nvme-of', 'open-in-new']" [routerLink]="['/sharing', 'nvme-of']">
+      <a
+        [ixTest]="['nvme-of', 'open-in-new']"
+        [routerLink]="['/sharing', 'nvme-of']"
+        [matTooltip]="'Open NVMe-oF list in full page' | translate"
+      >
         <h3 class="card-title">
           {{ 'NVMe-oF Subsystems' | translate }}
-          <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+          <ix-icon
+            name="open_in_new"
+            class="title-icon"
+            [attr.aria-label]="'Open NVMe-oF list in full page' | translate"
+          ></ix-icon>
         </h3>
       </a>
 

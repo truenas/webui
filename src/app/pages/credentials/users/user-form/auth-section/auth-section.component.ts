@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, effect, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, OnInit, inject } from '@angular/core';
 import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { User } from 'app/interfaces/user.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -11,7 +12,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { UserFormStore, UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user.store';
+import { UserFormStore, UserStigPasswordOption, defaultHomePath } from 'app/pages/credentials/users/user-form/user.store';
 
 @UntilDestroy()
 @Component({
@@ -35,6 +36,9 @@ export class AuthSectionComponent implements OnInit {
   private translate = inject(TranslateService);
 
   editingUser = input<User>();
+  homeDirectory = input<string>();
+  shell = input<string | null>();
+
   protected sshAccess = this.userStore.sshAccess;
   protected smbAccess = this.userStore.smbAccess;
   protected isStigMode = this.userStore.isStigMode;
@@ -49,6 +53,7 @@ export class AuthSectionComponent implements OnInit {
   }, {
     validators: [
       this.sshAccessValidator.bind(this),
+      this.sshPasswordEnabledValidator.bind(this),
       matchOthersFgValidator(
         'password_confirm',
         ['password'],
@@ -58,7 +63,6 @@ export class AuthSectionComponent implements OnInit {
   });
 
   protected readonly tooltips = {
-    password_disabled: helptextUsers.disablePasswordTooltip,
     one_time_password: helptextUsers.oneTimePasswordTooltip,
     password: helptextUsers.passwordTooltip,
     password_edit: helptextUsers.passwordTooltip,
@@ -66,11 +70,18 @@ export class AuthSectionComponent implements OnInit {
     sshpubkey: helptextUsers.publicKeyTooltip,
   };
 
+  protected passwordDisabledTooltip = computed(() => {
+    if (this.smbAccess()) {
+      return this.translate.instant('Password cannot be disabled when SMB access is enabled. SMB authentication requires a password.');
+    }
+    return helptextUsers.disablePasswordTooltip;
+  });
+
   protected stigPasswordOptions$ = of([
     {
       label: this.translate.instant('Disable Password'),
       value: UserStigPasswordOption.DisablePassword,
-      tooltip: this.translate.instant(this.tooltips.password_disabled),
+      tooltip: this.translate.instant(helptextUsers.disablePasswordTooltip),
     },
     {
       label: this.translate.instant('Generate Temporary One-Time Password'),
@@ -84,13 +95,12 @@ export class AuthSectionComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        const rawValue = this.form.getRawValue();
         this.userStore.updateUserConfig({
-          ssh_password_enabled: this.form.value.ssh_password_enabled,
-          password_disabled: this.smbAccess()
-            ? false
-            : this.form.value.password_disabled,
-          password: this.form.value.password,
-          sshpubkey: this.form.value.sshpubkey,
+          ssh_password_enabled: rawValue.ssh_password_enabled,
+          password_disabled: rawValue.password_disabled,
+          password: rawValue.password,
+          sshpubkey: rawValue.sshpubkey,
         });
       },
     });
@@ -121,18 +131,31 @@ export class AuthSectionComponent implements OnInit {
     effect(() => {
       if (this.smbAccess()) {
         this.form.controls.password.enable({ emitEvent: false });
+        this.form.controls.password_disabled.disable({ emitEvent: false });
         this.form.patchValue({ password_disabled: false });
+      } else {
+        this.form.controls.password_disabled.enable({ emitEvent: false });
+        // Ensure password field state is consistent when SMB is disabled
+        if (!this.form.value.password_disabled) {
+          this.form.controls.password.enable({ emitEvent: false });
+        }
       }
     });
 
     effect(() => {
       this.setupPasswordValidation();
     });
+
+    // Revalidate when home directory or shell changes
+    effect(() => {
+      this.homeDirectory();
+      this.shell();
+      this.form.updateValueAndValidity();
+    });
   }
 
   ngOnInit(): void {
     this.setPasswordFieldRelations();
-    this.setupPasswordValidation();
   }
 
   private setupPasswordValidation(): void {
@@ -160,6 +183,33 @@ export class AuthSectionComponent implements OnInit {
       return {
         sshAccessRequired: {
           message: this.translate.instant('SSH access requires either password authentication or an SSH public key'),
+        },
+      };
+    }
+
+    return null;
+  }
+
+  private sshPasswordEnabledValidator(formGroup: AbstractControl): ValidationErrors | null {
+    const sshPasswordEnabled = formGroup.get('ssh_password_enabled')?.value;
+
+    if (!sshPasswordEnabled) {
+      return null; // Checkbox is not checked, no validation needed
+    }
+
+    const homeDir = this.homeDirectory();
+    const userShell = this.shell();
+
+    // Check if home directory is valid (not empty and not default empty path)
+    const hasValidHome = homeDir && !isEmptyHomeDirectory(homeDir) && homeDir !== defaultHomePath;
+
+    // Check if shell is valid (not null/empty and not nologin)
+    const hasValidShell = userShell && userShell !== '/usr/sbin/nologin';
+
+    if (!hasValidHome || !hasValidShell) {
+      return {
+        ssh_password_enabled: {
+          message: this.translate.instant('Cannot be enabled without a valid home path and login shell.'),
         },
       };
     }

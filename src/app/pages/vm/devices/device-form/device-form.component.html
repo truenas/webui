@@ -96,6 +96,7 @@
             }
             @case (VmDeviceType.Raw) {
               <ix-explorer
+                #rawFileExplorer
                 formControlName="path"
                 [label]="'Raw File' | translate"
                 [required]="true"
@@ -121,9 +122,11 @@
 
               <ix-input
                 formControlName="size"
-                type="number"
                 [label]="'Raw Filesize' | translate"
+                [format]="formatter.memorySizeFormatting"
+                [parse]="formatter.memorySizeParsing"
                 [tooltip]="helptext.raw_size_tooltip | translate"
+                [hint]="'Must be specified if the raw file needs to be created' | translate"
               ></ix-input>
             }
             @case (VmDeviceType.Pci) {
@@ -257,6 +260,7 @@
           mat-button
           color="primary"
           ixTest="save"
+          [disabled]="typeSpecificForm.invalid || (!isNew && typeSpecificForm.pristine) || isLoading"
         >
           {{ 'Save' | translate }}
         </button>

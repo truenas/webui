@@ -526,7 +526,6 @@
     "./src/app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface.ts",
     "./src/app/pages/datasets/components/dataset-form/utils/name-length-validation.spec.ts",
     "./src/app/pages/datasets/components/dataset-form/utils/name-length-validation.ts",
-    "./src/app/pages/datasets/components/dataset-form/utils/special-small-block-size-options.constant.ts",
     "./src/app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog-data.interface.ts",
     "./src/app/pages/datasets/modules/permissions/components/edit-nfs-ace/edit-nfs-ace-form.types.ts",
     "./src/app/pages/datasets/modules/permissions/components/permissions-item/permissions-item.component.ts",

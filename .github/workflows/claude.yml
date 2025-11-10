@@ -7,10 +7,15 @@ on:
     paths-ignore:
       - 'src/assets/i18n/**'
 jobs:
+  check-ux-team:
+    uses: ./.github/workflows/check-ux-team.yml
+
   review:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs: [check-ux-team]
     if: |
+      needs.check-ux-team.outputs.is_member == 'true' &&
       !contains(github.event.pull_request.labels.*.name, 'skip-claude')
     permissions:
       contents: read
@@ -24,7 +29,7 @@ jobs:
           fetch-depth: 10
 
       - name: Automatic PR Review
-        uses: anthropics/claude-code-action@v1.0.7
+        uses: anthropics/claude-code-action@v1.0.16
         with:
           anthropic_api_key: ${{ secrets.CLAUDE_API_KEY }}
           track_progress: true

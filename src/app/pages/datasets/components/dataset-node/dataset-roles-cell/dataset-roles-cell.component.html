@@ -54,3 +54,10 @@
     [matTooltip]="'Dataset is shared via iSCSI' | translate"
   ></ix-icon>
 }
+
+@if (dataset().nvmet_shares?.length) {
+  <ix-icon
+    name="ix-nvme-share"
+    [matTooltip]="'Dataset is shared via NVMe-oF' | translate"
+  ></ix-icon>
+}

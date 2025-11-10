@@ -24,7 +24,7 @@ export const helptextPoolCreation = {
   logVdevDescription: T('ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed.'),
   spareVdevDescription: T('Drive reserved for inserting into DATA pool VDEVs when an active drive has failed.'),
   specialVdevDescription: T('Special Allocation class, used to create Fusion pools. Optional VDEV type\
- which is used to speed up metadata and small block IO.'),
+ which is used to speed up metadata and blocks below configured size.'),
   dedupVdevDescription: T('De-duplication tables are stored on this special VDEV type. These VDEVs must\
  be sized to X GiB for each X TiB of general storage.'),
   exportedPoolWarning: T('This disk is part of the exported pool {pool}. Adding this disk to a new or other existing pools will make {pool} unable to import. You will lose any and all data in {pool}. Please make sure you have backed up any sensitive data in {pool} before reusing/repurposing this disk.'),

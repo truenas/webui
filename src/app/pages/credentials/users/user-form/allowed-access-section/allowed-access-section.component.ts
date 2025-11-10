@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, effect, input, inject } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { hasShellAccess, hasSshAccess } from 'app/helpers/user.helper';
@@ -34,8 +34,12 @@ import { defaultRole, UserFormStore } from 'app/pages/credentials/users/user-for
 export class AllowedAccessSectionComponent {
   private formBuilder = inject(NonNullableFormBuilder);
   private userFormStore = inject(UserFormStore);
+  private translate = inject(TranslateService);
 
   editingUser = input<User>();
+  password = input<string>();
+  passwordDisabled = input<boolean>();
+
   protected sshAccess = this.userFormStore.sshAccess;
 
   protected readonly roles$ = of([
@@ -50,11 +54,58 @@ export class AllowedAccessSectionComponent {
     ssh_access: [false],
     shell_access: [false],
     role: [null as Role | null],
+  }, {
+    validators: [this.smbAccessValidator.bind(this)],
   });
 
   constructor() {
     this.setFieldRelations();
     this.updateStoreOnChanges();
+
+    // Revalidate when password changes
+    effect(() => {
+      this.password();
+      this.form.updateValueAndValidity();
+    });
+
+    // Revalidate when SMB checkbox changes
+    this.form.controls.smb.valueChanges.pipe(
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.form.updateValueAndValidity();
+    });
+  }
+
+  private smbAccessValidator(formGroup: AbstractControl): ValidationErrors | null {
+    const smbEnabled = formGroup.get('smb')?.value;
+
+    if (!smbEnabled) {
+      return null; // SMB is not enabled, no validation needed
+    }
+
+    // Skip validation for new users - password field is already required
+    if (!this.editingUser()) {
+      return null;
+    }
+
+    const password = this.password();
+    const hasPassword = password && password.trim().length > 0;
+
+    // Get original user state
+    const user = this.editingUser();
+    const originalSmbEnabled = user?.smb ?? false;
+
+    // Show error if enabling SMB and no password entered
+    // API requires password reset when enabling SMB access
+    if (originalSmbEnabled === false && !hasPassword) {
+      return {
+        smb: {
+          message: this.translate.instant('Password must be reset in order to enable SMB authentication'),
+        },
+      };
+    }
+
+    return null;
   }
 
   private setFieldRelations(): void {

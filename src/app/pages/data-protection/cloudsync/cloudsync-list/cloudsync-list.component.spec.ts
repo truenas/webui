@@ -160,7 +160,7 @@ describe('CloudSyncListComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Description', 'Frequency', 'State', 'Enabled'],
-      ['custom-cloudlist', 'At 00:00, every day', 'PENDING', 'Yes'],
+      ['custom-cloudlist', 'At 00:00, every day', 'Pending', 'Yes'],
     ];
 
     const cells = await table.getCellTexts();
