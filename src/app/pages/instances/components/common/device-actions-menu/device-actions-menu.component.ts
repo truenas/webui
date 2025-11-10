@@ -10,9 +10,7 @@ import {
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import {
   ContainerDeviceWithId,
-  ContainerDiskDevice,
   ContainerFilesystemDevice,
-  ContainerRawDevice,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -65,12 +63,7 @@ export class DeviceActionsMenuComponent {
   readonly edit = output();
 
   protected readonly isStorageDevice = computed(() => {
-    const dtype = this.device().dtype;
-    return [
-      ContainerDeviceType.Disk,
-      ContainerDeviceType.Raw,
-      ContainerDeviceType.Filesystem,
-    ].includes(dtype);
+    return this.device().dtype === ContainerDeviceType.Filesystem;
   });
 
   protected readonly canManage = computed(() => {
@@ -88,7 +81,7 @@ export class DeviceActionsMenuComponent {
   protected editPressed(): void {
     const device = this.device();
 
-    // For storage devices, open the form
+    // For filesystem devices, open the form
     if (this.isStorageDevice()) {
       const instance = this.instancesStore.selectedInstance();
       if (!instance) {
@@ -98,7 +91,7 @@ export class DeviceActionsMenuComponent {
       this.slideIn.open(InstanceDiskFormComponent, {
         data: {
           instance,
-          disk: device as ContainerDiskDevice | ContainerRawDevice | ContainerFilesystemDevice,
+          disk: device as ContainerFilesystemDevice,
         },
       }).pipe(untilDestroyed(this)).subscribe((result) => {
         if (result.response) {

@@ -10,16 +10,7 @@ export function getDeviceDescription(translate: TranslateService, device: Contai
         ? device.mac
         : translate.instant(instancesHelptext.deviceDescriptions.defaultMacAddress);
       const nicAttach = device.nic_attach || translate.instant(instancesHelptext.deviceDescriptions.unknown);
-      const nicName = device.name || nicAttach;
-      return `${nicName} (${nicMac})`;
-    }
-
-    case ContainerDeviceType.Disk:
-    case ContainerDeviceType.Raw: {
-      // Disk/Raw are presented as block devices
-      const path = device.path || translate.instant(instancesHelptext.deviceDescriptions.unknownPath);
-      const diskType = device.type ? ` (${device.type})` : '';
-      return `${path}${diskType}`;
+      return `${nicAttach} (${nicMac})`;
     }
 
     case ContainerDeviceType.Filesystem: {
@@ -29,9 +20,18 @@ export function getDeviceDescription(translate: TranslateService, device: Contai
       return `${source} → ${target}`;
     }
 
+    case ContainerDeviceType.Usb: {
+      if (device.usb) {
+        return `USB ${device.usb.vendor_id}:${device.usb.product_id}`;
+      }
+      return device.device || translate.instant(instancesHelptext.deviceDescriptions.unknown);
+    }
+
     default: {
-      const typeLabel = translate.instant(containerDeviceTypeLabels.get(device.dtype) || device.dtype);
-      return `${typeLabel}: ${device.description}`;
+      const typeLabel = translate.instant(
+        containerDeviceTypeLabels.get(device.dtype as ContainerDeviceType) || device.dtype,
+      );
+      return typeLabel;
     }
   }
 }

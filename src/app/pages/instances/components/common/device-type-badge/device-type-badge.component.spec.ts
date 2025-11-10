@@ -9,30 +9,6 @@ describe('DeviceTypeBadgeComponent', () => {
     component: DeviceTypeBadgeComponent,
   });
 
-  it('should display icon for DISK device type', () => {
-    spectator = createComponent({
-      props: {
-        deviceType: ContainerDeviceType.Disk,
-      },
-    });
-
-    const icon = spectator.query(IxIconComponent);
-    expect(icon).toBeTruthy();
-    expect(icon.name()).toBe('mdi-harddisk');
-  });
-
-  it('should display icon for RAW device type', () => {
-    spectator = createComponent({
-      props: {
-        deviceType: ContainerDeviceType.Raw,
-      },
-    });
-
-    const icon = spectator.query(IxIconComponent);
-    expect(icon).toBeTruthy();
-    expect(icon.name()).toBe('mdi-file');
-  });
-
   it('should display icon for FILESYSTEM device type', () => {
     spectator = createComponent({
       props: {
@@ -45,10 +21,34 @@ describe('DeviceTypeBadgeComponent', () => {
     expect(icon.name()).toBe('mdi-folder');
   });
 
+  it('should display icon for USB device type', () => {
+    spectator = createComponent({
+      props: {
+        deviceType: ContainerDeviceType.Usb,
+      },
+    });
+
+    const icon = spectator.query(IxIconComponent);
+    expect(icon).toBeTruthy();
+    expect(icon.name()).toBe('usb');
+  });
+
+  it('should display icon for NIC device type', () => {
+    spectator = createComponent({
+      props: {
+        deviceType: ContainerDeviceType.Nic,
+      },
+    });
+
+    const icon = spectator.query(IxIconComponent);
+    expect(icon).toBeTruthy();
+    expect(icon.name()).toBe('device_hub');
+  });
+
   it('should display label when showLabel is true', () => {
     spectator = createComponent({
       props: {
-        deviceType: ContainerDeviceType.Disk,
+        deviceType: ContainerDeviceType.Filesystem,
         showLabel: true,
       },
     });
@@ -59,32 +59,12 @@ describe('DeviceTypeBadgeComponent', () => {
   it('should hide label when showLabel is false', () => {
     spectator = createComponent({
       props: {
-        deviceType: ContainerDeviceType.Disk,
+        deviceType: ContainerDeviceType.Filesystem,
         showLabel: false,
       },
     });
 
     expect(spectator.query('.device-label')).toBeFalsy();
-  });
-
-  it('should apply correct CSS class for DISK device', () => {
-    spectator = createComponent({
-      props: {
-        deviceType: ContainerDeviceType.Disk,
-      },
-    });
-
-    expect(spectator.query('.device-disk')).toBeTruthy();
-  });
-
-  it('should apply correct CSS class for RAW device', () => {
-    spectator = createComponent({
-      props: {
-        deviceType: ContainerDeviceType.Raw,
-      },
-    });
-
-    expect(spectator.query('.device-raw')).toBeTruthy();
   });
 
   it('should apply correct CSS class for FILESYSTEM device', () => {
@@ -95,5 +75,25 @@ describe('DeviceTypeBadgeComponent', () => {
     });
 
     expect(spectator.query('.device-filesystem')).toBeTruthy();
+  });
+
+  it('should apply correct CSS class for USB device', () => {
+    spectator = createComponent({
+      props: {
+        deviceType: ContainerDeviceType.Usb,
+      },
+    });
+
+    expect(spectator.query('.device-usb')).toBeTruthy();
+  });
+
+  it('should apply correct CSS class for NIC device', () => {
+    spectator = createComponent({
+      props: {
+        deviceType: ContainerDeviceType.Nic,
+      },
+    });
+
+    expect(spectator.query('.device-nic')).toBeTruthy();
   });
 });

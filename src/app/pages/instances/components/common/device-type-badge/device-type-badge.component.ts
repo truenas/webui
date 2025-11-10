@@ -3,7 +3,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { ContainerDeviceType, containerDeviceTypeLabels } from 'app/enums/container.enum';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { getStorageDeviceIcon } from 'app/pages/instances/utils/storage-device-icon.utils';
+import { getStorageDeviceClass, getStorageDeviceIcon } from 'app/pages/instances/utils/storage-device-icon.utils';
 
 /**
  * Displays a device type badge with icon and label
@@ -34,20 +34,6 @@ export class DeviceTypeBadgeComponent {
   });
 
   protected readonly deviceClass = computed(() => {
-    const deviceType = this.deviceType();
-    switch (deviceType) {
-      case ContainerDeviceType.Disk:
-        return 'device-disk';
-      case ContainerDeviceType.Raw:
-        return 'device-raw';
-      case ContainerDeviceType.Filesystem:
-        return 'device-filesystem';
-      case ContainerDeviceType.Usb:
-        return 'device-usb';
-      case ContainerDeviceType.Nic:
-        return 'device-nic';
-      default:
-        return 'device-unknown';
-    }
+    return getStorageDeviceClass(this.deviceType());
   });
 }

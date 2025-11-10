@@ -34,17 +34,13 @@ export enum ContainerRemote {
 
 export enum ContainerDeviceType {
   Usb = 'USB',
-  Disk = 'DISK',
   Nic = 'NIC',
-  Raw = 'RAW',
   Filesystem = 'FILESYSTEM',
 }
 
 export const containerDeviceTypeLabels = new Map<ContainerDeviceType, string>([
   [ContainerDeviceType.Usb, 'USB'],
-  [ContainerDeviceType.Disk, T('Disk Device')],
   [ContainerDeviceType.Nic, T('NIC')],
-  [ContainerDeviceType.Raw, T('Raw File Device')],
   [ContainerDeviceType.Filesystem, T('Filesystem Device')],
 ]);
 

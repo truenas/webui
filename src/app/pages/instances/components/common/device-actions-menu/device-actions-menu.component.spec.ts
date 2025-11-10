@@ -62,8 +62,12 @@ describe('DeviceActionsMenuComponent', () => {
       props: {
         device: {
           id: 123,
-          name: 'my-device',
           dtype: ContainerDeviceType.Usb,
+          usb: {
+            vendor_id: '1234',
+            product_id: '5678',
+          },
+          device: null,
         } as ContainerDeviceWithId,
       },
     });
@@ -95,13 +99,12 @@ describe('DeviceActionsMenuComponent', () => {
       expect(spectator.component.edit.emit).toHaveBeenCalled();
     });
 
-    it('opens storage device form for storage devices when the Edit item is selected', async () => {
+    it('opens filesystem device form for filesystem devices when the Edit item is selected', async () => {
       spectator.setInput('device', {
         id: 456,
-        name: 'disk-device',
-        dtype: ContainerDeviceType.Disk,
-        path: '/dev/zvol/tank/my-zvol',
-        type: 'VIRTIO',
+        dtype: ContainerDeviceType.Filesystem,
+        source: '/mnt/tank/dataset',
+        target: '/data',
       } as ContainerDeviceWithId);
 
       const menu = await loader.getHarness(MatMenuHarness);

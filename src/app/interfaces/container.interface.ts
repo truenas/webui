@@ -1,9 +1,7 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import {
   AllowedImageOs,
-  ContainerDeviceType,
   ContainerNetworkType,
-  ContainerNicDeviceType,
   ContainerRemote,
   ContainerStatus,
   ContainerType,
@@ -11,7 +9,6 @@ import {
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 
 export type ContainerMetrics = Record<string, ContainerInstanceMetrics>;
-export type SectorSize = 512 | 4096 | null;
 
 export interface ContainerInstanceMetrics {
   cpu: {
@@ -95,84 +92,30 @@ export type UpdateContainerInstance = Partial<Pick<ContainerInstance,
   | 'capabilities_state'
 >>;
 
-export interface ContainerDiskDevice {
-  id?: number;
-  name: string;
-  description: string;
-  dtype: ContainerDeviceType.Disk;
-  path: string;
-  type: 'AHCI' | 'VIRTIO';
-  create_zvol?: boolean;
-  zvol_name?: string;
-  zvol_volsize?: number;
-  logical_sectorsize?: SectorSize;
-  physical_sectorsize?: SectorSize;
-  iotype?: 'NATIVE' | 'THREADS' | 'IO_URING';
-  serial?: string | null;
-  product_id?: string;
-}
-
-export interface ContainerRawDevice {
-  id?: number;
-  name: string;
-  description: string;
-  dtype: ContainerDeviceType.Raw;
-  path: string;
-  type: 'AHCI' | 'VIRTIO';
-  exists?: boolean;
-  boot?: boolean;
-  size?: number;
-  logical_sectorsize?: SectorSize;
-  physical_sectorsize?: SectorSize;
-  iotype?: 'NATIVE' | 'THREADS' | 'IO_URING';
-  serial?: string | null;
-  product_id?: string;
-}
-
 export interface ContainerFilesystemDevice {
-  id?: number;
-  name: string;
-  description: string;
-  dtype: ContainerDeviceType.Filesystem;
-  source: string;
+  dtype: 'FILESYSTEM';
   target: string;
-  product_id?: string;
+  source: string;
 }
-
-export type StorageDevice = ContainerDiskDevice | ContainerRawDevice | ContainerFilesystemDevice;
 
 export interface ContainerNicDevice {
-  id?: number;
-  name: string;
-  description: string;
-  dtype: ContainerDeviceType.Nic;
-  type: ContainerNicDeviceType;
-  nic_attach?: string;
-  readonly: boolean;
-  network: string;
-  product_id: string;
-  mac?: string;
-  trust_guest_rx_filters?: boolean;
-  mtu?: string;
+  dtype: 'NIC';
+  trust_guest_rx_filters: boolean;
+  type: 'E1000' | 'VIRTIO';
+  nic_attach: string | null;
+  mac: string | null;
 }
 
 export interface ContainerUsbDevice {
-  id?: number;
-  name: string;
-  description: string;
-  dtype: ContainerDeviceType.Usb;
-  readonly: boolean;
+  dtype: 'USB';
   usb: {
     vendor_id: string;
     product_id: string;
-  };
-  controller_type?: string;
-  device?: string | null;
+  } | null;
+  device: string | null;
 }
 
 export type ContainerDevice =
-  | ContainerDiskDevice
-  | ContainerRawDevice
   | ContainerFilesystemDevice
   | ContainerUsbDevice
   | ContainerNicDevice;

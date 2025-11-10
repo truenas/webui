@@ -3,7 +3,7 @@ import { instancesHelptext } from 'app/helptext/instances/instances';
 import { iconMarker, MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 
 /**
- * Icon mapping for storage device types
+ * Icon mapping for container device types (Filesystem, USB, NIC)
  * Uses Material Design Icons (mdi) from ix-icon component
  */
 export interface StorageDeviceIcon {
@@ -13,22 +13,10 @@ export interface StorageDeviceIcon {
 }
 
 /**
- * Get icon configuration for a storage device type
+ * Get icon configuration for a container device type
  */
 export function getStorageDeviceIcon(deviceType: ContainerDeviceType): StorageDeviceIcon {
   switch (deviceType) {
-    case ContainerDeviceType.Disk:
-      return {
-        name: iconMarker('mdi-harddisk'),
-        tooltip: instancesHelptext.deviceBadgeTooltips.disk,
-      };
-
-    case ContainerDeviceType.Raw:
-      return {
-        name: iconMarker('mdi-file'),
-        tooltip: instancesHelptext.deviceBadgeTooltips.raw,
-      };
-
     case ContainerDeviceType.Filesystem:
       return {
         name: iconMarker('mdi-folder'),
@@ -60,10 +48,6 @@ export function getStorageDeviceIcon(deviceType: ContainerDeviceType): StorageDe
  */
 export function getStorageDeviceClass(deviceType: ContainerDeviceType): string {
   switch (deviceType) {
-    case ContainerDeviceType.Disk:
-      return 'device-disk';
-    case ContainerDeviceType.Raw:
-      return 'device-raw';
     case ContainerDeviceType.Filesystem:
       return 'device-filesystem';
     case ContainerDeviceType.Usb:
@@ -76,12 +60,8 @@ export function getStorageDeviceClass(deviceType: ContainerDeviceType): string {
 }
 
 /**
- * Check if device type is a storage device (DISK, RAW, or FILESYSTEM)
+ * Check if device type is a filesystem device
  */
 export function isStorageDevice(deviceType: ContainerDeviceType): boolean {
-  return [
-    ContainerDeviceType.Disk,
-    ContainerDeviceType.Raw,
-    ContainerDeviceType.Filesystem,
-  ].includes(deviceType);
+  return deviceType === ContainerDeviceType.Filesystem;
 }
