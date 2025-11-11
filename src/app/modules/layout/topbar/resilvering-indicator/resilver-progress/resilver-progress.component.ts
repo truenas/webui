@@ -50,7 +50,7 @@ export class ResilverProgressDialog implements OnInit {
   readonly PoolScanState = PoolScanState;
 
   ngOnInit(): void {
-    this.api.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.api.subscribe('pool.scan').pipe(untilDestroyed(this)).subscribe((event) => {
       // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
       if (!event || !event.fields.scan.function.includes(PoolScanFunction.Resilver)) {
         return;

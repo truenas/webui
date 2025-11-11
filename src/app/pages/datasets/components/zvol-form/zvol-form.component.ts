@@ -8,6 +8,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   finalize, forkJoin, map, Observable, of, tap,
 } from 'rxjs';
+import {
+  specialVdevDefaultThreshold,
+  specialVdevMaxThreshold,
+  specialVdevMinThreshold,
+} from 'app/constants/dataset.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   DatasetRecordSize,
@@ -17,10 +22,11 @@ import {
 } from 'app/enums/dataset.enum';
 import { deduplicationSettingLabels } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { onOffLabels } from 'app/enums/on-off.enum';
+import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
-import { inherit } from 'app/enums/with-inherit.enum';
+import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
@@ -44,12 +50,13 @@ import {
   forbiddenValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.interface';
-import { getUserProperty } from 'app/pages/datasets/utils/dataset.utils';
+import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -78,6 +85,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     DetailsItemComponent,
     AsyncPipe,
     IxButtonGroupComponent,
+    FileSizePipe,
   ],
 })
 export class ZvolFormComponent implements OnInit {
@@ -106,6 +114,7 @@ export class ZvolFormComponent implements OnInit {
   protected isNew = true;
 
   readonly helptext = helptextZvol;
+  readonly OnOff = OnOff;
   inheritEncryptPlaceholder: string = helptextZvol.encryption.inheritLabel;
   namesInUse: string[] = [];
   volBlockSizeWarning: string | null;
@@ -119,6 +128,7 @@ export class ZvolFormComponent implements OnInit {
   protected inheritEncryption = true;
   protected generateKey = true;
   protected minimumRecommendedBlockSize: DatasetRecordSize;
+  showCustomizeSpecialSmallBlockSize = false;
 
   form = this.formBuilder.group({
     name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
@@ -132,6 +142,8 @@ export class ZvolFormComponent implements OnInit {
     readonly: [null as string | null, Validators.required],
     volblocksize: [null as string | null, Validators.required],
     snapdev: [DatasetSnapdev.Hidden as string],
+    special_small_block_size: [inherit as WithInherit<OnOff>],
+    special_small_block_size_custom: [null as number | null],
     inherit_encryption: [true],
     encryption: [true],
     encryption_type: ['key', Validators.required],
@@ -170,6 +182,10 @@ export class ZvolFormComponent implements OnInit {
   protected deduplicationOptions: Option[] = mapToOptions(deduplicationSettingLabels, this.translate);
   protected snapdevOptions: Option[] = mapToOptions(datasetSnapdevLabels, this.translate);
   protected readonlyOptions: Option[] = mapToOptions(onOffLabels, this.translate);
+  protected specialSmallBlockSizeOptions: Option[] = [
+    { label: this.translate.instant('On'), value: OnOff.On },
+    { label: this.translate.instant('Off'), value: OnOff.Off },
+  ];
 
   protected volblocksizeOptions: Option[] = [
     { label: '4 KiB', value: '4K' },
@@ -191,6 +207,7 @@ export class ZvolFormComponent implements OnInit {
   readonly readonlyOptions$ = of(this.readonlyOptions);
   readonly volblocksizeOptions$ = of(this.volblocksizeOptions);
   readonly snapdevOptions$ = of(this.snapdevOptions);
+  readonly specialSmallBlockSizeOptions$ = of(this.specialSmallBlockSizeOptions);
   readonly encryptionTypeOptions$ = of(this.encryptionTypeOptions);
 
   readonly algorithmOptions$ = this.api.call('pool.dataset.encryption_algorithm_choices').pipe(
@@ -212,6 +229,20 @@ export class ZvolFormComponent implements OnInit {
   ngOnInit(): void {
     this.isNew = this.slideInRef.getData().isNew;
     this.parentOrZvolId = this.slideInRef.getData().parentOrZvolId;
+
+    // Set up conditional validation for special_small_block_size_custom
+    this.form.controls.special_small_block_size.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      const customControl = this.form.controls.special_small_block_size_custom;
+      if (value === OnOff.On) {
+        customControl.setValidators([
+          Validators.min(specialVdevMinThreshold),
+          Validators.max(specialVdevMaxThreshold),
+        ]);
+      } else {
+        customControl.clearValidators();
+      }
+      customControl.updateValueAndValidity();
+    });
 
     if (this.parentOrZvolId) {
       this.setupForm();
@@ -271,6 +302,7 @@ export class ZvolFormComponent implements OnInit {
                 this.inheritCompression(parentOrZvol, parentDataset);
                 this.inheritDeduplication(parentOrZvol, parentDataset);
                 this.inheritSnapdev(parentOrZvol, parentDataset);
+                this.inheritSpecialSmallBlockSize(parentOrZvol, parentDataset);
 
                 this.cdr.markForCheck();
               },
@@ -287,6 +319,27 @@ export class ZvolFormComponent implements OnInit {
     this.form.controls.comments.setValue(comments?.value || '');
 
     this.form.controls.volsize.setValue(parent.volsize.rawvalue);
+
+    // Handle special_small_block_size
+    // Check if special_small_block_size is inherited or locally set
+    const isInherited = !parent.special_small_block_size
+      || parent.special_small_block_size.source === ZfsPropertySource.Inherited
+      || parent.special_small_block_size.source === ZfsPropertySource.Default;
+
+    if (parent.special_small_block_size && !isInherited) {
+      const specialSmallBlockSize = this.formatter.convertHumanStringToNum(parent.special_small_block_size.value);
+
+      if (specialSmallBlockSize === 0) {
+        // 0 means OFF (disabled)
+        this.form.controls.special_small_block_size.setValue(OnOff.Off);
+      } else if (specialSmallBlockSize > 0) {
+        // Any value > 0 means ON
+        this.form.controls.special_small_block_size.setValue(OnOff.On);
+        this.form.controls.special_small_block_size_custom.setValue(specialSmallBlockSize);
+        // Only show customize section if value differs from default
+        this.showCustomizeSpecialSmallBlockSize = (specialSmallBlockSize !== specialVdevDefaultThreshold);
+      }
+    }
   }
 
   private disableEncryptionFields(): void {
@@ -345,6 +398,21 @@ export class ZvolFormComponent implements OnInit {
     this.volblocksizeOptions.unshift({ label: inheritLabel, value: inherit });
     this.snapdevOptions.unshift({ label: `${inheritLabel} (${parent.snapdev.rawvalue})`, value: inherit });
 
+    // Add inherit option for special_small_block_size
+    if (parent.special_small_block_size) {
+      const sizeInBytes = this.formatter.convertHumanStringToNum(parent.special_small_block_size.value);
+      let inheritLabelValue: string;
+      if (sizeInBytes === 0) {
+        inheritLabelValue = `${inheritLabel} (off)`;
+      } else {
+        const formattedSize = buildNormalizedFileSize(sizeInBytes);
+        inheritLabelValue = `${inheritLabel} (${formattedSize})`;
+      }
+      this.specialSmallBlockSizeOptions.unshift({ label: inheritLabelValue, value: inherit });
+    } else {
+      this.specialSmallBlockSizeOptions.unshift({ label: inheritLabel, value: inherit });
+    }
+
     this.form.controls.sync.setValue(inherit);
     this.form.controls.compression.setValue(inherit);
     this.form.controls.deduplication.setValue(inherit);
@@ -395,6 +463,23 @@ export class ZvolFormComponent implements OnInit {
       this.form.controls.snapdev.setValue(inherit);
     } else {
       this.form.controls.snapdev.setValue(parent.snapdev.value);
+    }
+  }
+
+  private inheritSpecialSmallBlockSize(parent: Dataset, parentDataset: Dataset[]): void {
+    const inheritLabel = this.translate.instant('Inherit');
+    if (parentDataset[0].special_small_block_size) {
+      const sizeInBytes = this.formatter.convertHumanStringToNum(parentDataset[0].special_small_block_size.value);
+      let inheritLabelValue: string;
+      if (sizeInBytes === 0) {
+        inheritLabelValue = `${inheritLabel} (off)`;
+      } else {
+        const formattedSize = buildNormalizedFileSize(sizeInBytes);
+        inheritLabelValue = `${inheritLabel} (${formattedSize})`;
+      }
+      this.specialSmallBlockSizeOptions.unshift({ label: inheritLabelValue, value: inherit });
+    } else {
+      this.specialSmallBlockSizeOptions.unshift({ label: inheritLabel, value: inherit });
     }
   }
 
@@ -528,6 +613,21 @@ export class ZvolFormComponent implements OnInit {
     this.isLoading.set(true);
     const data: ZvolFormData = this.getPayload(this.form.getRawValue());
 
+    // Handle special_small_block_size transformation
+    const transformedValue = transformSpecialSmallBlockSizeForPayload(
+      data.special_small_block_size as WithInherit<OnOff>,
+      data.special_small_block_size_custom,
+    );
+    if (transformedValue === undefined || transformedValue === inherit) {
+      // For zvols, delete the property when inherit or undefined
+      delete data.special_small_block_size;
+    } else {
+      data.special_small_block_size = transformedValue;
+    }
+
+    // Remove UI-only field
+    delete data.special_small_block_size_custom;
+
     if (data.sync === inherit) {
       delete data.sync;
     }
@@ -596,6 +696,21 @@ export class ZvolFormComponent implements OnInit {
     this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId]]]).pipe(untilDestroyed(this)).subscribe({
       next: (datasets) => {
         const data: ZvolFormData = this.getPayload(this.form.getRawValue());
+
+        // Handle special_small_block_size transformation
+        const transformedValue = transformSpecialSmallBlockSizeForPayload(
+          data.special_small_block_size as WithInherit<OnOff>,
+          data.special_small_block_size_custom,
+        );
+        if (transformedValue === undefined || transformedValue === inherit) {
+          // For zvols, delete the property when inherit or undefined
+          delete data.special_small_block_size;
+        } else {
+          data.special_small_block_size = transformedValue;
+        }
+
+        // Remove UI-only field
+        delete data.special_small_block_size_custom;
 
         if (data.inherit_encryption) {
           delete data.encryption;
@@ -729,5 +844,14 @@ export class ZvolFormComponent implements OnInit {
   private handleZvolCreateUpdate(dataset: Dataset): void {
     this.isLoading.set(false);
     this.slideInRef.close({ response: dataset });
+  }
+
+  toggleCustomizeSpecialSmallBlockSize(): void {
+    this.showCustomizeSpecialSmallBlockSize = !this.showCustomizeSpecialSmallBlockSize;
+    if (this.showCustomizeSpecialSmallBlockSize && !this.form.value.special_small_block_size_custom) {
+      // Set a sensible default when opening customize (16 MiB)
+      this.form.patchValue({ special_small_block_size_custom: specialVdevDefaultThreshold });
+    }
+    this.cdr.markForCheck();
   }
 }
