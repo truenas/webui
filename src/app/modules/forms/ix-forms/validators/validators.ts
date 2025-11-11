@@ -61,16 +61,19 @@ export function greaterThanFg(
  * should target specific datasets (e.g., /mnt/pool/dataset) rather than
  * the pool root itself.
  *
- * @param errorMessage Optional custom error message. If not provided, a default message is used.
+ * @param errorMessage Translated error message to show when validation fails.
+ *                     Must be translated before passing to this validator for proper i18n support.
  * @returns ValidatorFn that returns null if valid, or ValidationErrors if invalid
  *
  * @example
- * // Usage in a form control
+ * // Usage in a form control with translated message
  * this.form = this.fb.group({
- *   path: ['', [validateNotPoolRoot('Cannot select pool root')]],
+ *   path: ['', [validateNotPoolRoot(
+ *     this.translate.instant('Cannot select pool root. Please select a dataset.')
+ *   )]],
  * });
  */
-export function validateNotPoolRoot(errorMessage?: string): ValidatorFn {
+export function validateNotPoolRoot(errorMessage: string): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const path = control.value?.trim() as string;
     if (!path) {
@@ -85,7 +88,7 @@ export function validateNotPoolRoot(errorMessage?: string): ValidatorFn {
     if (normalizedPath === '/mnt' || poolRootPattern.test(normalizedPath)) {
       return {
         poolRoot: {
-          message: errorMessage || 'Cannot select /mnt or pool root. Please select a dataset under the pool (e.g., /mnt/pool/dataset).',
+          message: errorMessage,
         },
       };
     }

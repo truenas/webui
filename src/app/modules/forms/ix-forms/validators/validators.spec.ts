@@ -60,79 +60,81 @@ describe('ValidationService', () => {
   });
 
   describe('validateNotPoolRoot', () => {
+    const errorMessage = 'Cannot select /mnt or pool root. Please select a dataset.';
+
     it('should accept empty values', () => {
-      const validator = validateNotPoolRoot();
+      const validator = validateNotPoolRoot(errorMessage);
       expect(validator(new FormControl(''))).toBeNull();
       expect(validator(new FormControl(null))).toBeNull();
       expect(validator(new FormControl(undefined))).toBeNull();
     });
 
     it('should accept valid dataset paths', () => {
-      const validator = validateNotPoolRoot();
+      const validator = validateNotPoolRoot(errorMessage);
       expect(validator(new FormControl('/mnt/tank/dataset'))).toBeNull();
       expect(validator(new FormControl('/mnt/pool/data/subdataset'))).toBeNull();
       expect(validator(new FormControl('/mnt/mypool/isos/'))).toBeNull();
     });
 
     it('should reject /mnt itself', () => {
-      const validator = validateNotPoolRoot();
+      const validator = validateNotPoolRoot(errorMessage);
       const result = validator(new FormControl('/mnt'));
       expect(result).toEqual({
         poolRoot: {
-          message: expect.stringContaining('Cannot select /mnt or pool root'),
+          message: errorMessage,
         },
       });
     });
 
     it('should reject /mnt with trailing slash', () => {
-      const validator = validateNotPoolRoot();
+      const validator = validateNotPoolRoot(errorMessage);
       const result = validator(new FormControl('/mnt/'));
       expect(result).toEqual({
         poolRoot: {
-          message: expect.stringContaining('Cannot select /mnt or pool root'),
+          message: errorMessage,
         },
       });
     });
 
     it('should reject pool root paths', () => {
-      const validator = validateNotPoolRoot();
+      const validator = validateNotPoolRoot(errorMessage);
       expect(validator(new FormControl('/mnt/tank'))).toEqual({
         poolRoot: {
-          message: expect.stringContaining('Cannot select /mnt or pool root'),
+          message: errorMessage,
         },
       });
       expect(validator(new FormControl('/mnt/mypool'))).toEqual({
         poolRoot: {
-          message: expect.stringContaining('Cannot select /mnt or pool root'),
+          message: errorMessage,
         },
       });
     });
 
     it('should reject pool root paths with trailing slashes', () => {
-      const validator = validateNotPoolRoot();
+      const validator = validateNotPoolRoot(errorMessage);
       expect(validator(new FormControl('/mnt/tank/'))).toEqual({
         poolRoot: {
-          message: expect.stringContaining('Cannot select /mnt or pool root'),
+          message: errorMessage,
         },
       });
     });
 
     it('should reject pool root paths with multiple trailing slashes', () => {
-      const validator = validateNotPoolRoot();
+      const validator = validateNotPoolRoot(errorMessage);
       expect(validator(new FormControl('/mnt/mypool///'))).toEqual({
         poolRoot: {
-          message: expect.stringContaining('Cannot select /mnt or pool root'),
+          message: errorMessage,
         },
       });
       expect(validator(new FormControl('/mnt/tank//////'))).toEqual({
         poolRoot: {
-          message: expect.stringContaining('Cannot select /mnt or pool root'),
+          message: errorMessage,
         },
       });
     });
 
-    it('should use custom error message when provided', () => {
-      const customMessage = 'Custom pool root error';
+    it('should use the provided translated error message', () => {
+      const customMessage = 'Translated error message';
       const validator = validateNotPoolRoot(customMessage);
       const result = validator(new FormControl('/mnt/tank'));
       expect(result).toEqual({
@@ -143,10 +145,10 @@ describe('ValidationService', () => {
     });
 
     it('should trim whitespace from paths', () => {
-      const validator = validateNotPoolRoot();
+      const validator = validateNotPoolRoot(errorMessage);
       expect(validator(new FormControl('  /mnt/tank  '))).toEqual({
         poolRoot: {
-          message: expect.stringContaining('Cannot select /mnt or pool root'),
+          message: errorMessage,
         },
       });
     });
