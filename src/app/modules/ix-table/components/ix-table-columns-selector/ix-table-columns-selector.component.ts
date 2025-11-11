@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
-import { filter, map, take } from 'rxjs';
+import { map, take } from 'rxjs';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxCellActionsComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -73,10 +73,15 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
     this.store$.pipe(
       waitForPreferences,
       map((config) => config.tableDisplayedColumns?.find((column) => column.title === this.columnPreferencesKey())),
-      filter((config) => !!config?.columns?.length),
       take(1),
       untilDestroyed(this),
     ).subscribe((displayedColumns) => {
+      // If no saved preferences exist, use default column visibility
+      if (!displayedColumns?.columns?.length) {
+        this.setInitialState();
+        return;
+      }
+
       this.columns().forEach((column) => {
         if (column instanceof IxCellActionsComponent || column instanceof IxCellActionsWithMenuComponent) return;
 
