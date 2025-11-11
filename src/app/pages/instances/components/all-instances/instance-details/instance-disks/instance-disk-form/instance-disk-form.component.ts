@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject,
+} from '@angular/core';
 import {
   FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -7,19 +9,13 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
-import {
-  ContainerDeviceType,
-} from 'app/enums/container.enum';
+import { ContainerDeviceType } from 'app/enums/container.enum';
 import { instancesHelptext } from 'app/helptext/instances/instances';
 import {
   ContainerFilesystemDevice,
   ContainerInstance,
 } from 'app/interfaces/container.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -29,6 +25,10 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  containerPathValidator,
+  poolPathValidator,
+} from 'app/pages/instances/utils/storage-device-validators';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 interface InstanceDiskFormOptions {
@@ -54,7 +54,6 @@ interface InstanceDiskFormOptions {
     FormActionsComponent,
     MatButton,
     TestDirective,
-    ExplorerCreateDatasetComponent,
   ],
 })
 export class InstanceDiskFormComponent implements OnInit {
@@ -70,19 +69,19 @@ export class InstanceDiskFormComponent implements OnInit {
 
   protected readonly isLoading = signal(false);
 
-  readonly datasetProvider = this.filesystem.getFilesystemNodeProvider({ datasetsOnly: true });
+  readonly fileProvider = this.filesystem.getFilesystemNodeProvider();
 
   protected form = this.formBuilder.nonNullable.group({
-    source: ['', Validators.required],
-    target: ['', Validators.required],
+    source: ['', [Validators.required, poolPathValidator()]],
+    target: ['', [Validators.required, containerPathValidator()]],
   });
-
-  protected readonly slashRootNode = [slashRootNode];
 
   protected isNew = computed(() => !this.existingDisk());
 
   protected title = computed(() => {
-    return !this.isNew() ? this.translate.instant('Edit Disk') : this.translate.instant('Add Disk');
+    return this.isNew()
+      ? this.translate.instant('Add Filesystem Device')
+      : this.translate.instant('Edit Filesystem Device');
   });
 
   protected get instance(): ContainerInstance {
@@ -112,7 +111,7 @@ export class InstanceDiskFormComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
-          this.snackbar.success(this.translate.instant('Disk saved'));
+          this.snackbar.success(this.translate.instant('Filesystem device saved'));
           this.slideInRef.close({
             response: true,
           });
@@ -126,18 +125,18 @@ export class InstanceDiskFormComponent implements OnInit {
   }
 
   private prepareRequest(): Observable<unknown> {
-    const payload = {
-      ...this.form.value,
+    const formValue = this.form.getRawValue();
+
+    const payload: ContainerFilesystemDevice = {
       dtype: ContainerDeviceType.Filesystem,
-    } as ContainerFilesystemDevice;
+      source: formValue.source,
+      target: formValue.target,
+    };
 
     const existingDisk = this.existingDisk();
     return existingDisk
-      ? this.api.call('container.device.update', [existingDisk.id, {
-        attributes: {
-          ...payload,
-          name: existingDisk.name,
-        },
+      ? this.api.call('container.device.update', [(existingDisk as ContainerFilesystemDevice & { id: number }).id, {
+        attributes: payload,
       }])
       : this.api.call('container.device.create', [{
         container: this.instance.id,

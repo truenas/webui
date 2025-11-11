@@ -6,9 +6,6 @@ import {
   InstanceDetailsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-details.component';
 import {
-  InstanceDevicesComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-devices/instance-devices.component';
-import {
   InstanceDisksComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disks.component';
 import {
@@ -20,6 +17,9 @@ import {
 import {
   InstanceToolsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-tools/instance-tools.component';
+import {
+  InstanceUsbDevicesComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-usb-devices/instance-usb-devices.component';
 import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
 
 describe('InstanceDetailsComponent', () => {
@@ -30,7 +30,7 @@ describe('InstanceDetailsComponent', () => {
       NgxSkeletonLoaderComponent,
       MockComponents(
         InstanceGeneralInfoComponent,
-        InstanceDevicesComponent,
+        InstanceUsbDevicesComponent,
         InstanceDisksComponent,
         InstanceNicsComponent,
         InstanceToolsComponent,
@@ -52,7 +52,7 @@ describe('InstanceDetailsComponent', () => {
   it('shows details sub-components related to a selected container', () => {
     const expectedComponents = [
       InstanceGeneralInfoComponent,
-      InstanceDevicesComponent,
+      InstanceUsbDevicesComponent,
       InstanceDisksComponent,
       InstanceNicsComponent,
       InstanceToolsComponent,

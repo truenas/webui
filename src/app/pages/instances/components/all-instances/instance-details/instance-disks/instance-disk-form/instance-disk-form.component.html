@@ -9,23 +9,18 @@
       <ix-fieldset>
         <ix-explorer
           formControlName="source"
-          [rootNodes]="slashRootNode"
-          [label]="'Source' | translate"
+          [label]="'Host Directory Source' | translate"
+          [tooltip]="'Select the host directory to mount inside the container' | translate"
           [required]="true"
-          [nodeProvider]="datasetProvider"
-        >
-          @if (isNew()) {
-            <ix-explorer-create-dataset></ix-explorer-create-dataset>
-          }
-        </ix-explorer>
+          [nodeProvider]="fileProvider"
+        ></ix-explorer>
 
-        @if (form.controls.target.enabled) {
-          <ix-input
-            formControlName="target"
-            [label]="'Target' | translate"
-            [required]="true"
-          ></ix-input>
-        }
+        <ix-input
+          formControlName="target"
+          [label]="'Container Mount Path' | translate"
+          [tooltip]="'Path where the directory will be mounted inside the container (e.g., /data)' | translate"
+          [required]="true"
+        ></ix-input>
       </ix-fieldset>
 
       <ix-form-actions>

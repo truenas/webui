@@ -11,9 +11,9 @@ export const instanceDetailsElements = {
       hierarchy: [T('General Info')],
       anchor: 'general-info',
     },
-    devices: {
-      hierarchy: [T('Devices')],
-      anchor: 'devices',
+    usbDevices: {
+      hierarchy: [T('USB Devices')],
+      anchor: 'usb-devices',
     },
     disks: {
       hierarchy: [T('Disks')],

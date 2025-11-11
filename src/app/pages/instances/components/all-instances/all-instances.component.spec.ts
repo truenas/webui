@@ -4,7 +4,6 @@ import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { ContainerGlobalState } from 'app/enums/container.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ContainerInstance } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -52,7 +51,12 @@ describe('AllInstancesComponent', () => {
       }),
       mockProvider(VirtualizationConfigStore, {
         initialize: jest.fn(),
-        state$: of({ config: { state: ContainerGlobalState.Initialized } }),
+        config: () => ({
+          bridge: null as string | null,
+          v4_network: null as string | null,
+          v6_network: null as string | null,
+          preferred_pool: null as string | null,
+        }),
       }),
       mockProvider(VirtualizationInstancesStore, {
         selectedInstance: jest.fn(() => ({})),

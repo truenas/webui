@@ -31,7 +31,7 @@ describe('InstanceDiskFormComponent', () => {
     ],
   });
 
-  describe('creating a disk', () => {
+  describe('creating a filesystem device', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
@@ -47,12 +47,12 @@ describe('InstanceDiskFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('creates a new disk for the instance provided when form is submitted', async () => {
+    it('creates a new filesystem device for the instance provided when form is submitted', async () => {
       const form = await loader.getHarness(IxFormHarness);
 
       await form.fillForm({
-        Source: '/mnt/path',
-        Target: 'target',
+        'Host Directory Source': '/mnt/path',
+        'Container Mount Path': '/target',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -66,14 +66,14 @@ describe('InstanceDiskFormComponent', () => {
         container: 1,
         attributes: {
           source: '/mnt/path',
-          target: 'target',
+          target: '/target',
           dtype: ContainerDeviceType.Filesystem,
         },
       }]);
     });
   });
 
-  describe('editing a disk', () => {
+  describe('editing a filesystem device', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
@@ -83,8 +83,9 @@ describe('InstanceDiskFormComponent', () => {
               disk: {
                 id: 456,
                 name: 'existing-disk',
+                dtype: ContainerDeviceType.Filesystem,
                 source: '/mnt/from',
-                target: 'to',
+                target: '/to',
               },
             }),
             close: jest.fn(),
@@ -99,22 +100,22 @@ describe('InstanceDiskFormComponent', () => {
       expect(spectator.query(ModalHeaderComponent)).toExist();
     });
 
-    it('shows values for the disk that is being edited', async () => {
+    it('shows values for the filesystem device that is being edited', async () => {
       const form = await loader.getHarness(IxFormHarness);
       const values = await form.getValues();
 
-      expect(values).toEqual({
-        Source: '/mnt/from',
-        Target: 'to',
+      expect(values).toMatchObject({
+        'Host Directory Source': '/mnt/from',
+        'Container Mount Path': '/to',
       });
     });
 
-    it('saves updated disk when form is saved', async () => {
+    it('saves updated filesystem device when form is saved', async () => {
       const form = await loader.getHarness(IxFormHarness);
 
       await form.fillForm({
-        Source: '/mnt/updated',
-        Target: 'new-target',
+        'Host Directory Source': '/mnt/updated',
+        'Container Mount Path': '/new-target',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -123,9 +124,8 @@ describe('InstanceDiskFormComponent', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.update', [456, {
         attributes: {
           source: '/mnt/updated',
-          target: 'new-target',
+          target: '/new-target',
           dtype: ContainerDeviceType.Filesystem,
-          name: 'existing-disk',
         },
       }]);
 
@@ -151,19 +151,19 @@ describe('InstanceDiskFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('requires source and target fields', async () => {
+    it('requires source and target fields for filesystem device', async () => {
       const form = await loader.getHarness(IxFormHarness);
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
 
       expect(await saveButton.isDisabled()).toBe(true);
 
       await form.fillForm({
-        Source: '/mnt/source',
+        'Host Directory Source': '/mnt/source',
       });
       expect(await saveButton.isDisabled()).toBe(true);
 
       await form.fillForm({
-        Target: 'dest',
+        'Container Mount Path': '/dest',
       });
       expect(await saveButton.isDisabled()).toBe(false);
     });

@@ -59,7 +59,7 @@ export class AddNicMenuComponent {
       .filter((device) => device.dtype === ContainerDeviceType.Nic) as ContainerNicDevice[];
 
     return Object.entries(choices)
-      .filter(([key]) => !existingNics.find((device) => (device.nic_attach || device.parent) === key))
+      .filter(([key]) => !existingNics.find((device) => device.nic_attach === key))
       .map(([key, label]) => ({ key, label }));
   });
 

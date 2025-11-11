@@ -40,7 +40,11 @@ describe('InstanceNicMacDialogComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     expect(await button.isDisabled()).toBeFalsy();
     await button.click();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ useDefault: true });
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      type: 'VIRTIO',
+      useDefault: true,
+      trust_guest_rx_filters: false,
+    });
   });
 
   it('returns mac value', async () => {
@@ -51,7 +55,12 @@ describe('InstanceNicMacDialogComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     expect(await button.isDisabled()).toBeFalsy();
     await button.click();
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ mac: 'aa:bb:cc:dd:ee:ff' });
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      type: 'VIRTIO',
+      useDefault: false,
+      mac: 'aa:bb:cc:dd:ee:ff',
+      trust_guest_rx_filters: false,
+    });
   });
 
   it('doesnt allow invalid mac value', async () => {

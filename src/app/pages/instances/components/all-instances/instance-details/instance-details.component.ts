@@ -7,9 +7,6 @@ import { ContainerType } from 'app/enums/container.enum';
 import { ContainerInstance } from 'app/interfaces/container.interface';
 import { instanceDetailsElements } from 'app/pages/instances/components/all-instances/instance-details/instance-details.elements';
 import {
-  InstanceDevicesComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-devices/instance-devices.component';
-import {
   InstanceDisksComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disks.component';
 import {
@@ -19,6 +16,9 @@ import { InstanceNicsComponent } from 'app/pages/instances/components/all-instan
 import {
   InstanceToolsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-tools/instance-tools.component';
+import {
+  InstanceUsbDevicesComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-usb-devices/instance-usb-devices.component';
 
 @Component({
   selector: 'ix-instance-details',
@@ -26,7 +26,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    InstanceDevicesComponent,
+    InstanceUsbDevicesComponent,
     InstanceGeneralInfoComponent,
     InstanceDisksComponent,
     InstanceToolsComponent,

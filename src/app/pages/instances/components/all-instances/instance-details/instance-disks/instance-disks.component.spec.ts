@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { ContainerDeviceType } from 'app/enums/container.enum';
+import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerFilesystemDevice } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
@@ -25,11 +25,15 @@ describe('InstanceDisksComponent', () => {
   let loader: HarnessLoader;
   const disks = [
     {
+      id: 1,
+      name: 'disk1',
       dtype: ContainerDeviceType.Filesystem,
       source: '/mnt/source-path',
       target: 'target',
     } as ContainerFilesystemDevice,
     {
+      id: 2,
+      name: 'disk2',
       dtype: ContainerDeviceType.Filesystem,
       source: null,
       target: 'target',
@@ -42,15 +46,16 @@ describe('InstanceDisksComponent', () => {
     ],
     providers: [
       mockProvider(VirtualizationInstancesStore, {
-        selectedInstance: () => fakeVirtualizationInstance({ id: 1 }),
+        selectedInstance: () => fakeVirtualizationInstance({
+          id: 1,
+          status: { state: ContainerStatus.Stopped, pid: 0, domain_state: 'stopped' },
+        }),
+        instanceUpdated: jest.fn(),
       }),
       mockProvider(VirtualizationDevicesStore, {
         isLoading: () => false,
         devices: () => disks,
         loadDevices: jest.fn(),
-      }),
-      mockProvider(VirtualizationInstancesStore, {
-        instanceUpdated: jest.fn(),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({
@@ -70,15 +75,15 @@ describe('InstanceDisksComponent', () => {
   });
 
   it('shows a list of disks that have source set', () => {
-    const diskRows = spectator.queryAll('.disk');
+    const diskRows = spectator.queryAll('.device');
 
-    expect(diskRows).toHaveLength(1);
+    expect(diskRows).toHaveLength(2);
     expect(diskRows[0]).toHaveText('/mnt/source-path → target');
   });
 
   it('renders a menu to manage the disk', () => {
     const actionsMenu = spectator.queryAll(DeviceActionsMenuComponent);
-    expect(actionsMenu).toHaveLength(1);
+    expect(actionsMenu).toHaveLength(2);
     expect(actionsMenu[0].device).toBe(disks[0]);
   });
 
@@ -90,16 +95,6 @@ describe('InstanceDisksComponent', () => {
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
         InstanceDiskFormComponent,
         { data: { disk: undefined, instance: fakeVirtualizationInstance({ id: 1 }) } },
-      );
-    });
-
-    it('opens disk for for edit when actions menu emits (edit)', () => {
-      const actionsMenu = spectator.query(DeviceActionsMenuComponent)!;
-      actionsMenu.edit.emit();
-
-      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-        InstanceDiskFormComponent,
-        { data: { disk: disks[0], instance: fakeVirtualizationInstance({ id: 1 }) } },
       );
     });
   });

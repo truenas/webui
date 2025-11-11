@@ -34,32 +34,19 @@ export enum ContainerRemote {
 
 export enum ContainerDeviceType {
   Usb = 'USB',
-  Disk = 'DISK',
   Nic = 'NIC',
-  Raw = 'RAW',
   Filesystem = 'FILESYSTEM',
 }
 
 export const containerDeviceTypeLabels = new Map<ContainerDeviceType, string>([
   [ContainerDeviceType.Usb, 'USB'],
-  [ContainerDeviceType.Disk, T('Disk')],
   [ContainerDeviceType.Nic, T('NIC')],
-  [ContainerDeviceType.Raw, T('Raw')],
-  [ContainerDeviceType.Filesystem, T('Filesystem')],
+  [ContainerDeviceType.Filesystem, T('Filesystem Device')],
 ]);
 
 export enum ContainerNetworkType {
   Bridge = 'BRIDGE',
 }
-
-export enum ContainerGlobalState {
-  NoPool = 'NO_POOL',
-  Initializing = 'INITIALIZING',
-  Locked = 'LOCKED',
-  Error = 'ERROR',
-  Initialized = 'INITIALIZED',
-}
-
 export enum ContainerNicType {
   Bridged = 'BRIDGED',
   Macvlan = 'MACVLAN',

@@ -23,23 +23,25 @@ export const instancesHelptext = {
   envNameLabel: T('Name'),
   envValueLabel: T('Value'),
 
-  disksLabel: T('Disks'),
-  disksSourceLabel: T('Source'),
-  disksDestinationLabel: T('Destination'),
-  disksDestinationTooltip: T('Specify the container filesystem path where the disk will be mounted.'),
+  deviceBadgeTooltips: {
+    filesystem: T('Filesystem bind mount'),
+    usb: T('USB device'),
+    nic: T('Network interface'),
+    unknown: T('Unknown device'),
+  },
+
+  deviceDescriptions: {
+    defaultMacAddress: T('Default Mac Address'),
+    unknown: T('Unknown'),
+    unknownSource: T('Unknown source'),
+    unknownTarget: T('Unknown target'),
+  },
 
   proxiesLabel: T('Proxies'),
 
   hostProtocolLabel: T('Host Protocol'),
   hostPortLabel: T('Host Port'),
   hostPortTooltip: T('Specify the host port to be mapped to the container\'s port.'),
-
-  ioBusTooltip: T('Choose the disk I/O bus type that best suits your system’s needs:\
- <br /><br /> • NVMe – Ideal for high-performance storage with faster read and write speeds.\
- <br /><br /> • Virtio-BLK – Efficient for virtualized environments, offering direct block device access with lower overhead.\
- <br /><br /> • Virtio-SCSI – Flexible and scalable, supporting advanced features like hot-swapping and multiple devices.'),
-
-  bootFromTooltip: T('Select the disk to boot the container from.'),
 
   instanceProtocolLabel: T('Container Protocol'),
   instanceProtocolTooltip: T('Select the protocol for the container\'s network connection.'),
@@ -86,5 +88,15 @@ export const instancesHelptext = {
  Leaving this field empty is allowed. \n \n When creating a Windows VM, make sure to set the this field to Windows.\
  Doing so will tell us to expect Windows to be running inside of the virtual machine\
  and to tweak behavior accordingly.'),
+  },
+
+  validators: {
+    containerPathMustStartWithSlash: T('Container path must start with /'),
+    containerPathCannotEndWithSlash: T('Container path cannot end with /'),
+    containerPathCannotContainDoubleSlash: T('Container path cannot contain //'),
+    containerPathInvalidCharacters: T('Invalid characters in container path'),
+    targetMustNotContainBraces: T('Target must not contain braces'),
+    poolPathMustStartWithMnt: T('Path must reside within a pool mount point (start with /mnt/)'),
+    sourceMustNotContainBraces: T('Source must not contain braces'),
   },
 };

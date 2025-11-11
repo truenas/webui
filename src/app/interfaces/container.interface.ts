@@ -1,13 +1,11 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import {
+  AllowedImageOs,
   ContainerDeviceType,
   ContainerNetworkType,
-  ContainerNicDeviceType,
-  ContainerNicType,
   ContainerRemote,
   ContainerStatus,
   ContainerType,
-  ImageOs,
 } from 'app/enums/container.enum';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 
@@ -95,78 +93,30 @@ export type UpdateContainerInstance = Partial<Pick<ContainerInstance,
   | 'capabilities_state'
 >>;
 
-export interface ContainerDiskDevice {
-  id?: number;
-  name: string;
-  description: string;
-  dtype: ContainerDeviceType.Disk;
-  readonly: boolean;
-  source: string | null;
-  destination: string | null;
-  product_id: string;
-}
-
-export interface ContainerRawDevice {
-  id?: number;
-  name: string;
-  description: string;
-  dtype: ContainerDeviceType.Raw;
-  readonly: boolean;
-  source: string | null;
-  product_id: string;
-}
-
 export interface ContainerFilesystemDevice {
-  id?: number;
-  name: string;
-  description: string;
   dtype: ContainerDeviceType.Filesystem;
-  readonly: boolean;
-  source: string;
   target: string;
-  product_id: string;
+  source: string;
 }
 
 export interface ContainerNicDevice {
-  id?: number;
-  name: string;
-  description: string;
   dtype: ContainerDeviceType.Nic;
-  type: ContainerNicDeviceType;
-  nic_attach?: string;
-  readonly: boolean;
-  network: string;
-  product_id: string;
-  mac?: string;
-  trust_guest_rx_filters?: boolean;
-  mtu?: string;
-  // Legacy fields - may still be used by frontend
-  nic_type?: ContainerNicType;
-  parent?: string;
+  trust_guest_rx_filters: boolean;
+  type: 'E1000' | 'VIRTIO';
+  nic_attach: string | null;
+  mac: string | null;
 }
 
 export interface ContainerUsbDevice {
-  id?: number;
-  name: string;
-  description: string;
   dtype: ContainerDeviceType.Usb;
-  readonly: boolean;
   usb: {
     vendor_id: string;
     product_id: string;
-  };
-  controller_type?: string;
-  device?: string | null;
-  // Legacy fields from API response
-  bus?: number;
-  dev?: number;
-  product_id?: string;
-  vendor_id?: string;
+  } | null;
+  device: string | null;
 }
 
 export type ContainerDevice =
-  | ContainerDiskDevice
-  | ContainerRawDevice
   | ContainerFilesystemDevice
   | ContainerUsbDevice
   | ContainerNicDevice;
@@ -175,7 +125,7 @@ export interface VirtualizationImage {
   archs: string[];
   description: string;
   label: string;
-  os: ImageOs | null | string;
+  os: AllowedImageOs;
   release: string;
   variant: string;
   instance_types: ContainerType[];

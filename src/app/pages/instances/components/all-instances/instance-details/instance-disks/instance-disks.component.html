@@ -17,23 +17,22 @@
     @if (isLoadingDevices()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      @for (disk of visibleDisks(); track disk.name) {
-        <div class="disk">
-          @if (disk.target) {
-            <div>{{ disk.source }} → {{ disk.target }}</div>
-          } @else {
-            <div>
-              {{ disk.source }}
-            </div>
-          }
+      @for (disk of visibleDisks(); track disk.id) {
+        <div class="device">
+          <div class="device-info">
+            <ix-device-type-badge [deviceType]="disk.dtype" [showLabel]="false"></ix-device-type-badge>
+            <span class="device-description">{{ getDeviceDescription(disk) }}</span>
+          </div>
 
           <ix-device-actions-menu
             [device]="disk"
-            (edit)="editDisk(disk)"
+            [showEdit]="true"
+            [isDisabled]="isContainerRunning()"
+            [disabledTooltip]="isContainerRunning() ? ('Cannot modify devices while container is running. Please stop the container first.' | translate) : null"
           ></ix-device-actions-menu>
         </div>
       } @empty {
-        {{ 'No disks added.' | translate }}
+        <div class="no-devices">{{ 'No disks added.' | translate }}</div>
       }
     }
   </mat-card-content>

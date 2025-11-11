@@ -20,9 +20,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-add-device-menu',
-  templateUrl: './add-device-menu.component.html',
-  styleUrls: ['./add-device-menu.component.scss'],
+  selector: 'ix-add-usb-device-menu',
+  templateUrl: './add-usb-device-menu.component.html',
+  styleUrls: ['./add-usb-device-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
@@ -34,7 +34,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     NgxSkeletonLoaderModule,
   ],
 })
-export class AddDeviceMenuComponent {
+export class AddUsbDeviceMenuComponent {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
@@ -53,10 +53,7 @@ export class AddDeviceMenuComponent {
       .filter((device) => device.dtype === ContainerDeviceType.Usb);
 
     return usbChoices.filter((usb) => {
-      return !existingUsbDevices.find((device) => {
-        const deviceProductId = device.usb?.product_id || device.product_id;
-        return deviceProductId === usb.product_id;
-      });
+      return !existingUsbDevices.find((device) => device.usb.product_id === usb.product_id);
     });
   });
 

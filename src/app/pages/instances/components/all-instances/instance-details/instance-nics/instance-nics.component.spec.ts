@@ -2,7 +2,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { ContainerDeviceType, ContainerNicType, ContainerStatus } from 'app/enums/container.enum';
+import { ContainerDeviceType, ContainerNicDeviceType, ContainerStatus } from 'app/enums/container.enum';
+import { ContainerDeviceWithId } from 'app/interfaces/container.interface';
 import {
   AddNicMenuComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
@@ -17,16 +18,22 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 
 describe('InstanceNicsComponent', () => {
   let spectator: Spectator<InstanceNicsComponent>;
-  const devices = [
+  const devices: ContainerDeviceWithId[] = [
     {
+      id: 1,
       dtype: ContainerDeviceType.Nic,
-      nic_type: ContainerNicType.Bridged,
-      name: 'nic1',
+      trust_guest_rx_filters: false,
+      type: ContainerNicDeviceType.Virtio,
+      nic_attach: 'br0',
+      mac: null,
     },
     {
+      id: 2,
       dtype: ContainerDeviceType.Nic,
-      nic_type: ContainerNicType.Macvlan,
-      name: 'nic2',
+      trust_guest_rx_filters: false,
+      type: ContainerNicDeviceType.E1000,
+      nic_attach: 'br1',
+      mac: null,
     },
   ];
 
@@ -61,8 +68,8 @@ describe('InstanceNicsComponent', () => {
     const deviceRows = spectator.queryAll('.device');
 
     expect(deviceRows).toHaveLength(2);
-    expect(deviceRows[0]).toHaveText('BRIDGED');
-    expect(deviceRows[1]).toHaveText('MACVLAN');
+    expect(deviceRows[0]).toHaveText('br0 (Default Mac Address)');
+    expect(deviceRows[1]).toHaveText('br1 (Default Mac Address)');
   });
 
   it('renders a menu to delete or manage the device', () => {
