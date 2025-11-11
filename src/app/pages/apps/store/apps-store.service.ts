@@ -1,12 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
+import { TranslateService } from '@ngx-translate/core';
 import {
   EMPTY,
   Observable, catchError, combineLatest, of, switchMap, tap,
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -38,6 +41,10 @@ const initialState: AppsState = {
 export class AppsStore extends ComponentStore<AppsState> {
   private errorHandler = inject(ErrorHandlerService);
   private appsService = inject(ApplicationsService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
+  private isSyncingCatalog = false;
 
   readonly isLoading$ = this.select((state) => state.isLoading);
 
@@ -80,26 +87,76 @@ export class AppsStore extends ComponentStore<AppsState> {
           isLoading: true,
         });
       }),
+      switchMap(() => this.loadCatalogData()),
       switchMap(() => {
-        return combineLatest([
-          this.loadLatestApps(),
-          this.loadAvailableApps(),
-          this.loadCategories(),
-        ]);
-      }),
-      tap(() => {
-        this.patchState((state: AppsState): AppsState => {
+        // Check if catalog is empty and needs sync (only on first load)
+        const state = this.get();
+        const catalogIsEmpty = state.availableApps.length === 0 && state.categories.length === 0;
+
+        if (catalogIsEmpty && !this.isSyncingCatalog) {
+          this.isSyncingCatalog = true;
+
+          // Show job dialog for user feedback during sync
+          return this.dialogService.jobDialog(
+            this.api.job('catalog.sync'),
+            {
+              title: this.translate.instant('Syncing Catalog'),
+              description: this.translate.instant('The catalog is being synced for the first time. This may take a few minutes.'),
+              canMinimize: true,
+            },
+          ).afterClosed().pipe(
+            switchMap(() => {
+              this.isSyncingCatalog = false;
+              // Reload catalog after sync completes
+              return this.loadCatalogData();
+            }),
+            tap(() => {
+              this.patchState((prevState: AppsState): AppsState => {
+                return {
+                  ...prevState,
+                  isLoading: false,
+                };
+              });
+            }),
+            catchError(() => {
+              this.isSyncingCatalog = false;
+              this.patchState((prevState: AppsState): AppsState => {
+                return {
+                  ...prevState,
+                  isLoading: false,
+                };
+              });
+              // Show specific error message for catalog sync failure
+              this.errorHandler.showErrorModal(
+                new Error(this.translate.instant('Failed to sync catalog. Please try clicking "Refresh Catalog" manually.')),
+              );
+              return EMPTY;
+            }),
+          );
+        }
+
+        // No sync needed, set loading to false
+        this.patchState((prevState: AppsState): AppsState => {
           return {
-            ...state,
+            ...prevState,
             isLoading: false,
           };
         });
+        return of(null);
       }),
       catchError((error: unknown) => {
         this.handleError(error);
         return EMPTY;
       }),
     );
+  }
+
+  private loadCatalogData(): Observable<unknown> {
+    return combineLatest([
+      this.loadLatestApps(),
+      this.loadAvailableApps(),
+      this.loadCategories(),
+    ]);
   }
 
   private loadLatestApps(): Observable<unknown> {
