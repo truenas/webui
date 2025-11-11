@@ -81,74 +81,72 @@ export class AppsStore extends ComponentStore<AppsState> {
 
   loadCatalog(): Observable<unknown> {
     return of(null).pipe(
-      tap(() => {
-        this.patchState({
-          ...initialState,
-          isLoading: true,
-        });
-      }),
+      tap(() => this.setLoadingState(true)),
       switchMap(() => this.loadCatalogData()),
-      switchMap(() => {
-        // Check if catalog is empty and needs sync (only on first load)
-        const state = this.get();
-        const catalogIsEmpty = state.availableApps.length === 0 && state.categories.length === 0;
-
-        if (catalogIsEmpty && !this.isSyncingCatalog) {
-          this.isSyncingCatalog = true;
-
-          // Show job dialog for user feedback during sync
-          return this.dialogService.jobDialog(
-            this.api.job('catalog.sync'),
-            {
-              title: this.translate.instant('Syncing Catalog'),
-              description: this.translate.instant('The catalog is being synced for the first time. This may take a few minutes.'),
-              canMinimize: true,
-            },
-          ).afterClosed().pipe(
-            switchMap(() => {
-              this.isSyncingCatalog = false;
-              // Reload catalog after sync completes
-              return this.loadCatalogData();
-            }),
-            tap(() => {
-              this.patchState((prevState: AppsState): AppsState => {
-                return {
-                  ...prevState,
-                  isLoading: false,
-                };
-              });
-            }),
-            catchError(() => {
-              this.isSyncingCatalog = false;
-              this.patchState((prevState: AppsState): AppsState => {
-                return {
-                  ...prevState,
-                  isLoading: false,
-                };
-              });
-              // Show specific error message for catalog sync failure
-              this.errorHandler.showErrorModal(
-                new Error(this.translate.instant('Failed to sync catalog. Please try clicking "Refresh Catalog" manually.')),
-              );
-              return EMPTY;
-            }),
-          );
-        }
-
-        // No sync needed, set loading to false
-        this.patchState((prevState: AppsState): AppsState => {
-          return {
-            ...prevState,
-            isLoading: false,
-          };
-        });
-        return of(null);
-      }),
+      switchMap(() => this.syncCatalogIfEmpty()),
       catchError((error: unknown) => {
         this.handleError(error);
         return EMPTY;
       }),
     );
+  }
+
+  /**
+   * Checks if the catalog is empty and automatically syncs it if needed.
+   * Shows a progress dialog to inform the user about the sync operation.
+   */
+  private syncCatalogIfEmpty(): Observable<unknown> {
+    const state = this.get();
+    const catalogIsEmpty = state.availableApps.length === 0 && state.categories.length === 0;
+
+    if (!catalogIsEmpty || this.isSyncingCatalog) {
+      this.setLoadingState(false);
+      return of(null);
+    }
+
+    this.isSyncingCatalog = true;
+
+    return this.dialogService.jobDialog(
+      this.api.job('catalog.sync'),
+      {
+        title: this.translate.instant('Syncing Catalog'),
+        description: this.translate.instant('The catalog is being synced for the first time. This may take a few minutes.'),
+        canMinimize: true,
+      },
+    ).afterClosed().pipe(
+      switchMap(() => this.reloadCatalogAfterSync()),
+      tap(() => this.setLoadingState(false)),
+      catchError(() => this.handleSyncError()),
+    );
+  }
+
+  /**
+   * Reloads catalog data after a successful sync operation.
+   */
+  private reloadCatalogAfterSync(): Observable<unknown> {
+    this.isSyncingCatalog = false;
+    return this.loadCatalogData();
+  }
+
+  /**
+   * Handles errors during catalog sync operation.
+   */
+  private handleSyncError(): Observable<never> {
+    this.isSyncingCatalog = false;
+    this.setLoadingState(false);
+
+    this.errorHandler.showErrorModal(
+      new Error(this.translate.instant('Failed to sync catalog. Please try clicking "Refresh Catalog" manually.')),
+    );
+
+    return EMPTY;
+  }
+
+  /**
+   * Updates the loading state in the store.
+   */
+  private setLoadingState(isLoading: boolean): void {
+    this.patchState((state: AppsState) => ({ ...state, isLoading }));
   }
 
   private loadCatalogData(): Observable<unknown> {
