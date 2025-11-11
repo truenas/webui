@@ -64,7 +64,7 @@ describe('VirtualizationConfigStore', () => {
     it('subscribes to config updates on first initialize call', () => {
       spectator.service.initialize();
 
-      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('virt.global.config');
+      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('lxc.config');
     });
 
     it('does not create duplicate subscriptions on multiple initialize calls', () => {

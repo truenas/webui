@@ -21,8 +21,8 @@ describe('VirtualizationInstancesStore', () => {
   ];
 
   const devices = [
-    { name: 'device1' },
-    { name: 'device2' },
+    { id: 1, dtype: 'FILESYSTEM' },
+    { id: 2, dtype: 'USB' },
   ] as ContainerDeviceWithId[];
 
   const routerEvents$ = new Subject<NavigationEnd>();

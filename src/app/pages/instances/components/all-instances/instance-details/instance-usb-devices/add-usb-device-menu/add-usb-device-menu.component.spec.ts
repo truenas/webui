@@ -45,14 +45,12 @@ describe('AddUsbDeviceMenuComponent', () => {
       mockProvider(VirtualizationDevicesStore, {
         devices: () => [
           {
-            name: 'usb-device',
-            description: 'USB Device',
             dtype: ContainerDeviceType.Usb,
-            readonly: false,
             usb: {
               vendor_id: '046d',
               product_id: 'already-added',
             },
+            device: null,
           } as ContainerDevice,
         ] as ContainerDevice[],
         loadDevices: jest.fn(),

@@ -4,10 +4,9 @@ import {
 } from 'app/enums/container.enum';
 import {
   ContainerDevice,
-  ContainerDiskDevice,
   ContainerFilesystemDevice,
   ContainerNicDevice,
-  ContainerRawDevice,
+  ContainerUsbDevice,
 } from 'app/interfaces/container.interface';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
 
@@ -16,90 +15,117 @@ describe('getDeviceDescription', () => {
     instant: jest.fn((key: string) => key),
   } as unknown as TranslateService;
 
-  it('should return "typeLabel: name (mac)" for a NIC device with name', () => {
-    const device: ContainerDevice = {
-      dtype: ContainerDeviceType.Nic,
-      name: 'eth0',
-      nic_attach: 'br0',
-    } as ContainerNicDevice;
+  describe('NIC devices', () => {
+    it('should return "nic_attach (mac)" for a NIC device with mac address', () => {
+      const device: ContainerDevice = {
+        dtype: ContainerDeviceType.Nic,
+        nic_attach: 'br0',
+        mac: '00:11:22:33:44:55',
+        type: 'VIRTIO',
+        trust_guest_rx_filters: false,
+      } as ContainerNicDevice;
 
-    const result = getDeviceDescription(mockTranslate as TranslateService, device);
-    expect(result).toBe('eth0 (Default Mac Address)');
+      const result = getDeviceDescription(mockTranslate as TranslateService, device);
+      expect(result).toBe('br0 (00:11:22:33:44:55)');
+    });
+
+    it('should use default mac address text when mac is null', () => {
+      const device: ContainerDevice = {
+        dtype: ContainerDeviceType.Nic,
+        nic_attach: 'ens1',
+        mac: null,
+        type: 'E1000',
+        trust_guest_rx_filters: true,
+      } as ContainerNicDevice;
+
+      const result = getDeviceDescription(mockTranslate as TranslateService, device);
+      expect(result).toBe('ens1 (Default Mac Address)');
+    });
+
+    it('should use "Unknown" when nic_attach is null', () => {
+      const device: ContainerDevice = {
+        dtype: ContainerDeviceType.Nic,
+        nic_attach: null,
+        mac: '00:11:22:33:44:55',
+        type: 'VIRTIO',
+        trust_guest_rx_filters: false,
+      } as ContainerNicDevice;
+
+      const result = getDeviceDescription(mockTranslate as TranslateService, device);
+      expect(result).toBe('Unknown (00:11:22:33:44:55)');
+    });
   });
 
-  it('should use nic_attach as name fallback for a NIC device without name', () => {
-    const device: ContainerDevice = {
-      dtype: ContainerDeviceType.Nic,
-      nic_attach: 'ens1',
-      mac: '00:11:22:33:44:55',
-    } as ContainerNicDevice;
+  describe('Filesystem devices', () => {
+    it('should return filesystem description with source and target', () => {
+      const device: ContainerDevice = {
+        dtype: ContainerDeviceType.Filesystem,
+        source: '/mnt/tank/dataset',
+        target: '/data',
+      } as ContainerFilesystemDevice;
 
-    const result = getDeviceDescription(mockTranslate as TranslateService, device);
-    expect(result).toBe('ens1 (00:11:22:33:44:55)');
+      const result = getDeviceDescription(mockTranslate as TranslateService, device);
+      expect(result).toBe('/mnt/tank/dataset → /data');
+    });
+
+    it('should handle missing source', () => {
+      const device: ContainerDevice = {
+        dtype: ContainerDeviceType.Filesystem,
+        source: '',
+        target: '/data',
+      } as ContainerFilesystemDevice;
+
+      const result = getDeviceDescription(mockTranslate as TranslateService, device);
+      expect(result).toBe('Unknown source → /data');
+    });
+
+    it('should handle missing target', () => {
+      const device: ContainerDevice = {
+        dtype: ContainerDeviceType.Filesystem,
+        source: '/mnt/tank/dataset',
+        target: '',
+      } as ContainerFilesystemDevice;
+
+      const result = getDeviceDescription(mockTranslate as TranslateService, device);
+      expect(result).toBe('/mnt/tank/dataset → Unknown target');
+    });
   });
 
-  it('should return disk description with path and type', () => {
-    const device: ContainerDevice = {
-      dtype: ContainerDeviceType.Disk,
-      path: '/dev/zvol/tank/my-zvol',
-      type: 'VIRTIO',
-    } as ContainerDiskDevice;
+  describe('USB devices', () => {
+    it('should return USB description with vendor and product IDs', () => {
+      const device: ContainerDevice = {
+        dtype: ContainerDeviceType.Usb,
+        usb: {
+          vendor_id: '046d',
+          product_id: 'c52b',
+        },
+        device: null,
+      } as ContainerUsbDevice;
 
-    const result = getDeviceDescription(mockTranslate as TranslateService, device);
-    expect(result).toBe('/dev/zvol/tank/my-zvol (VIRTIO)');
-  });
+      const result = getDeviceDescription(mockTranslate as TranslateService, device);
+      expect(result).toBe('USB 046d:c52b');
+    });
 
-  it('should return disk description with AHCI type', () => {
-    const device: ContainerDevice = {
-      dtype: ContainerDeviceType.Disk,
-      path: '/dev/zvol/tank/my-zvol',
-      type: 'AHCI',
-    } as ContainerDiskDevice;
+    it('should return device path when usb is null', () => {
+      const device: ContainerDevice = {
+        dtype: ContainerDeviceType.Usb,
+        usb: null,
+        device: '/dev/bus/usb/001/002',
+      } as ContainerUsbDevice;
 
-    const result = getDeviceDescription(mockTranslate as TranslateService, device);
-    expect(result).toBe('/dev/zvol/tank/my-zvol (AHCI)');
-  });
+      const result = getDeviceDescription(mockTranslate as TranslateService, device);
+      expect(result).toBe('/dev/bus/usb/001/002');
+    });
 
-  it('should return raw device description with path', () => {
-    const device: ContainerDevice = {
-      dtype: ContainerDeviceType.Raw,
-      path: '/mnt/tank/raw_device',
-      type: 'VIRTIO',
-    } as ContainerRawDevice;
+    it('should return "Unknown" when both usb and device are null', () => {
+      const device: ContainerDevice = {
+        dtype: ContainerDeviceType.Usb,
+        usb: null,
+        device: null,
+      } as ContainerUsbDevice;
 
-    const result = getDeviceDescription(mockTranslate as TranslateService, device);
-    expect(result).toBe('/mnt/tank/raw_device (VIRTIO)');
-  });
-
-  it('should return raw device description with AHCI type', () => {
-    const device: ContainerDevice = {
-      dtype: ContainerDeviceType.Raw,
-      path: '/mnt/tank/raw_device',
-      type: 'AHCI',
-    } as ContainerRawDevice;
-
-    const result = getDeviceDescription(mockTranslate as TranslateService, device);
-    expect(result).toBe('/mnt/tank/raw_device (AHCI)');
-  });
-
-  it('should return filesystem description with source and target', () => {
-    const device: ContainerDevice = {
-      dtype: ContainerDeviceType.Filesystem,
-      source: '/mnt/tank/dataset',
-      target: '/data',
-    } as ContainerFilesystemDevice;
-
-    const result = getDeviceDescription(mockTranslate as TranslateService, device);
-    expect(result).toBe('/mnt/tank/dataset → /data');
-  });
-
-  it('should return "dtype: description" if dev_type label is not in the map', () => {
-    const device: ContainerDevice = {
-      dtype: 'UNKNOWN_TYPE' as ContainerDeviceType,
-      description: 'Unknown device',
-    } as ContainerDevice;
-
-    const result = getDeviceDescription(mockTranslate as TranslateService, device);
-    expect(result).toBe('UNKNOWN_TYPE: Unknown device');
+      const result = getDeviceDescription(mockTranslate as TranslateService, device);
+      expect(result).toBe('Unknown');
+    });
   });
 });
