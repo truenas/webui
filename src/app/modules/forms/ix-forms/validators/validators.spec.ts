@@ -115,7 +115,16 @@ describe('ValidationService', () => {
           message: expect.stringContaining('Cannot select /mnt or pool root'),
         },
       });
+    });
+
+    it('should reject pool root paths with multiple trailing slashes', () => {
+      const validator = validateNotPoolRoot();
       expect(validator(new FormControl('/mnt/mypool///'))).toEqual({
+        poolRoot: {
+          message: expect.stringContaining('Cannot select /mnt or pool root'),
+        },
+      });
+      expect(validator(new FormControl('/mnt/tank//////'))).toEqual({
         poolRoot: {
           message: expect.stringContaining('Cannot select /mnt or pool root'),
         },

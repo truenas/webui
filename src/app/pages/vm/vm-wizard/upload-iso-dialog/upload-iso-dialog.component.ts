@@ -61,6 +61,8 @@ export class UploadIsoDialogComponent implements OnDestroy {
   readonly helptext = helptextVmWizard;
 
   form = this.formBuilder.nonNullable.group({
+    // Start with empty path instead of '/mnt' to avoid showing immediate validation error
+    // Users will use the file explorer to navigate to a valid dataset path
     path: ['', [validateNotPoolRoot(this.translate.instant(this.helptext.upload_iso_pool_root_error))]],
     files: [[] as File[]],
   });

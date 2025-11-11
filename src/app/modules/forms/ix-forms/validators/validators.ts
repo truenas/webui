@@ -54,7 +54,12 @@ export function greaterThanFg(
 /**
  * Validates that the selected path is not /mnt itself or a pool root.
  * Pool roots are paths like /mnt/poolname with no subdirectories.
- * The backend requires a child dataset to be selected.
+ *
+ * The backend requires a child dataset to be selected for operations like
+ * ISO uploads and disk exports because writing directly to pool roots can
+ * cause filesystem issues and is considered a security risk. Operations
+ * should target specific datasets (e.g., /mnt/pool/dataset) rather than
+ * the pool root itself.
  *
  * @param errorMessage Optional custom error message. If not provided, a default message is used.
  * @returns ValidatorFn that returns null if valid, or ValidationErrors if invalid
