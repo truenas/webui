@@ -1,6 +1,6 @@
 import { HttpEventType, HttpProgressEvent, HttpResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -18,6 +18,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -59,35 +60,8 @@ export class UploadIsoDialogComponent implements OnDestroy {
 
   readonly helptext = helptextVmWizard;
 
-  /**
-   * Validates that the selected path is not /mnt itself or a pool root.
-   * Pool roots are paths like /mnt/poolname with no subdirectories.
-   * The backend requires a child dataset to be selected.
-   */
-  private readonly validateNotPoolRoot = (control: AbstractControl): ValidationErrors | null => {
-    const path = control.value?.trim() as string;
-    if (!path) {
-      return null; // Let required validator handle empty values
-    }
-
-    // Normalize path by removing trailing slashes for consistent validation
-    const normalizedPath = path.replace(/\/+$/, '');
-
-    // Reject /mnt itself or pool root pattern: /mnt/poolname (no subdirectories)
-    const poolRootPattern = /^\/mnt\/[^/]+$/;
-    if (normalizedPath === '/mnt' || poolRootPattern.test(normalizedPath)) {
-      return {
-        poolRoot: {
-          message: this.translate.instant(this.helptext.upload_iso_pool_root_error),
-        },
-      };
-    }
-
-    return null;
-  };
-
   form = this.formBuilder.nonNullable.group({
-    path: ['', [this.validateNotPoolRoot]],
+    path: ['', [validateNotPoolRoot(this.translate.instant(this.helptext.upload_iso_pool_root_error))]],
     files: [[] as File[]],
   });
 

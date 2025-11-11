@@ -58,7 +58,7 @@ describe('UploadIsoDialogComponent', () => {
     const upload = fakeFile('new-windows.iso');
 
     await form.fillForm({
-      'ISO save location': '/mnt/iso',
+      'ISO save location': '/mnt/tank/iso',
       'Installer image file': [upload],
     });
 
@@ -68,9 +68,9 @@ describe('UploadIsoDialogComponent', () => {
     expect(spectator.inject(UploadService).upload).toHaveBeenCalledWith(expect.objectContaining({
       file: upload,
       method: 'filesystem.put',
-      params: ['/mnt/iso/new-windows.iso', { mode: 493 }],
+      params: ['/mnt/tank/iso/new-windows.iso', { mode: 493 }],
     }));
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('/mnt/iso/new-windows.iso');
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('/mnt/tank/iso/new-windows.iso');
   });
 
   it('cancels upload and cleans up when component is destroyed', async () => {
@@ -84,7 +84,7 @@ describe('UploadIsoDialogComponent', () => {
     });
 
     await form.fillForm({
-      'ISO save location': '/mnt/iso',
+      'ISO save location': '/mnt/tank/iso',
       'Installer image file': [upload],
     });
 
@@ -152,6 +152,7 @@ describe('UploadIsoDialogComponent', () => {
     it('accepts dataset paths like /mnt/poolname/dataset', () => {
       spectator.component.form.patchValue({
         path: '/mnt/tank/iso',
+        files: [fakeFile('test.iso')],
       });
       spectator.detectChanges();
 
@@ -162,6 +163,7 @@ describe('UploadIsoDialogComponent', () => {
     it('accepts nested dataset paths', () => {
       spectator.component.form.patchValue({
         path: '/mnt/tank/iso/images',
+        files: [fakeFile('test.iso')],
       });
       spectator.detectChanges();
 
