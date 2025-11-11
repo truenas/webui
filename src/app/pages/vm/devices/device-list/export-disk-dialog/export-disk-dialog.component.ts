@@ -11,7 +11,7 @@ import {
 } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { of } from 'rxjs';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -70,8 +70,13 @@ export class ExportDiskDialogComponent {
     { label: 'VMDK - VMware Virtual Machine Disk', value: 'vmdk', extension: '.vmdk' },
   ];
 
+  readonly formatOptions$ = of(this.imageFormats.map((format) => ({
+    label: format.label,
+    value: format.value,
+  })));
+
   /**
-   * Validates that the selected path is not a pool root.
+   * Validates that the selected path is not a pool root or /mnt itself.
    * Pool roots are paths like /mnt/poolname with no subdirectories.
    * The backend requires a child dataset to be selected.
    */
@@ -81,12 +86,15 @@ export class ExportDiskDialogComponent {
       return null; // Let required validator handle empty values
     }
 
-    // Check if path matches pool root pattern: /mnt/poolname (no trailing slash, no subdirectories)
-    const poolRootPattern = /^\/mnt\/[^/]+\/?$/;
-    if (poolRootPattern.test(path)) {
+    // Normalize path by removing trailing slashes for consistent validation
+    const normalizedPath = path.replace(/\/+$/, '');
+
+    // Reject /mnt itself or pool root pattern: /mnt/poolname (no subdirectories)
+    const poolRootPattern = /^\/mnt\/[^/]+$/;
+    if (normalizedPath === '/mnt' || poolRootPattern.test(normalizedPath)) {
       return {
         poolRoot: {
-          message: this.translate.instant(this.helptext.export_disk_pool_root_error as string),
+          message: this.translate.instant(this.helptext.export_disk_pool_root_error),
         },
       };
     }
@@ -106,16 +114,6 @@ export class ExportDiskDialogComponent {
 
   get sourcePath(): string {
     return this.data.device.attributes.path;
-  }
-
-  get formatOptions$(): Observable<{ label: string; value: string }[]> {
-    return new Observable((observer) => {
-      observer.next(this.imageFormats.map((format) => ({
-        label: format.label,
-        value: format.value,
-      })));
-      observer.complete();
-    });
   }
 
   private generateDefaultImageName(): string {

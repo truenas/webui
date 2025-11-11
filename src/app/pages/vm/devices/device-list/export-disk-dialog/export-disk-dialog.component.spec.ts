@@ -114,6 +114,18 @@ describe('ExportDiskDialogComponent', () => {
   });
 
   describe('pool root validation', () => {
+    it('rejects /mnt itself', () => {
+      spectator.component.form.patchValue({ destinationDir: '/mnt' });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.destinationDir.errors).toEqual({
+        poolRoot: {
+          message: 'Cannot export to pool root. Please select a dataset under the pool (e.g., /mnt/pool/dataset).',
+        },
+      });
+      expect(spectator.component.form.valid).toBe(false);
+    });
+
     it('rejects pool root paths like /mnt/poolname', () => {
       spectator.component.form.patchValue({ destinationDir: '/mnt/tank' });
       spectator.detectChanges();
