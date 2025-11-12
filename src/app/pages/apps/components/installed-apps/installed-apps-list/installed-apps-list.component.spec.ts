@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
@@ -412,8 +413,9 @@ describe('InstalledAppsListComponent', () => {
       expect(utilization.networkTx).toBe(0);
     });
 
-    it('handles null or invalid stats by returning zero for those apps', async () => {
+    it('handles null or invalid stats by returning zero for those apps', fakeAsync(() => {
       const appsStatsService = spectator.inject(AppsStatsService);
+      const installedAppsStore = spectator.inject(InstalledAppsStore);
 
       jest.spyOn(appsStatsService, 'getStatsForApp').mockImplementation((name) => {
         if (name === 'test-app-1') {
@@ -428,15 +430,28 @@ describe('InstalledAppsListComponent', () => {
         } as AppStats);
       });
 
+      // Trigger new emission with updated mock
+      Object.defineProperty(installedAppsStore, 'installedApps$', {
+        get: () => of(apps),
+      });
+
       const component = spectator.component;
-      const utilization = await firstValueFrom(component.totalUtilization$);
+
+      tick(300);  // Advance past debounceTime(300)
+
+      let utilization: any;
+      firstValueFrom(component.totalUtilization$).then((result) => {
+        utilization = result;
+      });
+      tick();  // Process the promise
 
       expect(utilization.cpu).toBe(20);
       expect(utilization.memory).toBe(2048);
-    });
+    }));
 
-    it('aggregates network stats correctly', async () => {
+    it('aggregates network stats correctly', fakeAsync(() => {
       const appsStatsService = spectator.inject(AppsStatsService);
+      const installedAppsStore = spectator.inject(InstalledAppsStore);
 
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
         app_name: 'test-app',
@@ -449,15 +464,27 @@ describe('InstalledAppsListComponent', () => {
         ],
       } as AppStats));
 
+      // Trigger new emission with updated mock
+      Object.defineProperty(installedAppsStore, 'installedApps$', {
+        get: () => of(apps),
+      });
+
       const component = spectator.component;
-      const utilization = await firstValueFrom(component.totalUtilization$);
+      tick(300);
+
+      let utilization: any;
+      firstValueFrom(component.totalUtilization$).then((result) => {
+        utilization = result;
+      });
+      tick();
 
       expect(utilization.networkRx).toBe(4500);
       expect(utilization.networkTx).toBe(10500);
-    });
+    }));
 
-    it('handles null network stats', async () => {
+    it('handles null network stats', fakeAsync(() => {
       const appsStatsService = spectator.inject(AppsStatsService);
+      const installedAppsStore = spectator.inject(InstalledAppsStore);
 
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
         app_name: 'test-app',
@@ -467,15 +494,27 @@ describe('InstalledAppsListComponent', () => {
         networks: null as any,
       } as AppStats));
 
+      // Trigger new emission with updated mock
+      Object.defineProperty(installedAppsStore, 'installedApps$', {
+        get: () => of(apps),
+      });
+
       const component = spectator.component;
-      const utilization = await firstValueFrom(component.totalUtilization$);
+      tick(300);
+
+      let utilization: any;
+      firstValueFrom(component.totalUtilization$).then((result) => {
+        utilization = result;
+      });
+      tick();
 
       expect(utilization.networkRx).toBe(0);
       expect(utilization.networkTx).toBe(0);
-    });
+    }));
 
-    it('handles undefined values in stats', async () => {
+    it('handles undefined values in stats', fakeAsync(() => {
       const appsStatsService = spectator.inject(AppsStatsService);
+      const installedAppsStore = spectator.inject(InstalledAppsStore);
 
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
         app_name: 'test-app',
@@ -485,13 +524,24 @@ describe('InstalledAppsListComponent', () => {
         networks: [],
       } as AppStats));
 
+      // Trigger new emission with updated mock
+      Object.defineProperty(installedAppsStore, 'installedApps$', {
+        get: () => of(apps),
+      });
+
       const component = spectator.component;
-      const utilization = await firstValueFrom(component.totalUtilization$);
+      tick(300);
+
+      let utilization: any;
+      firstValueFrom(component.totalUtilization$).then((result) => {
+        utilization = result;
+      });
+      tick();
 
       expect(utilization.cpu).toBe(0);
       expect(utilization.memory).toBe(0);
       expect(utilization.blkioRead).toBe(0);
       expect(utilization.blkioWrite).toBe(0);
-    });
+    }));
   });
 });
