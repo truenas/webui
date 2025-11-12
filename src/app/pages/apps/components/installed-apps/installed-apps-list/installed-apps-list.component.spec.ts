@@ -258,9 +258,10 @@ describe('InstalledAppsListComponent', () => {
 
     component.setDatasourceWithSort({ active: 'application', direction: 'asc' }, []);
 
-    expect(component.dataSource).toHaveLength(2);
-    expect(component.dataSource[0].name).toBe('test-app-1');
-    expect(component.dataSource[1].name).toBe('test-app-2');
+    expect(component.dataSource).toHaveLength(3);
+    expect(component.dataSource[0].name).toBe('external-nginx');
+    expect(component.dataSource[1].name).toBe('test-app-1');
+    expect(component.dataSource[2].name).toBe('test-app-2');
   });
 
   it('handles sortChanged with valid apps array correctly', () => {
