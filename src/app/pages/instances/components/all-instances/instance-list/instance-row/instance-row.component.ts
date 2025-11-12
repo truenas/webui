@@ -13,7 +13,7 @@ import { ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import {
   ContainerInstance,
-  VirtualizationStopParams,
+  ContainerStopParams,
   ContainerInstanceMetrics,
 } from 'app/interfaces/container.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -25,7 +25,7 @@ import { InstanceStatusCellComponent } from 'app/pages/instances/components/all-
 import {
   StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -52,7 +52,7 @@ export class InstanceRowComponent {
   private errorHandler = inject(ErrorHandlerService);
   private matDialog = inject(MatDialog);
   private snackbar = inject(SnackbarService);
-  private instancesStore = inject(VirtualizationInstancesStore);
+  private instancesStore = inject(ContainerInstancesStore);
 
   protected readonly requiredRoles = [Role.ContainerWrite];
   readonly instance = input.required<ContainerInstance>();
@@ -89,7 +89,7 @@ export class InstanceRowComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        switchMap((options: VirtualizationStopParams) => {
+        switchMap((options: ContainerStopParams) => {
           return this.api.call('container.stop', [instanceId, options])
             .pipe(this.errorHandler.withErrorHandler());
         }),
@@ -109,7 +109,7 @@ export class InstanceRowComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        switchMap((options: VirtualizationStopParams) => {
+        switchMap((options: ContainerStopParams) => {
           return this.api.call('container.stop', [instanceId, options])
             .pipe(
               switchMap(() => this.api.call('container.start', [instanceId])),

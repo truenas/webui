@@ -9,19 +9,19 @@ import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-export interface VirtualizationConfigState {
+export interface ContainerConfigState {
   isLoading: boolean;
   config: ContainerGlobalConfig | null;
 }
 
-const initialState: VirtualizationConfigState = {
+const initialState: ContainerConfigState = {
   isLoading: false,
   config: null,
 };
 
 @UntilDestroy()
 @Injectable()
-export class VirtualizationConfigStore extends ComponentStore<VirtualizationConfigState> {
+export class ContainerConfigStore extends ComponentStore<ContainerConfigState> {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 

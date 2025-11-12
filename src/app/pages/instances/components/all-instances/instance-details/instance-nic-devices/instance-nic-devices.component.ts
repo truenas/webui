@@ -8,7 +8,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AddNicMenuComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
+import { AddNicMenuComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nic-devices/add-nic-menu/add-nic-menu.component';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
@@ -16,14 +16,14 @@ import {
   DeviceTypeBadgeComponent,
 } from 'app/pages/instances/components/common/device-type-badge/device-type-badge.component';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-instance-nics',
-  templateUrl: './instance-nics.component.html',
-  styleUrls: ['./instance-nics.component.scss'],
+  selector: 'ix-instance-nic-devices',
+  templateUrl: './instance-nic-devices.component.html',
+  styleUrls: ['./instance-nic-devices.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,
@@ -37,9 +37,9 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
     DeviceTypeBadgeComponent,
   ],
 })
-export class InstanceNicsComponent {
-  private devicesStore = inject(VirtualizationDevicesStore);
-  private instancesStore = inject(VirtualizationInstancesStore);
+export class InstanceNicDevicesComponent {
+  private devicesStore = inject(ContainerDevicesStore);
+  private instancesStore = inject(ContainerInstancesStore);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
 

@@ -15,7 +15,7 @@ import { ContainerInstance, ContainerMetrics } from 'app/interfaces/container.in
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-export interface VirtualizationInstancesState {
+export interface ContainerInstancesState {
   isLoading: boolean;
   instances: ContainerInstance[] | undefined;
   selectedInstanceId: number | null;
@@ -23,7 +23,7 @@ export interface VirtualizationInstancesState {
   metrics: ContainerMetrics;
 }
 
-const initialState: VirtualizationInstancesState = {
+const initialState: ContainerInstancesState = {
   isLoading: true,
   instances: undefined,
   selectedInstanceId: null,
@@ -33,7 +33,7 @@ const initialState: VirtualizationInstancesState = {
 
 @UntilDestroy()
 @Injectable()
-export class VirtualizationInstancesStore extends ComponentStore<VirtualizationInstancesState> {
+export class ContainerInstancesStore extends ComponentStore<ContainerInstancesState> {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
@@ -129,7 +129,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
 
   instanceUpdated(updated: ContainerInstance): void {
     const instances = this.instances().map((instance) => (updated.id === instance.id ? updated : instance));
-    const updates: Partial<VirtualizationInstancesState> = { instances };
+    const updates: Partial<ContainerInstancesState> = { instances };
 
     if (this.selectedInstance()?.id === updated.id) {
       updates.selectedInstance = updated;

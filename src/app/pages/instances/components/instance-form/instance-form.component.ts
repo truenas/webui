@@ -24,7 +24,6 @@ import {
   containerTimeLabels,
   ContainerTime,
   ContainerRemote,
-  ContainerSource,
   ContainerType,
 } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
@@ -57,10 +56,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectImageDialog,
-  VirtualizationImageWithId,
+  ContainerImageWithId,
 } from 'app/pages/instances/components/instance-wizard/select-image-dialog/select-image-dialog.component';
-import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerConfigStore } from 'app/pages/instances/stores/container-config.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -85,7 +84,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     FormActionsComponent,
   ],
-  providers: [VirtualizationConfigStore],
+  providers: [ContainerConfigStore],
 })
 export class InstanceFormComponent implements OnInit {
   private api = inject(ApiService);
@@ -98,9 +97,9 @@ export class InstanceFormComponent implements OnInit {
   protected formatter = inject(IxFormatterService);
   private errorHandler = inject(ErrorHandlerService);
   slideInRef = inject<SlideInRef<ContainerInstance | undefined, boolean>>(SlideInRef);
-  private instancesStore = inject(VirtualizationInstancesStore, { optional: true });
+  private instancesStore = inject(ContainerInstancesStore, { optional: true });
   private router = inject(Router);
-  private virtualizationConfigStore = inject(VirtualizationConfigStore);
+  private containerConfigStore = inject(ContainerConfigStore);
 
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.LxcConfigWrite];
@@ -123,8 +122,6 @@ export class InstanceFormComponent implements OnInit {
       .filter((name) => name !== this.editingInstance?.name)),
   );
 
-  readonly ContainerSource = ContainerSource;
-
   protected isAdvancedMode = false;
 
   protected readonly isEditMode = signal<boolean>(false);
@@ -139,7 +136,7 @@ export class InstanceFormComponent implements OnInit {
   });
 
   protected readonly hasPreferredPool = computed(() => {
-    const config = this.virtualizationConfigStore.config();
+    const config = this.containerConfigStore.config();
     return Boolean(config?.preferred_pool);
   });
 
@@ -163,11 +160,7 @@ export class InstanceFormComponent implements OnInit {
     description: [''],
     autostart: [true],
     image: [''],
-    vcpus: [null as number | null, [Validators.min(1)]],
-    cores: [null as number | null, [Validators.min(1)]],
-    threads: [null as number | null, [Validators.min(1)]],
     cpuset: [''],
-    memory: [null as number | null, [Validators.min(20)]],
     time: [ContainerTime.Local],
     shutdown_timeout: [30, [Validators.min(5), Validators.max(300)]],
     init: [null as string | null],
@@ -189,7 +182,7 @@ export class InstanceFormComponent implements OnInit {
 
     // Setup form validators when config is loaded
     effect(() => {
-      const config = this.virtualizationConfigStore.config();
+      const config = this.containerConfigStore.config();
       if (config !== null && !this.isEditMode() && !this.hasSetupValidators) {
         this.hasSetupValidators = true;
         this.setupValidatorsForCreation();
@@ -208,7 +201,7 @@ export class InstanceFormComponent implements OnInit {
 
   ngOnInit(): void {
     // Initialize config store to load preferred pool settings
-    this.virtualizationConfigStore.initialize();
+    this.containerConfigStore.initialize();
 
     if (this.editingInstance) {
       this.loadInstanceForEditing(this.editingInstance.id);
@@ -295,11 +288,7 @@ export class InstanceFormComponent implements OnInit {
       name: instance.name,
       description: instance.description || '',
       autostart: instance.autostart,
-      vcpus: instance.vcpus,
-      cores: instance.cores,
-      threads: instance.threads,
       cpuset: instance.cpuset || '',
-      memory: instance.memory,
       time: instance.time as ContainerTime,
       shutdown_timeout: instance.shutdown_timeout,
       init: instance.init,
@@ -327,7 +316,7 @@ export class InstanceFormComponent implements OnInit {
       })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((image: VirtualizationImageWithId) => {
+      .subscribe((image: ContainerImageWithId) => {
         this.form.controls.image.setValue(image.id);
       });
   }
@@ -447,12 +436,7 @@ export class InstanceFormComponent implements OnInit {
 
     if (form.description) payload.description = form.description;
 
-    if (form.vcpus) payload.vcpus = form.vcpus;
-    if (form.cores) payload.cores = form.cores;
-    if (form.threads) payload.threads = form.threads;
     if (form.cpuset) payload.cpuset = form.cpuset;
-
-    if (form.memory) payload.memory = form.memory;
 
     if (form.time) payload.time = form.time;
     if (form.shutdown_timeout) payload.shutdown_timeout = form.shutdown_timeout;
@@ -480,12 +464,7 @@ export class InstanceFormComponent implements OnInit {
     if (form.description !== (this.editingInstance.description || '')) payload.description = form.description;
     if (form.autostart !== this.editingInstance.autostart) payload.autostart = form.autostart;
 
-    if (form.vcpus !== this.editingInstance.vcpus) payload.vcpus = form.vcpus;
-    if (form.cores !== this.editingInstance.cores) payload.cores = form.cores;
-    if (form.threads !== this.editingInstance.threads) payload.threads = form.threads;
     if (form.cpuset !== (this.editingInstance.cpuset || '')) payload.cpuset = form.cpuset || null;
-
-    if (form.memory !== this.editingInstance.memory) payload.memory = form.memory;
 
     if (form.time !== (this.editingInstance.time as ContainerTime)) payload.time = form.time;
     if (form.shutdown_timeout !== this.editingInstance.shutdown_timeout) {

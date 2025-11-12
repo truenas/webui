@@ -1,16 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, NEVER, Observable, switchMap, tap,
+  EMPTY, NEVER, Observable, filter, switchMap, tap,
 } from 'rxjs';
-import { ContainerDeviceType } from 'app/enums/container.enum';
+import { ContainerDeviceType, ContainerNicDeviceType } from 'app/enums/container.enum';
 import {
-  ContainerDeviceWithId,
+  ContainerDevice,
   ContainerFilesystemDevice,
+  ContainerNicDevice,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -20,11 +22,12 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  InstanceDiskFormComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
+  InstanceFilesystemDeviceFormComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-filesystem-devices/instance-filesystem-device-form/instance-filesystem-device-form.component';
+import { InstanceNicFormDialog } from 'app/pages/instances/components/common/instance-nic-form-dialog/instance-nic-form-dialog.component';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -46,16 +49,17 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class DeviceActionsMenuComponent {
   private dialog = inject(DialogService);
+  private matDialog = inject(MatDialog);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
-  private devicesStore = inject(VirtualizationDevicesStore);
-  private instancesStore = inject(VirtualizationInstancesStore);
+  private devicesStore = inject(ContainerDevicesStore);
+  private instancesStore = inject(ContainerInstancesStore);
   private loader = inject(LoaderService);
   private slideIn = inject(SlideIn);
 
-  readonly device = input.required<ContainerDeviceWithId>();
+  readonly device = input.required<ContainerDevice>();
   readonly showEdit = input(true);
   readonly isDisabled = input(false);
   readonly disabledTooltip = input<string | null>(null);
@@ -92,7 +96,7 @@ export class DeviceActionsMenuComponent {
         return;
       }
 
-      this.slideIn.open(InstanceDiskFormComponent, {
+      this.slideIn.open(InstanceFilesystemDeviceFormComponent, {
         data: {
           instance,
           disk: device as ContainerFilesystemDevice,
@@ -101,6 +105,54 @@ export class DeviceActionsMenuComponent {
         if (result.response) {
           this.devicesStore.loadDevices();
         }
+      });
+      return;
+    }
+
+    // For NIC devices, open the dialog
+    if (device.dtype === ContainerDeviceType.Nic) {
+      this.matDialog.open(InstanceNicFormDialog, {
+        data: {
+          device: device as ContainerNicDevice & { id: number },
+        },
+        minWidth: '500px',
+      }).afterClosed().pipe(
+        filter(Boolean),
+        switchMap((config: {
+          mac?: string;
+          useDefault: boolean;
+          type: ContainerNicDeviceType;
+          trust_guest_rx_filters?: boolean;
+        }) => {
+          const nicDevice = device as ContainerNicDevice;
+          if (!nicDevice.id) {
+            return NEVER;
+          }
+
+          const payload: ContainerNicDevice = {
+            dtype: ContainerDeviceType.Nic,
+            type: config.type,
+            nic_attach: nicDevice.nic_attach,
+            mac: config.mac || null,
+          };
+
+          // Only include trust_guest_rx_filters if it's present in config
+          // (dialog only includes it for VIRTIO devices)
+          if (config.trust_guest_rx_filters !== undefined) {
+            payload.trust_guest_rx_filters = config.trust_guest_rx_filters;
+          }
+
+          return this.api.call('container.device.update', [nicDevice.id, {
+            attributes: payload,
+          }]).pipe(
+            this.loader.withLoader(),
+            this.errorHandler.withErrorHandler(),
+          );
+        }),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.snackbar.success(this.translate.instant('NIC Device was updated'));
+        this.devicesStore.loadDevices();
       });
       return;
     }
@@ -140,7 +192,7 @@ export class DeviceActionsMenuComponent {
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         tap(() => {
-          this.snackbar.success(this.translate.instant('Device deleted'));
+          this.snackbar.success(this.translate.instant('Device was deleted'));
           this.devicesStore.deviceDeleted(deviceId);
         }),
       );

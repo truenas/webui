@@ -13,7 +13,10 @@
     } @else {
       @for (device of shownDevices(); track device.id) {
         <div class="device">
-          <span>{{ getDeviceDescription(device) }}</span>
+          <div class="device-info">
+            <ix-device-type-badge [deviceType]="device.dtype" [showLabel]="false"></ix-device-type-badge>
+            <span class="device-description">{{ getDeviceDescription(device) }}</span>
+          </div>
 
           <ix-device-actions-menu
             [device]="device"
@@ -23,7 +26,7 @@
           ></ix-device-actions-menu>
         </div>
       } @empty {
-         {{ 'No USB devices added.' | translate }}
+        <div class="no-devices">{{ 'No USB devices added.' | translate }}</div>
       }
     }
   </mat-card-content>

@@ -18,9 +18,9 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { InstanceNicMacDialog } from 'app/pages/instances/components/common/instance-nics-mac-addr-dialog/instance-nic-mac-dialog.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { InstanceNicFormDialog } from 'app/pages/instances/components/common/instance-nic-form-dialog/instance-nic-form-dialog.component';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -45,8 +45,8 @@ export class AddNicMenuComponent {
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private devicesStore = inject(VirtualizationDevicesStore);
-  private instancesStore = inject(VirtualizationInstancesStore);
+  private devicesStore = inject(ContainerDevicesStore);
+  private instancesStore = inject(ContainerInstancesStore);
   private matDialog = inject(MatDialog);
 
   private readonly nicChoices = toSignal(this.getNicChoices(), { initialValue: {} });
@@ -81,7 +81,7 @@ export class AddNicMenuComponent {
       return;
     }
 
-    this.matDialog.open(InstanceNicMacDialog, {
+    this.matDialog.open(InstanceNicFormDialog, {
       data: nicKey,
       minWidth: '500px',
     }).afterClosed().pipe(
@@ -90,7 +90,7 @@ export class AddNicMenuComponent {
         mac?: string;
         useDefault: boolean;
         type: ContainerNicDeviceType;
-        trust_guest_rx_filters: boolean;
+        trust_guest_rx_filters?: boolean;
       }) => {
         const payload: Partial<ContainerNicDevice> = {
           dtype: ContainerDeviceType.Nic,
@@ -103,7 +103,7 @@ export class AddNicMenuComponent {
         }
 
         // trust_guest_rx_filters can only be set for VIRTIO NICs
-        if (config.type === ContainerNicDeviceType.Virtio) {
+        if (config.type === ContainerNicDeviceType.Virtio && config.trust_guest_rx_filters !== undefined) {
           payload.trust_guest_rx_filters = config.trust_guest_rx_filters;
         }
 
@@ -118,7 +118,7 @@ export class AddNicMenuComponent {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.snackbar.success(this.translate.instant('NIC was added'));
+        this.snackbar.success(this.translate.instant('NIC Device was added'));
         this.devicesStore.loadDevices();
       },
     });

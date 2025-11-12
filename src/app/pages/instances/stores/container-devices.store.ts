@@ -8,15 +8,15 @@ import {
   filter,
   map,
 } from 'rxjs';
-import { ContainerDeviceWithId } from 'app/interfaces/container.interface';
+import { ContainerDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import { containerDevicesToVirtualizationDevices } from 'app/pages/instances/utils/container-device.utils';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
+import { containerDeviceEntriesToDevices } from 'app/pages/instances/utils/container-device.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface ContainerInstanceDeviceState {
   isLoading: boolean;
-  devices: ContainerDeviceWithId[];
+  devices: ContainerDevice[];
 }
 
 const initialState: ContainerInstanceDeviceState = {
@@ -26,10 +26,10 @@ const initialState: ContainerInstanceDeviceState = {
 
 @UntilDestroy()
 @Injectable()
-export class VirtualizationDevicesStore extends ComponentStore<ContainerInstanceDeviceState> {
+export class ContainerDevicesStore extends ComponentStore<ContainerInstanceDeviceState> {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private instanceStore = inject(VirtualizationInstancesStore);
+  private instanceStore = inject(ContainerInstancesStore);
 
   readonly isLoading = computed(() => this.state().isLoading);
   readonly devices = computed(() => this.state().devices);
@@ -52,7 +52,7 @@ export class VirtualizationDevicesStore extends ComponentStore<ContainerInstance
       switchMap(() => {
         this.patchState({ isLoading: true });
         return this.api.call('container.device.query', [[['container', '=', this.selectedInstance().id]]]).pipe(
-          map((containerDevices) => containerDevicesToVirtualizationDevices(containerDevices)),
+          map((containerDevices) => containerDeviceEntriesToDevices(containerDevices)),
           tap((devices) => {
             this.patchState({
               devices,

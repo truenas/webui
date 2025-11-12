@@ -4,31 +4,31 @@ import { of, Subject } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import {
-  ContainerDeviceWithId, ContainerMetrics,
+  ContainerDevice, ContainerMetrics,
 } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 
-describe('VirtualizationInstancesStore', () => {
-  let spectator: SpectatorService<VirtualizationInstancesStore>;
+describe('ContainerInstancesStore', () => {
+  let spectator: SpectatorService<ContainerInstancesStore>;
 
   const event$ = new Subject<ApiEvent>();
   const metricsEvent$ = new Subject<ApiEvent<ContainerMetrics>>();
   const instances = [
-    fakeVirtualizationInstance({ id: 1 }),
-    fakeVirtualizationInstance({ id: 2 }),
+    fakeContainerInstance({ id: 1 }),
+    fakeContainerInstance({ id: 2 }),
   ];
 
   const devices = [
     { id: 1, dtype: 'FILESYSTEM' },
     { id: 2, dtype: 'USB' },
-  ] as ContainerDeviceWithId[];
+  ] as ContainerDevice[];
 
   const routerEvents$ = new Subject<NavigationEnd>();
 
   const createService = createServiceFactory({
-    service: VirtualizationInstancesStore,
+    service: ContainerInstancesStore,
     providers: [
       mockProvider(ApiService, {
         call: jest.fn((method) => {
@@ -126,7 +126,7 @@ describe('VirtualizationInstancesStore', () => {
   describe('handles subscribe events', () => {
     beforeEach(() => spectator.service.initialize());
     it('adds instance to the list if add event emitted', () => {
-      const newInstance = fakeVirtualizationInstance({ id: 3 });
+      const newInstance = fakeContainerInstance({ id: 3 });
       event$.next({
         collection: 'container.query',
         id: 3,
@@ -145,7 +145,7 @@ describe('VirtualizationInstancesStore', () => {
         collection: 'container.query',
         id: 2,
         msg: CollectionChangeType.Changed,
-        fields: fakeVirtualizationInstance({ id: 2, name: 'instance3' }),
+        fields: fakeContainerInstance({ id: 2, name: 'instance3' }),
       });
       expect(spectator.service.instances()).toEqual([
         instances[0],
@@ -158,7 +158,7 @@ describe('VirtualizationInstancesStore', () => {
         collection: 'container.query',
         id: 2,
         msg: CollectionChangeType.Removed,
-        fields: fakeVirtualizationInstance({ id: 2 }),
+        fields: fakeContainerInstance({ id: 2 }),
       });
       expect(spectator.service.instances()).toEqual([
         instances[0],

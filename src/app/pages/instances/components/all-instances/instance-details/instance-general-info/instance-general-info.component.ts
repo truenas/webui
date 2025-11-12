@@ -21,7 +21,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceFormComponent } from 'app/pages/instances/components/instance-form/instance-form.component';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -53,7 +53,7 @@ export class InstanceGeneralInfoComponent {
   private router = inject(Router);
   private loader = inject(LoaderService);
   private slideIn = inject(SlideIn);
-  private instancesStore = inject(VirtualizationInstancesStore);
+  private instancesStore = inject(ContainerInstancesStore);
 
   instance = input.required<ContainerInstance>();
 

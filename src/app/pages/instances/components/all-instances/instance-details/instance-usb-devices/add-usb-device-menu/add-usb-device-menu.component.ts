@@ -14,8 +14,8 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -40,8 +40,8 @@ export class AddUsbDeviceMenuComponent {
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
-  private devicesStore = inject(VirtualizationDevicesStore);
-  private instancesStore = inject(VirtualizationInstancesStore);
+  private devicesStore = inject(ContainerDevicesStore);
+  private instancesStore = inject(ContainerInstancesStore);
 
   private readonly usbChoices = toSignal(this.api.call('container.device.usb_choices'), { initialValue: {} });
 
@@ -87,7 +87,7 @@ export class AddUsbDeviceMenuComponent {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Device was added'));
+        this.snackbar.success(this.translate.instant('USB Device was added'));
         this.devicesStore.loadDevices();
       });
   }

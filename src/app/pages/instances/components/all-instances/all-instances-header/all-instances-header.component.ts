@@ -13,9 +13,9 @@ import {
 } from 'app/pages/instances/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
 import { InstanceFormComponent } from 'app/pages/instances/components/instance-form/instance-form.component';
 import {
-  VirtualizationConfigStore,
-} from 'app/pages/instances/stores/virtualization-config.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+  ContainerConfigStore,
+} from 'app/pages/instances/stores/container-config.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
 @UntilDestroy()
 @Component({
@@ -33,8 +33,8 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 })
 export class AllInstancesHeaderComponent {
   private slideIn = inject(SlideIn);
-  private configStore = inject(VirtualizationConfigStore);
-  private instanceStore = inject(VirtualizationInstancesStore);
+  private configStore = inject(ContainerConfigStore);
+  private instanceStore = inject(ContainerInstancesStore);
 
   protected readonly searchableElements = allInstancesHeaderElements;
   protected readonly config = this.configStore.config;

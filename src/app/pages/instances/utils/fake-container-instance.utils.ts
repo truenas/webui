@@ -1,17 +1,13 @@
 import { ContainerStatus } from 'app/enums/container.enum';
 import { ContainerInstance } from 'app/interfaces/container.interface';
 
-export function fakeVirtualizationInstance(overrides: Partial<ContainerInstance> = {}): ContainerInstance {
+export function fakeContainerInstance(overrides: Partial<ContainerInstance> = {}): ContainerInstance {
   return {
     id: 1,
     uuid: 'test-uuid',
     name: 'test-instance',
     description: '',
-    vcpus: null,
-    cores: null,
-    threads: null,
     cpuset: null,
-    memory: null,
     autostart: false,
     time: 'local',
     shutdown_timeout: 30,

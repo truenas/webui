@@ -2,4 +2,22 @@
   align-items: center;
   display: flex;
   justify-content: space-between;
+  padding: 12px 0;
+}
+
+.device-info {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.device-description {
+  flex: 1;
+  font-size: 14px;
+  padding-bottom: 3px;
+}
+
+.no-devices {
+  color: var(--fg2);
+  padding: 16px 0;
 }

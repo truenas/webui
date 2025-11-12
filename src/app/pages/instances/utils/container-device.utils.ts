@@ -1,23 +1,24 @@
-import { ContainerDeviceEntry, ContainerDeviceWithId } from 'app/interfaces/container.interface';
+import { ContainerDevice, ContainerDeviceEntry } from 'app/interfaces/container.interface';
 
 /**
  * Maps ContainerDeviceEntry to ContainerDevice with ID
- * The new API wraps device data in 'attributes' and adds an 'id' field
+ * The API wraps device data in 'attributes' and adds an 'id' field at the top level.
+ * This function flattens the structure by adding id directly to the device attributes.
  */
-export function containerDeviceToVirtualizationDevice(
+export function containerDeviceEntryToDevice(
   containerDevice: ContainerDeviceEntry,
-): ContainerDeviceWithId {
+): ContainerDevice {
   return {
     ...containerDevice.attributes,
     id: containerDevice.id,
-  } as ContainerDeviceWithId;
+  };
 }
 
 /**
- * Maps array of ContainerDeviceEntries to ContainerDevices with IDs
+ * Maps array of ContainerDeviceEntries to ContainerDevices
  */
-export function containerDevicesToVirtualizationDevices(
+export function containerDeviceEntriesToDevices(
   containerDevices: ContainerDeviceEntry[],
-): ContainerDeviceWithId[] {
-  return containerDevices.map(containerDeviceToVirtualizationDevice);
+): ContainerDevice[] {
+  return containerDevices.map(containerDeviceEntryToDevice);
 }

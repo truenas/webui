@@ -122,7 +122,7 @@ export class GlobalConfigFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Virtualization settings updated'));
+        this.snackbar.success(this.translate.instant('Container settings updated'));
         this.slideInRef.close({
           response: true,
         });

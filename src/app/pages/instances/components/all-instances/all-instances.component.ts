@@ -12,8 +12,8 @@ import {
 import { allInstancesElements } from 'app/pages/instances/components/all-instances/all-instances.elements';
 import { InstanceDetailsComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-details.component';
 import { InstanceListComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-list.component';
-import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerConfigStore } from 'app/pages/instances/stores/container-config.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
 @UntilDestroy()
 @Component({
@@ -31,8 +31,8 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   ],
 })
 export class AllInstancesComponent implements OnInit {
-  private configStore = inject(VirtualizationConfigStore);
-  private instancesStore = inject(VirtualizationInstancesStore);
+  private configStore = inject(ContainerConfigStore);
+  private instancesStore = inject(ContainerInstancesStore);
   private dialogService = inject(DialogService);
   private window = inject<Window>(WINDOW);
   private translate = inject(TranslateService);

@@ -11,14 +11,14 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddUsbDeviceMenuComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-usb-devices/add-usb-device-menu/add-usb-device-menu.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
 describe('AddUsbDeviceMenuComponent', () => {
   let spectator: Spectator<AddUsbDeviceMenuComponent>;
   let loader: HarnessLoader;
   const selectedInstance = signal({
-    id: 'my-instance',
+    id: 123,
     type: ContainerType.Container,
   });
   const createComponent = createComponentFactory({
@@ -39,10 +39,10 @@ describe('AddUsbDeviceMenuComponent', () => {
         }),
         mockCall('container.device.create'),
       ]),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(ContainerInstancesStore, {
         selectedInstance,
       }),
-      mockProvider(VirtualizationDevicesStore, {
+      mockProvider(ContainerDevicesStore, {
         devices: () => [
           {
             dtype: ContainerDeviceType.Usb,
@@ -81,7 +81,7 @@ describe('AddUsbDeviceMenuComponent', () => {
     await menu.clickItem({ text: 'Card Reader' });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
-      container: 'my-instance',
+      container: 123,
       attributes: {
         dtype: ContainerDeviceType.Usb,
         usb: {
@@ -90,7 +90,7 @@ describe('AddUsbDeviceMenuComponent', () => {
         },
       } as ContainerDevice,
     }]);
-    expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Device was added');
+    expect(spectator.inject(ContainerDevicesStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('USB Device was added');
   });
 });

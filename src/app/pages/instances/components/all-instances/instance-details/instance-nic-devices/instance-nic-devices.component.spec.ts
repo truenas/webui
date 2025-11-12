@@ -3,22 +3,22 @@ import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ContainerDeviceType, ContainerNicDeviceType, ContainerStatus } from 'app/enums/container.enum';
-import { ContainerDeviceWithId } from 'app/interfaces/container.interface';
+import { ContainerDevice } from 'app/interfaces/container.interface';
 import {
   AddNicMenuComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
+} from 'app/pages/instances/components/all-instances/instance-details/instance-nic-devices/add-nic-menu/add-nic-menu.component';
 import {
-  InstanceNicsComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-nics/instance-nics.component';
+  InstanceNicDevicesComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-nic-devices/instance-nic-devices.component';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
-describe('InstanceNicsComponent', () => {
-  let spectator: Spectator<InstanceNicsComponent>;
-  const devices: ContainerDeviceWithId[] = [
+describe('InstanceNicDevicesComponent', () => {
+  let spectator: Spectator<InstanceNicDevicesComponent>;
+  const devices: ContainerDevice[] = [
     {
       id: 1,
       dtype: ContainerDeviceType.Nic,
@@ -38,18 +38,18 @@ describe('InstanceNicsComponent', () => {
   ];
 
   const createComponent = createComponentFactory({
-    component: InstanceNicsComponent,
+    component: InstanceNicDevicesComponent,
     imports: [
       NgxSkeletonLoaderComponent,
       MockComponent(AddNicMenuComponent),
       MockComponent(DeviceActionsMenuComponent),
     ],
     providers: [
-      mockProvider(VirtualizationDevicesStore, {
+      mockProvider(ContainerDevicesStore, {
         isLoading: () => false,
         devices: () => devices,
       }),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(ContainerInstancesStore, {
         selectedInstance: () => ({
           status: { state: ContainerStatus.Stopped },
         }),

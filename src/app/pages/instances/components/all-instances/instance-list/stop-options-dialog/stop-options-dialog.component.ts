@@ -10,7 +10,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
-import { VirtualizationStopParams } from 'app/interfaces/container.interface';
+import { ContainerStopParams } from 'app/interfaces/container.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -47,7 +47,7 @@ enum StopMethod {
 export class StopOptionsDialog {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<StopOptionsDialog, VirtualizationStopParams | false>>(MatDialogRef);
+  private dialogRef = inject<MatDialogRef<StopOptionsDialog, ContainerStopParams | false>>(MatDialogRef);
 
   protected readonly operation = signal(StopOptionsOperation.Stop);
 
@@ -86,7 +86,7 @@ export class StopOptionsDialog {
   protected onSubmit(): void {
     const stopMethod = this.form.getRawValue().stopMethod;
 
-    const params: VirtualizationStopParams = {};
+    const params: ContainerStopParams = {};
 
     switch (stopMethod) {
       case StopMethod.Graceful:

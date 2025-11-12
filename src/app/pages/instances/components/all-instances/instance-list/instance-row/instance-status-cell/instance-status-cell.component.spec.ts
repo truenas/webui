@@ -3,7 +3,7 @@ import { ContainerStatus } from 'app/enums/container.enum';
 import { ContainerInstance } from 'app/interfaces/container.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { InstanceStatusCellComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-status-cell/instance-status-cell.component';
-import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 
 describe('InstanceStatusCellComponent', () => {
   let spectator: SpectatorHost<InstanceStatusCellComponent>;
@@ -22,7 +22,7 @@ describe('InstanceStatusCellComponent', () => {
   }
 
   it('checks status for running instance', () => {
-    setupTest(fakeVirtualizationInstance({
+    setupTest(fakeContainerInstance({
       status: {
         state: ContainerStatus.Running,
         pid: 123,
@@ -34,7 +34,7 @@ describe('InstanceStatusCellComponent', () => {
   });
 
   it('checks status for stopped instance', () => {
-    setupTest(fakeVirtualizationInstance({
+    setupTest(fakeContainerInstance({
       status: {
         state: ContainerStatus.Stopped,
         pid: null,
@@ -46,7 +46,7 @@ describe('InstanceStatusCellComponent', () => {
   });
 
   it('checks status for deploying instance', () => {
-    setupTest(fakeVirtualizationInstance({
+    setupTest(fakeContainerInstance({
       status: {
         state: ContainerStatus.Stopped,
         pid: null,
@@ -58,7 +58,7 @@ describe('InstanceStatusCellComponent', () => {
   });
 
   it('checks status for stopping instance', () => {
-    setupTest(fakeVirtualizationInstance({
+    setupTest(fakeContainerInstance({
       status: {
         state: ContainerStatus.Unknown,
         pid: null,

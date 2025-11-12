@@ -12,21 +12,21 @@ import { ContainerDevice, ContainerFilesystemDevice, ContainerInstance } from 'a
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
-  InstanceDiskFormComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
+  InstanceFilesystemDeviceFormComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-filesystem-devices/instance-filesystem-device-form/instance-filesystem-device-form.component';
 import { DeviceActionsMenuComponent } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
 import {
   DeviceTypeBadgeComponent,
 } from 'app/pages/instances/components/common/device-type-badge/device-type-badge.component';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-instance-disks',
-  templateUrl: './instance-disks.component.html',
-  styleUrls: ['./instance-disks.component.scss'],
+  selector: 'ix-instance-filesystem-devices',
+  templateUrl: './instance-filesystem-devices.component.html',
+  styleUrls: ['./instance-filesystem-devices.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
@@ -41,10 +41,10 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
     DeviceTypeBadgeComponent,
   ],
 })
-export class InstanceDisksComponent {
+export class InstanceFilesystemDevicesComponent {
   private slideIn = inject(SlideIn);
-  private devicesStore = inject(VirtualizationDevicesStore);
-  private instancesStore = inject(VirtualizationInstancesStore);
+  private devicesStore = inject(ContainerDevicesStore);
+  private instancesStore = inject(ContainerInstancesStore);
   private translate = inject(TranslateService);
 
   readonly instance = input.required<ContainerInstance>();
@@ -74,7 +74,7 @@ export class InstanceDisksComponent {
   }
 
   private openDiskForm(disk?: ContainerFilesystemDevice): void {
-    this.slideIn.open(InstanceDiskFormComponent, { data: { disk, instance: this.instance() } })
+    this.slideIn.open(InstanceFilesystemDeviceFormComponent, { data: { disk, instance: this.instance() } })
       .pipe(filter((result) => !!result.response), untilDestroyed(this))
       .subscribe(() => this.devicesStore.loadDevices());
   }

@@ -8,20 +8,20 @@ import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerFilesystemDevice } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
-  InstanceDiskFormComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
+  InstanceFilesystemDeviceFormComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-filesystem-devices/instance-filesystem-device-form/instance-filesystem-device-form.component';
 import {
-  InstanceDisksComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disks.component';
+  InstanceFilesystemDevicesComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-filesystem-devices/instance-filesystem-devices.component';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 
-describe('InstanceDisksComponent', () => {
-  let spectator: Spectator<InstanceDisksComponent>;
+describe('InstanceFilesystemDevicesComponent', () => {
+  let spectator: Spectator<InstanceFilesystemDevicesComponent>;
   let loader: HarnessLoader;
   const disks = [
     {
@@ -40,19 +40,19 @@ describe('InstanceDisksComponent', () => {
     } as ContainerFilesystemDevice,
   ];
   const createComponent = createComponentFactory({
-    component: InstanceDisksComponent,
+    component: InstanceFilesystemDevicesComponent,
     imports: [
       MockComponent(DeviceActionsMenuComponent),
     ],
     providers: [
-      mockProvider(VirtualizationInstancesStore, {
-        selectedInstance: () => fakeVirtualizationInstance({
+      mockProvider(ContainerInstancesStore, {
+        selectedInstance: () => fakeContainerInstance({
           id: 1,
           status: { state: ContainerStatus.Stopped, pid: 0, domain_state: 'stopped' },
         }),
         instanceUpdated: jest.fn(),
       }),
-      mockProvider(VirtualizationDevicesStore, {
+      mockProvider(ContainerDevicesStore, {
         isLoading: () => false,
         devices: () => disks,
         loadDevices: jest.fn(),
@@ -68,7 +68,7 @@ describe('InstanceDisksComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        instance: fakeVirtualizationInstance({ id: 1 }),
+        instance: fakeContainerInstance({ id: 1 }),
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -93,8 +93,8 @@ describe('InstanceDisksComponent', () => {
       await addButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-        InstanceDiskFormComponent,
-        { data: { disk: undefined, instance: fakeVirtualizationInstance({ id: 1 }) } },
+        InstanceFilesystemDeviceFormComponent,
+        { data: { disk: undefined, instance: fakeContainerInstance({ id: 1 }) } },
       );
     });
   });

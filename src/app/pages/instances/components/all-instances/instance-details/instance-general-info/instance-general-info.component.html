@@ -28,28 +28,8 @@
         {{ instance.dataset }}
       </p>
       <p>
-        <span class="label">{{ 'Virtual CPUs' | translate }}:</span>
-        {{ instance.vcpus ?? ('N/A' | translate) }}
-      </p>
-      <p>
-        <span class="label">{{ 'Cores' | translate }}:</span>
-        {{ instance.cores ?? ('N/A' | translate) }}
-      </p>
-      <p>
-        <span class="label">{{ 'Threads' | translate }}:</span>
-        {{ instance.threads ?? ('N/A' | translate) }}
-      </p>
-      <p>
         <span class="label">{{ 'CPU Set' | translate }}:</span>
         {{ instance.cpuset || ('All Host CPUs' | translate) }}
-      </p>
-      <p>
-        <span class="label">{{ 'Memory' | translate }}:</span>
-        @if (instance.memory) {
-          {{ instance.memory }} MB
-        } @else {
-          {{ 'Available Host Memory' | translate }}
-        }
       </p>
       <p>
         <span class="label">{{ 'Container Time' | translate }}:</span>

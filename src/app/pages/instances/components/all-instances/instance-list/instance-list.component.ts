@@ -23,7 +23,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceListBulkActionsComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-list-bulk-actions/instance-list-bulk-actions.component';
 import { InstanceRowComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-row.component';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +46,7 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 export class InstanceListComponent {
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
-  private instancesStore = inject(VirtualizationInstancesStore);
+  private instancesStore = inject(ContainerInstancesStore);
   private searchDirectives = inject(UiSearchDirectivesService);
   private layoutService = inject(LayoutService);
 

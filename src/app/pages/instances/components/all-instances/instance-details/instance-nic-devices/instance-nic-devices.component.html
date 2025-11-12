@@ -1,7 +1,7 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>
-      {{ 'NIC' | translate }}
+      {{ 'NIC Devices' | translate }}
     </h3>
 
     @if (!hasPendingInterfaceChanges()) {
@@ -29,14 +29,14 @@
           @if (!hasPendingInterfaceChanges()) {
             <ix-device-actions-menu
               [device]="device"
-              [showEdit]="false"
+              [showEdit]="true"
               [isDisabled]="isContainerRunning()"
               [disabledTooltip]="isContainerRunning() ? ('Cannot modify devices while container is running. Please stop the container first.' | translate) : null"
             ></ix-device-actions-menu>
           }
         </div>
       } @empty {
-        <div class="no-devices">{{ 'No NICs added.' | translate }}</div>
+        <div class="no-devices">{{ 'No NIC devices added.' | translate }}</div>
       }
     }
   </mat-card-content>

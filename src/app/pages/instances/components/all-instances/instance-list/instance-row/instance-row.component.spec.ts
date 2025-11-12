@@ -19,10 +19,10 @@ import {
   StopOptionsDialog,
   StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 
-const instance = fakeVirtualizationInstance({
+const instance = fakeContainerInstance({
   id: 1,
   name: 'agi_instance',
   autostart: false,
@@ -67,7 +67,7 @@ describe('InstanceRowComponent', () => {
           }),
         })),
       }),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(ContainerInstancesStore, {
         selectedInstance: () => instance,
         selectInstance: jest.fn(),
       }),
@@ -119,7 +119,7 @@ describe('InstanceRowComponent', () => {
     });
 
     it('shows Stop and Restart button when instance is Running', async () => {
-      spectator.setInput('instance', fakeVirtualizationInstance({
+      spectator.setInput('instance', fakeContainerInstance({
         ...instance,
         status: {
           state: ContainerStatus.Running,
@@ -138,7 +138,7 @@ describe('InstanceRowComponent', () => {
     });
 
     it('shows Start button when instance is Stopped', async () => {
-      spectator.setInput('instance', fakeVirtualizationInstance({
+      spectator.setInput('instance', fakeContainerInstance({
         ...instance,
         status: {
           state: ContainerStatus.Stopped,
@@ -191,7 +191,7 @@ describe('InstanceRowComponent', () => {
     });
 
     it('starts an instance when Start icon is pressed', async () => {
-      spectator.setInput('instance', fakeVirtualizationInstance({
+      spectator.setInput('instance', fakeContainerInstance({
         ...instance,
         status: {
           state: ContainerStatus.Stopped,

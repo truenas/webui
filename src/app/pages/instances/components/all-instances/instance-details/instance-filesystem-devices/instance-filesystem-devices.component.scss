@@ -14,11 +14,10 @@
 .device-description {
   flex: 1;
   font-size: 14px;
+  padding-bottom: 3px;
 }
 
 .no-devices {
   color: var(--fg2);
-  font-style: italic;
   padding: 16px 0;
-  text-align: center;
 }

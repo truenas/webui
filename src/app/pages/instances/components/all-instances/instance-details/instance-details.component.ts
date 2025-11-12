@@ -7,12 +7,12 @@ import { ContainerType } from 'app/enums/container.enum';
 import { ContainerInstance } from 'app/interfaces/container.interface';
 import { instanceDetailsElements } from 'app/pages/instances/components/all-instances/instance-details/instance-details.elements';
 import {
-  InstanceDisksComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disks.component';
+  InstanceFilesystemDevicesComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-filesystem-devices/instance-filesystem-devices.component';
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
-import { InstanceNicsComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/instance-nics.component';
+import { InstanceNicDevicesComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nic-devices/instance-nic-devices.component';
 import {
   InstanceToolsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-tools/instance-tools.component';
@@ -28,9 +28,9 @@ import {
     TranslateModule,
     InstanceUsbDevicesComponent,
     InstanceGeneralInfoComponent,
-    InstanceDisksComponent,
+    InstanceFilesystemDevicesComponent,
     InstanceToolsComponent,
-    InstanceNicsComponent,
+    InstanceNicDevicesComponent,
     UiSearchDirective,
   ],
 })

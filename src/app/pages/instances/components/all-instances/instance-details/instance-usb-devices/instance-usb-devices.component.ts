@@ -13,9 +13,12 @@ import {
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
+import {
+  DeviceTypeBadgeComponent,
+} from 'app/pages/instances/components/common/device-type-badge/device-type-badge.component';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
 @UntilDestroy()
 @Component({
@@ -31,11 +34,12 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
     NgxSkeletonLoaderModule,
     DeviceActionsMenuComponent,
     AddUsbDeviceMenuComponent,
+    DeviceTypeBadgeComponent,
   ],
 })
 export class InstanceUsbDevicesComponent {
-  private devicesStore = inject(VirtualizationDevicesStore);
-  private instancesStore = inject(VirtualizationInstancesStore);
+  private devicesStore = inject(ContainerDevicesStore);
+  private instancesStore = inject(ContainerInstancesStore);
   private translate = inject(TranslateService);
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
