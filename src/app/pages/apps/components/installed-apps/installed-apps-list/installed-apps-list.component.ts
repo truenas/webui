@@ -590,6 +590,7 @@ export class InstalledAppsListComponent implements OnInit {
         }),
       );
     }),
+    takeUntilDestroyed(this.destroyRef),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 }
