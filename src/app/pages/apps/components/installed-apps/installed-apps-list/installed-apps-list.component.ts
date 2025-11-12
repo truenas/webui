@@ -13,7 +13,7 @@ import {
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, forkJoin, map, Observable, of, shareReplay, switchMap,
+  combineLatest, debounceTime, filter, forkJoin, map, Observable, of, shareReplay, switchMap,
 } from 'rxjs';
 import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
 import { AppState } from 'app/enums/app-state.enum';
@@ -549,6 +549,7 @@ export class InstalledAppsListComponent implements OnInit {
       return combineLatest(
         apps.map((app) => this.getAppStats(app.name)),
       ).pipe(
+        debounceTime(500),
         takeUntilDestroyed(this.destroyRef),
         map((statsArray) => {
           return statsArray.reduce((totals, stats) => {
