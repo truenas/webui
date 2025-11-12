@@ -399,6 +399,14 @@ export class InstalledAppsListComponent implements OnInit {
       .subscribe((job: Job<CoreBulkResponse[]>) => this.handleDeletionResult(job));
   }
 
+  /**
+   * Sorts the dataSource array by the specified field and direction.
+   *
+   * Note: Although TrueNAS and External apps are displayed in separate
+   * sections in the template, they are sorted together here. The template's
+   * filteredTruenasApps and filteredExternalApps getters filter this sorted
+   * array, preserving the sort order within each section.
+   */
   setDatasourceWithSort(sort: Sort, apps?: App[]): void {
     this.sortingInfo = sort;
     const sourceArray = apps && apps.length > 0 ? apps : this.dataSource;
