@@ -103,7 +103,7 @@
             </div>
             <div class="cell cell-status"></div>
             <div class="cell cell-cpu">
-              <strong>{{ utilization.cpu.toFixed(0) }}%</strong>
+              <strong>{{ (utilization.cpu || 0).toFixed(0) }}%</strong>
             </div>
             <div class="cell cell-ram">
               <strong>{{ utilization.memory | ixFileSize }}</strong>
