@@ -88,7 +88,7 @@ export class AppInfoCardComponent {
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly isAppStopped = computed<boolean>(() => this.app()?.state === AppState.Stopped);
   protected readonly inProgress = computed<boolean>(() => [AppState.Deploying].includes(this.app()?.state));
-  protected readonly isExternalApp = computed<boolean>(() => this.app()?.source === 'external');
+  protected readonly isExternalApp = computed<boolean>(() => this.app()?.source === 'EXTERNAL');
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly isRollbackPossible: WritableSignal<boolean> = signal(false);
   protected rollbackUpdateButtonSetEffect = effect(() => {

@@ -38,7 +38,7 @@ describe('InstalledAppsComponent', () => {
       train: 'test-catalog-train',
     },
     state: AppState.Running,
-    source: 'truenas',
+    source: 'TRUENAS',
   } as App;
 
   const createComponent = createRoutingFactory({

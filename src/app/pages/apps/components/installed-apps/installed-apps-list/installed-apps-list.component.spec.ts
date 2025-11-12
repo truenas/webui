@@ -47,7 +47,7 @@ describe('InstalledAppsListComponent', () => {
       },
       state: AppState.Running,
       upgrade_available: true,
-      source: 'truenas',
+      source: 'TRUENAS',
     },
     {
       id: 'ix-test-app-2',
@@ -58,7 +58,7 @@ describe('InstalledAppsListComponent', () => {
       },
       state: AppState.Stopped,
       upgrade_available: true,
-      source: 'truenas',
+      source: 'TRUENAS',
     },
     {
       id: 'external-nginx',
@@ -69,7 +69,7 @@ describe('InstalledAppsListComponent', () => {
       },
       state: AppState.Running,
       upgrade_available: false,
-      source: 'external',
+      source: 'EXTERNAL',
     },
   ] as App[];
 
@@ -216,7 +216,7 @@ describe('InstalledAppsListComponent', () => {
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpdate.emit();
 
     // Should only include selected TrueNAS apps (external apps are excluded from selection)
-    const truenasApps = apps.filter((app) => app.source === 'truenas');
+    const truenasApps = apps.filter((app) => app.source === 'TRUENAS');
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, { data: truenasApps });
   });
 
@@ -288,11 +288,11 @@ describe('InstalledAppsListComponent', () => {
       const externalApps = component.filteredExternalApps;
 
       expect(truenasApps).toHaveLength(2);
-      expect(truenasApps[0].source).toBe('truenas');
-      expect(truenasApps[1].source).toBe('truenas');
+      expect(truenasApps[0].source).toBe('TRUENAS');
+      expect(truenasApps[1].source).toBe('TRUENAS');
 
       expect(externalApps).toHaveLength(1);
-      expect(externalApps[0].source).toBe('external');
+      expect(externalApps[0].source).toBe('EXTERNAL');
       expect(externalApps[0].name).toBe('external-nginx');
     });
 
@@ -307,7 +307,7 @@ describe('InstalledAppsListComponent', () => {
 
       // Only TrueNAS apps should be in checkedApps
       expect(checkedApps).toHaveLength(2);
-      expect(checkedApps.every((app) => app.source === 'truenas')).toBe(true);
+      expect(checkedApps.every((app) => app.source === 'TRUENAS')).toBe(true);
       expect(checkedApps.some((app) => app.name === 'external-nginx')).toBe(false);
     });
 
@@ -323,7 +323,7 @@ describe('InstalledAppsListComponent', () => {
       // Only TrueNAS running apps should be included
       expect(activeCheckedApps).toHaveLength(1);
       expect(activeCheckedApps[0].name).toBe('test-app-1');
-      expect(activeCheckedApps[0].source).toBe('truenas');
+      expect(activeCheckedApps[0].source).toBe('TRUENAS');
     });
 
     it('excludes external apps from stopped checked apps', () => {
@@ -338,7 +338,7 @@ describe('InstalledAppsListComponent', () => {
       // Only TrueNAS stopped apps should be included
       expect(stoppedCheckedApps).toHaveLength(1);
       expect(stoppedCheckedApps[0].name).toBe('test-app-2');
-      expect(stoppedCheckedApps[0].source).toBe('truenas');
+      expect(stoppedCheckedApps[0].source).toBe('TRUENAS');
     });
   });
 });

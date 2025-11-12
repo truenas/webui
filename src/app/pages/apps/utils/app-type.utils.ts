@@ -5,7 +5,7 @@ import { App } from 'app/interfaces/app.interface';
  * External apps are deployed outside TrueNAS (e.g., via Docker CLI, Portainer, Dockage).
  */
 export function isExternalApp(app: App | null | undefined): boolean {
-  return app?.source === 'external';
+  return app?.source === 'EXTERNAL';
 }
 
 /**

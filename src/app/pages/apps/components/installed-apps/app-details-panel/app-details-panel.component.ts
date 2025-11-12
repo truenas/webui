@@ -28,6 +28,6 @@ export class AppDetailsPanelComponent {
   readonly closeMobileDetails = output();
 
   protected readonly isExternalApp = computed(() => {
-    return this.app()?.source === 'external';
+    return this.app()?.source === 'EXTERNAL';
   });
 }
