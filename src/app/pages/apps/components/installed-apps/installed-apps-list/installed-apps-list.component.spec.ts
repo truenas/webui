@@ -402,5 +402,79 @@ describe('InstalledAppsListComponent', () => {
       expect(utilization.networkRx).toBe(0);
       expect(utilization.networkTx).toBe(0);
     });
+
+    it('handles null or invalid stats by returning zero for those apps', async () => {
+      const appsStatsService = spectator.inject(AppsStatsService);
+      jest.spyOn(appsStatsService, 'getStatsForApp').mockImplementation((name) => {
+        if (name === 'test-app-1') {
+          return of(null as any);
+        }
+        return of({
+          cpu_usage: 10,
+          memory: 1024,
+          blkio: { read: 100, write: 200 },
+          networks: [],
+        });
+      });
+
+      const component = spectator.component;
+      const utilization = await firstValueFrom(component.totalUtilization$);
+
+      expect(utilization.cpu).toBe(20);
+      expect(utilization.memory).toBe(2048);
+    });
+
+    it('aggregates network stats correctly', async () => {
+      const appsStatsService = spectator.inject(AppsStatsService);
+      jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
+        cpu_usage: 5,
+        memory: 512,
+        blkio: { read: 50, write: 100 },
+        networks: [
+          { rx_bytes: 1000, tx_bytes: 2000 },
+          { rx_bytes: 500, tx_bytes: 1500 },
+        ],
+      }));
+
+      const component = spectator.component;
+      const utilization = await firstValueFrom(component.totalUtilization$);
+
+      expect(utilization.networkRx).toBe(4500);
+      expect(utilization.networkTx).toBe(10500);
+    });
+
+    it('handles null network stats', async () => {
+      const appsStatsService = spectator.inject(AppsStatsService);
+      jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
+        cpu_usage: 5,
+        memory: 512,
+        blkio: { read: 50, write: 100 },
+        networks: null as any,
+      }));
+
+      const component = spectator.component;
+      const utilization = await firstValueFrom(component.totalUtilization$);
+
+      expect(utilization.networkRx).toBe(0);
+      expect(utilization.networkTx).toBe(0);
+    });
+
+    it('handles undefined values in stats', async () => {
+      const appsStatsService = spectator.inject(AppsStatsService);
+      jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
+        cpu_usage: undefined as any,
+        memory: null as any,
+        blkio: undefined as any,
+        networks: [],
+      }));
+
+      const component = spectator.component;
+      const utilization = await firstValueFrom(component.totalUtilization$);
+
+      expect(utilization.cpu).toBe(0);
+      expect(utilization.memory).toBe(0);
+      expect(utilization.blkioRead).toBe(0);
+      expect(utilization.blkioWrite).toBe(0);
+    });
   });
 });
