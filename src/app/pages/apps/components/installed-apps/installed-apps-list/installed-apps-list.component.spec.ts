@@ -13,7 +13,7 @@ import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { App } from 'app/interfaces/app.interface';
+import { App, AppStats } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -410,11 +410,12 @@ describe('InstalledAppsListComponent', () => {
           return of(null as any);
         }
         return of({
+          app_name: name,
           cpu_usage: 10,
           memory: 1024,
           blkio: { read: 100, write: 200 },
           networks: [],
-        });
+        } as AppStats);
       });
 
       const component = spectator.component;
@@ -427,6 +428,7 @@ describe('InstalledAppsListComponent', () => {
     it('aggregates network stats correctly', async () => {
       const appsStatsService = spectator.inject(AppsStatsService);
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
+        app_name: 'test-app',
         cpu_usage: 5,
         memory: 512,
         blkio: { read: 50, write: 100 },
@@ -434,7 +436,7 @@ describe('InstalledAppsListComponent', () => {
           { rx_bytes: 1000, tx_bytes: 2000 },
           { rx_bytes: 500, tx_bytes: 1500 },
         ],
-      }));
+      } as AppStats));
 
       const component = spectator.component;
       const utilization = await firstValueFrom(component.totalUtilization$);
@@ -446,11 +448,12 @@ describe('InstalledAppsListComponent', () => {
     it('handles null network stats', async () => {
       const appsStatsService = spectator.inject(AppsStatsService);
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
+        app_name: 'test-app',
         cpu_usage: 5,
         memory: 512,
         blkio: { read: 50, write: 100 },
         networks: null as any,
-      }));
+      } as AppStats));
 
       const component = spectator.component;
       const utilization = await firstValueFrom(component.totalUtilization$);
@@ -462,11 +465,12 @@ describe('InstalledAppsListComponent', () => {
     it('handles undefined values in stats', async () => {
       const appsStatsService = spectator.inject(AppsStatsService);
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
+        app_name: 'test-app',
         cpu_usage: undefined as any,
         memory: null as any,
         blkio: undefined as any,
         networks: [],
-      }));
+      } as AppStats));
 
       const component = spectator.component;
       const utilization = await firstValueFrom(component.totalUtilization$);

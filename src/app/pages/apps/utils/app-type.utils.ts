@@ -12,6 +12,6 @@ export function isExternalApp(app: App | null | undefined): boolean {
  * Checks if an app is a TrueNAS-managed application.
  * Returns true if the app exists and is not an external container.
  */
-export function isTruenasApp(app: App | null | undefined): boolean {
+export function isTruenasApp(app: App | null | undefined): app is App {
   return !!app && !isExternalApp(app);
 }
