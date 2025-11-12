@@ -37,6 +37,7 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppUpdateDialog } from 'app/pages/apps/components/installed-apps/app-update-dialog/app-update-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { isExternalApp } from 'app/pages/apps/utils/app-type.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 
@@ -88,7 +89,7 @@ export class AppInfoCardComponent {
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly isAppStopped = computed<boolean>(() => this.app()?.state === AppState.Stopped);
   protected readonly inProgress = computed<boolean>(() => [AppState.Deploying].includes(this.app()?.state));
-  protected readonly isExternalApp = computed<boolean>(() => this.app()?.source === 'EXTERNAL');
+  protected readonly isExternalApp = computed<boolean>(() => isExternalApp(this.app()));
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly isRollbackPossible: WritableSignal<boolean> = signal(false);
   protected rollbackUpdateButtonSetEffect = effect(() => {
