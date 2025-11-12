@@ -387,7 +387,8 @@ describe('InstalledAppsListComponent', () => {
     });
 
     it('handles empty apps array by returning zero values', async () => {
-      spectator.inject(InstalledAppsStore).installedApps$ = of([]);
+      const installedAppsStore = spectator.inject(InstalledAppsStore);
+      jest.spyOn(installedAppsStore, 'installedApps$', 'get').mockReturnValue(of([]));
       const component = spectator.component;
 
       const utilization = await component.totalUtilization$.toPromise();
