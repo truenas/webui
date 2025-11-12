@@ -13,7 +13,7 @@ import {
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, forkJoin, map, Observable, of, shareReplay, switchMap,
+  combineLatest, debounceTime, filter, forkJoin, map, Observable, of, shareReplay, switchMap,
 } from 'rxjs';
 import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
 import { AppState } from 'app/enums/app-state.enum';
@@ -533,6 +533,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   readonly totalUtilization$ = this.installedAppsStore.installedApps$.pipe(
+    debounceTime(300),
     switchMap((apps) => {
       // Check if apps array is empty or contains only null/undefined values
       if (!apps?.length || !apps.some((app) => !!app)) {
