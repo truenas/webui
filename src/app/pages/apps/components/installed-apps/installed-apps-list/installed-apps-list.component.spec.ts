@@ -342,4 +342,62 @@ describe('InstalledAppsListComponent', () => {
       expect(stoppedCheckedApps[0].source).toBe('TRUENAS');
     });
   });
+
+  describe('collapsible sections', () => {
+    it('initializes with both sections expanded', () => {
+      const component = spectator.component;
+
+      expect(component.truenasAppsExpanded()).toBe(true);
+      expect(component.externalAppsExpanded()).toBe(true);
+    });
+
+    it('toggles TrueNAS apps section', () => {
+      const component = spectator.component;
+
+      component.truenasAppsExpanded.set(false);
+      expect(component.truenasAppsExpanded()).toBe(false);
+
+      component.truenasAppsExpanded.set(true);
+      expect(component.truenasAppsExpanded()).toBe(true);
+    });
+
+    it('toggles external apps section', () => {
+      const component = spectator.component;
+
+      component.externalAppsExpanded.set(false);
+      expect(component.externalAppsExpanded()).toBe(false);
+
+      component.externalAppsExpanded.set(true);
+      expect(component.externalAppsExpanded()).toBe(true);
+    });
+  });
+
+  describe('totalUtilization$', () => {
+    it('aggregates stats from all apps', async () => {
+      const component = spectator.component;
+
+      const utilization = await component.totalUtilization$.toPromise();
+
+      expect(utilization.cpu).toBeGreaterThanOrEqual(0);
+      expect(utilization.memory).toBeGreaterThanOrEqual(0);
+      expect(utilization.blkioRead).toBeGreaterThanOrEqual(0);
+      expect(utilization.blkioWrite).toBeGreaterThanOrEqual(0);
+      expect(utilization.networkRx).toBeGreaterThanOrEqual(0);
+      expect(utilization.networkTx).toBeGreaterThanOrEqual(0);
+    });
+
+    it('handles empty apps array by returning zero values', async () => {
+      spectator.inject(InstalledAppsStore).installedApps$ = of([]);
+      const component = spectator.component;
+
+      const utilization = await component.totalUtilization$.toPromise();
+
+      expect(utilization.cpu).toBe(0);
+      expect(utilization.memory).toBe(0);
+      expect(utilization.blkioRead).toBe(0);
+      expect(utilization.blkioWrite).toBe(0);
+      expect(utilization.networkRx).toBe(0);
+      expect(utilization.networkTx).toBe(0);
+    });
+  });
 });
