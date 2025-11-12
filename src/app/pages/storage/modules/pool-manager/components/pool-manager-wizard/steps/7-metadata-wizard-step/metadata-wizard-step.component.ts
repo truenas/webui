@@ -12,6 +12,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { parseDraidVdevName } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +46,7 @@ export class MetadataWizardStepComponent implements OnInit {
   readonly helptext = helptextPoolCreation;
 
   protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Special);
-  protected allowedLayouts = [CreateVdevLayout.Mirror, CreateVdevLayout.Stripe];
+  protected allowedLayouts = Object.values(CreateVdevLayout) as CreateVdevLayout[];
 
   goToReviewStep(): void {
     this.goToLastStep.emit();
@@ -67,6 +68,9 @@ export class MetadataWizardStepComponent implements OnInit {
       let type = metadataTopology[0].type;
       if (type === TopologyItemType.Disk && !metadataTopology[0].children.length) {
         type = TopologyItemType.Stripe;
+      } else if (type === TopologyItemType.Draid) {
+        const parsedVdevName = parseDraidVdevName(metadataTopology[0].name);
+        type = parsedVdevName.layout as unknown as TopologyItemType;
       }
       this.allowedLayouts = [type] as unknown as CreateVdevLayout[];
       this.canChangeLayout = false;

@@ -24,6 +24,19 @@
       display: block;
     }
 
+    .service-select {
+      flex-shrink: 0;
+      margin-bottom: 0;
+      margin-top: 0;
+      min-width: 130px;
+      padding: 0;
+
+      @media (max-width: $breakpoint-sm) {
+        margin-bottom: 8px;
+        width: 100%;
+      }
+    }
+
     .search-button-wrapper {
       display: flex;
       gap: 8px;
@@ -40,6 +53,43 @@
       }
 
       width: 100%;
+    }
+  }
+
+  .export-container {
+    align-items: center;
+    display: flex;
+
+    @media (max-width: $breakpoint-sm) {
+      margin-top: 8px;
+    }
+  }
+}
+
+:host ::ng-deep .mat-mdc-menu-panel .mat-mdc-menu-item.selected {
+  background-color: var(--alt-bg2);
+  font-weight: 500;
+}
+
+// Extracted to reduce nesting depth
+// Note: !important is required here to override Material's highly specific default styles
+.actions-bar .search-container .service-select {
+  ::ng-deep {
+    .label {
+      font-size: 15px !important;
+
+      .required {
+        display: none;
+      }
+    }
+
+    .input-container {
+      background: rgba(0, 0, 0, 0.1);
+      min-width: 130px;
+
+      .mat-mdc-select-trigger {
+        font-size: 15px !important;
+      }
     }
   }
 }
