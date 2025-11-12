@@ -176,6 +176,11 @@ ix-app-row,
       background: var(--hover-bg);
     }
 
+    &:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: -2px;
+    }
+
     ix-icon {
       font-size: 20px;
     }
