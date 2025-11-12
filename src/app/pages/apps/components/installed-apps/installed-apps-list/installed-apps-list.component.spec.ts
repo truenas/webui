@@ -9,7 +9,7 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
-import { firstValueFrom, of } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
@@ -74,6 +74,8 @@ describe('InstalledAppsListComponent', () => {
     },
   ] as App[];
 
+  const installedApps$ = new BehaviorSubject<App[]>(apps);
+
   const createComponent = createRoutingFactory({
     component: InstalledAppsListComponent,
     imports: [
@@ -96,7 +98,7 @@ describe('InstalledAppsListComponent', () => {
       }),
       mockProvider(InstalledAppsStore, {
         isLoading$: of(false),
-        installedApps$: of(apps),
+        installedApps$,
       }),
       mockProvider(AppsStore, {
         isLoading$: of(false),
@@ -415,7 +417,6 @@ describe('InstalledAppsListComponent', () => {
 
     it('handles null or invalid stats by returning zero for those apps', fakeAsync(() => {
       const appsStatsService = spectator.inject(AppsStatsService);
-      const installedAppsStore = spectator.inject(InstalledAppsStore);
 
       jest.spyOn(appsStatsService, 'getStatsForApp').mockImplementation((name) => {
         if (name === 'test-app-1') {
@@ -431,14 +432,10 @@ describe('InstalledAppsListComponent', () => {
       });
 
       // Trigger new emission with updated mock
-      Object.defineProperty(installedAppsStore, 'installedApps$', {
-        get: () => of(apps),
-      });
-
-      const component = spectator.component;
-
+      installedApps$.next(apps);
       tick(300);  // Advance past debounceTime(300)
 
+      const component = spectator.component;
       let utilization: any;
       firstValueFrom(component.totalUtilization$).then((result) => {
         utilization = result;
@@ -451,7 +448,6 @@ describe('InstalledAppsListComponent', () => {
 
     it('aggregates network stats correctly', fakeAsync(() => {
       const appsStatsService = spectator.inject(AppsStatsService);
-      const installedAppsStore = spectator.inject(InstalledAppsStore);
 
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
         app_name: 'test-app',
@@ -465,13 +461,10 @@ describe('InstalledAppsListComponent', () => {
       } as AppStats));
 
       // Trigger new emission with updated mock
-      Object.defineProperty(installedAppsStore, 'installedApps$', {
-        get: () => of(apps),
-      });
-
-      const component = spectator.component;
+      installedApps$.next(apps);
       tick(300);
 
+      const component = spectator.component;
       let utilization: any;
       firstValueFrom(component.totalUtilization$).then((result) => {
         utilization = result;
@@ -484,7 +477,6 @@ describe('InstalledAppsListComponent', () => {
 
     it('handles null network stats', fakeAsync(() => {
       const appsStatsService = spectator.inject(AppsStatsService);
-      const installedAppsStore = spectator.inject(InstalledAppsStore);
 
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
         app_name: 'test-app',
@@ -495,13 +487,10 @@ describe('InstalledAppsListComponent', () => {
       } as AppStats));
 
       // Trigger new emission with updated mock
-      Object.defineProperty(installedAppsStore, 'installedApps$', {
-        get: () => of(apps),
-      });
-
-      const component = spectator.component;
+      installedApps$.next(apps);
       tick(300);
 
+      const component = spectator.component;
       let utilization: any;
       firstValueFrom(component.totalUtilization$).then((result) => {
         utilization = result;
@@ -514,7 +503,6 @@ describe('InstalledAppsListComponent', () => {
 
     it('handles undefined values in stats', fakeAsync(() => {
       const appsStatsService = spectator.inject(AppsStatsService);
-      const installedAppsStore = spectator.inject(InstalledAppsStore);
 
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
         app_name: 'test-app',
@@ -525,13 +513,10 @@ describe('InstalledAppsListComponent', () => {
       } as AppStats));
 
       // Trigger new emission with updated mock
-      Object.defineProperty(installedAppsStore, 'installedApps$', {
-        get: () => of(apps),
-      });
-
-      const component = spectator.component;
+      installedApps$.next(apps);
       tick(300);
 
+      const component = spectator.component;
       let utilization: any;
       firstValueFrom(component.totalUtilization$).then((result) => {
         utilization = result;
