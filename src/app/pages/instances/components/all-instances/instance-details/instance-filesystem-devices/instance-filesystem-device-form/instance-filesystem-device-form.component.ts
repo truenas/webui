@@ -33,7 +33,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 
 interface InstanceFilesystemDeviceFormOptions {
   instance: ContainerInstance;
-  disk: (ContainerFilesystemDevice & { id: number }) | undefined;
+  disk: ContainerFilesystemDevice | undefined;
 }
 
 @UntilDestroy()
@@ -65,7 +65,7 @@ export class InstanceFilesystemDeviceFormComponent implements OnInit {
   private filesystem = inject(FilesystemService);
   slideInRef = inject<SlideInRef<InstanceFilesystemDeviceFormOptions, boolean>>(SlideInRef);
 
-  private existingDisk = signal<(ContainerFilesystemDevice & { id: number }) | null>(null);
+  private existingDisk = signal<ContainerFilesystemDevice | null>(null);
 
   protected readonly isLoading = signal(false);
 
