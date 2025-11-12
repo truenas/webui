@@ -201,6 +201,15 @@ describe('InstalledAppsListComponent', () => {
     expect(applicationsService.startApplication).toHaveBeenCalledWith('test-app-2');
   });
 
+  it('select all checkbox does not select external apps', async () => {
+    const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
+    await selectAll.check();
+
+    expect(spectator.component.selection.isSelected('external-nginx')).toBe(false);
+    expect(spectator.component.selection.isSelected('ix-test-app-1')).toBe(true);
+    expect(spectator.component.selection.isSelected('ix-test-app-2')).toBe(true);
+  });
+
   it('stops several applications', async () => {
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
