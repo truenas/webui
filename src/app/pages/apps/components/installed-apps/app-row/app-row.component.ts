@@ -81,7 +81,9 @@ export class AppRowComponent {
   });
 
   toggleAppChecked(): void {
-    this.selectionChange.emit();
+    if (!isExternalApp(this.app())) {
+      this.selectionChange.emit();
+    }
   }
 
   start(): void {
