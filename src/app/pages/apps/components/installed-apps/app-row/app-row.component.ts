@@ -43,7 +43,7 @@ import { isExternalApp } from 'app/pages/apps/utils/app-type.utils';
 })
 export class AppRowComponent {
   readonly app = input.required<App>();
-  readonly stats = input.required<AppStats>();
+  readonly stats = input<AppStats | null>();
   readonly selected = input.required<boolean>();
   readonly job = input<Job<void, AppStartQueryParams>>();
 
