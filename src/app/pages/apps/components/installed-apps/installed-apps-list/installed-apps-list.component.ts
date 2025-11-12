@@ -591,6 +591,5 @@ export class InstalledAppsListComponent implements OnInit {
       );
     }),
     shareReplay({ bufferSize: 1, refCount: true }),
-    takeUntilDestroyed(this.destroyRef),
   );
 }
