@@ -414,6 +414,8 @@ describe('InstalledAppsListComponent', () => {
 
     it('handles null or invalid stats by returning zero for those apps', async () => {
       const appsStatsService = spectator.inject(AppsStatsService);
+      const installedAppsStore = spectator.inject(InstalledAppsStore);
+
       jest.spyOn(appsStatsService, 'getStatsForApp').mockImplementation((name) => {
         if (name === 'test-app-1') {
           return of(null as any);
@@ -427,6 +429,11 @@ describe('InstalledAppsListComponent', () => {
         } as AppStats);
       });
 
+      // Trigger new emission with fresh apps
+      Object.defineProperty(installedAppsStore, 'installedApps$', {
+        get: () => of(apps),
+      });
+
       const component = spectator.component;
       const utilization = await firstValueFrom(component.totalUtilization$);
 
@@ -436,6 +443,8 @@ describe('InstalledAppsListComponent', () => {
 
     it('aggregates network stats correctly', async () => {
       const appsStatsService = spectator.inject(AppsStatsService);
+      const installedAppsStore = spectator.inject(InstalledAppsStore);
+
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
         app_name: 'test-app',
         cpu_usage: 5,
@@ -447,6 +456,11 @@ describe('InstalledAppsListComponent', () => {
         ],
       } as AppStats));
 
+      // Trigger new emission with fresh apps
+      Object.defineProperty(installedAppsStore, 'installedApps$', {
+        get: () => of(apps),
+      });
+
       const component = spectator.component;
       const utilization = await firstValueFrom(component.totalUtilization$);
 
@@ -456,6 +470,8 @@ describe('InstalledAppsListComponent', () => {
 
     it('handles null network stats', async () => {
       const appsStatsService = spectator.inject(AppsStatsService);
+      const installedAppsStore = spectator.inject(InstalledAppsStore);
+
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
         app_name: 'test-app',
         cpu_usage: 5,
@@ -463,6 +479,11 @@ describe('InstalledAppsListComponent', () => {
         blkio: { read: 50, write: 100 },
         networks: null as any,
       } as AppStats));
+
+      // Trigger new emission with fresh apps
+      Object.defineProperty(installedAppsStore, 'installedApps$', {
+        get: () => of(apps),
+      });
 
       const component = spectator.component;
       const utilization = await firstValueFrom(component.totalUtilization$);
@@ -473,6 +494,8 @@ describe('InstalledAppsListComponent', () => {
 
     it('handles undefined values in stats', async () => {
       const appsStatsService = spectator.inject(AppsStatsService);
+      const installedAppsStore = spectator.inject(InstalledAppsStore);
+
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
         app_name: 'test-app',
         cpu_usage: undefined as any,
@@ -480,6 +503,11 @@ describe('InstalledAppsListComponent', () => {
         blkio: undefined as any,
         networks: [],
       } as AppStats));
+
+      // Trigger new emission with fresh apps
+      Object.defineProperty(installedAppsStore, 'installedApps$', {
+        get: () => of(apps),
+      });
 
       const component = spectator.component;
       const utilization = await firstValueFrom(component.totalUtilization$);
