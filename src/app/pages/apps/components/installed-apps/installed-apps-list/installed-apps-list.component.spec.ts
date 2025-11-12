@@ -8,7 +8,7 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
@@ -376,7 +376,7 @@ describe('InstalledAppsListComponent', () => {
     it('aggregates stats from all apps', async () => {
       const component = spectator.component;
 
-      const utilization = await component.totalUtilization$.toPromise();
+      const utilization = await firstValueFrom(component.totalUtilization$);
 
       expect(utilization.cpu).toBeGreaterThanOrEqual(0);
       expect(utilization.memory).toBeGreaterThanOrEqual(0);
@@ -391,7 +391,7 @@ describe('InstalledAppsListComponent', () => {
       jest.spyOn(installedAppsStore, 'installedApps$', 'get').mockReturnValue(of([]));
       const component = spectator.component;
 
-      const utilization = await component.totalUtilization$.toPromise();
+      const utilization = await firstValueFrom(component.totalUtilization$);
 
       expect(utilization.cpu).toBe(0);
       expect(utilization.memory).toBe(0);

@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
-import { Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, DestroyRef, inject, signal, computed } from '@angular/core';
-import { toSignal, toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, DestroyRef, inject, signal } from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
@@ -122,6 +122,7 @@ export class InstalledAppsListComponent implements OnInit {
     active: SortableField.Application,
     direction: SortDirection.Asc,
   };
+
   truenasAppsExpanded = signal(true);
   externalAppsExpanded = signal(true);
 
@@ -521,7 +522,7 @@ export class InstalledAppsListComponent implements OnInit {
     return numA + numB;
   }
 
-  private safeNetworkSum(networks: Array<{ rx_bytes?: number; tx_bytes?: number }> | null | undefined, field: 'rx_bytes' | 'tx_bytes'): number {
+  private safeNetworkSum(networks: { rx_bytes?: number; tx_bytes?: number }[] | null | undefined, field: 'rx_bytes' | 'tx_bytes'): number {
     if (!Array.isArray(networks) || networks.length === 0) {
       return 0;
     }
