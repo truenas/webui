@@ -95,7 +95,7 @@
   >
     <div class="app-inner">
       @if (dataSource.length) {
-        <div class="utilization-summary">
+        <div class="utilization-summary" role="status" aria-live="polite" aria-atomic="true">
           @if (totalUtilization$ | async; as utilization) {
             <div class="cell cell-checkbox"></div>
             <div class="cell cell-name">
@@ -140,7 +140,7 @@
             (keydown.space)="truenasAppsExpanded.set(!truenasAppsExpanded()); $event.preventDefault()"
           >
             <ix-icon [name]="truenasAppsExpanded() ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
-            {{ 'TrueNAS Apps' | translate }}
+            {{ 'Apps managed by TrueNAS' | translate }}
             <span class="app-count">({{ filteredTruenasApps().length }})</span>
           </h3>
           @if (truenasAppsExpanded()) {
@@ -181,7 +181,7 @@
             (keydown.space)="externalAppsExpanded.set(!externalAppsExpanded()); $event.preventDefault()"
           >
             <ix-icon [name]="externalAppsExpanded() ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
-            {{ 'Other Apps' | translate }}
+            {{ 'External Apps' | translate }}
             <span class="app-count">({{ filteredExternalApps().length }})</span>
           </h3>
           @if (externalAppsExpanded()) {

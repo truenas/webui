@@ -72,13 +72,18 @@ export class AppRowComponent {
     return isExternalApp(this.app());
   });
 
-  readonly incomingTrafficBits = computed(() => {
-    return this.stats()?.networks?.reduce((sum, stats) => sum + (stats.rx_bytes || 0) * 8, 0) ?? 0;
+  readonly trafficStats = computed(() => {
+    const networks = this.stats()?.networks;
+    if (!networks?.length) return { incoming: 0, outgoing: 0 };
+
+    return networks.reduce((acc, stats) => ({
+      incoming: acc.incoming + (stats.rx_bytes || 0) * 8,
+      outgoing: acc.outgoing + (stats.tx_bytes || 0) * 8,
+    }), { incoming: 0, outgoing: 0 });
   });
 
-  readonly outgoingTrafficBits = computed(() => {
-    return this.stats()?.networks?.reduce((sum, stats) => sum + (stats.tx_bytes || 0) * 8, 0) ?? 0;
-  });
+  readonly incomingTrafficBits = computed(() => this.trafficStats().incoming);
+  readonly outgoingTrafficBits = computed(() => this.trafficStats().outgoing);
 
   toggleAppChecked(): void {
     // Defensive check: External apps don't render checkboxes in the template,

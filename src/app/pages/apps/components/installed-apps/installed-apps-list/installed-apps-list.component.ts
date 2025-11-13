@@ -530,7 +530,7 @@ export class InstalledAppsListComponent implements OnInit {
     return this.appsStats.getStatsForApp(name);
   }
 
-  private safeAdd(a: number, b: number | null | undefined): number {
+  private safeAdd(a: number | null | undefined, b: number | null | undefined): number {
     const numA = typeof a === 'number' && !Number.isNaN(a) ? a : 0;
     const numB = typeof b === 'number' && !Number.isNaN(b) ? b : 0;
     return numA + numB;
