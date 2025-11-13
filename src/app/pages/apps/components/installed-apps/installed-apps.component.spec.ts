@@ -115,7 +115,11 @@ describe('InstalledAppsComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    spectator.component.installedAppsList().dataSource = [app];
+    const listComponent = spectator.component.installedAppsList();
+    listComponent.dataSource = [app];
+    // Force computed signal to recalculate by toggling searchQuery
+    listComponent.searchQuery.set('trigger');
+    listComponent.searchQuery.set('');
     spectator.detectChanges();
     applicationsService = spectator.inject(ApplicationsService);
   });
