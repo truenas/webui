@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
-import { Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, DestroyRef, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, output, OnInit, ChangeDetectorRef, DestroyRef, inject, signal } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -135,7 +135,7 @@ export class InstalledAppsListComponent implements OnInit {
   };
 
   get isSelectedAppVisible(): boolean {
-    return this.filteredApps()?.some((app) => app.id === this.selectedApp?.id);
+    return this.filteredApps()?.some((app: App) => app.id === this.selectedApp?.id);
   }
 
   readonly filteredApps = computed(() => {
@@ -144,11 +144,11 @@ export class InstalledAppsListComponent implements OnInit {
   });
 
   readonly filteredTruenasApps = computed(() => {
-    return this.filteredApps().filter((app) => isTruenasApp(app));
+    return this.filteredApps().filter((app: App) => isTruenasApp(app));
   });
 
   readonly filteredExternalApps = computed(() => {
-    return this.filteredApps().filter((app) => isExternalApp(app));
+    return this.filteredApps().filter((app: App) => isExternalApp(app));
   });
 
   get allAppsChecked(): boolean {
@@ -215,7 +215,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   toggleAppsChecked(checked: boolean): void {
     if (checked) {
-      this.filteredTruenasApps().forEach((app) => this.selection.select(app.id));
+      this.filteredTruenasApps().forEach((app: App) => this.selection.select(app.id));
     } else {
       this.selection.clear();
     }
