@@ -9,8 +9,8 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/instances/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
-import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerConfigStore } from 'app/pages/instances/stores/container-config.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 import { AllInstancesHeaderComponent } from './all-instances-header.component';
 
 describe('AllInstancesHeaderComponent', () => {
@@ -26,11 +26,11 @@ describe('AllInstancesHeaderComponent', () => {
     component: AllInstancesHeaderComponent,
     providers: [
       mockAuth(),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(ContainerInstancesStore, {
         initialize: jest.fn(),
         instances: signal([]),
       }),
-      mockProvider(VirtualizationConfigStore, storeMock),
+      mockProvider(ContainerConfigStore, storeMock),
       mockProvider(SlideIn, {
         open: jest.fn(() => of(undefined)),
       }),
@@ -68,8 +68,8 @@ describe('AllInstancesHeaderComponent', () => {
         GlobalConfigFormComponent,
         { data: { dataset: 'pool1/dataset1' } },
       );
-      expect(spectator.inject(VirtualizationConfigStore).initialize).toHaveBeenCalled();
-      expect(spectator.inject(VirtualizationInstancesStore).initialize).toHaveBeenCalled();
+      expect(spectator.inject(ContainerConfigStore).initialize).toHaveBeenCalled();
+      expect(spectator.inject(ContainerInstancesStore).initialize).toHaveBeenCalled();
     });
   });
 });

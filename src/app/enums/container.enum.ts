@@ -1,12 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export enum ImageOs {
-  Linux = 'Linux',
-  FreeBsd = 'FreeBSD',
-  Windows = 'Windows',
-}
-
-export type AllowedImageOs = ImageOs | string | null;
+export type AllowedImageOs = string | null;
 
 export enum ContainerType {
   Container = 'CONTAINER',
@@ -47,15 +41,6 @@ export const containerDeviceTypeLabels = new Map<ContainerDeviceType, string>([
 export enum ContainerNetworkType {
   Bridge = 'BRIDGE',
 }
-export enum ContainerNicType {
-  Bridged = 'BRIDGED',
-  Macvlan = 'MACVLAN',
-}
-
-export const containerNicTypeLabels = new Map<ContainerNicType, string>([
-  [ContainerNicType.Bridged, T('Bridged Adaptors')],
-  [ContainerNicType.Macvlan, T('Macvlan')],
-]);
 
 export enum ContainerNicDeviceType {
   E1000 = 'E1000',
@@ -66,13 +51,6 @@ export const containerNicDeviceTypeLabels = new Map<ContainerNicDeviceType, stri
   [ContainerNicDeviceType.E1000, 'Intel e82585 (e1000)'],
   [ContainerNicDeviceType.Virtio, 'VirtIO'],
 ]);
-
-export enum ContainerSource {
-  Image = 'IMAGE',
-  Zvol = 'ZVOL',
-  Iso = 'ISO',
-  Volume = 'VOLUME',
-}
 
 export enum ContainerTime {
   Local = 'LOCAL',

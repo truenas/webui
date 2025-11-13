@@ -31,16 +31,16 @@ import {
 } from 'app/pages/instances/utils/storage-device-validators';
 import { FilesystemService } from 'app/services/filesystem.service';
 
-interface InstanceDiskFormOptions {
+interface InstanceFilesystemDeviceFormOptions {
   instance: ContainerInstance;
   disk: ContainerFilesystemDevice | undefined;
 }
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-instance-disk-form',
-  styleUrls: ['./instance-disk-form.component.scss'],
-  templateUrl: './instance-disk-form.component.html',
+  selector: 'ix-instance-filesystem-device-form',
+  styleUrls: ['./instance-filesystem-device-form.component.scss'],
+  templateUrl: './instance-filesystem-device-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxExplorerComponent,
@@ -56,14 +56,14 @@ interface InstanceDiskFormOptions {
     TestDirective,
   ],
 })
-export class InstanceDiskFormComponent implements OnInit {
+export class InstanceFilesystemDeviceFormComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(FormErrorHandlerService);
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private filesystem = inject(FilesystemService);
-  slideInRef = inject<SlideInRef<InstanceDiskFormOptions, boolean>>(SlideInRef);
+  slideInRef = inject<SlideInRef<InstanceFilesystemDeviceFormOptions, boolean>>(SlideInRef);
 
   private existingDisk = signal<ContainerFilesystemDevice | null>(null);
 
@@ -111,7 +111,7 @@ export class InstanceDiskFormComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
-          this.snackbar.success(this.translate.instant('Filesystem device saved'));
+          this.snackbar.success(this.translate.instant('Filesystem Device was saved'));
           this.slideInRef.close({
             response: true,
           });
@@ -135,7 +135,7 @@ export class InstanceDiskFormComponent implements OnInit {
 
     const existingDisk = this.existingDisk();
     return existingDisk
-      ? this.api.call('container.device.update', [(existingDisk as ContainerFilesystemDevice & { id: number }).id, {
+      ? this.api.call('container.device.update', [existingDisk.id, {
         attributes: payload,
       }])
       : this.api.call('container.device.create', [{

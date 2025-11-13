@@ -6,21 +6,21 @@ import {
   InstanceDetailsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-details.component';
 import {
-  InstanceDisksComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disks.component';
+  InstanceFilesystemDevicesComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-filesystem-devices/instance-filesystem-devices.component';
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
 import {
-  InstanceNicsComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-nics/instance-nics.component';
+  InstanceNicDevicesComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-nic-devices/instance-nic-devices.component';
 import {
   InstanceToolsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-tools/instance-tools.component';
 import {
   InstanceUsbDevicesComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-usb-devices/instance-usb-devices.component';
-import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 
 describe('InstanceDetailsComponent', () => {
   let spectator: Spectator<InstanceDetailsComponent>;
@@ -31,8 +31,8 @@ describe('InstanceDetailsComponent', () => {
       MockComponents(
         InstanceGeneralInfoComponent,
         InstanceUsbDevicesComponent,
-        InstanceDisksComponent,
-        InstanceNicsComponent,
+        InstanceFilesystemDevicesComponent,
+        InstanceNicDevicesComponent,
         InstanceToolsComponent,
       ),
     ],
@@ -41,7 +41,7 @@ describe('InstanceDetailsComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        instance: fakeVirtualizationInstance({
+        instance: fakeContainerInstance({
           id: 1,
           name: 'my-instance',
         }),
@@ -53,8 +53,8 @@ describe('InstanceDetailsComponent', () => {
     const expectedComponents = [
       InstanceGeneralInfoComponent,
       InstanceUsbDevicesComponent,
-      InstanceDisksComponent,
-      InstanceNicsComponent,
+      InstanceFilesystemDevicesComponent,
+      InstanceNicDevicesComponent,
       InstanceToolsComponent,
     ];
 

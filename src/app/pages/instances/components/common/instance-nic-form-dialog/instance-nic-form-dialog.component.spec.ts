@@ -5,14 +5,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { InstanceNicMacDialog } from 'app/pages/instances/components/common/instance-nics-mac-addr-dialog/instance-nic-mac-dialog.component';
+import { InstanceNicFormDialog } from 'app/pages/instances/components/common/instance-nic-form-dialog/instance-nic-form-dialog.component';
 
-describe('InstanceNicMacDialogComponent', () => {
-  let spectator: Spectator<InstanceNicMacDialog>;
+describe('InstanceNicFormDialogComponent', () => {
+  let spectator: Spectator<InstanceNicFormDialog>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: InstanceNicMacDialog,
+    component: InstanceNicFormDialog,
     providers: [
       mockProvider(MatDialogRef, {
         close: jest.fn(),
@@ -31,7 +31,7 @@ describe('InstanceNicMacDialogComponent', () => {
 
   it('shows nic name in title', () => {
     const title = spectator.query('h1');
-    expect(title.textContent).toBe('Add NIC Device: ens');
+    expect(title.textContent.trim()).toBe('Add NIC Device: ens');
   });
 
   it('returns default value', async () => {

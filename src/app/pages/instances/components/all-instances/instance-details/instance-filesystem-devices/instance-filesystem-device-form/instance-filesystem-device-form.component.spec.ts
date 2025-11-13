@@ -11,15 +11,15 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  InstanceDiskFormComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
+  InstanceFilesystemDeviceFormComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-filesystem-devices/instance-filesystem-device-form/instance-filesystem-device-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 
-describe('InstanceDiskFormComponent', () => {
-  let spectator: Spectator<InstanceDiskFormComponent>;
+describe('InstanceFilesystemDeviceFormComponent', () => {
+  let spectator: Spectator<InstanceFilesystemDeviceFormComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: InstanceDiskFormComponent,
+    component: InstanceFilesystemDeviceFormComponent,
     providers: [
       mockAuth(),
       mockApi([

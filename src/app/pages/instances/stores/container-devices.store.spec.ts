@@ -4,36 +4,36 @@ import { Subject, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ContainerDeviceEntry, ContainerInstance } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-describe('VirtualizationDevicesStore', () => {
-  let spectator: SpectatorService<VirtualizationDevicesStore>;
+describe('ContainerDevicesStore', () => {
+  let spectator: SpectatorService<ContainerDevicesStore>;
   let selectedInstanceSignal: ReturnType<typeof signal<ContainerInstance | undefined>>;
 
   const instances = [
-    fakeVirtualizationInstance({ id: 1 }),
-    fakeVirtualizationInstance({ id: 2 }),
+    fakeContainerInstance({ id: 1 }),
+    fakeContainerInstance({ id: 2 }),
   ];
 
   const containerDevices = [
     {
-      id: 1, container: 'instance1', attributes: { name: 'device1' }, order: 0,
+      id: 1, container: 1, attributes: { name: 'device1' },
     } as unknown as ContainerDeviceEntry,
     {
-      id: 2, container: 'instance1', attributes: { name: 'device2' }, order: 1,
+      id: 2, container: 1, attributes: { name: 'device2' },
     } as unknown as ContainerDeviceEntry,
   ] as ContainerDeviceEntry[];
 
   const createService = createServiceFactory({
-    service: VirtualizationDevicesStore,
+    service: ContainerDevicesStore,
     providers: [
       mockApi([
         mockCall('container.device.query', containerDevices),
       ]),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(ContainerInstancesStore, {
         instances: jest.fn(() => instances),
         selectedInstance: jest.fn(() => selectedInstanceSignal()),
       }),

@@ -2,7 +2,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
-import { ContainerDeviceWithId } from 'app/interfaces/container.interface';
+import { ContainerDevice } from 'app/interfaces/container.interface';
 import {
   AddUsbDeviceMenuComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-usb-devices/add-usb-device-menu/add-usb-device-menu.component';
@@ -12,13 +12,13 @@ import {
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 
 describe('InstanceUsbDevicesComponent', () => {
   let spectator: Spectator<InstanceUsbDevicesComponent>;
-  const devices: ContainerDeviceWithId[] = [
+  const devices: ContainerDevice[] = [
     {
       id: 1,
       dtype: ContainerDeviceType.Usb,
@@ -49,13 +49,13 @@ describe('InstanceUsbDevicesComponent', () => {
       ),
     ],
     providers: [
-      mockProvider(VirtualizationInstancesStore, {
-        selectedInstance: () => fakeVirtualizationInstance({
+      mockProvider(ContainerInstancesStore, {
+        selectedInstance: () => fakeContainerInstance({
           id: 1,
           status: { state: ContainerStatus.Stopped, pid: 0, domain_state: 'stopped' },
         }),
       }),
-      mockProvider(VirtualizationDevicesStore, {
+      mockProvider(ContainerDevicesStore, {
         isLoading: () => false,
         devices: () => devices,
         loadDevices: jest.fn(),

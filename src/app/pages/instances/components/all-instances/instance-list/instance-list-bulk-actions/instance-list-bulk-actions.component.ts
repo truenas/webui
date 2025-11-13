@@ -12,7 +12,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
-import { ContainerInstance, VirtualizationStopParams } from 'app/interfaces/container.interface';
+import { ContainerInstance, ContainerStopParams } from 'app/interfaces/container.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -88,7 +88,7 @@ export class InstanceListBulkActionsComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        tap((options: VirtualizationStopParams) => {
+        tap((options: ContainerStopParams) => {
           this.activeCheckedInstances().forEach((instance) => this.stop(instance.id, options));
           this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
           this.resetBulkSelection.emit();
@@ -103,7 +103,7 @@ export class InstanceListBulkActionsComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        tap((options: VirtualizationStopParams) => {
+        tap((options: ContainerStopParams) => {
           this.activeCheckedInstances().forEach((instance) => this.restart(instance.id, options));
           this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
           this.resetBulkSelection.emit();
@@ -118,13 +118,13 @@ export class InstanceListBulkActionsComponent {
       .subscribe();
   }
 
-  private stop(instanceId: number, options: VirtualizationStopParams): void {
+  private stop(instanceId: number, options: ContainerStopParams): void {
     this.api.call('container.stop', [instanceId, options])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe();
   }
 
-  private restart(instanceId: number, options: VirtualizationStopParams): void {
+  private restart(instanceId: number, options: ContainerStopParams): void {
     this.api.call('container.stop', [instanceId, options])
       .pipe(
         switchMap(() => this.api.call('container.start', [instanceId])),

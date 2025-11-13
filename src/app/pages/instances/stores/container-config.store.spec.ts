@@ -5,11 +5,11 @@ import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
+import { ContainerConfigStore } from 'app/pages/instances/stores/container-config.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-describe('VirtualizationConfigStore', () => {
-  let spectator: SpectatorService<VirtualizationConfigStore>;
+describe('ContainerConfigStore', () => {
+  let spectator: SpectatorService<ContainerConfigStore>;
   const configEvent$ = new Subject<ApiEvent<ContainerGlobalConfig>>();
   const config: ContainerGlobalConfig = {
     bridge: 'br0',
@@ -18,7 +18,7 @@ describe('VirtualizationConfigStore', () => {
   } as ContainerGlobalConfig;
 
   const createService = createServiceFactory({
-    service: VirtualizationConfigStore,
+    service: ContainerConfigStore,
     providers: [
       mockApi([
         mockCall('lxc.config', config),

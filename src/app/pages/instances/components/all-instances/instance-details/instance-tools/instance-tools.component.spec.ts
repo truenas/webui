@@ -7,7 +7,7 @@ import { ContainerStatus } from 'app/enums/container.enum';
 import {
   InstanceToolsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-tools/instance-tools.component';
-import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 
 describe('InstanceToolsComponent', () => {
   let spectator: Spectator<InstanceToolsComponent>;
@@ -27,7 +27,7 @@ describe('InstanceToolsComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        instance: fakeVirtualizationInstance({
+        instance: fakeContainerInstance({
           id: 1,
           status: {
             state: ContainerStatus.Running,
@@ -50,7 +50,7 @@ describe('InstanceToolsComponent', () => {
     });
 
     it('show shell link as disabled when instance is not running', async () => {
-      spectator.setInput('instance', fakeVirtualizationInstance({
+      spectator.setInput('instance', fakeContainerInstance({
         id: 1,
         status: {
           state: ContainerStatus.Stopped,

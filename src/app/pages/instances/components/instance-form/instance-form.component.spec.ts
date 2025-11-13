@@ -18,7 +18,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceFormComponent } from 'app/pages/instances/components/instance-form/instance-form.component';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
 describe('InstanceFormComponent', () => {
   let spectator: Spectator<InstanceFormComponent>;
@@ -38,11 +38,7 @@ describe('InstanceFormComponent', () => {
     uuid: 'test-uuid-123',
     name: 'test-container',
     description: 'Test description',
-    vcpus: 2,
-    cores: 1,
-    threads: 1,
     cpuset: '0-1',
-    memory: 1024,
     autostart: true,
     time: 'local',
     shutdown_timeout: 30,
@@ -94,7 +90,7 @@ describe('InstanceFormComponent', () => {
         close: jest.fn(),
         requireConfirmationWhen: jest.fn(),
       }),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(ContainerInstancesStore, {
         initialize: jest.fn(),
       }),
       mockProvider(MatDialog, {
@@ -129,16 +125,6 @@ describe('InstanceFormComponent', () => {
       // eslint-disable-next-line @typescript-eslint/dot-notation
       const title = spectator.component['title']();
       expect(title).toBe('Add Container');
-    });
-
-    it('shows Virtual CPUs field in basic view', async () => {
-      const vcpusInput = await loader.getHarness(IxInputHarness.with({ label: 'Virtual CPUs' }));
-      expect(vcpusInput).toBeTruthy();
-    });
-
-    it('shows Memory field in basic view', async () => {
-      const memoryInput = await loader.getHarness(IxInputHarness.with({ label: 'Memory Size (MB)' }));
-      expect(memoryInput).toBeTruthy();
     });
 
     it('sets isAdvancedMode to false by default', () => {
@@ -200,7 +186,7 @@ describe('InstanceFormComponent', () => {
           close: jest.fn(),
           requireConfirmationWhen: jest.fn(),
         }),
-        mockProvider(VirtualizationInstancesStore, {
+        mockProvider(ContainerInstancesStore, {
           initialize: jest.fn(),
         }),
         mockProvider(MatDialog, {
@@ -242,16 +228,6 @@ describe('InstanceFormComponent', () => {
       expect(imageField).toBeNull();
     });
 
-    it('shows Virtual CPUs field populated with existing value', async () => {
-      const vcpusInput = await loader.getHarness(IxInputHarness.with({ label: 'Virtual CPUs' }));
-      expect(await vcpusInput.getValue()).toBe('2');
-    });
-
-    it('shows Memory field populated with existing value', async () => {
-      const memoryInput = await loader.getHarness(IxInputHarness.with({ label: 'Memory Size (MB)' }));
-      expect(await memoryInput.getValue()).toBe('1024');
-    });
-
     it('shows Save button instead of Create button', async () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(saveButton).toBeTruthy();
@@ -264,39 +240,18 @@ describe('InstanceFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('has Virtual CPUs field visible in basic view', async () => {
-      const vcpusInput = await loader.getHarness(IxInputHarness.with({ label: 'Virtual CPUs' }));
-      expect(vcpusInput).toBeTruthy();
-    });
-
-    it('hides advanced CPU fields (Cores, Threads, CPU Set) in basic view', async () => {
-      await expect(
-        loader.getHarness(IxInputHarness.with({ label: 'Cores' })),
-      ).rejects.toThrow();
-      await expect(
-        loader.getHarness(IxInputHarness.with({ label: 'Threads' })),
-      ).rejects.toThrow();
+    it('hides CPU Set field in basic view', async () => {
       await expect(
         loader.getHarness(IxInputHarness.with({ label: 'CPU Set' })),
       ).rejects.toThrow();
     });
 
-    it('shows advanced CPU fields in Advanced Settings', async () => {
+    it('shows CPU Set field in Advanced Settings', async () => {
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
       await advancedButton.click();
 
-      const coresInput = await loader.getHarness(IxInputHarness.with({ label: 'Cores' }));
-      const threadsInput = await loader.getHarness(IxInputHarness.with({ label: 'Threads' }));
       const cpusetInput = await loader.getHarness(IxInputHarness.with({ label: 'CPU Set' }));
-
-      expect(coresInput).toBeTruthy();
-      expect(threadsInput).toBeTruthy();
       expect(cpusetInput).toBeTruthy();
-    });
-
-    it('has Memory field visible by default', async () => {
-      const memoryInput = await loader.getHarness(IxInputHarness.with({ label: 'Memory Size (MB)' }));
-      expect(memoryInput).toBeTruthy();
     });
   });
 
@@ -311,19 +266,13 @@ describe('InstanceFormComponent', () => {
       const router = spectator.inject(Router);
       const snackbar = spectator.inject(SnackbarService);
       const slideInRef = spectator.inject(SlideInRef);
-      const instancesStore = spectator.inject(VirtualizationInstancesStore);
+      const instancesStore = spectator.inject(ContainerInstancesStore);
 
       const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
       await nameInput.setValue('new-container');
 
       const descriptionInput = await loader.getHarness(IxInputHarness.with({ label: 'Description' }));
       await descriptionInput.setValue('Test container');
-
-      const vcpusInput = await loader.getHarness(IxInputHarness.with({ label: 'Virtual CPUs' }));
-      await vcpusInput.setValue('4');
-
-      const memoryInput = await loader.getHarness(IxInputHarness.with({ label: 'Memory Size (MB)' }));
-      await memoryInput.setValue('2048');
 
       const autostartCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Autostart' }));
       await autostartCheckbox.setValue(false);
@@ -368,7 +317,7 @@ describe('InstanceFormComponent', () => {
             preferred_pool: 'pool1',
           }),
           mockCall('container.create'),
-          mockCall('container.update', { ...existingInstance, name: 'updated-container', vcpus: 4 } as ContainerInstance),
+          mockCall('container.update', { ...existingInstance, name: 'updated-container' } as ContainerInstance),
           mockCall('container.get_instance', existingInstance),
           mockCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
@@ -378,7 +327,7 @@ describe('InstanceFormComponent', () => {
           close: jest.fn(),
           requireConfirmationWhen: jest.fn(),
         }),
-        mockProvider(VirtualizationInstancesStore, {
+        mockProvider(ContainerInstancesStore, {
           initialize: jest.fn(),
           instanceUpdated: jest.fn(),
         }),
@@ -405,13 +354,10 @@ describe('InstanceFormComponent', () => {
       const api = spectator.inject(ApiService);
       const snackbar = spectator.inject(SnackbarService);
       const slideInRef = spectator.inject(SlideInRef);
-      const instancesStore = spectator.inject(VirtualizationInstancesStore);
+      const instancesStore = spectator.inject(ContainerInstancesStore);
 
       const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
       await nameInput.setValue('updated-container');
-
-      const vcpusInput = await loader.getHarness(IxInputHarness.with({ label: 'Virtual CPUs' }));
-      await vcpusInput.setValue('4');
 
       const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submitButton.click();
@@ -420,14 +366,13 @@ describe('InstanceFormComponent', () => {
         1,
         expect.objectContaining({
           name: 'updated-container',
-          vcpus: 4,
         }),
       ]);
 
       expect(snackbar.success).toHaveBeenCalledWith('Container updated');
       expect(slideInRef.close).toHaveBeenCalledWith({ response: true, error: false });
       expect(instancesStore.instanceUpdated).toHaveBeenCalledWith(
-        expect.objectContaining({ name: 'updated-container', vcpus: 4 }),
+        expect.objectContaining({ name: 'updated-container' }),
       );
     });
   });
@@ -535,7 +480,7 @@ describe('InstanceFormComponent', () => {
           close: jest.fn(),
           requireConfirmationWhen: jest.fn(),
         }),
-        mockProvider(VirtualizationInstancesStore, {
+        mockProvider(ContainerInstancesStore, {
           initialize: jest.fn(),
         }),
         mockProvider(MatDialog, {

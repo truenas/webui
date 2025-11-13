@@ -7,7 +7,7 @@ import { Observable, of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import {
-  ContainerDeviceWithId,
+  ContainerDevice,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -17,15 +17,15 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('DeviceActionsMenuComponent', () => {
   let spectator: Spectator<DeviceActionsMenuComponent>;
   let loader: HarnessLoader;
-  const selectedInstance = signal(fakeVirtualizationInstance({
+  const selectedInstance = signal(fakeContainerInstance({
     id: 1,
   }));
   const createComponent = createComponentFactory({
@@ -47,10 +47,10 @@ describe('DeviceActionsMenuComponent', () => {
       mockApi([
         mockCall('container.device.delete'),
       ]),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(ContainerInstancesStore, {
         selectedInstance,
       }),
-      mockProvider(VirtualizationDevicesStore, {
+      mockProvider(ContainerDevicesStore, {
         loadDevices: jest.fn(),
         deviceDeleted: jest.fn(),
       }),
@@ -68,7 +68,7 @@ describe('DeviceActionsMenuComponent', () => {
             product_id: '5678',
           },
           device: null,
-        } as ContainerDeviceWithId,
+        } as ContainerDevice,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -83,7 +83,7 @@ describe('DeviceActionsMenuComponent', () => {
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.delete', [123]);
-      expect(spectator.inject(VirtualizationDevicesStore).deviceDeleted).toHaveBeenCalledWith(123);
+      expect(spectator.inject(ContainerDevicesStore).deviceDeleted).toHaveBeenCalledWith(123);
     });
   });
 
@@ -105,7 +105,7 @@ describe('DeviceActionsMenuComponent', () => {
         dtype: ContainerDeviceType.Filesystem,
         source: '/mnt/tank/dataset',
         target: '/data',
-      } as ContainerDeviceWithId);
+      } as ContainerDevice);
 
       const menu = await loader.getHarness(MatMenuHarness);
       await menu.open();

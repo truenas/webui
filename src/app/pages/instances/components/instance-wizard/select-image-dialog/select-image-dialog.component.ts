@@ -10,7 +10,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { catchError, Observable, of } from 'rxjs';
 import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { VirtualizationImage, ContainerImageRegistryResponse } from 'app/interfaces/container.interface';
+import { ContainerImage, ContainerImageRegistryResponse } from 'app/interfaces/container.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -23,7 +23,7 @@ import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-export type VirtualizationImageWithId = VirtualizationImage & {
+export type ContainerImageWithId = ContainerImage & {
   id: string;
 };
 
@@ -72,8 +72,8 @@ export class SelectImageDialog implements OnInit {
   protected variantOptions$: Observable<Option[]>;
   protected releaseOptions$: Observable<Option[]>;
 
-  protected images = signal<VirtualizationImageWithId[]>([]);
-  protected filteredImages = signal<VirtualizationImageWithId[]>([]);
+  protected images = signal<ContainerImageWithId[]>([]);
+  protected filteredImages = signal<ContainerImageWithId[]>([]);
   protected entityEmptyConf = signal({
     type: EmptyType.Loading,
     large: true,
@@ -91,7 +91,7 @@ export class SelectImageDialog implements OnInit {
     this.dialogRef.close();
   }
 
-  protected selectImage(image: VirtualizationImageWithId): void {
+  protected selectImage(image: ContainerImageWithId): void {
     this.dialogRef.close(image);
   }
 
@@ -116,7 +116,7 @@ export class SelectImageDialog implements OnInit {
     const releaseSet = new Set<string>();
 
     // Flatten the registry response into individual selectable images
-    const imageArray: VirtualizationImageWithId[] = [];
+    const imageArray: ContainerImageWithId[] = [];
 
     registryImages.forEach((registryImage) => {
       registryImage.versions.forEach((version: unknown) => {
@@ -142,8 +142,8 @@ export class SelectImageDialog implements OnInit {
 
         const imageId = `${registryImage.name}:${versionString}`;
 
-        // Create a VirtualizationImage-compatible object
-        const image: VirtualizationImageWithId = {
+        // Create a ContainerImage-compatible object
+        const image: ContainerImageWithId = {
           id: imageId,
           archs: archsArray,
           description: `${registryImage.name} container image`,

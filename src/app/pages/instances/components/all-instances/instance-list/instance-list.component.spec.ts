@@ -6,13 +6,13 @@ import { ContainerStatus } from 'app/enums/container.enum';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { InstanceListComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-list.component';
 import { InstanceRowComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-row.component';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 
 describe('InstanceListComponent', () => {
   let spectator: Spectator<InstanceListComponent>;
 
-  const mockInstance = fakeVirtualizationInstance({
+  const mockInstance = fakeContainerInstance({
     id: 1,
     name: 'agi_instance',
     status: {
@@ -27,7 +27,7 @@ describe('InstanceListComponent', () => {
     imports: [InstanceRowComponent],
     providers: [
       mockAuth(),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(ContainerInstancesStore, {
         initialize: jest.fn(),
         instances: jest.fn(() => [mockInstance]),
         metrics: jest.fn(() => ({})),

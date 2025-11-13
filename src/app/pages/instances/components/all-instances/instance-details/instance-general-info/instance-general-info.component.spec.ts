@@ -19,14 +19,13 @@ import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
 import { InstanceFormComponent } from 'app/pages/instances/components/instance-form/instance-form.component';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
-import { fakeVirtualizationInstance } from 'app/pages/instances/utils/fake-virtualization-instance.utils';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 
-const instance = fakeVirtualizationInstance({
+const instance = fakeContainerInstance({
   id: 1,
   name: 'Demo',
   autostart: true,
-  memory: 512,
   cpuset: '0-3',
   status: {
     state: ContainerStatus.Running,
@@ -50,7 +49,7 @@ describe('InstanceGeneralInfoComponent', () => {
           response: true,
         })),
       }),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(ContainerInstancesStore, {
         selectedInstance: jest.fn(),
         instanceUpdated: jest.fn(),
         initialize: jest.fn(),
@@ -82,18 +81,15 @@ describe('InstanceGeneralInfoComponent', () => {
     const cardContent = spectator.query('mat-card-content');
     expect(cardContent).toContainText('Autostart: Yes');
     expect(cardContent).toContainText('CPU Set: 0-3');
-    expect(cardContent).toContainText('Memory: 512 MB');
   });
 
-  it('renders correct values when CPU Set or Memory limit is not set', () => {
-    spectator.setInput('instance', fakeVirtualizationInstance({
+  it('renders correct values when CPU Set is not set', () => {
+    spectator.setInput('instance', fakeContainerInstance({
       cpuset: null,
-      memory: null,
     }));
 
     const cardContent = spectator.query('mat-card-content');
     expect(cardContent).toContainText('CPU Set: All Host CPUs');
-    expect(cardContent).toContainText('Memory: Available Host Memory');
   });
 
   it('deletes instance when "Delete" button is pressed and redirects to list root', async () => {
@@ -111,7 +107,7 @@ describe('InstanceGeneralInfoComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(InstanceFormComponent, { data: instance });
-    expect(spectator.inject(VirtualizationInstancesStore).initialize).toHaveBeenCalled();
+    expect(spectator.inject(ContainerInstancesStore).initialize).toHaveBeenCalled();
   });
 
   it('does not delete instance when confirmation is cancelled', async () => {
@@ -126,7 +122,7 @@ describe('InstanceGeneralInfoComponent', () => {
   });
 
   it('shows capabilities policy when available', () => {
-    spectator.setInput('instance', fakeVirtualizationInstance({
+    spectator.setInput('instance', fakeContainerInstance({
       capabilities_policy: 'ALLOW',
     }));
 

@@ -9,14 +9,14 @@
       [ixUiSearch]="searchableElements.elements.usbDevices"
     ></ix-instance-usb-devices>
 
-    <ix-instance-disks
+    <ix-instance-filesystem-devices
       [instance]="instance()"
       [ixUiSearch]="searchableElements.elements.disks"
-    ></ix-instance-disks>
+    ></ix-instance-filesystem-devices>
 
-    <ix-instance-nics
+    <ix-instance-nic-devices
       [ixUiSearch]="searchableElements.elements.nic"
-    ></ix-instance-nics>
+    ></ix-instance-nic-devices>
 
     <ix-instance-tools [instance]="instance()"
       [ixUiSearch]="searchableElements.elements.tools"

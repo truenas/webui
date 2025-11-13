@@ -11,8 +11,8 @@ import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/te
 import { AllInstancesHeaderComponent } from 'app/pages/instances/components/all-instances/all-instances-header/all-instances-header.component';
 import { AllInstancesComponent } from 'app/pages/instances/components/all-instances/all-instances.component';
 import { InstanceDetailsComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-details.component';
-import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerConfigStore } from 'app/pages/instances/stores/container-config.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('AllInstancesComponent', () => {
@@ -49,7 +49,7 @@ describe('AllInstancesComponent', () => {
       mockProvider(DialogService, {
         warn: jest.fn(() => of(true)),
       }),
-      mockProvider(VirtualizationConfigStore, {
+      mockProvider(ContainerConfigStore, {
         initialize: jest.fn(),
         config: () => ({
           bridge: null as string | null,
@@ -58,7 +58,7 @@ describe('AllInstancesComponent', () => {
           preferred_pool: null as string | null,
         }),
       }),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(ContainerInstancesStore, {
         selectedInstance: jest.fn(() => ({})),
         initialize: jest.fn(),
         instances: jest.fn(() => [] as ContainerInstance[]),
@@ -84,8 +84,8 @@ describe('AllInstancesComponent', () => {
 
   it('initializes config store on init', () => {
     spectator.component.ngOnInit();
-    expect(spectator.inject(VirtualizationConfigStore).initialize).toHaveBeenCalled();
-    expect(spectator.inject(VirtualizationInstancesStore).initialize).toHaveBeenCalled();
+    expect(spectator.inject(ContainerConfigStore).initialize).toHaveBeenCalled();
+    expect(spectator.inject(ContainerInstancesStore).initialize).toHaveBeenCalled();
   });
 
   it('shows warning dialog and updates localStorage if warning has not been shown before', () => {

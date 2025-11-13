@@ -1,4 +1,10 @@
-<h1 mat-dialog-title>{{ 'Add NIC Device: {nic}' | translate: { nic: nic() } }}</h1>
+<h1 mat-dialog-title>
+  @if (isEditMode()) {
+    {{ 'Edit NIC Device: {nic}' | translate: { nic: nic() } }}
+  } @else {
+    {{ 'Add NIC Device: {nic}' | translate: { nic: nic() } }}
+  }
+</h1>
 <div mat-dialog-content>
   <form [formGroup]="form">
     <ix-select
@@ -8,15 +14,18 @@
       [options]="nicTypeOptions"
     ></ix-select>
 
-    <ix-checkbox
-      formControlName="use_default"
-      [label]="'Use Default Mac Address' | translate"
-    ></ix-checkbox>
-    @if (!useDefault()) {
+    @if (!isEditMode()) {
+      <ix-checkbox
+        formControlName="use_default"
+        [label]="'Use Default Mac Address' | translate"
+      ></ix-checkbox>
+    }
+    @if (isEditMode() || !useDefault()) {
       <ix-input
         formControlName="mac"
-        [required]="true"
+        [required]="!isEditMode()"
         [label]="'Mac Address' | translate"
+        [tooltip]="isEditMode() ? ('Leave empty to use default MAC address' | translate) : null"
       ></ix-input>
     }
 
@@ -42,8 +51,12 @@
       color="primary"
       ixTest="close"
       [disabled]="!(isValid$ | async)"
-      (click)="addDevice()"
+      (click)="saveDevice()"
     >
-      {{ 'Add' | translate }}
+      @if (isEditMode()) {
+        {{ 'Update' | translate }}
+      } @else {
+        {{ 'Add' | translate }}
+      }
     </button>
 </div>

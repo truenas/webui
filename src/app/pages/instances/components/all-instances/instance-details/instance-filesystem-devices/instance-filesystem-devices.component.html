@@ -1,7 +1,7 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>
-      {{ 'Disks' | translate }}
+      {{ 'Filesystem Devices' | translate }}
     </h3>
 
     <button
@@ -32,7 +32,7 @@
           ></ix-device-actions-menu>
         </div>
       } @empty {
-        <div class="no-devices">{{ 'No disks added.' | translate }}</div>
+        <div class="no-devices">{{ 'No filesystem devices added.' | translate }}</div>
       }
     }
   </mat-card-content>

@@ -58,24 +58,6 @@
 
       </ix-fieldset>
 
-      <ix-fieldset [title]="'CPU Configuration' | translate">
-        <ix-input
-          formControlName="vcpus"
-          type="number"
-          [label]="'Virtual CPUs' | translate"
-          [tooltip]="'Number of virtual CPUs (greater or equal to 1)' | translate"
-        ></ix-input>
-      </ix-fieldset>
-
-      <ix-fieldset [title]="'Memory' | translate">
-        <ix-input
-          formControlName="memory"
-          type="number"
-          [label]="'Memory Size (MB)' | translate"
-          [tooltip]="'Memory available to container in megabytes' | translate"
-        ></ix-input>
-      </ix-fieldset>
-
       @if (isAdvancedMode) {
         @if (!isEditMode() && hasPreferredPool()) {
           <ix-fieldset [title]="'Storage' | translate">
@@ -97,21 +79,7 @@
           </ix-fieldset>
         }
 
-        <ix-fieldset [title]="'Advanced CPU Configuration' | translate">
-          <ix-input
-            formControlName="cores"
-            type="number"
-            [label]="'Cores' | translate"
-            [tooltip]="'Number of cores per socket' | translate"
-          ></ix-input>
-
-          <ix-input
-            formControlName="threads"
-            type="number"
-            [label]="'Threads' | translate"
-            [tooltip]="'Number of threads per core' | translate"
-          ></ix-input>
-
+        <ix-fieldset [title]="'CPU Configuration' | translate">
           <ix-input
             formControlName="cpuset"
             [label]="'CPU Set' | translate"

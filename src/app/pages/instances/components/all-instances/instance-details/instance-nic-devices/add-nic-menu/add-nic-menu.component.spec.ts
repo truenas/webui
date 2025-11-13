@@ -9,10 +9,10 @@ import { ContainerDeviceType, ContainerNicDeviceType } from 'app/enums/container
 import { ContainerDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { AddNicMenuComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
-import { InstanceNicMacDialog } from 'app/pages/instances/components/common/instance-nics-mac-addr-dialog/instance-nic-mac-dialog.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { AddNicMenuComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nic-devices/add-nic-menu/add-nic-menu.component';
+import { InstanceNicFormDialog } from 'app/pages/instances/components/common/instance-nic-form-dialog/instance-nic-form-dialog.component';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
 describe('AddNicMenuComponent', () => {
   let spectator: Spectator<AddNicMenuComponent>;
@@ -27,15 +27,15 @@ describe('AddNicMenuComponent', () => {
         }),
         mockCall('container.device.create'),
       ]),
-      mockProvider(VirtualizationInstancesStore, {
-        selectedInstance: () => ({ id: 'my-instance' }),
+      mockProvider(ContainerInstancesStore, {
+        selectedInstance: () => ({ id: 123 }),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: jest.fn(() => of({ useDefault: true, trust_guest_rx_filters: false })),
         })),
       }),
-      mockProvider(VirtualizationDevicesStore, {
+      mockProvider(ContainerDevicesStore, {
         devices: () => [
           {
             dtype: ContainerDeviceType.Nic,
@@ -78,13 +78,13 @@ describe('AddNicMenuComponent', () => {
 
     await menu.clickItem({ text: 'TrueNAS Bridge' });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(InstanceNicMacDialog, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(InstanceNicFormDialog, {
       data: 'truenasbr0',
       minWidth: '500px',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
-      container: 'my-instance',
+      container: 123,
       attributes: {
         dtype: ContainerDeviceType.Nic,
         type: ContainerNicDeviceType.Virtio,
@@ -92,8 +92,8 @@ describe('AddNicMenuComponent', () => {
         trust_guest_rx_filters: false,
       } as ContainerDevice,
     }]);
-    expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('NIC was added');
+    expect(spectator.inject(ContainerDevicesStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('NIC Device was added');
   });
 
   it('adds a NIC device without trust_guest_rx_filters when E1000 is selected', async () => {
@@ -104,19 +104,19 @@ describe('AddNicMenuComponent', () => {
       afterClosed: jest.fn(() => of({
         useDefault: true,
         type: ContainerNicDeviceType.E1000,
-        trust_guest_rx_filters: true,
+        // Note: trust_guest_rx_filters should NOT be included for E1000
       })),
     }));
 
     await menu.clickItem({ text: 'TrueNAS Bridge' });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
-      container: 'my-instance',
+      container: 123,
       attributes: {
         dtype: ContainerDeviceType.Nic,
         type: ContainerNicDeviceType.E1000,
         nic_attach: 'truenasbr0',
-        // trust_guest_rx_filters should NOT be included for E1000
+        // trust_guest_rx_filters should NOT be present for E1000
       } as ContainerDevice,
     }]);
   });
