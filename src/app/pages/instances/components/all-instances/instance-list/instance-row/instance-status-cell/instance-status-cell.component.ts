@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, HostBinding,
+  Component,
   computed,
   input,
 } from '@angular/core';
@@ -15,16 +15,19 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   styleUrls: ['./instance-status-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslateModule, MapValuePipe],
+  host: {
+    '[class]': 'hostClasses()',
+  },
 })
 export class InstanceStatusCellComponent {
   readonly instance = input.required<ContainerInstance>();
 
-  @HostBinding('class') get hostClasses(): string[] {
+  protected hostClasses = computed(() => {
     return [
       this.status()?.toLowerCase() || 'unknown',
       'has-cell',
-    ];
-  }
+    ].join(' ');
+  });
 
   status = computed(() => this.instance().status?.state);
 

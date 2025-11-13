@@ -170,6 +170,9 @@ export class ContainerInstancesStore extends ComponentStore<ContainerInstancesSt
           if (!shouldSubscribe) {
             return EMPTY;
           }
+          // TODO: API endpoint under review - may be migrated to container.metrics
+          // Currently using virt.instance.metrics for container metrics.
+          // API ticket will determine if this should move to container.* endpoint.
           return this.api.subscribe('virt.instance.metrics').pipe(
             map((event) => event.fields),
           );
