@@ -24,7 +24,7 @@
   ></ix-basic-search>
 </div>
 
-@if ((dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading())) {
+@if ((dataSource.length && !filteredApps().length) || (!dataSource.length && !isLoading())) {
   <ix-empty [conf]="entityEmptyConf"></ix-empty>
 } @else {
   <div
@@ -115,9 +115,9 @@
             </div>
             <div class="cell cell-network">
               <strong>
-                {{ utilization.networkRx * 8 | ixNetworkSpeed }}
+                {{ utilization.networkRxBits | ixNetworkSpeed }}
                 -
-                {{ utilization.networkTx * 8 | ixNetworkSpeed }}
+                {{ utilization.networkTxBits | ixNetworkSpeed }}
               </strong>
             </div>
             <div class="cell cell-update"></div>
@@ -126,7 +126,7 @@
         </div>
       }
 
-      @if (filteredTruenasApps.length) {
+      @if (filteredTruenasApps().length) {
         <div class="apps-section">
           <h3
             class="section-header"
@@ -141,11 +141,11 @@
           >
             <ix-icon [name]="truenasAppsExpanded() ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
             {{ 'TrueNAS Apps' | translate }}
-            <span class="app-count">({{ filteredTruenasApps.length }})</span>
+            <span class="app-count">({{ filteredTruenasApps().length }})</span>
           </h3>
           @if (truenasAppsExpanded()) {
             <div class="apps-rows" id="truenas-apps-section">
-              @for (app of filteredTruenasApps; track app.name) {
+              @for (app of filteredTruenasApps(); track app.name) {
                 <ix-app-row
                   tabindex="0"
                   [app]="app"
@@ -167,7 +167,7 @@
         </div>
       }
 
-      @if (filteredExternalApps.length) {
+      @if (filteredExternalApps().length) {
         <div class="apps-section">
           <h3
             class="section-header"
@@ -182,11 +182,11 @@
           >
             <ix-icon [name]="externalAppsExpanded() ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
             {{ 'Other Apps' | translate }}
-            <span class="app-count">({{ filteredExternalApps.length }})</span>
+            <span class="app-count">({{ filteredExternalApps().length }})</span>
           </h3>
           @if (externalAppsExpanded()) {
             <div class="apps-rows" id="external-apps-section">
-              @for (app of filteredExternalApps; track app.name) {
+              @for (app of filteredExternalApps(); track app.name) {
                 <ix-app-row
                   tabindex="0"
                   [app]="app"

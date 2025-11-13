@@ -135,24 +135,24 @@ export class InstalledAppsListComponent implements OnInit {
   };
 
   get isSelectedAppVisible(): boolean {
-    return this.filteredApps?.some((app) => app.id === this.selectedApp?.id);
+    return this.filteredApps()?.some((app) => app.id === this.selectedApp?.id);
   }
 
-  get filteredApps(): App[] {
+  readonly filteredApps = computed(() => {
     return this.dataSource
       .filter((app) => app?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase()));
-  }
+  });
 
-  get filteredTruenasApps(): App[] {
-    return this.filteredApps.filter((app) => isTruenasApp(app));
-  }
+  readonly filteredTruenasApps = computed(() => {
+    return this.filteredApps().filter((app) => isTruenasApp(app));
+  });
 
-  get filteredExternalApps(): App[] {
-    return this.filteredApps.filter((app) => isExternalApp(app));
-  }
+  readonly filteredExternalApps = computed(() => {
+    return this.filteredApps().filter((app) => isExternalApp(app));
+  });
 
   get allAppsChecked(): boolean {
-    return this.selection.selected.length === this.filteredTruenasApps.length && this.filteredTruenasApps.length > 0;
+    return this.selection.selected.length === this.filteredTruenasApps().length && this.filteredTruenasApps().length > 0;
   }
 
   get hasCheckedApps(): boolean {
@@ -208,14 +208,14 @@ export class InstalledAppsListComponent implements OnInit {
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
 
-    if (!this.filteredApps.length) {
+    if (!this.filteredApps().length) {
       this.showLoadStatus(EmptyType.NoSearchResults);
     }
   }
 
   toggleAppsChecked(checked: boolean): void {
     if (checked) {
-      this.filteredTruenasApps.forEach((app) => this.selection.select(app.id));
+      this.filteredTruenasApps().forEach((app) => this.selection.select(app.id));
     } else {
       this.selection.clear();
     }
@@ -556,8 +556,8 @@ export class InstalledAppsListComponent implements OnInit {
           memory: 0,
           blkioRead: 0,
           blkioWrite: 0,
-          networkRx: 0,
-          networkTx: 0,
+          networkRxBits: 0,
+          networkTxBits: 0,
         });
       }
 
@@ -576,21 +576,24 @@ export class InstalledAppsListComponent implements OnInit {
               memory: this.safeAdd(totals.memory, stats.memory),
               blkioRead: this.safeAdd(totals.blkioRead, stats.blkio?.read),
               blkioWrite: this.safeAdd(totals.blkioWrite, stats.blkio?.write),
-              networkRx: this.safeAdd(totals.networkRx, this.safeNetworkSum(stats.networks, 'rx_bytes')),
-              networkTx: this.safeAdd(totals.networkTx, this.safeNetworkSum(stats.networks, 'tx_bytes')),
+              networkRxBits: this.safeAdd(totals.networkRxBits, this.safeNetworkSum(stats.networks, 'rx_bytes') * 8),
+              networkTxBits: this.safeAdd(totals.networkTxBits, this.safeNetworkSum(stats.networks, 'tx_bytes') * 8),
             };
           }, {
             cpu: 0,
             memory: 0,
             blkioRead: 0,
             blkioWrite: 0,
-            networkRx: 0,
-            networkTx: 0,
+            networkRxBits: 0,
+            networkTxBits: 0,
           });
         }),
       );
     }),
-    takeUntilDestroyed(this.destroyRef),
+    // Note: takeUntilDestroyed is NOT needed here because shareReplay({ refCount: true })
+    // automatically unsubscribes from the source when all subscribers leave.
+    // The async pipe unsubscribes on component destruction, causing refCount to drop to 0,
+    // which triggers automatic cleanup of the entire observable chain.
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 }

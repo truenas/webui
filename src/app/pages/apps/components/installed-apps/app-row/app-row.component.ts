@@ -81,6 +81,8 @@ export class AppRowComponent {
   });
 
   toggleAppChecked(): void {
+    // Defensive check: External apps don't render checkboxes in the template,
+    // but this prevents selection changes if called programmatically
     if (!isExternalApp(this.app())) {
       this.selectionChange.emit();
     }

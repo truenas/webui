@@ -297,8 +297,8 @@ describe('InstalledAppsListComponent', () => {
       const component = spectator.component;
       component.dataSource = apps;
 
-      const truenasApps = component.filteredTruenasApps;
-      const externalApps = component.filteredExternalApps;
+      const truenasApps = component.filteredTruenasApps();
+      const externalApps = component.filteredExternalApps();
 
       expect(truenasApps).toHaveLength(2);
       expect(truenasApps[0].source).toBe('TRUENAS');
@@ -394,8 +394,8 @@ describe('InstalledAppsListComponent', () => {
       expect(utilization.memory).toBeGreaterThanOrEqual(0);
       expect(utilization.blkioRead).toBeGreaterThanOrEqual(0);
       expect(utilization.blkioWrite).toBeGreaterThanOrEqual(0);
-      expect(utilization.networkRx).toBeGreaterThanOrEqual(0);
-      expect(utilization.networkTx).toBeGreaterThanOrEqual(0);
+      expect(utilization.networkRxBits).toBeGreaterThanOrEqual(0);
+      expect(utilization.networkTxBits).toBeGreaterThanOrEqual(0);
     });
 
     it('handles empty apps array by returning zero values', async () => {
@@ -411,11 +411,11 @@ describe('InstalledAppsListComponent', () => {
       expect(utilization.memory).toBe(0);
       expect(utilization.blkioRead).toBe(0);
       expect(utilization.blkioWrite).toBe(0);
-      expect(utilization.networkRx).toBe(0);
-      expect(utilization.networkTx).toBe(0);
+      expect(utilization.networkRxBits).toBe(0);
+      expect(utilization.networkTxBits).toBe(0);
     });
 
-    it('handles null or invalid stats by returning zero for those apps', fakeAsync(() => {
+    it('handles null or invalid stats by returning zero for those apps', fakeAsync(async () => {
       const appsStatsService = spectator.inject(AppsStatsService);
 
       jest.spyOn(appsStatsService, 'getStatsForApp').mockImplementation((name) => {
@@ -432,24 +432,18 @@ describe('InstalledAppsListComponent', () => {
       });
 
       const component = spectator.component;
-      let utilization: any;
-
-      // Subscribe before triggering emission
-      const subscription = component.totalUtilization$.subscribe((result) => {
-        utilization = result;
-      });
 
       // Trigger new emission with updated mock
       installedApps$.next(apps);
       tick(300);  // Advance past debounceTime(300)
 
+      const utilization = await firstValueFrom(component.totalUtilization$);
+
       expect(utilization.cpu).toBe(20);
       expect(utilization.memory).toBe(2048);
-
-      subscription.unsubscribe();
     }));
 
-    it('aggregates network stats correctly', fakeAsync(() => {
+    it('aggregates network stats correctly', fakeAsync(async () => {
       const appsStatsService = spectator.inject(AppsStatsService);
 
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
@@ -464,24 +458,18 @@ describe('InstalledAppsListComponent', () => {
       } as AppStats));
 
       const component = spectator.component;
-      let utilization: any;
-
-      // Subscribe before triggering emission
-      const subscription = component.totalUtilization$.subscribe((result) => {
-        utilization = result;
-      });
 
       // Trigger new emission with updated mock
       installedApps$.next(apps);
       tick(300);
 
-      expect(utilization.networkRx).toBe(4500);
-      expect(utilization.networkTx).toBe(10500);
+      const utilization = await firstValueFrom(component.totalUtilization$);
 
-      subscription.unsubscribe();
+      expect(utilization.networkRxBits).toBe(36000);
+      expect(utilization.networkTxBits).toBe(84000);
     }));
 
-    it('handles null network stats', fakeAsync(() => {
+    it('handles null network stats', fakeAsync(async () => {
       const appsStatsService = spectator.inject(AppsStatsService);
 
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
@@ -493,24 +481,18 @@ describe('InstalledAppsListComponent', () => {
       } as AppStats));
 
       const component = spectator.component;
-      let utilization: any;
-
-      // Subscribe before triggering emission
-      const subscription = component.totalUtilization$.subscribe((result) => {
-        utilization = result;
-      });
 
       // Trigger new emission with updated mock
       installedApps$.next(apps);
       tick(300);
 
-      expect(utilization.networkRx).toBe(0);
-      expect(utilization.networkTx).toBe(0);
+      const utilization = await firstValueFrom(component.totalUtilization$);
 
-      subscription.unsubscribe();
+      expect(utilization.networkRxBits).toBe(0);
+      expect(utilization.networkTxBits).toBe(0);
     }));
 
-    it('handles undefined values in stats', fakeAsync(() => {
+    it('handles undefined values in stats', fakeAsync(async () => {
       const appsStatsService = spectator.inject(AppsStatsService);
 
       jest.spyOn(appsStatsService, 'getStatsForApp').mockReturnValue(of({
@@ -522,23 +504,17 @@ describe('InstalledAppsListComponent', () => {
       } as AppStats));
 
       const component = spectator.component;
-      let utilization: any;
-
-      // Subscribe before triggering emission
-      const subscription = component.totalUtilization$.subscribe((result) => {
-        utilization = result;
-      });
 
       // Trigger new emission with updated mock
       installedApps$.next(apps);
       tick(300);
 
+      const utilization = await firstValueFrom(component.totalUtilization$);
+
       expect(utilization.cpu).toBe(0);
       expect(utilization.memory).toBe(0);
       expect(utilization.blkioRead).toBe(0);
       expect(utilization.blkioWrite).toBe(0);
-
-      subscription.unsubscribe();
     }));
   });
 });
