@@ -58,7 +58,7 @@ describe('UploadIsoDialogComponent', () => {
     const upload = fakeFile('new-windows.iso');
 
     await form.fillForm({
-      'ISO save location': '/mnt/iso',
+      'ISO save location': '/mnt/tank/iso',
       'Installer image file': [upload],
     });
 
@@ -68,9 +68,9 @@ describe('UploadIsoDialogComponent', () => {
     expect(spectator.inject(UploadService).upload).toHaveBeenCalledWith(expect.objectContaining({
       file: upload,
       method: 'filesystem.put',
-      params: ['/mnt/iso/new-windows.iso', { mode: 493 }],
+      params: ['/mnt/tank/iso/new-windows.iso', { mode: 493 }],
     }));
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('/mnt/iso/new-windows.iso');
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('/mnt/tank/iso/new-windows.iso');
   });
 
   it('cancels upload and cleans up when component is destroyed', async () => {
@@ -84,7 +84,7 @@ describe('UploadIsoDialogComponent', () => {
     });
 
     await form.fillForm({
-      'ISO save location': '/mnt/iso',
+      'ISO save location': '/mnt/tank/iso',
       'Installer image file': [upload],
     });
 
@@ -106,5 +106,69 @@ describe('UploadIsoDialogComponent', () => {
     // Verify the upload subscription was cancelled
     expect(uploadEventSpy).toHaveBeenCalled(); // The subject itself still emits
     // But the component's subscription should be cancelled
+  });
+
+  describe('path validation', () => {
+    it('starts with empty path and form is invalid', () => {
+      expect(spectator.component.form.controls.path.value).toBe('');
+      expect(spectator.component.form.valid).toBe(false);
+    });
+
+    it('rejects /mnt itself', () => {
+      spectator.component.form.patchValue({ path: '/mnt' });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.path.errors).toEqual({
+        poolRoot: {
+          message: 'Cannot upload to /mnt or pool root. Please select a dataset under the pool (e.g., /mnt/pool/dataset).',
+        },
+      });
+      expect(spectator.component.form.valid).toBe(false);
+    });
+
+    it('rejects pool root paths like /mnt/poolname', () => {
+      spectator.component.form.patchValue({ path: '/mnt/tank' });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.path.errors).toEqual({
+        poolRoot: {
+          message: 'Cannot upload to /mnt or pool root. Please select a dataset under the pool (e.g., /mnt/pool/dataset).',
+        },
+      });
+      expect(spectator.component.form.valid).toBe(false);
+    });
+
+    it('rejects pool root paths with trailing slash', () => {
+      spectator.component.form.patchValue({ path: '/mnt/tank/' });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.path.errors).toEqual({
+        poolRoot: {
+          message: 'Cannot upload to /mnt or pool root. Please select a dataset under the pool (e.g., /mnt/pool/dataset).',
+        },
+      });
+    });
+
+    it('accepts dataset paths like /mnt/poolname/dataset', () => {
+      spectator.component.form.patchValue({
+        path: '/mnt/tank/iso',
+        files: [fakeFile('test.iso')],
+      });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.path.errors).toBeNull();
+      expect(spectator.component.form.valid).toBe(true);
+    });
+
+    it('accepts nested dataset paths', () => {
+      spectator.component.form.patchValue({
+        path: '/mnt/tank/iso/images',
+        files: [fakeFile('test.iso')],
+      });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.path.errors).toBeNull();
+      expect(spectator.component.form.valid).toBe(true);
+    });
   });
 });
