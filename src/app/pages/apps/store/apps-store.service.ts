@@ -79,9 +79,14 @@ export class AppsStore extends ComponentStore<AppsState> {
     );
   });
 
-  loadCatalog(): Observable<unknown> {
+  private loadCatalog(): Observable<unknown> {
     return of(null).pipe(
-      tap(() => this.setLoadingState(true)),
+      tap(() => {
+        this.patchState({
+          ...initialState,
+          isLoading: true,
+        });
+      }),
       switchMap(() => this.loadCatalogData()),
       switchMap(() => this.syncCatalogIfEmpty()),
       catchError((error: unknown) => {
@@ -96,10 +101,16 @@ export class AppsStore extends ComponentStore<AppsState> {
    * Shows a progress dialog to inform the user about the sync operation.
    */
   private syncCatalogIfEmpty(): Observable<unknown> {
+    // Check and set flag atomically to prevent race condition
+    if (this.isSyncingCatalog) {
+      this.setLoadingState(false);
+      return of(null);
+    }
+
     const state = this.get();
     const catalogIsEmpty = state.availableApps.length === 0 && state.categories.length === 0;
 
-    if (!catalogIsEmpty || this.isSyncingCatalog) {
+    if (!catalogIsEmpty) {
       this.setLoadingState(false);
       return of(null);
     }
@@ -125,7 +136,16 @@ export class AppsStore extends ComponentStore<AppsState> {
    */
   private reloadCatalogAfterSync(): Observable<unknown> {
     this.isSyncingCatalog = false;
-    return this.loadCatalogData();
+    return this.loadCatalogData().pipe(
+      catchError((error: unknown) => {
+        this.setLoadingState(false);
+        this.errorHandler.showErrorModal(
+          new Error(this.translate.instant('Catalog sync completed, but failed to load catalog data. Please refresh the page.')),
+        );
+        console.error('Failed to reload catalog after sync:', error);
+        return EMPTY;
+      }),
+    );
   }
 
   /**
