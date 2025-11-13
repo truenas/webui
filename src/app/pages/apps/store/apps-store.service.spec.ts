@@ -1,6 +1,6 @@
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, firstValueFrom, filter } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
@@ -192,32 +192,37 @@ describe('AppsStore', () => {
     });
 
     it('reloads catalog data after sync completes', () => {
-      // After sync, mock should return data
-      jest.spyOn(appsServiceMock, 'getAvailableApps').mockReturnValue(of(availableApps));
-      jest.spyOn(appsServiceMock, 'getLatestApps').mockReturnValue(of([installedAndRecommendedApp]));
-      jest.spyOn(appsServiceMock, 'getAllAppsCategories').mockReturnValue(of(['storage', 'media']));
+      // Clear previous mock calls from initialization
+      jest.clearAllMocks();
 
-      // Verify data loading methods are called again after sync
-      const availableAppsCalls = (appsServiceMock.getAvailableApps as jest.Mock).mock.calls.length;
-      expect(availableAppsCalls).toBeGreaterThanOrEqual(2); // Initial + after sync
+      // Setup mocks to return empty initially
+      jest.spyOn(appsServiceMock, 'getAvailableApps').mockReturnValueOnce(of([]) as Observable<AvailableApp[]>);
+      jest.spyOn(appsServiceMock, 'getLatestApps').mockReturnValueOnce(of([]) as Observable<AvailableApp[]>);
+      jest.spyOn(appsServiceMock, 'getAllAppsCategories').mockReturnValueOnce(of([]) as Observable<string[]>);
+
+      // After sync, mock should return data
+      jest.spyOn(appsServiceMock, 'getAvailableApps').mockReturnValueOnce(of(availableApps) as Observable<AvailableApp[]>);
+      jest.spyOn(appsServiceMock, 'getLatestApps').mockReturnValueOnce(of([installedAndRecommendedApp]) as Observable<AvailableApp[]>);
+      jest.spyOn(appsServiceMock, 'getAllAppsCategories').mockReturnValueOnce(of(['storage', 'media']) as Observable<string[]>);
+
+      // Trigger a fresh initialization
+      emptySpectator.service.initialize();
+
+      // Verify data loading methods are called exactly twice: initial load + reload after sync
+      expect(appsServiceMock.getAvailableApps).toHaveBeenCalledTimes(2);
+      expect(appsServiceMock.getLatestApps).toHaveBeenCalledTimes(2);
+      expect(appsServiceMock.getAllAppsCategories).toHaveBeenCalledTimes(2);
     });
 
     it('sets isLoading to false after sync completes', async () => {
-      // Wait for the observable to emit false
-      const isLoadingValues: boolean[] = [];
-      const subscription = emptySpectator.service.isLoading$.subscribe((value) => {
-        isLoadingValues.push(value);
-      });
+      // Wait for isLoading to become false using RxJS firstValueFrom
+      const isLoadingFalse = await firstValueFrom(
+        emptySpectator.service.isLoading$.pipe(
+          filter((isLoading) => isLoading === false),
+        ),
+      );
 
-      // Give time for async operations to complete
-      await new Promise<void>((resolve) => {
-        setTimeout(() => resolve(), 100);
-      });
-
-      subscription.unsubscribe();
-
-      // Should eventually emit false
-      expect(isLoadingValues).toContain(false);
+      expect(isLoadingFalse).toBe(false);
     });
 
     it('does not sync again when catalog has data', () => {
