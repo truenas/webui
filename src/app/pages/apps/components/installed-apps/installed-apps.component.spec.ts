@@ -116,6 +116,7 @@ describe('InstalledAppsComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     spectator.component.installedAppsList().dataSource = [app];
+    spectator.detectChanges();
     applicationsService = spectator.inject(ApplicationsService);
   });
 
