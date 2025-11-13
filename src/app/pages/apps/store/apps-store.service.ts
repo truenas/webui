@@ -79,7 +79,7 @@ export class AppsStore extends ComponentStore<AppsState> {
     );
   });
 
-  private loadCatalog(): Observable<unknown> {
+  loadCatalog(): Observable<unknown> {
     return of(null).pipe(
       tap(() => {
         this.patchState({
