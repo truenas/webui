@@ -590,10 +590,7 @@ export class InstalledAppsListComponent implements OnInit {
         }),
       );
     }),
-    // Note: takeUntilDestroyed is NOT needed here because shareReplay({ refCount: true })
-    // automatically unsubscribes from the source when all subscribers leave.
-    // The async pipe unsubscribes on component destruction, causing refCount to drop to 0,
-    // which triggers automatic cleanup of the entire observable chain.
+    takeUntilDestroyed(this.destroyRef),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 }
