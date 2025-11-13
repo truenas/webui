@@ -431,19 +431,22 @@ describe('InstalledAppsListComponent', () => {
         } as AppStats);
       });
 
+      const component = spectator.component;
+      let utilization: any;
+
+      // Subscribe before triggering emission
+      const subscription = component.totalUtilization$.subscribe((result) => {
+        utilization = result;
+      });
+
       // Trigger new emission with updated mock
       installedApps$.next(apps);
       tick(300);  // Advance past debounceTime(300)
 
-      const component = spectator.component;
-      let utilization: any;
-      firstValueFrom(component.totalUtilization$).then((result) => {
-        utilization = result;
-      });
-      tick();  // Process the promise
-
       expect(utilization.cpu).toBe(20);
       expect(utilization.memory).toBe(2048);
+
+      subscription.unsubscribe();
     }));
 
     it('aggregates network stats correctly', fakeAsync(() => {
@@ -460,19 +463,22 @@ describe('InstalledAppsListComponent', () => {
         ],
       } as AppStats));
 
+      const component = spectator.component;
+      let utilization: any;
+
+      // Subscribe before triggering emission
+      const subscription = component.totalUtilization$.subscribe((result) => {
+        utilization = result;
+      });
+
       // Trigger new emission with updated mock
       installedApps$.next(apps);
       tick(300);
 
-      const component = spectator.component;
-      let utilization: any;
-      firstValueFrom(component.totalUtilization$).then((result) => {
-        utilization = result;
-      });
-      tick();
-
       expect(utilization.networkRx).toBe(4500);
       expect(utilization.networkTx).toBe(10500);
+
+      subscription.unsubscribe();
     }));
 
     it('handles null network stats', fakeAsync(() => {
@@ -486,19 +492,22 @@ describe('InstalledAppsListComponent', () => {
         networks: null as any,
       } as AppStats));
 
+      const component = spectator.component;
+      let utilization: any;
+
+      // Subscribe before triggering emission
+      const subscription = component.totalUtilization$.subscribe((result) => {
+        utilization = result;
+      });
+
       // Trigger new emission with updated mock
       installedApps$.next(apps);
       tick(300);
 
-      const component = spectator.component;
-      let utilization: any;
-      firstValueFrom(component.totalUtilization$).then((result) => {
-        utilization = result;
-      });
-      tick();
-
       expect(utilization.networkRx).toBe(0);
       expect(utilization.networkTx).toBe(0);
+
+      subscription.unsubscribe();
     }));
 
     it('handles undefined values in stats', fakeAsync(() => {
@@ -512,21 +521,24 @@ describe('InstalledAppsListComponent', () => {
         networks: [],
       } as AppStats));
 
+      const component = spectator.component;
+      let utilization: any;
+
+      // Subscribe before triggering emission
+      const subscription = component.totalUtilization$.subscribe((result) => {
+        utilization = result;
+      });
+
       // Trigger new emission with updated mock
       installedApps$.next(apps);
       tick(300);
-
-      const component = spectator.component;
-      let utilization: any;
-      firstValueFrom(component.totalUtilization$).then((result) => {
-        utilization = result;
-      });
-      tick();
 
       expect(utilization.cpu).toBe(0);
       expect(utilization.memory).toBe(0);
       expect(utilization.blkioRead).toBe(0);
       expect(utilization.blkioWrite).toBe(0);
+
+      subscription.unsubscribe();
     }));
   });
 });
