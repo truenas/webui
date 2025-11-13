@@ -9,7 +9,6 @@ import {
   catchError, of, Subject, Subscription, takeUntil, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -19,6 +18,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -58,13 +58,16 @@ export class UploadIsoDialogComponent implements OnDestroy {
   private snackbar = inject(SnackbarService);
   private dialogService = inject(DialogService);
 
+  readonly helptext = helptextVmWizard;
+
   form = this.formBuilder.nonNullable.group({
-    path: [mntPath],
+    // Start with empty path instead of '/mnt' to avoid showing immediate validation error
+    // Users will use the file explorer to navigate to a valid dataset path
+    path: ['', [validateNotPoolRoot(this.translate.instant(this.helptext.upload_iso_pool_root_error))]],
     files: [[] as File[]],
   });
 
   readonly directoryNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
-  readonly helptext = helptextVmWizard;
   protected readonly requiredRoles = [Role.VmWrite];
 
   private destroy$ = new Subject<void>();
