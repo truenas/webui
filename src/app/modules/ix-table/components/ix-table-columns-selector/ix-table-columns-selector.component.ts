@@ -92,8 +92,6 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
         }
       });
 
-      this.defaultColumns = cloneDeep(this.columns());
-
       if (displayedColumns.columns.every((column) => !this.columns().some((col) => col.title === column))) {
         this.hiddenColumns.clear();
       }
