@@ -157,7 +157,7 @@ export class ApiService {
     const uuid = uuidv4();
     return of(uuid).pipe(
       switchMap(() => {
-        if (performance?.mark) {
+        if (typeof performance !== 'undefined' && typeof performance.mark === 'function') {
           performance.mark(`${method} - ${uuid} - start`);
         }
 
@@ -183,7 +183,7 @@ export class ApiService {
     return switchMap((message: SuccessfulResponse | ErrorResponse) => {
       if (isErrorResponse(message)) {
         // Always create end mark on error to match the start mark
-        if (performance?.mark && performance?.measure) {
+        if (typeof performance !== 'undefined' && typeof performance.mark === 'function' && typeof performance.measure === 'function') {
           performance.mark(`${method} - ${uuid} - end`);
           try {
             performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
@@ -200,7 +200,7 @@ export class ApiService {
         return throwError(() => new ApiCallError(message.error as JsonRpcError));
       }
 
-      if (performance?.mark && performance?.measure) {
+      if (typeof performance !== 'undefined' && typeof performance.mark === 'function' && typeof performance.measure === 'function') {
         performance.mark(`${method} - ${uuid} - end`);
         try {
           performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);

@@ -1,6 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, HostListener, effect,
+  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, HostListener,
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import {
   FormArray,
   FormControl,
@@ -16,7 +17,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  filter, map, Observable, of, tap,
+  filter, map, Observable, of, take, tap,
 } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import {
@@ -140,6 +141,9 @@ export class InstanceFormComponent implements OnInit {
     return Boolean(config?.preferred_pool);
   });
 
+  // Observable for config changes (field initializer has injection context)
+  private config$ = toObservable(this.containerConfigStore.config);
+
   poolOptions$ = this.api.call('container.pool_choices').pipe(
     choicesToOptions(),
     tap((options) => {
@@ -177,20 +181,11 @@ export class InstanceFormComponent implements OnInit {
     }>>([]),
   });
 
+  private hasSetupValidators = false;
+
   constructor() {
     this.editingInstance = this.slideInRef.getData();
-
-    // Setup form validators when config is loaded
-    effect(() => {
-      const config = this.containerConfigStore.config();
-      if (config !== null && !this.isEditMode() && !this.hasSetupValidators) {
-        this.hasSetupValidators = true;
-        this.setupValidatorsForCreation();
-      }
-    });
   }
-
-  private hasSetupValidators = false;
 
   @HostListener('window:beforeunload', ['$event'])
   onBeforeUnload(event: BeforeUnloadEvent): void {
@@ -202,6 +197,16 @@ export class InstanceFormComponent implements OnInit {
   ngOnInit(): void {
     // Initialize config store to load preferred pool settings
     this.containerConfigStore.initialize();
+
+    // Setup form validators when config is loaded (for creation mode only)
+    this.config$.pipe(
+      filter((config) => config !== null && !this.isEditMode() && !this.hasSetupValidators),
+      take(1),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.hasSetupValidators = true;
+      this.setupValidatorsForCreation();
+    });
 
     if (this.editingInstance) {
       this.loadInstanceForEditing(this.editingInstance.id);
@@ -488,6 +493,29 @@ export class InstanceFormComponent implements OnInit {
     return payload;
   }
 
+  /**
+   * Parses container image string into name and version components.
+   *
+   * Container images follow a colon-separated format with varying structures:
+   *
+   * 1. Full format (5+ parts): "name:major:arch:variant:version_timestamp:time"
+   *    Example: "almalinux:10:amd64:default:20250924_23:08"
+   *    - name: "almalinux:10:amd64:default"
+   *    - version: "20250924_23:08"
+   *
+   * 2. Simple format (2-4 parts): "name:version" or "name:tag:version"
+   *    Example: "ubuntu:22.04"
+   *    - name: "ubuntu"
+   *    - version: "22.04"
+   *
+   * 3. No version (1 part): "name"
+   *    Example: "alpine"
+   *    - name: "alpine"
+   *    - version: ""
+   *
+   * @param imageString The full image identifier string from the API
+   * @returns Object containing separated name and version strings
+   */
   private parseImageField(imageString: string): { name: string; version: string } {
     // For container images like "almalinux:10:amd64:default:20250924_23:08"
     // The base name format is typically "name:major:arch:variant"

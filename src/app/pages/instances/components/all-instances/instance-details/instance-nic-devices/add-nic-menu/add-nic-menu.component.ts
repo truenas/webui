@@ -82,7 +82,7 @@ export class AddNicMenuComponent {
     }
 
     this.matDialog.open(InstanceNicFormDialog, {
-      data: nicKey,
+      data: { nic: nicKey },
       minWidth: '500px',
     }).afterClosed().pipe(
       filter(Boolean),

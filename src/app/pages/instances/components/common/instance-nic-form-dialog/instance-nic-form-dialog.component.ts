@@ -53,16 +53,12 @@ export class InstanceNicFormDialog {
   private ixValidator = inject(IxValidatorsService);
   private translate = inject(TranslateService);
   private matDialogRef = inject<MatDialogRef<InstanceNicFormDialog>>(MatDialogRef);
-  private dialogData = inject<InstanceNicFormDialogData | string>(MAT_DIALOG_DATA);
+  private dialogData = inject<InstanceNicFormDialogData>(MAT_DIALOG_DATA);
 
-  protected readonly isEditMode = computed(() => {
-    return typeof this.dialogData !== 'string' && !!this.dialogData?.device;
-  });
+  protected readonly isEditMode = computed(() => !!this.dialogData.device);
 
   protected readonly nic = signal(
-    typeof this.dialogData === 'string'
-      ? this.dialogData
-      : this.dialogData?.nic || (this.dialogData?.device?.nic_attach || ''),
+    this.dialogData.nic || this.dialogData.device?.nic_attach || '',
   );
 
   protected readonly nicTypeOptions = of([
@@ -95,31 +91,19 @@ export class InstanceNicFormDialog {
   });
 
   private getInitialType(): ContainerNicDeviceType {
-    if (typeof this.dialogData !== 'string' && this.dialogData?.device) {
-      return this.dialogData.device.type;
-    }
-    return ContainerNicDeviceType.Virtio;
+    return this.dialogData.device?.type || ContainerNicDeviceType.Virtio;
   }
 
   private getInitialUseDefault(): boolean {
-    if (typeof this.dialogData !== 'string' && this.dialogData?.device) {
-      return !this.dialogData.device.mac;
-    }
-    return true;
+    return this.dialogData.device ? !this.dialogData.device.mac : true;
   }
 
   private getInitialMac(): string {
-    if (typeof this.dialogData !== 'string' && this.dialogData?.device?.mac) {
-      return this.dialogData.device.mac;
-    }
-    return '';
+    return this.dialogData.device?.mac || '';
   }
 
   private getInitialTrustGuestRxFilters(): boolean {
-    if (typeof this.dialogData !== 'string' && this.dialogData?.device) {
-      return this.dialogData.device.trust_guest_rx_filters || false;
-    }
-    return false;
+    return this.dialogData.device?.trust_guest_rx_filters || false;
   }
 
   protected readonly isValid$: Observable<boolean> = this.form.valueChanges.pipe(

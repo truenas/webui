@@ -79,7 +79,7 @@ describe('AddNicMenuComponent', () => {
     await menu.clickItem({ text: 'TrueNAS Bridge' });
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(InstanceNicFormDialog, {
-      data: 'truenasbr0',
+      data: { nic: 'truenasbr0' },
       minWidth: '500px',
     });
 

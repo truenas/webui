@@ -4,10 +4,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { isEqual } from 'lodash-es';
 import {
-  of, Subject, switchMap, tap, EMPTY,
+  of, switchMap, tap, EMPTY,
 } from 'rxjs';
 import {
-  catchError, takeUntil, filter, map, startWith, distinctUntilChanged,
+  catchError, filter, map, startWith, distinctUntilChanged,
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEventTyped } from 'app/interfaces/api-message.interface';
@@ -47,15 +47,12 @@ export class ContainerInstancesStore extends ComponentStore<ContainerInstancesSt
 
   readonly metrics = computed(() => this.state().metrics);
 
-  private readonly destroySubscription$ = new Subject<void>();
-
   constructor() {
     super(initialState);
     this.listenForMetrics();
   }
 
   readonly initialize = this.effect((trigger$) => {
-    this.destroySubscription$.next();
     return trigger$.pipe(
       switchMap(() => {
         return this.api.call('container.query').pipe(
@@ -91,7 +88,6 @@ export class ContainerInstancesStore extends ComponentStore<ContainerInstancesSt
             this.errorHandler.showErrorModal(error);
             return of(undefined);
           }),
-          takeUntil(this.destroySubscription$),
         );
       }),
       untilDestroyed(this),
@@ -108,6 +104,11 @@ export class ContainerInstancesStore extends ComponentStore<ContainerInstancesSt
         break;
       case CollectionChangeType.Changed:
         // TODO: Keep it until API improvements
+        // Workaround for API limitation: When only the status field is updated,
+        // the API sends event.id as the instance name (string) instead of the instance ID (number).
+        // This special handling matches by name until the API is fixed to consistently use IDs.
+        // Once the API improvement is made, this workaround can be removed and only the standard
+        // ID-based update (below) will be needed.
         if (event.fields && Object.keys(event.fields).length === 1 && 'status' in event.fields) {
           const changedInstances = prevInstances.map((instance) => {
             if (instance.name === event.id) {
@@ -174,7 +175,7 @@ export class ContainerInstancesStore extends ComponentStore<ContainerInstancesSt
           // Currently using virt.instance.metrics for container metrics.
           // API ticket will determine if this should move to container.* endpoint.
           return this.api.subscribe('virt.instance.metrics').pipe(
-            map((event) => event.fields),
+            map((event) => event.fields ?? {}),
           );
         }),
         tap((metrics) => this.patchState({ metrics })),

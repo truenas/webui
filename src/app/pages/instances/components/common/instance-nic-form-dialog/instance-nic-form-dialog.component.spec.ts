@@ -19,7 +19,7 @@ describe('InstanceNicFormDialogComponent', () => {
       }),
       {
         provide: MAT_DIALOG_DATA,
-        useValue: 'ens',
+        useValue: { nic: 'ens' },
       },
     ],
   });
