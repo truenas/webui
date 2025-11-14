@@ -65,6 +65,12 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges, 
   }
 
   ngOnInit(): void {
+    // Ensure defaultColumns is initialized before any operations
+    // This handles the edge case where ngOnInit might run before ngOnChanges
+    if (!this.defaultColumns) {
+      this.defaultColumns = cloneDeep(this.columns());
+    }
+
     if (!this.columnPreferencesKey()) {
       this.setInitialState();
       return;
