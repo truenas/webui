@@ -55,6 +55,7 @@ describe('RaidzExtendDialogComponent', () => {
           ] as DetailsDisk[],
           used: [],
         }),
+        mockCall('core.get_jobs', []),
       ]),
       mockProvider(MatDialogRef),
       mockProvider(SnackbarService),
