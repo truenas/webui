@@ -1,6 +1,6 @@
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of, firstValueFrom, filter } from 'rxjs';
+import { Observable, of, firstValueFrom, filter, throwError } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
@@ -239,6 +239,79 @@ describe('AppsStore', () => {
       const finalCallCount = (emptySpectator.inject(ApiService).job as jest.Mock).mock.calls.length;
       // Should still be the same count since catalog now has data
       expect(finalCallCount).toBe(initialCallCount);
+    });
+
+    it('handles sync job failure gracefully', async () => {
+      const errorMockDialogRef = {
+        afterClosed: jest.fn(() => throwError(() => new Error('Sync failed'))),
+        getSubscriptionLimiterInstance: jest.fn(),
+      } as unknown as JobProgressDialogRef<unknown>;
+
+      jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(errorMockDialogRef);
+      jest.clearAllMocks();
+
+      emptySpectator.service.initialize();
+
+      // Wait for error handling to complete
+      await new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), 100);
+      });
+
+      // Verify error modal was shown with correct message
+      expect(emptySpectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(
+        new Error('Failed to sync catalog. Please try clicking "Refresh Catalog" manually.'),
+      );
+
+      // Verify loading state is set to false
+      const isLoading = await firstValueFrom(
+        emptySpectator.service.isLoading$.pipe(
+          filter((loading) => loading === false),
+        ),
+      );
+      expect(isLoading).toBe(false);
+    });
+
+    it('handles individual service failures during reload after sync', async () => {
+      // Reset mocks and setup for this test
+      jest.clearAllMocks();
+
+      // First load returns empty (triggers sync)
+      jest.spyOn(appsServiceMock, 'getAvailableApps')
+        .mockReturnValueOnce(of([]) as Observable<AvailableApp[]>)
+        .mockReturnValueOnce(throwError(() => new Error('Reload failed')));
+      jest.spyOn(appsServiceMock, 'getLatestApps')
+        .mockReturnValueOnce(of([]) as Observable<AvailableApp[]>)
+        .mockReturnValueOnce(of([installedAndRecommendedApp]) as Observable<AvailableApp[]>);
+      jest.spyOn(appsServiceMock, 'getAllAppsCategories')
+        .mockReturnValueOnce(of([]) as Observable<string[]>)
+        .mockReturnValueOnce(of(['storage', 'media']) as Observable<string[]>);
+
+      // Setup successful sync dialog
+      const successMockDialogRef = {
+        afterClosed: jest.fn(() => of(true)),
+        getSubscriptionLimiterInstance: jest.fn(),
+      } as unknown as JobProgressDialogRef<unknown>;
+      jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(successMockDialogRef);
+
+      emptySpectator.service.initialize();
+
+      // Wait for error handling to complete
+      await new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), 100);
+      });
+
+      // Verify error modal was shown (individual service error is caught and handled)
+      expect(emptySpectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(
+        new Error('Reload failed'),
+      );
+
+      // Verify loading state is set to false
+      const isLoading = await firstValueFrom(
+        emptySpectator.service.isLoading$.pipe(
+          filter((loading) => loading === false),
+        ),
+      );
+      expect(isLoading).toBe(false);
     });
   });
 });
