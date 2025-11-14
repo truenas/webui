@@ -101,21 +101,23 @@ export class AppsStore extends ComponentStore<AppsState> {
    * Shows a progress dialog to inform the user about the sync operation.
    */
   private syncCatalogIfEmpty(): Observable<unknown> {
-    // Check and set flag atomically to prevent race condition
+    // Check if already syncing to prevent race condition
     if (this.isSyncingCatalog) {
       this.setLoadingState(false);
       return of(null);
     }
 
+    // Set flag immediately to prevent concurrent sync operations
+    this.isSyncingCatalog = true;
+
     const state = this.get();
     const catalogIsEmpty = state.availableApps.length === 0 && state.categories.length === 0;
 
     if (!catalogIsEmpty) {
+      this.isSyncingCatalog = false;
       this.setLoadingState(false);
       return of(null);
     }
-
-    this.isSyncingCatalog = true;
 
     return this.dialogService.jobDialog(
       this.api.job('catalog.sync'),
@@ -137,12 +139,11 @@ export class AppsStore extends ComponentStore<AppsState> {
   private reloadCatalogAfterSync(): Observable<unknown> {
     this.isSyncingCatalog = false;
     return this.loadCatalogData().pipe(
-      catchError((error: unknown) => {
+      catchError(() => {
         this.setLoadingState(false);
         this.errorHandler.showErrorModal(
           new Error(this.translate.instant('Catalog sync completed, but failed to load catalog data. Please refresh the page.')),
         );
-        console.error('Failed to reload catalog after sync:', error);
         return EMPTY;
       }),
     );
@@ -166,7 +167,7 @@ export class AppsStore extends ComponentStore<AppsState> {
    * Updates the loading state in the store.
    */
   private setLoadingState(isLoading: boolean): void {
-    this.patchState((state: AppsState) => ({ ...state, isLoading }));
+    this.patchState({ isLoading });
   }
 
   private loadCatalogData(): Observable<unknown> {
