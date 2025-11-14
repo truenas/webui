@@ -25,6 +25,7 @@ describe('AppsStore', () => {
     latestApps: [],
     categories: [],
     isLoading: false,
+    isSyncingCatalog: false,
   };
 
   const installedAndRecommendedApp: AvailableApp = {

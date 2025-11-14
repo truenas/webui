@@ -26,6 +26,7 @@ export interface AppsState {
   recommendedApps: AvailableApp[];
   categories: string[];
   isLoading: boolean;
+  isSyncingCatalog: boolean;
 }
 
 const initialState: AppsState = {
@@ -34,6 +35,7 @@ const initialState: AppsState = {
   latestApps: [],
   categories: [],
   isLoading: false,
+  isSyncingCatalog: false,
 };
 
 @UntilDestroy()
@@ -44,7 +46,6 @@ export class AppsStore extends ComponentStore<AppsState> {
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
-  private isSyncingCatalog = false;
 
   readonly isLoading$ = this.select((state) => state.isLoading);
 
@@ -101,23 +102,23 @@ export class AppsStore extends ComponentStore<AppsState> {
    * Shows a progress dialog to inform the user about the sync operation.
    */
   private syncCatalogIfEmpty(): Observable<unknown> {
+    const state = this.get();
+
     // Check if already syncing to prevent race condition
-    if (this.isSyncingCatalog) {
+    if (state.isSyncingCatalog) {
       this.setLoadingState(false);
       return of(null);
     }
 
-    // Set flag immediately to prevent concurrent sync operations
-    this.isSyncingCatalog = true;
-
-    const state = this.get();
     const catalogIsEmpty = state.availableApps.length === 0 && state.categories.length === 0;
 
     if (!catalogIsEmpty) {
-      this.isSyncingCatalog = false;
       this.setLoadingState(false);
       return of(null);
     }
+
+    // Set flag in state to prevent concurrent sync operations
+    this.patchState({ isSyncingCatalog: true });
 
     return this.dialogService.jobDialog(
       this.api.job('catalog.sync'),
@@ -128,7 +129,10 @@ export class AppsStore extends ComponentStore<AppsState> {
       },
     ).afterClosed().pipe(
       switchMap(() => this.reloadCatalogAfterSync()),
-      tap(() => this.setLoadingState(false)),
+      tap(() => {
+        this.setLoadingState(false);
+        this.patchState({ isSyncingCatalog: false });
+      }),
       catchError(() => this.handleSyncError()),
     );
   }
@@ -137,10 +141,10 @@ export class AppsStore extends ComponentStore<AppsState> {
    * Reloads catalog data after a successful sync operation.
    */
   private reloadCatalogAfterSync(): Observable<unknown> {
-    this.isSyncingCatalog = false;
     return this.loadCatalogData().pipe(
       catchError(() => {
         this.setLoadingState(false);
+        this.patchState({ isSyncingCatalog: false });
         this.errorHandler.showErrorModal(
           new Error(this.translate.instant('Catalog sync completed, but failed to load catalog data. Please refresh the page.')),
         );
@@ -153,8 +157,8 @@ export class AppsStore extends ComponentStore<AppsState> {
    * Handles errors during catalog sync operation.
    */
   private handleSyncError(): Observable<never> {
-    this.isSyncingCatalog = false;
     this.setLoadingState(false);
+    this.patchState({ isSyncingCatalog: false });
 
     this.errorHandler.showErrorModal(
       new Error(this.translate.instant('Failed to sync catalog. Please try clicking "Refresh Catalog" manually.')),
