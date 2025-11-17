@@ -262,18 +262,9 @@ export class WidgetStorageComponent {
   }
 
   /** helper function to format the scrub/resilver percentage displayed on the dashboard.
-   * in some cases, we get an API value that is already a percentage (i.e. not a fraction between 0 and 1)
-   * and in other cases we get a fraction between 0 and 1. the discrepancy here is due to us getting
-   * scan data from two different places: `pool.query` and `zfs.pool.scan`. the former gives us a percentage,
-   * while the latter gives us a fraction between 0 and 1.
    */
   private formatScanPercentage(scan: PoolScanUpdate): string {
-    let donePercentage = scan.percentage;
-    if (donePercentage >= 1) {
-      donePercentage /= 100;
-    }
-
-    return this.percentPipe.transform(donePercentage, '1.2-2') || '?';
+    return this.percentPipe.transform(scan.percentage / 100, '1.2-2') || '?';
   }
 
   private getScanItemInfo(pool: Pool): ItemInfo {
