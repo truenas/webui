@@ -4783,7 +4783,7 @@
   "Source Location": "Emplacement source",
   "Space Available to Zvol": "Espace disponible pour le Zvol",
   "Space Management": "Gestion de l'espace",
-  "Spare": "Pièce de rechange",
+  "Spare": "",
   "Spare VDEVs": "VDEV de rechange",
   "Sparse": "Peu dense",
   "Special Allocation class, used to create Fusion pools. Optional VDEV type which is used to speed up metadata and blocks below configured size.": "Classe d’allocation spéciale, utilisée pour créer des volumes Fusion. Type de VDEV optionnel servant à accélérer les métadonnées et les blocs dont la taille est inférieure à la valeur configurée.",
