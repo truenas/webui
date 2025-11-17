@@ -191,6 +191,11 @@ export class AuthSectionComponent implements OnInit {
   }
 
   private sshPasswordEnabledValidator(formGroup: AbstractControl): ValidationErrors | null {
+    // Skip validation if SSH access is not enabled
+    if (!this.sshAccess()) {
+      return null; // SSH access is not enabled, no validation needed
+    }
+
     const sshPasswordEnabled = formGroup.get('ssh_password_enabled')?.value;
 
     if (!sshPasswordEnabled) {

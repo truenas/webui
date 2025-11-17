@@ -368,5 +368,32 @@ describe('AuthSectionComponent', () => {
 
       expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
     });
+
+    it('does not validate when SSH access is disabled even if password checkbox is checked', async () => {
+      // Setup initial state with SSH access enabled and valid home/shell
+      spectator.setInput('homeDirectory', '/mnt/tank/user');
+      spectator.setInput('shell', '/usr/bin/bash');
+      spectator.detectChanges();
+
+      // Fill in required password fields to make form valid
+      await form.fillForm({
+        Password: 'test-password',
+        'Confirm Password': 'test-password',
+        'Allow SSH Login with Password (not recommended)': true,
+      });
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
+
+      // Now disable SSH access (simulating unchecking SSH Access in allowed-access-section)
+      sshAccess.set(false);
+      spectator.detectChanges();
+
+      // Change shell to nologin (which happens when shell access is disabled)
+      spectator.setInput('shell', '/usr/sbin/nologin');
+      spectator.detectChanges();
+
+      // The ssh_password_enabled validator should not run because SSH access is disabled
+      // This validates the fix for the reported bug https://ixsystems.atlassian.net/browse/NAS-138307
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
+    });
   });
 });

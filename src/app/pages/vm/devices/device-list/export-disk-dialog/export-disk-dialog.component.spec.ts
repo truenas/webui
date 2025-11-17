@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TranslateModule } from '@ngx-translate/core';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -45,6 +46,7 @@ describe('ExportDiskDialogComponent', () => {
       IxExplorerComponent,
       IxInputComponent,
       IxSelectComponent,
+      TranslateModule.forRoot(),
     ],
     providers: [
       mockProvider(FilesystemService, {
@@ -78,7 +80,7 @@ describe('ExportDiskDialogComponent', () => {
 
   it('closes dialog with export data when form is submitted', async () => {
     await form.fillForm({
-      'Destination Directory': '/mnt/exports',
+      'Destination Directory': '/mnt/tank/exports',
       'Image Name': 'my-vm-disk',
       'Image Format': 'VMDK - VMware Virtual Machine Disk',
     });
@@ -88,9 +90,9 @@ describe('ExportDiskDialogComponent', () => {
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
       request: {
         source: '/dev/zvol/tank/vm-disk',
-        destination: '/mnt/exports/my-vm-disk.vmdk',
+        destination: '/mnt/tank/exports/my-vm-disk.vmdk',
       },
-      destinationPath: '/mnt/exports/my-vm-disk.vmdk',
+      destinationPath: '/mnt/tank/exports/my-vm-disk.vmdk',
     });
   });
 
@@ -109,5 +111,66 @@ describe('ExportDiskDialogComponent', () => {
     expect(formatOptions.map((format) => format.value)).toEqual([
       'qcow2', 'qed', 'raw', 'vdi', 'vhdx', 'vmdk',
     ]);
+  });
+
+  describe('pool root validation', () => {
+    it('rejects /mnt itself', () => {
+      spectator.component.form.patchValue({ destinationDir: '/mnt' });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.destinationDir.errors).toEqual({
+        poolRoot: {
+          message: 'Cannot export to pool root. Please select a dataset under the pool (e.g., /mnt/pool/dataset).',
+        },
+      });
+      expect(spectator.component.form.valid).toBe(false);
+    });
+
+    it('rejects pool root paths like /mnt/poolname', () => {
+      spectator.component.form.patchValue({ destinationDir: '/mnt/tank' });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.destinationDir.errors).toEqual({
+        poolRoot: {
+          message: 'Cannot export to pool root. Please select a dataset under the pool (e.g., /mnt/pool/dataset).',
+        },
+      });
+      expect(spectator.component.form.valid).toBe(false);
+    });
+
+    it('rejects pool root paths with trailing slash', () => {
+      spectator.component.form.patchValue({ destinationDir: '/mnt/tank/' });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.destinationDir.errors).toEqual({
+        poolRoot: {
+          message: 'Cannot export to pool root. Please select a dataset under the pool (e.g., /mnt/pool/dataset).',
+        },
+      });
+    });
+
+    it('accepts dataset paths like /mnt/poolname/dataset', () => {
+      spectator.component.form.patchValue({
+        destinationDir: '/mnt/tank/exports',
+        imageName: 'test-disk',
+        format: 'raw',
+      });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.destinationDir.errors).toBeNull();
+      expect(spectator.component.form.valid).toBe(true);
+    });
+
+    it('accepts nested dataset paths', () => {
+      spectator.component.form.patchValue({
+        destinationDir: '/mnt/tank/exports/vm-backups',
+        imageName: 'test-disk',
+        format: 'raw',
+      });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.destinationDir.errors).toBeNull();
+      expect(spectator.component.form.valid).toBe(true);
+    });
   });
 });

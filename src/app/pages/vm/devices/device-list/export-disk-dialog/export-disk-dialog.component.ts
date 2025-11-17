@@ -10,14 +10,15 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -56,6 +57,7 @@ interface ImageFormat {
 export class ExportDiskDialogComponent {
   private fb = inject(FormBuilder);
   private filesystemService = inject(FilesystemService);
+  private translate = inject(TranslateService);
   dialogRef = inject(MatDialogRef) as MatDialogRef<ExportDiskDialogComponent>;
   data = inject<ExportDiskDialogData>(MAT_DIALOG_DATA);
 
@@ -69,8 +71,16 @@ export class ExportDiskDialogComponent {
     { label: 'VMDK - VMware Virtual Machine Disk', value: 'vmdk', extension: '.vmdk' },
   ];
 
+  readonly formatOptions$ = of(this.imageFormats.map((format) => ({
+    label: format.label,
+    value: format.value,
+  })));
+
   form = this.fb.group({
-    destinationDir: ['', [Validators.required]],
+    destinationDir: ['', [
+      Validators.required,
+      validateNotPoolRoot(this.translate.instant(this.helptext.export_disk_pool_root_error)),
+    ]],
     imageName: [this.generateDefaultImageName(), [Validators.required]],
     format: ['qcow2', [Validators.required]],
   });
@@ -81,16 +91,6 @@ export class ExportDiskDialogComponent {
 
   get sourcePath(): string {
     return this.data.device.attributes.path;
-  }
-
-  get formatOptions$(): Observable<{ label: string; value: string }[]> {
-    return new Observable((observer) => {
-      observer.next(this.imageFormats.map((format) => ({
-        label: format.label,
-        value: format.value,
-      })));
-      observer.complete();
-    });
   }
 
   private generateDefaultImageName(): string {
