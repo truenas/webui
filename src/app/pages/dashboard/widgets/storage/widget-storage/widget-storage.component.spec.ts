@@ -314,7 +314,7 @@ describe('WidgetStorageComponent', () => {
         name: 'poolWithOngoingScrub',
         scan: {
           ...poolWithOngoingScrub.scan,
-          percentage: 0.71234,
+          percentage: 71.234,
         },
       });
 

@@ -85,8 +85,8 @@ export class WidgetResourcesService {
   );
 
   // since pool.query doesn't emit events for scan updates, we need to subscribe to
-  // the `zfs.pool.scan` endpoint to actually receive real-time scrub/resilver updates.
-  readonly scans$ = this.api.subscribe('zfs.pool.scan').pipe(
+  // the `pool.scan` endpoint to actually receive real-time scrub/resilver updates.
+  readonly scans$ = this.api.subscribe('pool.scan').pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

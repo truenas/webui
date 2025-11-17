@@ -33,7 +33,7 @@ export class ResilveringIndicatorComponent {
   private matDialog = inject(MatDialog);
   private api = inject(ApiService);
 
-  protected isResilvering$ = this.api.subscribe('zfs.pool.scan').pipe(
+  protected isResilvering$ = this.api.subscribe('pool.scan').pipe(
     map((event) => {
       const scan = event.fields.scan;
       return scan.function === PoolScanFunction.Resilver && scan.state !== PoolScanState.Finished;
