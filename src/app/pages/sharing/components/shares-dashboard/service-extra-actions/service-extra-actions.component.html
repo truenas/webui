@@ -2,7 +2,8 @@
   <div>
     <button
       mat-icon-button
-      [attr.aria-label]="'Table Actions of Expandable Table' | translate"
+      [matTooltip]="'More Options' | translate"
+      [attr.aria-label]="'More Options' | translate"
       [ixTest]="[service().id, 'actions-menu']"
       [matMenuTriggerFor]="rowActions"
     >
