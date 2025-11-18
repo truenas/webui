@@ -2,8 +2,8 @@
   <div>
     <button
       mat-icon-button
-      [matTooltip]="'More Options' | translate"
-      [attr.aria-label]="'More Options' | translate"
+      [matTooltip]="'Actions for {name}' | translate: { name: serviceNames.get(service().service) }"
+      [attr.aria-label]="'Actions for {name}' | translate: { name: serviceNames.get(service().service) }"
       [ixTest]="[service().id, 'actions-menu']"
       [matMenuTriggerFor]="rowActions"
     >
