@@ -53,8 +53,8 @@ export const helptextSharingSmb = {
   autoDatasetCreationTooltip: T('Create dataset automatically if it does not exist.'),
   datasetNamingSchemaLabel: T('Dataset Naming Schema'),
   datasetNamingSchemaTooltip: T('The naming schema to use when Auto Dataset Creation is specified.\
- If you do not set a schema, the server uses %u (username) if it is not joined to Active Directory.\
- If the server is joined to Active Directory it uses %D/%u (domain/username).'),
+ If you do not set a schema, the server uses %U (username) if it is not joined to Active Directory.\
+ If the server is joined to Active Directory it uses %D/%U (domain/username).'),
   autoQuotaLabel: T('Auto Quota'),
   autoQuotaTooltip: T('Set the specified ZFS quota (in gibibytes) on new datasets.\
  If the value is zero, TrueNAS disables automatic quotas for the share.'),
