@@ -262,9 +262,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
       if (watchList.length === 0 && ignoreList.length === 0) {
         return {
-          message: this.translate.instant(
-            'At least one group must be specified in Watch List or Ignore List to enable audit logging.',
-          ),
+          auditRequiresGroups: {
+            message: this.translate.instant(
+              'At least one group must be specified in Watch List or Ignore List to enable audit logging.',
+            ),
+          },
         };
       }
 
