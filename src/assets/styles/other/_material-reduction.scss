@@ -828,6 +828,14 @@ body .mat-calendar-next-button::after {
   margin: 10px;
 }
 
+.mat-mdc-menu-panel:has(.search-element-highlighted) {
+  overflow: visible;
+
+  .mat-mdc-menu-content {
+    overflow: visible;
+  }
+}
+
 .mat-mdc-menu-item {
   > span {
     align-items: center;
