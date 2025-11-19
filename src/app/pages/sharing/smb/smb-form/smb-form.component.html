@@ -134,11 +134,9 @@
             [tooltip]="helptextSharingSmb.auditLogTooltip | translate"
           ></ix-checkbox>
 
-          @if (form.value.audit.enable) {
-            <p class="audit-requirement-message">
-              {{ 'At least one group must be added to either Watch List or Ignore List.' | translate }}
-            </p>
+          <ix-errors [control]="form.controls.audit"></ix-errors>
 
+          @if (form.value.audit.enable) {
             <ix-chips
               formControlName="watch_list"
               [label]="'Watch List' | translate"
@@ -154,8 +152,6 @@
               [autocompleteProvider]="groupProvider"
               [allowNewEntries]="false"
             ></ix-chips>
-
-            <ix-errors [control]="form.controls.audit"></ix-errors>
           }
         </ix-fieldset>
 
