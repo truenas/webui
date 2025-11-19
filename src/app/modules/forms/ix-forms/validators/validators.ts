@@ -1,5 +1,5 @@
 import {
-  FormGroup, UntypedFormControl, ValidationErrors, ValidatorFn,
+  AbstractControl, FormGroup, UntypedFormControl, ValidationErrors, ValidatorFn,
 } from '@angular/forms';
 import { isEmpty, isNumber, toNumber } from 'lodash-es';
 
@@ -47,6 +47,52 @@ export function greaterThanFg(
       prevErrors = null;
     }
     fg.get(controlName)?.setErrors(prevErrors);
+    return null;
+  };
+}
+
+/**
+ * Validates that the selected path is not /mnt itself or a pool root.
+ * Pool roots are paths like /mnt/poolname with no subdirectories.
+ *
+ * The backend requires a child dataset to be selected for operations like
+ * ISO uploads and disk exports because writing directly to pool roots can
+ * cause filesystem issues and is considered a security risk. Operations
+ * should target specific datasets (e.g., /mnt/pool/dataset) rather than
+ * the pool root itself.
+ *
+ * @param errorMessage Translated error message to show when validation fails.
+ *                     Must be translated before passing to this validator for proper i18n support.
+ * @returns ValidatorFn that returns null if valid, or ValidationErrors if invalid
+ *
+ * @example
+ * // Usage in a form control with translated message
+ * this.form = this.fb.group({
+ *   path: ['', [validateNotPoolRoot(
+ *     this.translate.instant('Cannot select pool root. Please select a dataset.')
+ *   )]],
+ * });
+ */
+export function validateNotPoolRoot(errorMessage: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const path = control.value?.trim() as string;
+    if (!path) {
+      return null; // Let required validator handle empty values
+    }
+
+    // Normalize path by removing trailing slashes for consistent validation
+    const normalizedPath = path.replace(/\/+$/, '');
+
+    // Reject /mnt itself or pool root pattern: /mnt/poolname (no subdirectories)
+    const poolRootPattern = /^\/mnt\/[^/]+$/;
+    if (normalizedPath === '/mnt' || poolRootPattern.test(normalizedPath)) {
+      return {
+        poolRoot: {
+          message: errorMessage,
+        },
+      };
+    }
+
     return null;
   };
 }
