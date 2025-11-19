@@ -50,7 +50,8 @@
   },
   "private": true,
   "resolutions": {
-    "mermaid": "^11.10.1"
+    "mermaid": "^11.10.1",
+    "glob": "^10.4.5"
   },
   "dependencies": {
     "@angular-devkit/core": "~20.3.2",
@@ -89,7 +90,7 @@
     "@mdi/svg": "~7.4.47",
     "@messageformat/core": "~3.3.0",
     "@ngneat/reactive-forms": "~5.0.2",
-    "@ngneat/spectator": "~21.0.1",
+    "@ngneat/spectator": "~22.1.0",
     "@ngneat/until-destroy": "~10.0.0",
     "@ngrx/component-store": "~20.0.1",
     "@ngrx/effects": "~20.0.1",
