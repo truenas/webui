@@ -48,6 +48,7 @@ export class SessionTimeoutService {
       .subscribe((preferences) => {
         this.pause();
         const lifetime = preferences.lifetime || 300;
+        this.tokenLastUsedService.updateTokenLifetime(lifetime);
         this.actionWaitTimeout = setTimeout(() => {
           this.stop();
           const showWarningDialogFor = 30000;
