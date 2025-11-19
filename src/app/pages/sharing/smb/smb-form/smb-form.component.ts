@@ -2,7 +2,9 @@ import {
   AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal, inject,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -40,6 +42,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -87,6 +90,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxSelectComponent,
     IxCheckboxComponent,
     IxChipsComponent,
+    IxErrorsComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
@@ -246,6 +250,28 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   protected rootNodes = signal<ExplorerNodeData[]>([]);
 
+  private auditValidator(): ValidatorFn {
+    return (control): ValidationErrors | null => {
+      const auditGroup = control.value;
+      if (!auditGroup.enable) {
+        return null;
+      }
+
+      const watchList = auditGroup.watch_list || [];
+      const ignoreList = auditGroup.ignore_list || [];
+
+      if (watchList.length === 0 && ignoreList.length === 0) {
+        return {
+          message: this.translate.instant(
+            'At least one group must be specified in Watch List or Ignore List to enable audit logging.',
+          ),
+        };
+      }
+
+      return null;
+    };
+  }
+
   protected form = this.formBuilder.group({
     // Common for all share purposes
     purpose: [SmbSharePurpose.DefaultShare as SmbSharePurpose | null],
@@ -260,7 +286,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       enable: [false],
       watch_list: [[] as string[]],
       ignore_list: [[] as string[]],
-    }),
+    }, { validators: this.auditValidator() }),
 
     // Only relevant to legacy shares
     recyclebin: [false],
