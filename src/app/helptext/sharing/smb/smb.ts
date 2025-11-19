@@ -21,7 +21,7 @@ export const helptextSharingSmb = {
 <br><br> <b>Note</b>: Auditing may not be enabled if SMB1 support is enabled for the server.',
   ),
   watchListTooltip: T(
-    'List of groups for which to generate audit messages. Keep this list empty to Watch All.',
+    'List of groups for which to generate audit messages.',
   ),
   ignoreListTooltip: T(
     'List of groups to ignore when auditing. If conflict arises between Watch List and Ignore List \
