@@ -1019,5 +1019,62 @@ describe('SmbFormComponent', () => {
       saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(false);
     });
+
+    it('should display error message when audit logging is enabled without groups', async () => {
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error message is displayed
+      const errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeTruthy();
+      expect(errorElement?.textContent).toContain('At least one group must be specified');
+    });
+
+    it('should re-validate and show error when group is added then removed (reactivity)', async () => {
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error is initially displayed
+      let errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeTruthy();
+
+      // Add a group to watch list
+      const watchListChips = await loader.getHarness(IxChipsHarness.with({ label: 'Watch List' }));
+      await watchListChips.selectSuggestionValue('test');
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error is gone
+      errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeFalsy();
+
+      // Remove the group
+      await watchListChips.removeAllChips();
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error appears again (validates reactivity)
+      errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeTruthy();
+      expect(errorElement?.textContent).toContain('At least one group must be specified');
+    });
   });
 });
