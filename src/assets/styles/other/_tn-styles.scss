@@ -388,8 +388,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-mdc-dialog-content {
-    overflow: hidden;
-    padding-bottom: 0;
+    max-height: 50vh;
+    overflow-y: auto;
 
     .more-info {
       align-items: center;
@@ -607,8 +607,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // Bring tooltips to the front in dialogs
-  .mat-mdc-dialog-container,
-  .mat-mdc-dialog-content {
+  // Only container needs visible overflow - content should scroll
+  .mat-mdc-dialog-container {
     overflow: visible !important;
   }
 
