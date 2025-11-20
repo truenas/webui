@@ -193,7 +193,7 @@
   "A pool is made of VDEVs (virtual devices). Each VDEV is a group of drives working together": "",
   "A registry mirror is an alternative server used to cache and serve container images, helping speed up downloads and potentially reduce network load. It can be public or private, and optionally secure.": "",
   "A scrub is a data integrity check of your pool. Scrubs identify data integrity problems, detect silent data corruptions caused by transient hardware issues, and provide early disk failure alerts.": "",
-  "A single bandwidth limit or bandwidth limit schedule in rclone format. Separate entries by pressing <code>Enter</code>. Example:  <samp>08:00,512</samp> <samp>12:00,10MB</samp> <samp>13:00,512</samp>  <samp>18:00,30MB</samp> <samp>23:00,off</samp>. Units can be specified with a suffix of <samp>b</samp> (default), <samp>k</samp>, <samp>M</samp>, or <samp>G</samp>. See <a href=\"https://rclone.org/docs/#bwlimit-bandwidth-spec\" target=\"_blank\">rclone --bwlimit</a>.": "",
+  "A single bandwidth limit or bandwidth limit schedule in rclone format. Separate entries by pressing <code>Enter</code>. Example:  <samp>08:00,512</samp> <samp>12:00,10MB</samp> <samp>13:00,512</samp>  <samp>18:00,30MB</samp> <samp>23:00,off</samp>. Units can be specified with a suffix of <samp>b</samp> (default), <samp>k</samp>, <samp>M</samp>, or <samp>G</samp>. See <a href=\"https://rclone.org/docs/#bwlimit-bwtimetable\" target=\"_blank\">rclone --bwlimit</a>.": "",
   "A smaller block size can reduce sequential I/O performance and space efficiency.": "",
   "A stripe {vdevType} VDEV is highly discouraged and will result in data loss if it fails": "",
   "A stripe log VDEV may result in data loss if it fails combined with a power outage.": "",
