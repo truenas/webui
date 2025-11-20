@@ -3480,7 +3480,7 @@
   "Number of seconds before a timeout. Increase this value if AD DNS queries time out.": "DNS 超时（秒）。如果 DNS 查询超时，请增加此值。",
   "Number of seconds before timeout. To view the AD  connection status, open the interface <i>Task Manager</i>.": "超时前的秒数。要查看 AD 连接状态，请打开界面<i>任务管理器</i>。",
   "Number of seconds to wait after a network failure  before triggering a failover. <i>0</i> means a failover occurs  immediately, or after two seconds when the system is using a link  aggregation.": "网络故障后等待触发故障转移之前要等待的秒数。<i> 0 </i>表示故障转移立即发生，或者在系统使用链路聚合时两秒钟后发生。",
-  "Number of simultaneous file transfers. Enter a number based on the available bandwidth and destination system performance. See <a href=\"https://rclone.org/docs/#transfers-n\" target=\"_blank\">rclone --transfers</a>.": "同时传输的文件数。根据可用带宽和目标系统性能输入数字。请参见<a href=\"https://rclone.org/docs/\\#transfers-n\" target=\"_blank\"> rclone --transfers </a>。",
+  "Number of simultaneous file transfers. Enter a number based on the available bandwidth and destination system performance. See <a href=\"https://rclone.org/docs/#transfers-int\" target=\"_blank\">rclone --transfers</a>.": "同时传输的文件数。根据可用带宽和目标系统性能输入数字。请参见<a href=\"https://rclone.org/docs/\\#transfers-n\" target=\"_blank\"> rclone --transfers </a>。",
   "Number of times the replication is attempted  before stopping and marking the task as failed.": "在停止并将任务标记为失败之前尝试复制的次数。",
   "Number of VDEVs": "VDEVs 数量",
   "Number of virtual CPUs to allocate to the virtual machine. The VM operating system might have operational or licensing restrictions on the number of CPUs.": "分配给虚拟机的虚拟 CPU 数量。虚拟机操作系统可能对 CPU 数量有操作或许可证限制。",

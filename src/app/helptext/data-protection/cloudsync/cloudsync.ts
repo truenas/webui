@@ -133,7 +133,7 @@ export const helptextCloudSync = {
   transfersLabel: T('Transfers'),
   transfersTooltip: T('Number of simultaneous file transfers. Enter a\
  number based on the available bandwidth and destination system\
- performance. See <a href="https://rclone.org/docs/#transfers-n"\
+ performance. See <a href="https://rclone.org/docs/#transfers-int"\
  target="_blank">rclone --transfers</a>.'),
 
   enabledLabel: T('Enabled'),

@@ -146,7 +146,7 @@
   "No display devices are configured for this VM.": "",
   "Not enabled, because this feature requires an HA license.": "",
   "Note": "",
-  "Number of simultaneous file transfers. Enter a number based on the available bandwidth and destination system performance. See <a href=\"https://rclone.org/docs/#transfers-n\" target=\"_blank\">rclone --transfers</a>.": "",
+  "Number of simultaneous file transfers. Enter a number based on the available bandwidth and destination system performance. See <a href=\"https://rclone.org/docs/#transfers-int\" target=\"_blank\">rclone --transfers</a>.": "",
   "Once enabled, users will be prompted to set up two-factor authentication next time they login. They can choose to skip the setup if desired.": "",
   "Open Backup Credentials in full page": "",
   "Open Cloud Sync Tasks list in full page": "",
