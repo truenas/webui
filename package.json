@@ -51,7 +51,10 @@
   "private": true,
   "resolutions": {
     "mermaid": "^11.10.1",
-    "glob": "^10.4.5"
+    "@markuplint/create-rule-helper/glob": "^10.4.5",
+    "@markuplint/file-resolver/glob": "^10.4.5",
+    "svg-sprite/glob": "^10.4.5",
+    "test-exclude": "^7.0.1"
   },
   "dependencies": {
     "@angular-devkit/core": "~20.3.2",
@@ -163,7 +166,7 @@
     "ip-regex": "~5.0.0",
     "is-cidr": "~5.1.0",
     "jdenticon": "~3.3.0",
-    "jest": "~30.0.5",
+    "jest": "~30.2.0",
     "jest-canvas-mock": "^2.5.0",
     "jest-fail-on-console": "~3.3.0",
     "jest-junit": "~16.0.0",
