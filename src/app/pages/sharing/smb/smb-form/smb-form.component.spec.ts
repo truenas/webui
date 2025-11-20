@@ -1079,7 +1079,7 @@ describe('SmbFormComponent', () => {
   });
 
   describe('Dataset Naming Schema null value', () => {
-    it('should allow empty string for dataset_naming_schema when auto_dataset_creation is enabled', async () => {
+    it('should allow null value for dataset_naming_schema when auto_dataset_creation is enabled', async () => {
       await setupTest();
 
       await form.fillForm({
@@ -1087,7 +1087,7 @@ describe('SmbFormComponent', () => {
         Path: '/mnt/pool/time-machine',
         Name: 'time-machine',
         'Auto Dataset Creation': true,
-        'Dataset Naming Schema': '',
+        'Dataset Naming Schema': null,
       });
 
       await spectator.fixture.whenStable();
@@ -1117,6 +1117,34 @@ describe('SmbFormComponent', () => {
 
       const formValues = await form.getValues();
       expect(formValues['Dataset Naming Schema']).toBeUndefined();
+    });
+
+    it('should send null to API when dataset_naming_schema is empty', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': null,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          purpose: SmbSharePurpose.TimeMachineShare,
+          name: 'time-machine',
+          path: '/mnt/pool/time-machine',
+          enabled: true,
+          options: expect.objectContaining({
+            auto_dataset_creation: true,
+            dataset_naming_schema: null,
+          }),
+        }),
+      ]);
     });
   });
 });
