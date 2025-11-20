@@ -1077,4 +1077,46 @@ describe('SmbFormComponent', () => {
       expect(errorElement?.textContent).toContain('At least one group must be specified');
     });
   });
+
+  describe('Dataset Naming Schema null value', () => {
+    it('should allow empty string for dataset_naming_schema when auto_dataset_creation is enabled', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': '',
+      });
+
+      await spectator.fixture.whenStable();
+
+      const formValues = await form.getValues();
+      expect(formValues['Dataset Naming Schema']).toBe('');
+    });
+
+    it('should clear dataset_naming_schema when auto_dataset_creation is disabled', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': 'test-schema',
+      });
+
+      await spectator.fixture.whenStable();
+
+      await form.fillForm({
+        'Auto Dataset Creation': false,
+      });
+
+      await spectator.fixture.whenStable();
+
+      const formValues = await form.getValues();
+      expect(formValues['Dataset Naming Schema']).toBeUndefined();
+    });
+  });
 });
