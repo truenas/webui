@@ -29,6 +29,7 @@ import {
 } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
@@ -64,7 +65,7 @@ describe('SmbFormComponent', () => {
     enabled: true,
     comment: 'Description',
     audit: {
-      enable: true,
+      enable: false,
       watch_list: [] as string[],
       ignore_list: [] as string[],
     },
@@ -194,7 +195,7 @@ describe('SmbFormComponent', () => {
     'Export Read Only': true,
     'Browsable to Network Clients': true,
     'Access Based Share Enumeration': true,
-    'Enable Logging': true,
+    'Enable Logging': false,
   };
 
   async function submitForm(values: Record<string, unknown>): Promise<void> {
@@ -302,7 +303,7 @@ describe('SmbFormComponent', () => {
         browsable: true,
         access_based_share_enumeration: true,
         audit: {
-          enable: true,
+          enable: false,
           ignore_list: [],
           watch_list: [],
         },
@@ -446,9 +447,7 @@ describe('SmbFormComponent', () => {
         'Export Read Only': true,
         'Browsable to Network Clients': true,
         'Access Based Share Enumeration': true,
-        'Enable Logging': true,
-        'Watch List': [],
-        'Ignore List': [],
+        'Enable Logging': false,
 
         'Use Apple-style Character Encoding': true,
       });
@@ -912,6 +911,170 @@ describe('SmbFormComponent', () => {
 
       const formValues = await form.getValues();
       expect(formValues['Auto Quota']).toBe('50');
+    });
+  });
+
+  describe('audit logging validation', () => {
+    beforeEach(async () => {
+      await setupTest();
+    });
+
+    it('should disable save button when audit logging is enabled without groups', async () => {
+      // Fill in required fields first
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // User should see save button disabled due to validation error
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    });
+
+    it('should enable save button when group is added to watch list', async () => {
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify save button is initially disabled
+      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Add a group to watch list
+      const watchListChips = await loader.getHarness(IxChipsHarness.with({ label: 'Watch List' }));
+      await watchListChips.selectSuggestionValue('test');
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // User should now see save button enabled
+      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('should enable save button when group is added to ignore list', async () => {
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify save button is initially disabled
+      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Add a group to ignore list
+      const ignoreListChips = await loader.getHarness(IxChipsHarness.with({ label: 'Ignore List' }));
+      await ignoreListChips.selectSuggestionValue('test');
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // User should now see save button enabled
+      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('should enable save button when audit logging is disabled', async () => {
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify save button is initially disabled
+      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Disable audit logging
+      const enableLoggingCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Logging' }));
+      await enableLoggingCheckbox.setValue(false);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // User should now see save button enabled
+      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('should display error message when audit logging is enabled without groups', async () => {
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error message is displayed
+      const errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeTruthy();
+      expect(errorElement?.textContent).toContain('At least one group must be specified');
+    });
+
+    it('should re-validate and show error when group is added then removed (reactivity)', async () => {
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error is initially displayed
+      let errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeTruthy();
+
+      // Add a group to watch list
+      const watchListChips = await loader.getHarness(IxChipsHarness.with({ label: 'Watch List' }));
+      await watchListChips.selectSuggestionValue('test');
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error is gone
+      errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeFalsy();
+
+      // Remove the group
+      await watchListChips.removeAllChips();
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error appears again (validates reactivity)
+      errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeTruthy();
+      expect(errorElement?.textContent).toContain('At least one group must be specified');
     });
   });
 });
