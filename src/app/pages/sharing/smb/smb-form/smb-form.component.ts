@@ -433,8 +433,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     ).subscribe((autoCreate) => {
       if (!autoCreate) {
         this.form.controls.dataset_naming_schema.setValue(null);
-      } else if (this.form.controls.dataset_naming_schema.value === null) {
-        this.form.controls.dataset_naming_schema.setValue('');
       }
     });
   }
@@ -645,7 +643,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       smbShare.options = options;
     }
 
+    // Convert empty string to null for dataset_naming_schema to allow server defaults
     const timeMachineOptions = smbShare.options as TimeMachineSmbShareOptions;
+    if (timeMachineOptions?.dataset_naming_schema === '') {
+      timeMachineOptions.dataset_naming_schema = null;
+    }
 
     if (
       presetFields.includes('timemachine_quota')
