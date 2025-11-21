@@ -94,6 +94,18 @@
         </a>
       </div>
     }
+    @if (hasDirectWebShares() || hasInheritedWebShares()) {
+      <div class="details-item">
+        <ix-icon name="ix-webshare" class="icon"></ix-icon>
+        <div class="label">{{ 'Share Attached' | translate }}:</div>
+        <div class="webshares value">
+          {{ 'Dataset is shared via WebShare as {shares}' | translate: { shares: combinedWebShareDisplay() } }}
+        </div>
+        <a class="action" ixTest="manage-webshares" [routerLink]="['/sharing/webshare']">
+          {{ 'Manage WebShares' | translate }}
+        </a>
+      </div>
+    }
     @if (canCreateShare()) {
       <div class="details-item">
         <ix-icon class="icon" name="share"></ix-icon>
@@ -121,6 +133,20 @@
           {{ 'Create NFS Share' | translate }}
         </a>
       </div>
+      @if (hasLicenseOrTruenasConnect()) {
+        <div class="details-item">
+          <a
+            *ixRequiresRoles="webShareRequiredRoles"
+            class="action"
+            tabindex="0"
+            ixTest="create-webshare"
+            (click)="createWebshare()"
+            (keydown.enter)="createWebshare()"
+          >
+            {{ 'Create WebShare' | translate }}
+          </a>
+        </div>
+      }
     }
   </mat-card-content>
 </mat-card>

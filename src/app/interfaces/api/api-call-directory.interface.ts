@@ -294,6 +294,9 @@ import {
   VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
 import {
+  WebShareConfig, WebShareConfigUpdate, WebShare, WebShareUpdate,
+} from 'app/interfaces/webshare-config.interface';
+import {
   CloneZfsSnapshot,
   CreateZfsSnapshot,
   ZfsRollbackParams,
@@ -789,6 +792,10 @@ export interface ApiCallDirectory {
   'sharing.smb.setacl': { params: [{ share_name: string; share_acl: SmbSharesecAce[] }]; response: SmbSharesec };
   'sharing.smb.share_precheck': { params: [{ name: string }]; response: null | { reason: string } };
   'sharing.smb.update': { params: [id: number, update: Partial<SmbShare>]; response: SmbShare };
+  'sharing.webshare.create': { params: [WebShareUpdate]; response: WebShare };
+  'sharing.webshare.delete': { params: [id: number]; response: boolean };
+  'sharing.webshare.query': { params: QueryParams<WebShare>; response: WebShare[] };
+  'sharing.webshare.update': { params: [id: number, update: WebShareUpdate]; response: WebShare };
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };
@@ -980,6 +987,10 @@ export interface ApiCallDirectory {
   // WebUI Crypto
   'webui.crypto.csr_profiles': { params: void; response: CertificateProfiles };
   'webui.crypto.get_certificate_domain_names': { params: [number]; response: string[] };
+
+  // WebShare
+  'webshare.config': { params: void; response: WebShareConfig };
+  'webshare.update': { params: [WebShareConfigUpdate]; response: WebShareConfig };
 
   // ZFS
   'pool.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
