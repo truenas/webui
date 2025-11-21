@@ -7,6 +7,7 @@
   border: 1px solid var(--lines);
   color: var(--fg1);
   display: flex;
+  min-height: 37.5px;
   padding: 2px 8px;
   position: relative;
 
@@ -71,18 +72,24 @@
 }
 
 .switch-link {
+  align-items: center;
   color: var(--primary);
   cursor: pointer;
-  flex-grow: 0;
-  flex-shrink: 1;
-  margin-top: 5px;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 12px;
+  gap: 4px;
+  margin-top: 3px;
   user-select: none;
   white-space: nowrap;
 
-  @media (max-width: $breakpoint-sm) {
-    margin-top: 0;
-    white-space: inherit;
-    width: 70px;
+  ix-icon {
+    font-size: 16px;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 1.5px var(--focus-bg) inset;
+    outline-width: 0;
   }
 }
 

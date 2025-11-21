@@ -14,15 +14,17 @@
 />
 
 @if (allowAdvanced()) {
-  <a
+  <span
     class="switch-link"
     ixTest="switch-to-advanced"
     tabindex="0"
+    [matTooltip]="'Switch To Advanced' | translate"
     (click)="switchToAdvanced.emit()"
     (keydown.enter)="$event.preventDefault(); switchToAdvanced.emit()"
   >
-    {{ 'Switch To Advanced' | translate }}
-  </a>
+    <ix-icon name="mdi-tune"></ix-icon>
+    {{ 'Advanced' | translate }}
+  </span>
 }
 
 @if (searchControl.value) {

@@ -5,7 +5,7 @@
   ></ix-fake-progress-bar>
 
   <div class="actions-bar">
-    <div class="search-container">
+    <div class="top-row">
       <ix-select
         class="service-select"
         ixTest="audit-service"
@@ -14,6 +14,61 @@
         [options]="serviceOptions$"
         [required]="true"
       ></ix-select>
+      @if (dataProvider().totalRows) {
+        <div class="export-container">
+          <button
+            mat-icon-button
+            ixTest="export-format-selector"
+            [matMenuTriggerFor]="formatMenu"
+            [attr.aria-label]="'Select Export Format' | translate"
+          >
+            <ix-icon name="mdi-menu-down"></ix-icon>
+          </button>
+          <mat-menu #formatMenu="matMenu">
+            <button
+              mat-menu-item
+              ixTest="format-csv"
+              [class.selected]="exportFormat() === ExportFormat.Csv"
+              (click)="onFormatChange(ExportFormat.Csv)"
+            >
+              CSV
+            </button>
+            <button
+              mat-menu-item
+              ixTest="format-json"
+              [class.selected]="exportFormat() === ExportFormat.Json"
+              (click)="onFormatChange(ExportFormat.Json)"
+            >
+              JSON
+            </button>
+            <button
+              mat-menu-item
+              ixTest="format-yaml"
+              [class.selected]="exportFormat() === ExportFormat.Yaml"
+              (click)="onFormatChange(ExportFormat.Yaml)"
+            >
+              YAML
+            </button>
+          </mat-menu>
+          <ix-export-button
+            jobMethod="audit.export"
+            downloadMethod="audit.download_report"
+            [addReportNameArgument]="true"
+            [searchQuery]="searchQuery()"
+            [sorting]="dataProvider().sorting"
+            [defaultFilters]="basicQueryFilters()"
+            [controllerType]="dataProvider().selectedControllerType"
+            [filename]="exportFilename()"
+            [fileType]="exportFileType()"
+            [fileMimeType]="exportMimeType"
+            [exportFormat]="exportFormat()"
+            [displayFormat]="exportFormatDisplayLabel()"
+            [ariaLabel]="'Export audit logs as {format}' | translate:{ format: exportFormatDisplayLabel() }"
+          ></ix-export-button>
+        </div>
+      }
+    </div>
+    <div class="search-row">
       <ix-search-input2
         #searchInput
         class="search-input"
@@ -22,130 +77,15 @@
         [query]="searchQuery()"
         (runSearch)="onSearch(searchInput.query()); updateUrlOptions(); searchInput.advancedSearch()?.hideDatePicker()"
       ></ix-search-input2>
-      <div class="search-button-wrapper">
-        <button
-          mat-button
-          type="button"
-          color="primary"
-          ixTest="search"
-          (click)="onSearch(searchInput.query()); updateUrlOptions(); searchInput.advancedSearch()?.hideDatePicker()"
-        >
-          {{ 'Search' | translate }}
-        </button>
-        @if (isMobileView()) {
-          <ng-container [ngTemplateOutlet]="exportButton"></ng-container>
-        }
-      </div>
+      <button
+        mat-button
+        type="button"
+        color="primary"
+        ixTest="search"
+        (click)="onSearch(searchInput.query()); updateUrlOptions(); searchInput.advancedSearch()?.hideDatePicker()"
+      >
+        {{ 'Search' | translate }}
+      </button>
     </div>
-    @if (!isMobileView() && dataProvider().totalRows) {
-      <div class="export-container">
-        <button
-          mat-icon-button
-          ixTest="export-format-selector"
-          [matMenuTriggerFor]="formatMenu"
-          [attr.aria-label]="'Select Export Format' | translate"
-        >
-          <ix-icon name="mdi-menu-down"></ix-icon>
-        </button>
-        <mat-menu #formatMenu="matMenu">
-          <button
-            mat-menu-item
-            ixTest="format-csv"
-            [class.selected]="exportFormat() === ExportFormat.Csv"
-            (click)="onFormatChange(ExportFormat.Csv)"
-          >
-            CSV
-          </button>
-          <button
-            mat-menu-item
-            ixTest="format-json"
-            [class.selected]="exportFormat() === ExportFormat.Json"
-            (click)="onFormatChange(ExportFormat.Json)"
-          >
-            JSON
-          </button>
-          <button
-            mat-menu-item
-            ixTest="format-yaml"
-            [class.selected]="exportFormat() === ExportFormat.Yaml"
-            (click)="onFormatChange(ExportFormat.Yaml)"
-          >
-            YAML
-          </button>
-        </mat-menu>
-        <ix-export-button
-          jobMethod="audit.export"
-          downloadMethod="audit.download_report"
-          [addReportNameArgument]="true"
-          [searchQuery]="searchQuery()"
-          [sorting]="dataProvider().sorting"
-          [defaultFilters]="basicQueryFilters()"
-          [controllerType]="dataProvider().selectedControllerType"
-          [filename]="exportFilename()"
-          [fileType]="exportFileType()"
-          [fileMimeType]="exportMimeType"
-          [exportFormat]="exportFormat()"
-          [displayFormat]="exportFormatDisplayLabel()"
-          [ariaLabel]="'Export audit logs as {format}' | translate:{ format: exportFormatDisplayLabel() }"
-        ></ix-export-button>
-      </div>
-    }
   </div>
 </div>
-
-
-<ng-template #exportButton>
-  @if (dataProvider().totalRows) {
-    <div class="export-container">
-      <button
-        mat-icon-button
-        ixTest="export-format-selector"
-        [matMenuTriggerFor]="formatMenuMobile"
-        [attr.aria-label]="'Select Export Format' | translate"
-      >
-        <ix-icon name="mdi-menu-down"></ix-icon>
-      </button>
-      <mat-menu #formatMenuMobile="matMenu">
-        <button
-          mat-menu-item
-          ixTest="format-csv"
-          [class.selected]="exportFormat() === ExportFormat.Csv"
-          (click)="onFormatChange(ExportFormat.Csv)"
-        >
-          CSV
-        </button>
-        <button
-          mat-menu-item
-          ixTest="format-json"
-          [class.selected]="exportFormat() === ExportFormat.Json"
-          (click)="onFormatChange(ExportFormat.Json)"
-        >
-          JSON
-        </button>
-        <button
-          mat-menu-item
-          ixTest="format-yaml"
-          [class.selected]="exportFormat() === ExportFormat.Yaml"
-          (click)="onFormatChange(ExportFormat.Yaml)"
-        >
-          YAML
-        </button>
-      </mat-menu>
-      <ix-export-button
-        jobMethod="audit.export"
-        downloadMethod="audit.download_report"
-        [addReportNameArgument]="true"
-        [searchQuery]="searchQuery()"
-        [sorting]="dataProvider().sorting"
-        [defaultFilters]="basicQueryFilters()"
-        [controllerType]="dataProvider().selectedControllerType"
-        [filename]="exportFilename()"
-        [fileType]="exportFileType()"
-        [fileMimeType]="exportMimeType"
-        [exportFormat]="exportFormat()"
-        [displayFormat]="exportFormatDisplayLabel()"
-        [ariaLabel]="'Export audit logs as {format}' | translate:{ format: exportFormatDisplayLabel() }"
-      ></ix-export-button>
-    </div>
-  }
-</ng-template>
