@@ -19,7 +19,7 @@ class TestTerminalReconnectLogic {
   shellService: ShellService;
 
   conf = (): TerminalConfiguration => ({
-    connectionData: { container_id: 'test-instance', use_console: false },
+    connectionData: { container_id: 1, use_console: false },
   });
 
   constructor(
@@ -124,7 +124,7 @@ describe('TerminalComponent Reconnect Logic', () => {
       expect(logic.isReconnecting()).toBe(true);
       expect(authService.getOneTimeToken).toHaveBeenCalled();
       expect(shellService.connect).toHaveBeenCalledWith('fresh-token', {
-        container_id: 'test-instance',
+        container_id: 1,
         use_console: false,
       });
     });
@@ -182,7 +182,7 @@ describe('TerminalComponent Reconnect Logic', () => {
       expect(logic.isReconnecting()).toBe(true);
       expect(authService.getOneTimeToken).toHaveBeenCalledTimes(1);
       expect(shellService.connect).toHaveBeenCalledWith('fresh-token', {
-        container_id: 'test-instance',
+        container_id: 1,
         use_console: false,
       });
     });
