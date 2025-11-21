@@ -1077,4 +1077,201 @@ describe('SmbFormComponent', () => {
       expect(errorElement?.textContent).toContain('At least one group must be specified');
     });
   });
+
+  describe('Dataset Naming Schema null value', () => {
+    it('should allow null value for dataset_naming_schema when auto_dataset_creation is enabled', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': null,
+      });
+
+      await spectator.fixture.whenStable();
+
+      // The form harness displays null as empty string in the UI
+      const formValues = await form.getValues();
+      expect(formValues['Dataset Naming Schema']).toBe('');
+    });
+
+    it('should clear dataset_naming_schema when auto_dataset_creation is disabled', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': 'test-schema',
+      });
+
+      await spectator.fixture.whenStable();
+
+      await form.fillForm({
+        'Auto Dataset Creation': false,
+      });
+
+      await spectator.fixture.whenStable();
+
+      const formValues = await form.getValues();
+      expect(formValues['Dataset Naming Schema']).toBeUndefined();
+    });
+
+    it('should send null to API when dataset_naming_schema is empty', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': null,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          purpose: SmbSharePurpose.TimeMachineShare,
+          name: 'time-machine',
+          path: '/mnt/pool/time-machine',
+          enabled: true,
+          options: expect.objectContaining({
+            auto_dataset_creation: true,
+            dataset_naming_schema: null,
+          }),
+        }),
+      ]);
+    });
+
+    it('should convert empty string to null when user clears the field', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': 'initial-value',
+      });
+
+      await spectator.fixture.whenStable();
+
+      await form.fillForm({
+        'Dataset Naming Schema': '', // User clears the field
+      });
+
+      await spectator.fixture.whenStable();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          purpose: SmbSharePurpose.TimeMachineShare,
+          options: expect.objectContaining({
+            dataset_naming_schema: null, // Should be converted to null
+          }),
+        }),
+      ]);
+    });
+
+    it('should handle toggling auto_dataset_creation on/off/on correctly', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': '%u',
+      });
+
+      await spectator.fixture.whenStable();
+
+      // Disable auto-creation (should clear the field)
+      await form.fillForm({
+        'Auto Dataset Creation': false,
+      });
+
+      await spectator.fixture.whenStable();
+      let formValues = await form.getValues();
+      expect(formValues['Dataset Naming Schema']).toBeUndefined();
+
+      // Re-enable auto-creation (field should stay null/empty, allowing server defaults)
+      await form.fillForm({
+        'Auto Dataset Creation': true,
+      });
+
+      await spectator.fixture.whenStable();
+      formValues = await form.getValues();
+      // Field should display as empty, allowing user to leave blank or enter custom value
+      expect(formValues['Dataset Naming Schema']).toBe('');
+
+      // User can optionally enter a new value
+      await form.fillForm({
+        'Dataset Naming Schema': 'custom-schema',
+      });
+
+      await spectator.fixture.whenStable();
+      formValues = await form.getValues();
+      expect(formValues['Dataset Naming Schema']).toBe('custom-schema');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          options: expect.objectContaining({
+            auto_dataset_creation: true,
+            dataset_naming_schema: 'custom-schema',
+          }),
+        }),
+      ]);
+    });
+
+    it('should send null when toggling auto_dataset_creation and leaving field empty', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': '%u',
+      });
+
+      await spectator.fixture.whenStable();
+
+      // Disable and re-enable auto-creation
+      await form.fillForm({
+        'Auto Dataset Creation': false,
+      });
+
+      await spectator.fixture.whenStable();
+
+      await form.fillForm({
+        'Auto Dataset Creation': true,
+      });
+
+      await spectator.fixture.whenStable();
+
+      // Leave field empty (should send null for server defaults)
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          options: expect.objectContaining({
+            auto_dataset_creation: true,
+            dataset_naming_schema: null, // Should send null for server defaults
+          }),
+        }),
+      ]);
+    });
+  });
 });
