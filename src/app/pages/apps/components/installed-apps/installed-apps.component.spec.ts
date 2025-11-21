@@ -38,6 +38,7 @@ describe('InstalledAppsComponent', () => {
       train: 'test-catalog-train',
     },
     state: AppState.Running,
+    source: 'TRUENAS',
   } as App;
 
   const createComponent = createRoutingFactory({
@@ -100,14 +101,26 @@ describe('InstalledAppsComponent', () => {
       }),
       mockApi([]),
       mockAuth(),
-      mockProvider(AppsStatsService),
+      mockProvider(AppsStatsService, {
+        getStatsForApp: jest.fn(() => of({
+          cpu_usage: 0,
+          memory: 0,
+          blkio: { read: 0, write: 0 },
+          networks: [],
+        })),
+      }),
     ],
     params: { appId: 'ix-test-app' },
   });
 
   beforeEach(() => {
     spectator = createComponent();
-    spectator.component.installedAppsList().dataSource = [app];
+    const listComponent = spectator.component.installedAppsList();
+    listComponent.dataSource = [app];
+    // Force computed signal to recalculate by toggling searchQuery
+    listComponent.searchQuery.set('trigger');
+    listComponent.searchQuery.set('');
+    spectator.detectChanges();
     applicationsService = spectator.inject(ApplicationsService);
   });
 
