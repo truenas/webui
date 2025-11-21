@@ -1,0 +1,16 @@
+.warning-message {
+  align-items: flex-start;
+  background-color: var(--yellow-lighter);
+  border-radius: 4px;
+  color: var(--fg1);
+  display: flex;
+  font-size: 0.875rem;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px;
+
+  ix-icon {
+    color: var(--yellow);
+    flex-shrink: 0;
+  }
+}
