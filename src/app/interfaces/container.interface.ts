@@ -150,13 +150,20 @@ export interface ContainerImageRegistryResponse {
   versions: string[];
 }
 
-export interface AvailableUsb {
-  vendor_id: string;
-  product_id: string;
-  bus: number;
-  dev: number;
+export interface UsbCapability {
   product: string;
-  manufacturer: string;
+  product_id: string;
+  vendor: string;
+  vendor_id: string;
+  bus: string;
+  device: string;
+}
+
+export interface AvailableUsb {
+  capability: UsbCapability;
+  available: boolean;
+  error: string | null;
+  description: string;
 }
 
 export type InstanceEnvVariablesFormGroup = FormGroup<{

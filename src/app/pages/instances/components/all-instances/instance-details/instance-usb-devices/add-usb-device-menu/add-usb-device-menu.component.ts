@@ -43,17 +43,27 @@ export class AddUsbDeviceMenuComponent {
   private devicesStore = inject(ContainerDevicesStore);
   private instancesStore = inject(ContainerInstancesStore);
 
-  private readonly usbChoices = toSignal(this.api.call('container.device.usb_choices'), { initialValue: {} });
+  private readonly usbChoices = toSignal(this.api.call('container.device.usb_choices'), { initialValue: null });
 
-  protected readonly isLoadingDevices = this.devicesStore.isLoading;
+  protected readonly isLoading = computed(() => {
+    const devicesLoading = this.devicesStore.isLoading();
+    const usbChoices = this.usbChoices();
+    return devicesLoading || usbChoices === null;
+  });
 
   protected readonly availableUsbDevices = computed(() => {
-    const usbChoices = Object.values(this.usbChoices());
+    const usbChoices = this.usbChoices();
+    if (!usbChoices) {
+      return [];
+    }
+
     const existingUsbDevices = this.devicesStore.devices()
       .filter((device) => device.dtype === ContainerDeviceType.Usb);
 
-    return usbChoices.filter((usb) => {
-      return !existingUsbDevices.find((device) => device.usb.product_id === usb.product_id);
+    return Object.values(usbChoices).filter((usb) => {
+      const isAlreadyAdded = existingUsbDevices
+        .some((device) => device.usb?.product_id === usb.capability.product_id);
+      return usb.available && !isAlreadyAdded;
     });
   });
 
@@ -65,8 +75,8 @@ export class AddUsbDeviceMenuComponent {
     this.addDevice({
       dtype: ContainerDeviceType.Usb,
       usb: {
-        vendor_id: usb.vendor_id,
-        product_id: usb.product_id,
+        vendor_id: usb.capability.vendor_id,
+        product_id: usb.capability.product_id,
       },
     } as ContainerUsbDevice);
   }

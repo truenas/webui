@@ -27,14 +27,22 @@ describe('AddUsbDeviceMenuComponent', () => {
       mockApi([
         mockCall('container.device.usb_choices', {
           usb1: {
-            vendor_id: '046d',
-            product_id: 'already-added',
-            product: 'Web Cam',
+            capability: {
+              vendor_id: '046d',
+              product_id: 'already-added',
+              product: 'Web Cam',
+            },
+            available: true,
+            description: 'Web Cam',
           } as AvailableUsb,
           usb2: {
-            vendor_id: '0781',
-            product_id: 'new',
-            product: 'Card Reader',
+            capability: {
+              vendor_id: '0781',
+              product_id: 'new',
+              product: 'Card Reader',
+            },
+            available: true,
+            description: 'Card Reader',
           } as AvailableUsb,
         }),
         mockCall('container.device.create'),

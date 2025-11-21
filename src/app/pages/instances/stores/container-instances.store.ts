@@ -98,30 +98,48 @@ export class ContainerInstancesStore extends ComponentStore<ContainerInstancesSt
     event: ApiEventTyped<'container.query'>,
   ): void {
     const prevInstances = this.instances();
+    const selectedInstance = this.selectedInstance();
     switch (event?.msg) {
       case CollectionChangeType.Added:
         this.patchState({ instances: [...prevInstances, event.fields] });
         break;
-      case CollectionChangeType.Changed:
+      case CollectionChangeType.Changed: {
         // TODO: Keep it until API improvements
         // Workaround for API limitation: When only the status field is updated,
         // the API sends event.id as the instance name (string) instead of the instance ID (number).
         // This special handling matches by name until the API is fixed to consistently use IDs.
         // Once the API improvement is made, this workaround can be removed and only the standard
         // ID-based update (below) will be needed.
-        if (event.fields && Object.keys(event.fields).length === 1 && 'status' in event.fields) {
-          const changedInstances = prevInstances.map((instance) => {
+        const isStatusOnlyUpdate = event.fields && Object.keys(event.fields).length === 1 && 'status' in event.fields;
+        let updatedInstances: ContainerInstance[];
+
+        if (isStatusOnlyUpdate) {
+          updatedInstances = prevInstances.map((instance) => {
             if (instance.name === event.id) {
               return { ...instance, status: event.fields.status };
             }
             return instance;
           });
-          this.patchState({ instances: changedInstances });
+        } else {
+          updatedInstances = prevInstances.map((item) => (item.id === event.id ? { ...item, ...event?.fields } : item));
         }
-        this.patchState({
-          instances: prevInstances.map((item) => (item.id === event.id ? { ...item, ...event?.fields } : item)),
-        });
+
+        const updates: Partial<ContainerInstancesState> = { instances: updatedInstances };
+
+        // Update selectedInstance if it was affected
+        if (selectedInstance) {
+          const matchesByName = isStatusOnlyUpdate && selectedInstance.name === event.id;
+          const matchesById = selectedInstance.id === event.id;
+          if (matchesByName || matchesById) {
+            updates.selectedInstance = updatedInstances.find(
+              (instance) => instance.id === selectedInstance.id,
+            );
+          }
+        }
+
+        this.patchState(updates);
         break;
+      }
       case CollectionChangeType.Removed:
         this.patchState({ instances: prevInstances.filter((item) => item.id !== event.id) });
         break;
