@@ -1,8 +1,3 @@
-.mirrors {
-  margin-bottom: 5px;
-  margin-top: 8px;
-}
-
 .actions {
   margin-top: 10px;
 }
@@ -22,5 +17,24 @@
 
   .size {
     width: 80px;
+  }
+}
+
+.registry-mirrors {
+  margin-bottom: 0;
+}
+
+.registry-mirror {
+  align-items: flex-start;
+  column-gap: 20px;
+  display: flex;
+
+  ix-input {
+    flex-grow: 1;
+  }
+
+  ix-checkbox {
+    padding-top: 40px;
+    width: auto;
   }
 }
