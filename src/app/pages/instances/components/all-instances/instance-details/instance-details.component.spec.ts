@@ -2,32 +2,25 @@ import { Type } from '@angular/core';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { VirtualizationType } from 'app/enums/virtualization.enum';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import {
   InstanceDetailsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-details.component';
 import {
-  InstanceDevicesComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-devices/instance-devices.component';
-import {
-  InstanceDisksComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disks.component';
+  InstanceFilesystemDevicesComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-filesystem-devices/instance-filesystem-devices.component';
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
 import {
-  InstanceIdmapComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-idmap/instance-idmap.component';
-import {
-  InstanceNicsComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-nics/instance-nics.component';
-import {
-  InstanceProxiesComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-proxies/instance-proxies.component';
+  InstanceNicDevicesComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-nic-devices/instance-nic-devices.component';
 import {
   InstanceToolsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-tools/instance-tools.component';
+import {
+  InstanceUsbDevicesComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-usb-devices/instance-usb-devices.component';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 
 describe('InstanceDetailsComponent', () => {
   let spectator: Spectator<InstanceDetailsComponent>;
@@ -37,11 +30,9 @@ describe('InstanceDetailsComponent', () => {
       NgxSkeletonLoaderComponent,
       MockComponents(
         InstanceGeneralInfoComponent,
-        InstanceDevicesComponent,
-        InstanceDisksComponent,
-        InstanceNicsComponent,
-        InstanceProxiesComponent,
-        InstanceIdmapComponent,
+        InstanceUsbDevicesComponent,
+        InstanceFilesystemDevicesComponent,
+        InstanceNicDevicesComponent,
         InstanceToolsComponent,
       ),
     ],
@@ -50,10 +41,10 @@ describe('InstanceDetailsComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        instance: {
+        instance: fakeContainerInstance({
+          id: 1,
           name: 'my-instance',
-          type: VirtualizationType.Container,
-        } as VirtualizationInstance,
+        }),
       },
     });
   });
@@ -61,44 +52,14 @@ describe('InstanceDetailsComponent', () => {
   it('shows details sub-components related to a selected container', () => {
     const expectedComponents = [
       InstanceGeneralInfoComponent,
-      InstanceDevicesComponent,
-      InstanceDisksComponent,
-      InstanceNicsComponent,
-      InstanceProxiesComponent,
-      InstanceIdmapComponent,
+      InstanceUsbDevicesComponent,
+      InstanceFilesystemDevicesComponent,
+      InstanceNicDevicesComponent,
       InstanceToolsComponent,
     ];
 
     expectedComponents.forEach((component) => {
       expect(spectator.query(component as Type<unknown>)).toExist();
-    });
-  });
-
-  it('shows details sub-components related to a selected VM', () => {
-    spectator.setInput('instance', {
-      name: 'my-instance',
-      type: VirtualizationType.Vm,
-    } as VirtualizationInstance);
-
-    const expectedComponents = [
-      InstanceGeneralInfoComponent,
-      InstanceDevicesComponent,
-      InstanceDisksComponent,
-      InstanceNicsComponent,
-      InstanceToolsComponent,
-    ];
-
-    expectedComponents.forEach((component) => {
-      expect(spectator.query(component as Type<unknown>)).toExist();
-    });
-
-    const notExpectedComponents = [
-      InstanceProxiesComponent,
-      InstanceIdmapComponent,
-    ];
-
-    notExpectedComponents.forEach((component) => {
-      expect(spectator.query(component as Type<unknown>)).not.toExist();
     });
   });
 });

@@ -19,7 +19,7 @@ class TestTerminalReconnectLogic {
   shellService: ShellService;
 
   conf = (): TerminalConfiguration => ({
-    connectionData: { virt_instance_id: 'test-instance', use_console: false },
+    connectionData: { container_id: 1, use_console: false },
   });
 
   constructor(
@@ -86,7 +86,8 @@ class TestTerminalReconnectLogic {
   }
 
   isInstanceShell(): boolean {
-    return 'virt_instance_id' in this.conf().connectionData;
+    const data = this.conf().connectionData;
+    return ('container_id' in data && 'use_console' in data);
   }
 }
 
@@ -123,7 +124,7 @@ describe('TerminalComponent Reconnect Logic', () => {
       expect(logic.isReconnecting()).toBe(true);
       expect(authService.getOneTimeToken).toHaveBeenCalled();
       expect(shellService.connect).toHaveBeenCalledWith('fresh-token', {
-        virt_instance_id: 'test-instance',
+        container_id: 1,
         use_console: false,
       });
     });
@@ -181,7 +182,7 @@ describe('TerminalComponent Reconnect Logic', () => {
       expect(logic.isReconnecting()).toBe(true);
       expect(authService.getOneTimeToken).toHaveBeenCalledTimes(1);
       expect(shellService.connect).toHaveBeenCalledWith('fresh-token', {
-        virt_instance_id: 'test-instance',
+        container_id: 1,
         use_console: false,
       });
     });

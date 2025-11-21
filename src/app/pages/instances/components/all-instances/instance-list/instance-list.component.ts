@@ -13,8 +13,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { distinctUntilChanged, map, tap } from 'rxjs';
 import { containersEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { WINDOW } from 'app/helpers/window.helper';
+import { ContainerInstance } from 'app/interfaces/container.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
@@ -23,7 +23,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceListBulkActionsComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-list-bulk-actions/instance-list-bulk-actions.component';
 import { InstanceRowComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-row/instance-row.component';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
 @UntilDestroy()
 @Component({
@@ -46,16 +46,16 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
 export class InstanceListComponent {
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
-  private instancesStore = inject(VirtualizationInstancesStore);
+  private instancesStore = inject(ContainerInstancesStore);
   private searchDirectives = inject(UiSearchDirectivesService);
   private layoutService = inject(LayoutService);
 
-  readonly instanceId = toSignal(this.activatedRoute.params.pipe(map((params) => params['id'])));
+  readonly instanceId = toSignal(this.activatedRoute.params.pipe(map((params) => +params['id'])));
   readonly toggleShowMobileDetails = output<boolean>();
 
   readonly searchQuery = signal<string>('');
   protected readonly window = inject<Window>(WINDOW);
-  protected readonly selection = new SelectionModel<string>(true, []);
+  protected readonly selection = new SelectionModel<number>(true, []);
 
   protected readonly instances = this.instancesStore.instances;
   protected readonly isLoading = this.instancesStore.isLoading;
@@ -67,11 +67,9 @@ export class InstanceListComponent {
     return this.selection.selected.length === this.filteredInstances().length;
   }
 
-  get checkedInstances(): VirtualizationInstance[] {
+  get checkedInstances(): ContainerInstance[] {
     return this.selection.selected
-      .map((id) => {
-        return this.instances().find((instance) => instance.id === id);
-      })
+      .map((id: number) => this.instances().find((instance) => instance.id === id))
       .filter((instance) => !!instance);
   }
 
@@ -100,7 +98,9 @@ export class InstanceListComponent {
     toObservable(this.instanceId).pipe(
       distinctUntilChanged(),
       tap((instanceId) => {
-        this.instancesStore.selectInstance(instanceId as string);
+        if (instanceId !== null) {
+          this.instancesStore.selectInstance(instanceId);
+        }
       }),
       untilDestroyed(this),
     ).subscribe();
@@ -118,7 +118,7 @@ export class InstanceListComponent {
     }
   }
 
-  navigateToDetails(instance: VirtualizationInstance): void {
+  navigateToDetails(instance: ContainerInstance): void {
     this.layoutService.navigatePreservingScroll(this.router, ['/containers', 'view', instance.id]);
 
     this.toggleShowMobileDetails.emit(true);

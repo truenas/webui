@@ -1,0 +1,62 @@
+<h1 mat-dialog-title>
+  @if (isEditMode()) {
+    {{ 'Edit NIC Device: {nic}' | translate: { nic: nic() } }}
+  } @else {
+    {{ 'Add NIC Device: {nic}' | translate: { nic: nic() } }}
+  }
+</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form">
+    <ix-select
+      formControlName="type"
+      [label]="'NIC Type' | translate"
+      [required]="true"
+      [options]="nicTypeOptions"
+    ></ix-select>
+
+    @if (!isEditMode()) {
+      <ix-checkbox
+        formControlName="use_default"
+        [label]="'Use Default Mac Address' | translate"
+      ></ix-checkbox>
+    }
+    @if (isEditMode() || !useDefault()) {
+      <ix-input
+        formControlName="mac"
+        [required]="!isEditMode()"
+        [label]="'Mac Address' | translate"
+        [tooltip]="isEditMode() ? ('Leave empty to use default MAC address' | translate) : null"
+      ></ix-input>
+    }
+
+    @if (isVirtio()) {
+      <ix-checkbox
+        formControlName="trust_guest_rx_filters"
+        [label]="'Trust Guest RX Filters' | translate"
+        [tooltip]="'Whether to trust guest OS receive filter settings for better performance.' | translate"
+      ></ix-checkbox>
+    }
+  </form>
+</div>
+<div mat-dialog-actions>
+    <button
+      mat-button
+      ixTest="cancel"
+      [mat-dialog-close]="null"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+    <button
+      mat-button
+      color="primary"
+      ixTest="close"
+      [disabled]="!(isValid$ | async)"
+      (click)="saveDevice()"
+    >
+      @if (isEditMode()) {
+        {{ 'Update' | translate }}
+      } @else {
+        {{ 'Add' | translate }}
+      }
+    </button>
+</div>

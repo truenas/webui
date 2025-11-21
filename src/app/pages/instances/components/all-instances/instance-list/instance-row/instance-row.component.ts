@@ -9,14 +9,13 @@ import {
   filter, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import {
-  VirtualizationInstance,
-  VirtualizationStopParams,
-  VirtualizationInstanceMetrics,
-} from 'app/interfaces/virtualization.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
+  ContainerInstance,
+  ContainerStopParams,
+  ContainerInstanceMetrics,
+} from 'app/interfaces/container.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -26,7 +25,7 @@ import { InstanceStatusCellComponent } from 'app/pages/instances/components/all-
 import {
   StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -48,24 +47,23 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class InstanceRowComponent {
-  private dialog = inject(DialogService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private matDialog = inject(MatDialog);
   private snackbar = inject(SnackbarService);
-  private instancesStore = inject(VirtualizationInstancesStore);
+  private instancesStore = inject(ContainerInstancesStore);
 
-  protected readonly requiredRoles = [Role.VirtInstanceWrite];
-  readonly instance = input.required<VirtualizationInstance>();
-  readonly metrics = input<VirtualizationInstanceMetrics | undefined>();
+  protected readonly requiredRoles = [Role.ContainerWrite];
+  readonly instance = input.required<ContainerInstance>();
+  readonly metrics = input<ContainerInstanceMetrics | undefined>();
   readonly selected = input<boolean>(false);
-  protected readonly isStopped = computed(() => this.instance()?.status === VirtualizationStatus.Stopped);
+  protected readonly isStopped = computed(() => this.instance()?.status?.state === ContainerStatus.Stopped);
 
   readonly hasMetrics = computed(() => {
     const metrics = this.metrics();
 
-    return this.instance()?.status === VirtualizationStatus.Running
+    return this.instance()?.status?.state === ContainerStatus.Running
       && metrics
       && Object.keys(metrics).length > 0;
   });
@@ -75,11 +73,7 @@ export class InstanceRowComponent {
   start(): void {
     const instanceId = this.instance().id;
 
-    this.dialog.jobDialog(
-      this.api.job('virt.instance.start', [instanceId]),
-      { title: this.translate.instant('Starting...') },
-    )
-      .afterClosed()
+    this.api.call('container.start', [instanceId])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Container started'));
@@ -95,12 +89,8 @@ export class InstanceRowComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        switchMap((options: VirtualizationStopParams) => {
-          return this.dialog.jobDialog(
-            this.api.job('virt.instance.stop', [instanceId, options]),
-            { title: this.translate.instant('Stopping...') },
-          )
-            .afterClosed()
+        switchMap((options: ContainerStopParams) => {
+          return this.api.call('container.stop', [instanceId, options])
             .pipe(this.errorHandler.withErrorHandler());
         }),
         untilDestroyed(this),
@@ -119,13 +109,12 @@ export class InstanceRowComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        switchMap((options: VirtualizationStopParams) => {
-          return this.dialog.jobDialog(
-            this.api.job('virt.instance.restart', [instanceId, options]),
-            { title: this.translate.instant('Restarting...') },
-          )
-            .afterClosed()
-            .pipe(this.errorHandler.withErrorHandler());
+        switchMap((options: ContainerStopParams) => {
+          return this.api.call('container.stop', [instanceId, options])
+            .pipe(
+              switchMap(() => this.api.call('container.start', [instanceId])),
+              this.errorHandler.withErrorHandler(),
+            );
         }),
         untilDestroyed(this),
       )

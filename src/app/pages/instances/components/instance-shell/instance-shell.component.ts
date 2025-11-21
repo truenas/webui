@@ -15,11 +15,11 @@ import { TerminalComponent } from 'app/modules/terminal/components/terminal/term
 export class InstanceShellComponent implements TerminalConfiguration {
   private aroute = inject(ActivatedRoute);
 
-  protected instanceId = signal('');
+  protected instanceId = signal(0);
 
   get connectionData(): TerminalConnectionData {
     return {
-      virt_instance_id: this.instanceId(),
+      container_id: this.instanceId(),
       use_console: false,
     };
   }
@@ -27,7 +27,7 @@ export class InstanceShellComponent implements TerminalConfiguration {
   preInit(): Observable<void> {
     return new Observable<void>((subscriber: Subscriber<void>) => {
       this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-        this.instanceId.set(params['id'] as string);
+        this.instanceId.set(parseInt(params['id'] as string, 10));
         subscriber.next();
       });
     });

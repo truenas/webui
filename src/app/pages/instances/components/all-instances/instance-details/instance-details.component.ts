@@ -1,28 +1,24 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input,
+  ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { VirtualizationType } from 'app/enums/virtualization.enum';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerType } from 'app/enums/container.enum';
+import { ContainerInstance } from 'app/interfaces/container.interface';
 import { instanceDetailsElements } from 'app/pages/instances/components/all-instances/instance-details/instance-details.elements';
 import {
-  InstanceDevicesComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-devices/instance-devices.component';
-import {
-  InstanceDisksComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-disks/instance-disks.component';
+  InstanceFilesystemDevicesComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-filesystem-devices/instance-filesystem-devices.component';
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
-import { InstanceIdmapComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-idmap/instance-idmap.component';
-import { InstanceNicsComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nics/instance-nics.component';
-import {
-  InstanceProxiesComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-proxies/instance-proxies.component';
+import { InstanceNicDevicesComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-nic-devices/instance-nic-devices.component';
 import {
   InstanceToolsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-tools/instance-tools.component';
+import {
+  InstanceUsbDevicesComponent,
+} from 'app/pages/instances/components/all-instances/instance-details/instance-usb-devices/instance-usb-devices.component';
 
 @Component({
   selector: 'ix-instance-details',
@@ -30,23 +26,17 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
-    InstanceDevicesComponent,
+    InstanceUsbDevicesComponent,
     InstanceGeneralInfoComponent,
-    InstanceProxiesComponent,
-    InstanceDisksComponent,
+    InstanceFilesystemDevicesComponent,
     InstanceToolsComponent,
-    InstanceNicsComponent,
+    InstanceNicDevicesComponent,
     UiSearchDirective,
-    InstanceIdmapComponent,
   ],
 })
 export class InstanceDetailsComponent {
-  instance = input.required<VirtualizationInstance>();
+  instance = input.required<ContainerInstance>();
 
   protected readonly searchableElements = instanceDetailsElements;
-  protected readonly VirtualizationType = VirtualizationType;
-
-  protected readonly isContainer = computed(() => {
-    return this.instance().type === VirtualizationType.Container;
-  });
+  protected readonly ContainerType = ContainerType;
 }

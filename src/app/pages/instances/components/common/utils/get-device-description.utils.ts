@@ -1,19 +1,36 @@
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
-import { VirtualizationDeviceType, virtualizationDeviceTypeLabels } from 'app/enums/virtualization.enum';
-import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
+import { ContainerDeviceType } from 'app/enums/container.enum';
+import { instancesHelptext } from 'app/helptext/instances/instances';
+import { ContainerDevice } from 'app/interfaces/container.interface';
 
-export function getDeviceDescription(translate: TranslateService, device: VirtualizationDevice): string {
-  if (device.dev_type === VirtualizationDeviceType.Tpm) {
-    return translate.instant(T('Trusted Platform Module (TPM)'));
+export function getDeviceDescription(translate: TranslateService, device: ContainerDevice): string {
+  switch (device.dtype) {
+    case ContainerDeviceType.Nic: {
+      const nicMac = device.mac
+        ? device.mac
+        : translate.instant(instancesHelptext.deviceDescriptions.defaultMacAddress);
+      const nicAttach = device.nic_attach || translate.instant(instancesHelptext.deviceDescriptions.unknown);
+      return `${nicAttach} (${nicMac})`;
+    }
+
+    case ContainerDeviceType.Filesystem: {
+      // Filesystem is a bind mount from host to container
+      const source = device.source || translate.instant(instancesHelptext.deviceDescriptions.unknownSource);
+      const target = device.target || translate.instant(instancesHelptext.deviceDescriptions.unknownTarget);
+      return `${source} → ${target}`;
+    }
+
+    case ContainerDeviceType.Usb: {
+      if (device.usb) {
+        return `USB ${device.usb.vendor_id}:${device.usb.product_id}`;
+      }
+      return device.device || translate.instant(instancesHelptext.deviceDescriptions.unknown);
+    }
+
+    default: {
+      // This should never happen due to TypeScript exhaustiveness checking
+      const exhaustiveCheck: never = device;
+      return String(exhaustiveCheck);
+    }
   }
-
-  const typeLabel = translate.instant(virtualizationDeviceTypeLabels.get(device.dev_type) || device.dev_type);
-
-  if (device.dev_type === VirtualizationDeviceType.Nic) {
-    const nicMac = device.mac ? device.mac : 'Default Mac Address';
-    return `${typeLabel}: ${device.name} (${device.nic_type}) (${nicMac})`;
-  }
-
-  return `${typeLabel}: ${device.description}`;
 }

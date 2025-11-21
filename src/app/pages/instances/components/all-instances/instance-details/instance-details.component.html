@@ -5,30 +5,20 @@
       [ixUiSearch]="searchableElements.elements.generalInfo"
     ></ix-instance-general-info>
 
-    <ix-instance-devices
-      [ixUiSearch]="searchableElements.elements.devices"
-    ></ix-instance-devices>
+    <ix-instance-usb-devices
+      [ixUiSearch]="searchableElements.elements.usbDevices"
+    ></ix-instance-usb-devices>
 
-    <ix-instance-disks
+    <ix-instance-filesystem-devices
       [instance]="instance()"
       [ixUiSearch]="searchableElements.elements.disks"
-    ></ix-instance-disks>
+    ></ix-instance-filesystem-devices>
 
-    <ix-instance-nics
+    <ix-instance-nic-devices
       [ixUiSearch]="searchableElements.elements.nic"
-    ></ix-instance-nics>
+    ></ix-instance-nic-devices>
 
-    @if (isContainer()) {
-      <ix-instance-proxies
-        [ixUiSearch]="searchableElements.elements.proxies"
-      ></ix-instance-proxies>
-
-      <ix-instance-idmap [instance]="instance()"
-        [ixUiSearch]="searchableElements.elements.idmap"
-      ></ix-instance-idmap>
-    }
-
-    <ix-instance-tools [instance]="instance()"
+    <ix-instance-tools
       [ixUiSearch]="searchableElements.elements.tools"
     ></ix-instance-tools>
   </div>

@@ -4,14 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import { ContainerStatus } from 'app/enums/container.enum';
 import {
-  VirtualizationInstance,
-  VirtualizationInstanceMetrics,
-} from 'app/interfaces/virtualization.interface';
+  ContainerInstanceMetrics,
+} from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -22,17 +19,21 @@ import {
   StopOptionsDialog,
   StopOptionsOperation,
 } from 'app/pages/instances/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 
-const instance = {
-  id: 'my-instance',
+const instance = fakeContainerInstance({
+  id: 1,
   name: 'agi_instance',
   autostart: false,
-  status: VirtualizationStatus.Running,
-  type: VirtualizationType.Container,
-} as VirtualizationInstance;
+  status: {
+    state: ContainerStatus.Running,
+    pid: 123,
+    domain_state: null,
+  },
+});
 
-const metrics: VirtualizationInstanceMetrics = {
+const metrics: ContainerInstanceMetrics = {
   cpu: {
     cpu_user_percentage: 20,
   },
@@ -58,11 +59,6 @@ describe('InstanceRowComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockApi([
-        mockJob('virt.instance.restart', fakeSuccessfulJob()),
-        mockJob('virt.instance.start', fakeSuccessfulJob()),
-        mockJob('virt.instance.stop', fakeSuccessfulJob()),
-      ]),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of({
@@ -71,7 +67,7 @@ describe('InstanceRowComponent', () => {
           }),
         })),
       }),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(ContainerInstancesStore, {
         selectedInstance: () => instance,
         selectInstance: jest.fn(),
       }),
@@ -81,6 +77,14 @@ describe('InstanceRowComponent', () => {
         })),
       }),
       mockProvider(SnackbarService),
+      mockProvider(ApiService, {
+        call: jest.fn((method: string) => {
+          if (method === 'container.start' || method === 'container.stop') {
+            return of(undefined);
+          }
+          return of({});
+        }),
+      }),
     ],
   });
 
@@ -115,10 +119,14 @@ describe('InstanceRowComponent', () => {
     });
 
     it('shows Stop and Restart button when instance is Running', async () => {
-      spectator.setInput('instance', {
+      spectator.setInput('instance', fakeContainerInstance({
         ...instance,
-        status: VirtualizationStatus.Running,
-      });
+        status: {
+          state: ContainerStatus.Running,
+          pid: 123,
+          domain_state: null,
+        },
+      }));
 
       const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop-circle' }));
       const startIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-play-circle' }));
@@ -130,10 +138,14 @@ describe('InstanceRowComponent', () => {
     });
 
     it('shows Start button when instance is Stopped', async () => {
-      spectator.setInput('instance', {
+      spectator.setInput('instance', fakeContainerInstance({
         ...instance,
-        status: VirtualizationStatus.Stopped,
-      });
+        status: {
+          state: ContainerStatus.Stopped,
+          pid: null,
+          domain_state: null,
+        },
+      }));
 
       const stopIcon = await loader.getHarnessOrNull(IxIconHarness.with({ name: 'mdi-stop-circle' }));
       const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
@@ -153,10 +165,9 @@ describe('InstanceRowComponent', () => {
       expect(spectator.inject(MatDialog).open)
         .toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Stop });
 
-      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
-        'virt.instance.stop',
-        ['my-instance', { force: true, timeout: -1 }],
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'container.stop',
+        [1, { force: true, timeout: -1 }],
       );
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container stopped');
     });
@@ -168,25 +179,31 @@ describe('InstanceRowComponent', () => {
       expect(spectator.inject(MatDialog).open)
         .toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
 
-      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
-        'virt.instance.restart',
-        ['my-instance', { force: true, timeout: -1 }],
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'container.stop',
+        [1, { force: true, timeout: -1 }],
+      );
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'container.start',
+        [1],
       );
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container restarted');
     });
 
     it('starts an instance when Start icon is pressed', async () => {
-      spectator.setInput('instance', {
+      spectator.setInput('instance', fakeContainerInstance({
         ...instance,
-        status: VirtualizationStatus.Stopped,
-      });
+        status: {
+          state: ContainerStatus.Stopped,
+          pid: null,
+          domain_state: null,
+        },
+      }));
 
       const startIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-play-circle' }));
       await startIcon.click();
 
-      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.start', ['my-instance']);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.start', [1]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container started');
     });
   });

@@ -2,13 +2,13 @@
   <button
     mat-icon-button
     type="button"
-    [ixTest]="['actions-for', device().description]"
+    [ixTest]="['actions-for', deviceDescription()]"
     [matMenuTriggerFor]="menu"
     [disabled]="!canManage()"
     [class.disabled]="!canManage()"
     [attr.tabindex]="!canManage() ? -1 : 0"
-    [matTooltip]="canManage() ? ('Actions for {device}' | translate: { device: device().description }) : manageRestrictedExplanation()"
-    [attr.aria-label]="'Actions for {device}' | translate: { device: device().description }"
+    [matTooltip]="canManage() ? ('Actions for {device}' | translate: { device: deviceDescription() }) : manageRestrictedExplanation()"
+    [attr.aria-label]="'Actions for {device}' | translate: { device: deviceDescription() }"
   >
     <ix-icon name="more_vert"></ix-icon>
   </button>
@@ -19,15 +19,15 @@
     <button
       mat-menu-item
       type="button"
-      [ixTest]="['edit', device().description]"
-      (click)="edit.emit()"
+      [ixTest]="['edit', deviceDescription()]"
+      (click)="editPressed()"
     >{{ 'Edit' | translate }}</button>
   }
 
   <button
     mat-menu-item
     type="button"
-    [ixTest]="['delete', device().description]"
+    [ixTest]="['delete', deviceDescription()]"
     (click)="deletePressed()"
   >{{ 'Delete' | translate }}</button>
 </mat-menu>

@@ -10,8 +10,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
+import { ContainerStopParams } from 'app/interfaces/container.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { VirtualizationStopParams } from 'app/interfaces/virtualization.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -21,11 +21,10 @@ export enum StopOptionsOperation {
   Stop,
 }
 
-enum WaitFor {
-  Force = 'force',
-  Timeout30 = '30',
-  Timeout60 = '60',
-  Timeout300 = '300',
+enum StopMethod {
+  Graceful = 'graceful',
+  ForceAfterTimeout = 'force_after_timeout',
+  ForceImmediately = 'force_immediately',
 }
 
 @UntilDestroy()
@@ -48,36 +47,31 @@ enum WaitFor {
 export class StopOptionsDialog {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private dialogRef = inject<MatDialogRef<StopOptionsDialog, VirtualizationStopParams | false>>(MatDialogRef);
+  private dialogRef = inject<MatDialogRef<StopOptionsDialog, ContainerStopParams | false>>(MatDialogRef);
 
   protected readonly operation = signal(StopOptionsOperation.Stop);
 
   protected readonly isRestart = computed(() => this.operation() === StopOptionsOperation.Restart);
 
   protected readonly form = this.formBuilder.nonNullable.group({
-    waitFor: [WaitFor.Timeout30],
+    stopMethod: [StopMethod.ForceAfterTimeout],
   });
 
-  protected readonly waitForOptions$: Observable<Option[]> = toObservable(this.isRestart).pipe(
+  protected readonly stopMethodOptions$: Observable<Option[]> = toObservable(this.isRestart).pipe(
     map((isRestart) => {
+      const baseLabel = isRestart ? 'restart' : 'stop';
       return [
         {
-          label: isRestart
-            ? this.translate.instant('Force restart now')
-            : this.translate.instant('Force shutdown now'),
-          value: WaitFor.Force,
+          label: this.translate.instant('Wait for graceful {action}', { action: baseLabel }),
+          value: StopMethod.Graceful,
         },
         {
-          label: this.translate.instant('Wait for 30 seconds'),
-          value: WaitFor.Timeout30,
+          label: this.translate.instant('Wait for graceful {action}, then force', { action: baseLabel }),
+          value: StopMethod.ForceAfterTimeout,
         },
         {
-          label: this.translate.instant('Wait for 1 minute'),
-          value: WaitFor.Timeout60,
-        },
-        {
-          label: this.translate.instant('Wait for 5 minutes'),
-          value: WaitFor.Timeout300,
+          label: this.translate.instant('Force {action} immediately', { action: baseLabel }),
+          value: StopMethod.ForceImmediately,
         },
       ];
     }),
@@ -90,32 +84,25 @@ export class StopOptionsDialog {
   }
 
   protected onSubmit(): void {
-    const waitFor = this.form.getRawValue().waitFor;
+    const stopMethod = this.form.getRawValue().stopMethod;
 
-    const params: VirtualizationStopParams = {
-      timeout: -1,
-      force: false,
-    };
+    const params: ContainerStopParams = {};
 
-    switch (waitFor) {
-      case WaitFor.Force:
+    switch (stopMethod) {
+      case StopMethod.Graceful:
+        // No flags set - wait for graceful shutdown
+        break;
+
+      case StopMethod.ForceAfterTimeout:
+        params.force_after_timeout = true;
+        break;
+
+      case StopMethod.ForceImmediately:
         params.force = true;
         break;
 
-      case WaitFor.Timeout30:
-        params.timeout = 30;
-        break;
-
-      case WaitFor.Timeout60:
-        params.timeout = 60;
-        break;
-
-      case WaitFor.Timeout300:
-        params.timeout = 300;
-        break;
-
       default:
-        assertUnreachable(waitFor);
+        assertUnreachable(stopMethod);
     }
 
     this.dialogRef.close(params);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -6,11 +6,10 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
-import { WINDOW } from 'app/helpers/window.helper';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { ContainerStatus } from 'app/enums/container.enum';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
 @Component({
   selector: 'ix-instance-tools',
@@ -31,11 +30,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class InstanceToolsComponent {
-  private window = inject<Window>(WINDOW);
+  private instancesStore = inject(ContainerInstancesStore);
 
-  readonly instance = input.required<VirtualizationInstance>();
+  protected readonly instance = this.instancesStore.selectedInstance;
 
-  protected readonly isInstanceStopped = computed(() => this.instance().status !== VirtualizationStatus.Running);
-  protected readonly isVm = computed(() => this.instance().type === VirtualizationType.Vm);
-  protected readonly vncLink = computed(() => `vnc://${this.window.location.hostname}:${this.instance().vnc_port}`);
+  protected readonly isInstanceStopped = computed(() => {
+    return this.instance()?.status?.state !== ContainerStatus.Running;
+  });
 }

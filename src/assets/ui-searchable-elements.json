@@ -3837,7 +3837,7 @@
   {
     "hierarchy": [
       "Containers",
-      "Devices"
+      "USB Devices"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -3848,7 +3848,7 @@
       "/containers/view/def"
     ],
     "routerLink": null,
-    "anchor": "devices",
+    "anchor": "usb-devices",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3891,42 +3891,6 @@
   {
     "hierarchy": [
       "Containers",
-      "Proxies"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers/view/def"
-    ],
-    "routerLink": null,
-    "anchor": "proxies",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
-      "Idmap"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers/view/def"
-    ],
-    "routerLink": null,
-    "anchor": "idmap",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
       "Tools"
     ],
     "synonyms": [],
@@ -3945,7 +3909,7 @@
   {
     "hierarchy": [
       "Containers",
-      "Global Settings"
+      "GlobalSettings"
     ],
     "synonyms": [
       "Container Settings"
@@ -3958,7 +3922,7 @@
       "/containers"
     ],
     "routerLink": null,
-    "anchor": "vm-global-settings",
+    "anchor": "container-global-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3971,17 +3935,17 @@
       "New Container",
       "Add Container"
     ],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "CONTAINER_WRITE"
+    ],
     "visibleTokens": [
       "VMS"
     ],
     "anchorRouterLink": [
       "/containers"
     ],
-    "routerLink": [
-      "/containers/new"
-    ],
-    "anchor": "add-instance",
+    "routerLink": null,
+    "anchor": "add-container",
     "triggerAnchor": null,
     "section": "ui"
   },

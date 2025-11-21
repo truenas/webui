@@ -6,15 +6,15 @@ export const allInstancesHeaderElements = {
   hierarchy: [T('Containers')],
   anchorRouterLink: ['/containers'],
   elements: {
-    globalSettings: {
-      hierarchy: [T('Global Settings')],
+    settings: {
+      hierarchy: [T('GlobalSettings')],
       synonyms: [T('Container Settings')],
-      anchor: 'vm-global-settings',
+      anchor: 'container-global-settings',
     },
     add: {
       hierarchy: [T('Create New Container')],
       synonyms: [T('New Container'), T('Add Container')],
-      anchor: 'add-instance',
+      anchor: 'add-container',
     },
   },
   visibleTokens: [GlobalSearchVisibleToken.Vms],

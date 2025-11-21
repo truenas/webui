@@ -1,9 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  distinctUntilChanged, filter, map,
-} from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -15,8 +12,8 @@ import {
 import { allInstancesElements } from 'app/pages/instances/components/all-instances/all-instances.elements';
 import { InstanceDetailsComponent } from 'app/pages/instances/components/all-instances/instance-details/instance-details.component';
 import { InstanceListComponent } from 'app/pages/instances/components/all-instances/instance-list/instance-list.component';
-import { VirtualizationConfigStore } from 'app/pages/instances/stores/virtualization-config.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerConfigStore } from 'app/pages/instances/stores/container-config.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
 @UntilDestroy()
 @Component({
@@ -34,8 +31,8 @@ import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtual
   ],
 })
 export class AllInstancesComponent implements OnInit {
-  private configStore = inject(VirtualizationConfigStore);
-  private instancesStore = inject(VirtualizationInstancesStore);
+  private configStore = inject(ContainerConfigStore);
+  private instancesStore = inject(ContainerInstancesStore);
   private dialogService = inject(DialogService);
   private window = inject<Window>(WINDOW);
   private translate = inject(TranslateService);
@@ -46,13 +43,6 @@ export class AllInstancesComponent implements OnInit {
   ngOnInit(): void {
     this.configStore.initialize();
     this.instancesStore.initialize();
-
-    this.configStore.state$.pipe(
-      filter((state) => Boolean(state?.config)),
-      map((state) => state.config.state),
-      distinctUntilChanged(),
-      untilDestroyed(this),
-    ).subscribe(() => this.instancesStore.initialize());
 
     const showVmInstancesWarning = !this.window.localStorage.getItem('showNewVmInstancesWarning');
 

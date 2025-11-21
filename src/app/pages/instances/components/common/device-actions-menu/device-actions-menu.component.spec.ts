@@ -3,30 +3,31 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { VirtualizationDeviceType, VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import { ContainerDeviceType } from 'app/enums/container.enum';
 import {
-  VirtualizationDevice,
-  VirtualizationInstance,
-  VirtualizationTpm,
-} from 'app/interfaces/virtualization.interface';
+  ContainerDevice,
+} from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/instances/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationDevicesStore } from 'app/pages/instances/stores/virtualization-devices.store';
-import { VirtualizationInstancesStore } from 'app/pages/instances/stores/virtualization-instances.store';
+import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
+import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('DeviceActionsMenuComponent', () => {
   let spectator: Spectator<DeviceActionsMenuComponent>;
   let loader: HarnessLoader;
-  const selectedInstance = signal({
-    id: 'my-instance',
-    type: VirtualizationType.Container,
-  } as VirtualizationInstance);
+  const selectedInstance = signal(fakeContainerInstance({
+    id: 1,
+  }));
   const createComponent = createComponentFactory({
     component: DeviceActionsMenuComponent,
     providers: [
@@ -34,14 +35,24 @@ describe('DeviceActionsMenuComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: Observable<unknown>) => source$),
+      }),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of({ response: false })),
+      }),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$),
+      }),
       mockApi([
-        mockCall('virt.instance.device_delete'),
+        mockCall('container.device.delete'),
       ]),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(ContainerInstancesStore, {
         selectedInstance,
       }),
-      mockProvider(VirtualizationDevicesStore, {
+      mockProvider(ContainerDevicesStore, {
         loadDevices: jest.fn(),
+        deviceDeleted: jest.fn(),
       }),
     ],
   });
@@ -50,39 +61,17 @@ describe('DeviceActionsMenuComponent', () => {
     spectator = createComponent({
       props: {
         device: {
-          name: 'my-device',
-          dev_type: VirtualizationDeviceType.Gpu,
-        } as VirtualizationDevice,
+          id: 123,
+          dtype: ContainerDeviceType.Usb,
+          usb: {
+            vendor_id: '1234',
+            product_id: '5678',
+          },
+          device: null,
+        } as ContainerDevice,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  });
-
-  describe('disabled state', () => {
-    it('shows menu as disabled for readonly devices', async () => {
-      spectator.setInput('device', {
-        name: 'my-device',
-        readonly: true,
-      } as VirtualizationDevice);
-
-      const menu = await loader.getHarness(MatMenuHarness);
-      expect(await menu.isDisabled()).toBe(true);
-    });
-
-    it('shows menu as disabled when device is a TPM and the instance is running', async () => {
-      spectator.setInput('device', {
-        dev_type: VirtualizationDeviceType.Tpm,
-      } as VirtualizationTpm);
-
-      selectedInstance.set({
-        id: 'my-instance',
-        type: VirtualizationType.Vm,
-        status: VirtualizationStatus.Running,
-      } as VirtualizationInstance);
-
-      const menu = await loader.getHarness(MatMenuHarness);
-      expect(await menu.isDisabled()).toBe(true);
-    });
   });
 
   describe('delete', () => {
@@ -93,13 +82,13 @@ describe('DeviceActionsMenuComponent', () => {
       await menu.clickItem({ text: 'Delete' });
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_delete', ['my-instance', 'my-device']);
-      expect(spectator.inject(VirtualizationDevicesStore).deviceDeleted).toHaveBeenCalledWith('my-device');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.delete', [123]);
+      expect(spectator.inject(ContainerDevicesStore).deviceDeleted).toHaveBeenCalledWith(123);
     });
   });
 
   describe('edit', () => {
-    it('emits an edit event when the Edit item is selected', async () => {
+    it('emits an edit event for non-storage devices when the Edit item is selected', async () => {
       const menu = await loader.getHarness(MatMenuHarness);
       await menu.open();
 
@@ -108,6 +97,25 @@ describe('DeviceActionsMenuComponent', () => {
       await menu.clickItem({ text: 'Edit' });
 
       expect(spectator.component.edit.emit).toHaveBeenCalled();
+    });
+
+    it('opens filesystem device form for filesystem devices when the Edit item is selected', async () => {
+      spectator.setInput('device', {
+        id: 456,
+        dtype: ContainerDeviceType.Filesystem,
+        source: '/mnt/tank/dataset',
+        target: '/data',
+      } as ContainerDevice);
+
+      const menu = await loader.getHarness(MatMenuHarness);
+      await menu.open();
+
+      jest.spyOn(spectator.inject(SlideIn), 'open');
+
+      await menu.clickItem({ text: 'Edit' });
+
+      // Verify that the SlideIn service was called to open the form
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalled();
     });
 
     it('does not show the Edit item when showEdit is false', async () => {

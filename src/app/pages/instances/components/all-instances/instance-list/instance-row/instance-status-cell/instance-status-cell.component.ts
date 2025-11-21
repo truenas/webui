@@ -1,12 +1,12 @@
 import {
   ChangeDetectionStrategy,
-  Component, HostBinding,
+  Component,
   computed,
   input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { virtualizationStatusLabels } from 'app/enums/virtualization.enum';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { containerStatusLabels } from 'app/enums/container.enum';
+import { ContainerInstance } from 'app/interfaces/container.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
 @Component({
@@ -15,18 +15,21 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   styleUrls: ['./instance-status-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslateModule, MapValuePipe],
+  host: {
+    '[class]': 'hostClasses()',
+  },
 })
 export class InstanceStatusCellComponent {
-  readonly instance = input.required<VirtualizationInstance>();
+  readonly instance = input.required<ContainerInstance>();
 
-  @HostBinding('class') get hostClasses(): string[] {
+  protected hostClasses = computed(() => {
     return [
-      this.status()?.toLowerCase(),
+      this.status()?.toLowerCase() || 'unknown',
       'has-cell',
-    ];
-  }
+    ].join(' ');
+  });
 
-  status = computed(() => this.instance().status);
+  status = computed(() => this.instance().status?.state);
 
-  protected statusLabels = virtualizationStatusLabels;
+  protected statusLabels = containerStatusLabels;
 }
