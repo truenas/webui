@@ -7,8 +7,12 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
+import { switchMap, map } from 'rxjs/operators';
+import { JobState } from 'app/enums/job-state.enum';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -73,26 +77,48 @@ export class RaidzExtendDialog {
   protected onSubmit(event: SubmitEvent): void {
     event.preventDefault();
 
-    const payload = {
-      // UI check for duplicate serials is handled in UnusedDiskSelectComponent
-      allow_duplicate_serials: true,
-      new_disk: this.form.value.newDisk,
-      target_vdev: this.data.vdev.guid,
-    } as PoolAttachParams;
+    // Check for existing pool.attach jobs for this pool
+    this.checkForExistingExtendJob().pipe(
+      switchMap((hasExistingJob) => {
+        if (hasExistingJob) {
+          this.snackbar.error(
+            this.translate.instant('A VDEV extension operation is already in progress for this pool. Please wait for it to complete.'),
+          );
+          return of(null);
+        }
 
-    this.dialogService.jobDialog(
-      this.api.job('pool.attach', [this.data.poolId, payload]),
-      { title: this.translate.instant('Extending VDEV'), canMinimize: true },
-    )
-      .afterClosed()
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
+        const payload = {
+          // UI check for duplicate serials is handled in UnusedDiskSelectComponent
+          allow_duplicate_serials: true,
+          new_disk: this.form.value.newDisk,
+          target_vdev: this.data.vdev.guid,
+        } as PoolAttachParams;
+
+        return this.dialogService.jobDialog(
+          this.api.job('pool.attach', [this.data.poolId, payload]),
+          { title: this.translate.instant('Extending VDEV'), canMinimize: true },
+        ).afterClosed();
+      }),
+      this.errorHandler.withErrorHandler(),
+      untilDestroyed(this),
+    ).subscribe((result) => {
+      if (result) {
         this.snackbar.success(this.translate.instant('VDEV successfully extended.'));
         this.dialogRef.close(true);
-      });
+      }
+    });
+  }
+
+  private checkForExistingExtendJob(): Observable<boolean> {
+    return this.api.call('core.get_jobs', [[
+      ['method', '=', 'pool.attach'],
+      ['state', 'in', [JobState.Running, JobState.Waiting]],
+    ]]).pipe(
+      map((jobs: Job<void, [number, PoolAttachParams]>[]) => {
+        // Check if any job is for the same pool
+        return jobs.some((job) => job.arguments[0] === this.data.poolId);
+      }),
+    );
   }
 
   private setFilterMinimumSizeFn(): void {
