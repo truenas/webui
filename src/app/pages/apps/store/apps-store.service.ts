@@ -1,12 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
+import { TranslateService } from '@ngx-translate/core';
 import {
   EMPTY,
   Observable, catchError, combineLatest, of, switchMap, tap,
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -23,6 +26,7 @@ export interface AppsState {
   recommendedApps: AvailableApp[];
   categories: string[];
   isLoading: boolean;
+  isSyncingCatalog: boolean;
 }
 
 const initialState: AppsState = {
@@ -31,6 +35,7 @@ const initialState: AppsState = {
   latestApps: [],
   categories: [],
   isLoading: false,
+  isSyncingCatalog: false,
 };
 
 @UntilDestroy()
@@ -38,6 +43,9 @@ const initialState: AppsState = {
 export class AppsStore extends ComponentStore<AppsState> {
   private errorHandler = inject(ErrorHandlerService);
   private appsService = inject(ApplicationsService);
+  private api = inject(ApiService);
+  private dialogService = inject(DialogService);
+  private translate = inject(TranslateService);
 
   readonly isLoading$ = this.select((state) => state.isLoading);
 
@@ -80,26 +88,98 @@ export class AppsStore extends ComponentStore<AppsState> {
           isLoading: true,
         });
       }),
-      switchMap(() => {
-        return combineLatest([
-          this.loadLatestApps(),
-          this.loadAvailableApps(),
-          this.loadCategories(),
-        ]);
-      }),
-      tap(() => {
-        this.patchState((state: AppsState): AppsState => {
-          return {
-            ...state,
-            isLoading: false,
-          };
-        });
-      }),
+      switchMap(() => this.loadCatalogData()),
+      switchMap(() => this.syncCatalogIfEmpty()),
       catchError((error: unknown) => {
         this.handleError(error);
         return EMPTY;
       }),
     );
+  }
+
+  /**
+   * Checks if the catalog is empty and automatically syncs it if needed.
+   * Shows a progress dialog to inform the user about the sync operation.
+   */
+  private syncCatalogIfEmpty(): Observable<unknown> {
+    const state = this.get();
+
+    // Check if already syncing to prevent race condition
+    if (state.isSyncingCatalog) {
+      this.setLoadingState(false);
+      return of(null);
+    }
+
+    const catalogIsEmpty = state.availableApps.length === 0 && state.categories.length === 0;
+
+    if (!catalogIsEmpty) {
+      this.setLoadingState(false);
+      return of(null);
+    }
+
+    // Set flag in state to prevent concurrent sync operations
+    this.patchState({ isSyncingCatalog: true });
+
+    return this.dialogService.jobDialog(
+      this.api.job('catalog.sync'),
+      {
+        title: this.translate.instant('Syncing Catalog'),
+        description: this.translate.instant('The catalog is being synced for the first time. This may take a few minutes.'),
+        canMinimize: true,
+      },
+    ).afterClosed().pipe(
+      switchMap(() => this.reloadCatalogAfterSync()),
+      tap(() => {
+        this.setLoadingState(false);
+        this.patchState({ isSyncingCatalog: false });
+      }),
+      catchError(() => this.handleSyncError()),
+    );
+  }
+
+  /**
+   * Reloads catalog data after a successful sync operation.
+   */
+  private reloadCatalogAfterSync(): Observable<unknown> {
+    return this.loadCatalogData().pipe(
+      catchError(() => {
+        this.setLoadingState(false);
+        this.patchState({ isSyncingCatalog: false });
+        this.errorHandler.showErrorModal(
+          new Error(this.translate.instant('Catalog sync completed, but failed to load catalog data. Please refresh the page.')),
+        );
+        return EMPTY;
+      }),
+    );
+  }
+
+  /**
+   * Handles errors during catalog sync operation.
+   */
+  private handleSyncError(): Observable<never> {
+    this.setLoadingState(false);
+    this.patchState({ isSyncingCatalog: false });
+
+    this.errorHandler.showErrorModal(
+      new Error(this.translate.instant('Failed to sync catalog. Please try clicking "Refresh Catalog" manually.')),
+    );
+
+    return EMPTY;
+  }
+
+  /**
+   * Updates the loading state in the store.
+   */
+  private setLoadingState(isLoading: boolean): void {
+    this.patchState({ isLoading });
+  }
+
+  private loadCatalogData(): Observable<unknown> {
+    return combineLatest([
+      this.loadLatestApps(),
+      this.loadAvailableApps(),
+      this.loadCategories(),
+    ]);
   }
 
   private loadLatestApps(): Observable<unknown> {

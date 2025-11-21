@@ -16,6 +16,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import {
   AllCpusUpdate, MemoryUpdate, AllNetworkInterfacesUpdate, ReportingData,
 } from 'app/interfaces/reporting.interface';
+import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { AppState } from 'app/store';
@@ -80,6 +81,12 @@ export class WidgetResourcesService {
   );
 
   readonly pools$ = this.api.callAndSubscribe('pool.query').pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  // since pool.query doesn't emit events for scan updates, we need to subscribe to
+  // the `pool.scan` endpoint to actually receive real-time scrub/resilver updates.
+  readonly scans$ = this.api.subscribe('pool.scan').pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
@@ -212,6 +219,20 @@ export class WidgetResourcesService {
   poolUpdatesWithStaleDetection(): Observable<StaleDataState<Record<string, PoolUsage>>> {
     return this.realtimeUpdates$.pipe(
       map((update) => update.fields.pools),
+      catchError(() => NEVER),
+      detectStaleData(5000),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
+  /**
+   * Returns scan data with stale detection.
+   * Data is considered stale if no updates received within 5 seconds.
+   * Errors in the stream are caught and the observable completes silently.
+   */
+  scanUpdatesWithStaleDetection(): Observable<StaleDataState<PoolScan>> {
+    return this.scans$.pipe(
+      map((update) => update.fields),
       catchError(() => NEVER),
       detectStaleData(5000),
       shareReplay({ bufferSize: 1, refCount: true }),
