@@ -34,8 +34,13 @@ export class ContainerDevicesStore extends ComponentStore<ContainerInstanceDevic
   readonly isLoading = computed(() => this.state().isLoading);
   readonly devices = computed(() => this.state().devices);
   private readonly selectedInstance = this.instanceStore.selectedInstance;
+
   constructor() {
     super(initialState);
+    // Note: We're triggering the loadDevices effect imperatively via tap() rather than
+    // passing the observable directly. This pattern works because the effect internally
+    // manages its subscription, but is unconventional. The effect could alternatively
+    // be refactored to accept the selectedInstance observable directly.
     toObservable(this.selectedInstance).pipe(
       tap((instance) => {
         if (!instance) {

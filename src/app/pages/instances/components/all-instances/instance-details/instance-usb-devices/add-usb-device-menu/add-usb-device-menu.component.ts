@@ -5,6 +5,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { catchError, of } from 'rxjs';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import {
   AvailableUsb,
@@ -43,7 +44,15 @@ export class AddUsbDeviceMenuComponent {
   private devicesStore = inject(ContainerDevicesStore);
   private instancesStore = inject(ContainerInstancesStore);
 
-  private readonly usbChoices = toSignal(this.api.call('container.device.usb_choices'), { initialValue: null });
+  private readonly usbChoices = toSignal(
+    this.api.call('container.device.usb_choices').pipe(
+      catchError((error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+        return of({} as Record<string, AvailableUsb>);
+      }),
+    ),
+    { initialValue: null },
+  );
 
   protected readonly isLoading = computed(() => {
     const devicesLoading = this.devicesStore.isLoading();
@@ -61,6 +70,9 @@ export class AddUsbDeviceMenuComponent {
       .filter((device) => device.dtype === ContainerDeviceType.Usb);
 
     return Object.values(usbChoices).filter((usb) => {
+      if (!usb?.capability?.product_id || !usb?.description) {
+        return false;
+      }
       const isAlreadyAdded = existingUsbDevices
         .some((device) => device.usb?.product_id === usb.capability.product_id);
       return usb.available && !isAlreadyAdded;

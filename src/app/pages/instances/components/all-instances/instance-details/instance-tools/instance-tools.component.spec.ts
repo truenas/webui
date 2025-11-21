@@ -1,43 +1,47 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { ContainerStatus } from 'app/enums/container.enum';
+import { ContainerInstance } from 'app/interfaces/container.interface';
 import {
   InstanceToolsComponent,
 } from 'app/pages/instances/components/all-instances/instance-details/instance-tools/instance-tools.component';
+import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 import { fakeContainerInstance } from 'app/pages/instances/utils/fake-container-instance.utils';
 
 describe('InstanceToolsComponent', () => {
   let spectator: Spectator<InstanceToolsComponent>;
   let loader: HarnessLoader;
+  const selectedInstance = signal<ContainerInstance>(fakeContainerInstance({
+    id: 1,
+    status: {
+      state: ContainerStatus.Running,
+      pid: 123,
+      domain_state: null,
+    },
+  }));
+
   const createComponent = createComponentFactory({
     component: InstanceToolsComponent,
     providers: [
-      mockWindow({
-        location: {
-          hostname: 'truenas.com',
-        },
-        open: jest.fn(),
+      mockProvider(ContainerInstancesStore, {
+        selectedInstance,
       }),
     ],
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        instance: fakeContainerInstance({
-          id: 1,
-          status: {
-            state: ContainerStatus.Running,
-            pid: 123,
-            domain_state: null,
-          },
-        }),
+    selectedInstance.set(fakeContainerInstance({
+      id: 1,
+      status: {
+        state: ContainerStatus.Running,
+        pid: 123,
+        domain_state: null,
       },
-    });
-
+    }));
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -50,7 +54,7 @@ describe('InstanceToolsComponent', () => {
     });
 
     it('show shell link as disabled when instance is not running', async () => {
-      spectator.setInput('instance', fakeContainerInstance({
+      selectedInstance.set(fakeContainerInstance({
         id: 1,
         status: {
           state: ContainerStatus.Stopped,
@@ -58,6 +62,7 @@ describe('InstanceToolsComponent', () => {
           domain_state: null,
         },
       }));
+      spectator.detectChanges();
 
       const shellLink = await loader.getHarness(MatButtonHarness.with({ text: 'Shell' }));
       expect(await shellLink.isDisabled()).toBe(true);
