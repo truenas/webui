@@ -1,0 +1,31 @@
+<ix-modal-header
+  [requiredRoles]="requiredRoles"
+  [title]="'WebShare' | translate"
+  [loading]="isFormLoading()"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-checkbox
+          formControlName="search"
+          [label]="'Enable TrueSearch' | translate"
+          [tooltip]="helptext.search_enabled_tooltip | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading()"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

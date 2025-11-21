@@ -1,13 +1,17 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { UsageCardComponent } from 'app/pages/datasets/components/usage-card/usage-card.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const datasetDummy = {
   id: '/mnt/pool/ds',
@@ -27,9 +31,23 @@ describe('UsageCardComponent', () => {
   const createComponent = createComponentFactory({
     providers: [
       mockAuth(),
-      mockApi(),
+      mockApi([
+        mockCall('tn_connect.config', {
+          id: 1,
+          enabled: true,
+          status: TruenasConnectStatus.Configured,
+        } as TruenasConnectConfig),
+      ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemInfo,
+            value: { license: null },
+          },
+        ],
       }),
     ],
     component: UsageCardComponent,
@@ -87,7 +105,7 @@ describe('UsageCardComponent', () => {
     expect(
       spectator.query('.smb-shares.value'),
     ).toHaveText(
-      "Dataset is shared via SMB as 'smb1', and 'smb2'",
+      "Dataset is shared via SMB as 'smb1' and 'smb2'",
     );
   });
 
