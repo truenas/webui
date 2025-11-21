@@ -13,7 +13,7 @@ export type TerminalConnectionData =
   }
   // Containers
   | {
-    container_id: string;
+    container_id: number;
     use_console: boolean;
   }
   // Apps
