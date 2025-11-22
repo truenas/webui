@@ -27,7 +27,8 @@
     @if (isDisk() || isMirror()) {
       <button
         mat-icon-button
-        aria-label="Actions"
+        [matTooltip]="'Actions' | translate"
+        [attr.aria-label]="'Actions' | translate"
         [ixTest]="[ownName(), 'actions']"
         [matMenuTriggerFor]="menu"
       >

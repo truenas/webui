@@ -4,6 +4,7 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -55,6 +56,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatMenuItem,
     TranslateModule,
     AsyncPipe,
+    MatTooltip,
   ],
 })
 export class SshKeypairFormComponent implements OnInit {

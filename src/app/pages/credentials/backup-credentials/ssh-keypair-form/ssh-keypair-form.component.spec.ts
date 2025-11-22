@@ -111,7 +111,7 @@ describe('SshKeypairFormComponent', () => {
           'Public Key': 'Downloaded public key',
         });
 
-        const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="Download actions"]' }));
+        const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="Download Actions"]' }));
         await actionsMenu.open();
         await actionsMenu.clickItem({ text: 'Download Public Key' });
 
@@ -128,7 +128,7 @@ describe('SshKeypairFormComponent', () => {
           'Private Key': 'Downloaded private key',
         });
 
-        const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="Download actions"]' }));
+        const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="Download Actions"]' }));
         await actionsMenu.open();
         await actionsMenu.clickItem({ text: 'Download Private Key' });
 

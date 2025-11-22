@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -83,6 +84,7 @@ interface DataCard {
     MatList,
     MatListItem,
     TranslateModule,
+    MatTooltip,
   ],
 })
 export class DirectoryServicesComponent implements OnInit {

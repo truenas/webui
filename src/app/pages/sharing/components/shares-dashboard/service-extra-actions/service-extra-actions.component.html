@@ -2,7 +2,8 @@
   <div>
     <button
       mat-icon-button
-      [attr.aria-label]="'Table Actions of Expandable Table' | translate"
+      [matTooltip]="'Actions for {name}' | translate: { name: serviceNames.get(service().service) }"
+      [attr.aria-label]="'Actions for {name}' | translate: { name: serviceNames.get(service().service) }"
       [ixTest]="[service().id, 'actions-menu']"
       [matMenuTriggerFor]="rowActions"
     >

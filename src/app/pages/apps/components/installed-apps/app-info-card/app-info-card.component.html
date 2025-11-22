@@ -17,6 +17,8 @@
         mat-icon-button
         ixTest="app-info-menu"
         [matMenuTriggerFor]="appInfoMenu"
+        [matTooltip]="'More Options' | translate"
+        [attr.aria-label]="'More Options' | translate"
       >
         <ix-icon name="more_vert"></ix-icon>
       </button>
