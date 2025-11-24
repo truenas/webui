@@ -1,4 +1,4 @@
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, Component, OnInit, ChangeDetectionStrategy, input, computed, signal, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -51,7 +51,6 @@ interface AuditUrlOptions extends UrlOptions<AuditEntry> {
     FakeProgressBarComponent,
     MatButton,
     MatIconButton,
-    NgTemplateOutlet,
     MatMenu,
     MatMenuTrigger,
     MatMenuItem,
@@ -75,7 +74,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
   protected readonly searchQuery = signal<SearchQuery<AuditEntry>>({ query: '', isBasicQuery: true });
   protected readonly searchProperties = signal<SearchProperty<AuditEntry>[]>([]);
-  protected readonly advancedSearchPlaceholder = this.translate.instant('Service = "SMB" AND Event = "CLOSE"');
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Event = "Close" AND Username = "admin"');
   protected readonly serviceControl = new FormControl<AuditService>(AuditService.Middleware);
   protected readonly serviceOptions$ = of(mapToOptions(auditServiceLabels, this.translate));
   protected readonly exportFormat = signal<ExportFormat>(ExportFormat.Csv);
