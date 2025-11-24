@@ -7,7 +7,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
+import { Role } from 'app/enums/role.enum';
 import { ContainerDevice, ContainerFilesystemDevice, ContainerInstance } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -39,9 +41,12 @@ import { ContainerInstancesStore } from 'app/pages/instances/stores/container-in
     TranslateModule,
     DeviceActionsMenuComponent,
     DeviceTypeBadgeComponent,
+    RequiresRolesDirective,
   ],
 })
 export class InstanceFilesystemDevicesComponent {
+  protected readonly requiredRoles = [Role.ContainerWrite];
+
   private slideIn = inject(SlideIn);
   private devicesStore = inject(ContainerDevicesStore);
   private instancesStore = inject(ContainerInstancesStore);

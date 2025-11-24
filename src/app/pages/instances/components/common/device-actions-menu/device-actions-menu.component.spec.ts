@@ -5,6 +5,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Observable, of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import {
   ContainerDevice,
@@ -31,6 +32,7 @@ describe('DeviceActionsMenuComponent', () => {
   const createComponent = createComponentFactory({
     component: DeviceActionsMenuComponent,
     providers: [
+      mockAuth(),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

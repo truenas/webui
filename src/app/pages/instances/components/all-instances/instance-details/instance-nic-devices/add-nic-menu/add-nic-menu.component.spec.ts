@@ -5,6 +5,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerDeviceType, ContainerNicDeviceType } from 'app/enums/container.enum';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -20,6 +21,7 @@ describe('AddNicMenuComponent', () => {
   const createComponent = createComponentFactory({
     component: AddNicMenuComponent,
     providers: [
+      mockAuth(),
       mockApi([
         mockCall('container.device.nic_attach_choices', {
           truenasbr0: 'TrueNAS Bridge',

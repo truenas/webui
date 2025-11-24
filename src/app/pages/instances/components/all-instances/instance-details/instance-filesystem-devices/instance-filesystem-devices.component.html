@@ -5,6 +5,7 @@
     </h3>
 
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-button
       ixTest="add-disk"
       (click)="addDisk()"

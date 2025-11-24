@@ -2,9 +2,9 @@
   <ngx-skeleton-loader class="loader"></ngx-skeleton-loader>
 } @else if (hasDevicesToAdd()) {
   <button
+    *ixRequiresRoles="requiredRoles"
     mat-button
     ixTest="add-device"
-    [disabled]=""
     [matMenuTriggerFor]="addDeviceMenu"
   >
     {{ 'Add' | translate }}

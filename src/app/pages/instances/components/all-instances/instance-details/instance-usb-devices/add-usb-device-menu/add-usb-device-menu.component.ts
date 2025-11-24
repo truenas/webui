@@ -6,7 +6,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerDeviceType } from 'app/enums/container.enum';
+import { Role } from 'app/enums/role.enum';
 import {
   AvailableUsb,
   ContainerUsbDevice,
@@ -33,9 +35,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TranslateModule,
     MatMenuTrigger,
     NgxSkeletonLoaderModule,
+    RequiresRolesDirective,
   ],
 })
 export class AddUsbDeviceMenuComponent {
+  protected readonly requiredRoles = [Role.ContainerWrite];
+
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);

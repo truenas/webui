@@ -4,6 +4,7 @@ import { signal } from '@angular/core';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerDeviceType, ContainerType } from 'app/enums/container.enum';
 import { AvailableUsb, ContainerDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -24,6 +25,7 @@ describe('AddUsbDeviceMenuComponent', () => {
   const createComponent = createComponentFactory({
     component: AddUsbDeviceMenuComponent,
     providers: [
+      mockAuth(),
       mockApi([
         mockCall('container.device.usb_choices', {
           usb1: {

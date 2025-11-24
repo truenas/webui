@@ -5,6 +5,7 @@
     </h3>
 
     <button
+      *ixRequiresRoles="[Role.ContainerWrite]"
       mat-button
       ixTest="edit-instance"
       (click)="editInstance()"

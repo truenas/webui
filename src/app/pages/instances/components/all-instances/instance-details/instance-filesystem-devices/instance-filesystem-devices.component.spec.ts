@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerFilesystemDevice } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -45,6 +46,7 @@ describe('InstanceFilesystemDevicesComponent', () => {
       MockComponent(DeviceActionsMenuComponent),
     ],
     providers: [
+      mockAuth(),
       mockProvider(ContainerInstancesStore, {
         selectedInstance: () => fakeContainerInstance({
           id: 1,

@@ -8,7 +8,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, NEVER, Observable, filter, switchMap, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerDeviceType, ContainerNicDeviceType } from 'app/enums/container.enum';
+import { Role } from 'app/enums/role.enum';
 import {
   ContainerDevice,
   ContainerFilesystemDevice,
@@ -45,9 +47,12 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatMenu,
     MatMenuTrigger,
     MatMenuItem,
+    RequiresRolesDirective,
   ],
 })
 export class DeviceActionsMenuComponent {
+  protected readonly requiredRoles = [Role.ContainerWrite];
+
   private dialog = inject(DialogService);
   private matDialog = inject(MatDialog);
   private api = inject(ApiService);
