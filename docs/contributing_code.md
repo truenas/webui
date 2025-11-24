@@ -69,7 +69,7 @@ Once your PR is merged, it will appear in the next nightly build. :tada:
 
 We appreciate your contribution.
 
-### Get [Forum](https://forums.truenas.com) Contributor Credit!
+### Get [Forum](https://github.com/HarborNAS/community/discussions) Contributor Credit!
 
 Once you have successfully had your pull-request merged into the HarborNAS repository, you are eligible for an exclusive forum badge and group to highlight your contributor status!
 
