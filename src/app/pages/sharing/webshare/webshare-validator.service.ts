@@ -81,7 +81,8 @@ export class WebShareValidatorService {
       // Filter out empty strings which come from multiple consecutive slashes
       // Example: '/mnt/pool' → 'pool' → ['pool'] → length 1 (REJECTED)
       // Example: '/mnt/pool/dataset' → 'pool/dataset' → ['pool', 'dataset'] → length 2 (ACCEPTED)
-      // Example: '/mnt/pool//dataset' → 'pool//dataset' → ['pool', '', 'dataset'] → ['pool', 'dataset'] → length 2 (ACCEPTED)
+      // Example: '/mnt/pool//dataset' → 'pool//dataset' → ['pool', '', 'dataset']
+      //          → ['pool', 'dataset'] → length 2 (ACCEPTED)
       const pathParts = normalizedPath.substring(5).split('/').filter((part) => part.length > 0);
       if (pathParts.length === 1) {
         return {

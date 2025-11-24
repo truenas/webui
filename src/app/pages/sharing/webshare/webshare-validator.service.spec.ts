@@ -1,7 +1,7 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormControl, ValidationErrors } from '@angular/forms';
-import { signal } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import { firstValueFrom, Observable, throwError } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -26,56 +26,48 @@ describe('WebShareValidatorService', () => {
   });
 
   describe('validateWebShareName', () => {
-    it('returns null for empty value', (done) => {
+    it('returns null for empty value', async () => {
       const shares = signal<WebShare[]>([]);
       const validator = service.validateWebShareName(shares);
       const control = new FormControl('');
 
-      (validator(control) as Observable<ValidationErrors | null>).subscribe((result: ValidationErrors | null) => {
-        expect(result).toBeNull();
-        done();
-      });
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      expect(result).toBeNull();
     });
 
-    it('returns error when name already exists', (done) => {
+    it('returns error when name already exists', async () => {
       const shares = signal<WebShare[]>([
         { id: 1, name: 'documents', path: '/mnt/tank/documents' } as WebShare,
       ]);
       const validator = service.validateWebShareName(shares);
       const control = new FormControl('documents');
 
-      (validator(control) as Observable<ValidationErrors | null>).subscribe((result: ValidationErrors | null) => {
-        expect(result).toEqual({
-          nameExists: { message: 'A WebShare with this name already exists' },
-        });
-        done();
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      expect(result).toEqual({
+        nameExists: { message: 'A WebShare with this name already exists' },
       });
     });
 
-    it('allows name when editing the same share', (done) => {
+    it('allows name when editing the same share', async () => {
       const shares = signal<WebShare[]>([
         { id: 1, name: 'documents', path: '/mnt/tank/documents' } as WebShare,
       ]);
       const validator = service.validateWebShareName(shares, 1);
       const control = new FormControl('documents');
 
-      (validator(control) as Observable<ValidationErrors | null>).subscribe((result: ValidationErrors | null) => {
-        expect(result).toBeNull();
-        done();
-      });
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      expect(result).toBeNull();
     });
 
-    it('allows unique name', (done) => {
+    it('allows unique name', async () => {
       const shares = signal<WebShare[]>([
         { id: 1, name: 'documents', path: '/mnt/tank/documents' } as WebShare,
       ]);
       const validator = service.validateWebShareName(shares);
       const control = new FormControl('media');
 
-      (validator(control) as Observable<ValidationErrors | null>).subscribe((result: ValidationErrors | null) => {
-        expect(result).toBeNull();
-        done();
-      });
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      expect(result).toBeNull();
     });
   });
 
@@ -208,124 +200,108 @@ describe('WebShareValidatorService', () => {
   });
 
   describe('validateWebSharePathNesting', () => {
-    it('returns null for empty value', (done) => {
+    it('returns null for empty value', async () => {
       const shares = signal<WebShare[]>([]);
       const validator = service.validateWebSharePathNesting(shares);
       const control = new FormControl('');
 
-      (validator(control) as Observable<ValidationErrors | null>).subscribe((result: ValidationErrors | null) => {
-        expect(result).toBeNull();
-        done();
-      });
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      expect(result).toBeNull();
     });
 
-    it('rejects exact duplicate path', (done) => {
+    it('rejects exact duplicate path', async () => {
       const shares = signal<WebShare[]>([
         { id: 1, name: 'documents', path: '/mnt/tank/documents' } as WebShare,
       ]);
       const validator = service.validateWebSharePathNesting(shares);
       const control = new FormControl('/mnt/tank/documents');
 
-      (validator(control) as Observable<ValidationErrors | null>).subscribe((result: ValidationErrors | null) => {
-        expect(result).toEqual({
-          pathNested: {
-            message: 'This path is already covered by the WebShare "documents" at /mnt/tank/documents',
-          },
-        });
-        done();
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      expect(result).toEqual({
+        pathNested: {
+          message: 'This path is already covered by the WebShare "documents" at /mnt/tank/documents',
+        },
       });
     });
 
-    it('rejects path nested inside existing share', (done) => {
+    it('rejects path nested inside existing share', async () => {
       const shares = signal<WebShare[]>([
         { id: 1, name: 'documents', path: '/mnt/tank/documents' } as WebShare,
       ]);
       const validator = service.validateWebSharePathNesting(shares);
       const control = new FormControl('/mnt/tank/documents/private');
 
-      (validator(control) as Observable<ValidationErrors | null>).subscribe((result: ValidationErrors | null) => {
-        expect(result).toEqual({
-          pathNested: {
-            message: 'This path is already covered by the WebShare "documents" at /mnt/tank/documents',
-          },
-        });
-        done();
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      expect(result).toEqual({
+        pathNested: {
+          message: 'This path is already covered by the WebShare "documents" at /mnt/tank/documents',
+        },
       });
     });
 
-    it('rejects path that contains existing share', (done) => {
+    it('rejects path that contains existing share', async () => {
       const shares = signal<WebShare[]>([
         { id: 1, name: 'documents', path: '/mnt/tank/data/documents' } as WebShare,
       ]);
       const validator = service.validateWebSharePathNesting(shares);
       const control = new FormControl('/mnt/tank/data');
 
-      (validator(control) as Observable<ValidationErrors | null>).subscribe((result: ValidationErrors | null) => {
-        expect(result).toEqual({
-          pathContainsExisting: {
-            message: 'This path would include the existing WebShare "documents" at /mnt/tank/data/documents',
-          },
-        });
-        done();
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      expect(result).toEqual({
+        pathContainsExisting: {
+          message: 'This path would include the existing WebShare "documents" at /mnt/tank/data/documents',
+        },
       });
     });
 
-    it('allows path when editing the same share', (done) => {
+    it('allows path when editing the same share', async () => {
       const shares = signal<WebShare[]>([
         { id: 1, name: 'documents', path: '/mnt/tank/documents' } as WebShare,
       ]);
       const validator = service.validateWebSharePathNesting(shares, 1);
       const control = new FormControl('/mnt/tank/documents');
 
-      (validator(control) as Observable<ValidationErrors | null>).subscribe((result: ValidationErrors | null) => {
-        expect(result).toBeNull();
-        done();
-      });
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      expect(result).toBeNull();
     });
 
-    it('does not match partial directory names', (done) => {
+    it('does not match partial directory names', async () => {
       const shares = signal<WebShare[]>([
         { id: 1, name: 'foo', path: '/mnt/tank/foo' } as WebShare,
       ]);
       const validator = service.validateWebSharePathNesting(shares);
       const control = new FormControl('/mnt/tank/foobar');
 
-      (validator(control) as Observable<ValidationErrors | null>).subscribe((result: ValidationErrors | null) => {
-        // Should be null because /mnt/tank/foobar is not nested in /mnt/tank/foo
-        expect(result).toBeNull();
-        done();
-      });
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      // Should be null because /mnt/tank/foobar is not nested in /mnt/tank/foo
+      expect(result).toBeNull();
     });
 
-    it('returns error when path does not exist', (done) => {
+    it('returns error when path does not exist', async () => {
       jest.spyOn(api, 'call').mockReturnValue(throwError(() => new Error('Path not found')));
 
       const shares = signal<WebShare[]>([]);
       const validator = service.validateWebSharePathNesting(shares);
       const control = new FormControl('/mnt/tank/nonexistent');
 
-      (validator(control) as Observable<ValidationErrors | null>).subscribe((result: ValidationErrors | null) => {
-        expect(result).toEqual({
-          pathNotFound: { message: 'Path does not exist' },
-        });
-        done();
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      expect(result).toEqual({
+        pathNotFound: { message: 'Path does not exist' },
       });
     });
 
-    it('handles trailing slashes in existing paths', (done) => {
+    it('handles trailing slashes in existing paths', async () => {
       const shares = signal<WebShare[]>([
         { id: 1, name: 'documents', path: '/mnt/tank/documents/' } as WebShare,
       ]);
       const validator = service.validateWebSharePathNesting(shares);
       const control = new FormControl('/mnt/tank/documents/private');
 
-      (validator(control) as Observable<ValidationErrors | null>).subscribe((result: ValidationErrors | null) => {
-        expect(result).toEqual({
-          pathNested: {
-            message: 'This path is already covered by the WebShare "documents" at /mnt/tank/documents',
-          },
-        });
-        done();
+      const result = await firstValueFrom(validator(control) as Observable<ValidationErrors | null>);
+      expect(result).toEqual({
+        pathNested: {
+          message: 'This path is already covered by the WebShare "documents" at /mnt/tank/documents',
+        },
       });
     });
   });

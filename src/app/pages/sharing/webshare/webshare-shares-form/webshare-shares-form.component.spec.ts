@@ -314,4 +314,152 @@ describe('WebShareSharesFormComponent', () => {
       });
     });
   });
+
+  describe('Error handling', () => {
+    it('should handle error when loading WebShares fails', () => {
+      const mockApiCall = jest.fn().mockReturnValue(throwError(() => new Error('Failed to load shares')));
+
+      spectator = createComponent({
+        providers: [
+          mockProvider(ApiService, { call: mockApiCall }),
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              isNew: true,
+              name: '',
+              path: '',
+            } as WebShareFormData),
+          }),
+        ],
+      });
+
+      const dialogService = spectator.inject(DialogService);
+      jest.spyOn(dialogService, 'error');
+
+      expect(dialogService.error).toHaveBeenCalledWith({
+        title: 'Error Loading WebShares',
+        message: 'Could not retrieve existing WebShare configurations. Please check your connection and try again.',
+        stackTrace: 'Failed to load shares',
+      });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: false, error: null });
+    });
+
+    it('should prevent submission when form is invalid', () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              isNew: true,
+              name: '',
+              path: '',
+            } as WebShareFormData),
+          }),
+        ],
+      });
+      api = spectator.inject(ApiService);
+      spectator.detectChanges();
+
+      // Clear mock calls from initialization
+      jest.clearAllMocks();
+
+      const form = spectator.component.form;
+      form.controls.name.setValue('');
+      form.controls.path.setValue('');
+      spectator.detectChanges();
+
+      const saveButton = spectator.query('button[type="submit"][mat-button]');
+      spectator.click(saveButton);
+
+      // Should not call API when form is invalid
+      expect(api.call).not.toHaveBeenCalledWith('sharing.webshare.create', expect.anything());
+
+      // Form should be marked as touched to show errors
+      expect(form.controls.name.touched).toBe(true);
+      expect(form.controls.path.touched).toBe(true);
+    });
+
+    it('should handle update API errors gracefully', () => {
+      const mockApiCall = jest.fn((method: string) => {
+        if (method === 'sharing.webshare.query') {
+          return of(mockWebShares);
+        }
+        if (method === 'sharing.webshare.update') {
+          return throwError(() => new Error('Update failed'));
+        }
+        // For other methods like filesystem.stat, return success
+        return of({});
+      });
+
+      spectator = createComponent({
+        providers: [
+          mockProvider(ApiService, { call: mockApiCall }),
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              id: 1,
+              isNew: false,
+              name: 'documents',
+              path: '/mnt/tank/documents',
+            } as WebShareFormData),
+          }),
+        ],
+      });
+
+      const errorHandler = spectator.inject(FormErrorHandlerService);
+      const handleErrorSpy = jest.spyOn(errorHandler, 'handleValidationErrors');
+      spectator.detectChanges();
+
+      const form = spectator.component.form;
+      form.controls.path.setValue('/mnt/tank/docs_updated');
+      spectator.detectChanges();
+
+      const saveButton = spectator.query('button[type="submit"][mat-button]');
+      spectator.click(saveButton);
+
+      expect(handleErrorSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('Pre-filled data', () => {
+    it('should initialize with pre-filled path when creating from dataset', () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              isNew: true,
+              name: '',
+              path: '/mnt/tank/predefined',
+            } as WebShareFormData),
+          }),
+        ],
+      });
+      spectator.detectChanges();
+
+      const form = spectator.component.form;
+      expect(form.controls.path.value).toBe('/mnt/tank/predefined');
+      expect(form.controls.name.value).toBe('');
+    });
+
+    it('should initialize with both name and path pre-filled', () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              isNew: true,
+              name: 'prefilled_name',
+              path: '/mnt/tank/prefilled',
+            } as WebShareFormData),
+          }),
+        ],
+      });
+      spectator.detectChanges();
+
+      const form = spectator.component.form;
+      expect(form.controls.name.value).toBe('prefilled_name');
+      expect(form.controls.path.value).toBe('/mnt/tank/prefilled');
+    });
+  });
 });

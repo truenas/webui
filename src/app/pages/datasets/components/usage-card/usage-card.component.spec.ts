@@ -246,5 +246,192 @@ describe('UsageCardComponent', () => {
 
       expect(spectator.query('.webshares.value')).not.toExist();
     });
+
+    it('creates a new webshare with pre-filled dataset information', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        name: 'pool/mydata',
+        mountpoint: '/mnt/pool/mydata',
+        smb_shares: [],
+        nfs_shares: [],
+        iscsi_shares: [],
+        webshares: [],
+        children: [],
+        apps: [],
+        vms: [],
+      });
+      spectator.setInput('hasChildrenWithShares', false);
+      spectator.detectChanges();
+
+      const createWebShareLink = spectator.queryAll('.details-item .action')[2] as HTMLAnchorElement;
+      createWebShareLink.click();
+
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+        expect.anything(),
+        {
+          data: {
+            isNew: true,
+            name: 'mydata',
+            path: '/mnt/pool/mydata',
+          },
+        },
+      );
+    });
+  });
+
+  describe('canCreateShare computed property', () => {
+    it('returns false when dataset has children with shares', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        smb_shares: [],
+        nfs_shares: [],
+        iscsi_shares: [],
+        webshares: [],
+        apps: [],
+        vms: [],
+      });
+      spectator.setInput('hasChildrenWithShares', true);
+
+      expect(spectator.component.canCreateShare()).toBe(false);
+    });
+
+    it('returns false when dataset is system dataset', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        name: 'pool/system-dataset',
+        smb_shares: [],
+        nfs_shares: [],
+        iscsi_shares: [],
+        webshares: [],
+        apps: [],
+        vms: [],
+      });
+      spectator.setInput('systemDataset', 'pool/system-dataset');
+      spectator.setInput('hasChildrenWithShares', false);
+
+      expect(spectator.component.canCreateShare()).toBe(false);
+    });
+
+    it('returns false when dataset is ix-apps', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        name: 'pool/ix-apps',
+        smb_shares: [],
+        nfs_shares: [],
+        iscsi_shares: [],
+        webshares: [],
+        apps: [],
+        vms: [],
+      });
+      spectator.setInput('hasChildrenWithShares', false);
+
+      expect(spectator.component.canCreateShare()).toBe(false);
+    });
+
+    it('returns false when dataset has apps', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        smb_shares: [],
+        nfs_shares: [],
+        iscsi_shares: [],
+        webshares: [],
+        apps: [{ name: 'app1', path: 'path1' }],
+        vms: [],
+      });
+      spectator.setInput('hasChildrenWithShares', false);
+
+      expect(spectator.component.canCreateShare()).toBe(false);
+    });
+
+    it('returns false when dataset has vms', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        smb_shares: [],
+        nfs_shares: [],
+        iscsi_shares: [],
+        webshares: [],
+        apps: [],
+        vms: [{ name: 'vm1', path: 'path1' }],
+      });
+      spectator.setInput('hasChildrenWithShares', false);
+
+      expect(spectator.component.canCreateShare()).toBe(false);
+    });
+
+    it('returns false when dataset has SMB shares', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        smb_shares: [{ share_name: 'smb1', path: 'path1', enabled: true }],
+        nfs_shares: [],
+        iscsi_shares: [],
+        webshares: [],
+        apps: [],
+        vms: [],
+      });
+      spectator.setInput('hasChildrenWithShares', false);
+
+      expect(spectator.component.canCreateShare()).toBe(false);
+    });
+
+    it('returns false when dataset has NFS shares', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        smb_shares: [],
+        nfs_shares: [{ enabled: true, path: 'path1' }],
+        iscsi_shares: [],
+        webshares: [],
+        apps: [],
+        vms: [],
+      });
+      spectator.setInput('hasChildrenWithShares', false);
+
+      expect(spectator.component.canCreateShare()).toBe(false);
+    });
+
+    it('returns false when dataset has iSCSI shares', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        smb_shares: [],
+        nfs_shares: [],
+        iscsi_shares: [{ enabled: true, type: IscsiExtentType.Disk, path: 'path1' }],
+        webshares: [],
+        apps: [],
+        vms: [],
+      });
+      spectator.setInput('hasChildrenWithShares', false);
+
+      expect(spectator.component.canCreateShare()).toBe(false);
+    });
+
+    it('returns false when dataset has webshares', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        smb_shares: [],
+        nfs_shares: [],
+        iscsi_shares: [],
+        webshares: [{ name: 'share1', path: 'path1' }],
+        apps: [],
+        vms: [],
+      });
+      spectator.setInput('hasChildrenWithShares', false);
+
+      expect(spectator.component.canCreateShare()).toBe(false);
+    });
+
+    it('returns true when dataset is eligible for sharing', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        name: 'pool/eligible-dataset',
+        smb_shares: [],
+        nfs_shares: [],
+        iscsi_shares: [],
+        webshares: [],
+        apps: [],
+        vms: [],
+      });
+      spectator.setInput('hasChildrenWithShares', false);
+
+      expect(spectator.component.canCreateShare()).toBe(true);
+    });
   });
 });
