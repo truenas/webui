@@ -3162,7 +3162,7 @@
   "SMB Group": "Grupo SMB",
   "SMB Lock": "Bloqueio SMB",
   "SMB Locks": "Bloqueios SMB",
-  "SMB multichannel allows servers to use multiple network connections  simultaneously by combining the bandwidth of several network interface cards (NICs) for  better performance. SMB multichannel does not function if you combine NICs into a LAGG. <a href=\"https://www.truenas.com/docs/scale/scaletutorials/shares/smb/smbmultichannel/\" target=\"_blank\">Read more in docs</a>": "O multicanal SMB permite que servidores usem múltiplas conexões de rede simultaneamente combinando a largura de banda de várias placas de interface de rede (NICs) para melhor desempenho. O multicanal SMB não funciona se você combinar NICs em um LAGG. <a href=\"https://www.truenas.com/docs/scale/scaletutorials/shares/smb/smbmultichannel/\" target=\"_blank\">Leia mais na documentação</a>",
+  "SMB multichannel allows servers to use multiple network connections  simultaneously by combining the bandwidth of several network interface cards (NICs) for  better performance. SMB multichannel does not function if you combine NICs into a LAGG. <a href=\"https://harboros.ai/docs\" target=\"_blank\">Read more in docs</a>": "O multicanal SMB permite que servidores usem múltiplas conexões de rede simultaneamente combinando a largura de banda de várias placas de interface de rede (NICs) para melhor desempenho. O multicanal SMB não funciona se você combinar NICs em um LAGG. <a href=\"https://harboros.ai/docs\" target=\"_blank\">Leia mais na documentação</a>",
   "SMB Name": "Nome SMB",
   "SMB Notification": "Notificação SMB",
   "SMB Notifications": "Notificações SMB",

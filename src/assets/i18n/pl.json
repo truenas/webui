@@ -4762,7 +4762,7 @@
   "SMB Group": "Grupa SMB",
   "SMB Lock": "Blokada SMB",
   "SMB Locks": "Blokady SMB",
-  "SMB multichannel allows servers to use multiple network connections  simultaneously by combining the bandwidth of several network interface cards (NICs) for  better performance. SMB multichannel does not function if you combine NICs into a LAGG. <a href=\"https://www.truenas.com/docs/scale/scaletutorials/shares/smb/smbmultichannel/\" target=\"_blank\">Read more in docs</a>": "SMB multichannel pozwala serwerom na jednoczesne korzystanie z wielu połączeń sieciowych poprzez łączenie przepustowości kilku kart sieciowych (NIC) dla lepszej wydajności. SMB multichannel nie działa, jeśli połączysz NIC w LAGG. <a href=\"https://www.truenas.com/docs/scale/scaletutorials/shares/smb/smbmultichannel/\" target=\"_blank\">Dowiedz się więcej w dokumentacji</a>",
+  "SMB multichannel allows servers to use multiple network connections  simultaneously by combining the bandwidth of several network interface cards (NICs) for  better performance. SMB multichannel does not function if you combine NICs into a LAGG. <a href=\"https://harboros.ai/docs\" target=\"_blank\">Read more in docs</a>": "SMB multichannel pozwala serwerom na jednoczesne korzystanie z wielu połączeń sieciowych poprzez łączenie przepustowości kilku kart sieciowych (NIC) dla lepszej wydajności. SMB multichannel nie działa, jeśli połączysz NIC w LAGG. <a href=\"https://harboros.ai/docs\" target=\"_blank\">Dowiedz się więcej w dokumentacji</a>",
   "SMB Name": "Nazwa SMB",
   "SMB Notification": "Powiadomienie SMB",
   "SMB Notifications": "Powiadomienia SMB",
