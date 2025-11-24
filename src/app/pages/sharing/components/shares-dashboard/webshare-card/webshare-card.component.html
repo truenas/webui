@@ -18,16 +18,18 @@
     </div>
 
     <div class="actions">
-      @if (showWebShareButton$ | async) {
-        <button
-          mat-button
-          [ixTest]="['webshare', 'open']"
-          [attr.aria-label]="'Open WebShare' | translate"
-          (click)="openWebShare()"
-        >
-          {{ 'Open WebShare' | translate }}
-        </button>
-      }
+      <button
+        mat-button
+        [ixTest]="['webshare', 'open']"
+        [attr.aria-label]="'Open WebShare' | translate"
+        [disabled]="!isTruenasDirectDomain"
+        [matTooltip]="isTruenasDirectDomain
+          ? ('Open WebShare' | translate)
+          : ('WebShare can only be opened when accessed via a .truenas.direct domain' | translate)"
+        (click)="openWebShare()"
+      >
+        {{ 'Open WebShare' | translate }}
+      </button>
 
       <button
         *ixRequiresRoles="requiredRoles"

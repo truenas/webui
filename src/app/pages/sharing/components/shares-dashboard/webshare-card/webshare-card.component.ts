@@ -6,6 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -59,6 +60,7 @@ import { selectService } from 'app/store/services/services.selectors';
     MatCard,
     MatToolbarRow,
     MatButton,
+    MatTooltip,
     RouterLink,
     IxIconComponent,
     RequiresRolesDirective,
@@ -109,12 +111,7 @@ export class WebShareCardComponent implements OnInit {
 
   // Check if current domain is *.truenas.direct (static check, hostname doesn't change at runtime)
   // WebShare service is only accessible on *.truenas.direct domains for security reasons
-  private readonly isTruenasDirectDomain = this.window.location.hostname.endsWith('.truenas.direct');
-
-  // Show button only if service is running AND on *.truenas.direct domain
-  showWebShareButton$ = this.isServiceRunning$.pipe(
-    map((isRunning) => isRunning && this.isTruenasDirectDomain),
-  );
+  readonly isTruenasDirectDomain = this.window.location.hostname.includes('.truenas.direct');
 
   hasLicenseOrTruenasConnect$ = this.licenseService.hasLicenseOrTruenasConnect$;
 
@@ -143,6 +140,12 @@ export class WebShareCardComponent implements OnInit {
           iconName: iconMarker('mdi-open-in-new'),
           tooltip: this.translate.instant('Open'),
           onClick: (row) => this.openWebShareByName(row),
+          disabled: () => of(!this.isTruenasDirectDomain),
+          dynamicTooltip: () => of(
+            this.isTruenasDirectDomain
+              ? this.translate.instant('Open')
+              : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'),
+          ),
         },
         {
           iconName: iconMarker('edit'),

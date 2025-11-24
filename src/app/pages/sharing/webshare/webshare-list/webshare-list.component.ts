@@ -10,12 +10,13 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, switchMap, map, take,
+  filter, switchMap, map, take, of,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -94,6 +95,7 @@ export class WebShareListComponent implements OnInit {
   private licenseService = inject(LicenseService);
   private webShareService = inject(WebShareService);
   private truenasConnectService = inject(TruenasConnectService);
+  private window = inject(WINDOW);
 
   service$ = this.store$.select(selectService(ServiceName.WebShare));
   filterString = '';
@@ -128,6 +130,12 @@ export class WebShareListComponent implements OnInit {
           iconName: iconMarker('mdi-open-in-new'),
           tooltip: this.translate.instant('Open'),
           onClick: (row) => this.openWebShare(row),
+          disabled: () => of(!this.isTruenasDirectDomain()),
+          dynamicTooltip: () => of(
+            this.isTruenasDirectDomain()
+              ? this.translate.instant('Open')
+              : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'),
+          ),
         },
         {
           iconName: iconMarker('edit'),
@@ -277,6 +285,10 @@ export class WebShareListComponent implements OnInit {
 
   openTruenasConnectDialog(): void {
     this.truenasConnectService.openStatusModal();
+  }
+
+  private isTruenasDirectDomain(): boolean {
+    return this.window.location.hostname.includes('.truenas.direct');
   }
 
   openWebShare(row: WebShareTableRow): void {
