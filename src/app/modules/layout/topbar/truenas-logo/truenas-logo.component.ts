@@ -46,7 +46,7 @@ export class TruenasLogoComponent {
   readonly logoMarkIcon = computed(() => {
     return this.useWhite()
       ? iconMarker('ix-truenas-logo-mark')
-      : iconMarker('ix-truenas-logo-mark-color');
+      : iconMarker('ix-harbor-logo-mark-color');
   });
 
   readonly fullSizeIcon = computed(() => {

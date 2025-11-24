@@ -48,7 +48,7 @@ describe('TruenasLogoComponent', () => {
 
   it('community-edition: shows a logotype', async () => {
     const [mark, text] = icons;
-    expect(await mark.getName()).toBe('ix-truenas-logo-mark-color');
+    expect(await mark.getName()).toBe('ix-harbor-logo-mark-color');
     expect(await text.getName()).toBe('ix-harbor-logo-type-color');
   });
 
@@ -73,7 +73,7 @@ describe('TruenasLogoComponent', () => {
     store$.refreshState();
 
     const [mark, text] = icons;
-    expect(await mark.getName()).toBe('ix-truenas-logo-mark-color');
+    expect(await mark.getName()).toBe('ix-harbor-logo-mark-color');
     expect(await text.getName()).toBe('ix-harbor-logo-type-color');
   });
 
@@ -114,6 +114,6 @@ describe('TruenasLogoComponent', () => {
     spectator.setInput('hideText', true);
     icons = await loader.getAllHarnesses(IxIconHarness);
     expect(icons).toHaveLength(1);
-    expect(await icons[0].getName()).toBe('ix-truenas-logo-mark-color');
+    expect(await icons[0].getName()).toBe('ix-harbor-logo-mark-color');
   });
 });
