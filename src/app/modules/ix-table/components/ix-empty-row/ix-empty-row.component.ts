@@ -56,7 +56,7 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
   }
 
   getIcon(): MarkedIcon {
-    let icon = iconMarker('ix-truenas-logo');
+    let icon = iconMarker('ix-harbor-logo');
     const conf = this.conf();
     if (conf.icon) {
       icon = conf.icon;
@@ -64,7 +64,7 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
       const type = conf.type;
       switch (type) {
         case EmptyType.Loading:
-          icon = iconMarker('ix-truenas-logo');
+          icon = iconMarker('ix-harbor-logo');
           break;
         case EmptyType.FirstUse:
           icon = iconMarker('mdi-rocket');

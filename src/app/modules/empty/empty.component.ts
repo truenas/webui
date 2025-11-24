@@ -44,7 +44,7 @@ export class EmptyComponent {
   });
 
   getIcon(): MarkedIcon | undefined {
-    let icon = iconMarker('ix-truenas-logo');
+    let icon = iconMarker('ix-harbor-logo');
     const confIcon = this.conf().icon;
     if (confIcon) {
       icon = confIcon;
@@ -56,7 +56,7 @@ export class EmptyComponent {
 
       switch (type) {
         case EmptyType.Loading:
-          icon = iconMarker('ix-truenas-logo');
+          icon = iconMarker('ix-harbor-logo');
           break;
         case EmptyType.FirstUse:
           icon = iconMarker('mdi-rocket');

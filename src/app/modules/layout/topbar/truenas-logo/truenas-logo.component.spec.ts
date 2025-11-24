@@ -55,14 +55,14 @@ describe('TruenasLogoComponent', () => {
   it('community-edition: shows full logo in color', async () => {
     spectator.setInput('fullSize', true);
     icons = await loader.getAllHarnesses(IxIconHarness);
-    expect(await icons[0].getName()).toBe('ix-truenas-logo-ce-color');
+    expect(await icons[0].getName()).toBe('ix-harbor-logo');
   });
 
   it('community-edition: shows full logo in white', async () => {
     spectator.setInput('fullSize', true);
     spectator.setInput('color', 'white');
     icons = await loader.getAllHarnesses(IxIconHarness);
-    expect(await icons[0].getName()).toBe('ix-truenas-logo-ce');
+    expect(await icons[0].getName()).toBe('ix-harbor-logo');
   });
 
   it('enterprise: shows a logotype', async () => {
@@ -86,7 +86,7 @@ describe('TruenasLogoComponent', () => {
     spectator.setInput('fullSize', true);
     icons = await loader.getAllHarnesses(IxIconHarness);
 
-    expect(await icons[0].getName()).toBe('ix-truenas-logo-enterprise-color');
+    expect(await icons[0].getName()).toBe('ix-harbor-logo');
   });
 
   it('enterprise: shows full logo in white', async () => {
@@ -99,7 +99,7 @@ describe('TruenasLogoComponent', () => {
     spectator.setInput('color', 'white');
     icons = await loader.getAllHarnesses(IxIconHarness);
 
-    expect(await icons[0].getName()).toBe('ix-truenas-logo-enterprise');
+    expect(await icons[0].getName()).toBe('ix-harbor-logo');
   });
 
   it('checks white color', async () => {

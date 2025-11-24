@@ -9,7 +9,7 @@ import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @Component({
-  selector: 'ix-truenas-logo',
+  selector: 'ix-harbor-logo',
   templateUrl: './truenas-logo.component.html',
   styleUrls: ['./truenas-logo.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,11 +52,11 @@ export class TruenasLogoComponent {
   readonly fullSizeIcon = computed(() => {
     if (this.isEnterprise()) {
       return this.useWhite()
-        ? iconMarker('ix-truenas-logo-enterprise')
-        : iconMarker('ix-truenas-logo-enterprise-color');
+        ? iconMarker('ix-harbor-logo')
+        : iconMarker('ix-harbor-logo');
     }
     return this.useWhite()
-      ? iconMarker('ix-truenas-logo-ce')
-      : iconMarker('ix-truenas-logo-ce-color');
+      ? iconMarker('ix-harbor-logo')
+      : iconMarker('ix-harbor-logo');
   });
 }
