@@ -1,6 +1,6 @@
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { ContainerStatus } from 'app/enums/container.enum';
-import { ContainerInstance } from 'app/interfaces/container.interface';
+import { Container } from 'app/interfaces/container.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { ContainerStatusCellComponent } from 'app/pages/containers/components/all-containers/container-list/container-row/container-status-cell/container-status-cell.component';
 import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
@@ -15,7 +15,7 @@ describe('ContainerStatusCellComponent', () => {
     ],
   });
 
-  function setupTest(container: ContainerInstance): void {
+  function setupTest(container: Container): void {
     spectator = createHost(`
       <ix-container-status-cell [container]="container"></ix-container-status-cell>
     `, { hostProps: { container } });

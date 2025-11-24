@@ -4,7 +4,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ContainerType } from 'app/enums/container.enum';
-import { ContainerInstance } from 'app/interfaces/container.interface';
+import { Container } from 'app/interfaces/container.interface';
 import { containerDetailsElements } from 'app/pages/containers/components/all-containers/container-details/container-details.elements';
 import {
   ContainerFilesystemDevicesComponent,
@@ -35,7 +35,7 @@ import {
   ],
 })
 export class ContainerDetailsComponent {
-  container = input.required<ContainerInstance>();
+  container = input.required<Container>();
 
   protected readonly searchableElements = containerDetailsElements;
   protected readonly ContainerType = ContainerType;

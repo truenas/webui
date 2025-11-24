@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { containerStatusLabels } from 'app/enums/container.enum';
-import { ContainerInstance } from 'app/interfaces/container.interface';
+import { Container } from 'app/interfaces/container.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
 @Component({
@@ -20,7 +20,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   },
 })
 export class ContainerStatusCellComponent {
-  readonly container = input.required<ContainerInstance>();
+  readonly container = input.required<Container>();
 
   protected hostClasses = computed(() => {
     return [

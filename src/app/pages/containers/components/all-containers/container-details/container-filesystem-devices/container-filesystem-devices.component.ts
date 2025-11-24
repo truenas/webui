@@ -10,7 +10,7 @@ import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
-import { ContainerDevice, ContainerFilesystemDevice, ContainerInstance } from 'app/interfaces/container.interface';
+import { Container, ContainerDevice, ContainerFilesystemDevice } from 'app/interfaces/container.interface';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -52,7 +52,7 @@ export class ContainerFilesystemDevicesComponent {
   private containersStore = inject(ContainersStore);
   private translate = inject(TranslateService);
 
-  readonly container = input.required<ContainerInstance>();
+  readonly container = input.required<Container>();
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
   protected readonly isContainerRunning = computed(() => {

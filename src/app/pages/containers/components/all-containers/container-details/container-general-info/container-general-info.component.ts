@@ -11,7 +11,7 @@ import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { containerCapabilitiesPolicyLabels, containerTimeLabels } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
-import { ContainerInstance } from 'app/interfaces/container.interface';
+import { Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -55,7 +55,7 @@ export class ContainerGeneralInfoComponent {
   private slideIn = inject(SlideIn);
   private containersStore = inject(ContainersStore);
 
-  container = input.required<ContainerInstance>();
+  container = input.required<Container>();
 
   protected readonly Role = Role;
   protected readonly containerCapabilitiesPolicyLabels = containerCapabilitiesPolicyLabels;

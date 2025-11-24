@@ -76,11 +76,11 @@ import {
   ContainerDevicePayload,
   ContainerDeviceDelete,
   ContainerDeviceEntry,
+  Container,
   ContainerGlobalConfig,
   ContainerImageRegistryResponse,
-  ContainerInstance,
-  CreateContainerInstance,
-  UpdateContainerInstance,
+  CreateContainer,
+  UpdateContainer,
 } from 'app/interfaces/container.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { CoreOptions } from 'app/interfaces/core-options.interface';
@@ -910,16 +910,16 @@ export interface ApiCallDirectory {
   'container.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
 
   // Container (actual available endpoints only)
-  'container.create': { params: [CreateContainerInstance]; response: ContainerInstance };
-  'container.delete': { params: [instanceId: number]; response: boolean };
-  'container.get_instance': { params: [instanceId: number]; response: ContainerInstance };
+  'container.create': { params: [CreateContainer]; response: Container };
+  'container.delete': { params: [containerId: number]; response: boolean };
+  'container.get_instance': { params: [containerId: number]; response: Container };
   'container.image.query_registry': { params: []; response: ContainerImageRegistryResponse[] };
-  'container.migrate': { params: [instanceId: number]; response: boolean };
+  'container.migrate': { params: [containerId: number]; response: boolean };
   'container.pool_choices': { params: []; response: Choices };
-  'container.query': { params: QueryParams<ContainerInstance>; response: ContainerInstance[] };
-  'container.start': { params: [instanceId: number]; response: void };
-  'container.stop': { params: [instanceId: number, params?: { force?: boolean }]; response: void };
-  'container.update': { params: [instanceId: number, update: UpdateContainerInstance]; response: ContainerInstance };
+  'container.query': { params: QueryParams<Container>; response: Container[] };
+  'container.start': { params: [containerId: number]; response: void };
+  'container.stop': { params: [containerId: number, params?: { force?: boolean }]; response: void };
+  'container.update': { params: [containerId: number, update: UpdateContainer]; response: Container };
 
   // LXC (actual available endpoints only)
   'lxc.bridge_choices': { params: []; response: Choices };

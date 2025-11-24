@@ -5,7 +5,7 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ContainerInstance } from 'app/interfaces/container.interface';
+import { Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/testing/mock-master-detail-view.component';
 import { AllContainersHeaderComponent } from 'app/pages/containers/components/all-containers/all-containers-header/all-containers-header.component';
@@ -61,7 +61,7 @@ describe('AllContainersComponent', () => {
       mockProvider(ContainersStore, {
         selectedContainer: jest.fn(() => ({})),
         initialize: jest.fn(),
-        containers: jest.fn(() => [] as ContainerInstance[]),
+        containers: jest.fn(() => [] as Container[]),
         isLoading: jest.fn(() => false),
       }),
       {

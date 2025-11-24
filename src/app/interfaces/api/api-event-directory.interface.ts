@@ -4,7 +4,7 @@ import { App, AppContainerLog, AppStats } from 'app/interfaces/app.interface';
 import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import {
-  ContainerGlobalConfig, ContainerInstance, ContainerMetrics,
+  Container, ContainerGlobalConfig, ContainerMetrics,
 } from 'app/interfaces/container.interface';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -48,7 +48,7 @@ export interface ApiEventDirectory {
   'user.query': { response: User };
   'virt.instance.metrics': { response: ContainerMetrics };
 
-  'container.query': { response: ContainerInstance };
+  'container.query': { response: Container };
   'lxc.config': { response: ContainerGlobalConfig };
 
   'vm.query': { response: VirtualMachine };

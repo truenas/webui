@@ -32,10 +32,10 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import {
-  CreateContainerInstance,
-  UpdateContainerInstance,
-  InstanceEnvVariablesFormGroup,
-  ContainerInstance,
+  Container,
+  ContainerEnvVariablesFormGroup,
+  CreateContainer,
+  UpdateContainer,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -97,7 +97,7 @@ export class ContainerFormComponent implements OnInit {
   private dialogService = inject(DialogService);
   protected formatter = inject(IxFormatterService);
   private errorHandler = inject(ErrorHandlerService);
-  slideInRef = inject<SlideInRef<ContainerInstance | undefined, boolean>>(SlideInRef);
+  slideInRef = inject<SlideInRef<Container | undefined, boolean>>(SlideInRef);
   private containersStore = inject(ContainersStore, { optional: true });
   private router = inject(Router);
   private containerConfigStore = inject(ContainerConfigStore);
@@ -126,7 +126,7 @@ export class ContainerFormComponent implements OnInit {
   protected isAdvancedMode = false;
 
   protected readonly isEditMode = signal<boolean>(false);
-  protected editingContainer: ContainerInstance | null = null;
+  protected editingContainer: Container | null = null;
   protected readonly title = computed(() => {
     if (this.isEditMode()) {
       return this.translate.instant('Edit Container: {name}', {
@@ -172,7 +172,7 @@ export class ContainerFormComponent implements OnInit {
     inituser: [null as string | null],
     initgroup: [null as string | null],
     capabilities_policy: [ContainerCapabilitiesPolicy.Default],
-    environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
+    environment_variables: new FormArray<ContainerEnvVariablesFormGroup>([]),
     use_default_network: [true],
     usb_devices: [[] as string[]],
     disks: this.formBuilder.array<FormGroup<{
@@ -276,7 +276,7 @@ export class ContainerFormComponent implements OnInit {
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe({
-      next: (container: ContainerInstance) => {
+      next: (container: Container) => {
         this.editingContainer = container;
         this.populateFormForEdit(container);
         this.isLoading.set(false);
@@ -288,7 +288,7 @@ export class ContainerFormComponent implements OnInit {
     });
   }
 
-  private populateFormForEdit(container: ContainerInstance): void {
+  private populateFormForEdit(container: Container): void {
     this.form.patchValue({
       name: container.name,
       description: container.description || '',
@@ -346,7 +346,7 @@ export class ContainerFormComponent implements OnInit {
     this.isLoading.set(true);
 
     if (this.isEditMode()) {
-      this.updateInstance().pipe(untilDestroyed(this)).subscribe({
+      this.updateContainer().pipe(untilDestroyed(this)).subscribe({
         next: (updatedInstance) => {
           this.isLoading.set(false);
           this.form.markAsPristine();
@@ -405,7 +405,7 @@ export class ContainerFormComponent implements OnInit {
     this.form.controls.environment_variables.removeAt(index);
   }
 
-  private createContainer(): Observable<ContainerInstance> {
+  private createContainer(): Observable<Container> {
     const payload = this.getCreatePayload();
 
     const job$ = this.api.job('container.create', [payload]);
@@ -422,16 +422,16 @@ export class ContainerFormComponent implements OnInit {
       );
   }
 
-  private updateInstance(): Observable<ContainerInstance> {
+  private updateContainer(): Observable<Container> {
     const payload = this.getUpdatePayload();
 
     return this.api.call('container.update', [this.editingContainer.id, payload]);
   }
 
-  private getCreatePayload(): CreateContainerInstance {
+  private getCreatePayload(): CreateContainer {
     const form = this.form.getRawValue();
 
-    const payload: CreateContainerInstance = {
+    const payload: CreateContainer = {
       uuid: crypto.randomUUID(),
       name: form.name,
       pool: (this.hasPreferredPool() && form.use_preferred_pool) ? '' : form.pool,
@@ -461,9 +461,9 @@ export class ContainerFormComponent implements OnInit {
     return payload;
   }
 
-  private getUpdatePayload(): UpdateContainerInstance {
+  private getUpdatePayload(): UpdateContainer {
     const form = this.form.getRawValue();
-    const payload: UpdateContainerInstance = {};
+    const payload: UpdateContainer = {};
 
     if (form.name !== this.editingContainer.name) payload.name = form.name;
     if (form.description !== (this.editingContainer.description || '')) payload.description = form.description;

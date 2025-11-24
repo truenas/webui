@@ -12,7 +12,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
-import { ContainerInstance, ContainerStopParams } from 'app/interfaces/container.interface';
+import { Container, ContainerStopParams } from 'app/interfaces/container.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -45,7 +45,7 @@ export class ContainerListBulkActionsComponent {
   private errorHandler = inject(ErrorHandlerService);
   private matDialog = inject(MatDialog);
 
-  readonly checkedContainers = input.required<ContainerInstance[]>();
+  readonly checkedContainers = input.required<Container[]>();
   readonly resetBulkSelection = output();
 
   protected readonly requiredRoles = [Role.ContainerWrite];

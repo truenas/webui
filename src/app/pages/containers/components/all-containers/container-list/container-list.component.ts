@@ -13,7 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { distinctUntilChanged, map, tap } from 'rxjs';
 import { containersEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ContainerInstance } from 'app/interfaces/container.interface';
+import { Container } from 'app/interfaces/container.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -67,7 +67,7 @@ export class ContainerListComponent {
     return this.selection.selected.length === this.filteredContainers().length;
   }
 
-  get checkedContainers(): ContainerInstance[] {
+  get checkedContainers(): Container[] {
     return this.selection.selected
       .map((id: number) => this.containers().find((container) => container.id === id))
       .filter((container) => !!container);
@@ -118,7 +118,7 @@ export class ContainerListComponent {
     }
   }
 
-  navigateToDetails(container: ContainerInstance): void {
+  navigateToDetails(container: Container): void {
     this.layoutService.navigatePreservingScroll(this.router, ['/containers', 'view', container.id]);
 
     this.toggleShowMobileDetails.emit(true);

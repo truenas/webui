@@ -11,15 +11,15 @@ import {
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEventTyped } from 'app/interfaces/api-message.interface';
-import { ContainerInstance, ContainerMetrics } from 'app/interfaces/container.interface';
+import { Container, ContainerMetrics } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface ContainersState {
   isLoading: boolean;
-  containers: ContainerInstance[] | undefined;
+  containers: Container[] | undefined;
   selectedContainerId: number | null;
-  selectedContainer: ContainerInstance | undefined;
+  selectedContainer: Container | undefined;
   metrics: ContainerMetrics;
 }
 
@@ -111,7 +111,7 @@ export class ContainersStore extends ComponentStore<ContainersState> {
         // Once the API improvement is made, this workaround can be removed and only the standard
         // ID-based update (below) will be needed.
         const isStatusOnlyUpdate = event.fields && Object.keys(event.fields).length === 1 && 'status' in event.fields;
-        let updatedContainers: ContainerInstance[];
+        let updatedContainers: Container[];
 
         if (isStatusOnlyUpdate) {
           updatedContainers = prevContainers.map((container) => {
@@ -148,7 +148,7 @@ export class ContainersStore extends ComponentStore<ContainersState> {
     }
   }
 
-  containerUpdated(updated: ContainerInstance): void {
+  containerUpdated(updated: Container): void {
     const containers = this.containers().map((container) => (updated.id === container.id ? updated : container));
     const updates: Partial<ContainersState> = { containers };
 

@@ -10,7 +10,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerStatus } from 'app/enums/container.enum';
-import { ContainerInstance } from 'app/interfaces/container.interface';
+import { Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
@@ -33,7 +33,7 @@ describe('ContainerFormComponent', () => {
     });
   });
 
-  const existingInstance: ContainerInstance = {
+  const existingContainer: Container = {
     id: 1,
     uuid: 'test-uuid-123',
     name: 'test-container',
@@ -58,8 +58,8 @@ describe('ContainerFormComponent', () => {
     },
   };
 
-  const createdInstance: ContainerInstance = {
-    ...existingInstance,
+  const createdContainer: Container = {
+    ...existingContainer,
     id: 1,
     name: 'new-container',
   };
@@ -79,14 +79,14 @@ describe('ContainerFormComponent', () => {
           v6_network: null,
           preferred_pool: 'pool1',
         }),
-        mockJob('container.create', fakeSuccessfulJob(createdInstance)),
-        mockCall('container.update', existingInstance),
-        mockCall('container.get_instance', existingInstance),
+        mockJob('container.create', fakeSuccessfulJob(createdContainer)),
+        mockCall('container.update', existingContainer),
+        mockCall('container.get_instance', existingContainer),
         mockCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
         mockCall('container.query', []),
       ]),
       mockProvider(SlideInRef, {
-        getData: jest.fn(() => undefined as ContainerInstance | undefined),
+        getData: jest.fn(() => undefined as Container | undefined),
         close: jest.fn(),
         requireConfirmationWhen: jest.fn(),
       }),
@@ -103,7 +103,7 @@ describe('ContainerFormComponent', () => {
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of({ result: createdInstance }),
+          afterClosed: () => of({ result: createdContainer }),
         })),
       }),
       mockProvider(Router, {
@@ -176,13 +176,13 @@ describe('ContainerFormComponent', () => {
             preferred_pool: 'pool1',
           }),
           mockCall('container.create'),
-          mockCall('container.update', existingInstance),
-          mockCall('container.get_instance', existingInstance),
+          mockCall('container.update', existingContainer),
+          mockCall('container.get_instance', existingContainer),
           mockCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
         ]),
         mockProvider(SlideInRef, {
-          getData: jest.fn(() => existingInstance as ContainerInstance | undefined),
+          getData: jest.fn(() => existingContainer as Container | undefined),
           close: jest.fn(),
           requireConfirmationWhen: jest.fn(),
         }),
@@ -317,13 +317,13 @@ describe('ContainerFormComponent', () => {
             preferred_pool: 'pool1',
           }),
           mockCall('container.create'),
-          mockCall('container.update', { ...existingInstance, name: 'updated-container' } as ContainerInstance),
-          mockCall('container.get_instance', existingInstance),
+          mockCall('container.update', { ...existingContainer, name: 'updated-container' } as Container),
+          mockCall('container.get_instance', existingContainer),
           mockCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
         ]),
         mockProvider(SlideInRef, {
-          getData: jest.fn(() => existingInstance as ContainerInstance | undefined),
+          getData: jest.fn(() => existingContainer as Container | undefined),
           close: jest.fn(),
           requireConfirmationWhen: jest.fn(),
         }),
@@ -469,14 +469,14 @@ describe('ContainerFormComponent', () => {
             v6_network: null,
             preferred_pool: null,
           }),
-          mockJob('container.create', fakeSuccessfulJob(createdInstance)),
-          mockCall('container.update', existingInstance),
-          mockCall('container.get_instance', existingInstance),
+          mockJob('container.create', fakeSuccessfulJob(createdContainer)),
+          mockCall('container.update', existingContainer),
+          mockCall('container.get_instance', existingContainer),
           mockCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
         ]),
         mockProvider(SlideInRef, {
-          getData: jest.fn(() => undefined as ContainerInstance | undefined),
+          getData: jest.fn(() => undefined as Container | undefined),
           close: jest.fn(),
           requireConfirmationWhen: jest.fn(),
         }),
@@ -493,7 +493,7 @@ describe('ContainerFormComponent', () => {
         }),
         mockProvider(DialogService, {
           jobDialog: jest.fn(() => ({
-            afterClosed: () => of({ result: createdInstance }),
+            afterClosed: () => of({ result: createdContainer }),
           })),
         }),
         mockProvider(Router, {

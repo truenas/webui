@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerStatus } from 'app/enums/container.enum';
 import {
-  ContainerInstanceMetrics,
+  ContainerStats,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -33,7 +33,7 @@ const container = fakeContainer({
   },
 });
 
-const metrics: ContainerInstanceMetrics = {
+const metrics: ContainerStats = {
   cpu: {
     cpu_user_percentage: 20,
   },

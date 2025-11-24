@@ -1,7 +1,7 @@
 import { ContainerStatus } from 'app/enums/container.enum';
-import { ContainerInstance } from 'app/interfaces/container.interface';
+import { Container } from 'app/interfaces/container.interface';
 
-export function fakeContainer(overrides: Partial<ContainerInstance> = {}): ContainerInstance {
+export function fakeContainer(overrides: Partial<Container> = {}): Container {
   return {
     id: 1,
     uuid: 'test-uuid',
@@ -26,5 +26,5 @@ export function fakeContainer(overrides: Partial<ContainerInstance> = {}): Conta
       domain_state: null,
     },
     ...overrides,
-  } as ContainerInstance;
+  } as Container;
 }

@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Subject, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { ContainerDeviceEntry, ContainerInstance } from 'app/interfaces/container.interface';
+import { Container, ContainerDeviceEntry } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -11,7 +11,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('ContainerDevicesStore', () => {
   let spectator: SpectatorService<ContainerDevicesStore>;
-  let selectedContainerSignal: ReturnType<typeof signal<ContainerInstance | undefined>>;
+  let selectedContainerSignal: ReturnType<typeof signal<Container | undefined>>;
 
   const containers = [
     fakeContainer({ id: 1 }),
@@ -42,7 +42,7 @@ describe('ContainerDevicesStore', () => {
   });
 
   beforeEach(() => {
-    selectedContainerSignal = signal<ContainerInstance | undefined>(containers[0]);
+    selectedContainerSignal = signal<Container | undefined>(containers[0]);
     spectator = createService();
   });
 

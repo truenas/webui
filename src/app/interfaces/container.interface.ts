@@ -9,9 +9,9 @@ import {
   ContainerType,
 } from 'app/enums/container.enum';
 
-export type ContainerMetrics = Record<string, ContainerInstanceMetrics>;
+export type ContainerMetrics = Record<string, ContainerStats>;
 
-export interface ContainerInstanceMetrics {
+export interface ContainerStats {
   cpu: {
     cpu_user_percentage: number;
   };
@@ -23,7 +23,7 @@ export interface ContainerInstanceMetrics {
   };
 }
 
-export interface ContainerInstance {
+export interface Container {
   id: number;
   uuid: string;
   name: string;
@@ -50,7 +50,7 @@ export interface ContainerInstance {
   };
 }
 
-export type CreateContainerInstance = Partial<Omit<ContainerInstance, 'id' | 'dataset' | 'status' | 'idmap'>> & {
+export type CreateContainer = Partial<Omit<Container, 'id' | 'dataset' | 'status' | 'idmap'>> & {
   uuid: string;
   name: string;
   autostart: boolean;
@@ -61,7 +61,7 @@ export type CreateContainerInstance = Partial<Omit<ContainerInstance, 'id' | 'da
   };
 };
 
-export type UpdateContainerInstance = Partial<Pick<ContainerInstance,
+export type UpdateContainer = Partial<Pick<Container,
   | 'uuid'
   | 'name'
   | 'description'
@@ -166,7 +166,7 @@ export interface AvailableUsb {
   description: string;
 }
 
-export type InstanceEnvVariablesFormGroup = FormGroup<{
+export type ContainerEnvVariablesFormGroup = FormGroup<{
   name: FormControl<string>;
   value: FormControl<string>;
 }>;

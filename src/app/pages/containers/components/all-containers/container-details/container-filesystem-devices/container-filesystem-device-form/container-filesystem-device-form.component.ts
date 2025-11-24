@@ -12,8 +12,8 @@ import { Observable, of } from 'rxjs';
 import { ContainerDeviceType } from 'app/enums/container.enum';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import {
+  Container,
   ContainerFilesystemDevice,
-  ContainerInstance,
 } from 'app/interfaces/container.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -32,7 +32,7 @@ import {
 import { FilesystemService } from 'app/services/filesystem.service';
 
 interface ContainerFilesystemDeviceFormOptions {
-  container: ContainerInstance;
+  container: Container;
   disk: ContainerFilesystemDevice | undefined;
 }
 
@@ -84,7 +84,7 @@ export class ContainerFilesystemDeviceFormComponent implements OnInit {
       : this.translate.instant('Edit Filesystem Device');
   });
 
-  protected get container(): ContainerInstance {
+  protected get container(): Container {
     return this.slideInRef.getData().container;
   }
 

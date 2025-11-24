@@ -14,19 +14,19 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { containerDeviceEntriesToDevices } from 'app/pages/containers/utils/container-device.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-export interface ContainerInstanceDeviceState {
+export interface ContainerDeviceState {
   isLoading: boolean;
   devices: ContainerDevice[];
 }
 
-const initialState: ContainerInstanceDeviceState = {
+const initialState: ContainerDeviceState = {
   isLoading: false,
   devices: [],
 };
 
 @UntilDestroy()
 @Injectable()
-export class ContainerDevicesStore extends ComponentStore<ContainerInstanceDeviceState> {
+export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private containersStore = inject(ContainersStore);

@@ -4,7 +4,7 @@ import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { ContainerStatus } from 'app/enums/container.enum';
-import { ContainerInstance } from 'app/interfaces/container.interface';
+import { Container } from 'app/interfaces/container.interface';
 import {
   ContainerToolsComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-tools/container-tools.component';
@@ -14,7 +14,7 @@ import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 describe('ContainerToolsComponent', () => {
   let spectator: Spectator<ContainerToolsComponent>;
   let loader: HarnessLoader;
-  const selectedContainer = signal<ContainerInstance>(fakeContainer({
+  const selectedContainer = signal<Container>(fakeContainer({
     id: 1,
     status: {
       state: ContainerStatus.Running,

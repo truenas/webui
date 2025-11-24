@@ -12,9 +12,9 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import {
-  ContainerInstance,
+  Container,
+  ContainerStats,
   ContainerStopParams,
-  ContainerInstanceMetrics,
 } from 'app/interfaces/container.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
@@ -55,8 +55,8 @@ export class ContainerRowComponent {
   private containersStore = inject(ContainersStore);
 
   protected readonly requiredRoles = [Role.ContainerWrite];
-  readonly container = input.required<ContainerInstance>();
-  readonly metrics = input<ContainerInstanceMetrics | undefined>();
+  readonly container = input.required<Container>();
+  readonly metrics = input<ContainerStats | undefined>();
   readonly selected = input<boolean>(false);
   protected readonly isStopped = computed(() => this.container()?.status?.state === ContainerStatus.Stopped);
 
