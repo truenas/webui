@@ -38,9 +38,7 @@ import { ResilveringIndicatorComponent } from 'app/modules/layout/topbar/resilve
 import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -74,8 +72,6 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     TranslateModule,
     UiSearchDirective,
     TestDirective,
-    TruecommandButtonComponent,
-    TruenasConnectButtonComponent,
     MatButtonModule, MatMenuModule,
     ɵɵRouterLink,
   ],
