@@ -1,62 +1,85 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="-1">
-  <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
-  <script nomodule="" src="assets/scripts/ie-support/ie-polyfills.min.js"></script>
-  <title id="main-page-title"></title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="apple-touch-icon" sizes="120x120" href="assets/favicons/apple-touch-icon.png">
-  <link rel="manifest" href="assets/favicons/site.webmanifest">
-  <link rel="mask-icon" href="assets/favicons/safari-pinned-tab.svg" color="#000000">
-  <meta name="msapplication-TileColor" content="#2d89ef">
-  <meta name="robots" content="noindex">
-  <meta name="msapplication-config" content="assets/favicons/browserconfig.xml">
-  <meta name="theme-color" content="#ffffff">
-  <script>
-    const bg1 = localStorage.getItem('bg1')
-    const fg1 = localStorage.getItem('fg1')
-    document.documentElement.style.setProperty('--bg1', bg1 || '#1E1E1E');
-    document.documentElement.style.setProperty('--fg1', fg1 || '#fff');
-    performance.mark('index.html');
-  </script>
-  <style>
-    :root {
-      --bg1: '';
-      --fg1: '';
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      background: var(--bg1);
-    }
-
-    @keyframes loading {
-      50% {
-        opacity: 0;
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+    <meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
+    <script
+      nomodule=""
+      src="assets/scripts/ie-support/ie-polyfills.min.js"
+    ></script>
+    <title id="main-page-title"></title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="apple-touch-icon"
+      sizes="120x120"
+      href="assets/favicons/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="assets/favicons/site.webmanifest" />
+    <link
+      rel="mask-icon"
+      href="assets/favicons/safari-pinned-tab.svg"
+      color="#000000"
+    />
+    <meta name="msapplication-TileColor" content="#2d89ef" />
+    <meta name="robots" content="noindex" />
+    <meta
+      name="msapplication-config"
+      content="assets/favicons/browserconfig.xml"
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <script>
+      const bg1 = localStorage.getItem("bg1");
+      const fg1 = localStorage.getItem("fg1");
+      document.documentElement.style.setProperty("--bg1", bg1 || "#1E1E1E");
+      document.documentElement.style.setProperty("--fg1", fg1 || "#fff");
+      performance.mark("index.html");
+    </script>
+    <style>
+      :root {
+        --bg1: "";
+        --fg1: "";
       }
-    }
-  </style>
-</head>
 
-<body class="ix-dark">
-  <ix-root>
-    <div style="display: flex; align-items: center; justify-content: center; height: 100vh;">
-      <div style="width: 100px; animation: loading 2s linear infinite; opacity: 0.3;">
-        <svg fill="var(--fg1)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 62 49">
-          <path
-            d="M61.03 19.16v13.01L33.19 48.25V35.24l27.84-16.08ZM27.86 35.24v13L0 32.17v-13l12.59 7.26s.03.02.05.03l15.23 8.79-.01-.01Zm13.93-11.11-11.26 6.51-11.28-6.51 11.28-6.51 11.26 6.51Zm16.59-9.58-11.27 6.51-13.92-8.05V0l25.19 14.55ZM27.86 0v13.01l-13.93 8.04-11.28-6.5L27.86 0Z" />
-        </svg>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--bg1);
+      }
+
+      @keyframes loading {
+        50% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="ix-dark">
+    <ix-root>
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          background-color: white;
+        "
+      >
+        <div
+          style="
+            width: 100px;
+            animation: loading 2s linear infinite;
+            opacity: 0.3;
+          "
+        >
+          <img src="assets/icons/custom/harbor-logo-mark-color.svg" />
+        </div>
       </div>
-    </div>
-  </ix-root>
-</body>
-
+    </ix-root>
+  </body>
 </html>
