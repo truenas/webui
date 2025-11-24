@@ -121,7 +121,7 @@ export class TruenasConnectService {
   }
 
   openTruenasConnectWindow(url: string): void {
-    const truenasTabName = 'TrueNASConnect';
+    const truenasTabName = 'HarborOSConnect';
 
     if (!globalTruenasConnectWindow || globalTruenasConnectWindow.closed) {
       // First time, or the old tab was closed - open new window with URL

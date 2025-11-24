@@ -140,7 +140,7 @@ describe('TruenasConnectService', () => {
     );
     expect(windowMock.open).toHaveBeenCalledWith(
       url,
-      'TrueNASConnect',
+      'HarborOSConnect',
       'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes',
     );
     expect(mockTncWindow.focus).toHaveBeenCalled();
@@ -164,7 +164,7 @@ describe('TruenasConnectService', () => {
     expect(windowMock.open).toHaveBeenCalledTimes(1);
     expect(windowMock.open).toHaveBeenCalledWith(
       firstUrl,
-      'TrueNASConnect',
+      'HarborOSConnect',
       'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes',
     );
     expect(mockTncWindow.focus).toHaveBeenCalledTimes(1);
@@ -178,7 +178,7 @@ describe('TruenasConnectService', () => {
 
     // Should call open again but with empty URL for focus only
     expect(windowMock.open).toHaveBeenCalledTimes(2);
-    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'TrueNASConnect');
+    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'HarborOSConnect');
     expect(mockTncWindow.focus).toHaveBeenCalledTimes(1); // Called once in the second attempt
     // URL should NOT be changed - no navigation
     expect(mockTncWindow.location.href).toBe(''); // Original URL unchanged
@@ -221,7 +221,7 @@ describe('TruenasConnectService', () => {
     expect(windowMock.open).toHaveBeenCalledTimes(2);
     expect(windowMock.open).toHaveBeenLastCalledWith(
       secondUrl,
-      'TrueNASConnect',
+      'HarborOSConnect',
       'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes',
     );
     expect(mockNewWindow.focus).toHaveBeenCalled();
@@ -241,7 +241,7 @@ describe('TruenasConnectService', () => {
 
     expect(windowMock.open).toHaveBeenCalledWith(
       testUrl,
-      'TrueNASConnect',
+      'HarborOSConnect',
       'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes',
     );
     expect(mockTncWindow.focus).toHaveBeenCalled();
@@ -272,7 +272,7 @@ describe('TruenasConnectService', () => {
 
     // Should call open again with empty URL (focus only) and not change location
     expect(windowMock.open).toHaveBeenCalledTimes(2); // Called twice: first with URL, second with empty
-    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'TrueNASConnect');
+    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'HarborOSConnect');
     expect(mockTncWindow.focus).toHaveBeenCalledTimes(1);
     expect(mockTncWindow.location.href).toBe(originalHref); // URL unchanged
   });
@@ -302,7 +302,7 @@ describe('TruenasConnectService', () => {
 
     // Should call open with empty URL (focus only) and not navigate
     expect(windowMock.open).toHaveBeenCalledTimes(2); // Called twice: first with URL, second with empty
-    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'TrueNASConnect');
+    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'HarborOSConnect');
     expect(mockTncWindow.focus).toHaveBeenCalledTimes(1);
     expect(mockTncWindow.location.href).toBe(firstUrl); // URL unchanged - stays at original
   });

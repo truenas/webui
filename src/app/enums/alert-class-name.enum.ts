@@ -44,7 +44,7 @@ export enum AlertClassName {
   FailoverRemoteSystemInaccessible = 'FailoverRemoteSystemInaccessible',
   FailoverKeysSyncFailed = 'FailoverKeysSyncFailed',
   FailoverKmipKeysSyncFailed = 'FailoverKMIPKeysSyncFailed',
-  TrueNasVersionsMismatch = 'TrueNASVersionsMismatch',
+  TrueNasVersionsMismatch = 'HarborOSVersionsMismatch',
 
   // Hardware
   UsbStorage = 'USBStorage',
