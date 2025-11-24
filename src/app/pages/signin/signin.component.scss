@@ -1,4 +1,4 @@
-@import 'scss-imports/cssvars';
+@import "scss-imports/cssvars";
 
 .session-form-hold {
   margin: 0 auto;
@@ -10,7 +10,7 @@
     padding: 0 !important;
   }
 
-  >.mat-mdc-card {
+  > .mat-mdc-card {
     border: 0;
     margin: 0;
   }
@@ -42,7 +42,7 @@
   padding: 0 0 18px !important;
 }
 
-.mat-mdc-card .mat-mdc-card-content>div {
+.mat-mdc-card .mat-mdc-card-content > div {
   padding: 0;
 }
 
@@ -59,23 +59,25 @@
   background-color: var(--bg2);
 
   // Fallback for browsers that don't support image-set
-  background-image: url('assets/images/signin/stars-sky-800w.jpg');
-  background-image: image-set(url('assets/images/signin/stars-sky-400w.avif') 1x,
-  url('assets/images/signin/stars-sky-800w.avif') 2x,
-  url('assets/images/signin/stars-sky-1200w.avif') 3x);
+  background-image: url("assets/images/signin/stars-sky-800w.jpg");
+  background-image: image-set(
+    url("assets/images/signin/stars-sky-400w.avif") 1x,
+    url("assets/images/signin/stars-sky-800w.avif") 2x,
+    url("assets/images/signin/stars-sky-1200w.avif") 3x
+  );
   background-size: cover;
   border-bottom: solid 1px var(--lines);
   height: 250px;
-
-  padding: 20% 0;
   position: relative;
   text-align: center;
+  display: flex;
+  align-items: center;
 
   .logo {
     fill: #fff;
     height: auto;
     position: relative;
-    width: 256px;
+    width: 100%;
     z-index: 2;
   }
 }
@@ -86,7 +88,7 @@
   height: 100vh;
   justify-content: center;
 
-  >div {
+  > div {
     animation: loading 2s linear infinite;
     opacity: 0.3;
     width: 100px;
@@ -123,7 +125,7 @@
   *  Apparently 100vw is actually viewport width + scrollbar width
   *  if vertical scrollbar is present
   */
-  .page-wrap>* {
+  .page-wrap > * {
     max-width: 100%;
     width: 100%;
   }
