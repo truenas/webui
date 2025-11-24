@@ -49,7 +49,7 @@ describe('TruenasLogoComponent', () => {
   it('community-edition: shows a logotype', async () => {
     const [mark, text] = icons;
     expect(await mark.getName()).toBe('ix-truenas-logo-mark-color');
-    expect(await text.getName()).toBe('ix-truenas-logo-type-color');
+    expect(await text.getName()).toBe('ix-harbor-logo-type-color');
   });
 
   it('community-edition: shows full logo in color', async () => {
@@ -74,7 +74,7 @@ describe('TruenasLogoComponent', () => {
 
     const [mark, text] = icons;
     expect(await mark.getName()).toBe('ix-truenas-logo-mark-color');
-    expect(await text.getName()).toBe('ix-truenas-logo-type-color');
+    expect(await text.getName()).toBe('ix-harbor-logo-type-color');
   });
 
   it('enterprise: shows full logo in color', async () => {
@@ -107,7 +107,7 @@ describe('TruenasLogoComponent', () => {
     const [mark, text] = icons;
     expect(icons).toHaveLength(2);
     expect(await mark.getName()).toBe('ix-truenas-logo-mark');
-    expect(await text.getName()).toBe('ix-truenas-logo-type');
+    expect(await text.getName()).toBe('ix-harbor-logo-type');
   });
 
   it('checks when logo text is hidden', async () => {
