@@ -34,8 +34,8 @@ export class GlobalSearchSectionsProvider {
     const normalizedSearchTerm = searchTerm.toLowerCase();
     const isDocumentationKeyword = documentationKeywords.has(normalizedSearchTerm);
     const targetHref = appVersion
-      ? `https://www.truenas.com/docs/scale/${appVersion}/search`
-      : 'https://www.truenas.com/docs/search';
+      ? `https://harboros.ai/docs?version=${appVersion}`
+      : 'https://harboros.ai/docs';
 
     if (isDocumentationKeyword) {
       return [

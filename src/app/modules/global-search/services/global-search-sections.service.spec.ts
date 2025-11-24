@@ -86,7 +86,7 @@ describe('GlobalSearchSectionsProvider', () => {
 
     expect(results).toEqual([{
       hierarchy: ['Search Documentation for «{value}»'],
-      targetHref: 'https://www.truenas.com/docs/search/?query=test',
+      targetHref: 'https://harboros.ai/docs/?query=test',
       section: GlobalSearchSection.Help,
     }]);
   });
@@ -97,7 +97,7 @@ describe('GlobalSearchSectionsProvider', () => {
 
     expect(results).toEqual([{
       hierarchy: ['Go to Documentation'],
-      targetHref: 'https://www.truenas.com/docs/search',
+      targetHref: 'https://harboros.ai/docs',
       section: GlobalSearchSection.Help,
     }]);
   });

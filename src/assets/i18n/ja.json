@@ -40,7 +40,7 @@
   "Enable it here.": "ここで有効にしてください。",
   "Enable STIG Mode Anyway": "とにかくSTIGモードを有効にします",
   "Enable HarborNAS Proactive Support": "HarborNAS プロアクティブ サポートを有効にする",
-  "Enter or paste the API key provided from <a href=\"https://portal.truenas.com/portal/login/\" target=\"_blank\">HarborNAS Account Services</a>. Login or signup is required.": "<a href=\"https://portal.truenas.com/portal/login/\" target=\"_blank\">HarborNAS Account Services</a> から提供された API キーを入力または貼り付けます。ログインまたはサインアップが必要です。",
+  "Enter or paste the API key provided from <a href=\"https://github.com/HarborNAS/portal/login/\" target=\"_blank\">HarborNAS Account Services</a>. Login or signup is required.": "<a href=\"https://github.com/HarborNAS/portal/login/\" target=\"_blank\">HarborNAS Account Services</a> から提供された API キーを入力または貼り付けます。ログインまたはサインアップが必要です。",
   "Error description": "エラーの説明",
   "Error Message": "エラーメッセージ",
   "Events (Optional)": "イベント（オプション）",

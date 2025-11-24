@@ -32,7 +32,7 @@ export const helptextTopbar = {
     saveButton: T('Save'),
     apiKey: T('API Key'),
     apiTooltip: T('Enter or paste the API key provided from \
-<a href="https://portal.truenas.com/portal/login/" target="_blank">HarborNAS Account Services</a>. \
+<a href="https://github.com/HarborNAS/portal/login/" target="_blank">HarborNAS Account Services</a>. \
 Login or signup is required.'),
     enabledLabel: T('Enable'),
     enabledTooltip: T('Immediately connect to TrueCommand.'),

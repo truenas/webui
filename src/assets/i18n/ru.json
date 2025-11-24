@@ -18,7 +18,7 @@
   "Enable it here.": "Включите это здесь.",
   "Enable STIG Mode Anyway": "Включить режим STIG в любом случае",
   "Enable HarborNASAS Proactive Support": "Включить упреждающую поддержкHarborNASrNAS",
-  "Enter or paste the API key provided from <a href=\"https://portal.truenas.com/portal/login/\" target=\"_blank\">HarborNASAS Account Services</a>. Login or signup is required.": "Введите или вставьте ключ API, предоставленный <a href=\"https://portal.truenas.com/portal/login/\" target=\"_blank\">службами учётной записHarborNASrNAS</a>. Требуется вход или регистрация.",
+  "Enter or paste the API key provided from <a href=\"https://github.com/HarborNAS/portal/login/\" target=\"_blank\">HarborNASAS Account Services</a>. Login or signup is required.": "Введите или вставьте ключ API, предоставленный <a href=\"https://github.com/HarborNAS/portal/login/\" target=\"_blank\">службами учётной записHarborNASrNAS</a>. Требуется вход или регистрация.",
   "Error description": "Описание ошибки",
   "Error Message": "Сообщение об ошибке",
   "Events (Optional)": "События (необязательно)",

@@ -1281,7 +1281,7 @@
   "Enter or paste the <a href=\"https://docs.mattermost.com/configure/integrations-configuration-settings.html#integrate-enableincomingwebhooks\" target=\"_blank\">incoming webhook</a> URL associated with this service.": "",
   "Enter or paste the <b>public</b> SSH key of the user for any key-based authentication. <b>Do not paste the private key.</b>": "",
   "Enter or paste the API key provided from <a href=\"https://portal.ixsystems.com/portal/login/\" target=\"_blank\">iXsystems Account Services</a>. Login or signup is required.": "",
-  "Enter or paste the API key provided from <a href=\"https://portal.truenas.com/portal/login/\" target=\"_blank\">HarborNASAS Account Services</a>. Login or signup is required.": "",
+  "Enter or paste the API key provided from <a href=\"https://github.com/HarborNAS/portal/login/\" target=\"_blank\">HarborNASAS Account Services</a>. Login or signup is required.": "",
   "Enter or select the cloud storage location to use for this task.": "",
   "Enter path for {label}.{multiple}": "",
   "Enter the <a href=\"https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html\" target=\"_blank\">AWS account region</a>.": "",

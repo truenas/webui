@@ -68,7 +68,7 @@
   "Enable this directory service configuration": "이 디렉터리 서비스 구성을 활성화",
   "Enable HarborNAS Proactive Support": "HarborNAS 사전 지원 활성화",
   "Enable Trusted Domains": "신뢰하는 도메인 활성화",
-  "Enter or paste the API key provided from <a href=\"https://portal.truenas.com/portal/login/\" target=\"_blank\">HarborNAS Account Services</a>. Login or signup is required.": "<a href=\"https://portal.truenas.com/portal/login/\" target=\"_blank\">HarborNAS 계정 서비스</a>에서 제공하는 API 키를 입력하거나 붙여넣습니다. 로그인 또는 회원가입이 필요합니다.",
+  "Enter or paste the API key provided from <a href=\"https://github.com/HarborNAS/portal/login/\" target=\"_blank\">HarborNAS Account Services</a>. Login or signup is required.": "<a href=\"https://github.com/HarborNAS/portal/login/\" target=\"_blank\">HarborNAS 계정 서비스</a>에서 제공하는 API 키를 입력하거나 붙여넣습니다. 로그인 또는 회원가입이 필요합니다.",
   "Error description": "오류 설명",
   "Error Message": "오류 메시지",
   "Events (Optional)": "이벤트 (선택사항)",

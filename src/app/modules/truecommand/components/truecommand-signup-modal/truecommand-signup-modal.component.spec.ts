@@ -40,7 +40,7 @@ describe('TruecommandSignupModalComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Signup' }));
     await button.click();
 
-    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenCalledWith('https://portal.truenas.com');
+    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenCalledWith('https://github.com/HarborNAS');
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(false);
   });
 

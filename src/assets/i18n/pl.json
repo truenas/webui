@@ -324,7 +324,7 @@
   "Enter or paste the <a   href=\"https://docs.opsgenie.com/v1.0/docs/api-integration\"   target=\"_blank\">API key</a>. Find the API key by signing   into the OpsGenie web interface and going to   Integrations/Configured Integrations. Click the desired   integration, Settings, and read the API Key field.": "",
   "Enter or paste the <a   href=\"https://help.victorops.com/knowledge-base/api/\"   target=\"_blank\">Splunk On-Call API key</a>.": "",
   "Enter or paste the <a   href=\"https://portal.victorops.com/public/api-docs.html#/Routing32Keys\"   target=\"_blank\">Splunk On-Call routing key</a>.": "",
-  "Enter or paste the API key provided from <a href=\"https://portal.truenas.com/portal/login/\" target=\"_blank\">HarborNASAS Account Services</a>. Login or signup is required.": "",
+  "Enter or paste the API key provided from <a href=\"https://github.com/HarborNAS/portal/login/\" target=\"_blank\">HarborNASAS Account Services</a>. Login or signup is required.": "",
   "Enter the desired address into the field to override the randomized MAC address.": "",
   "Enter vm name to continue.": "",
   "Error creating device": "",
