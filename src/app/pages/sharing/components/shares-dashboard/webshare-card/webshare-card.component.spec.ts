@@ -22,7 +22,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
-import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { WebShareCardComponent } from './webshare-card.component';
