@@ -158,6 +158,11 @@ export class WebShareSharesFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
     const values = this.form.getRawValue();
     const payload = {
       name: values.name,
@@ -208,6 +213,9 @@ export class WebShareSharesFormComponent implements OnInit {
           this.webShares.set(shares);
           this.isFormLoading.set(false);
           this.form.enable();
+          // Mark form as untouched after enabling to prevent validation errors
+          // from showing immediately on form load
+          this.form.markAsUntouched();
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);

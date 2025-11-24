@@ -11,7 +11,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  filter, switchMap, map, take, of, catchError, shareReplay, Subject, startWith,
+  filter, switchMap, map, of, catchError, shareReplay, Subject, startWith,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -184,35 +184,17 @@ export class WebShareCardComponent implements OnInit {
   }
 
   onAddClicked(): void {
-    this.hasTruenasConnect$.pipe(
-      take(1),
+    this.webShareService.openWebShareForm({
+      isNew: true,
+      name: '',
+      path: '',
+    }).pipe(
+      filter((success) => success),
       takeUntilDestroyed(this.destroyRef),
     // eslint-disable-next-line rxjs-angular/prefer-takeuntil
-    ).subscribe((hasAccess) => {
-      if (!hasAccess) {
-        this.openTruenasConnectDialog();
-        return;
-      }
-
-      const slideInRef$ = this.slideIn.open(WebShareSharesFormComponent, {
-        data: {
-          isNew: true,
-          name: '',
-          path: '',
-        },
-      });
-
-      slideInRef$
-        .pipe(filter((result) => !!result?.response), takeUntilDestroyed(this.destroyRef))
-        // eslint-disable-next-line rxjs-angular/prefer-takeuntil
-        .subscribe(() => {
-          this.refreshConfig$.next();
-        });
+    ).subscribe(() => {
+      this.refreshConfig$.next();
     });
-  }
-
-  private openTruenasConnectDialog(): void {
-    this.truenasConnectService.openStatusModal();
   }
 
   openWebShare(): void {
