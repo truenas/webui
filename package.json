@@ -4,7 +4,7 @@
   "license": "GPLv3",
   "description": "HarborNAS WebUI",
   "type": "module",
-  "homepage": "https://github.com/truenas/webui/",
+  "homepage": "https://github.com/HarborNASwebui/",
   "scripts": {
     "prebuild": "yarn icons",
     "prestart": "yarn icons",
@@ -40,7 +40,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/truenas/webui.git"
+    "url": "https://github.com/HarborNASwebui.git"
   },
   "bugs": {
     "url": "https://ixsystems.atlassian.net"

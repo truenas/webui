@@ -17,7 +17,7 @@ describe('AppAvailableInfoCardComponent', () => {
     latest_app_version: '2023.5.3',
     sources: [
       'https://github.com/home-assistant/home-assistant',
-      'https://github.com/truenas/charts/tree/master/library/ix-dev/charts/home-assistant',
+      'https://github.com/HarborNAScharts/tree/master/library/ix-dev/charts/home-assistant',
     ],
     maintainers: [
       {
