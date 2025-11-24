@@ -9,7 +9,7 @@ import { ContainerConfigStore } from 'app/pages/instances/stores/container-confi
 import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
 import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
 
-export const instancesRoutes: Routes = [{
+export const containersRoutes: Routes = [{
   path: '',
   data: { title: T('Containers'), breadcrumb: null },
   providers: [

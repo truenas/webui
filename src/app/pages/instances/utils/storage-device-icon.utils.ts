@@ -1,5 +1,5 @@
 import { ContainerDeviceType } from 'app/enums/container.enum';
-import { instancesHelptext } from 'app/helptext/instances/instances';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import { iconMarker, MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 
 /**
@@ -20,25 +20,25 @@ export function getStorageDeviceIcon(deviceType: ContainerDeviceType): StorageDe
     case ContainerDeviceType.Filesystem:
       return {
         name: iconMarker('mdi-folder'),
-        tooltip: instancesHelptext.deviceBadgeTooltips.filesystem,
+        tooltip: containersHelptext.deviceBadgeTooltips.filesystem,
       };
 
     case ContainerDeviceType.Usb:
       return {
         name: iconMarker('usb'),
-        tooltip: instancesHelptext.deviceBadgeTooltips.usb,
+        tooltip: containersHelptext.deviceBadgeTooltips.usb,
       };
 
     case ContainerDeviceType.Nic:
       return {
         name: iconMarker('device_hub'),
-        tooltip: instancesHelptext.deviceBadgeTooltips.nic,
+        tooltip: containersHelptext.deviceBadgeTooltips.nic,
       };
 
     default:
       return {
         name: iconMarker('help'),
-        tooltip: instancesHelptext.deviceBadgeTooltips.unknown,
+        tooltip: containersHelptext.deviceBadgeTooltips.unknown,
       };
   }
 }

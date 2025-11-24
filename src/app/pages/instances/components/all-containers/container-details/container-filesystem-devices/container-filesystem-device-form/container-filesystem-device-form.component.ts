@@ -10,7 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { ContainerDeviceType } from 'app/enums/container.enum';
-import { instancesHelptext } from 'app/helptext/instances/instances';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   ContainerFilesystemDevice,
   ContainerInstance,
@@ -144,5 +144,5 @@ export class ContainerFilesystemDeviceFormComponent implements OnInit {
       }]);
   }
 
-  protected readonly instancesHelptext = instancesHelptext;
+  protected readonly containersHelptext = containersHelptext;
 }

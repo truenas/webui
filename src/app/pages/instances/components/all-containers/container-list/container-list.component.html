@@ -22,8 +22,8 @@
 @if (instances() !== undefined && !filteredInstances().length && !isLoading()) {
   <ix-empty [conf]="emptyConfig()"></ix-empty>
 } @else {
-  <div class="instances">
-    <div class="instances-header-row">
+  <div class="containers">
+    <div class="containers-header-row">
       <div class="cell checkbox">
         @if (instances().length) {
           <mat-checkbox

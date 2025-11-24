@@ -1,6 +1,6 @@
 import { TranslateService } from '@ngx-translate/core';
 import { ContainerDeviceType } from 'app/enums/container.enum';
-import { instancesHelptext } from 'app/helptext/instances/instances';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 
 export function getDeviceDescription(translate: TranslateService, device: ContainerDevice): string {
@@ -8,15 +8,15 @@ export function getDeviceDescription(translate: TranslateService, device: Contai
     case ContainerDeviceType.Nic: {
       const nicMac = device.mac
         ? device.mac
-        : translate.instant(instancesHelptext.deviceDescriptions.defaultMacAddress);
-      const nicAttach = device.nic_attach || translate.instant(instancesHelptext.deviceDescriptions.unknown);
+        : translate.instant(containersHelptext.deviceDescriptions.defaultMacAddress);
+      const nicAttach = device.nic_attach || translate.instant(containersHelptext.deviceDescriptions.unknown);
       return `${nicAttach} (${nicMac})`;
     }
 
     case ContainerDeviceType.Filesystem: {
       // Filesystem is a bind mount from host to container
-      const source = device.source || translate.instant(instancesHelptext.deviceDescriptions.unknownSource);
-      const target = device.target || translate.instant(instancesHelptext.deviceDescriptions.unknownTarget);
+      const source = device.source || translate.instant(containersHelptext.deviceDescriptions.unknownSource);
+      const target = device.target || translate.instant(containersHelptext.deviceDescriptions.unknownTarget);
       return `${source} → ${target}`;
     }
 
@@ -24,7 +24,7 @@ export function getDeviceDescription(translate: TranslateService, device: Contai
       if (device.usb) {
         return `USB ${device.usb.vendor_id}:${device.usb.product_id}`;
       }
-      return device.device || translate.instant(instancesHelptext.deviceDescriptions.unknown);
+      return device.device || translate.instant(containersHelptext.deviceDescriptions.unknown);
     }
 
     default: {

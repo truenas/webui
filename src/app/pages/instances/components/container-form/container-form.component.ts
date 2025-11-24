@@ -30,7 +30,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { instancesHelptext } from 'app/helptext/instances/instances';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   CreateContainerInstance,
   UpdateContainerInstance,
@@ -549,5 +549,5 @@ export class ContainerFormComponent implements OnInit {
     }, {});
   }
 
-  protected readonly instancesHelptext = instancesHelptext;
+  protected readonly containersHelptext = containersHelptext;
 }

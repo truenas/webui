@@ -1,5 +1,5 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { instancesHelptext } from 'app/helptext/instances/instances';
+import { containersHelptext } from 'app/helptext/containers/containers';
 
 /**
  * Validator for container mount paths
@@ -17,7 +17,7 @@ export function containerPathValidator(): ValidatorFn {
     if (!value.startsWith('/')) {
       return {
         containerPath: {
-          message: instancesHelptext.validators.containerPathMustStartWithSlash,
+          message: containersHelptext.validators.containerPathMustStartWithSlash,
         },
       };
     }
@@ -26,7 +26,7 @@ export function containerPathValidator(): ValidatorFn {
     if (value.length > 1 && value.endsWith('/')) {
       return {
         containerPath: {
-          message: instancesHelptext.validators.containerPathCannotEndWithSlash,
+          message: containersHelptext.validators.containerPathCannotEndWithSlash,
         },
       };
     }
@@ -35,7 +35,7 @@ export function containerPathValidator(): ValidatorFn {
     if (value.includes('//')) {
       return {
         containerPath: {
-          message: instancesHelptext.validators.containerPathCannotContainDoubleSlash,
+          message: containersHelptext.validators.containerPathCannotContainDoubleSlash,
         },
       };
     }
@@ -44,7 +44,7 @@ export function containerPathValidator(): ValidatorFn {
     if (value.includes('{') || value.includes('}')) {
       return {
         containerPath: {
-          message: instancesHelptext.validators.targetMustNotContainBraces,
+          message: containersHelptext.validators.targetMustNotContainBraces,
         },
       };
     }
@@ -54,7 +54,7 @@ export function containerPathValidator(): ValidatorFn {
     if (!validPattern.test(value)) {
       return {
         containerPath: {
-          message: instancesHelptext.validators.containerPathInvalidCharacters,
+          message: containersHelptext.validators.containerPathInvalidCharacters,
         },
       };
     }
@@ -79,7 +79,7 @@ export function poolPathValidator(): ValidatorFn {
     if (!value.startsWith('/mnt/')) {
       return {
         poolPath: {
-          message: instancesHelptext.validators.poolPathMustStartWithMnt,
+          message: containersHelptext.validators.poolPathMustStartWithMnt,
         },
       };
     }
@@ -88,7 +88,7 @@ export function poolPathValidator(): ValidatorFn {
     if (value.includes('{') || value.includes('}')) {
       return {
         poolPath: {
-          message: instancesHelptext.validators.sourceMustNotContainBraces,
+          message: containersHelptext.validators.sourceMustNotContainBraces,
         },
       };
     }

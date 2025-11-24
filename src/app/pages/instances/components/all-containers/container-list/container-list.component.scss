@@ -33,14 +33,14 @@
     }
   }
 
-  .instances {
+  .containers {
     background-color: var(--bg2);
     color: var(--fg1);
     display: flex;
     flex-direction: column;
   }
 
-  .instances-header-row {
+  .containers-header-row {
     align-items: center;
     background: var(--bg1);
     border-bottom: 1px solid var(--lines);
@@ -100,7 +100,7 @@
     }
   }
 
-  .instances-header-row,
+  .containers-header-row,
   ix-container-row {
     display: grid;
     grid-template-columns: 5% minmax(13%, auto) 15% 11% 10% 10% 10% 10%;
