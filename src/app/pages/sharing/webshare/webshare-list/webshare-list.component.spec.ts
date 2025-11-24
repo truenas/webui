@@ -172,7 +172,7 @@ describe('WebShareListComponent', () => {
     });
 
     expect(dialog.confirm).toHaveBeenCalledWith({
-      title: 'Delete WebShare "{name}"',
+      title: 'Delete WebShare',
       message: 'Are you sure you want to delete the WebShare "{name}"? Users will no longer be able to access {path} through WebShare.',
       buttonText: 'Delete',
       buttonColor: 'warn',

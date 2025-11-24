@@ -170,25 +170,19 @@ export class UsageCardComponent {
     return this.inheritedWebShares().length > 0;
   });
 
-  readonly combinedWebShareDisplay = computed(() => {
-    const directShares = this.dataset().webshares ?? [];
-    const inheritedShares = this.inheritedWebShares();
-
-    // Get direct share names
-    const directShareNames = directShares.map((share) => share.name);
-
-    // Get inherited share names that are not already in direct shares
-    const uniqueInheritedShareNames = inheritedShares
+  private getUniqueInheritedShareNames(): string[] {
+    const directShareNames = (this.dataset().webshares ?? []).map((share) => share.name);
+    return this.inheritedWebShares()
       .map((share) => share.name)
       .filter((name) => !directShareNames.includes(name));
+  }
 
-    // Build display string with inherited shares marked
-    const allShareNames = [
-      ...directShareNames,
-      ...uniqueInheritedShareNames.map((name) => `${name} (inherited)`),
-    ];
+  readonly combinedWebShareDisplay = computed(() => {
+    const directShareNames = (this.dataset().webshares ?? []).map((share) => share.name);
+    const uniqueInheritedNames = this.getUniqueInheritedShareNames()
+      .map((name) => `${name} (inherited)`);
 
-    return this.formatShareNames(allShareNames);
+    return this.formatShareNames([...directShareNames, ...uniqueInheritedNames]);
   });
 
   readonly canCreateShare = computed(() => {

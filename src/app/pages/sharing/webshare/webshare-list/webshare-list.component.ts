@@ -237,7 +237,7 @@ export class WebShareListComponent implements OnInit {
 
   doDelete(row: WebShareTableRow): void {
     this.dialog.confirm({
-      title: this.translate.instant('Delete WebShare "{name}"', { name: row.name }),
+      title: this.translate.instant(this.helptext.delete_dialog_title),
       message: this.translate.instant(this.helptext.delete_dialog_message, {
         name: row.name,
         path: row.path,

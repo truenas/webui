@@ -19,6 +19,7 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -114,6 +115,8 @@ export class WebShareCardComponent implements OnInit {
   readonly isTruenasDirectDomain = this.window.location.hostname.includes('.truenas.direct');
 
   hasLicenseOrTruenasConnect$ = this.licenseService.hasLicenseOrTruenasConnect$;
+
+  protected readonly helptext = helptextSharingWebshare;
 
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -240,11 +243,11 @@ export class WebShareCardComponent implements OnInit {
 
   protected doDelete(row: WebShareTableRow): void {
     this.dialog.confirm({
-      title: this.translate.instant('Delete WebShare'),
-      message: this.translate.instant(
-        'Are you sure you want to delete the WebShare "{name}"? Users will no longer be able to access {path} through WebShare.',
-        { name: row.name, path: row.path },
-      ),
+      title: this.translate.instant(this.helptext.delete_dialog_title),
+      message: this.translate.instant(this.helptext.delete_dialog_message, {
+        name: row.name,
+        path: row.path,
+      }),
       buttonText: this.translate.instant('Delete'),
       buttonColor: 'warn',
     })
