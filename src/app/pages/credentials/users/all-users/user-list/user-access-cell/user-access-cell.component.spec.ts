@@ -27,7 +27,7 @@ describe('UserAccessCellComponent', () => {
 
   it('shows "Full Admin" when user has full admin role', async () => {
     setupTest(mockUser);
-    expect(await loader.getHarness(IxIconHarness.with({ name: 'ix-truenas-logo-mark' }))).toBeTruthy();
+    expect(await loader.getHarness(IxIconHarness.with({ name: 'ix-harbor-logo-mark' }))).toBeTruthy();
     expect(spectator.query('span')!.textContent).toBe('Full Admin');
   });
 

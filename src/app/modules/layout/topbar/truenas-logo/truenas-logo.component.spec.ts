@@ -106,7 +106,7 @@ describe('TruenasLogoComponent', () => {
     spectator.setInput('color', 'white');
     const [mark, text] = icons;
     expect(icons).toHaveLength(2);
-    expect(await mark.getName()).toBe('ix-truenas-logo-mark');
+    expect(await mark.getName()).toBe('ix-harbor-logo-mark');
     expect(await text.getName()).toBe('ix-harbor-logo-type');
   });
 

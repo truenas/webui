@@ -1,6 +1,6 @@
 @if (isSystemDataset()) {
   <ix-icon
-    name="ix-truenas-logo-mark"
+    name="ix-harbor-logo-mark"
     [matTooltip]="'This dataset is used by the system' | translate"
     [fullSize]="true"
   ></ix-icon>
@@ -10,12 +10,17 @@
   @if (isApps()) {
     <ix-icon
       name="apps"
-      [matTooltip]="'This dataset is used to store apps config and other container related data' | translate"
+      [matTooltip]="
+        'This dataset is used to store apps config and other container related data'
+          | translate
+      "
     ></ix-icon>
   } @else {
     <ix-icon
       name="apps"
-      [matTooltip]="'This dataset is used by: {apps}' | translate: { apps: appNames() }"
+      [matTooltip]="
+        'This dataset is used by: {apps}' | translate: { apps: appNames() }
+      "
     ></ix-icon>
   }
 }
@@ -23,7 +28,9 @@
 @if (dataset().vms?.length) {
   <ix-icon
     name="mdi-laptop"
-    [matTooltip]="'This dataset is used by: {vms}' | translate: { vms: vmNames() }"
+    [matTooltip]="
+      'This dataset is used by: {vms}' | translate: { vms: vmNames() }
+    "
   ></ix-icon>
 }
 

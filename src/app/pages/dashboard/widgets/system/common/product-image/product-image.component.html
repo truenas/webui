@@ -11,7 +11,7 @@
         (click)="goToEnclosure()"
       />
     } @else {
-      <ix-icon name="ix-truenas-logo-mark" [fullSize]="true"></ix-icon>
+      <ix-icon name="ix-harbor-logo-mark" [fullSize]="true"></ix-icon>
     }
   } @else {
     <ngx-skeleton-loader
@@ -21,7 +21,7 @@
         height: 'auto',
         'aspect-ratio': '1',
         background: 'var(--alt-bg2)',
-        opacity: 0.25
+        opacity: 0.25,
       }"
     ></ngx-skeleton-loader>
   }
@@ -33,9 +33,7 @@
       <strong>(<ng-content></ng-content>)</strong>
     }
     @if (isUnsupportedHardware()) {
-      <strong>({{ 'Unsupported Hardware' | translate }})</strong>
+      <strong>({{ "Unsupported Hardware" | translate }})</strong>
     }
   </div>
 }
-
-

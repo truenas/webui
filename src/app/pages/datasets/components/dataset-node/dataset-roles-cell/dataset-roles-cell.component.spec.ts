@@ -28,7 +28,7 @@ describe('DatasetRolesCellComponent', () => {
   it('shows "System Dataset" when dataset is marked as system', async () => {
     await setupTest({ name: 'root/dataset' } as DatasetDetails, true);
 
-    expect(await ixIcon.getName()).toBe('ix-truenas-logo-mark');
+    expect(await ixIcon.getName()).toBe('ix-harbor-logo-mark');
     expect(spectator.query(MatTooltip)!.message).toBe('This dataset is used by the system');
   });
 
