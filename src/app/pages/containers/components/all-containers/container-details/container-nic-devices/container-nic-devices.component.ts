@@ -5,6 +5,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { catchError, of } from 'rxjs';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -43,7 +44,10 @@ export class ContainerNicDevicesComponent {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
 
-  protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
+  protected readonly hasPendingInterfaceChanges = toSignal(
+    this.api.call('interface.has_pending_changes').pipe(catchError(() => of(false))),
+  );
+
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly isContainerRunning = computed(() => {
