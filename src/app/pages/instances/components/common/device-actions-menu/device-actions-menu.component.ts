@@ -24,9 +24,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  InstanceFilesystemDeviceFormComponent,
-} from 'app/pages/instances/components/all-instances/instance-details/instance-filesystem-devices/instance-filesystem-device-form/instance-filesystem-device-form.component';
-import { InstanceNicFormDialog } from 'app/pages/instances/components/common/instance-nic-form-dialog/instance-nic-form-dialog.component';
+  ContainerFilesystemDeviceFormComponent,
+} from 'app/pages/instances/components/all-containers/container-details/container-filesystem-devices/container-filesystem-device-form/container-filesystem-device-form.component';
+import { ContainerNicFormDialog } from 'app/pages/instances/components/common/container-nic-form-dialog/container-nic-form-dialog.component';
 import { getDeviceDescription } from 'app/pages/instances/components/common/utils/get-device-description.utils';
 import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
 import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
@@ -101,7 +101,7 @@ export class DeviceActionsMenuComponent {
         return;
       }
 
-      this.slideIn.open(InstanceFilesystemDeviceFormComponent, {
+      this.slideIn.open(ContainerFilesystemDeviceFormComponent, {
         data: {
           instance,
           disk: device as ContainerFilesystemDevice,
@@ -116,7 +116,7 @@ export class DeviceActionsMenuComponent {
 
     // For NIC devices, open the dialog
     if (device.dtype === ContainerDeviceType.Nic) {
-      this.matDialog.open(InstanceNicFormDialog, {
+      this.matDialog.open(ContainerNicFormDialog, {
         data: {
           device: device as ContainerNicDevice & { id: number },
         },

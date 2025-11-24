@@ -1,0 +1,33 @@
+<ix-page-header
+  [customBadgeTitle]="'Experimental' | translate"
+>
+  <ix-all-containers-header></ix-all-containers-header>
+</ix-page-header>
+
+<ix-master-detail-view
+  #masterDetailView="masterDetailViewContext"
+  [showDetails]="masterList.isSelectedInstanceVisible()"
+  [selectedItem]="selectedInstance()"
+>
+  <ix-container-list
+    #masterList
+    master
+    [ixUiSearch]="searchableElements.elements.list"
+    (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
+  ></ix-container-list>
+
+  <ng-container detail-header>
+    {{ 'Details for' | translate }}
+    {{ selectedInstance()?.name }}
+  </ng-container>
+
+  <ng-container detail>
+    @let instance = selectedInstance();
+    @if (instance) {
+      <ix-container-details
+        [instance]="instance"
+        [class.detail-disabled]="masterList.hasCheckedInstances"
+      ></ix-container-details>
+    }
+  </ng-container>
+</ix-master-detail-view>

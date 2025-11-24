@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { AllInstancesComponent } from 'app/pages/instances/components/all-instances/all-instances.component';
+import { AllContainersComponent } from 'app/pages/instances/components/all-containers/all-containers.component';
 import {
-  InstanceConsoleComponent,
-} from 'app/pages/instances/components/instance-shell/instance-console.component';
-import { InstanceShellComponent } from 'app/pages/instances/components/instance-shell/instance-shell.component';
+  ContainerConsoleComponent,
+} from 'app/pages/instances/components/container-shell/container-console.component';
+import { ContainerShellComponent } from 'app/pages/instances/components/container-shell/container-shell.component';
 import { ContainerConfigStore } from 'app/pages/instances/stores/container-config.store';
 import { ContainerDevicesStore } from 'app/pages/instances/stores/container-devices.store';
 import { ContainerInstancesStore } from 'app/pages/instances/stores/container-instances.store';
@@ -20,7 +20,7 @@ export const instancesRoutes: Routes = [{
   children: [
     {
       path: '',
-      component: AllInstancesComponent,
+      component: AllContainersComponent,
     },
     {
       path: 'view/:id',
@@ -29,16 +29,16 @@ export const instancesRoutes: Routes = [{
         {
           path: '',
           pathMatch: 'full',
-          component: AllInstancesComponent,
+          component: AllContainersComponent,
         },
         {
           path: 'shell',
-          component: InstanceShellComponent,
+          component: ContainerShellComponent,
           data: { title: T('Container Shell') },
         },
         {
           path: 'console',
-          component: InstanceConsoleComponent,
+          component: ContainerConsoleComponent,
           data: { title: T('Container Console') },
         },
       ],
