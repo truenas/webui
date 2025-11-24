@@ -6,7 +6,8 @@
       "Bash(/Users/macbook/karpov-work/TrueNAS/webui/src/app/pages/instances/components/container-form/container-form.component.ts )",
       "Bash(/Users/macbook/karpov-work/TrueNAS/webui/src/app/pages/instances/utils/storage-device-icon.utils.ts )",
       "Bash(/Users/macbook/karpov-work/TrueNAS/webui/src/app/pages/instances/utils/storage-device-validators.ts )",
-      "Bash(/Users/macbook/karpov-work/TrueNAS/webui/src/app/pages/instances/components/all-containers/container-details/container-filesystem-devices/container-filesystem-device-form/container-filesystem-device-form.component.ts)"
+      "Bash(/Users/macbook/karpov-work/TrueNAS/webui/src/app/pages/instances/components/all-containers/container-details/container-filesystem-devices/container-filesystem-device-form/container-filesystem-device-form.component.ts)",
+      "Bash(xargs sed:*)"
     ],
     "deny": [],
     "ask": []

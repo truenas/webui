@@ -107,7 +107,7 @@ export const adminRoutes: Routes = [
       },
       {
         path: 'containers',
-        loadChildren: () => import('app/pages/instances/containers.routes').then((module) => module.containersRoutes),
+        loadChildren: () => import('app/pages/containers/containers.routes').then((module) => module.containersRoutes),
       },
     ],
   },
