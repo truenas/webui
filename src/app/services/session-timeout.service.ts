@@ -18,6 +18,7 @@ import {
   SessionExpiringDialogOptions,
 } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
@@ -38,6 +39,7 @@ export class SessionTimeoutService {
   private tokenLastUsedService = inject(TokenLastUsedService);
   private wsStatus = inject(WebSocketStatusService);
   private window = inject<Window>(WINDOW);
+  private localeService = inject(LocaleService);
 
   protected actionWaitTimeout: Timeout;
   protected terminateCancelTimeout: Timeout;
@@ -117,7 +119,7 @@ export class SessionTimeoutService {
         message: this.translate.instant(`
               It looks like your session has been inactive for more than {lifetime} seconds.<br>
               For security reasons we will log you out at {time}.
-            `, { time: format(new Date(new Date().getTime() + showConfirmTime), 'HH:mm:ss'), lifetime }),
+            `, { time: format(new Date(new Date().getTime() + showConfirmTime), this.localeService.getPreferredTimeFormat()), lifetime }),
         buttonText: this.translate.instant('Extend session'),
       } as SessionExpiringDialogOptions,
     });
