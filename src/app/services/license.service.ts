@@ -71,24 +71,26 @@ export class LicenseService {
     [isEnterprise, licenseFeatures]: [boolean, LicenseFeature[]],
   ) => !isEnterprise || licenseFeatures.includes(LicenseFeature.Jails)));
 
+  private readonly truenasConnectConfig$ = this.api.call('tn_connect.config').pipe(
+    catchError((error: unknown) => {
+      console.warn('Failed to check TrueNAS Connect status. Assuming not configured.', error);
+      return of({ enabled: false, status: TruenasConnectStatus.Disabled } as TruenasConnectConfig);
+    }),
+    shareReplay({ bufferSize: 1, refCount: false }),
+  );
+
   /**
    * Check if the system has a valid license OR is configured with TrueNAS Connect.
    * This is used to determine if features requiring license/connect are available.
    */
   readonly hasLicenseOrTruenasConnect$ = combineLatest([
-    this.store$.pipe(
-      waitForSystemInfo,
-      map((systemInfo) => systemInfo.license !== null),
-    ),
-    this.api.call('tn_connect.config').pipe(
-      map((config: TruenasConnectConfig) => config.status === TruenasConnectStatus.Configured),
-      catchError((error: unknown) => {
-        console.warn('Failed to check TrueNAS Connect status. Assuming not configured.', error);
-        return of(false);
-      }),
-    ),
+    this.store$.select(selectSystemInfo),
+    this.truenasConnectConfig$,
   ]).pipe(
-    map(([hasLicense, tnConnectConfigured]) => hasLicense || tnConnectConfigured),
+    map(([systemInfo, connectConfig]) => {
+      const hasLicense = systemInfo?.license !== null;
+      return hasLicense || connectConfig.enabled;
+    }),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 }

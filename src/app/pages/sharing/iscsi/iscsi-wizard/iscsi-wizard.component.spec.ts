@@ -148,13 +148,13 @@ describe('IscsiWizardComponent', () => {
     await saveButton.click();
     tick();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(8, 'pool.dataset.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'pool.dataset.create', [{
       name: 'new_pool/test-name',
       type: 'VOLUME',
       volsize: 1073741824,
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'iscsi.extent.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(10, 'iscsi.extent.create', [{
       blocksize: 512,
       disk: 'zvol/my+pool/test_zvol',
       insecure_tpc: true,
@@ -165,17 +165,17 @@ describe('IscsiWizardComponent', () => {
       xen: false,
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(10, 'iscsi.portal.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(11, 'iscsi.portal.create', [{
       comment: 'test-name',
       listen: [{ ip: '::' }],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(11, 'iscsi.initiator.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(12, 'iscsi.initiator.create', [{
       comment: 'test-name',
       initiators: ['initiator1', 'initiator2'],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(12, 'iscsi.target.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(13, 'iscsi.target.create', [{
       name: 'test-name',
       mode: 'ISCSI',
       groups: [{
@@ -186,7 +186,7 @@ describe('IscsiWizardComponent', () => {
       }],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(13, 'iscsi.targetextent.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(14, 'iscsi.targetextent.create', [{
       extent: 11,
       target: 15,
     }]);
@@ -218,13 +218,13 @@ describe('IscsiWizardComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(8, 'pool.dataset.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'pool.dataset.create', [{
       name: 'new_pool/test-name',
       type: 'VOLUME',
       volsize: 1073741824,
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'iscsi.extent.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(10, 'iscsi.extent.create', [{
       blocksize: 512,
       disk: 'zvol/my+pool/test_zvol',
       insecure_tpc: true,
@@ -235,17 +235,17 @@ describe('IscsiWizardComponent', () => {
       xen: false,
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(10, 'iscsi.portal.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(11, 'iscsi.portal.create', [{
       comment: 'test-name',
       listen: [{ ip: '::' }],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(11, 'iscsi.initiator.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(12, 'iscsi.initiator.create', [{
       comment: 'test-name',
       initiators: ['initiator1', 'initiator2'],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(12, 'iscsi.target.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(13, 'iscsi.target.create', [{
       name: 'test-name',
       mode: 'ISCSI',
       groups: [{
@@ -256,7 +256,7 @@ describe('IscsiWizardComponent', () => {
       }],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(13, 'iscsi.targetextent.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(14, 'iscsi.targetextent.create', [{
       extent: 11,
       target: 15,
     }]);
