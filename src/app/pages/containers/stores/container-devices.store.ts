@@ -10,7 +10,7 @@ import {
 } from 'rxjs';
 import { ContainerDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { containerDeviceEntriesToDevices } from 'app/pages/containers/utils/container-device.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -29,21 +29,21 @@ const initialState: ContainerInstanceDeviceState = {
 export class ContainerDevicesStore extends ComponentStore<ContainerInstanceDeviceState> {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
-  private instanceStore = inject(ContainerInstancesStore);
+  private containersStore = inject(ContainersStore);
 
   readonly isLoading = computed(() => this.state().isLoading);
   readonly devices = computed(() => this.state().devices);
-  private readonly selectedInstance = this.instanceStore.selectedInstance;
+  private readonly selectedContainer = this.containersStore.selectedContainer;
 
   constructor() {
     super(initialState);
     // Note: We're triggering the loadDevices effect imperatively via tap() rather than
     // passing the observable directly. This pattern works because the effect internally
     // manages its subscription, but is unconventional. The effect could alternatively
-    // be refactored to accept the selectedInstance observable directly.
-    toObservable(this.selectedInstance).pipe(
-      tap((instance) => {
-        if (!instance) {
+    // be refactored to accept the selectedContainer observable directly.
+    toObservable(this.selectedContainer).pipe(
+      tap((container) => {
+        if (!container) {
           this.patchState({ devices: [] });
         }
       }),
@@ -56,7 +56,7 @@ export class ContainerDevicesStore extends ComponentStore<ContainerInstanceDevic
     return trigger$.pipe(
       switchMap(() => {
         this.patchState({ isLoading: true });
-        return this.api.call('container.device.query', [[['container', '=', this.selectedInstance().id]]]).pipe(
+        return this.api.call('container.device.query', [[['container', '=', this.selectedContainer().id]]]).pipe(
           map((containerDevices) => containerDeviceEntriesToDevices(containerDevices)),
           tap((devices) => {
             this.patchState({

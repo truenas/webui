@@ -7,17 +7,17 @@ import {
   ContainerDevice, ContainerMetrics,
 } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
-import { fakeContainerInstance } from 'app/pages/containers/utils/fake-container-instance.utils';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
-describe('ContainerInstancesStore', () => {
-  let spectator: SpectatorService<ContainerInstancesStore>;
+describe('ContainersStore', () => {
+  let spectator: SpectatorService<ContainersStore>;
 
   const event$ = new Subject<ApiEvent>();
   const metricsEvent$ = new Subject<ApiEvent<ContainerMetrics>>();
-  const instances = [
-    fakeContainerInstance({ id: 1 }),
-    fakeContainerInstance({ id: 2 }),
+  const containers = [
+    fakeContainer({ id: 1 }),
+    fakeContainer({ id: 2 }),
   ];
 
   const devices = [
@@ -28,12 +28,12 @@ describe('ContainerInstancesStore', () => {
   const routerEvents$ = new Subject<NavigationEnd>();
 
   const createService = createServiceFactory({
-    service: ContainerInstancesStore,
+    service: ContainersStore,
     providers: [
       mockProvider(ApiService, {
         call: jest.fn((method) => {
           if (method === 'container.query') {
-            return of(instances);
+            return of(containers);
           }
           return of(devices);
         }),
@@ -59,54 +59,54 @@ describe('ContainerInstancesStore', () => {
   it('should have initial state', () => {
     expect(spectator.service.state()).toEqual({
       isLoading: true,
-      selectedInstance: undefined,
-      selectedInstanceId: null,
-      instances: undefined,
+      selectedContainer: undefined,
+      selectedContainerId: null,
+      containers: undefined,
       metrics: {},
     });
   });
 
-  it('should load instances when initialize is called', () => {
+  it('should load containers when initialize is called', () => {
     spectator.service.initialize();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalled();
     expect(spectator.service.state()).toEqual({
-      instances,
-      selectedInstance: undefined,
-      selectedInstanceId: null,
+      containers,
+      selectedContainer: undefined,
+      selectedContainerId: null,
       isLoading: false,
       metrics: {},
     });
   });
 
-  it('should select instance when method is called', () => {
+  it('should select container when method is called', () => {
     spectator.service.initialize();
-    spectator.service.selectInstance(1);
+    spectator.service.selectContainer(1);
     expect(spectator.service.state()).toEqual({
-      instances,
+      containers,
       isLoading: false,
-      selectedInstance: instances[0],
-      selectedInstanceId: 1,
+      selectedContainer: containers[0],
+      selectedContainerId: 1,
       metrics: {},
     });
   });
 
-  it('resets selected instance', () => {
+  it('resets selected container', () => {
     spectator.service.initialize();
-    spectator.service.selectInstance(1);
+    spectator.service.selectContainer(1);
     expect(spectator.service.state()).toEqual({
-      instances,
+      containers,
       isLoading: false,
-      selectedInstance: instances[0],
-      selectedInstanceId: 1,
+      selectedContainer: containers[0],
+      selectedContainerId: 1,
       metrics: {},
     });
-    spectator.service.resetInstance();
+    spectator.service.resetContainer();
     expect(spectator.service.state()).toEqual({
-      instances,
+      containers,
       isLoading: false,
-      selectedInstance: null,
-      selectedInstanceId: 1,
+      selectedContainer: null,
+      selectedContainerId: 1,
       metrics: {},
     });
   });
@@ -118,25 +118,25 @@ describe('ContainerInstancesStore', () => {
       expect(spectator.service.isLoading()).toBe(false);
     });
 
-    it('instances - returns instances part of the state', () => {
-      expect(spectator.service.instances()).toEqual(instances);
+    it('containers - returns containers part of the state', () => {
+      expect(spectator.service.containers()).toEqual(containers);
     });
   });
 
   describe('handles subscribe events', () => {
     beforeEach(() => spectator.service.initialize());
-    it('adds instance to the list if add event emitted', () => {
-      const newInstance = fakeContainerInstance({ id: 3 });
+    it('adds container to the list if add event emitted', () => {
+      const newContainer = fakeContainer({ id: 3 });
       event$.next({
         collection: 'container.query',
         id: 3,
         msg: CollectionChangeType.Added,
-        fields: newInstance,
+        fields: newContainer,
       });
 
-      expect(spectator.service.instances()).toEqual([
-        ...instances,
-        newInstance,
+      expect(spectator.service.containers()).toEqual([
+        ...containers,
+        newContainer,
       ]);
     });
 
@@ -145,11 +145,11 @@ describe('ContainerInstancesStore', () => {
         collection: 'container.query',
         id: 2,
         msg: CollectionChangeType.Changed,
-        fields: fakeContainerInstance({ id: 2, name: 'instance3' }),
+        fields: fakeContainer({ id: 2, name: 'container3' }),
       });
-      expect(spectator.service.instances()).toEqual([
-        instances[0],
-        expect.objectContaining({ id: 2, name: 'instance3' }),
+      expect(spectator.service.containers()).toEqual([
+        containers[0],
+        expect.objectContaining({ id: 2, name: 'container3' }),
       ]);
     });
 
@@ -158,10 +158,10 @@ describe('ContainerInstancesStore', () => {
         collection: 'container.query',
         id: 2,
         msg: CollectionChangeType.Removed,
-        fields: fakeContainerInstance({ id: 2 }),
+        fields: fakeContainer({ id: 2 }),
       });
-      expect(spectator.service.instances()).toEqual([
-        instances[0],
+      expect(spectator.service.containers()).toEqual([
+        containers[0],
       ]);
     });
 

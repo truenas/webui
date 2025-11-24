@@ -18,7 +18,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 describe('ContainerFormComponent', () => {
   let spectator: Spectator<ContainerFormComponent>;
@@ -90,7 +90,7 @@ describe('ContainerFormComponent', () => {
         close: jest.fn(),
         requireConfirmationWhen: jest.fn(),
       }),
-      mockProvider(ContainerInstancesStore, {
+      mockProvider(ContainersStore, {
         initialize: jest.fn(),
       }),
       mockProvider(MatDialog, {
@@ -186,7 +186,7 @@ describe('ContainerFormComponent', () => {
           close: jest.fn(),
           requireConfirmationWhen: jest.fn(),
         }),
-        mockProvider(ContainerInstancesStore, {
+        mockProvider(ContainersStore, {
           initialize: jest.fn(),
         }),
         mockProvider(MatDialog, {
@@ -266,7 +266,7 @@ describe('ContainerFormComponent', () => {
       const router = spectator.inject(Router);
       const snackbar = spectator.inject(SnackbarService);
       const slideInRef = spectator.inject(SlideInRef);
-      const instancesStore = spectator.inject(ContainerInstancesStore);
+      const containersStore = spectator.inject(ContainersStore);
 
       const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
       await nameInput.setValue('new-container');
@@ -295,7 +295,7 @@ describe('ContainerFormComponent', () => {
 
       expect(snackbar.success).toHaveBeenCalledWith('Container created');
       expect(slideInRef.close).toHaveBeenCalledWith({ response: true, error: false });
-      expect(instancesStore.initialize).toHaveBeenCalled();
+      expect(containersStore.initialize).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['/containers', 'view', 1]);
     });
   });
@@ -327,9 +327,9 @@ describe('ContainerFormComponent', () => {
           close: jest.fn(),
           requireConfirmationWhen: jest.fn(),
         }),
-        mockProvider(ContainerInstancesStore, {
+        mockProvider(ContainersStore, {
           initialize: jest.fn(),
-          instanceUpdated: jest.fn(),
+          containerUpdated: jest.fn(),
         }),
         mockProvider(MatDialog, {
           open: jest.fn(() => ({
@@ -354,7 +354,7 @@ describe('ContainerFormComponent', () => {
       const api = spectator.inject(ApiService);
       const snackbar = spectator.inject(SnackbarService);
       const slideInRef = spectator.inject(SlideInRef);
-      const instancesStore = spectator.inject(ContainerInstancesStore);
+      const containersStore = spectator.inject(ContainersStore);
 
       const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
       await nameInput.setValue('updated-container');
@@ -371,7 +371,7 @@ describe('ContainerFormComponent', () => {
 
       expect(snackbar.success).toHaveBeenCalledWith('Container updated');
       expect(slideInRef.close).toHaveBeenCalledWith({ response: true, error: false });
-      expect(instancesStore.instanceUpdated).toHaveBeenCalledWith(
+      expect(containersStore.containerUpdated).toHaveBeenCalledWith(
         expect.objectContaining({ name: 'updated-container' }),
       );
     });
@@ -480,7 +480,7 @@ describe('ContainerFormComponent', () => {
           close: jest.fn(),
           requireConfirmationWhen: jest.fn(),
         }),
-        mockProvider(ContainerInstancesStore, {
+        mockProvider(ContainersStore, {
           initialize: jest.fn(),
         }),
         mockProvider(MatDialog, {

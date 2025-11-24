@@ -60,7 +60,7 @@ import {
   ContainerImageWithId,
 } from 'app/pages/containers/components/container-wizard/select-image-dialog/select-image-dialog.component';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -98,7 +98,7 @@ export class ContainerFormComponent implements OnInit {
   protected formatter = inject(IxFormatterService);
   private errorHandler = inject(ErrorHandlerService);
   slideInRef = inject<SlideInRef<ContainerInstance | undefined, boolean>>(SlideInRef);
-  private instancesStore = inject(ContainerInstancesStore, { optional: true });
+  private containersStore = inject(ContainersStore, { optional: true });
   private router = inject(Router);
   private containerConfigStore = inject(ContainerConfigStore);
 
@@ -118,19 +118,19 @@ export class ContainerFormComponent implements OnInit {
   protected readonly forbiddenNames$ = this.api.call('container.query', [
     [], { select: ['name'], order_by: ['name'] },
   ]).pipe(
-    map((instances) => instances
-      .map((instance) => instance.name)
-      .filter((name) => name !== this.editingInstance?.name)),
+    map((containers) => containers
+      .map((container) => container.name)
+      .filter((name) => name !== this.editingContainer?.name)),
   );
 
   protected isAdvancedMode = false;
 
   protected readonly isEditMode = signal<boolean>(false);
-  protected editingInstance: ContainerInstance | null = null;
+  protected editingContainer: ContainerInstance | null = null;
   protected readonly title = computed(() => {
     if (this.isEditMode()) {
       return this.translate.instant('Edit Container: {name}', {
-        name: this.editingInstance?.name || '',
+        name: this.editingContainer?.name || '',
       });
     }
     return this.translate.instant('Add Container');
@@ -184,7 +184,7 @@ export class ContainerFormComponent implements OnInit {
   private hasSetupValidators = false;
 
   constructor() {
-    this.editingInstance = this.slideInRef.getData();
+    this.editingContainer = this.slideInRef.getData();
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -208,8 +208,8 @@ export class ContainerFormComponent implements OnInit {
       this.setupValidatorsForCreation();
     });
 
-    if (this.editingInstance) {
-      this.loadInstanceForEditing(this.editingInstance.id);
+    if (this.editingContainer) {
+      this.loadContainerForEditing(this.editingContainer.id);
     } else {
       this.setupForCreation();
     }
@@ -234,7 +234,7 @@ export class ContainerFormComponent implements OnInit {
 
   private setupForCreation(): void {
     this.isEditMode.set(false);
-    this.editingInstance = null;
+    this.editingContainer = null;
 
     this.form.controls.image.setValidators([Validators.required, Validators.minLength(1), Validators.maxLength(200)]);
 
@@ -263,7 +263,7 @@ export class ContainerFormComponent implements OnInit {
     this.form.controls.pool.updateValueAndValidity();
   }
 
-  private loadInstanceForEditing(instanceId: number): void {
+  private loadContainerForEditing(containerId: number): void {
     this.isEditMode.set(true);
 
     this.form.controls.pool.clearValidators();
@@ -272,13 +272,13 @@ export class ContainerFormComponent implements OnInit {
     this.form.controls.image.updateValueAndValidity();
 
     this.isLoading.set(true);
-    this.api.call('container.get_instance', [instanceId]).pipe(
+    this.api.call('container.get_instance', [containerId]).pipe(
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),
     ).subscribe({
-      next: (instance: ContainerInstance) => {
-        this.editingInstance = instance;
-        this.populateFormForEdit(instance);
+      next: (container: ContainerInstance) => {
+        this.editingContainer = container;
+        this.populateFormForEdit(container);
         this.isLoading.set(false);
       },
       error: () => {
@@ -288,23 +288,23 @@ export class ContainerFormComponent implements OnInit {
     });
   }
 
-  private populateFormForEdit(instance: ContainerInstance): void {
+  private populateFormForEdit(container: ContainerInstance): void {
     this.form.patchValue({
-      name: instance.name,
-      description: instance.description || '',
-      autostart: instance.autostart,
-      cpuset: instance.cpuset || '',
-      time: instance.time as ContainerTime,
-      shutdown_timeout: instance.shutdown_timeout,
-      init: instance.init,
-      initdir: instance.initdir || '',
-      inituser: instance.inituser || '',
-      initgroup: instance.initgroup || '',
-      capabilities_policy: instance.capabilities_policy as ContainerCapabilitiesPolicy,
+      name: container.name,
+      description: container.description || '',
+      autostart: container.autostart,
+      cpuset: container.cpuset || '',
+      time: container.time as ContainerTime,
+      shutdown_timeout: container.shutdown_timeout,
+      init: container.init,
+      initdir: container.initdir || '',
+      inituser: container.inituser || '',
+      initgroup: container.initgroup || '',
+      capabilities_policy: container.capabilities_policy as ContainerCapabilitiesPolicy,
     });
 
-    if (instance.initenv && Object.keys(instance.initenv).length > 0) {
-      for (const [name, value] of Object.entries(instance.initenv)) {
+    if (container.initenv && Object.keys(container.initenv).length > 0) {
+      for (const [name, value] of Object.entries(container.initenv)) {
         this.addEnvironmentVariableWithValue(name, String(value));
       }
     }
@@ -354,8 +354,8 @@ export class ContainerFormComponent implements OnInit {
 
           this.slideInRef.close({ response: true, error: false });
 
-          if (this.instancesStore && updatedInstance) {
-            this.instancesStore.instanceUpdated(updatedInstance);
+          if (this.containersStore && updatedInstance) {
+            this.containersStore.containerUpdated(updatedInstance);
           }
         },
         error: (error: unknown) => {
@@ -364,15 +364,15 @@ export class ContainerFormComponent implements OnInit {
         },
       });
     } else {
-      this.createInstance().pipe(untilDestroyed(this)).subscribe({
-        next: (instance) => {
+      this.createContainer().pipe(untilDestroyed(this)).subscribe({
+        next: (container) => {
           this.isLoading.set(false);
           this.form.markAsPristine();
           this.snackbar.success(this.translate.instant('Container created'));
           this.slideInRef.close({ response: true, error: false });
-          this.instancesStore?.initialize();
-          if (instance?.id) {
-            this.router.navigate(['/containers', 'view', instance.id]);
+          this.containersStore?.initialize();
+          if (container?.id) {
+            this.router.navigate(['/containers', 'view', container.id]);
           }
         },
         error: (error: unknown) => {
@@ -405,7 +405,7 @@ export class ContainerFormComponent implements OnInit {
     this.form.controls.environment_variables.removeAt(index);
   }
 
-  private createInstance(): Observable<ContainerInstance> {
+  private createContainer(): Observable<ContainerInstance> {
     const payload = this.getCreatePayload();
 
     const job$ = this.api.job('container.create', [payload]);
@@ -425,7 +425,7 @@ export class ContainerFormComponent implements OnInit {
   private updateInstance(): Observable<ContainerInstance> {
     const payload = this.getUpdatePayload();
 
-    return this.api.call('container.update', [this.editingInstance.id, payload]);
+    return this.api.call('container.update', [this.editingContainer.id, payload]);
   }
 
   private getCreatePayload(): CreateContainerInstance {
@@ -465,28 +465,28 @@ export class ContainerFormComponent implements OnInit {
     const form = this.form.getRawValue();
     const payload: UpdateContainerInstance = {};
 
-    if (form.name !== this.editingInstance.name) payload.name = form.name;
-    if (form.description !== (this.editingInstance.description || '')) payload.description = form.description;
-    if (form.autostart !== this.editingInstance.autostart) payload.autostart = form.autostart;
+    if (form.name !== this.editingContainer.name) payload.name = form.name;
+    if (form.description !== (this.editingContainer.description || '')) payload.description = form.description;
+    if (form.autostart !== this.editingContainer.autostart) payload.autostart = form.autostart;
 
-    if (form.cpuset !== (this.editingInstance.cpuset || '')) payload.cpuset = form.cpuset || null;
+    if (form.cpuset !== (this.editingContainer.cpuset || '')) payload.cpuset = form.cpuset || null;
 
-    if (form.time !== (this.editingInstance.time as ContainerTime)) payload.time = form.time;
-    if (form.shutdown_timeout !== this.editingInstance.shutdown_timeout) {
+    if (form.time !== (this.editingContainer.time as ContainerTime)) payload.time = form.time;
+    if (form.shutdown_timeout !== this.editingContainer.shutdown_timeout) {
       payload.shutdown_timeout = form.shutdown_timeout;
     }
 
-    if (form.init !== this.editingInstance.init) payload.init = form.init;
-    if (form.initdir !== (this.editingInstance.initdir || '')) payload.initdir = form.initdir || null;
-    if (form.inituser !== (this.editingInstance.inituser || '')) payload.inituser = form.inituser || null;
-    if (form.initgroup !== (this.editingInstance.initgroup || '')) payload.initgroup = form.initgroup || null;
+    if (form.init !== this.editingContainer.init) payload.init = form.init;
+    if (form.initdir !== (this.editingContainer.initdir || '')) payload.initdir = form.initdir || null;
+    if (form.inituser !== (this.editingContainer.inituser || '')) payload.inituser = form.inituser || null;
+    if (form.initgroup !== (this.editingContainer.initgroup || '')) payload.initgroup = form.initgroup || null;
 
-    if (form.capabilities_policy !== (this.editingInstance.capabilities_policy as ContainerCapabilitiesPolicy)) {
+    if (form.capabilities_policy !== (this.editingContainer.capabilities_policy as ContainerCapabilitiesPolicy)) {
       payload.capabilities_policy = form.capabilities_policy;
     }
 
     const envVars = this.getEnvironmentVariablesPayload();
-    if (JSON.stringify(envVars) !== JSON.stringify(this.editingInstance.initenv || {})) {
+    if (JSON.stringify(envVars) !== JSON.stringify(this.editingContainer.initenv || {})) {
       payload.initenv = envVars;
     }
 

@@ -13,7 +13,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { AddNicMenuComponent } from 'app/pages/containers/components/all-containers/container-details/container-nic-devices/add-nic-menu/add-nic-menu.component';
 import { ContainerNicFormDialog } from 'app/pages/containers/components/common/container-nic-form-dialog/container-nic-form-dialog.component';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 describe('AddNicMenuComponent', () => {
   let spectator: Spectator<AddNicMenuComponent>;
@@ -29,8 +29,8 @@ describe('AddNicMenuComponent', () => {
         }),
         mockCall('container.device.create'),
       ]),
-      mockProvider(ContainerInstancesStore, {
-        selectedInstance: () => ({ id: 123 }),
+      mockProvider(ContainersStore, {
+        selectedContainer: () => ({ id: 123 }),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({

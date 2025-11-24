@@ -14,7 +14,7 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/containers/components/common/device-actions-menu/device-actions-menu.component';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 describe('ContainerNicDevicesComponent', () => {
   let spectator: Spectator<ContainerNicDevicesComponent>;
@@ -49,8 +49,8 @@ describe('ContainerNicDevicesComponent', () => {
         isLoading: () => false,
         devices: () => devices,
       }),
-      mockProvider(ContainerInstancesStore, {
-        selectedInstance: () => ({
+      mockProvider(ContainersStore, {
+        selectedContainer: () => ({
           status: { state: ContainerStatus.Stopped },
         }),
       }),

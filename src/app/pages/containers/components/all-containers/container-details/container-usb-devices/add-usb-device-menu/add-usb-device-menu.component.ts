@@ -18,7 +18,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -47,7 +47,7 @@ export class AddUsbDeviceMenuComponent {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private devicesStore = inject(ContainerDevicesStore);
-  private instancesStore = inject(ContainerInstancesStore);
+  private containersStore = inject(ContainersStore);
 
   private readonly usbChoices = toSignal(
     this.api.call('container.device.usb_choices').pipe(
@@ -99,7 +99,7 @@ export class AddUsbDeviceMenuComponent {
   }
 
   private addDevice(payload: Partial<ContainerUsbDevice>): void {
-    const instanceId = this.instancesStore.selectedInstance()?.id;
+    const instanceId = this.containersStore.selectedContainer()?.id;
     if (!instanceId) {
       return;
     }

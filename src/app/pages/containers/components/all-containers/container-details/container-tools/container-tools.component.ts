@@ -9,7 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 @Component({
   selector: 'ix-container-tools',
@@ -30,11 +30,11 @@ import { ContainerInstancesStore } from 'app/pages/containers/stores/container-i
   ],
 })
 export class ContainerToolsComponent {
-  private instancesStore = inject(ContainerInstancesStore);
+  private containersStore = inject(ContainersStore);
 
-  protected readonly instance = this.instancesStore.selectedInstance;
+  protected readonly container = this.containersStore.selectedContainer;
 
-  protected readonly isInstanceStopped = computed(() => {
-    return this.instance()?.status?.state !== ContainerStatus.Running;
+  protected readonly isContainerStopped = computed(() => {
+    return this.container()?.status?.state !== ContainerStatus.Running;
   });
 }

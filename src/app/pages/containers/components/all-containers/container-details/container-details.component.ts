@@ -35,7 +35,7 @@ import {
   ],
 })
 export class ContainerDetailsComponent {
-  instance = input.required<ContainerInstance>();
+  container = input.required<ContainerInstance>();
 
   protected readonly searchableElements = containerDetailsElements;
   protected readonly ContainerType = ContainerType;

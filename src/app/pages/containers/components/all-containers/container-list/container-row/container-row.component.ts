@@ -25,7 +25,7 @@ import { ContainerStatusCellComponent } from 'app/pages/containers/components/al
 import {
   StopOptionsDialog, StopOptionsOperation,
 } from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -52,18 +52,18 @@ export class ContainerRowComponent {
   private errorHandler = inject(ErrorHandlerService);
   private matDialog = inject(MatDialog);
   private snackbar = inject(SnackbarService);
-  private instancesStore = inject(ContainerInstancesStore);
+  private containersStore = inject(ContainersStore);
 
   protected readonly requiredRoles = [Role.ContainerWrite];
-  readonly instance = input.required<ContainerInstance>();
+  readonly container = input.required<ContainerInstance>();
   readonly metrics = input<ContainerInstanceMetrics | undefined>();
   readonly selected = input<boolean>(false);
-  protected readonly isStopped = computed(() => this.instance()?.status?.state === ContainerStatus.Stopped);
+  protected readonly isStopped = computed(() => this.container()?.status?.state === ContainerStatus.Stopped);
 
   readonly hasMetrics = computed(() => {
     const metrics = this.metrics();
 
-    return this.instance()?.status?.state === ContainerStatus.Running
+    return this.container()?.status?.state === ContainerStatus.Running
       && metrics
       && Object.keys(metrics).length > 0;
   });
@@ -71,18 +71,18 @@ export class ContainerRowComponent {
   readonly selectionChange = output();
 
   start(): void {
-    const instanceId = this.instance().id;
+    const containerId = this.container().id;
 
-    this.api.call('container.start', [instanceId])
+    this.api.call('container.start', [containerId])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Container started'));
-        this.instancesStore.selectInstance(this.instance().id);
+        this.containersStore.selectContainer(this.container().id);
       });
   }
 
   stop(): void {
-    const instanceId = this.instance().id;
+    const containerId = this.container().id;
 
     this.matDialog
       .open(StopOptionsDialog, { data: StopOptionsOperation.Stop })
@@ -90,19 +90,19 @@ export class ContainerRowComponent {
       .pipe(
         filter(Boolean),
         switchMap((options: ContainerStopParams) => {
-          return this.api.call('container.stop', [instanceId, options])
+          return this.api.call('container.stop', [containerId, options])
             .pipe(this.errorHandler.withErrorHandler());
         }),
         untilDestroyed(this),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Container stopped'));
-        this.instancesStore.selectInstance(this.instance().id);
+        this.containersStore.selectContainer(this.container().id);
       });
   }
 
   restart(): void {
-    const instanceId = this.instance().id;
+    const containerId = this.container().id;
 
     this.matDialog
       .open(StopOptionsDialog, { data: StopOptionsOperation.Restart })
@@ -110,9 +110,9 @@ export class ContainerRowComponent {
       .pipe(
         filter(Boolean),
         switchMap((options: ContainerStopParams) => {
-          return this.api.call('container.stop', [instanceId, options])
+          return this.api.call('container.stop', [containerId, options])
             .pipe(
-              switchMap(() => this.api.call('container.start', [instanceId])),
+              switchMap(() => this.api.call('container.start', [containerId])),
               this.errorHandler.withErrorHandler(),
             );
         }),
@@ -120,7 +120,7 @@ export class ContainerRowComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Container restarted'));
-        this.instancesStore.selectInstance(this.instance().id);
+        this.containersStore.selectContainer(this.container().id);
       });
   }
 }

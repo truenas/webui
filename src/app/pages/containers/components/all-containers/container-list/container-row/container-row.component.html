@@ -1,7 +1,7 @@
 <div class="cell checkbox">
   <mat-checkbox
     color="primary"
-    [ixTest]="instance().name"
+    [ixTest]="container().name"
     [checked]="selected()"
     (click)="$event.stopPropagation()"
     (change)="selectionChange.emit()"
@@ -9,17 +9,17 @@
 </div>
 
 <div class="cell cell-name">
-  <span class="name">{{ instance().name }}</span>
+  <span class="name">{{ container().name }}</span>
 </div>
 
 <div class="cell">
   <ix-container-status-cell
-    [instance]="instance()"
+    [container]="container()"
   ></ix-container-status-cell>
 </div>
 
 <div class="cell">
-  <span>{{ instance().autostart | yesNo }}</span>
+  <span>{{ container().autostart | yesNo }}</span>
 </div>
 
 <div class="cell" [matTooltip]="'Percentage of total core utilization' | translate">
@@ -52,7 +52,7 @@
       *ixRequiresRoles="requiredRoles"
       mat-icon-button
       matTooltipPosition="above"
-      [ixTest]="[instance().name, 'start']"
+      [ixTest]="[container().name, 'start']"
       [matTooltip]="'Start' | translate"
       (click)="$event.stopPropagation(); start()"
     >
@@ -63,7 +63,7 @@
       *ixRequiresRoles="requiredRoles"
       mat-icon-button
       matTooltipPosition="above"
-      [ixTest]="[instance().name, 'restart']"
+      [ixTest]="[container().name, 'restart']"
       [matTooltip]="'Restart' | translate"
       (click)="$event.stopPropagation(); restart()"
     >
@@ -74,12 +74,12 @@
       *ixRequiresRoles="requiredRoles"
       mat-icon-button
       matTooltipPosition="above"
-      [ixTest]="[instance().name, 'stop']"
+      [ixTest]="[container().name, 'stop']"
       [matTooltip]="'Stop' | translate"
       (click)="$event.stopPropagation(); stop();"
     >
       <ix-icon name="mdi-stop-circle"></ix-icon>
     </button>
   }
-  <ix-icon class="instance-details" name="mdi-chevron-right"></ix-icon>
+  <ix-icon class="container-details" name="mdi-chevron-right"></ix-icon>
 </div>

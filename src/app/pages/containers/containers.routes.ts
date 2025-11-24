@@ -7,14 +7,14 @@ import {
 import { ContainerShellComponent } from 'app/pages/containers/components/container-shell/container-shell.component';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 export const containersRoutes: Routes = [{
   path: '',
   data: { title: T('Containers'), breadcrumb: null },
   providers: [
     ContainerConfigStore,
-    ContainerInstancesStore,
+    ContainersStore,
     ContainerDevicesStore,
   ],
   children: [

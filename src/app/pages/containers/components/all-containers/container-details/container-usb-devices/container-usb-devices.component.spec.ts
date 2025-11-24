@@ -13,8 +13,8 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/containers/components/common/device-actions-menu/device-actions-menu.component';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
-import { fakeContainerInstance } from 'app/pages/containers/utils/fake-container-instance.utils';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
 describe('ContainerUsbDevicesComponent', () => {
   let spectator: Spectator<ContainerUsbDevicesComponent>;
@@ -49,8 +49,8 @@ describe('ContainerUsbDevicesComponent', () => {
       ),
     ],
     providers: [
-      mockProvider(ContainerInstancesStore, {
-        selectedInstance: () => fakeContainerInstance({
+      mockProvider(ContainersStore, {
+        selectedContainer: () => fakeContainer({
           id: 1,
           status: { state: ContainerStatus.Stopped, pid: 0, domain_state: 'stopped' },
         }),

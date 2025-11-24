@@ -22,7 +22,7 @@ import {
 } from 'app/pages/containers/components/common/device-type-badge/device-type-badge.component';
 import { getDeviceDescription } from 'app/pages/containers/components/common/utils/get-device-description.utils';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 @UntilDestroy()
 @Component({
@@ -49,15 +49,15 @@ export class ContainerFilesystemDevicesComponent {
 
   private slideIn = inject(SlideIn);
   private devicesStore = inject(ContainerDevicesStore);
-  private instancesStore = inject(ContainerInstancesStore);
+  private containersStore = inject(ContainersStore);
   private translate = inject(TranslateService);
 
-  readonly instance = input.required<ContainerInstance>();
+  readonly container = input.required<ContainerInstance>();
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
   protected readonly isContainerRunning = computed(() => {
-    const instance = this.instancesStore.selectedInstance();
-    return instance?.status.state === ContainerStatus.Running;
+    const container = this.containersStore.selectedContainer();
+    return container?.status.state === ContainerStatus.Running;
   });
 
   protected readonly visibleDisks = computed(() => {
@@ -79,7 +79,7 @@ export class ContainerFilesystemDevicesComponent {
   }
 
   private openDiskForm(disk?: ContainerFilesystemDevice): void {
-    this.slideIn.open(ContainerFilesystemDeviceFormComponent, { data: { disk, instance: this.instance() } })
+    this.slideIn.open(ContainerFilesystemDeviceFormComponent, { data: { disk, container: this.container() } })
       .pipe(filter((result) => !!result.response), untilDestroyed(this))
       .subscribe(() => this.devicesStore.loadDevices());
   }

@@ -31,8 +31,8 @@ import {
 } from 'app/pages/containers/utils/storage-device-validators';
 import { FilesystemService } from 'app/services/filesystem.service';
 
-interface InstanceFilesystemDeviceFormOptions {
-  instance: ContainerInstance;
+interface ContainerFilesystemDeviceFormOptions {
+  container: ContainerInstance;
   disk: ContainerFilesystemDevice | undefined;
 }
 
@@ -63,7 +63,7 @@ export class ContainerFilesystemDeviceFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private filesystem = inject(FilesystemService);
-  slideInRef = inject<SlideInRef<InstanceFilesystemDeviceFormOptions, boolean>>(SlideInRef);
+  slideInRef = inject<SlideInRef<ContainerFilesystemDeviceFormOptions, boolean>>(SlideInRef);
 
   private existingDisk = signal<ContainerFilesystemDevice | null>(null);
 
@@ -84,8 +84,8 @@ export class ContainerFilesystemDeviceFormComponent implements OnInit {
       : this.translate.instant('Edit Filesystem Device');
   });
 
-  protected get instance(): ContainerInstance {
-    return this.slideInRef.getData().instance;
+  protected get container(): ContainerInstance {
+    return this.slideInRef.getData().container;
   }
 
   constructor() {
@@ -139,7 +139,7 @@ export class ContainerFilesystemDeviceFormComponent implements OnInit {
         attributes: payload,
       }])
       : this.api.call('container.device.create', [{
-        container: this.instance.id,
+        container: this.container.id,
         attributes: payload,
       }]);
   }

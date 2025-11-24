@@ -13,12 +13,12 @@ import {
   AddUsbDeviceMenuComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-usb-devices/add-usb-device-menu/add-usb-device-menu.component';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 describe('AddUsbDeviceMenuComponent', () => {
   let spectator: Spectator<AddUsbDeviceMenuComponent>;
   let loader: HarnessLoader;
-  const selectedInstance = signal({
+  const selectedContainer = signal({
     id: 123,
     type: ContainerType.Container,
   });
@@ -49,8 +49,8 @@ describe('AddUsbDeviceMenuComponent', () => {
         }),
         mockCall('container.device.create'),
       ]),
-      mockProvider(ContainerInstancesStore, {
-        selectedInstance,
+      mockProvider(ContainersStore, {
+        selectedContainer,
       }),
       mockProvider(ContainerDevicesStore, {
         devices: () => [

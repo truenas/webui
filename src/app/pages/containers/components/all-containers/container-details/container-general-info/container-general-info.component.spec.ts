@@ -19,10 +19,10 @@ import {
   ContainerGeneralInfoComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-general-info/container-general-info.component';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
-import { fakeContainerInstance } from 'app/pages/containers/utils/fake-container-instance.utils';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
-const instance = fakeContainerInstance({
+const container = fakeContainer({
   id: 1,
   name: 'Demo',
   autostart: true,
@@ -49,9 +49,9 @@ describe('ContainerGeneralInfoComponent', () => {
           response: true,
         })),
       }),
-      mockProvider(ContainerInstancesStore, {
-        selectedInstance: jest.fn(),
-        instanceUpdated: jest.fn(),
+      mockProvider(ContainersStore, {
+        selectedContainer: jest.fn(),
+        containerUpdated: jest.fn(),
         initialize: jest.fn(),
       }),
       mockApi([
@@ -66,7 +66,7 @@ describe('ContainerGeneralInfoComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent({
-      props: { instance },
+      props: { container },
     });
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -84,7 +84,7 @@ describe('ContainerGeneralInfoComponent', () => {
   });
 
   it('renders correct values when CPU Set is not set', () => {
-    spectator.setInput('instance', fakeContainerInstance({
+    spectator.setInput('container', fakeContainer({
       cpuset: null,
     }));
 
@@ -92,7 +92,7 @@ describe('ContainerGeneralInfoComponent', () => {
     expect(cardContent).toContainText('CPU Set: All Host CPUs');
   });
 
-  it('deletes instance when "Delete" button is pressed and redirects to list root', async () => {
+  it('deletes container when "Delete" button is pressed and redirects to list root', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
@@ -102,15 +102,15 @@ describe('ContainerGeneralInfoComponent', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers']);
   });
 
-  it('opens edit instance form when Edit is pressed', async () => {
+  it('opens edit container form when Edit is pressed', async () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ContainerFormComponent, { data: instance });
-    expect(spectator.inject(ContainerInstancesStore).initialize).toHaveBeenCalled();
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ContainerFormComponent, { data: container });
+    expect(spectator.inject(ContainersStore).initialize).toHaveBeenCalled();
   });
 
-  it('does not delete instance when confirmation is cancelled', async () => {
+  it('does not delete container when confirmation is cancelled', async () => {
     const dialogService = spectator.inject(DialogService);
     (dialogService.confirm as jest.Mock).mockReturnValue(of(false));
 
@@ -122,7 +122,7 @@ describe('ContainerGeneralInfoComponent', () => {
   });
 
   it('shows capabilities policy when available', () => {
-    spectator.setInput('instance', fakeContainerInstance({
+    spectator.setInput('container', fakeContainer({
       capabilities_policy: 'ALLOW',
     }));
 

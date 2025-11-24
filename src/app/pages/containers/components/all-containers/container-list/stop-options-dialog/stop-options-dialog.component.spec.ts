@@ -31,13 +31,13 @@ describe('StopOptionsDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
-  it('shows labels and text related to stopping an instance when operation is Stop', async () => {
+  it('shows labels and text related to stopping a container when operation is Stop', async () => {
     setupTest(StopOptionsOperation.Stop);
     expect(spectator.query('h1')).toHaveText('Stop Options');
     expect(await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }))).toBeTruthy();
   });
 
-  it('shows labels and text related to restarting an instance when operation is Restart', async () => {
+  it('shows labels and text related to restarting a container when operation is Restart', async () => {
     setupTest(StopOptionsOperation.Restart);
     expect(spectator.query('h1')).toHaveText('Restart Options');
     expect(await loader.getHarness(MatButtonHarness.with({ text: 'Restart' }))).toBeTruthy();

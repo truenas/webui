@@ -6,15 +6,15 @@
   </mat-card-header>
 
   <mat-card-content>
-    <div [matTooltip]="isInstanceStopped() ? ('Container is not running' | translate) : ''">
+    <div [matTooltip]="isContainerStopped() ? ('Container is not running' | translate) : ''">
       <a
         mat-flat-button
         color="default"
         ixTest="open-shell"
         class="tool"
-        [class.disabled]="isInstanceStopped()"
-        [disabled]="isInstanceStopped()"
-        [routerLink]="['/containers', 'view', instance().id, 'shell']"
+        [class.disabled]="isContainerStopped()"
+        [disabled]="isContainerStopped()"
+        [routerLink]="['/containers', 'view', container().id, 'shell']"
       >
         <span>{{ 'Shell' | translate }}</span>
 

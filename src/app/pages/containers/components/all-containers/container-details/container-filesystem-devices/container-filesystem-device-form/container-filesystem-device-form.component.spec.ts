@@ -37,7 +37,7 @@ describe('ContainerFilesystemDeviceFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             getData: () => ({
-              instance: { id: 1, type: ContainerType.Container },
+              container: { id: 1, type: ContainerType.Container },
             }),
             close: jest.fn(),
             requireConfirmationWhen: jest.fn(),
@@ -47,7 +47,7 @@ describe('ContainerFilesystemDeviceFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('creates a new filesystem device for the instance provided when form is submitted', async () => {
+    it('creates a new filesystem device for the container provided when form is submitted', async () => {
       const form = await loader.getHarness(IxFormHarness);
 
       await form.fillForm({
@@ -79,7 +79,7 @@ describe('ContainerFilesystemDeviceFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             getData: () => ({
-              instance: { id: 1, type: ContainerType.Container },
+              container: { id: 1, type: ContainerType.Container },
               disk: {
                 id: 456,
                 name: 'existing-disk',
@@ -141,7 +141,7 @@ describe('ContainerFilesystemDeviceFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             getData: () => ({
-              instance: { id: 1, type: ContainerType.Container },
+              container: { id: 1, type: ContainerType.Container },
             }),
             close: jest.fn(),
             requireConfirmationWhen: jest.fn(),

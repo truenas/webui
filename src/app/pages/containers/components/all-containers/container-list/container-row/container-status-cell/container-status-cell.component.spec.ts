@@ -3,7 +3,7 @@ import { ContainerStatus } from 'app/enums/container.enum';
 import { ContainerInstance } from 'app/interfaces/container.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { ContainerStatusCellComponent } from 'app/pages/containers/components/all-containers/container-list/container-row/container-status-cell/container-status-cell.component';
-import { fakeContainerInstance } from 'app/pages/containers/utils/fake-container-instance.utils';
+import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
 describe('ContainerStatusCellComponent', () => {
   let spectator: SpectatorHost<ContainerStatusCellComponent>;
@@ -15,14 +15,14 @@ describe('ContainerStatusCellComponent', () => {
     ],
   });
 
-  function setupTest(instance: ContainerInstance): void {
+  function setupTest(container: ContainerInstance): void {
     spectator = createHost(`
-      <ix-container-status-cell [instance]="instance"></ix-container-status-cell>
-    `, { hostProps: { instance } });
+      <ix-container-status-cell [container]="container"></ix-container-status-cell>
+    `, { hostProps: { container } });
   }
 
-  it('checks status for running instance', () => {
-    setupTest(fakeContainerInstance({
+  it('checks status for running container', () => {
+    setupTest(fakeContainer({
       status: {
         state: ContainerStatus.Running,
         pid: 123,
@@ -33,8 +33,8 @@ describe('ContainerStatusCellComponent', () => {
     expect(spectator.query('span')).toHaveText('Running');
   });
 
-  it('checks status for stopped instance', () => {
-    setupTest(fakeContainerInstance({
+  it('checks status for stopped container', () => {
+    setupTest(fakeContainer({
       status: {
         state: ContainerStatus.Stopped,
         pid: null,
@@ -45,8 +45,8 @@ describe('ContainerStatusCellComponent', () => {
     expect(spectator.query('span')).toHaveText('Stopped');
   });
 
-  it('checks status for deploying instance', () => {
-    setupTest(fakeContainerInstance({
+  it('checks status for deploying container', () => {
+    setupTest(fakeContainer({
       status: {
         state: ContainerStatus.Stopped,
         pid: null,
@@ -57,8 +57,8 @@ describe('ContainerStatusCellComponent', () => {
     expect(spectator.query('span')).toHaveText('Stopped');
   });
 
-  it('checks status for stopping instance', () => {
-    setupTest(fakeContainerInstance({
+  it('checks status for stopping container', () => {
+    setupTest(fakeContainer({
       status: {
         state: ContainerStatus.Unknown,
         pid: null,

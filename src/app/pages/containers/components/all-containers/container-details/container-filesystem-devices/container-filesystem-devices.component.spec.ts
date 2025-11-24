@@ -18,8 +18,8 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/containers/components/common/device-actions-menu/device-actions-menu.component';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
-import { fakeContainerInstance } from 'app/pages/containers/utils/fake-container-instance.utils';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
 describe('ContainerFilesystemDevicesComponent', () => {
   let spectator: Spectator<ContainerFilesystemDevicesComponent>;
@@ -47,12 +47,12 @@ describe('ContainerFilesystemDevicesComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(ContainerInstancesStore, {
-        selectedInstance: () => fakeContainerInstance({
+      mockProvider(ContainersStore, {
+        selectedContainer: () => fakeContainer({
           id: 1,
           status: { state: ContainerStatus.Stopped, pid: 0, domain_state: 'stopped' },
         }),
-        instanceUpdated: jest.fn(),
+        containerUpdated: jest.fn(),
       }),
       mockProvider(ContainerDevicesStore, {
         isLoading: () => false,
@@ -70,7 +70,7 @@ describe('ContainerFilesystemDevicesComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        instance: fakeContainerInstance({ id: 1 }),
+        container: fakeContainer({ id: 1 }),
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -96,7 +96,7 @@ describe('ContainerFilesystemDevicesComponent', () => {
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
         ContainerFilesystemDeviceFormComponent,
-        { data: { disk: undefined, instance: fakeContainerInstance({ id: 1 }) } },
+        { data: { disk: undefined, container: fakeContainer({ id: 1 }) } },
       );
     });
   });

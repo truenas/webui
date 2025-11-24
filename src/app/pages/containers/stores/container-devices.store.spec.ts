@@ -5,17 +5,17 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ContainerDeviceEntry, ContainerInstance } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
-import { fakeContainerInstance } from 'app/pages/containers/utils/fake-container-instance.utils';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('ContainerDevicesStore', () => {
   let spectator: SpectatorService<ContainerDevicesStore>;
-  let selectedInstanceSignal: ReturnType<typeof signal<ContainerInstance | undefined>>;
+  let selectedContainerSignal: ReturnType<typeof signal<ContainerInstance | undefined>>;
 
-  const instances = [
-    fakeContainerInstance({ id: 1 }),
-    fakeContainerInstance({ id: 2 }),
+  const containers = [
+    fakeContainer({ id: 1 }),
+    fakeContainer({ id: 2 }),
   ];
 
   const containerDevices = [
@@ -33,16 +33,16 @@ describe('ContainerDevicesStore', () => {
       mockApi([
         mockCall('container.device.query', containerDevices),
       ]),
-      mockProvider(ContainerInstancesStore, {
-        instances: jest.fn(() => instances),
-        selectedInstance: jest.fn(() => selectedInstanceSignal()),
+      mockProvider(ContainersStore, {
+        containers: jest.fn(() => containers),
+        selectedContainer: jest.fn(() => selectedContainerSignal()),
       }),
       mockProvider(ErrorHandlerService),
     ],
   });
 
   beforeEach(() => {
-    selectedInstanceSignal = signal<ContainerInstance | undefined>(instances[0]);
+    selectedContainerSignal = signal<ContainerInstance | undefined>(containers[0]);
     spectator = createService();
   });
 
@@ -66,7 +66,7 @@ describe('ContainerDevicesStore', () => {
     });
   });
 
-  it('loadDevices – loads a list of devices for the selected instance', () => {
+  it('loadDevices – loads a list of devices for the selected container', () => {
     spectator.service.loadDevices();
 
     expect(spectator.service.devices()).toEqual([
@@ -77,7 +77,7 @@ describe('ContainerDevicesStore', () => {
       .toHaveBeenCalledWith('container.device.query', [[['container', '=', 1]]]);
   });
 
-  it('deviceDeleted – removes a device from list of devices for selected instance', () => {
+  it('deviceDeleted – removes a device from list of devices for selected container', () => {
     spectator.service.loadDevices();
     spectator.service.deviceDeleted(1);
 

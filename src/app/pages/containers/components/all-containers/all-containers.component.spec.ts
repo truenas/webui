@@ -12,7 +12,7 @@ import { AllContainersHeaderComponent } from 'app/pages/containers/components/al
 import { AllContainersComponent } from 'app/pages/containers/components/all-containers/all-containers.component';
 import { ContainerDetailsComponent } from 'app/pages/containers/components/all-containers/container-details/container-details.component';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('AllContainersComponent', () => {
@@ -58,10 +58,10 @@ describe('AllContainersComponent', () => {
           preferred_pool: null as string | null,
         }),
       }),
-      mockProvider(ContainerInstancesStore, {
-        selectedInstance: jest.fn(() => ({})),
+      mockProvider(ContainersStore, {
+        selectedContainer: jest.fn(() => ({})),
         initialize: jest.fn(),
-        instances: jest.fn(() => [] as ContainerInstance[]),
+        containers: jest.fn(() => [] as ContainerInstance[]),
         isLoading: jest.fn(() => false),
       }),
       {
@@ -85,7 +85,7 @@ describe('AllContainersComponent', () => {
   it('initializes config store on init', () => {
     spectator.component.ngOnInit();
     expect(spectator.inject(ContainerConfigStore).initialize).toHaveBeenCalled();
-    expect(spectator.inject(ContainerInstancesStore).initialize).toHaveBeenCalled();
+    expect(spectator.inject(ContainersStore).initialize).toHaveBeenCalled();
   });
 
   it('shows warning dialog and updates localStorage if warning has not been shown before', () => {

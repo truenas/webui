@@ -6,8 +6,8 @@
 
 <ix-master-detail-view
   #masterDetailView="masterDetailViewContext"
-  [showDetails]="masterList.isSelectedInstanceVisible()"
-  [selectedItem]="selectedInstance()"
+  [showDetails]="masterList.isSelectedContainerVisible()"
+  [selectedItem]="selectedContainer()"
 >
   <ix-container-list
     #masterList
@@ -18,15 +18,15 @@
 
   <ng-container detail-header>
     {{ 'Details for' | translate }}
-    {{ selectedInstance()?.name }}
+    {{ selectedContainer()?.name }}
   </ng-container>
 
   <ng-container detail>
-    @let instance = selectedInstance();
-    @if (instance) {
+    @let container = selectedContainer();
+    @if (container) {
       <ix-container-details
-        [instance]="instance"
-        [class.detail-disabled]="masterList.hasCheckedInstances"
+        [container]="container"
+        [class.detail-disabled]="masterList.hasCheckedContainers"
       ></ix-container-details>
     }
   </ng-container>

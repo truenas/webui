@@ -22,7 +22,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerNicFormDialog } from 'app/pages/containers/components/common/container-nic-form-dialog/container-nic-form-dialog.component';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -51,7 +51,7 @@ export class AddNicMenuComponent {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private devicesStore = inject(ContainerDevicesStore);
-  private instancesStore = inject(ContainerInstancesStore);
+  private containersStore = inject(ContainersStore);
   private matDialog = inject(MatDialog);
 
   private readonly nicChoices = toSignal(this.getNicChoices(), { initialValue: {} });
@@ -81,7 +81,7 @@ export class AddNicMenuComponent {
   }
 
   private addDevice(nicKey: string): void {
-    const instanceId = this.instancesStore.selectedInstance()?.id;
+    const instanceId = this.containersStore.selectedContainer()?.id;
     if (!instanceId) {
       return;
     }

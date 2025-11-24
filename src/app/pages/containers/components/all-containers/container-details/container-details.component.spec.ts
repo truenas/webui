@@ -20,7 +20,7 @@ import {
 import {
   ContainerUsbDevicesComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-usb-devices/container-usb-devices.component';
-import { fakeContainerInstance } from 'app/pages/containers/utils/fake-container-instance.utils';
+import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
 describe('ContainerDetailsComponent', () => {
   let spectator: Spectator<ContainerDetailsComponent>;
@@ -41,9 +41,9 @@ describe('ContainerDetailsComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        instance: fakeContainerInstance({
+        container: fakeContainer({
           id: 1,
-          name: 'my-instance',
+          name: 'my-container',
         }),
       },
     });

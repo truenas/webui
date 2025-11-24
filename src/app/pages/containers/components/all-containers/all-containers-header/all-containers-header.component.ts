@@ -15,7 +15,7 @@ import { ContainerFormComponent } from 'app/pages/containers/components/containe
 import {
   ContainerConfigStore,
 } from 'app/pages/containers/stores/container-config.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 @UntilDestroy()
 @Component({
@@ -34,7 +34,7 @@ import { ContainerInstancesStore } from 'app/pages/containers/stores/container-i
 export class AllContainersHeaderComponent {
   private slideIn = inject(SlideIn);
   private configStore = inject(ContainerConfigStore);
-  private instanceStore = inject(ContainerInstancesStore);
+  private containersStore = inject(ContainersStore);
 
   protected readonly searchableElements = allContainersHeaderElements;
   protected readonly config = this.configStore.config;
@@ -54,7 +54,7 @@ export class AllContainersHeaderComponent {
       .subscribe({
         next: () => {
           this.configStore.initialize();
-          this.instanceStore.initialize();
+          this.containersStore.initialize();
         },
       });
   }

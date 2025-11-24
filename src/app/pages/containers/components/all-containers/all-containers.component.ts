@@ -13,7 +13,7 @@ import { allContainersElements } from 'app/pages/containers/components/all-conta
 import { ContainerDetailsComponent } from 'app/pages/containers/components/all-containers/container-details/container-details.component';
 import { ContainerListComponent } from 'app/pages/containers/components/all-containers/container-list/container-list.component';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 @UntilDestroy()
 @Component({
@@ -32,17 +32,17 @@ import { ContainerInstancesStore } from 'app/pages/containers/stores/container-i
 })
 export class AllContainersComponent implements OnInit {
   private configStore = inject(ContainerConfigStore);
-  private instancesStore = inject(ContainerInstancesStore);
+  private containersStore = inject(ContainersStore);
   private dialogService = inject(DialogService);
   private window = inject<Window>(WINDOW);
   private translate = inject(TranslateService);
 
-  readonly selectedInstance = this.instancesStore.selectedInstance;
+  readonly selectedContainer = this.containersStore.selectedContainer;
   protected readonly searchableElements = allContainersElements;
 
   ngOnInit(): void {
     this.configStore.initialize();
-    this.instancesStore.initialize();
+    this.containersStore.initialize();
 
     const showVmInstancesWarning = !this.window.localStorage.getItem('showNewVmInstancesWarning');
 

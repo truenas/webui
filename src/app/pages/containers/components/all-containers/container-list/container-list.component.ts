@@ -23,7 +23,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ContainerListBulkActionsComponent } from 'app/pages/containers/components/all-containers/container-list/container-list-bulk-actions/container-list-bulk-actions.component';
 import { ContainerRowComponent } from 'app/pages/containers/components/all-containers/container-list/container-row/container-row.component';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 @UntilDestroy()
 @Component({
@@ -46,60 +46,60 @@ import { ContainerInstancesStore } from 'app/pages/containers/stores/container-i
 export class ContainerListComponent {
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
-  private instancesStore = inject(ContainerInstancesStore);
+  private containersStore = inject(ContainersStore);
   private searchDirectives = inject(UiSearchDirectivesService);
   private layoutService = inject(LayoutService);
 
-  readonly instanceId = toSignal(this.activatedRoute.params.pipe(map((params) => +params['id'])));
+  readonly containerId = toSignal(this.activatedRoute.params.pipe(map((params) => +params['id'])));
   readonly toggleShowMobileDetails = output<boolean>();
 
   readonly searchQuery = signal<string>('');
   protected readonly window = inject<Window>(WINDOW);
   protected readonly selection = new SelectionModel<number>(true, []);
 
-  protected readonly instances = this.instancesStore.instances;
-  protected readonly isLoading = this.instancesStore.isLoading;
+  protected readonly containers = this.containersStore.containers;
+  protected readonly isLoading = this.containersStore.isLoading;
 
-  protected readonly metrics = this.instancesStore.metrics;
+  protected readonly metrics = this.containersStore.metrics;
 
-  protected readonly selectedInstance = this.instancesStore.selectedInstance;
+  protected readonly selectedContainer = this.containersStore.selectedContainer;
   get isAllSelected(): boolean {
-    return this.selection.selected.length === this.filteredInstances().length;
+    return this.selection.selected.length === this.filteredContainers().length;
   }
 
-  get checkedInstances(): ContainerInstance[] {
+  get checkedContainers(): ContainerInstance[] {
     return this.selection.selected
-      .map((id: number) => this.instances().find((instance) => instance.id === id))
-      .filter((instance) => !!instance);
+      .map((id: number) => this.containers().find((container) => container.id === id))
+      .filter((container) => !!container);
   }
 
-  get hasCheckedInstances(): boolean {
-    return this.checkedInstances.length > 0;
+  get hasCheckedContainers(): boolean {
+    return this.checkedContainers.length > 0;
   }
 
-  readonly isSelectedInstanceVisible = computed(() => {
-    return this.filteredInstances()?.some((instance) => instance.id === this.selectedInstance()?.id);
+  readonly isSelectedContainerVisible = computed(() => {
+    return this.filteredContainers()?.some((container) => container.id === this.selectedContainer()?.id);
   });
 
-  protected readonly filteredInstances = computed(() => {
-    return (this.instances() || []).filter((instance) => {
-      return instance?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase());
+  protected readonly filteredContainers = computed(() => {
+    return (this.containers() || []).filter((container) => {
+      return container?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase());
     });
   });
 
   protected readonly emptyConfig = computed<EmptyConfig>(() => {
-    if (this.searchQuery()?.length && !this.filteredInstances()?.length) {
+    if (this.searchQuery()?.length && !this.filteredContainers()?.length) {
       return noSearchResultsConfig;
     }
     return containersEmptyConfig;
   });
 
   constructor() {
-    toObservable(this.instanceId).pipe(
+    toObservable(this.containerId).pipe(
       distinctUntilChanged(),
-      tap((instanceId) => {
-        if (instanceId !== null) {
-          this.instancesStore.selectInstance(instanceId);
+      tap((containerId) => {
+        if (containerId !== null) {
+          this.containersStore.selectContainer(containerId);
         }
       }),
       untilDestroyed(this),
@@ -112,14 +112,14 @@ export class ContainerListComponent {
 
   toggleAllChecked(checked: boolean): void {
     if (checked) {
-      this.filteredInstances().forEach((instance) => this.selection.select(instance.id));
+      this.filteredContainers().forEach((container) => this.selection.select(container.id));
     } else {
       this.selection.clear();
     }
   }
 
-  navigateToDetails(instance: ContainerInstance): void {
-    this.layoutService.navigatePreservingScroll(this.router, ['/containers', 'view', instance.id]);
+  navigateToDetails(container: ContainerInstance): void {
+    this.layoutService.navigatePreservingScroll(this.router, ['/containers', 'view', container.id]);
 
     this.toggleShowMobileDetails.emit(true);
   }

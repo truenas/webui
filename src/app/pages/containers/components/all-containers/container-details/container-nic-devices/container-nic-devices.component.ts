@@ -18,7 +18,7 @@ import {
 } from 'app/pages/containers/components/common/device-type-badge/device-type-badge.component';
 import { getDeviceDescription } from 'app/pages/containers/components/common/utils/get-device-description.utils';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
 @UntilDestroy()
 @Component({
@@ -40,7 +40,7 @@ import { ContainerInstancesStore } from 'app/pages/containers/stores/container-i
 })
 export class ContainerNicDevicesComponent {
   private devicesStore = inject(ContainerDevicesStore);
-  private instancesStore = inject(ContainerInstancesStore);
+  private containersStore = inject(ContainersStore);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
 
@@ -51,8 +51,8 @@ export class ContainerNicDevicesComponent {
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
   protected readonly isContainerRunning = computed(() => {
-    const instance = this.instancesStore.selectedInstance();
-    return instance?.status.state === ContainerStatus.Running;
+    const container = this.containersStore.selectedContainer();
+    return container?.status.state === ContainerStatus.Running;
   });
 
   protected readonly shownDevices = computed(() => {

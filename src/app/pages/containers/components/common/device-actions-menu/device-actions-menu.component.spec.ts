@@ -19,14 +19,14 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/containers/components/common/device-actions-menu/device-actions-menu.component';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
-import { fakeContainerInstance } from 'app/pages/containers/utils/fake-container-instance.utils';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('DeviceActionsMenuComponent', () => {
   let spectator: Spectator<DeviceActionsMenuComponent>;
   let loader: HarnessLoader;
-  const selectedInstance = signal(fakeContainerInstance({
+  const selectedContainer = signal(fakeContainer({
     id: 1,
   }));
   const createComponent = createComponentFactory({
@@ -49,8 +49,8 @@ describe('DeviceActionsMenuComponent', () => {
       mockApi([
         mockCall('container.device.delete'),
       ]),
-      mockProvider(ContainerInstancesStore, {
-        selectedInstance,
+      mockProvider(ContainersStore, {
+        selectedContainer,
       }),
       mockProvider(ContainerDevicesStore, {
         loadDevices: jest.fn(),

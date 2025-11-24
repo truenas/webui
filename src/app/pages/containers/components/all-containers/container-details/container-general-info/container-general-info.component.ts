@@ -21,7 +21,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -53,38 +53,38 @@ export class ContainerGeneralInfoComponent {
   private router = inject(Router);
   private loader = inject(LoaderService);
   private slideIn = inject(SlideIn);
-  private instancesStore = inject(ContainerInstancesStore);
+  private containersStore = inject(ContainersStore);
 
-  instance = input.required<ContainerInstance>();
+  container = input.required<ContainerInstance>();
 
   protected readonly Role = Role;
   protected readonly containerCapabilitiesPolicyLabels = containerCapabilitiesPolicyLabels;
   protected readonly containerTimeLabels = containerTimeLabels;
 
-  editInstance(): void {
+  editContainer(): void {
     this.slideIn
-      .open(ContainerFormComponent, { data: this.instance() })
+      .open(ContainerFormComponent, { data: this.container() })
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (result) => {
-          // Reload the instance data if the form was saved successfully
+          // Reload the container data if the form was saved successfully
           if (result?.response) {
-            this.instancesStore.initialize();
+            this.containersStore.initialize();
           }
         },
       });
   }
 
-  deleteInstance(): void {
+  deleteContainer(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete'),
-      message: this.translate.instant('Delete {name}?', { name: this.instance().name }),
+      message: this.translate.instant('Delete {name}?', { name: this.container().name }),
       buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       switchMap(() => {
         this.loader.open();
-        return this.api.call('container.delete', [this.instance().id]);
+        return this.api.call('container.delete', [this.container().id]);
       }),
       this.errorHandler.withErrorHandler(),
       untilDestroyed(this),

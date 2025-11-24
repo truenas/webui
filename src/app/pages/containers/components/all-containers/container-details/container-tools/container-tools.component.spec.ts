@@ -8,13 +8,13 @@ import { ContainerInstance } from 'app/interfaces/container.interface';
 import {
   ContainerToolsComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-tools/container-tools.component';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
-import { fakeContainerInstance } from 'app/pages/containers/utils/fake-container-instance.utils';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
 describe('ContainerToolsComponent', () => {
   let spectator: Spectator<ContainerToolsComponent>;
   let loader: HarnessLoader;
-  const selectedInstance = signal<ContainerInstance>(fakeContainerInstance({
+  const selectedContainer = signal<ContainerInstance>(fakeContainer({
     id: 1,
     status: {
       state: ContainerStatus.Running,
@@ -26,14 +26,14 @@ describe('ContainerToolsComponent', () => {
   const createComponent = createComponentFactory({
     component: ContainerToolsComponent,
     providers: [
-      mockProvider(ContainerInstancesStore, {
-        selectedInstance,
+      mockProvider(ContainersStore, {
+        selectedContainer,
       }),
     ],
   });
 
   beforeEach(() => {
-    selectedInstance.set(fakeContainerInstance({
+    selectedContainer.set(fakeContainer({
       id: 1,
       status: {
         state: ContainerStatus.Running,
@@ -53,8 +53,8 @@ describe('ContainerToolsComponent', () => {
       expect(await (await shellLink.host()).getAttribute('href')).toBe('/containers/view/1/shell');
     });
 
-    it('show shell link as disabled when instance is not running', async () => {
-      selectedInstance.set(fakeContainerInstance({
+    it('show shell link as disabled when container is not running', async () => {
+      selectedContainer.set(fakeContainer({
         id: 1,
         status: {
           state: ContainerStatus.Stopped,

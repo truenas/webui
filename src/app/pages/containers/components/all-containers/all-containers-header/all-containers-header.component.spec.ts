@@ -10,7 +10,7 @@ import {
   GlobalConfigFormComponent,
 } from 'app/pages/containers/components/all-containers/all-containers-header/global-config-form/global-config-form.component';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { AllContainersHeaderComponent } from './all-containers-header.component';
 
 describe('AllContainersHeaderComponent', () => {
@@ -26,9 +26,9 @@ describe('AllContainersHeaderComponent', () => {
     component: AllContainersHeaderComponent,
     providers: [
       mockAuth(),
-      mockProvider(ContainerInstancesStore, {
+      mockProvider(ContainersStore, {
         initialize: jest.fn(),
-        instances: signal([]),
+        containers: signal([]),
       }),
       mockProvider(ContainerConfigStore, storeMock),
       mockProvider(SlideIn, {
@@ -69,7 +69,7 @@ describe('AllContainersHeaderComponent', () => {
         { data: { dataset: 'pool1/dataset1' } },
       );
       expect(spectator.inject(ContainerConfigStore).initialize).toHaveBeenCalled();
-      expect(spectator.inject(ContainerInstancesStore).initialize).toHaveBeenCalled();
+      expect(spectator.inject(ContainersStore).initialize).toHaveBeenCalled();
     });
   });
 });

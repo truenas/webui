@@ -17,7 +17,7 @@ describe('ContainerListBulkActionsComponent', () => {
   let loader: HarnessLoader;
   let menu: MatMenuHarness;
 
-  const checkedInstancesMock = [
+  const checkedContainersMock = [
     { id: '1', status: 'Running' },
     { id: '2', status: 'Stopped' },
   ] as unknown as ContainerInstance[];
@@ -40,7 +40,7 @@ describe('ContainerListBulkActionsComponent', () => {
   beforeEach(async () => {
     spectator = createComponent({
       props: {
-        checkedInstances: checkedInstancesMock,
+        checkedContainers: checkedContainersMock,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -48,9 +48,9 @@ describe('ContainerListBulkActionsComponent', () => {
     await menu.open();
   });
 
-  it('displays the correct count of selected instances', () => {
+  it('displays the correct count of selected containers', () => {
     const selectedCount = spectator.query('.bulk-selected span:first-child');
-    expect(selectedCount).toHaveText(String(checkedInstancesMock.length));
+    expect(selectedCount).toHaveText(String(checkedContainersMock.length));
   });
 
   it('calls onBulkStart when Start All Selected is clicked', async () => {

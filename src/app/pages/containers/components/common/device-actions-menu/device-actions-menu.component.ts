@@ -29,7 +29,7 @@ import {
 import { ContainerNicFormDialog } from 'app/pages/containers/components/common/container-nic-form-dialog/container-nic-form-dialog.component';
 import { getDeviceDescription } from 'app/pages/containers/components/common/utils/get-device-description.utils';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -60,7 +60,7 @@ export class DeviceActionsMenuComponent {
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private devicesStore = inject(ContainerDevicesStore);
-  private instancesStore = inject(ContainerInstancesStore);
+  private containersStore = inject(ContainersStore);
   private loader = inject(LoaderService);
   private slideIn = inject(SlideIn);
 
@@ -96,14 +96,14 @@ export class DeviceActionsMenuComponent {
 
     // For filesystem devices, open the form
     if (this.isStorageDevice()) {
-      const instance = this.instancesStore.selectedInstance();
-      if (!instance) {
+      const container = this.containersStore.selectedContainer();
+      if (!container) {
         return;
       }
 
       this.slideIn.open(ContainerFilesystemDeviceFormComponent, {
         data: {
-          instance,
+          container,
           disk: device as ContainerFilesystemDevice,
         },
       }).pipe(untilDestroyed(this)).subscribe((result) => {

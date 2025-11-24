@@ -19,12 +19,12 @@ import {
   StopOptionsDialog,
   StopOptionsOperation,
 } from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
-import { fakeContainerInstance } from 'app/pages/containers/utils/fake-container-instance.utils';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
-const instance = fakeContainerInstance({
+const container = fakeContainer({
   id: 1,
-  name: 'agi_instance',
+  name: 'agi_container',
   autostart: false,
   status: {
     state: ContainerStatus.Running,
@@ -67,9 +67,9 @@ describe('ContainerRowComponent', () => {
           }),
         })),
       }),
-      mockProvider(ContainerInstancesStore, {
-        selectedInstance: () => instance,
-        selectInstance: jest.fn(),
+      mockProvider(ContainersStore, {
+        selectedContainer: () => container,
+        selectContainer: jest.fn(),
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -90,18 +90,18 @@ describe('ContainerRowComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent({
-      props: { instance, metrics },
+      props: { container, metrics },
     });
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   describe('cell rendering', () => {
-    it('shows instance name', () => {
-      expect(spectator.query('.cell-name')).toHaveText('agi_instance');
+    it('shows container name', () => {
+      expect(spectator.query('.cell-name')).toHaveText('agi_container');
     });
 
-    it('shows instance status', () => {
+    it('shows container status', () => {
       const cells = spectator.queryAll('.cell');
       expect(cells[2]).toHaveText('Running');
     });
@@ -118,9 +118,9 @@ describe('ContainerRowComponent', () => {
       expect(cells[6]).toHaveText('10%');
     });
 
-    it('shows Stop and Restart button when instance is Running', async () => {
-      spectator.setInput('instance', fakeContainerInstance({
-        ...instance,
+    it('shows Stop and Restart button when container is Running', async () => {
+      spectator.setInput('container', fakeContainer({
+        ...container,
         status: {
           state: ContainerStatus.Running,
           pid: 123,
@@ -137,9 +137,9 @@ describe('ContainerRowComponent', () => {
       expect(startIcon).not.toExist();
     });
 
-    it('shows Start button when instance is Stopped', async () => {
-      spectator.setInput('instance', fakeContainerInstance({
-        ...instance,
+    it('shows Start button when container is Stopped', async () => {
+      spectator.setInput('container', fakeContainer({
+        ...container,
         status: {
           state: ContainerStatus.Stopped,
           pid: null,
@@ -158,7 +158,7 @@ describe('ContainerRowComponent', () => {
   });
 
   describe('actions', () => {
-    it('shows stop options dialog and stops instance when Stop icon is pressed', async () => {
+    it('shows stop options dialog and stops container when Stop icon is pressed', async () => {
       const stopIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-stop-circle' }));
       await stopIcon.click();
 
@@ -172,7 +172,7 @@ describe('ContainerRowComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container stopped');
     });
 
-    it('shows restart options dialog and restarts instance when Restart icon is pressed', async () => {
+    it('shows restart options dialog and restarts container when Restart icon is pressed', async () => {
       const restartIcon = await loader.getHarness(IxIconHarness.with({ name: 'mdi-restart' }));
       await restartIcon.click();
 
@@ -190,9 +190,9 @@ describe('ContainerRowComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Container restarted');
     });
 
-    it('starts an instance when Start icon is pressed', async () => {
-      spectator.setInput('instance', fakeContainerInstance({
-        ...instance,
+    it('starts a container when Start icon is pressed', async () => {
+      spectator.setInput('container', fakeContainer({
+        ...container,
         status: {
           state: ContainerStatus.Stopped,
           pid: null,

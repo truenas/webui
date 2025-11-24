@@ -20,7 +20,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   },
 })
 export class ContainerStatusCellComponent {
-  readonly instance = input.required<ContainerInstance>();
+  readonly container = input.required<ContainerInstance>();
 
   protected hostClasses = computed(() => {
     return [
@@ -29,7 +29,7 @@ export class ContainerStatusCellComponent {
     ].join(' ');
   });
 
-  status = computed(() => this.instance().status?.state);
+  status = computed(() => this.container().status?.state);
 
   protected statusLabels = containerStatusLabels;
 }

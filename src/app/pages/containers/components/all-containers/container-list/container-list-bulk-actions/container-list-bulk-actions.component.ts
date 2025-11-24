@@ -45,7 +45,7 @@ export class ContainerListBulkActionsComponent {
   private errorHandler = inject(ErrorHandlerService);
   private matDialog = inject(MatDialog);
 
-  readonly checkedInstances = input.required<ContainerInstance[]>();
+  readonly checkedContainers = input.required<ContainerInstance[]>();
   readonly resetBulkSelection = output();
 
   protected readonly requiredRoles = [Role.ContainerWrite];
@@ -53,31 +53,31 @@ export class ContainerListBulkActionsComponent {
   readonly bulkActionStartedMessage = this.translate.instant('Requested action performed for selected Containers');
 
   protected readonly isBulkStartDisabled = computed(() => {
-    return this.checkedInstances().every(
-      (instance) => [ContainerStatus.Running].includes(instance.status?.state),
+    return this.checkedContainers().every(
+      (container) => [ContainerStatus.Running].includes(container.status?.state),
     );
   });
 
   protected readonly isBulkStopDisabled = computed(() => {
-    return this.checkedInstances().every(
-      (instance) => [ContainerStatus.Stopped].includes(instance.status?.state),
+    return this.checkedContainers().every(
+      (container) => [ContainerStatus.Stopped].includes(container.status?.state),
     );
   });
 
-  protected readonly activeCheckedInstances = computed(() => {
-    return this.checkedInstances().filter(
-      (instance) => [ContainerStatus.Running].includes(instance.status?.state),
+  protected readonly activeCheckedContainers = computed(() => {
+    return this.checkedContainers().filter(
+      (container) => [ContainerStatus.Running].includes(container.status?.state),
     );
   });
 
-  protected readonly stoppedCheckedInstances = computed(() => {
-    return this.checkedInstances().filter(
-      (instance) => [ContainerStatus.Stopped].includes(instance.status?.state),
+  protected readonly stoppedCheckedContainers = computed(() => {
+    return this.checkedContainers().filter(
+      (container) => [ContainerStatus.Stopped].includes(container.status?.state),
     );
   });
 
   onBulkStart(): void {
-    this.stoppedCheckedInstances().forEach((instance) => this.start(instance.id));
+    this.stoppedCheckedContainers().forEach((container) => this.start(container.id));
     this.resetBulkSelection.emit();
     this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
   }
@@ -89,7 +89,7 @@ export class ContainerListBulkActionsComponent {
       .pipe(
         filter(Boolean),
         tap((options: ContainerStopParams) => {
-          this.activeCheckedInstances().forEach((instance) => this.stop(instance.id, options));
+          this.activeCheckedContainers().forEach((container) => this.stop(container.id, options));
           this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
           this.resetBulkSelection.emit();
         }),
@@ -104,7 +104,7 @@ export class ContainerListBulkActionsComponent {
       .pipe(
         filter(Boolean),
         tap((options: ContainerStopParams) => {
-          this.activeCheckedInstances().forEach((instance) => this.restart(instance.id, options));
+          this.activeCheckedContainers().forEach((container) => this.restart(container.id, options));
           this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
           this.resetBulkSelection.emit();
         }),
@@ -112,22 +112,22 @@ export class ContainerListBulkActionsComponent {
       ).subscribe();
   }
 
-  private start(instanceId: number): void {
-    this.api.call('container.start', [instanceId])
+  private start(containerId: number): void {
+    this.api.call('container.start', [containerId])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe();
   }
 
-  private stop(instanceId: number, options: ContainerStopParams): void {
-    this.api.call('container.stop', [instanceId, options])
+  private stop(containerId: number, options: ContainerStopParams): void {
+    this.api.call('container.stop', [containerId, options])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe();
   }
 
-  private restart(instanceId: number, options: ContainerStopParams): void {
-    this.api.call('container.stop', [instanceId, options])
+  private restart(containerId: number, options: ContainerStopParams): void {
+    this.api.call('container.stop', [containerId, options])
       .pipe(
-        switchMap(() => this.api.call('container.start', [instanceId])),
+        switchMap(() => this.api.call('container.start', [containerId])),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )

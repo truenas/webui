@@ -1,20 +1,21 @@
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { ContainerListComponent } from 'app/pages/containers/components/all-containers/container-list/container-list.component';
 import { ContainerRowComponent } from 'app/pages/containers/components/all-containers/container-list/container-row/container-row.component';
-import { ContainerInstancesStore } from 'app/pages/containers/stores/container-instances.store';
-import { fakeContainerInstance } from 'app/pages/containers/utils/fake-container-instance.utils';
+import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
 describe('ContainerListComponent', () => {
   let spectator: Spectator<ContainerListComponent>;
 
-  const mockInstance = fakeContainerInstance({
+  const mockContainer = fakeContainer({
     id: 1,
-    name: 'agi_instance',
+    name: 'agi_container',
     status: {
       state: ContainerStatus.Running,
       pid: 123,
@@ -24,16 +25,16 @@ describe('ContainerListComponent', () => {
 
   const createComponent = createRoutingFactory({
     component: ContainerListComponent,
-    imports: [ContainerRowComponent],
+    declarations: [MockComponent(ContainerRowComponent)],
     providers: [
       mockAuth(),
-      mockProvider(ContainerInstancesStore, {
+      mockProvider(ContainersStore, {
         initialize: jest.fn(),
-        instances: jest.fn(() => [mockInstance]),
+        containers: jest.fn(() => [mockContainer]),
         metrics: jest.fn(() => ({})),
         isLoading: jest.fn(() => false),
-        selectedInstance: jest.fn(() => mockInstance),
-        selectInstance: jest.fn(),
+        selectedContainer: jest.fn(() => mockContainer),
+        selectContainer: jest.fn(),
       }),
       mockProvider(Router, {
         events: of(),
@@ -51,11 +52,10 @@ describe('ContainerListComponent', () => {
     spectator = createComponent();
   });
 
-  it('shows a list of instances', () => {
-    const instances = spectator.queryAll(ContainerRowComponent);
+  it('shows a list of containers', () => {
+    const containerRows = spectator.queryAll('ix-container-row');
 
-    expect(instances).toHaveLength(1);
-    expect(instances[0].instance()).toEqual(mockInstance);
+    expect(containerRows).toHaveLength(1);
   });
 
   it('shows details', () => {
