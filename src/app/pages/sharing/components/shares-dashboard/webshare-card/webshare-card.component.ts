@@ -114,7 +114,7 @@ export class WebShareCardComponent implements OnInit {
   // WebShare service is only accessible on *.truenas.direct domains for security reasons
   readonly isTruenasDirectDomain = this.window.location.hostname.includes('.truenas.direct');
 
-  hasLicenseOrTruenasConnect$ = this.licenseService.hasLicenseOrTruenasConnect$;
+  hasTruenasConnect$ = this.licenseService.hasTruenasConnect$;
 
   protected readonly helptext = helptextSharingWebshare;
 
@@ -184,7 +184,7 @@ export class WebShareCardComponent implements OnInit {
   }
 
   onAddClicked(): void {
-    this.hasLicenseOrTruenasConnect$.pipe(
+    this.hasTruenasConnect$.pipe(
       take(1),
       takeUntilDestroyed(this.destroyRef),
     // eslint-disable-next-line rxjs-angular/prefer-takeuntil

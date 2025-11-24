@@ -102,7 +102,7 @@ export class WebShareListComponent implements OnInit {
   searchQuery: SearchQuery<WebShareTableRow> = { isBasicQuery: true, query: '' };
   dataProvider: AsyncDataProvider<WebShareTableRow>;
 
-  hasLicenseOrTruenasConnect$ = this.licenseService.hasLicenseOrTruenasConnect$;
+  hasTruenasConnect$ = this.licenseService.hasTruenasConnect$;
 
   protected readonly helptext = helptextSharingWebshare;
 
@@ -190,7 +190,7 @@ export class WebShareListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.hasLicenseOrTruenasConnect$.pipe(
+    this.hasTruenasConnect$.pipe(
       take(1),
       takeUntilDestroyed(this.destroyRef),
     // eslint-disable-next-line rxjs-angular/prefer-takeuntil

@@ -24,7 +24,7 @@
         mat-button
         color="primary"
         ixTest="add-webshare"
-        [disabled]="!(hasLicenseOrTruenasConnect$ | async)"
+        [disabled]="!(hasTruenasConnect$ | async)"
         (click)="doAdd()"
       >
         {{ 'Add' | translate }}
@@ -32,7 +32,7 @@
     </div>
   </mat-toolbar-row>
   <mat-card-content>
-    @if (!(hasLicenseOrTruenasConnect$ | async)) {
+    @if (!(hasTruenasConnect$ | async)) {
       <div class="info-message clickable" (click)="openTruenasConnectDialog()">
         <ix-icon name="info"></ix-icon>
         <span>{{ 'WebShare service requires TrueNAS Connect to be configured and active.' | translate }}</span>

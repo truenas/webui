@@ -133,7 +133,7 @@
           {{ 'Create NFS Share' | translate }}
         </a>
       </div>
-      @if (hasLicenseOrTruenasConnect()) {
+      @if (hasTruenasConnect()) {
         <div class="details-item">
           <a
             *ixRequiresRoles="webShareRequiredRoles"

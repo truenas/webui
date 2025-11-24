@@ -1,10 +1,10 @@
-<mat-card [class.card-disabled]="!(hasLicenseOrTruenasConnect$ | async)">
+<mat-card [class.card-disabled]="!(hasTruenasConnect$ | async)">
   <mat-toolbar-row>
     <div class="toolbar-row-title">
       <a [ixTest]="['webshare', 'open-in-new']" [routerLink]="['/sharing', 'webshare']">
         <h3 class="card-title">
           {{ 'WebShare' | translate }}
-          @if (!(hasLicenseOrTruenasConnect$ | async)) {
+          @if (!(hasTruenasConnect$ | async)) {
             <span class="license-required">({{ 'Requires TrueNAS Connect to be configured' | translate }})</span>
           }
           <ix-icon name="open_in_new"></ix-icon>
@@ -36,7 +36,7 @@
         mat-button
         [ixTest]="['webshare', 'add']"
         [attr.aria-label]="'Add WebShare' | translate"
-        [disabled]="!(hasLicenseOrTruenasConnect$ | async)"
+        [disabled]="!(hasTruenasConnect$ | async)"
         (click)="onAddClicked()"
       >
         {{ 'Add' | translate }}

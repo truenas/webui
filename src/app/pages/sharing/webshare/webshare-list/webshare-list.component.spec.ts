@@ -164,7 +164,7 @@ describe('WebShareListComponent', () => {
     const dialog = spectator.inject(DialogService);
     const snackbar = spectator.inject(SnackbarService);
 
-    // Directly call the doDelete method
+    // Call the delete method directly to test delete confirmation flow
     spectator.component.doDelete({
       id: 1,
       name: 'documents',
@@ -187,7 +187,7 @@ describe('WebShareListComponent', () => {
     const dialog = spectator.inject(DialogService);
     jest.spyOn(dialog, 'confirm').mockReturnValue(of(false as unknown as never));
 
-    // Directly call the doDelete method
+    // Call the delete method directly to test cancellation flow
     spectator.component.doDelete({
       id: 1,
       name: 'documents',
@@ -204,7 +204,7 @@ describe('WebShareListComponent', () => {
     expect(deleteCallsMade).toHaveLength(0);
   });
 
-  it('should handle delete error gracefully', () => {
+  it('should handle delete error gracefully', async () => {
     const dialog = spectator.inject(DialogService);
     jest.spyOn(dialog, 'confirm').mockReturnValue(of(true as unknown as never));
     jest.spyOn(api, 'call').mockImplementation((method: string) => {
@@ -220,12 +220,14 @@ describe('WebShareListComponent', () => {
       return of(null);
     });
 
-    // Directly call the doDelete method
+    // Call the delete method directly to test error handling flow
     spectator.component.doDelete({
       id: 1,
       name: 'documents',
       path: '/mnt/tank/documents',
     });
+
+    await spectator.fixture.whenStable();
 
     expect(dialog.error).toHaveBeenCalledWith({
       title: 'Error deleting WebShare',
@@ -290,8 +292,8 @@ describe('WebShareListComponent', () => {
     });
   });
 
-  it('should check for valid license before adding share', () => {
-    // Test that hasLicenseOrTruenasConnect$ observable is defined and accessible
-    expect(spectator.component.hasLicenseOrTruenasConnect$).toBeDefined();
+  it('should check for TrueNAS Connect before adding share', () => {
+    // Test that hasTruenasConnect$ observable is defined and accessible
+    expect(spectator.component.hasTruenasConnect$).toBeDefined();
   });
 });

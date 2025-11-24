@@ -43,7 +43,7 @@ describe('UsageCardComponent', () => {
         open: jest.fn(() => of()),
       }),
       mockProvider(LicenseService, {
-        hasLicenseOrTruenasConnect$: of(true),
+        hasTruenasConnect$: of(true),
       }),
       provideMockStore({
         selectors: [

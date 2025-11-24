@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -19,6 +19,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -139,10 +140,29 @@ describe('WebShareCardComponent', () => {
     consoleError.mockRestore();
   });
 
-  it('does not show Open WebShare button when service is stopped', () => {
-    // Test is covered by component logic - when service.state !== Running, button is not shown
-    // This is validated in the component template with @if (isServiceRunning$ | async)
-    expect(true).toBe(true);
+  it('disables Open WebShare button when not on .truenas.direct domain', async () => {
+    // Change hostname to non-.truenas.direct
+    Object.defineProperty(mockWindow.location, 'hostname', {
+      value: 'localhost',
+      writable: true,
+      configurable: true,
+    });
+
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+    const openButton = await loader.getHarness(
+      MatButtonHarness.with({ text: 'Open WebShare' }),
+    );
+
+    expect(await openButton.isDisabled()).toBe(true);
+
+    // Restore hostname for other tests
+    Object.defineProperty(mockWindow.location, 'hostname', {
+      value: 'test.truenas.direct',
+      writable: true,
+      configurable: true,
+    });
   });
 
   it('opens add form when Add button is clicked', async () => {
@@ -157,8 +177,72 @@ describe('WebShareCardComponent', () => {
   });
 
   it('shows delete confirmation and deletes WebShare', () => {
-    // Test is validated - doDelete method is properly implemented with dialog confirmation
-    // and API call to update webshare config
-    expect(true).toBe(true);
+    const dialog = spectator.inject(DialogService);
+    const api = spectator.inject(ApiService);
+    const snackbar = spectator.inject(SnackbarService);
+
+    jest.spyOn(dialog, 'confirm').mockReturnValue(of(true as unknown as never));
+    jest.spyOn(api, 'call').mockImplementation((method) => {
+      if (method === 'sharing.webshare.delete') {
+        return of(true);
+      }
+      return of(mockWebShares);
+    });
+
+    // Find and click delete button for first row
+    const deleteButtons = spectator.queryAll('[aria-label*="Delete"]');
+    expect(deleteButtons.length).toBeGreaterThan(0);
+
+    deleteButtons[0].dispatchEvent(new Event('click'));
+    spectator.detectChanges();
+
+    expect(dialog.confirm).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Delete WebShare',
+        buttonText: 'Delete',
+      }),
+    );
+
+    expect(api.call).toHaveBeenCalledWith('sharing.webshare.delete', [1]);
+    expect(snackbar.success).toHaveBeenCalledWith('WebShare deleted');
+  });
+
+  it('handles error when deleting WebShare fails', () => {
+    const dialog = spectator.inject(DialogService);
+    const api = spectator.inject(ApiService);
+
+    jest.spyOn(dialog, 'confirm').mockReturnValue(of(true as unknown as never));
+    jest.spyOn(api, 'call').mockImplementation((method) => {
+      if (method === 'sharing.webshare.delete') {
+        return throwError(() => new Error('Delete failed'));
+      }
+      return of(mockWebShares);
+    });
+    jest.spyOn(dialog, 'error');
+
+    const deleteButtons = spectator.queryAll('[aria-label*="Delete"]');
+    deleteButtons[0].dispatchEvent(new Event('click'));
+    spectator.detectChanges();
+
+    expect(dialog.error).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Error deleting WebShare',
+      }),
+    );
+  });
+
+  it('does not delete when confirmation is cancelled', () => {
+    const dialog = spectator.inject(DialogService);
+    const api = spectator.inject(ApiService);
+
+    jest.spyOn(dialog, 'confirm').mockReturnValue(of(false as unknown as never));
+    jest.spyOn(api, 'call');
+
+    const deleteButtons = spectator.queryAll('[aria-label*="Delete"]');
+    deleteButtons[0].dispatchEvent(new Event('click'));
+    spectator.detectChanges();
+
+    // API should not be called if confirmation is cancelled
+    expect(api.call).not.toHaveBeenCalledWith('sharing.webshare.delete', expect.anything());
   });
 });

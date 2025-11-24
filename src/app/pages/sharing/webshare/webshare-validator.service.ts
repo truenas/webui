@@ -39,6 +39,22 @@ export class WebShareValidatorService {
     };
   }
 
+  /**
+   * Validates that a WebShare path is valid and not a root dataset.
+   *
+   * Rules enforced:
+   * 1. Path must be under /mnt/
+   * 2. Path cannot be a root dataset (e.g., /mnt/pool)
+   * 3. Path must be a subdirectory (e.g., /mnt/pool/dataset)
+   *
+   * Examples:
+   * - /mnt/pool          → REJECTED (root dataset)
+   * - /mnt/pool/         → REJECTED (root dataset with trailing slash)
+   * - /mnt/pool//dataset → ACCEPTED (multiple slashes normalized)
+   * - /mnt/pool/dataset  → ACCEPTED (valid subdirectory)
+   * - /etc/passwd        → REJECTED (not under /mnt/)
+   * - /mnt/../etc        → REJECTED (path traversal)
+   */
   validateWebSharePath(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (!control.value) {
@@ -47,7 +63,8 @@ export class WebShareValidatorService {
 
       const inputPath = control.value as string;
 
-      // Normalize the path by resolving . and .. segments to prevent path traversal
+      // Normalize the path by resolving . and .. segments and removing trailing slashes
+      // This prevents path traversal attacks and ensures consistent validation
       const normalizedPath = this.normalizePath(inputPath);
 
       // After normalization, check if path is still under /mnt/
@@ -59,8 +76,12 @@ export class WebShareValidatorService {
         };
       }
 
-      // Check if it's a root dataset
-      // Filter out empty strings to handle any edge cases with multiple slashes
+      // Check if it's a root dataset (e.g., /mnt/pool)
+      // Remove the '/mnt/' prefix (5 characters) and split by '/'
+      // Filter out empty strings which come from multiple consecutive slashes
+      // Example: '/mnt/pool' → 'pool' → ['pool'] → length 1 (REJECTED)
+      // Example: '/mnt/pool/dataset' → 'pool/dataset' → ['pool', 'dataset'] → length 2 (ACCEPTED)
+      // Example: '/mnt/pool//dataset' → 'pool//dataset' → ['pool', '', 'dataset'] → ['pool', 'dataset'] → length 2 (ACCEPTED)
       const pathParts = normalizedPath.substring(5).split('/').filter((part) => part.length > 0);
       if (pathParts.length === 1) {
         return {

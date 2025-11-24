@@ -80,17 +80,11 @@ export class LicenseService {
   );
 
   /**
-   * Check if the system has a valid license OR is configured with TrueNAS Connect.
-   * This is used to determine if features requiring license/connect are available.
+   * Check if the system is configured with TrueNAS Connect.
+   * This is used to determine if WebShare and other TrueNAS Connect features are available.
    */
-  readonly hasLicenseOrTruenasConnect$ = combineLatest([
-    this.store$.select(selectSystemInfo),
-    this.truenasConnectConfig$,
-  ]).pipe(
-    map(([systemInfo, connectConfig]) => {
-      const hasLicense = systemInfo?.license !== null;
-      return hasLicense || connectConfig.enabled;
-    }),
+  readonly hasTruenasConnect$ = this.truenasConnectConfig$.pipe(
+    map((connectConfig) => connectConfig.enabled),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 }

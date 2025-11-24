@@ -198,8 +198,8 @@ export class UsageCardComponent {
       && !this.hasInheritedWebShares();
   });
 
-  readonly hasLicenseOrTruenasConnect = toSignal(
-    this.licenseService.hasLicenseOrTruenasConnect$,
+  readonly hasTruenasConnect = toSignal(
+    this.licenseService.hasTruenasConnect$,
     { initialValue: false },
   );
 
