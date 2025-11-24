@@ -38,7 +38,7 @@ describe('CopyrightLineComponent', () => {
 
     expect(spectator.fixture.nativeElement).toHaveText(`HarborNAS®  © ${buildYear} iXsystems, Inc. dba  HarborNAS`);
     expect(spectator.fixture.nativeElement).toHaveText('iXsystems, Inc');
-    expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/testdrive');
+    expect(spectator.query('a')).toHaveAttribute('href', 'https://github.com/HarborNAS');
   });
 
   it('shows copyright line with product type and year of build', () => {
@@ -48,7 +48,7 @@ describe('CopyrightLineComponent', () => {
 
     expect(spectator.fixture.nativeElement).toHaveText(`HarborNAS® Community Edition  © ${buildYear} iXsystems, Inc. dba  HarborNAS`);
     expect(spectator.fixture.nativeElement).toHaveText('iXsystems, Inc');
-    expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/testdrive');
+    expect(spectator.query('a')).toHaveAttribute('href', 'https://github.com/HarborNAS');
   });
 
   it('shows copyright line with enterprise product type and year of build', () => {
