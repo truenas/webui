@@ -5,7 +5,7 @@ import { BwLimitUpdate } from 'app/interfaces/cloud-sync-task.interface';
 /**
  * validator that ensures *rclone bandwidth limit strings*
  * match the specification described here:
- * https://rclone.org/docs/#bwlimit-bandwidth-spec
+ * https://rclone.org/docs/#bwlimit-bwtimetable
  *
  * on error, the validator returns the *invalidRcloneBandwidthLimit* error object with
  * the original invalid value string.

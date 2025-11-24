@@ -32,7 +32,8 @@
         mat-icon-button
         ixTest="device-actions"
         class="actions"
-        [title]="'Actions' | translate"
+        [matTooltip]="'Actions' | translate"
+        [attr.aria-label]="'Actions' | translate"
         [matMenuTriggerFor]="actionsMenu"
       >
         <ix-icon name="more_vert"></ix-icon>

@@ -73,7 +73,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
   protected readonly searchQuery = signal<SearchQuery<AuditEntry>>({ query: '', isBasicQuery: true });
   protected readonly searchProperties = signal<SearchProperty<AuditEntry>[]>([]);
-  protected readonly advancedSearchPlaceholder = this.translate.instant('Service = "SMB" AND Event = "CLOSE"');
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Event = "Close" AND Username = "admin"');
   protected readonly serviceControl = new FormControl<AuditService>(AuditService.Middleware);
   protected readonly serviceOptions$ = of(mapToOptions(auditServiceLabels, this.translate));
   protected readonly exportFormat = signal<ExportFormat>(ExportFormat.Csv);

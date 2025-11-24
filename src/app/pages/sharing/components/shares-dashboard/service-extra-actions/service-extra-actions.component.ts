@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -42,6 +43,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     RequiresRolesDirective,
     MatMenuItem,
     TranslateModule,
+    MatTooltip,
   ],
 })
 export class ServiceExtraActionsComponent {
