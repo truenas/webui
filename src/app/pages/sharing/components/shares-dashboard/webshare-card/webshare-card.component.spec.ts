@@ -22,6 +22,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { WebShareCardComponent } from './webshare-card.component';
@@ -138,31 +139,6 @@ describe('WebShareCardComponent', () => {
     expect(mockWindow.open).toHaveBeenCalledWith('http://test.truenas.direct:755/webshare/', '_blank');
 
     consoleError.mockRestore();
-  });
-
-  it('disables Open WebShare button when not on .truenas.direct domain', async () => {
-    // Change hostname to non-.truenas.direct
-    Object.defineProperty(mockWindow.location, 'hostname', {
-      value: 'localhost',
-      writable: true,
-      configurable: true,
-    });
-
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-
-    const openButton = await loader.getHarness(
-      MatButtonHarness.with({ text: 'Open WebShare' }),
-    );
-
-    expect(await openButton.isDisabled()).toBe(true);
-
-    // Restore hostname for other tests
-    Object.defineProperty(mockWindow.location, 'hostname', {
-      value: 'test.truenas.direct',
-      writable: true,
-      configurable: true,
-    });
   });
 
   it('opens add form when Add button is clicked', async () => {

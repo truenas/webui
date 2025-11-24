@@ -18,7 +18,6 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
@@ -88,7 +87,6 @@ export class WebShareCardComponent implements OnInit {
   private snackbar = inject(SnackbarService);
   protected emptyService = inject(EmptyService);
   private store$ = inject(Store<AppState>);
-  private window = inject(WINDOW);
   private destroyRef = inject(DestroyRef);
   private licenseService = inject(LicenseService);
   private webShareService = inject(WebShareService);
@@ -112,7 +110,7 @@ export class WebShareCardComponent implements OnInit {
 
   // Check if current domain is *.truenas.direct (static check, hostname doesn't change at runtime)
   // WebShare service is only accessible on *.truenas.direct domains for security reasons
-  readonly isTruenasDirectDomain = this.window.location.hostname.includes('.truenas.direct');
+  readonly isTruenasDirectDomain = this.webShareService.isTruenasDirectDomain;
 
   hasTruenasConnect$ = this.licenseService.hasTruenasConnect$;
 
@@ -171,11 +169,7 @@ export class WebShareCardComponent implements OnInit {
 
   ngOnInit(): void {
     const webshares$ = this.webShares$.pipe(
-      map((shares) => shares.map((share) => ({
-        id: share.id,
-        name: share.name,
-        path: share.path,
-      }))),
+      map((shares) => this.webShareService.transformToTableRows(shares)),
       takeUntilDestroyed(this.destroyRef),
     );
 

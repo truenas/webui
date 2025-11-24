@@ -10,15 +10,13 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, switchMap, map, of,
+  filter, switchMap, of,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
-import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -95,7 +93,6 @@ export class WebShareListComponent implements OnInit {
   private licenseService = inject(LicenseService);
   private webShareService = inject(WebShareService);
   private truenasConnectService = inject(TruenasConnectService);
-  private window = inject(WINDOW);
 
   service$ = this.store$.select(selectService(ServiceName.WebShare));
   filterString = '';
@@ -130,9 +127,9 @@ export class WebShareListComponent implements OnInit {
           iconName: iconMarker('mdi-open-in-new'),
           tooltip: this.translate.instant('Open'),
           onClick: (row) => this.openWebShare(row),
-          disabled: () => of(!this.isTruenasDirectDomain()),
+          disabled: () => of(!this.webShareService.isTruenasDirectDomain),
           dynamicTooltip: () => of(
-            this.isTruenasDirectDomain()
+            this.webShareService.isTruenasDirectDomain
               ? this.translate.instant('Open')
               : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'),
           ),
@@ -252,12 +249,7 @@ export class WebShareListComponent implements OnInit {
   }
 
   private setDataProvider(): void {
-    const webshares$ = this.api.call('sharing.webshare.query', [[]]).pipe(
-      map((shares: WebShare[]) => shares.map((share) => ({
-        id: share.id,
-        name: share.name,
-        path: share.path,
-      }))),
+    const webshares$ = this.webShareService.getWebShareTableRows().pipe(
       takeUntilDestroyed(this.destroyRef),
     );
 
@@ -271,10 +263,6 @@ export class WebShareListComponent implements OnInit {
 
   openTruenasConnectDialog(): void {
     this.truenasConnectService.openStatusModal();
-  }
-
-  private isTruenasDirectDomain(): boolean {
-    return this.window.location.hostname.includes('.truenas.direct');
   }
 
   openWebShare(row: WebShareTableRow): void {
