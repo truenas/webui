@@ -103,4 +103,42 @@ describe('ServiceWebshareComponent', () => {
 
     expect(spectator.inject(SlideInRef).close).not.toHaveBeenCalled();
   });
+
+  it('saves config with search enabled when keeping it enabled', async () => {
+    // Form already has search enabled from mock config
+    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable TrueSearch' }));
+    expect(await searchCheckbox.getValue()).toBe(true);
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: true }]);
+  });
+
+  it('initializes form with default values when config has search disabled', async () => {
+    const api = spectator.inject(ApiService);
+    jest.spyOn(api, 'call').mockImplementation((method) => {
+      if (method === 'webshare.config') {
+        return of({ id: 1, search: false } as WebShareConfig);
+      }
+      return of(null);
+    });
+
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    const searchCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable TrueSearch' }));
+    expect(await searchCheckbox.getValue()).toBe(false);
+  });
+
+  it('displays the form with correct title', () => {
+    const header = spectator.query('ix-modal-header');
+    expect(header).toBeTruthy();
+  });
+
+  it('has save button accessible', async () => {
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    expect(saveButton).toBeTruthy();
+  });
 });

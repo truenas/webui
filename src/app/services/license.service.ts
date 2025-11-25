@@ -82,9 +82,13 @@ export class LicenseService {
   /**
    * Check if the system is configured with TrueNAS Connect.
    * This is used to determine if WebShare and other TrueNAS Connect features are available.
+   * We check for `status === Configured` rather than just `enabled` because:
+   * - `enabled: true` only means TrueNAS Connect is turned on
+   * - The system might still be in intermediate states (e.g., CertGenerationInProgress)
+   * - Only `status === Configured` means TrueNAS Connect is fully operational
    */
   readonly hasTruenasConnect$ = this.truenasConnectConfig$.pipe(
-    map((connectConfig) => connectConfig.enabled),
+    map((connectConfig) => connectConfig.status === TruenasConnectStatus.Configured),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 }
