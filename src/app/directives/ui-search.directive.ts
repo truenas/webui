@@ -57,10 +57,17 @@ export class UiSearchDirective implements OnInit, OnDestroy {
 
   private tryHighlightAnchors(element: UiSearchableElement, attemptCount: number): void {
     if (this.elementRef.nativeElement) {
+      if (element.triggerAnchor) {
+        const triggerAnchorRef = document.getElementById(element.triggerAnchor);
+        if (triggerAnchorRef) {
+          setTimeout(() => triggerAnchorRef.click(), searchDelayConst);
+        }
+      }
+
       setTimeout(() => {
         const anchorRef = document.getElementById(this.elementRef.nativeElement.id) || this.elementRef.nativeElement;
         this.highlightAndClickElement(anchorRef, !!element.triggerAnchor);
-      }, searchDelayConst);
+      }, element.triggerAnchor ? searchDelayConst * 2 : searchDelayConst);
 
       if (element.anchor && this.elementRef.nativeElement.id !== element.anchor) {
         this.highlightElementAnchor(element.anchor);
@@ -81,10 +88,8 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     }, searchDelayConst * 1.5);
   }
 
-  private highlightAndClickElement(anchorRef: HTMLElement, shouldClick = false): void {
-    if (shouldClick && anchorRef) setTimeout(() => anchorRef.click(), searchDelayConst);
-
-    if (!anchorRef || shouldClick) return;
+  private highlightAndClickElement(anchorRef: HTMLElement, skipFocus = false): void {
+    if (!anchorRef) return;
 
     this.renderer.addClass(anchorRef, 'search-element-highlighted');
 
@@ -94,7 +99,9 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     };
 
     setTimeout(() => {
-      anchorRef.focus();
+      if (!skipFocus) {
+        anchorRef.focus();
+      }
       anchorRef.scrollIntoView();
       document.querySelector<HTMLElement>('.rightside-content-hold')?.scrollBy(0, -20);
       ['click', 'keydown'].forEach((event) => document.addEventListener(event, removeHighlightStyling, { once: true }));
