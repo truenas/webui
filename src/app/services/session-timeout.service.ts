@@ -42,6 +42,7 @@ export class SessionTimeoutService {
 
   protected actionWaitTimeout: Timeout;
   protected terminateCancelTimeout: Timeout;
+  private lastLifetimeValue: number | null = null;
 
   private resume = (): void => {
     this.appStore$
@@ -50,7 +51,10 @@ export class SessionTimeoutService {
       .subscribe((preferences) => {
         this.pause();
         const lifetime = preferences.lifetime || 300;
-        this.tokenLastUsedService.updateTokenLifetime(lifetime);
+        if (this.lastLifetimeValue !== lifetime) {
+          this.tokenLastUsedService.updateTokenLifetime(lifetime);
+          this.lastLifetimeValue = lifetime;
+        }
         this.actionWaitTimeout = setTimeout(() => {
           this.stop();
           const showWarningDialogFor = 30000;
