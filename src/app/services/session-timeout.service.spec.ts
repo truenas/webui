@@ -67,6 +67,37 @@ describe('SessionTimeoutService', () => {
     expect(window.addEventListener).toHaveBeenCalledWith('keypress', expect.any(Function), false);
   });
 
+  it('updates token lifetime when session starts', fakeAsync(() => {
+    const tokenLastUsedService = spectator.inject(TokenLastUsedService);
+
+    spectator.service.start();
+    tick(0);
+
+    expect(tokenLastUsedService.updateTokenLifetime).toHaveBeenCalledWith(300);
+  }));
+
+  it('only updates token lifetime when value changes', fakeAsync(() => {
+    const tokenLastUsedService = spectator.inject(TokenLastUsedService);
+    const window = spectator.inject<Window>(WINDOW);
+    const resumeHandler = (window.addEventListener as jest.Mock).mock.calls.find(
+      (call) => call[0] === 'mouseover',
+    )?.[1];
+
+    spectator.service.start();
+    tick(0);
+
+    expect(tokenLastUsedService.updateTokenLifetime).toHaveBeenCalledTimes(1);
+
+    // Simulate another mouseover event (resume called again)
+    if (resumeHandler) {
+      resumeHandler();
+      tick(0);
+    }
+
+    // Should still be 1 because lifetime hasn't changed
+    expect(tokenLastUsedService.updateTokenLifetime).toHaveBeenCalledTimes(1);
+  }));
+
   it('pauses session timeout', fakeAsync(() => {
     spectator.service.start();
     spectator.service.pause();
