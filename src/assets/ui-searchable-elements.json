@@ -2699,6 +2699,49 @@
   {
     "hierarchy": [
       "Shares",
+      "WebShare",
+      "Add WebShare"
+    ],
+    "synonyms": [
+      "Create WebShare",
+      "New WebShare",
+      "Add Share",
+      "Create Share",
+      "New Share"
+    ],
+    "requiredRoles": [
+      "SHARING_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "webshare"
+    ],
+    "routerLink": null,
+    "anchor": "add-webshare",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "WebShare"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "webshare"
+    ],
+    "routerLink": null,
+    "anchor": "webshare-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
       "SMB",
       "SMB Status",
       "Sessions"

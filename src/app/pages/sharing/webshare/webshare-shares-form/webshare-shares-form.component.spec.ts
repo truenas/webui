@@ -293,28 +293,6 @@ describe('WebShareSharesFormComponent', () => {
     });
   });
 
-
-  describe('Cancel operation', () => {
-    beforeEach(() => {
-      // Mock console.warn for this test suite to avoid reactive form warnings
-      jest.spyOn(console, 'warn').mockImplementation();
-
-      spectator = createComponent();
-      spectator.detectChanges();
-    });
-
-    it('should close slide-in when cancel is clicked', () => {
-      // Use spectator click instead of harness due to label issues
-      const cancelButton = spectator.query('button[type="button"][mat-button]');
-      spectator.click(cancelButton);
-
-      expect(slideInRef.close).toHaveBeenCalledWith({
-        response: false,
-        error: null,
-      });
-    });
-  });
-
   describe('Error handling', () => {
     it('should handle error when loading WebShares fails', () => {
       const mockApiCall = jest.fn().mockReturnValue(throwError(() => new Error('Failed to load shares')));

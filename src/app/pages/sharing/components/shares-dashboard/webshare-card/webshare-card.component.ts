@@ -35,6 +35,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -45,7 +46,6 @@ import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares
 import { webShareNameColumn, WebShareTableRow } from 'app/pages/sharing/components/webshare-name-cell/webshare-name-cell.component';
 import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
-import { LicenseService } from 'app/services/license.service';
 import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -88,9 +88,9 @@ export class WebShareCardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private store$ = inject(Store<AppState>);
   private destroyRef = inject(DestroyRef);
-  private licenseService = inject(LicenseService);
   private webShareService = inject(WebShareService);
   private truenasConnectService = inject(TruenasConnectService);
+  private loader = inject(LoaderService);
 
   service$ = this.store$.select(selectService(ServiceName.WebShare));
   protected dataProvider: AsyncDataProvider<WebShareTableRow>;
@@ -112,7 +112,9 @@ export class WebShareCardComponent implements OnInit {
   // WebShare service is only accessible on *.truenas.direct domains for security reasons
   readonly isTruenasDirectDomain = this.webShareService.isTruenasDirectDomain;
 
-  hasTruenasConnect$ = this.licenseService.hasTruenasConnect$;
+  hasTruenasConnect$ = this.truenasConnectService.config$.pipe(
+    map((config) => config?.enabled ?? false),
+  );
 
   protected readonly helptext = helptextSharingWebshare;
 
@@ -229,7 +231,11 @@ export class WebShareCardComponent implements OnInit {
     })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.api.call('sharing.webshare.delete', [row.id])),
+        switchMap(() => {
+          return this.api.call('sharing.webshare.delete', [row.id]).pipe(
+            this.loader.withLoader(),
+          );
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
       // eslint-disable-next-line rxjs-angular/prefer-takeuntil

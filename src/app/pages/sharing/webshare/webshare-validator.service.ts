@@ -21,8 +21,10 @@ export class WebShareValidatorService {
       }
 
       const shares = sharesSignal();
-      // Filter out the share being edited
-      const otherShares = excludeId ? shares.filter((share) => share.id !== excludeId) : shares;
+      // Filter out the share being edited (use explicit null check to handle id=0 edge case)
+      const otherShares = excludeId !== null
+        ? shares.filter((share) => share.id !== excludeId)
+        : shares;
 
       const nameExists = otherShares.some(
         (share) => share.name === control.value,
@@ -153,8 +155,10 @@ export class WebShareValidatorService {
           const shares = sharesSignal();
           const newPath = value as string;
 
-          // Filter out the share being edited
-          const otherShares = shares.filter((share) => share.id !== excludeId);
+          // Filter out the share being edited (use explicit null check to handle id=0 edge case)
+          const otherShares = excludeId !== null
+            ? shares.filter((share) => share.id !== excludeId)
+            : shares;
 
           // Check for nesting conflicts
           for (const share of otherShares) {

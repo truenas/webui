@@ -28,7 +28,7 @@ export const helptextSharingWebshare = {
   },
 
   delete_dialog_title: T('Delete WebShare'),
-  delete_dialog_message: T('Are you sure you want to delete the WebShare "{name}"? Users will no longer be able to access {path} through WebShare.'),
+  delete_dialog_message: T('Are you sure you want to delete the WebShare "{name}"?<br><br>Users will no longer be able to access {path} through WebShare.'),
 
   service_disabled_message: T('The WebShare service must be configured and started before adding WebShares.'),
 };

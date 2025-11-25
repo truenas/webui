@@ -24,6 +24,7 @@
         mat-button
         color="primary"
         ixTest="add-webshare"
+        [ixUiSearch]="searchableElements.elements.createWebShare"
         [disabled]="!(hasTruenasConnect$ | async)"
         (click)="doAdd()"
       >
@@ -39,9 +40,10 @@
       </div>
     }
     @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
-      <ix-empty [conf]="emptyConfig"></ix-empty>
+      <ix-empty [conf]="emptyConfig" [requiredRoles]="requiredRoles"></ix-empty>
     } @else {
       <ix-table
+        [ixUiSearch]="searchableElements.elements.webshareList"
         [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
         [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
       >

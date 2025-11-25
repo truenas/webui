@@ -125,7 +125,12 @@ describe('WebShareListComponent', () => {
   it('should show empty state when no shares are configured', () => {
     // This test verifies that the component can handle empty data
     expect(spectator.component.emptyConfig).toBeDefined();
-    expect(spectator.component.emptyConfig.title).toBe('No WebShares configured');
+    expect(spectator.component.emptyConfig.title).toBe('');
+    expect(spectator.component.emptyConfig.message).toContain('WebShare service provides web-based file access');
+    expect(spectator.component.emptyConfig.button).toEqual({
+      label: 'Add WebShare',
+      action: expect.any(Function),
+    });
   });
 
   it('should open form when Add button is clicked', () => {
@@ -173,7 +178,7 @@ describe('WebShareListComponent', () => {
 
     expect(dialog.confirm).toHaveBeenCalledWith({
       title: 'Delete WebShare',
-      message: 'Are you sure you want to delete the WebShare "{name}"? Users will no longer be able to access {path} through WebShare.',
+      message: 'Are you sure you want to delete the WebShare "{name}"?<br><br>Users will no longer be able to access {path} through WebShare.',
       buttonText: 'Delete',
       buttonColor: 'warn',
     });

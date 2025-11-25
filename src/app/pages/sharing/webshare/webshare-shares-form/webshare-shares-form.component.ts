@@ -7,17 +7,16 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
-import { FileType } from 'app/enums/file-type.enum';
+import { of } from 'rxjs';
+import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
-import { TreeNode, ExplorerNodeData } from 'app/interfaces/tree-node.interface';
+import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -29,6 +28,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebShareValidatorService } from 'app/pages/sharing/webshare/webshare-validator.service';
+import { FilesystemService } from 'app/services/filesystem.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
@@ -52,6 +52,7 @@ export interface WebShareFormData {
     IxFieldsetComponent,
     IxInputComponent,
     IxExplorerComponent,
+    ExplorerCreateDatasetComponent,
     IxIconComponent,
     FormActionsComponent,
     MatButton,
@@ -64,6 +65,10 @@ export class WebShareSharesFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingWrite];
   protected readonly helptext = helptextSharingWebshare;
 
+  createDatasetProps: Omit<DatasetCreate, 'name'> = {
+    share_type: DatasetPreset.Generic,
+  };
+
   protected isFormLoading = signal(true);
   protected webShares = signal<WebShare[]>([]);
 
@@ -74,6 +79,7 @@ export class WebShareSharesFormComponent implements OnInit {
   private dialog = inject(DialogService);
   private validatorService = inject(WebShareValidatorService);
   private translate = inject(TranslateService);
+  private filesystemService = inject(FilesystemService);
   slideInRef = inject(SlideInRef<WebShareFormData, boolean>);
   private store$ = inject(Store<AppState>);
   private destroyRef = inject(DestroyRef);
@@ -87,6 +93,12 @@ export class WebShareSharesFormComponent implements OnInit {
     path: ['', Validators.required],
   });
 
+  constructor() {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
+
   get isNew(): boolean {
     return this.slideInRef.getData()?.isNew || false;
   }
@@ -97,36 +109,10 @@ export class WebShareSharesFormComponent implements OnInit {
       : this.helptext.webshare_form_title_edit;
   }
 
-  protected readonly treeNodeProvider = (parent: TreeNode<ExplorerNodeData>): Observable<ExplorerNodeData[]> => {
-    const path = parent ? parent.data.path : '/mnt';
-    return this.api.call('filesystem.listdir', [path, [], {
-      order_by: ['name'],
-    }]).pipe(
-      map((nodes) => nodes
-        .filter((node) => node.type === FileType.Directory)
-        .map((node) => {
-          let nodeType: ExplorerNodeType;
-          switch (node.type) {
-            case FileType.Directory:
-              nodeType = ExplorerNodeType.Directory;
-              break;
-            case FileType.Symlink:
-              nodeType = ExplorerNodeType.Symlink;
-              break;
-            default:
-              nodeType = ExplorerNodeType.File;
-              break;
-          }
-
-          return {
-            path: node.path,
-            name: node.name,
-            type: nodeType,
-            hasChildren: true,
-          } as ExplorerNodeData;
-        })),
-    );
-  };
+  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({
+    directoriesOnly: true,
+    includeSnapshots: false,
+  });
 
 
   ngOnInit(): void {

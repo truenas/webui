@@ -10,13 +10,15 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, switchMap, of,
+  filter, map, switchMap, of,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -36,6 +38,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -43,9 +46,9 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { webShareNameColumn, WebShareTableRow } from 'app/pages/sharing/components/webshare-name-cell/webshare-name-cell.component';
+import { webshareListElements } from 'app/pages/sharing/webshare/webshare-list/webshare-list.elements';
 import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
-import { LicenseService } from 'app/services/license.service';
 import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -65,6 +68,7 @@ import { selectService } from 'app/store/services/services.selectors';
     RequiresRolesDirective,
     MatButton,
     TestDirective,
+    UiSearchDirective,
     MatCardContent,
     IxTableComponent,
     IxTableEmptyDirective,
@@ -80,6 +84,7 @@ import { selectService } from 'app/store/services/services.selectors';
 export class WebShareListComponent implements OnInit {
   readonly requiredRoles = [Role.SharingWrite];
   readonly EmptyType = EmptyType;
+  protected readonly searchableElements = webshareListElements;
 
   private api = inject(ApiService);
   private slideIn = inject(SlideIn);
@@ -90,26 +95,33 @@ export class WebShareListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private store$ = inject(Store<AppState>);
   private destroyRef = inject(DestroyRef);
-  private licenseService = inject(LicenseService);
   private webShareService = inject(WebShareService);
   private truenasConnectService = inject(TruenasConnectService);
+  private loader = inject(LoaderService);
 
   service$ = this.store$.select(selectService(ServiceName.WebShare));
   filterString = '';
   searchQuery: SearchQuery<WebShareTableRow> = { isBasicQuery: true, query: '' };
   dataProvider: AsyncDataProvider<WebShareTableRow>;
 
-  hasTruenasConnect$ = this.licenseService.hasTruenasConnect$;
+  hasTruenasConnect$ = this.truenasConnectService.config$.pipe(
+    map((config) => config?.enabled ?? false),
+  );
 
   protected readonly helptext = helptextSharingWebshare;
 
-  readonly emptyConfig = {
+  readonly emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
-    title: this.translate.instant('No WebShares configured'),
-    message: this.translate.instant('Click the "Add" button to create a WebShare.'),
-    buttonText: this.translate.instant('Add WebShare'),
-    buttonAction: () => this.doAdd(),
-    requiredRoles: this.requiredRoles,
+    title: '',
+    message: this.translate.instant(
+      'WebShare service provides web-based file access.<br><br>Users can access these shares if they have the WebShare Enabled option set on their account.',
+    ),
+    icon: iconMarker('ix-webshare'),
+    large: true,
+    button: {
+      label: this.translate.instant('Add WebShare'),
+      action: () => this.doAdd(),
+    },
   };
 
   columns = createTable<WebShareTableRow>([
@@ -230,7 +242,11 @@ export class WebShareListComponent implements OnInit {
     })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.api.call('sharing.webshare.delete', [row.id])),
+        switchMap(() => {
+          return this.api.call('sharing.webshare.delete', [row.id]).pipe(
+            this.loader.withLoader(),
+          );
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
       // eslint-disable-next-line rxjs-angular/prefer-takeuntil
