@@ -1,7 +1,8 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, Location } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -27,9 +28,11 @@ import { BasicSearchComponent } from 'app/modules/forms/search-input/components/
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
@@ -43,6 +46,7 @@ import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('InstalledAppsComponent', () => {
@@ -147,19 +151,28 @@ describe('InstalledAppsComponent', () => {
           networks: [],
         })),
       }),
+      mockProvider(MatDialog),
+      mockProvider(SnackbarService),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: jest.fn(() => (source$) => source$),
+      }),
+      mockProvider(Location, {
+        replaceState: jest.fn(),
+      }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$) => source$),
+      }),
     ],
     params: { appId: 'ix-test-app' },
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
-    const listComponent = spectator.component.installedAppsList();
-    listComponent.dataSource = [app];
-    // Force computed signal to recalculate by toggling searchQuery
-    listComponent.searchQuery.set('trigger');
-    listComponent.searchQuery.set('');
-    spectator.detectChanges();
     applicationsService = spectator.inject(ApplicationsService);
+
+    // Wait for component initialization and subscriptions to complete
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
   });
 
   it('shows a list of installed apps', () => {
