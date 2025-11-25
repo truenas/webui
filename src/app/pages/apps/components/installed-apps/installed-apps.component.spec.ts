@@ -1,24 +1,43 @@
+import { AsyncPipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import {
   Spectator, createRoutingFactory, mockProvider,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent, MockDeclaration } from 'ng-mocks';
-import { ImgFallbackDirective } from 'ngx-img-fallback';
+import { TranslateModule } from '@ngx-translate/core';
+import { MockComponent, MockDeclaration, MockModule, MockPipe } from 'ng-mocks';
+import { ImgFallbackDirective, ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
 import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LayoutService } from 'app/modules/layout/layout.service';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
+import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
+import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
+import { InstalledAppsListBulkActionsComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list-bulk-actions/installed-apps-list-bulk-actions.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
+import { InstalledAppsListComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -44,16 +63,35 @@ describe('InstalledAppsComponent', () => {
   const createComponent = createRoutingFactory({
     component: InstalledAppsComponent,
     imports: [
-      ImgFallbackDirective,
+      ImgFallbackModule,
       NgxPopperjsContentComponent,
       NgxPopperjsDirective,
       NgxPopperjsLooseDirective,
       ReactiveFormsModule,
+      TranslateModule.forRoot(),
+      MatSortModule,
+      MatTableModule,
+      MatCheckboxModule,
+      MatButtonModule,
+      MatTooltipModule,
+      AsyncPipe,
+      RequiresRolesDirective,
       MockComponent(PageHeaderComponent),
+      InstalledAppsListComponent,
+      AppRowComponent,
+      MockComponent(AppStateCellComponent),
+      MockComponent(AppUpdateCellComponent),
+      MockComponent(FakeProgressBarComponent),
+      MockComponent(BasicSearchComponent),
+      MockComponent(IxIconComponent),
+      MockComponent(EmptyComponent),
+      MockComponent(InstalledAppsListBulkActionsComponent),
+      MockPipe(FileSizePipe),
+      MockPipe(NetworkSpeedPipe),
+      TestDirective,
     ],
     declarations: [
       MockDeclaration(AppDetailsPanelComponent),
-      MockDeclaration(AppRowComponent),
     ],
     providers: [
       mockProvider(DockerStore, {
