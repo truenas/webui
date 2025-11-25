@@ -54,7 +54,7 @@ export const smbSharePurposeLabels = new Map<SmbSharePurpose, string>([
   [SmbSharePurpose.PrivateDatasetsShare, T('Private Datasets Share')],
   [SmbSharePurpose.ExternalShare, T('External Share')],
   [SmbSharePurpose.VeeamRepositoryShare, T('Veeam Repository Share')],
-  [SmbSharePurpose.FcpShare, T('MacOS Media Project Share')],
+  [SmbSharePurpose.FcpShare, T('MacOS Media Share')],
 ]);
 
 export const smbSharePurposeTooltips = new Map<SmbSharePurpose, string>([
