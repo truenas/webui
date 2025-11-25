@@ -7,6 +7,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { SpareWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/5-spare-wizard-step/spare-wizard-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -19,19 +20,19 @@ describe('SpareWizardStepComponent', () => {
     {
       identifier: '{serial_lunid}8HG7MZJH_5000cca2700de678',
       name: 'sdo',
-      number: 2272,
+      devname: 'sdo',
       serial: '8HG7MZJH',
       size: 12000138625024,
       type: 'HDD',
-    },
+    } as DetailsDisk,
     {
       identifier: '{serial_lunid}8DJ61EBH_5000cca2537bba6c',
       name: 'sdv',
-      number: 16720,
+      devname: 'sdv',
       serial: '8DJ61EBH',
       size: 12000138625024,
       type: 'HDD',
-    },
+    } as DetailsDisk,
   ];
 
   const createComponent = createComponentFactory({
