@@ -39,7 +39,7 @@
       </div>
     }
     @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
-      <ix-empty [conf]="emptyConfig" [requiredRoles]="requiredRoles"></ix-empty>
+      <ix-empty [conf]="emptyConfig()" [requiredRoles]="requiredRoles"></ix-empty>
     } @else {
       <ix-table
         [ixUiSearch]="searchableElements.elements.webshareList"

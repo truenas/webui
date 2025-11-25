@@ -20,6 +20,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { selectService } from 'app/store/services/services.selectors';
@@ -122,16 +123,18 @@ describe('WebShareListComponent', () => {
     expect(spectator.component.dataProvider).toBeDefined();
   });
 
-  it('should show empty state when no shares are configured', () => {
-    // This test verifies that the component can handle empty data
-    expect(spectator.component.emptyConfig).toBeDefined();
-    expect(spectator.component.emptyConfig.title).toBe('');
-    expect(spectator.component.emptyConfig.message).toContain('WebShare service provides web-based file access');
-    expect(spectator.component.emptyConfig.button).toEqual({
+  it('should show empty state with Add button when TrueNAS Connect is configured', () => {
+    // This test verifies that the component shows the Add button when TrueNAS Connect is configured
+    const config = spectator.component.emptyConfig();
+    expect(config).toBeDefined();
+    expect(config.title).toBe('');
+    expect(config.message).toContain('WebShare service provides web-based file access');
+    expect(config.button).toEqual({
       label: 'Add WebShare',
       action: expect.any(Function),
     });
   });
+
 
   it('should open form when Add button is clicked', () => {
     // Directly call doAdd to test the form opening logic
@@ -300,5 +303,90 @@ describe('WebShareListComponent', () => {
   it('should check for TrueNAS Connect before adding share', () => {
     // Test that hasTruenasConnect$ observable is defined and accessible
     expect(spectator.component.hasTruenasConnect$).toBeDefined();
+  });
+});
+
+describe('WebShareListComponent - TrueNAS Connect not configured', () => {
+  let spectator: Spectator<WebShareListComponent>;
+
+  const mockTruenasConnectConfigDisabled = {
+    id: 1,
+    enabled: false,
+    status: TruenasConnectStatus.Disabled,
+    client_id: 'test-client-id',
+  } as unknown as TruenasConnectConfig;
+
+  const mockService: Service = {
+    id: 1,
+    service: ServiceName.WebShare,
+    state: ServiceStatus.Running,
+    enable: true,
+  } as Service;
+
+  const createComponent = createComponentFactory({
+    component: WebShareListComponent,
+    imports: [],
+    providers: [
+      mockAuth(),
+      mockApi([
+        mockCall('sharing.webshare.query', []),
+        mockCall('tn_connect.config', mockTruenasConnectConfigDisabled),
+      ]),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of({ response: true, error: null })),
+      }),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+        error: jest.fn(),
+      }),
+      mockProvider(SnackbarService),
+      mockProvider(EmptyService),
+      mockProvider(MatDialog),
+      mockProvider(TranslateService, {
+        instant: jest.fn((key: string) => key),
+        get: jest.fn(() => of({})),
+        onLangChange: of({ lang: 'en' }),
+        onTranslationChange: of({}),
+        onDefaultLangChange: of({}),
+      }),
+      mockProvider(TruenasConnectService, {
+        config$: of(mockTruenasConnectConfigDisabled),
+        openStatusModal: jest.fn(),
+      }),
+      provideMockStore({
+        initialState: {
+          services: {
+            ids: [],
+            entities: {},
+          },
+          preferences: {
+            preferences: {},
+          },
+        },
+        selectors: [
+          {
+            selector: selectService(ServiceName.WebShare),
+            value: mockService,
+          },
+          {
+            selector: selectSystemInfo,
+            value: { license: { features: ['WEBSHARE'] } },
+          },
+        ],
+      }),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    spectator.detectChanges();
+  });
+
+  it('should show empty state without Add button when TrueNAS Connect is not configured', () => {
+    const config = spectator.component.emptyConfig();
+    expect(config).toBeDefined();
+    expect(config.title).toBe('');
+    expect(config.message).toContain('WebShare service provides web-based file access');
+    expect(config.button).toBeUndefined();
   });
 });
