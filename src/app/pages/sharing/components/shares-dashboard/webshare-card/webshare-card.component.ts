@@ -104,9 +104,10 @@ export class WebShareCardComponent implements OnInit {
 
   webShares$ = this.refreshConfig$.pipe(
     startWith(null),
-    switchMap(() => this.api.call('sharing.webshare.query', [[]])),
+    switchMap(() => this.api.call('sharing.webshare.query', [[]]).pipe(
+      catchError(() => of([] as WebShare[])),
+    )),
     shareReplay({ bufferSize: 1, refCount: true }),
-    catchError(() => of([] as WebShare[])),
   );
 
   // Check if current domain is *.truenas.direct (static check, hostname doesn't change at runtime)

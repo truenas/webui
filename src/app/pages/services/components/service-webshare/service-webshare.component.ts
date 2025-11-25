@@ -6,6 +6,7 @@ import { ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextServiceWebshare } from 'app/helptext/services/components/service-webshare';
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
@@ -23,6 +24,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-service-webshare',
   templateUrl: './service-webshare.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -34,6 +36,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    RequiresRolesDirective,
   ],
 })
 export class ServiceWebshareComponent implements OnInit {

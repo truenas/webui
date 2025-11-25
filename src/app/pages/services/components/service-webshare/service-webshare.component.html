@@ -4,9 +4,9 @@
   [loading]="isFormLoading()"
 ></ix-modal-header>
 
-<mat-card>
+<mat-card class="card">
   <mat-card-content>
-    <form [formGroup]="form" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-checkbox
           formControlName="search"
@@ -17,6 +17,7 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"

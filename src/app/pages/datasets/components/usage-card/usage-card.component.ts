@@ -138,11 +138,6 @@ export class UsageCardComponent {
     return this.formatShareNames(shareNames);
   });
 
-  readonly webShareNames = computed(() => {
-    const shareNames = this.dataset().webshares?.map((item) => item.name) || [];
-    return this.formatShareNames(shareNames);
-  });
-
   readonly inheritedWebShares = computed(() => {
     const branch = this.selectedBranch();
     const currentDataset = this.dataset();
