@@ -52,7 +52,7 @@ export class GlobalConfigFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   slideInRef = inject<SlideInRef<ContainerGlobalConfig, boolean>>(SlideInRef);
 
-  protected readonly requiredRoles = [Role.LxcConfigWrite];
+  protected readonly requiredRoles = [Role.ContainerWrite];
   protected isLoading = signal(false);
   protected currentConfig = signal<ContainerGlobalConfig>(this.slideInRef.getData());
   protected readonly autoBridge = '';
