@@ -3576,6 +3576,26 @@
   {
     "hierarchy": [
       "System",
+      "Services",
+      "WebShare"
+    ],
+    "synonyms": [
+      "WebShare Service"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "services"
+    ],
+    "routerLink": null,
+    "anchor": "service-WebShare",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
       "Services"
     ],
     "synonyms": [],
