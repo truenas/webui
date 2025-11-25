@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, HostListener,
+  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject,
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import {
@@ -86,6 +86,9 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     FormActionsComponent,
   ],
   providers: [ContainerConfigStore],
+  host: {
+    '(window:beforeunload)': 'onBeforeUnload($event)',
+  },
 })
 export class ContainerFormComponent implements OnInit {
   private api = inject(ApiService);
@@ -103,7 +106,7 @@ export class ContainerFormComponent implements OnInit {
   private containerConfigStore = inject(ContainerConfigStore);
 
   protected readonly isLoading = signal<boolean>(false);
-  protected readonly requiredRoles = [Role.LxcConfigWrite];
+  protected readonly requiredRoles = [Role.ContainerWrite];
 
   protected readonly slashRootNode = [slashRootNode];
 
@@ -187,7 +190,6 @@ export class ContainerFormComponent implements OnInit {
     this.editingContainer = this.slideInRef.getData();
   }
 
-  @HostListener('window:beforeunload', ['$event'])
   onBeforeUnload(event: BeforeUnloadEvent): void {
     if (this.form.dirty) {
       event.preventDefault();

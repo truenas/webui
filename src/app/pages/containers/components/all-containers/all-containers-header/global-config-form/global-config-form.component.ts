@@ -52,6 +52,7 @@ export class GlobalConfigFormComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   slideInRef = inject<SlideInRef<ContainerGlobalConfig, boolean>>(SlideInRef);
 
+  // LXC role is required for global container configuration (lxc.update, lxc.config)
   protected readonly requiredRoles = [Role.LxcConfigWrite];
   protected isLoading = signal(false);
   protected currentConfig = signal<ContainerGlobalConfig>(this.slideInRef.getData());
