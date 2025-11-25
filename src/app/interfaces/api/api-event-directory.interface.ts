@@ -46,9 +46,9 @@ export interface ApiEventDirectory {
   'tn_connect.config': { response: TruenasConnectConfig };
   'truecommand.config': { response: TrueCommandConfig };
   'user.query': { response: User };
-  'virt.instance.metrics': { response: ContainerMetrics };
 
   'container.query': { response: Container };
+  'container.metrics': { response: ContainerMetrics };
   'lxc.config': { response: ContainerGlobalConfig };
 
   'vm.query': { response: VirtualMachine };
