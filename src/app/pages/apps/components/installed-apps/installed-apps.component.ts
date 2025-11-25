@@ -42,31 +42,31 @@ import { InstalledAppsListComponent } from 'app/pages/apps/components/installed-
   ],
 })
 export class InstalledAppsComponent {
-  readonly installedAppsList = viewChild.required(InstalledAppsListComponent);
+  readonly installedAppsList = viewChild(InstalledAppsListComponent);
 
   protected get selectedApp(): App | undefined {
-    return this.installedAppsList().selectedApp;
+    return this.installedAppsList()?.selectedApp;
   }
 
   protected get appsUpdateAvailable(): number {
-    return this.installedAppsList().appsUpdateAvailable;
+    return this.installedAppsList()?.appsUpdateAvailable ?? 0;
   }
 
   protected get hasUpdates(): boolean {
-    return this.installedAppsList().hasUpdates;
+    return this.installedAppsList()?.hasUpdates ?? false;
   }
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
   start(name: string): void {
-    this.installedAppsList().start(name);
+    this.installedAppsList()?.start(name);
   }
 
   stop(name: string): void {
-    this.installedAppsList().stop(name);
+    this.installedAppsList()?.stop(name);
   }
 
   protected onBulkUpdate(updateAll = false): void {
-    this.installedAppsList().onBulkUpdate(updateAll);
+    this.installedAppsList()?.onBulkUpdate(updateAll);
   }
 }
