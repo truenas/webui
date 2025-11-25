@@ -18,6 +18,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
@@ -113,7 +114,7 @@ export class WebShareCardComponent implements OnInit {
   readonly isTruenasDirectDomain = this.webShareService.isTruenasDirectDomain;
 
   hasTruenasConnect$ = this.truenasConnectService.config$.pipe(
-    map((config) => config?.enabled ?? false),
+    map((config) => config?.status === TruenasConnectStatus.Configured),
   );
 
   protected readonly helptext = helptextSharingWebshare;

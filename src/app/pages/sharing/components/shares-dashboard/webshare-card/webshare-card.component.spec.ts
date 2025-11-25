@@ -9,6 +9,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Service } from 'app/interfaces/service.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
@@ -60,6 +61,7 @@ describe('WebShareCardComponent', () => {
 
   const mockTnConnectConfig: TruenasConnectConfig = {
     enabled: true,
+    status: TruenasConnectStatus.Configured,
   } as TruenasConnectConfig;
 
   const createComponent = createComponentFactory({
