@@ -3,26 +3,15 @@
 
 .actions-bar {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 12px;
-  justify-content: space-between;
 
-  @media (max-width: $breakpoint-sm) {
-    display: block;
-  }
-
-  .search-container {
-    column-gap: 12px;
+  .top-row {
+    align-items: center;
     display: flex;
-    flex: 1;
-
-    @media (max-width: $breakpoint-singlecolumn) {
-      width: 100%;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      display: block;
-    }
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: space-between;
 
     .service-select {
       flex-shrink: 0;
@@ -30,38 +19,27 @@
       margin-top: 0;
       min-width: 130px;
       padding: 0;
-
-      @media (max-width: $breakpoint-sm) {
-        margin-bottom: 8px;
-        width: 100%;
-      }
     }
 
-    .search-button-wrapper {
+    .export-container {
+      align-items: center;
       display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-
-      @media (max-width: $breakpoint-sm) {
-        margin-top: 8px;
-      }
-    }
-
-    .search-input {
-      @media (min-width: $breakpoint-sm) {
-        max-width: 90%;
-      }
-
-      width: 100%;
     }
   }
 
-  .export-container {
-    align-items: center;
+  .search-row {
+    align-items: flex-start;
     display: flex;
+    gap: 12px;
+    width: 100%;
 
-    @media (max-width: $breakpoint-sm) {
-      margin-top: 8px;
+    .search-input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    button {
+      flex-shrink: 0;
     }
   }
 }
@@ -73,7 +51,7 @@
 
 // Extracted to reduce nesting depth
 // Note: !important is required here to override Material's highly specific default styles
-.actions-bar .search-container .service-select {
+.actions-bar .top-row .service-select {
   ::ng-deep {
     .label {
       font-size: 15px !important;

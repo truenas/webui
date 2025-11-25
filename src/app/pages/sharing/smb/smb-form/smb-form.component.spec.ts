@@ -29,6 +29,7 @@ import {
 } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
@@ -64,7 +65,7 @@ describe('SmbFormComponent', () => {
     enabled: true,
     comment: 'Description',
     audit: {
-      enable: true,
+      enable: false,
       watch_list: [] as string[],
       ignore_list: [] as string[],
     },
@@ -194,7 +195,7 @@ describe('SmbFormComponent', () => {
     'Export Read Only': true,
     'Browsable to Network Clients': true,
     'Access Based Share Enumeration': true,
-    'Enable Logging': true,
+    'Enable Logging': false,
   };
 
   async function submitForm(values: Record<string, unknown>): Promise<void> {
@@ -302,7 +303,7 @@ describe('SmbFormComponent', () => {
         browsable: true,
         access_based_share_enumeration: true,
         audit: {
-          enable: true,
+          enable: false,
           ignore_list: [],
           watch_list: [],
         },
@@ -446,9 +447,7 @@ describe('SmbFormComponent', () => {
         'Export Read Only': true,
         'Browsable to Network Clients': true,
         'Access Based Share Enumeration': true,
-        'Enable Logging': true,
-        'Watch List': [],
-        'Ignore List': [],
+        'Enable Logging': false,
 
         'Use Apple-style Character Encoding': true,
       });
@@ -912,6 +911,367 @@ describe('SmbFormComponent', () => {
 
       const formValues = await form.getValues();
       expect(formValues['Auto Quota']).toBe('50');
+    });
+  });
+
+  describe('audit logging validation', () => {
+    beforeEach(async () => {
+      await setupTest();
+    });
+
+    it('should disable save button when audit logging is enabled without groups', async () => {
+      // Fill in required fields first
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // User should see save button disabled due to validation error
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    });
+
+    it('should enable save button when group is added to watch list', async () => {
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify save button is initially disabled
+      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Add a group to watch list
+      const watchListChips = await loader.getHarness(IxChipsHarness.with({ label: 'Watch List' }));
+      await watchListChips.selectSuggestionValue('test');
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // User should now see save button enabled
+      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('should enable save button when group is added to ignore list', async () => {
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify save button is initially disabled
+      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Add a group to ignore list
+      const ignoreListChips = await loader.getHarness(IxChipsHarness.with({ label: 'Ignore List' }));
+      await ignoreListChips.selectSuggestionValue('test');
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // User should now see save button enabled
+      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('should enable save button when audit logging is disabled', async () => {
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify save button is initially disabled
+      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Disable audit logging
+      const enableLoggingCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Enable Logging' }));
+      await enableLoggingCheckbox.setValue(false);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // User should now see save button enabled
+      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('should display error message when audit logging is enabled without groups', async () => {
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error message is displayed
+      const errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeTruthy();
+      expect(errorElement?.textContent).toContain('At least one group must be specified');
+    });
+
+    it('should re-validate and show error when group is added then removed (reactivity)', async () => {
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error is initially displayed
+      let errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeTruthy();
+
+      // Add a group to watch list
+      const watchListChips = await loader.getHarness(IxChipsHarness.with({ label: 'Watch List' }));
+      await watchListChips.selectSuggestionValue('test');
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error is gone
+      errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeFalsy();
+
+      // Remove the group
+      await watchListChips.removeAllChips();
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error appears again (validates reactivity)
+      errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeTruthy();
+      expect(errorElement?.textContent).toContain('At least one group must be specified');
+    });
+  });
+
+  describe('Dataset Naming Schema null value', () => {
+    it('should allow null value for dataset_naming_schema when auto_dataset_creation is enabled', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': null,
+      });
+
+      await spectator.fixture.whenStable();
+
+      // The form harness displays null as empty string in the UI
+      const formValues = await form.getValues();
+      expect(formValues['Dataset Naming Schema']).toBe('');
+    });
+
+    it('should clear dataset_naming_schema when auto_dataset_creation is disabled', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': 'test-schema',
+      });
+
+      await spectator.fixture.whenStable();
+
+      await form.fillForm({
+        'Auto Dataset Creation': false,
+      });
+
+      await spectator.fixture.whenStable();
+
+      const formValues = await form.getValues();
+      expect(formValues['Dataset Naming Schema']).toBeUndefined();
+    });
+
+    it('should send null to API when dataset_naming_schema is empty', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': null,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          purpose: SmbSharePurpose.TimeMachineShare,
+          name: 'time-machine',
+          path: '/mnt/pool/time-machine',
+          enabled: true,
+          options: expect.objectContaining({
+            auto_dataset_creation: true,
+            dataset_naming_schema: null,
+          }),
+        }),
+      ]);
+    });
+
+    it('should convert empty string to null when user clears the field', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': 'initial-value',
+      });
+
+      await spectator.fixture.whenStable();
+
+      await form.fillForm({
+        'Dataset Naming Schema': '', // User clears the field
+      });
+
+      await spectator.fixture.whenStable();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          purpose: SmbSharePurpose.TimeMachineShare,
+          options: expect.objectContaining({
+            dataset_naming_schema: null, // Should be converted to null
+          }),
+        }),
+      ]);
+    });
+
+    it('should handle toggling auto_dataset_creation on/off/on correctly', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': '%u',
+      });
+
+      await spectator.fixture.whenStable();
+
+      // Disable auto-creation (should clear the field)
+      await form.fillForm({
+        'Auto Dataset Creation': false,
+      });
+
+      await spectator.fixture.whenStable();
+      let formValues = await form.getValues();
+      expect(formValues['Dataset Naming Schema']).toBeUndefined();
+
+      // Re-enable auto-creation (field should stay null/empty, allowing server defaults)
+      await form.fillForm({
+        'Auto Dataset Creation': true,
+      });
+
+      await spectator.fixture.whenStable();
+      formValues = await form.getValues();
+      // Field should display as empty, allowing user to leave blank or enter custom value
+      expect(formValues['Dataset Naming Schema']).toBe('');
+
+      // User can optionally enter a new value
+      await form.fillForm({
+        'Dataset Naming Schema': 'custom-schema',
+      });
+
+      await spectator.fixture.whenStable();
+      formValues = await form.getValues();
+      expect(formValues['Dataset Naming Schema']).toBe('custom-schema');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          options: expect.objectContaining({
+            auto_dataset_creation: true,
+            dataset_naming_schema: 'custom-schema',
+          }),
+        }),
+      ]);
+    });
+
+    it('should send null when toggling auto_dataset_creation and leaving field empty', async () => {
+      await setupTest();
+
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/time-machine',
+        Name: 'time-machine',
+        'Auto Dataset Creation': true,
+        'Dataset Naming Schema': '%u',
+      });
+
+      await spectator.fixture.whenStable();
+
+      // Disable and re-enable auto-creation
+      await form.fillForm({
+        'Auto Dataset Creation': false,
+      });
+
+      await spectator.fixture.whenStable();
+
+      await form.fillForm({
+        'Auto Dataset Creation': true,
+      });
+
+      await spectator.fixture.whenStable();
+
+      // Leave field empty (should send null for server defaults)
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          options: expect.objectContaining({
+            auto_dataset_creation: true,
+            dataset_naming_schema: null, // Should send null for server defaults
+          }),
+        }),
+      ]);
     });
   });
 });
