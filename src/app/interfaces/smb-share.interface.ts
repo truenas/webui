@@ -28,7 +28,8 @@ export type SmbShare =
   | TimeLockedSmbShare
   | PrivateDatasetsSmbShare
   | ExternalSmbShare
-  | VeeamRepositorySmbShare;
+  | VeeamRepositorySmbShare
+  | FcpSmbShare;
 
 export enum SmbSharePurpose {
   DefaultShare = 'DEFAULT_SHARE',
@@ -39,6 +40,7 @@ export enum SmbSharePurpose {
   PrivateDatasetsShare = 'PRIVATE_DATASETS_SHARE',
   ExternalShare = 'EXTERNAL_SHARE',
   VeeamRepositoryShare = 'VEEAM_REPOSITORY_SHARE',
+  FcpShare = 'FCP_SHARE',
 }
 
 export const externalSmbSharePath = 'EXTERNAL';
@@ -52,6 +54,7 @@ export const smbSharePurposeLabels = new Map<SmbSharePurpose, string>([
   [SmbSharePurpose.PrivateDatasetsShare, T('Private Datasets Share')],
   [SmbSharePurpose.ExternalShare, T('External Share')],
   [SmbSharePurpose.VeeamRepositoryShare, T('Veeam Repository Share')],
+  [SmbSharePurpose.FcpShare, T('MacOS Media Project Share')],
 ]);
 
 export const smbSharePurposeTooltips = new Map<SmbSharePurpose, string>([
@@ -63,6 +66,7 @@ export const smbSharePurposeTooltips = new Map<SmbSharePurpose, string>([
   [SmbSharePurpose.PrivateDatasetsShare, T('The server uses the specified dataset_naming_schema in options to make a new ZFS dataset when the client connects. The server uses this dataset as the share path during the SMB session.')],
   [SmbSharePurpose.ExternalShare, T('The SMB share is a DFS proxy to a share hosted on an external SMB server.')],
   [SmbSharePurpose.VeeamRepositoryShare, T('The SMB share is a repository for Veeam Backup & Replication and supports Fast Clone.')],
+  [SmbSharePurpose.FcpShare, T('The SMB share is configured with Apple-style Character Encoding enabled and is usable by Apple-based media and entertainment workflows.')],
 ]);
 
 export interface DefaultSmbShare extends BaseShare {
@@ -105,6 +109,15 @@ export interface VeeamRepositorySmbShare extends BaseShare {
   options: Record<string, never>;
 }
 
+export interface FcpSmbShare extends BaseShare {
+  purpose: SmbSharePurpose.FcpShare;
+  options: FcpSmbShareOptions;
+}
+
+export interface FcpSmbShareOptions {
+  aapl_name_mangling?: boolean;
+}
+
 export type SmbShareOptions =
   | DefaultSmbShareOptions
   | LegacySmbShareOptions
@@ -112,7 +125,8 @@ export type SmbShareOptions =
   | MultiProtocolSmbShareOptions
   | TimeLockedSmbShareOptions
   | PrivateDatasetsSmbShareOptions
-  | ExternalSmbShareOptions;
+  | ExternalSmbShareOptions
+  | FcpSmbShareOptions;
 
 export interface LegacySmbShareOptions {
   recyclebin?: boolean;

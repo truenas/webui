@@ -23,6 +23,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import {
+  FcpSmbShare,
   LegacySmbShareOptions,
   SmbSharePurpose,
   SmbShare,
@@ -425,6 +426,34 @@ describe('SmbFormComponent', () => {
         }),
       ]);
     });
+
+    it('creates FCP (Apple Media Projects) share', async () => {
+      await submitForm({
+        ...commonValues,
+        Purpose: 'Apple Media Projects',
+      });
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          purpose: SmbSharePurpose.FcpShare,
+          name: 'Default',
+          path: '/mnt/pool123/ds222',
+          enabled: true,
+          comment: 'Description',
+          readonly: true,
+          browsable: true,
+          access_based_share_enumeration: true,
+          audit: {
+            enable: false,
+            ignore_list: [],
+            watch_list: [],
+          },
+          options: {
+            aapl_name_mangling: true,
+          },
+        }),
+      ]);
+    });
   });
 
   describe('edit default share', () => {
@@ -485,6 +514,84 @@ describe('SmbFormComponent', () => {
     });
   });
 
+  describe('edit FCP share', () => {
+    it('shows aapl_name_mangling checkbox as checked and disabled for FCP share', async () => {
+      await setupTest({
+        purpose: SmbSharePurpose.FcpShare,
+        options: { aapl_name_mangling: true },
+      } as FcpSmbShare);
+
+      const checkbox = await loader.getHarness(
+        IxCheckboxHarness.with({ label: formLabels.aapl_name_mangling }),
+      );
+
+      expect(await checkbox.getValue()).toBe(true);
+      expect(await checkbox.isDisabled()).toBe(true);
+    });
+
+    it('shows extensions warning when FCP share is selected and aapl_extensions is disabled', async () => {
+      // Manually set the component's smbConfig signal to have aapl_extensions disabled
+      await setupTest();
+
+      // Use component's private property to set the config
+      (spectator.component as unknown as { smbConfig: { set: (config: SmbConfig) => void } }).smbConfig.set({
+        aapl_extensions: false,
+      } as SmbConfig);
+
+      await form.fillForm({
+        Purpose: 'Apple Media Projects',
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const warning = spectator.query('ix-smb-extensions-warning');
+      expect(warning).toBeTruthy();
+    });
+
+    it('does not show aapl_name_mangling checkbox for purposes that do not support it', async () => {
+      // Test External Share which doesn't include aapl_name_mangling in its preset
+      await setupTest({
+        purpose: SmbSharePurpose.ExternalShare,
+      } as SmbShare);
+
+      const checkboxes = await loader.getAllHarnesses(
+        IxCheckboxHarness.with({ label: formLabels.aapl_name_mangling }),
+      );
+
+      expect(checkboxes).toHaveLength(0);
+    });
+
+    it('disables aapl_name_mangling checkbox for FCP purpose', async () => {
+      await setupTest();
+
+      // Start with Default Share - checkbox should be enabled
+      await form.fillForm({ Purpose: 'Default Share' });
+      spectator.detectChanges();
+      let checkbox = await loader.getHarness(
+        IxCheckboxHarness.with({ label: formLabels.aapl_name_mangling }),
+      );
+      expect(await checkbox.isDisabled()).toBe(false);
+
+      // Switch to FCP - checkbox should be checked and disabled
+      await form.fillForm({ Purpose: 'Apple Media Projects' });
+      spectator.detectChanges();
+      checkbox = await loader.getHarness(
+        IxCheckboxHarness.with({ label: formLabels.aapl_name_mangling }),
+      );
+      expect(await checkbox.getValue()).toBe(true);
+      expect(await checkbox.isDisabled()).toBe(true);
+
+      // Switch back to Default - checkbox should be enabled again
+      await form.fillForm({ Purpose: 'Default Share' });
+      spectator.detectChanges();
+      checkbox = await loader.getHarness(
+        IxCheckboxHarness.with({ label: formLabels.aapl_name_mangling }),
+      );
+      expect(await checkbox.isDisabled()).toBe(false);
+    });
+  });
+
   describe('smb form operations (default share)', () => {
     beforeEach(async () => {
       await setupTest();
@@ -534,6 +641,7 @@ describe('SmbFormComponent', () => {
         'Private Datasets Share',
         'External Share',
         'Veeam Repository Share',
+        'Apple Media Projects',
       ]);
     });
 
