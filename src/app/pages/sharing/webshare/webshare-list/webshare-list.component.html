@@ -7,11 +7,10 @@
       [count]="+(dataProvider.currentPageCount$ | async)"
     ></ix-service-state-button>
     <div class="actions action-icon">
-      <ix-search-input
-        #searchInput
+      <ix-basic-search
         [query]="searchQuery"
-        (runSearch)="onSearch(searchInput.query())"
-      ></ix-search-input>
+        (queryChange)="onListFiltered($event)"
+      ></ix-basic-search>
 
       <ix-table-columns-selector
         [columnPreferencesKey]="'webshareList'"

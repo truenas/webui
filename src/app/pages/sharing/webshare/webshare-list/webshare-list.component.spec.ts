@@ -15,7 +15,7 @@ import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.inte
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -241,7 +241,7 @@ describe('WebShareListComponent', () => {
   });
 
   it('should filter shares based on search query', () => {
-    const searchInput = spectator.query(SearchInputComponent);
+    const searchInput = spectator.query(BasicSearchComponent);
     expect(searchInput).toBeTruthy();
 
     jest.spyOn(spectator.component.dataProvider, 'setFilter');

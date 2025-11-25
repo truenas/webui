@@ -6,7 +6,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -23,8 +22,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
-import { SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -64,7 +62,7 @@ import { selectService } from 'app/store/services/services.selectors';
     FakeProgressBarComponent,
     MatToolbarRow,
     ServiceStateButtonComponent,
-    SearchInputComponent,
+    BasicSearchComponent,
     IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
@@ -91,7 +89,6 @@ export class WebShareListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);
-  private router = inject(Router);
   private snackbar = inject(SnackbarService);
   protected emptyService = inject(EmptyService);
   private store$ = inject(Store<AppState>);
@@ -101,8 +98,7 @@ export class WebShareListComponent implements OnInit {
   private loader = inject(LoaderService);
 
   service$ = this.store$.select(selectService(ServiceName.WebShare));
-  filterString = '';
-  searchQuery: SearchQuery<WebShareTableRow> = { isBasicQuery: true, query: '' };
+  searchQuery = '';
   dataProvider: AsyncDataProvider<WebShareTableRow>;
 
   hasTruenasConnect$ = this.truenasConnectService.config$.pipe(
@@ -170,7 +166,7 @@ export class WebShareListComponent implements OnInit {
     this.setDefaultSort();
     // eslint-disable-next-line rxjs-angular/prefer-takeuntil
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      this.onListFiltered(this.filterString);
+      this.onListFiltered(this.searchQuery);
     });
   }
 
@@ -187,16 +183,11 @@ export class WebShareListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.searchQuery = query;
     this.dataProvider.setFilter({
       query,
       columnKeys: ['name', 'path'],
     });
-  }
-
-  onSearch(query: SearchQuery<WebShareTableRow>): void {
-    const searchString = query.isBasicQuery ? query.query : '';
-    this.onListFiltered(searchString);
   }
 
   doAdd(): void {
