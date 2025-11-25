@@ -1,0 +1,25 @@
+<div class="cards">
+  <div class="scroll-window">
+    <ix-container-general-info
+      [container]="container()"
+      [ixUiSearch]="searchableElements.elements.generalInfo"
+    ></ix-container-general-info>
+
+    <ix-container-usb-devices
+      [ixUiSearch]="searchableElements.elements.usbDevices"
+    ></ix-container-usb-devices>
+
+    <ix-container-filesystem-devices
+      [container]="container()"
+      [ixUiSearch]="searchableElements.elements.disks"
+    ></ix-container-filesystem-devices>
+
+    <ix-container-nic-devices
+      [ixUiSearch]="searchableElements.elements.nic"
+    ></ix-container-nic-devices>
+
+    <ix-container-tools
+      [ixUiSearch]="searchableElements.elements.tools"
+    ></ix-container-tools>
+  </div>
+</div>

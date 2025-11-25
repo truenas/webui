@@ -1,0 +1,40 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Filesystem Devices' | translate }}
+    </h3>
+
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      ixTest="add-disk"
+      (click)="addDisk()"
+    >
+      {{ 'Add' | translate }}
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (isLoadingDevices()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      @for (disk of visibleDisks(); track disk.id) {
+        <div class="device">
+          <div class="device-info">
+            <ix-device-type-badge [deviceType]="disk.dtype" [showLabel]="false"></ix-device-type-badge>
+            <span class="device-description">{{ getDeviceDescription(disk) }}</span>
+          </div>
+
+          <ix-device-actions-menu
+            [device]="disk"
+            [showEdit]="true"
+            [isDisabled]="isContainerRunning()"
+            [disabledTooltip]="isContainerRunning() ? ('Cannot modify devices while container is running. Please stop the container first.' | translate) : null"
+          ></ix-device-actions-menu>
+        </div>
+      } @empty {
+        <div class="no-devices">{{ 'No filesystem devices added.' | translate }}</div>
+      }
+    }
+  </mat-card-content>
+</mat-card>

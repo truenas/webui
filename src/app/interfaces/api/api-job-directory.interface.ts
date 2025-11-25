@@ -13,8 +13,8 @@ import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
 import { PullContainerImageParams, PullContainerImageResponse } from 'app/interfaces/container-image.interface';
 import {
-  CreateContainerInstance,
-  ContainerInstance,
+  Container,
+  CreateContainer,
 } from 'app/interfaces/container.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
@@ -195,8 +195,8 @@ export interface ApiJobDirectory {
   'update.run': { params: [UpdateParams]; response: void };
 
   // Container
-  'container.create': { params: [CreateContainerInstance]; response: ContainerInstance };
-  'container.migrate': { params: [instanceId: number]; response: boolean };
+  'container.create': { params: [CreateContainer]; response: Container };
+  'container.migrate': { params: [containerId: number]; response: boolean };
 
   // VM
   'vm.device.convert': { params: [{ source: string; destination: string }]; response: boolean };

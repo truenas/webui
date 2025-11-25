@@ -1,0 +1,83 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'General Info' | translate }}
+    </h3>
+
+    <button
+      *ixRequiresRoles="[Role.ContainerWrite]"
+      mat-button
+      ixTest="edit-container"
+      (click)="editContainer()"
+    >
+      {{ 'Edit' | translate }}
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (container(); as container) {
+      <p>
+        <span class="label">{{ 'Description' | translate }}:</span>
+        {{ container.description || ('N/A' | translate) }}
+      </p>
+      <p>
+        <span class="label">{{ 'Autostart' | translate }}:</span>
+        {{ container.autostart | yesNo }}
+      </p>
+      <p>
+        <span class="label">{{ 'Dataset' | translate }}:</span>
+        {{ container.dataset }}
+      </p>
+      <p>
+        <span class="label">{{ 'CPU Set' | translate }}:</span>
+        {{ container.cpuset || ('All Host CPUs' | translate) }}
+      </p>
+      <p>
+        <span class="label">{{ 'Container Time' | translate }}:</span>
+        {{ container.time | mapValue: containerTimeLabels | translate }}
+      </p>
+      <p>
+        <span class="label">{{ 'Shutdown Timeout' | translate }}:</span>
+        {{ container.shutdown_timeout }} {{ 'seconds' | translate }}
+      </p>
+      <p>
+        <span class="label">{{ 'Init Process' | translate }}:</span>
+        {{ container.init }}
+      </p>
+      @if (container.initdir) {
+        <p>
+          <span class="label">{{ 'Init Working Directory' | translate }}:</span>
+          {{ container.initdir }}
+        </p>
+      }
+      @if (container.inituser) {
+        <p>
+          <span class="label">{{ 'Init User' | translate }}:</span>
+          {{ container.inituser }}
+        </p>
+      }
+      @if (container.initgroup) {
+        <p>
+          <span class="label">{{ 'Init Group' | translate }}:</span>
+          {{ container.initgroup }}
+        </p>
+      }
+      <p>
+        <span class="label">{{ 'Capabilities Policy' | translate }}:</span>
+        {{ container.capabilities_policy | mapValue: containerCapabilitiesPolicyLabels | translate }}
+      </p>
+    }
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button
+      *ixRequiresRoles="[Role.ContainerWrite]"
+      mat-button
+      ixTest="delete-container"
+      (click)="deleteContainer()"
+    >
+      {{ 'Delete' | translate }}
+    </button>
+  </mat-card-actions>
+</mat-card>
+

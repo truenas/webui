@@ -1,0 +1,27 @@
+@if (isLoading()) {
+  <ngx-skeleton-loader class="loader"></ngx-skeleton-loader>
+} @else if (hasDevicesToAdd()) {
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    ixTest="add-device"
+    [matMenuTriggerFor]="addDeviceMenu"
+  >
+    {{ 'Add' | translate }}
+  </button>
+
+  <mat-menu #addDeviceMenu="matMenu">
+    @if (availableUsbDevices().length) {
+      <h4 class="menu-header">{{ 'USB Devices' | translate }}</h4>
+      @for (usb of availableUsbDevices(); track usb.capability.product_id) {
+        <button
+          mat-menu-item
+          [ixTest]="['add-usb-device', usb.description]"
+          (click)="addUsb(usb)"
+        >
+          {{ usb.description }}
+        </button>
+      }
+    }
+  </mat-menu>
+}
