@@ -86,7 +86,7 @@ describe('InstalledAppsComponent', () => {
       MockComponent(AppStateCellComponent),
       MockComponent(AppUpdateCellComponent),
       MockComponent(FakeProgressBarComponent),
-      MockComponent(BasicSearchComponent),
+      BasicSearchComponent,
       MockComponent(IxIconComponent),
       MockComponent(EmptyComponent),
       MockComponent(InstalledAppsListBulkActionsComponent),
