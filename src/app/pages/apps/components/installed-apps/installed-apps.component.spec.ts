@@ -154,13 +154,13 @@ describe('InstalledAppsComponent', () => {
       mockProvider(MatDialog),
       mockProvider(SnackbarService),
       mockProvider(ErrorHandlerService, {
-        withErrorHandler: jest.fn(() => (source$) => source$),
+        withErrorHandler: jest.fn(() => (source$: unknown) => source$),
       }),
       mockProvider(Location, {
         replaceState: jest.fn(),
       }),
       mockProvider(LoaderService, {
-        withLoader: jest.fn(() => (source$) => source$),
+        withLoader: jest.fn(() => (source$: unknown) => source$),
       }),
     ],
     params: { appId: 'ix-test-app' },
