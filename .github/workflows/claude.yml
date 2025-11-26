@@ -8,6 +8,8 @@ on:
       - 'src/assets/i18n/**'
 jobs:
   check-ux-team:
+    permissions:
+      contents: read
     uses: ./.github/workflows/check-ux-team.yml
 
   review:
