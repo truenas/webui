@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef, computed,
+  ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -105,33 +105,17 @@ export class WebShareListComponent implements OnInit {
     map((config) => config?.status === TruenasConnectStatus.Configured),
   );
 
-  private hasTruenasConnect = toSignal(this.hasTruenasConnect$, { initialValue: false });
-
   protected readonly helptext = helptextSharingWebshare;
 
-  readonly emptyConfig = computed<EmptyConfig>(() => {
-    const baseConfig: EmptyConfig = {
-      type: EmptyType.NoPageData,
-      title: '',
-      message: this.translate.instant(
-        'WebShare service provides web-based file access.<br><br>Users can access these shares if they have the WebShare Enabled option set on their account.',
-      ),
-      icon: iconMarker('ix-webshare'),
-      large: true,
-    };
-
-    if (this.hasTruenasConnect()) {
-      return {
-        ...baseConfig,
-        button: {
-          label: this.translate.instant('Add WebShare'),
-          action: () => this.doAdd(),
-        },
-      };
-    }
-
-    return baseConfig;
-  });
+  readonly emptyConfig: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    title: '',
+    message: this.translate.instant(
+      'WebShare service provides web-based file access.<br><br>Users can access these shares if they have the WebShare Enabled option set on their account.',
+    ),
+    icon: iconMarker('ix-webshare'),
+    large: true,
+  };
 
   columns = createTable<WebShareTableRow>([
     webShareNameColumn({
