@@ -1,11 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ActiveDirectoryConfigComponent } from 'app/pages/directory-service/components/directory-services-form/active-directory-config/active-directory-config.component';
@@ -18,6 +21,13 @@ describe('DirectoryServicesConfigFormComponent', () => {
   let spectator: Spectator<DirectoryServicesFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+
+  const mockSlideInRef = {
+    getData: () => null as DirectoryServicesConfig,
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(() => of(false)),
+    swap: jest.fn(),
+  };
 
   const createComponent = createComponentFactory({
     component: DirectoryServicesFormComponent,
@@ -33,15 +43,19 @@ describe('DirectoryServicesConfigFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(SlideInRef, {
-        getData: () => null as DirectoryServicesConfig,
-        close: jest.fn(),
-        requireConfirmationWhen: jest.fn(() => of(false)),
-        swap: jest.fn(),
-      }),
+      mockProvider(SlideInRef, mockSlideInRef),
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),
       }),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
+      }),
+      mockApi([
+        mockJob('directoryservices.update'),
+      ]),
     ],
   });
 
@@ -88,6 +102,33 @@ describe('DirectoryServicesConfigFormComponent', () => {
       });
 
       expect(spectator.query(IpaConfigComponent)).toBeTruthy();
+    });
+  });
+
+  describe('clear config', () => {
+    it('should show confirmation dialog and call API when Clear Config is clicked', async () => {
+      const clearConfigButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Config' }));
+      await clearConfigButton.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+        title: 'Clear Directory Services Configuration',
+        message: 'Directory service will be disabled and all settings will be lost. Are you sure you want to continue?',
+        buttonText: 'Clear',
+      });
+
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(mockSlideInRef.close).toHaveBeenCalledWith({ response: true });
+    });
+
+    it('should not call API when confirmation is cancelled', async () => {
+      const dialogService = spectator.inject(DialogService);
+      (dialogService.confirm as jest.Mock).mockReturnValue(of(false));
+
+      const clearConfigButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear Config' }));
+      await clearConfigButton.click();
+
+      expect(dialogService.confirm).toHaveBeenCalled();
+      expect(dialogService.jobDialog).not.toHaveBeenCalled();
     });
   });
 });
