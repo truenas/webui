@@ -4,7 +4,7 @@
   "license": "GPLv3",
   "description": "HarborOS WebUI",
   "type": "module",
-  "homepage": "https://github.com/HarborNASwebui/",
+  "homepage": "https://github.com/HarborNAS",
   "scripts": {
     "prebuild": "yarn icons",
     "prestart": "yarn icons",

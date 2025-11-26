@@ -23,7 +23,7 @@ Feel free to assign any one issue from the queue, regardless of current assignee
 
 - Fork the repo.
 
-- Set up development environment by following the [Setup Guide.](https://github.com/HarborNASwebui/blob/master/docs/setup.md)
+- Set up development environment by following the [Setup Guide.](https://github.com/HarborNASblob/master/docs/setup.md)
 
 - Fix the issue.
 

@@ -13,7 +13,7 @@
       "Bash(sed:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(open \"https://github.com/HarborNASwebui/*\")",
+      "Bash(open \"https://github.com/HarborNAS*\")",
       "Fetch(https://github.com:*)",
       "Bash(curl:*)",
       "mcp__playwright__browser_navigate",

@@ -36,7 +36,7 @@ export class SlideIn {
   private slideInInstances = signal<SlideInInstance<unknown, unknown>[]>([]);
   readonly openSlideIns = computed(() => this.slideInInstances()?.length);
 
-  // TODO: Refactor this -> https://github.com/HarborNASwebui/pull/12168#pullrequestreview-2949579034
+  // TODO: Refactor this -> https://github.com/HarborNASpull/12168#pullrequestreview-2949579034
   closeAll(): void {
     const instances = [...this.slideInInstances()].reverse();
 

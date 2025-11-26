@@ -3394,7 +3394,7 @@
   "KMIP Server": "Serveur KMIP",
   "KVM implements Hyper-V Enlightenments   for Windows guests. These features make Windows think they're   running on top of a Hyper-V compatible hypervisor and use Hyper-V specific features.   In some cases enabling these Enlightenments might improve usability and performance on the guest.": "KVM implémente les fonctionnalités Hyper-V Enlightenments pour les invités Windows. Ces fonctionnalités permettent à Windows de croire qu'il s'exécute sur un hyperviseur compatible Hyper-V et d'utiliser des fonctionnalités spécifiques à Hyper-V. Dans certains cas, l'activation de ces fonctionnalités peut améliorer la convivialité et les performances de l'invité.",
   "Language": "Langue",
-  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/HarborNASwebui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Learn how to contribute.</a>": "Les langues autres que l'anglais sont fournies par la communauté et peuvent être incomplètes. <a href=\"https://github.com/HarborNASwebui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Découvrez comment contribuer.</a>",
+  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/HarborNAS/docs\" target=\"_blank\">Learn how to contribute.</a>": "Les langues autres que l'anglais sont fournies par la communauté et peuvent être incomplètes. <a href=\"https://github.com/HarborNAS/docs\" target=\"_blank\">Découvrez comment contribuer.</a>",
   "Last 24 hours": "Les dernières 24 heures",
   "Last 3 days": "Les 3 derniers jours",
   "Last month": "Le mois dernier",

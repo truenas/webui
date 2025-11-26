@@ -10,13 +10,13 @@ Angular-based WebUI for HarborOS.
 
 ### Participate In The Project
 
-- :earth_africa: [Translate UI in your language.](https://github.com/HarborNASwebui/blob/master/docs/contributing_translations.md)
-- :mage: [Contribute code.](https://github.com/HarborNASwebui/blob/master/docs/contributing_code.md)
+- :earth_africa: [Translate UI in your language.](https://github.com/HarborNAS/blob/master/docs/contributing_translations.md)
+- :mage: [Contribute code.](https://github.com/HarborNAS/blob/master/docs/contributing_code.md)
 
 ### Set up Development Environment
 
-- :toolbox: [Set up local environment.](https://github.com/HarborNASwebui/blob/master/docs/setup.md)
+- :toolbox: [Set up local environment.](https://github.com/HarborNAS/blob/master/docs/setup.md)
 
 ### Test Specific UI Version
 
-- :test_tube: Learn [How To Run WebUI In a Docker Container.](https://github.com/HarborNASwebui/blob/master/docs/testing_ui.md)
+- :test_tube: Learn [How To Run WebUI In a Docker Container.](https://github.com/HarborNAS/blob/master/docs/testing_ui.md)

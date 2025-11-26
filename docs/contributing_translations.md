@@ -6,7 +6,7 @@
 
 ## Details
 
-All JSON files for translating HarborOS UI are located in [src/assets/i18n](https://github.com/HarborNASwebui/tree/master/src/assets/i18n). \
+All JSON files for translating HarborOS UI are located in [src/assets/i18n](https://github.com/HarborNAStree/master/src/assets/i18n). \
 These files can be edited using your editor of choice or directly on GitHub.
 
 Translation needs to be added to the right part of the string. For example:
@@ -114,4 +114,4 @@ It's also helpful to test plural strings in an [online editor](http://format-mes
 ## Contributing Code
 
 By the way, we also welcome code contributions.\
-[Learn how to contribute.](https://github.com/HarborNASwebui/blob/master/docs/contributing_code.md)
+[Learn how to contribute.](https://github.com/HarborNASblob/master/docs/contributing_code.md)

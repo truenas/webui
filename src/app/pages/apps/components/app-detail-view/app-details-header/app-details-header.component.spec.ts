@@ -13,7 +13,7 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 describe('AppDetailsHeaderComponent', () => {
   let spectator: Spectator<AppDetailsHeaderComponent>;
   const application = {
-    icon_url: 'http://github.com/truenas/icon.png',
+    icon_url: 'http://github.com/HarborNAS/icon.png',
     name: 'SETI@home',
     latest_app_version: '1.0.5',
     latest_version: '1.0.0',

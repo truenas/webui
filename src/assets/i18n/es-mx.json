@@ -2696,7 +2696,7 @@
   "LACPDU Rate": "Tasa LACPDU",
   "Lan": "Lan",
   "Language": "Idioma",
-  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/HarborNASwebui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Learn how to contribute.</a>": "Los idiomas distintos del <i>inglés</i> son proporcionados por la comunidad y pueden estar incompletos. <a href=\"https://github.com/HarborNASwebui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Aprenda cómo contribuir.</a>",
+  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/HarborNAS/docs\" target=\"_blank\">Learn how to contribute.</a>": "Los idiomas distintos del <i>inglés</i> son proporcionados por la comunidad y pueden estar incompletos. <a href=\"https://github.com/HarborNAS/docs\" target=\"_blank\">Aprenda cómo contribuir.</a>",
   "Last 24 hours": "Últimas 24 horas",
   "Last 3 days": "Últimos 3 días",
   "Last Action": "Última acción",

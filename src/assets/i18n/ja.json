@@ -3662,7 +3662,7 @@
   "Label": "ラベル",
   "Lan": "LAN",
   "Language": "言語",
-  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/HarborNASwebui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Learn how to contribute.</a>": "<i>英語</i> 以外の言語はコミュニティによって提供され、不完全な場合があります。      <a href=\"https://github.com/HarborNASwebui/blob/master/docs/contributing_translations.md\" target=\"_blank\">貢献する方法を学ぶ。</a>",
+  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/HarborNAS/docs\" target=\"_blank\">Learn how to contribute.</a>": "<i>英語</i> 以外の言語はコミュニティによって提供され、不完全な場合があります。      <a href=\"https://github.com/HarborNAS/docs\" target=\"_blank\">貢献する方法を学ぶ。</a>",
   "Last 24 hours": "直近24時間",
   "Last 3 days": "直近3日間",
   "Last Action": "最後のアクション",

@@ -1776,7 +1776,7 @@
   "Label": "Rótulo",
   "LACPDU Rate": "Taxa LACPDU",
   "Lan": "Rede Local",
-  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/HarborNASwebui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Learn how to contribute.</a>": "Idiomas diferentes de <i>Inglês</i> são fornecidos pela comunidade e podem estar incompletos. <a href=\"https://github.com/HarborNASwebui/blob/master/docs/contributing_translations.md\" target=\"_blank\">Saiba como contribuir.</a>",
+  "Languages other than <i>English</i> are provided by      the community and may be incomplete.      <a href=\"https://github.com/HarborNAS/docs\" target=\"_blank\">Learn how to contribute.</a>": "Idiomas diferentes de <i>Inglês</i> são fornecidos pela comunidade e podem estar incompletos. <a href=\"https://github.com/HarborNAS/docs\" target=\"_blank\">Saiba como contribuir.</a>",
   "Last Action": "Última Ação",
   "Last Change": "Última Alteração",
   "Last Change Attribute": "Atributo de Última Alteração",
