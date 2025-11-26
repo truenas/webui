@@ -1,7 +1,8 @@
 name: 'Latest Docker Image - master'
+permissions:
+  contents: read
 
 on:
-  push:
     branches:
       - master
     paths-ignore:
