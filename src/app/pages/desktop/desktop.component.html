@@ -1,7 +1,9 @@
-<div class="grid grid-rows-9 h-full grid-flow-col gap-6 justify-start p-8">
+<div
+  class="flex align-content-start flex-col flex-wrap justify-start items-start h-full grid-flow-col gap-6 p-8"
+>
   @for (item of menuItems; track item) {
     <button
-      class="size-full aspect-square gap-1 shadow rounded-md bg-background/10 backdrop-blur-md text-foreground overflow-hidden flex flex-col items-center justify-center"
+      class="size-24 gap-1 shadow rounded-md bg-background/10 backdrop-blur-md text-foreground overflow-hidden flex flex-col items-center justify-center"
       (click)="open(item)"
     >
       <div class="size-12 mx-auto flex-shrink-0">
