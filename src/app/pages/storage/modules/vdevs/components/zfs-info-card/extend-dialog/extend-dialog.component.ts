@@ -102,7 +102,7 @@ export class ExtendDialog {
       ['method', '=', 'pool.attach'],
       ['state', 'in', [JobState.Running, JobState.Waiting]],
     ]]).pipe(
-      map((jobs: Job<void, [number, PoolAttachParams]>[]) => {
+      map((jobs: Job<unknown, [number, PoolAttachParams]>[]) => {
         // Check if any job is for the same pool
         return jobs.some((job) => job.arguments[0] === this.data.poolId);
       }),
