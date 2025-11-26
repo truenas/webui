@@ -16,7 +16,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 
-const adminUsername = 'truenas_admin';
+const adminUsername = 'harboros_admin';
 
 @UntilDestroy()
 @Component({
