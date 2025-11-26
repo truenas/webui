@@ -84,7 +84,7 @@ describe('FileTicketLicensedFormComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'User Guide' }));
     await button.click();
 
-    expect(window.open).toHaveBeenCalledWith('https://www.truenas.com/docs/hub/');
+    expect(window.open).toHaveBeenCalledWith('https://harboros.ai/docs');
   });
 
   it('redirects to eula page when EULA is pressed', async () => {

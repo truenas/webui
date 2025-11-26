@@ -119,7 +119,7 @@ export class FileTicketLicensedComponent {
   }
 
   onUserGuidePressed(): void {
-    this.window.open('https://www.truenas.com/docs/hub/');
+    this.window.open('https://harboros.ai/docs');
   }
 
   onEulaPressed(): void {
