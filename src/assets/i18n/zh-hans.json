@@ -4847,7 +4847,7 @@
   "Store Encryption key in Sending HarborOS database": "在发HarborNASrNAS 数据库中存储加密密钥",
   "Store system logs on the system dataset. Unset to store system logs in <i>/var/</i> on the operating system device.": "将系统日志存储在系统数据集上。取消设置将系统日志存储在操作系统设备上的<i>/var/</i>中。",
   "Storj": "Storj",
-  "Storj is an S3 compatible, fault tolerant, globally distributed cloud storage platform with a security first approach to backup and recovery - delivering extreme resilience and performance both sustainably and economically. <a href=\"https://truenas.com/storj\" target=\"_blank\">HarborOS and Storj</a> have partnered to streamline delivery of Hybrid Cloud solutions globally.": "Storj是一个兼容S3的、容错的、全球分布式的云存储平台，采用以安全为首要的备份和恢复方法 - 提供极高的弹性和性能，同时可持续且经济实惠。<a href=\"https://truenas.com/storj\" target=\"_blank\">HarborOS和Storj</a>合作，旨在全球范围内简化混合云解决方案的交付。",
+  "Storj is an S3 compatible, fault tolerant, globally distributed cloud storage platform with a security first approach to backup and recovery - delivering extreme resilience and performance both sustainably and economically. <a href=\"https://harboros.ai/docs\" target=\"_blank\">HarborOS and Storj</a> have partnered to streamline delivery of Hybrid Cloud solutions globally.": "Storj是一个兼容S3的、容错的、全球分布式的云存储平台，采用以安全为首要的备份和恢复方法 - 提供极高的弹性和性能，同时可持续且经济实惠。<a href=\"https://harboros.ai/docs\" target=\"_blank\">HarborOS和Storj</a>合作，旨在全球范围内简化混合云解决方案的交付。",
   "Stream Compression": "流压缩",
   "String of additional smb4.conf parameters not covered by the system's API.": "与系统 API 不涵盖的额外 smb4.conf 参数的字符串。",
   "Strip ACL": "剥离 ACL",

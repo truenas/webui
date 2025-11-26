@@ -29,6 +29,6 @@ describe('CloudSyncProviderDescriptionComponent', () => {
 
     const description = spectator.query('.body');
     expect(description.innerHTML).toContain('Storj is an S3 compatible');
-    expect(description.innerHTML).toContain('<a href="https://truenas.com/storj" target="_blank">HarborOS and Storj</a>');
+    expect(description.innerHTML).toContain('<a href="https://harboros.ai/docs" target="_blank">HarborOS and Storj</a>');
   });
 });
