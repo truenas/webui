@@ -81,7 +81,7 @@ describe('UserMenuComponent', () => {
       const guide = await menu.getItems({ text: /Guide$/ });
       const guideElement = await guide[0].host();
 
-      expect(await guideElement.getAttribute('href')).toBe('https://www.truenas.com/docs/');
+      expect(await guideElement.getAttribute('href')).toBe('https://harboros.ai/docs');
       expect(await guideElement.getAttribute('target')).toBe('_blank');
     });
 

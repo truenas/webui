@@ -102,7 +102,7 @@ describe('GlobalSearchComponent', () => {
       {
         hierarchy: ['Search Documentation for «{value}»'],
         section: GlobalSearchSection.Help,
-        targetHref: 'https://www.truenas.com/docs/scale/24.10/search/?query=Filtered',
+        targetHref: 'https://harboros.ai/docsscale/24.10/search/?query=Filtered',
       },
     ]);
 
@@ -131,7 +131,7 @@ describe('GlobalSearchComponent', () => {
         {
           hierarchy: ['Search Documentation for «{value}»'],
           section: GlobalSearchSection.Help,
-          targetHref: 'https://www.truenas.com/docs/scale/24.10/search/?query=Unknown',
+          targetHref: 'https://harboros.ai/docsscale/24.10/search/?query=Unknown',
         },
       ]);
       expect(spectator.component.searchResults).toHaveLength(1);

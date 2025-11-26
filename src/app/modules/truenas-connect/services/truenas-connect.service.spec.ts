@@ -88,7 +88,7 @@ describe('TruenasConnectService', () => {
 
   it('should throw error when config is null in disableService', () => {
     spectator.service.config.set(null);
-    expect(() => spectator.service.disableService()).toThrow('Truenas Connect config is not available');
+    expect(() => spectator.service.disableService()).toThrow('HarborOS Connect config is not available');
   });
 
   it('should enable a tnc service', () => {
@@ -109,7 +109,7 @@ describe('TruenasConnectService', () => {
 
   it('should throw error when config is null in enableService', () => {
     spectator.service.config.set(null);
-    expect(() => spectator.service.enableService()).toThrow('Truenas Connect config is not available');
+    expect(() => spectator.service.enableService()).toThrow('HarborOS Connect config is not available');
   });
 
   it('should generate claim_token', () => {

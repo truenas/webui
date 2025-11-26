@@ -55,7 +55,7 @@ export class TruenasConnectService {
   disableService(): Observable<TruenasConnectConfig> {
     const currentConfig = this.config();
     if (!currentConfig) {
-      throw new Error('Truenas Connect config is not available');
+      throw new Error('HarborOS Connect config is not available');
     }
     const ips = currentConfig.ips || [];
     const interfaces = currentConfig.interfaces || [];
@@ -78,7 +78,7 @@ export class TruenasConnectService {
   enableService(): Observable<TruenasConnectConfig> {
     const currentConfig = this.config();
     if (!currentConfig) {
-      throw new Error('Truenas Connect config is not available');
+      throw new Error('HarborOS Connect config is not available');
     }
     const ips = currentConfig.ips || [];
     const interfaces = currentConfig.interfaces || [];

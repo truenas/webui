@@ -75,7 +75,7 @@ describe('GlobalSearchSectionsProvider', () => {
 
     expect(results).toEqual([{
       hierarchy: ['Search Documentation for «{value}»'],
-      targetHref: 'https://www.truenas.com/docs/scale/24.10/search/?query=feature',
+      targetHref: 'https://harboros.ai/docsscale/24.10/search/?query=feature',
       section: GlobalSearchSection.Help,
     }]);
   });

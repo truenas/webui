@@ -32,7 +32,7 @@ export const helptextSystemUpdate = {
   continueDialogAction: T('Continue with the upgrade'),
 
   clickForInformationLink: T('Click for information on\
-    <a href="https://www.truenas.com/docs/truenasupgrades/" target="_blank">HarborOS SCALE Migration, Nightly trains\
+    <a href="https://harboros.ai/docs" target="_blank">HarborOS SCALE Migration, Nightly trains\
     and other upgrade options.</a>'),
 
   haUpdate: {

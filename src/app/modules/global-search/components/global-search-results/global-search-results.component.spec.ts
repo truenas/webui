@@ -14,7 +14,7 @@ import { GlobalSearchResultsComponent } from './global-search-results.component'
 const mockedHelpElement = {
   hierarchy: ['Help Section Item'],
   section: GlobalSearchSection.Help,
-  targetHref: 'https://www.truenas.com/docs/scale/24.10/search/?query=test',
+  targetHref: 'https://harboros.ai/docsscale/24.10/search/?query=test',
 };
 
 const mockedUiElement = {
@@ -131,7 +131,7 @@ describe('GlobalSearchResultsComponent', () => {
         anchor: adjustment,
         hierarchy: [...mockedUiElement.hierarchy, adjustment],
       }))
-    ;
+      ;
 
     spectator.setInput('results', mockResults);
     spectator.setInput('searchTerm', 'Item');

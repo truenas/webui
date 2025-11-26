@@ -856,7 +856,7 @@ export interface ApiCallDirectory {
   'truecommand.config': { params: void; response: TrueCommandConfig };
   'truecommand.update': { params: [UpdateTrueCommand]; response: TrueCommandUpdateResponse };
 
-  // Truenas Connect
+  // HarborOS Connect
   'tn_connect.config': { params: void; response: TruenasConnectConfig };
   'tn_connect.update': { params: [TruenasConnectUpdate]; response: TruenasConnectConfig };
   'tn_connect.generate_claim_token': { params: void; response: string };

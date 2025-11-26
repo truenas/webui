@@ -28,7 +28,7 @@ export const helptextSystemSupport = {
       placeholderHighRating: T('Any part of HarborOS that you like in particular?'),
       placeholderLowRating: T('If something isn’t working correctly, it may be better to use the “Report a bug” option. This way you’ll automatically get status updates as we fix it.'),
     },
-    voteForNewFeatures: T('You can also vote for new features <a target="_blank" href="https://github.com/HarborOS/community/discussions/feature-requests">on our forum.</a>'),
+    voteForNewFeatures: T('You can also vote for new features <a target="_blank" href="https://github.com/HarborNAS/community/discussionsfeature-requests">on our forum.</a>'),
   },
 
   token: {
