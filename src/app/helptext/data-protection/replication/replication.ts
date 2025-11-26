@@ -12,7 +12,7 @@ export const helptextReplication = {
  created connection in <b>System > SSH Connections</b>.</li> \
  <li><i>SSH+NETCAT</i> uses SSH to establish a connection to the \
  destination system, then uses \
- <a href="https://github.com/HarborNASpy-libzfs" \
+ <a href="https://github.com/HarborNAS" \
  target="_blank">py-libzfs</a> to send an unencrypted data stream for \
  higher transfer speeds. This only works when replicating to a \
  HarborOS, or other system with <i>py-libzfs</i> installed.</li> \
