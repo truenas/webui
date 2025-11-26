@@ -1,4 +1,5 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -8,6 +9,7 @@ import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/
 import { NvmeOfCardComponent } from 'app/pages/sharing/components/shares-dashboard/nvme-of-card/nvme-of-card.component';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
+import { WebShareCardComponent } from 'app/pages/sharing/components/shares-dashboard/webshare-card/webshare-card.component';
 
 describe('SharesDashboardComponent', () => {
   let spectator: Spectator<SharesDashboardComponent>;
@@ -18,6 +20,13 @@ describe('SharesDashboardComponent', () => {
       mockApi([
         mockCall('pool.query', () => [{ id: 1 }] as Pool[]),
       ]),
+      provideMockStore({
+        initialState: {
+          systemInfo: {
+            systemInfo: { license: null },
+          },
+        },
+      }),
     ],
     declarations: [
       MockComponents(
@@ -25,6 +34,7 @@ describe('SharesDashboardComponent', () => {
         NfsCardComponent,
         IscsiCardComponent,
         NvmeOfCardComponent,
+        WebShareCardComponent,
       ),
     ],
   });
@@ -38,5 +48,6 @@ describe('SharesDashboardComponent', () => {
     expect(spectator.query(NfsCardComponent)).toExist();
     expect(spectator.query(IscsiCardComponent)).toExist();
     expect(spectator.query(NvmeOfCardComponent)).toExist();
+    expect(spectator.query(WebShareCardComponent)).toExist();
   });
 });

@@ -17,6 +17,7 @@ import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { WithInherit } from 'app/enums/with-inherit.enum';
 import { YesNo } from 'app/enums/yes-no.enum';
+import { WebShareSummary } from 'app/interfaces/webshare-config.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
 export interface Dataset {
@@ -192,6 +193,7 @@ export interface DatasetDetails {
   nvmet_shares?: { enabled: boolean; path: string }[];
   vms?: { name: string; path: string }[];
   apps?: { name: string; path: string }[];
+  webshares?: WebShareSummary[];
   children?: DatasetDetails[];
   volsize?: ZfsProperty<string, number>; // Present for type === DatasetType.Volume
   thick_provisioned?: boolean; // Present for type === DatasetType.Volume
