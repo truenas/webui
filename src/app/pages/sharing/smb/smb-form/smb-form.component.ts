@@ -32,6 +32,7 @@ import { SelectOption } from 'app/interfaces/option.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import {
   externalSmbSharePath,
+  FcpSmbShareOptions,
   smbSharePurposeTooltips, SmbSharePurpose, smbSharePurposeLabels, SmbShare,
   TimeMachineSmbShareOptions,
   LegacySmbShareOptions, SmbShareOptions,
@@ -551,6 +552,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         if (field === 'auto_quota' && control.value === null) {
           (control as FormControl).patchValue(0, { emitEvent: false });
         }
+
+        // For FCP_SHARE, force aapl_name_mangling to true and disable it
+        if (preset === SmbSharePurpose.FcpShare && field === 'aapl_name_mangling') {
+          (control as FormControl).patchValue(true, { emitEvent: false });
+          control.disable({ emitEvent: false });
+        }
       }
     });
   }
@@ -641,6 +648,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       }
 
       smbShare.options = options;
+    }
+
+    // For FCP_SHARE, ensure aapl_name_mangling is in options even though control is disabled
+    if (purpose === SmbSharePurpose.FcpShare) {
+      const fcpOptions = smbShare.options as FcpSmbShareOptions;
+      fcpOptions.aapl_name_mangling = true;
     }
 
     // Convert empty string to null for dataset_naming_schema to allow server defaults
@@ -821,8 +834,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   private updateExtensionsWarning(): void {
+    const purpose = this.form.controls.purpose.value;
+    const requiresExtensions = purpose === SmbSharePurpose.TimeMachineShare
+      || purpose === SmbSharePurpose.FcpShare;
     this.showExtensionsWarning.set(
-      !this.smbConfig()?.aapl_extensions && this.form.controls.purpose.value === SmbSharePurpose.TimeMachineShare,
+      !this.smbConfig()?.aapl_extensions && requiresExtensions,
     );
   }
 
