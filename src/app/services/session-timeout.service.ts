@@ -51,7 +51,7 @@ export class SessionTimeoutService {
     this.pause();
     const lifetime = this.currentLifetime ?? this.defaultLifetime;
     this.actionWaitTimeout = setTimeout(() => {
-      this.stop();
+      this.removeListeners();
       const showWarningDialogFor = 30000;
 
       this.terminateCancelTimeout = setTimeout(() => {
@@ -110,7 +110,7 @@ export class SessionTimeoutService {
     this.preferencesSubscription?.unsubscribe();
     this.preferencesSubscription = this.appStore$
       .select(selectPreferences)
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean))
       .subscribe((preferences) => {
         const lifetime = preferences.lifetime || this.defaultLifetime;
         if (this.currentLifetime !== lifetime) {
