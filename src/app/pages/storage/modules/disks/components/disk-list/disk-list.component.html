@@ -71,6 +71,7 @@
             <button
               *ixRequiresRoles="requiredRoles"
               mat-button
+              type="button"
               [ixTest]="[disk.name, 'wipe']"
               (click)="wipe(disk)"
             >
@@ -83,6 +84,7 @@
             <button
               *ixRequiresRoles="requiredRoles"
               mat-button
+              type="button"
               [ixTest]="[disk.name, 'unlock']"
               (click)="unlock(disk)"
             >
@@ -93,6 +95,7 @@
             <button
               *ixRequiresRoles="requiredRoles"
               mat-button
+              type="button"
               [ixTest]="[disk.name, 'reset-sed']"
               (click)="resetSed(disk)"
             >
