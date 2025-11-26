@@ -3325,7 +3325,7 @@
   "Signing in to a registry, such as Docker Hub, is not required for Apps to function, but may help if you experience rate limiting issues.": "",
   "Signup": "",
   "Silver / Gold Coverage Customers can enable iXsystems Proactive Support. This  automatically emails iXsystems when certain conditions occur on this HarborOS system. The iX Support  Team will promptly communicate with the Contacts saved below to quickly resolve any issue that may  have occurred on the system.": "",
-  "Silver / Gold Coverage Customers can enable HarborOS Proactive Support. This  automatically emailHarborNASrNAS when certain conditions occur on tHarborNASborNAS systemHarborNASarborNAS Support  Team will promptly communicate with the Contacts saved below to quickly resolve any issue that may  have occurred on the system.": "",
+  "Silver / Gold Coverage Customers can enable HarborOS Proactive Support. This  automatically email HarborOS when certain conditions occur on HarborOS system HarborOS Support  Team will promptly communicate with the Contacts saved below to quickly resolve any issue that may  have occurred on the system.": "",
   "Similar Apps": "",
   "Site Name": "",
   "Size in GiB of refreservation to set on ZFS dataset  where the audit databases are stored. The refreservation specifies the  minimum amount of space guaranteed to the dataset, and counts against  the space available for other datasets in the zpool where the audit  dataset is located.": "",
