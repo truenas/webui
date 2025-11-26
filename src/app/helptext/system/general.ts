@@ -105,7 +105,7 @@ No personally identifiable information is collected.\
 When disabled, anonymous usage statistics consisting only of the software version and total system capacity (e.g. HarborOS 24.04.0, 55 TB) are still collected. \
 Information about system configuration and usage is not collected.\
 <br><br>\
-<a href="https://www.truenas.com/docs/scale/gettingstarted/useragreements/datacollectionstatement/" target="_blank">See details.</a>\
+<a href="https://harboros.ai/docs" target="_blank">See details.</a>\
     '),
     stigModeTooltip: T('This option is disabled in STIG mode.'),
   },
