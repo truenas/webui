@@ -38,7 +38,7 @@ import { ResilveringIndicatorComponent } from 'app/modules/layout/topbar/resilve
 import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { HarborosConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -84,7 +84,7 @@ export class TopbarComponent implements OnInit {
   private appStore$ = inject<Store<AppState>>(Store);
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
-  private tnc = inject(TruenasConnectService);
+  private tnc = inject(HarborosConnectService);
   private apiService = inject<ApiService>(ApiService);
   // private matIconRegistry = inject(MatIconRegistry);
   private domSanitizer = inject(DomSanitizer);

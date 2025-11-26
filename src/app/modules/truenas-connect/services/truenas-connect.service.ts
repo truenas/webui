@@ -3,29 +3,29 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import {
   filter, map, merge, Observable, switchMap, tap,
 } from 'rxjs';
-import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { HarborosConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { HarborosConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 // Global reference to persist across potential service reinstantiation
-let globalTruenasConnectWindow: Window | null = null;
+let globalHarborosConnectWindow: Window | null = null;
 
 // Export function to reset global state for testing
-export function resetGlobalTruenasConnectWindow(): void {
-  globalTruenasConnectWindow = null;
+export function resetGlobalHarborosConnectWindow(): void {
+  globalHarborosConnectWindow = null;
 }
 
 @Injectable({
   providedIn: 'root',
 })
-export class TruenasConnectService {
+export class HarborosConnectService {
   private window = inject<Window>(WINDOW);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 
-  config = signal<TruenasConnectConfig | null>(null);
+  config = signal<HarborosConnectConfig | null>(null);
   config$ = toObservable(this.config);
   constructor() {
     this.getConfig();
@@ -52,7 +52,7 @@ export class TruenasConnectService {
     return useAllInterfaces;
   }
 
-  disableService(): Observable<TruenasConnectConfig> {
+  disableService(): Observable<HarborosConnectConfig> {
     const currentConfig = this.config();
     if (!currentConfig) {
       throw new Error('HarborOS Connect config is not available');
@@ -75,7 +75,7 @@ export class TruenasConnectService {
       );
   }
 
-  enableService(): Observable<TruenasConnectConfig> {
+  enableService(): Observable<HarborosConnectConfig> {
     const currentConfig = this.config();
     if (!currentConfig) {
       throw new Error('HarborOS Connect config is not available');
@@ -98,15 +98,15 @@ export class TruenasConnectService {
       );
   }
 
-  connect(): Observable<TruenasConnectConfig> {
+  connect(): Observable<HarborosConnectConfig> {
     return this.api.call('tn_connect.get_registration_uri')
       .pipe(
         tap((url) => {
-          this.openTruenasConnectWindow(url);
+          this.openHarborosConnectWindow(url);
         }),
         switchMap(() => {
           return this.config$.pipe(
-            filter((config: TruenasConnectConfig) => config.status === TruenasConnectStatus.Configured),
+            filter((config: HarborosConnectConfig) => config.status === HarborosConnectStatus.Configured),
           );
         }),
         this.errorHandler.withErrorHandler(),
@@ -120,16 +120,16 @@ export class TruenasConnectService {
       );
   }
 
-  openTruenasConnectWindow(url: string): void {
+  openHarborosConnectWindow(url: string): void {
     const truenasTabName = 'HarborOSConnect';
 
-    if (!globalTruenasConnectWindow || globalTruenasConnectWindow.closed) {
+    if (!globalHarborosConnectWindow || globalHarborosConnectWindow.closed) {
       // First time, or the old tab was closed - open new window with URL
       const windowFeatures = 'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes';
-      globalTruenasConnectWindow = this.window.open(url, truenasTabName, windowFeatures);
+      globalHarborosConnectWindow = this.window.open(url, truenasTabName, windowFeatures);
 
-      if (globalTruenasConnectWindow) {
-        globalTruenasConnectWindow.focus();
+      if (globalHarborosConnectWindow) {
+        globalHarborosConnectWindow.focus();
       }
       return;
     }
@@ -139,15 +139,15 @@ export class TruenasConnectService {
     const existingWindow = this.window.open('', truenasTabName);
     if (existingWindow && !existingWindow.closed) {
       existingWindow.focus();
-      globalTruenasConnectWindow = existingWindow; // Update reference
+      globalHarborosConnectWindow = existingWindow; // Update reference
       return;
     }
 
     // Window reference was stale, open new one
     const windowFeatures = 'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes';
-    globalTruenasConnectWindow = this.window.open(url, truenasTabName, windowFeatures);
-    if (globalTruenasConnectWindow) {
-      globalTruenasConnectWindow.focus();
+    globalHarborosConnectWindow = this.window.open(url, truenasTabName, windowFeatures);
+    if (globalHarborosConnectWindow) {
+      globalHarborosConnectWindow.focus();
     }
   }
 }

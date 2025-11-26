@@ -15,7 +15,7 @@ import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
-import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { HarborosConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import {
@@ -42,7 +42,7 @@ export interface ApiEventDirectory {
   'reporting.realtime': { response: ReportingRealtimeUpdate };
   'service.query': { response: Service };
   'system.reboot.info': { response: SystemRebootInfo };
-  'tn_connect.config': { response: TruenasConnectConfig };
+  'tn_connect.config': { response: HarborosConnectConfig };
   'truecommand.config': { response: TrueCommandConfig };
   'user.query': { response: User };
   'virt.global.config': { response: VirtualizationGlobalConfig };

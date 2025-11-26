@@ -43,7 +43,9 @@
         ></ix-checkbox>
       }
       @if (snapshotsText) {
-        <span class="snapshots-text" [class.warning]="isSnapshotsWarning">{{ snapshotsText }}</span>
+        <span class="snapshots-text" [class.warning]="isSnapshotsWarning">{{
+          snapshotsText
+        }}</span>
       }
       @if (form.controls.custom_snapshots.enabled) {
         <ix-checkbox
@@ -71,7 +73,7 @@
       @if (form.controls.name_regex.enabled) {
         <ix-input
           formControlName="name_regex"
-          [label]="helptext.nameRegexLabel  | translate"
+          [label]="helptext.nameRegexLabel | translate"
           [tooltip]="helptext.nameRegexTooltip | translate"
           [required]="true"
         ></ix-input>
@@ -136,7 +138,7 @@
       @if (form.controls.encryption_key_hex.enabled) {
         <ix-input
           formControlName="encryption_key_hex"
-          [label]="helptext.encryptionKeyHexLabel  | translate"
+          [label]="helptext.encryptionKeyHexLabel | translate"
           [tooltip]="helptext.encryptionKeyHexTooltip | translate"
           [required]="true"
         ></ix-input>
@@ -145,7 +147,7 @@
         <ix-input
           formControlName="encryption_key_passphrase"
           type="password"
-          [label]="helptext.encryptionKeyPassphraseLabel  | translate"
+          [label]="helptext.encryptionKeyPassphraseLabel | translate"
           [tooltip]="helptext.encryptionKeyPassphraseTooltip | translate"
           [required]="true"
         ></ix-input>
@@ -153,14 +155,16 @@
       @if (form.controls.encryption_key_location_truenasdb.enabled) {
         <ix-checkbox
           formControlName="encryption_key_location_truenasdb"
-          [label]="helptext.encryptionKeyLocationTruenasdbLabel | translate"
-          [tooltip]="helptext.encryptionKeyLocationTruenasdbTooltip | translate"
+          [label]="helptext.encryptionKeyLocationHarborosdbLabel | translate"
+          [tooltip]="
+            helptext.encryptionKeyLocationHarborosdbTooltip | translate
+          "
         ></ix-checkbox>
       }
       @if (form.controls.encryption_key_location.enabled) {
         <ix-input
           formControlName="encryption_key_location"
-          [label]="helptext.encryptionKeyLocationLabel  | translate"
+          [label]="helptext.encryptionKeyLocationLabel | translate"
           [tooltip]="helptext.encryptionKeyLocationTooltip | translate"
           [required]="true"
         ></ix-input>
@@ -196,12 +200,11 @@
       color="primary"
       ixTest="next"
       [disabled]="form.invalid"
-    >{{ 'Next' | translate }}</button>
-    <button
-      mat-button
-      type="button"
-      ixTest="advanced"
-      (click)="openAdvanced()"
-    >{{ 'Advanced Replication Creation' | translate }}</button>
+    >
+      {{ "Next" | translate }}
+    </button>
+    <button mat-button type="button" ixTest="advanced" (click)="openAdvanced()">
+      {{ "Advanced Replication Creation" | translate }}
+    </button>
   </ix-form-actions>
 </form>

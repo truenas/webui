@@ -6,18 +6,18 @@ import {
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import {
-  TruenasConnectStatus,
-  TruenasConnectStatusReason,
+  HarborosConnectStatus,
+  HarborosConnectStatusReason,
 } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
-import { TruenasConnectService, resetGlobalTruenasConnectWindow } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { HarborosConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { HarborosConnectService, resetGlobalHarborosConnectWindow } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-describe('TruenasConnectService', () => {
-  let spectator: SpectatorService<TruenasConnectService>;
-  const config: TruenasConnectConfig = {
+describe('HarborosConnectService', () => {
+  let spectator: SpectatorService<HarborosConnectService>;
+  const config: HarborosConnectConfig = {
     id: 1,
     ips: [''],
     interfaces: [],
@@ -28,8 +28,8 @@ describe('TruenasConnectService', () => {
     account_service_base_url: 'https://account-service-test.ixsystems.com',
     leca_service_base_url: 'https://leca-test.ixsystems.com',
     heartbeat_url: 'https://heartbeat-test.ixsystems.com',
-    status: TruenasConnectStatus.Configured,
-    status_reason: TruenasConnectStatusReason[TruenasConnectStatus.Configured],
+    status: HarborosConnectStatus.Configured,
+    status_reason: HarborosConnectStatusReason[HarborosConnectStatus.Configured],
     registration_details: {
       scopes: [],
       account_id: '',
@@ -44,13 +44,13 @@ describe('TruenasConnectService', () => {
   const url
     = 'https://tnc.ixsystems.net/en/#/auth/login?redirectUrl=%2Fsystem%2Fregister%3Fversion%3D25.10.0-MASTER-20250409-224807%26model%3DUNKNOWN%26system_id%3D249cdb8d-5bfc-49f0-981b-f2184eb7992e%26token%3Deb48fa51-6e6e-4f4f-ab30-976bb209bfa6';
   const createService = createServiceFactory({
-    service: TruenasConnectService,
+    service: HarborosConnectService,
     providers: [
       mockApi([
         mockCall('tn_connect.config', config),
         mockCall('tn_connect.update', {
           ...config,
-          status: TruenasConnectStatus.Disabled,
+          status: HarborosConnectStatus.Disabled,
         }),
         mockCall('tn_connect.generate_claim_token'),
         mockCall('tn_connect.get_registration_uri', url),
@@ -67,7 +67,7 @@ describe('TruenasConnectService', () => {
   beforeEach(() => {
     spectator = createService();
     // Reset global window reference for clean test state
-    resetGlobalTruenasConnectWindow();
+    resetGlobalHarborosConnectWindow();
   });
 
   it('should disable a tnc service', () => {
@@ -160,7 +160,7 @@ describe('TruenasConnectService', () => {
 
     // First connection - should open new window
     const firstUrl = 'https://first-url.com';
-    spectator.service.openTruenasConnectWindow(firstUrl);
+    spectator.service.openHarborosConnectWindow(firstUrl);
     expect(windowMock.open).toHaveBeenCalledTimes(1);
     expect(windowMock.open).toHaveBeenCalledWith(
       firstUrl,
@@ -174,7 +174,7 @@ describe('TruenasConnectService', () => {
 
     // Second connection - should reuse existing window with empty URL (focus only)
     const secondUrl = 'https://second-url.com';
-    spectator.service.openTruenasConnectWindow(secondUrl);
+    spectator.service.openHarborosConnectWindow(secondUrl);
 
     // Should call open again but with empty URL for focus only
     expect(windowMock.open).toHaveBeenCalledTimes(2);
@@ -207,7 +207,7 @@ describe('TruenasConnectService', () => {
 
     // First connection - open window
     const firstUrl = 'https://first-url.com';
-    spectator.service.openTruenasConnectWindow(firstUrl);
+    spectator.service.openHarborosConnectWindow(firstUrl);
     expect(windowMock.open).toHaveBeenCalledTimes(1);
 
     // Simulate window being closed
@@ -215,7 +215,7 @@ describe('TruenasConnectService', () => {
 
     // Second connection - should open new window since previous is closed
     const secondUrl = 'https://second-url.com';
-    spectator.service.openTruenasConnectWindow(secondUrl);
+    spectator.service.openHarborosConnectWindow(secondUrl);
 
     // Should open new window since previous was closed
     expect(windowMock.open).toHaveBeenCalledTimes(2);
@@ -237,7 +237,7 @@ describe('TruenasConnectService', () => {
     windowMock.open = jest.fn().mockReturnValue(mockTncWindow);
 
     const testUrl = 'https://test-url.com';
-    spectator.service.openTruenasConnectWindow(testUrl);
+    spectator.service.openHarborosConnectWindow(testUrl);
 
     expect(windowMock.open).toHaveBeenCalledWith(
       testUrl,
@@ -260,7 +260,7 @@ describe('TruenasConnectService', () => {
     windowMock.open = jest.fn().mockReturnValue(mockTncWindow);
 
     // First connection - open window
-    spectator.service.openTruenasConnectWindow(sameUrl);
+    spectator.service.openHarborosConnectWindow(sameUrl);
     expect(windowMock.open).toHaveBeenCalledTimes(1);
 
     // Reset focus mock and location.href setter
@@ -268,7 +268,7 @@ describe('TruenasConnectService', () => {
     const originalHref = mockTncWindow.location.href;
 
     // Second connection with same URL - should only focus, not navigate
-    spectator.service.openTruenasConnectWindow(sameUrl);
+    spectator.service.openHarborosConnectWindow(sameUrl);
 
     // Should call open again with empty URL (focus only) and not change location
     expect(windowMock.open).toHaveBeenCalledTimes(2); // Called twice: first with URL, second with empty
@@ -291,14 +291,14 @@ describe('TruenasConnectService', () => {
     windowMock.open = jest.fn().mockReturnValue(mockTncWindow);
 
     // First connection
-    spectator.service.openTruenasConnectWindow(firstUrl);
+    spectator.service.openHarborosConnectWindow(firstUrl);
     expect(windowMock.open).toHaveBeenCalledTimes(1);
 
     // Reset focus mock
     mockTncWindow.focus.mockClear();
 
     // Second connection with different URL - should only focus, no navigation
-    spectator.service.openTruenasConnectWindow(secondUrl);
+    spectator.service.openHarborosConnectWindow(secondUrl);
 
     // Should call open with empty URL (focus only) and not navigate
     expect(windowMock.open).toHaveBeenCalledTimes(2); // Called twice: first with URL, second with empty

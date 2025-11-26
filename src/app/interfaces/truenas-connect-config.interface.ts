@@ -1,6 +1,6 @@
-import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { HarborosConnectStatus } from 'app/enums/truenas-connect-status.enum';
 
-export interface TruenasConnectConfig extends TruenasConnectUpdate {
+export interface HarborosConnectConfig extends HarborosConnectUpdate {
   id: number;
   registration_details: {
     scopes: string[];
@@ -11,7 +11,7 @@ export interface TruenasConnectConfig extends TruenasConnectUpdate {
     iat: number;
     iss: string;
   };
-  status: TruenasConnectStatus;
+  status: HarborosConnectStatus;
   status_reason: string;
   certificate: number;
   interfaces_ips: string[];
@@ -24,7 +24,7 @@ export interface TruenasConnectConfig extends TruenasConnectUpdate {
   heartbeat_url: string;
 }
 
-export interface TruenasConnectUpdate {
+export interface HarborosConnectUpdate {
   enabled: boolean;
   ips: string[];
   interfaces: string[];

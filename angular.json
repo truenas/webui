@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "harbornas-scale-ui": {
+    "harboros-scale-ui": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -67,18 +67,18 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "buildTarget": "harbornas-scale-ui:build"
+            "buildTarget": "harboros-scale-ui:build"
           },
           "configurations": {
             "production": {
-              "buildTarget": "harbornas-scale-ui:build:production"
+              "buildTarget": "harboros-scale-ui:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n",
           "options": {
-            "buildTarget": "harbornas-scale-ui:build"
+            "buildTarget": "harboros-scale-ui:build"
           }
         }
       }

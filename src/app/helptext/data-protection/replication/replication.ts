@@ -168,7 +168,7 @@ to determine snapshots creation order.'),
 
   encryptionKeyPassphraseTooltip: helptextReplicationWizard.encryptionKeyPassphraseTooltip,
 
-  encryptionKeyLocationTruenasdbTooltip: helptextReplicationWizard.encryptionKeyLocationTruenasdbTooltip,
+  encryptionKeyLocationHarborosdbTooltip: helptextReplicationWizard.encryptionKeyLocationHarborosdbTooltip,
 
   encryptionKeyLocationTooltip: helptextReplicationWizard.encryptionKeyLocationTooltip,
 

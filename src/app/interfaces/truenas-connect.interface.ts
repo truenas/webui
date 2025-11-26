@@ -1,6 +1,6 @@
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 
-export interface TruenasConnectRegistration {
+export interface HarborosConnectRegistration {
   version: string;
   model: EnclosureModel;
   token: string;

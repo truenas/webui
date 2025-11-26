@@ -256,7 +256,7 @@ import {
   TrueCommandConfig, TrueCommandUpdateResponse,
   UpdateTrueCommand,
 } from 'app/interfaces/true-command-config.interface';
-import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
+import { HarborosConnectConfig, HarborosConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
@@ -857,8 +857,8 @@ export interface ApiCallDirectory {
   'truecommand.update': { params: [UpdateTrueCommand]; response: TrueCommandUpdateResponse };
 
   // HarborOS Connect
-  'tn_connect.config': { params: void; response: TruenasConnectConfig };
-  'tn_connect.update': { params: [TruenasConnectUpdate]; response: TruenasConnectConfig };
+  'tn_connect.config': { params: void; response: HarborosConnectConfig };
+  'tn_connect.update': { params: [HarborosConnectUpdate]; response: HarborosConnectConfig };
   'tn_connect.generate_claim_token': { params: void; response: string };
   'tn_connect.get_registration_uri': { params: void; response: string };
 

@@ -8,18 +8,18 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { ProductType } from 'app/enums/product-type.enum';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
+import { HarborosLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
 
-describe('TruenasLogoComponent', () => {
-  let spectator: Spectator<TruenasLogoComponent>;
+describe('HarborosLogoComponent', () => {
+  let spectator: Spectator<HarborosLogoComponent>;
   let loader: HarnessLoader;
   let icons: IxIconHarness[];
 
   const createComponent = createComponentFactory({
-    component: TruenasLogoComponent,
+    component: HarborosLogoComponent,
     providers: [
       mockProvider(ThemeService, {
         activeTheme$: of('ix-dark'),

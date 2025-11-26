@@ -1,19 +1,19 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { TncStatus, TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
-import { TruenasConnectStatusDisplayComponent } from './truenas-connect-status-display.component';
+import { TncStatus, HarborosConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { HarborosConnectStatusDisplayComponent } from './truenas-connect-status-display.component';
 
-describe('TruenasConnectStatusDisplayComponent', () => {
-  let spectator: Spectator<TruenasConnectStatusDisplayComponent>;
+describe('HarborosConnectStatusDisplayComponent', () => {
+  let spectator: Spectator<HarborosConnectStatusDisplayComponent>;
 
   const createComponent = createComponentFactory({
-    component: TruenasConnectStatusDisplayComponent,
+    component: HarborosConnectStatusDisplayComponent,
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
         status: TncStatus.Active,
-        rawStatus: TruenasConnectStatus.Configured,
+        rawStatus: HarborosConnectStatus.Configured,
       },
     });
   });
@@ -60,7 +60,7 @@ describe('TruenasConnectStatusDisplayComponent', () => {
 
   it('should display disabled state correctly', () => {
     spectator.setInput('status', TncStatus.Disabled);
-    spectator.setInput('rawStatus', TruenasConnectStatus.Disabled);
+    spectator.setInput('rawStatus', HarborosConnectStatus.Disabled);
     spectator.detectChanges();
 
     expect(spectator.query('.status-disabled')).toBeTruthy();

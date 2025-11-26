@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
+import { HarborosConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 
 @UntilDestroy()
 @Component({
@@ -24,13 +24,13 @@ import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/
   styleUrl: './truenas-connect-button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TruenasConnectButtonComponent {
+export class HarborosConnectButtonComponent {
   private matDialog = inject(MatDialog);
 
   tooltips = helptextTopbar.tooltips;
 
   protected showStatus(): void {
-    this.matDialog.open(TruenasConnectStatusModalComponent, {
+    this.matDialog.open(HarborosConnectStatusModalComponent, {
       width: '400px',
       hasBackdrop: true,
       panelClass: 'topbar-panel',

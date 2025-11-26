@@ -12,7 +12,7 @@ import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { HarborosConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
@@ -22,12 +22,12 @@ import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-ind
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
-import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
+import { HarborosLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
-import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
+import { HarborosConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { HarborosConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { RebootInfoState } from 'app/store/reboot-info/reboot-info.reducer';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
@@ -52,7 +52,7 @@ interface ComponentOptions {
 
 function createTopbarComponent(options: ComponentOptions = {}): {
   factory: () => Spectator<TopbarComponent>;
-  mockConfigSignal: ReturnType<typeof signal<TruenasConnectConfig | null>>;
+  mockConfigSignal: ReturnType<typeof signal<HarborosConnectConfig | null>>;
 } {
   const {
     updateJob = [
@@ -72,7 +72,7 @@ function createTopbarComponent(options: ComponentOptions = {}): {
     },
   } = options;
 
-  const mockConfigSignal = signal<TruenasConnectConfig | null>(null);
+  const mockConfigSignal = signal<HarborosConnectConfig | null>(null);
 
   const factory = createComponentFactory({
     component: TopbarComponent,
@@ -82,8 +82,8 @@ function createTopbarComponent(options: ComponentOptions = {}): {
         JobsIndicatorComponent,
         UserMenuComponent,
         PowerMenuComponent,
-        TruenasLogoComponent,
-        TruenasConnectButtonComponent,
+        HarborosLogoComponent,
+        HarborosConnectButtonComponent,
         TruecommandButtonComponent,
       ),
     ],
@@ -96,7 +96,7 @@ function createTopbarComponent(options: ComponentOptions = {}): {
       mockProvider(UiSearchProvider),
       mockProvider(MatDialog, matDialog),
       mockApi([]),
-      mockProvider(TruenasConnectService, {
+      mockProvider(HarborosConnectService, {
         config: mockConfigSignal,
       }),
       provideMockStore({
@@ -128,7 +128,7 @@ function createTopbarComponent(options: ComponentOptions = {}): {
 describe('TopbarComponent', () => {
   let spectator: Spectator<TopbarComponent>;
   let loader: HarnessLoader;
-  let mockConfigSignal: ReturnType<typeof signal<TruenasConnectConfig | null>>;
+  let mockConfigSignal: ReturnType<typeof signal<HarborosConnectConfig | null>>;
   const updateRunningStatus$ = new EventEmitter<'true' | 'false'>();
 
   const { factory: createComponent, mockConfigSignal: configSignal } = createTopbarComponent({
@@ -175,7 +175,7 @@ describe('TopbarComponent', () => {
   });
 
   describe('hasTncConfig', () => {
-    const baseTncConfig: Partial<TruenasConnectConfig> = {
+    const baseTncConfig: Partial<HarborosConnectConfig> = {
       tnc_base_url: 'https://tnc.example.com',
       account_service_base_url: 'https://account.example.com',
       leca_service_base_url: 'https://leca.example.com',
@@ -191,7 +191,7 @@ describe('TopbarComponent', () => {
         ...baseTncConfig,
         ips: [],
         interfaces_ips: [],
-      } as TruenasConnectConfig);
+      } as HarborosConnectConfig);
       expect(spectator.component.hasTncConfig()).toBeTruthy();
     });
 
@@ -202,7 +202,7 @@ describe('TopbarComponent', () => {
         tnc_base_url: '',
         account_service_base_url: '',
         leca_service_base_url: '',
-      } as TruenasConnectConfig);
+      } as HarborosConnectConfig);
       expect(spectator.component.hasTncConfig()).toBeFalsy();
     });
 
@@ -212,7 +212,7 @@ describe('TopbarComponent', () => {
         leca_service_base_url: 'https://leca.example.com',
         ips: [],
         interfaces_ips: [],
-      } as TruenasConnectConfig);
+      } as HarborosConnectConfig);
       expect(spectator.component.hasTncConfig()).toBeFalsy();
     });
 
@@ -222,7 +222,7 @@ describe('TopbarComponent', () => {
         leca_service_base_url: 'https://leca.example.com',
         ips: [],
         interfaces_ips: [],
-      } as TruenasConnectConfig);
+      } as HarborosConnectConfig);
       expect(spectator.component.hasTncConfig()).toBeFalsy();
     });
 
@@ -232,7 +232,7 @@ describe('TopbarComponent', () => {
         account_service_base_url: 'https://account.example.com',
         ips: [],
         interfaces_ips: [],
-      } as TruenasConnectConfig);
+      } as HarborosConnectConfig);
       expect(spectator.component.hasTncConfig()).toBeFalsy();
     });
   });

@@ -18,7 +18,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     RouterLink,
   ],
 })
-export class TruenasLogoComponent {
+export class HarborosLogoComponent {
   private store$ = inject<Store<AppState>>(Store);
   private themeService = inject(ThemeService);
 

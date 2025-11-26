@@ -1,11 +1,11 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
-import { TruenasConnectSpinnerComponent } from './truenas-connect-spinner.component';
+import { HarborosConnectSpinnerComponent } from './truenas-connect-spinner.component';
 
-describe('TruenasConnectSpinnerComponent', () => {
-  let spectator: Spectator<TruenasConnectSpinnerComponent>;
+describe('HarborosConnectSpinnerComponent', () => {
+  let spectator: Spectator<HarborosConnectSpinnerComponent>;
 
   const createComponent = createComponentFactory({
-    component: TruenasConnectSpinnerComponent,
+    component: HarborosConnectSpinnerComponent,
   });
 
   beforeEach(() => {
@@ -43,7 +43,7 @@ describe('TruenasConnectSpinnerComponent', () => {
   });
 
   it('should be a standalone component', () => {
-    expect(spectator.component).toBeInstanceOf(TruenasConnectSpinnerComponent);
+    expect(spectator.component).toBeInstanceOf(HarborosConnectSpinnerComponent);
   });
 
   it('should use SVG-based animation instead of JavaScript', () => {
