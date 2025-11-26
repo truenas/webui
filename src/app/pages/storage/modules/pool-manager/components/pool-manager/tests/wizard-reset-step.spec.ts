@@ -10,7 +10,6 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import {
   PoolManagerComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
@@ -187,16 +186,17 @@ describe('PoolManagerComponent – wizard step reset', () => {
     await wizard.clickNext();
 
     // SPARE step activated
-    const diskDropdown = (await (await wizard.getActiveStep()).getHarness(
-      IxComboboxHarness.with({ label: 'Select Disk for Spare VDEV' }),
-    )
-    );
-    await diskDropdown.setValue('sda3 - HDD (20 GiB)');
+    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Spare (Optional)');
+    await wizard.fillStep({
+      'Disk Size': '20 GiB (HDD)',
+      Width: '1',
+    });
     expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Spare:': '1 × 20 GiB (HDD)' });
     const resetSpareButton = (await (await wizard.getActiveStep()).getHarness(MatButtonHarness.with({ text: 'Reset Step' })));
     await resetSpareButton.click();
     expect(await wizard.getStepValues()).toStrictEqual({
-      'Select Disk for Spare VDEV': '',
+      'Disk Size': '',
+      Width: '',
     });
     await wizard.clickNext();
 

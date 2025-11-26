@@ -155,10 +155,6 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  protected existingPoolHasSpares(): boolean {
-    return !!this.existingPool?.topology?.spare?.length;
-  }
-
   getTopLevelWarningForStep(step: PoolCreationWizardStep): string | null | undefined {
     return this.topLevelWarningsForEachStep?.[step];
   }
