@@ -177,9 +177,9 @@ export class InstanceDiskFormComponent implements OnInit {
     const existingDisk = this.existingDisk();
     return existingDisk
       ? this.api.call('virt.instance.device_update', [this.instance.id, {
-        ...payload,
-        name: existingDisk.name,
-      }])
+          ...payload,
+          name: existingDisk.name,
+        }])
       : this.api.call('virt.instance.device_add', [this.instance.id, payload]);
   }
 

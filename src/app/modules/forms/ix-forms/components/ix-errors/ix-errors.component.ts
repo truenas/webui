@@ -220,12 +220,12 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
     if (messages.length) {
       const messageToAnnounce = this.label()
         ? this.translate.instant('Errors in {field}: {messages}', {
-          field: this.label(),
-          messages: messages.join(', '),
-        })
+            field: this.label(),
+            messages: messages.join(', '),
+          })
         : this.translate.instant('Errors in the form: {messages}', {
-          messages: messages.join(', '),
-        });
+            messages: messages.join(', '),
+          });
 
       this.liveAnnouncer.announce(messageToAnnounce);
     }

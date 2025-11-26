@@ -164,12 +164,12 @@ export class DirectoryServicesComponent implements OnInit {
         this.directoryServicesConfig.set(directoryServicesConfig);
         this.directoryServicesStatus.set(servicesState);
         this.isActiveDirectoryEnabled = servicesState.type === DirectoryServiceType.ActiveDirectory
-        && servicesState.status !== DirectoryServiceStatus.Disabled;
+          && servicesState.status !== DirectoryServiceStatus.Disabled;
         this.isLdapEnabled = servicesState.type === DirectoryServiceType.Ldap
-        && servicesState.status !== DirectoryServiceStatus.Disabled;
+          && servicesState.status !== DirectoryServiceStatus.Disabled;
 
         this.isIpaEnabled = servicesState.type === DirectoryServiceType.Ipa
-        && servicesState.status !== DirectoryServiceStatus.Disabled;
+          && servicesState.status !== DirectoryServiceStatus.Disabled;
         const adConfig = directoryServicesConfig?.configuration as ActiveDirectoryConfig;
         if (adConfig && directoryServicesConfig) {
           const items: Option[] = [
@@ -243,8 +243,8 @@ export class DirectoryServicesComponent implements OnInit {
               label: this.translate.instant(helptextDashboard.ldap.credentialType),
               value: directoryServicesConfig?.credential
                 ? this.translate.instant(
-                  credentialTypeLabels[directoryServicesConfig.credential.credential_type],
-                )
+                    credentialTypeLabels[directoryServicesConfig.credential.credential_type],
+                  )
                 : null,
             },
           );
@@ -315,11 +315,11 @@ export class DirectoryServicesComponent implements OnInit {
 
         // Update enabled states based on new status
         this.isActiveDirectoryEnabled = status.type === DirectoryServiceType.ActiveDirectory
-        && status.status !== DirectoryServiceStatus.Disabled;
+          && status.status !== DirectoryServiceStatus.Disabled;
         this.isLdapEnabled = status.type === DirectoryServiceType.Ldap
-        && status.status !== DirectoryServiceStatus.Disabled;
+          && status.status !== DirectoryServiceStatus.Disabled;
         this.isIpaEnabled = status.type === DirectoryServiceType.Ipa
-        && status.status !== DirectoryServiceStatus.Disabled;
+          && status.status !== DirectoryServiceStatus.Disabled;
 
         // Refresh the cards to update the UI with new status
         this.refreshCards();

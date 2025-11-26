@@ -111,7 +111,7 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
       }
       const firstDisk = cloneDeep(allCategoryVdevsDisks[0]);
       managerTopology[type].hasCustomDiskSelection = managerTopology[type].hasCustomDiskSelection
-      || allCategoryVdevsDisks.some((disk) => disk.size !== firstDisk.size || disk.type !== firstDisk.type);
+        || allCategoryVdevsDisks.some((disk) => disk.size !== firstDisk.size || disk.type !== firstDisk.type);
       if (!managerTopology[type].hasCustomDiskSelection) {
         managerTopology[type].diskSize = firstDisk.size;
         managerTopology[type].diskType = firstDisk.type;
