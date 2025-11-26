@@ -1,4 +1,6 @@
 name: Check UX Team Membership
+permissions:
+  contents: read
 
 on:
   workflow_call:
