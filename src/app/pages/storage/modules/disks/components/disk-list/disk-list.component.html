@@ -78,6 +78,28 @@
               <span>{{ 'Wipe' | translate }}</span>
             </button>
           }
+
+          @if (isSedLocked(disk)) {
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              [ixTest]="[disk.name, 'unlock']"
+              (click)="unlock(disk)"
+            >
+              <ix-icon name="mdi-lock-open-variant"></ix-icon>
+              <span>{{ 'Unlock' | translate }}</span>
+            </button>
+
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              [ixTest]="[disk.name, 'reset-sed']"
+              (click)="resetSed(disk)"
+            >
+              <ix-icon name="mdi-restart"></ix-icon>
+              <span>{{ 'SED Reset' | translate }}</span>
+            </button>
+          }
         </div>
       </ix-table-details-row>
 

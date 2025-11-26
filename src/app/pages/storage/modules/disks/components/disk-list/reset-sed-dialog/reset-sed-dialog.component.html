@@ -1,0 +1,70 @@
+<h1 mat-dialog-title>{{ 'SED Reset - Secure Erase' | translate }}</h1>
+
+<div mat-dialog-content>
+  <div class="warning-box" role="alert">
+    <div class="warning-header">
+      <ix-icon name="mdi-alert"></ix-icon>
+      <span>{{ 'CRITICAL WARNING' | translate }}</span>
+    </div>
+    <p class="warning-main">
+      {{ 'This operation is IRREVERSIBLE and will PERMANENTLY DESTROY ALL DATA on this disk.' | translate }}
+    </p>
+    <ul class="warning-list">
+      <li>{{ 'All data will be cryptographically erased and cannot be recovered' | translate }}</li>
+      <li>{{ 'The disk will be reset to factory default settings' | translate }}</li>
+      <li>{{ 'This process cannot be undone or interrupted' | translate }}</li>
+      <li>{{ 'Make absolutely sure you have backups of any important data' | translate }}</li>
+    </ul>
+  </div>
+
+  <p class="disk-name">{{ 'Disk:' | translate }} <strong>{{ data.diskName }}</strong></p>
+
+  <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+    <ix-input
+      formControlName="psid"
+      [label]="'Physical Security ID (PSID)' | translate"
+      [placeholder]="'Enter PSID from drive label (e.g., ABCD1234EFGH5678)' | translate"
+      [required]="true"
+    ></ix-input>
+
+    <ix-checkbox
+      formControlName="confirm"
+      [label]="'I understand this will permanently destroy all data on this disk' | translate"
+      [required]="true"
+    ></ix-checkbox>
+  </form>
+
+  <div class="psid-info-box">
+    <p class="psid-info-title">{{ 'Where to find the PSID:' | translate }}</p>
+    <div class="psid-info-content">
+      <ix-icon name="mdi-harddisk"></ix-icon>
+      <div class="psid-info-text">
+        <span class="drive-label">{{ 'Hard Disk Drive' | translate }}</span>
+        <span class="drive-description">{{ 'Physical label on drive' | translate }}</span>
+        <span class="drive-hint">{{ 'Look for "PSID:" or "Physical Security ID"' | translate }}</span>
+      </div>
+    </div>
+    <div class="psid-example">
+      <span class="example-label">{{ 'Example PSID format:' | translate }}</span>
+      <code>ABCD1234EFGH5678IJKL9012</code>
+    </div>
+  </div>
+</div>
+
+<ix-form-actions mat-dialog-actions>
+  <button mat-button type="button" ixTest="cancel" matDialogClose>
+    {{ 'Cancel' | translate }}
+  </button>
+
+  <button
+    *ixRequiresRoles="[Role.DiskWrite]"
+    mat-button
+    type="submit"
+    color="warn"
+    ixTest="reset-sed"
+    [disabled]="form.invalid"
+    (click)="onSubmit()"
+  >
+    {{ 'Perform SED Reset' | translate }}
+  </button>
+</ix-form-actions>
