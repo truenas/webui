@@ -52,10 +52,6 @@ export type IxSelectValue = SelectOptionValueType;
   hostDirectives: [
     { ...registeredDirectiveConfig },
   ],
-  host: {
-    tabindex: '0',
-    '(focus)': 'onHostFocus()',
-  },
 })
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
   controlDirective = inject(NgControl);
@@ -224,15 +220,6 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
    */
   focus(): void {
     if (this.matSelect) {
-      this.matSelect.focus();
-    }
-  }
-
-  /**
-   * Handle focus on the host element
-   */
-  onHostFocus(): void {
-    if (this.matSelect && !this.isDisabled) {
       this.matSelect.focus();
     }
   }
