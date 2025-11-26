@@ -34,6 +34,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ActiveDirectoryConfigComponent } from './active-directory-config/active-directory-config.component';
 import { CredentialConfigComponent } from './credential-config/credential-config.component';
 import { IpaConfigComponent } from './ipa-config/ipa-config.component';
@@ -72,6 +73,7 @@ export class DirectoryServicesFormComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
+  private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private validationService = inject(DirectoryServiceValidationService);
@@ -223,6 +225,39 @@ export class DirectoryServicesFormComponent implements OnInit {
           this.formErrorHandler.handleValidationErrors(error, this.form, this.getFieldsMap());
         },
       });
+  }
+
+  protected onClearConfig(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Clear Directory Services Configuration'),
+      message: this.translate.instant('Directory service will be disabled and all settings will be lost. Are you sure you want to continue?'),
+      buttonText: this.translate.instant('Clear'),
+    }).pipe(
+      untilDestroyed(this),
+    ).subscribe((confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+
+      this.isLoading.set(true);
+      this.dialogService.jobDialog(
+        this.api.job('directoryservices.update', [{ enable: false, service_type: null } as DirectoryServicesUpdate]),
+        { title: this.translate.instant('Clearing Directory Services Configuration') },
+      )
+        .afterClosed()
+        .pipe(
+          finalize(() => this.isLoading.set(false)),
+          untilDestroyed(this),
+        )
+        .subscribe({
+          next: () => {
+            this.slideInRef.close({ response: true });
+          },
+          error: (error: unknown) => {
+            this.errorHandler.showErrorModal(error);
+          },
+        });
+    });
   }
 
   private getFieldsMap(): Record<string, string> {
