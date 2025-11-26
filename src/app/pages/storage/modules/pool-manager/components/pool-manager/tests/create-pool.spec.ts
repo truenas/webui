@@ -177,7 +177,8 @@ describe('PoolManagerComponent – create pool', () => {
     // Spare
     await wizard.clickNext();
     await wizard.fillStep({
-      'Select Disk for Spare VDEV': 'sda1 - HDD (20 GiB)',
+      'Disk Size': '20 GiB (HDD)',
+      Width: '1',
     });
 
     // Cache
