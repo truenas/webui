@@ -129,7 +129,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
       this.form.controls.name.updateValueAndValidity();
 
       // Set encryption type based on pool's SED status for disk filtering
-      if (this.pool()?.sed_encryption) {
+      if (this.pool()?.all_sed) {
         this.form.controls.encryptionType.setValue(EncryptionType.Sed);
       }
     } else {

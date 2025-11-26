@@ -63,7 +63,7 @@
     }
   } @else {
     <!-- Message when adding VDEVs to SED pool -->
-    @if (pool()?.sed_encryption) {
+    @if (pool()?.all_sed) {
       <div class="sed-info-message">
         {{ 'This pool uses SED encryption. Only SED-capable disks will be available for selection.' | translate }}
       </div>

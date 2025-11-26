@@ -32,6 +32,7 @@ import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components
 import {
   DownloadKeyDialog, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
+import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { PoolCreationWizardStep, getPoolCreationWizardStepIndex } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -267,6 +268,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
         generate_key: true,
         algorithm: this.state.encryption,
       };
+    }
+
+    if (this.state.encryptionType === EncryptionType.Sed) {
+      payload.all_sed = true;
     }
 
     return payload;

@@ -185,7 +185,7 @@ describe('GeneralWizardStepComponent', () => {
   });
 
   it('sets encryption type to SED when adding VDEVs to SED pool', () => {
-    const poolWithSed = { sed_encryption: true, name: 'testpool' } as Pool;
+    const poolWithSed = { all_sed: true, name: 'testpool' } as Pool;
     spectator.setInput('isAddingVdevs', true);
     spectator.setInput('pool', poolWithSed);
     spectator.component.ngOnChanges();
