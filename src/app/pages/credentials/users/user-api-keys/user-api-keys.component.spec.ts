@@ -101,7 +101,9 @@ describe('UserApiKeysComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ApiKeyFormComponent, { data: undefined });
+    expect(
+      spectator.inject(SlideIn).open,
+    ).toHaveBeenCalledWith(ApiKeyFormComponent, { data: { editingKey: undefined } });
   });
 
   it('renders a button that opens API docs', async () => {
@@ -128,7 +130,7 @@ describe('UserApiKeysComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
-      data: apiKeys[0],
+      data: { editingKey: apiKeys[0] },
     });
   });
 
