@@ -38,7 +38,7 @@ describe('ContainersStore', () => {
           return of(devices);
         }),
         subscribe: jest.fn((method) => {
-          if (method === 'virt.instance.metrics') {
+          if (method === 'container.metrics') {
             return metricsEvent$;
           }
           return event$;
@@ -181,7 +181,7 @@ describe('ContainersStore', () => {
       } as unknown as ContainerMetrics;
 
       metricsEvent$.next({
-        collection: 'virt.instance.metrics',
+        collection: 'container.metrics',
         id: 'metrics',
         msg: CollectionChangeType.Changed,
         fields: mockInstanceMetrics,

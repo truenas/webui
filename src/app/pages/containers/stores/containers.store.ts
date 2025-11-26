@@ -191,9 +191,7 @@ export class ContainersStore extends ComponentStore<ContainersState> {
           if (!shouldSubscribe) {
             return EMPTY;
           }
-          // Note: Backend API still uses legacy 'virt.instance.metrics' endpoint.
-          // This will be updated when the backend migrates to 'container.metrics'.
-          return this.api.subscribe('virt.instance.metrics').pipe(
+          return this.api.subscribe('container.metrics').pipe(
             map((event) => event.fields ?? {}),
           );
         }),
