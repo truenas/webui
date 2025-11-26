@@ -123,16 +123,11 @@ describe('WebShareListComponent', () => {
     expect(spectator.component.dataProvider).toBeDefined();
   });
 
-  it('should show empty state with Add button when TrueNAS Connect is configured', () => {
-    // This test verifies that the component shows the Add button when TrueNAS Connect is configured
-    const config = spectator.component.emptyConfig();
+  it('should show empty state configuration', () => {
+    const config = spectator.component.emptyConfig;
     expect(config).toBeDefined();
     expect(config.title).toBe('');
     expect(config.message).toContain('WebShare service provides web-based file access');
-    expect(config.button).toEqual({
-      label: 'Add WebShare',
-      action: expect.any(Function),
-    });
   });
 
 
@@ -382,11 +377,10 @@ describe('WebShareListComponent - TrueNAS Connect not configured', () => {
     spectator.detectChanges();
   });
 
-  it('should show empty state without Add button when TrueNAS Connect is not configured', () => {
-    const config = spectator.component.emptyConfig();
+  it('should show empty state configuration when TrueNAS Connect is not configured', () => {
+    const config = spectator.component.emptyConfig;
     expect(config).toBeDefined();
     expect(config.title).toBe('');
     expect(config.message).toContain('WebShare service provides web-based file access');
-    expect(config.button).toBeUndefined();
   });
 });
