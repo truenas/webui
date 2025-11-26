@@ -10,7 +10,7 @@ Requires an Enterprise license, RDMA-capable system and network equipment.'),
   dhchapKeyTooltip: T('DH-CHAP key to be used to authenticate the host.'),
   noDhText: T("Don't use DH key exchange."),
   generateHostKeyDisabled: T('Please enter Host NQN first.'),
-  dhchapCtrlKey: T('If set, the secret that this HarborNAS will present to the host when the host is connecting (Bi-Directional Authentication).'),
+  dhchapCtrlKey: T('If set, the secret that this HarborOS will present to the host when the host is connecting (Bi-Directional Authentication).'),
   dhKeyExchangeTooltip: T('Diffie–Hellman key exchange is used in addition to CHAP for authentication.'),
 
   onlyStaticIpsShown: T('Only interfaces with static IPs are shown.'),

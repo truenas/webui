@@ -33,7 +33,7 @@ export class MockEnclosureGenerator {
       ...response,
       platform: `TRUENAS-${this.config.controllerModel}`,
       system_product: `TRUENAS-${this.config.controllerModel}`,
-      system_manufacturer: 'HarborNAS',
+      system_manufacturer: 'HarborOS',
       remote_info: response.remote_info
         ? {
           ...response.remote_info,

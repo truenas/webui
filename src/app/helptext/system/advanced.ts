@@ -13,9 +13,9 @@ export const helptextSystemAdvanced = {
   systemDatasetTooltip: T('Store system logs on the system dataset. Unset to store system logs in <i>/var/</i> on the operating system device.'),
   syslogAuditTooltip: T('Check to enable Audit Logs'),
 
-  consoleMenuTooltip: T('Select to display the HarborNAS console menu without authentication.\n\n\
+  consoleMenuTooltip: T('Select to display the HarborOS console menu without authentication.\n\n\
 When unset, you must log in before accessing the console.\n\n\
-Note: If the administrative account Shell is not set to HarborNAS Console, you enter the Linux shell. Enter <code>cli --menu</code> to access the console menu.'),
+Note: If the administrative account Shell is not set to HarborOS Console, you enter the Linux shell. Enter <code>cli --menu</code> to access the console menu.'),
 
   serialConsoleTooltip: T('Do not set this if the Serial Port is disabled.'),
 
@@ -102,7 +102,7 @@ simultaneously.'),
   allowedIpAddresses: {
     tooltip: T('You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an \
  IP address with a subnet mask (e.g., 192.168.1.0/24) to define a range of addresses.'),
-    lockoutWarning: T('Make sure to add your current IP address to the list. Otherwise you will lose access to HarborNAS UI.'),
+    lockoutWarning: T('Make sure to add your current IP address to the list. Otherwise you will lose access to HarborOS UI.'),
   },
 
   storageSettings: {

@@ -37,7 +37,7 @@ describe('AllowedAccessSectionComponent', () => {
       const smbAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
       expect(await smbAccessCheckbox.isChecked()).toBe(true);
 
-      const truenasAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'HarborNAS Access' }));
+      const truenasAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'HarborOS Access' }));
       expect(await truenasAccessCheckbox.isChecked()).toBe(false);
 
       const sshAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SSH Access' }));
@@ -70,7 +70,7 @@ describe('AllowedAccessSectionComponent', () => {
       const shellAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Shell Access' }));
       expect(await shellAccessCheckbox.isChecked()).toBe(true);
 
-      const truenasAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'HarborNAS Access' }));
+      const truenasAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'HarborOS Access' }));
       expect(await truenasAccessCheckbox.isChecked()).toBe(true);
     });
 
@@ -101,8 +101,8 @@ describe('AllowedAccessSectionComponent', () => {
     });
   });
 
-  it('shows role field when HarborNAS access is selected', async () => {
-    const truenasCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'HarborNAS Access' }));
+  it('shows role field when HarborOS access is selected', async () => {
+    const truenasCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'HarborOS Access' }));
     await truenasCheckbox.check();
 
     const roleInput = await loader.getHarness(IxSelectHarness);
@@ -118,7 +118,7 @@ describe('AllowedAccessSectionComponent', () => {
   });
 
   it('updates store when role is changed', async () => {
-    const truenasCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'HarborNAS Access' }));
+    const truenasCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'HarborOS Access' }));
     await truenasCheckbox.check();
 
     const roleInput = await loader.getHarness(IxSelectHarness);

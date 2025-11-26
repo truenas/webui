@@ -97,7 +97,7 @@ export class FileReviewComponent {
 
     const ratingSymbol = '★'.repeat(rating ?? 0) + '☆'.repeat(maxRatingValue - (rating ?? 0));
     // eslint-disable-next-line no-restricted-globals
-    window.open(`https://github.com/HarborNAS/internal_wiki/issues/new?labels=feedback&body=Rating:%20${ratingSymbol}%0AMessage:%20${message}`, '_blank');
+    window.open(`https://github.com/HarborOS/internal_wiki/issues/new?labels=feedback&body=Rating:%20${ratingSymbol}%0AMessage:%20${message}`, '_blank');
 
     this.onSuccess();
   }

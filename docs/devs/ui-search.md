@@ -1,6 +1,6 @@
 # UI Search
 
-Global search allows user to search for UI elements across HarborNAS.
+Global search allows user to search for UI elements across HarborOS.
 
 ## How it works
 

@@ -231,7 +231,7 @@ export class EmailFormComponent implements OnInit {
     const productType = this.systemGeneralService.getProductType();
     const email = {
       subject: 'Test Message',
-      text: `This is a test message from HarborNAS ${productType.replace('_', ' ')}.`,
+      text: `This is a test message from HarborOS ${productType.replace('_', ' ')}.`,
     };
     const config = this.prepareConfigUpdate();
 

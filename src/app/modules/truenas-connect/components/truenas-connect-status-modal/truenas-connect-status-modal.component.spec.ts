@@ -62,13 +62,13 @@ describe('TruenasConnectStatusModalComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('should show Open HarborNAS Connect button when configured', async () => {
+  it('should show Open HarborOS Connect button when configured', async () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator.detectChanges();
 
     const openBtn = await loader.getHarness(
       MatButtonHarness.with({
-        text: 'Open HarborNAS Connect',
+        text: 'Open HarborOS Connect',
       }),
     );
     expect(openBtn).toBeTruthy();
@@ -80,8 +80,8 @@ describe('TruenasConnectStatusModalComponent', () => {
   });
 
   it('should display the status as ACTIVE', () => {
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('HarborNAS Connect - Status Healthy');
-    expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain('Your system is linked with HarborNAS Connect');
+    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('HarborOS Connect - Status Healthy');
+    expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain('Your system is linked with HarborOS Connect');
   });
 
   it('should display the status as WAITING', () => {
@@ -235,25 +235,25 @@ describe('TruenasConnectStatusModalComponent', () => {
   it('should display the status as CONNECTING with custom text', () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationSuccess }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborNAS Connect');
-    expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain('Your system is setting up with HarborNAS Connect');
+    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborOS Connect');
+    expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain('Your system is setting up with HarborOS Connect');
     expect(spectator.query('ix-truenas-connect-spinner')).toBeTruthy();
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertGenerationInProgress }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborNAS Connect');
+    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborOS Connect');
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertGenerationSuccess }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborNAS Connect');
+    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborOS Connect');
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertRenewalInProgress }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborNAS Connect');
+    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborOS Connect');
 
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertRenewalSuccess }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborNAS Connect');
+    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborOS Connect');
   });
 
   it('should display custom error message for FAILED state', () => {
@@ -282,7 +282,7 @@ describe('TruenasConnectStatusModalComponent', () => {
   it('should display disabled status as WAITING (shows Get Connected button)', () => {
     config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Disabled }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Power Up your HarborNAS Experience! Link your system with HarborNAS Connect now for additional security, alerting, and other features.');
+    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Power Up your HarborOS Experience! Link your system with HarborOS Connect now for additional security, alerting, and other features.');
   });
 
   it('should not automatically enable service when dialog opens (removed behavior)', () => {
@@ -357,7 +357,7 @@ describe('TruenasConnectStatusModalComponent', () => {
 
       expect(statusElement).toBeNull();
       expect(statusReasonElement).toBeTruthy();
-      expect(statusReasonElement?.textContent).toContain('Power Up your HarborNAS Experience');
+      expect(statusReasonElement?.textContent).toContain('Power Up your HarborOS Experience');
     });
   });
 
@@ -376,7 +376,7 @@ describe('TruenasConnectStatusModalComponent', () => {
 
       const statusElement = spectator.query('[ixTest="tnc-status"]');
       expect(statusElement).toBeTruthy();
-      expect(statusElement?.textContent).toContain('Setting up HarborNAS Connect');
+      expect(statusElement?.textContent).toContain('Setting up HarborOS Connect');
     });
   });
 
@@ -405,7 +405,7 @@ describe('TruenasConnectStatusModalComponent', () => {
 
     const statusElement = spectator.query('[ixTest="tnc-status"]');
     expect(statusElement).toBeTruthy();
-    expect(statusElement?.textContent).toContain('HarborNAS Connect - Status Healthy');
+    expect(statusElement?.textContent).toContain('HarborOS Connect - Status Healthy');
   });
 
   it('should display disabled status as waiting (no longer shows DISABLED)', () => {
@@ -415,7 +415,7 @@ describe('TruenasConnectStatusModalComponent', () => {
     // Disabled status now maps to waiting which shows different content
     const statusElement = spectator.query('[ixTest="tnc-status-reason"]');
     expect(statusElement).toBeTruthy();
-    expect(statusElement?.textContent).toContain('Power Up your HarborNAS Experience!');
+    expect(statusElement?.textContent).toContain('Power Up your HarborOS Experience!');
   });
 
   it('should not auto-enable service when status is configured', () => {
@@ -451,6 +451,6 @@ describe('TruenasConnectStatusModalComponent', () => {
     // Undefined status maps to waiting (default case)
     const statusElement = spectator.query('[ixTest="tnc-status-reason"]');
     expect(statusElement).toBeTruthy();
-    expect(statusElement!.textContent).toContain('Power Up your HarborNAS Experience!');
+    expect(statusElement!.textContent).toContain('Power Up your HarborOS Experience!');
   });
 });

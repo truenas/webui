@@ -514,7 +514,7 @@ describe('ExportDisconnectModalComponent', () => {
   async function submitExportForm(): Promise<void> {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Delete saved configurations from HarborNAS?': true,
+      'Delete saved configurations from HarborOS?': true,
       'Confirm Export Pool': true,
     });
 
@@ -547,7 +547,7 @@ describe('ExportDisconnectModalComponent', () => {
       const values = await form.getValues();
 
       expect(values).toEqual({
-        'Delete saved configurations from HarborNAS?': true,
+        'Delete saved configurations from HarborOS?': true,
         'Confirm Export Pool': false,
       });
     });

@@ -39,7 +39,7 @@ export const allThemes: Theme[] = [
     name: 'ix-dark',
     label: 'Dark',
     labelSwatch: 'blue',
-    description: 'HarborNAS default theme',
+    description: 'HarborOS default theme',
     accentColors: ['blue', 'magenta', 'orange', 'cyan', 'yellow', 'violet', 'red', 'green', 'pink', 'aqua', 'tomato', 'teal', 'slategray', 'salmon'],
     primary: 'var(--blue)',
     topbar: '#111111',

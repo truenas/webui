@@ -102,7 +102,7 @@ describe('IscsiWizardComponent', () => {
           {
             selector: selectSystemInfo,
             value: {
-              version: 'HarborNAS-SCALE-22.12',
+              version: 'HarborOS-SCALE-22.12',
               license: {
                 features: [LicenseFeature.FibreChannel],
               },

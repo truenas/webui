@@ -17,7 +17,7 @@ function banner(): string {
 
 const program: Command = new Command()
   .name('ui')
-  .description('HarborNAS webui setup utility')
+  .description('HarborOS webui setup utility')
   .usage('(Call from root directory of repo via yarn)')
   .addHelpText('before', banner());
 

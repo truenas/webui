@@ -43,6 +43,6 @@ describe('HaStatusPopoverComponent', () => {
 
     const disabledReasons = spectator.queryAll('.disabled-reasons li');
     expect(disabledReasons[0]).toHaveText('No interfaces configured with Virtual IP.');
-    expect(disabledReasons[1]).toHaveText('Other HarborNAS controller cannot be reached.');
+    expect(disabledReasons[1]).toHaveText('Other HarborOS controller cannot be reached.');
   });
 });

@@ -4,10 +4,10 @@
 
 - yarn >= 1.22
 - Node.js >= 20.19
-- Running instance with HarborNAS nightly (VM is fine).
+- Running instance with HarborOS nightly (VM is fine).
 
 > [!TIP]
-> `master` branch usually corresponds to HarborNAS nightly, but you _may_ be able to run master WebUI on non-master HarborNAS instance, if it's relatively new.
+> `master` branch usually corresponds to HarborOS nightly, but you _may_ be able to run master WebUI on non-master HarborOS instance, if it's relatively new.
 
 ## Getting The Code
 
@@ -24,10 +24,10 @@ $ cd webui
 $ yarn
 ```
 
-- Create an environment file and point it to your HarborNAS instance:
+- Create an environment file and point it to your HarborOS instance:
 
 ```sh
-$ yarn ui remote -i <ip address or hostname of the server where HarborNAS is running>
+$ yarn ui remote -i <ip address or hostname of the server where HarborOS is running>
 ```
 
 > [!TIP]

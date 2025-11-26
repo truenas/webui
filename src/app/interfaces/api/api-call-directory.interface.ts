@@ -862,7 +862,7 @@ export interface ApiCallDirectory {
   'tn_connect.generate_claim_token': { params: void; response: string };
   'tn_connect.get_registration_uri': { params: void; response: string };
 
-  // HarborNAS
+  // HarborOS
   'truenas.accept_eula': { params: void; response: void };
   'truenas.get_eula': { params: void; response: string };
   'truenas.is_eula_accepted': { params: void; response: boolean };

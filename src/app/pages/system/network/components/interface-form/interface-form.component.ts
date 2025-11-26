@@ -417,9 +417,9 @@ export class InterfaceFormComponent implements OnInit {
         if (isHaLicensed) {
           if (failoverNode === 'A') {
             this.ipLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
-            this.failoverLabelSuffix = ' ' + this.translate.instant('(HarborNAS Controller 2)') as TranslatedString;
+            this.failoverLabelSuffix = ' ' + this.translate.instant('(HarborOS Controller 2)') as TranslatedString;
           } else if (failoverNode === 'B') {
-            this.ipLabelSuffix = ' ' + this.translate.instant('(HarborNAS Controller 1)') as TranslatedString;
+            this.ipLabelSuffix = ' ' + this.translate.instant('(HarborOS Controller 1)') as TranslatedString;
             this.failoverLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
           }
         }

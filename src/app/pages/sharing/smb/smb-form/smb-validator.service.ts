@@ -83,7 +83,7 @@ export class SmbValidationService {
   }
 
   private extractError(error: string): string {
-    const errorText = error.replace('[EINVAL] sharing.smb.share_precheck: HarborNAS server must be joined to a directory service or have at least one local SMB user before creating an SMB share.', '');
+    const errorText = error.replace('[EINVAL] sharing.smb.share_precheck: HarborOS server must be joined to a directory service or have at least one local SMB user before creating an SMB share.', '');
 
     if (errorText.includes(this.nameExistsError)) {
       return this.translate.instant(this.nameExistsError);

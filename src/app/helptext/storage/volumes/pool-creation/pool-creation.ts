@@ -11,7 +11,7 @@ export const helptextPoolCreation = {
   Pool-level encryption does not apply to the storage pool or disks in the pool. It applies\
   to the root dataset that shares the pool name and any child datasets created unless you change\
   the encryption at the time you create the child dataset. For more information on encryption please\
-  refer to the <a href="http://HarborNAS.com/docs/" target="_blank">HarborNAS Documentation hub</a>.'),
+  refer to the <a href="http://HarborOS.com/docs/" target="_blank">HarborOS Documentation hub</a>.'),
 
   diskSelectionMessage: T('VDEVs have been created through manual disk selection. To view or\
   edit your selections, press the "Edit Manual Disk Selection" button below. To start again with the\

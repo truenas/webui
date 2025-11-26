@@ -126,7 +126,7 @@ describe('UserAccessCardComponent', () => {
 
   it('should display roles', () => {
     const rolesSection = spectator.query('.content-wrapper:nth-of-type(6)');
-    expect(rolesSection).toHaveText('HarborNAS Access: Full Admin');
+    expect(rolesSection).toHaveText('HarborOS Access: Full Admin');
   });
 
   it('should display API keys count', () => {

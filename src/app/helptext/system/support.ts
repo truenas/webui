@@ -3,8 +3,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export const helptextSystemSupport = {
   proactive: {
     title: T('Proactive Support'),
-    instructions: T('Silver / Gold Coverage Customers can enable HarborNAS Proactive Support. This \
- automatically emails HarborNAS when certain conditions occur on this HarborNAS system. The HarborNAS Support \
+    instructions: T('Silver / Gold Coverage Customers can enable HarborOS Proactive Support. This \
+ automatically emails HarborOS when certain conditions occur on this HarborOS system. The HarborOS Support \
  Team will promptly communicate with the Contacts saved below to quickly resolve any issue that may \
  have occurred on the system.'),
     primaryContact: T('Primary Contact'),
@@ -25,10 +25,10 @@ export const helptextSystemSupport = {
   review: {
     message: {
       placeholder: T('Share your thoughts on our product\'s features, usability, or any suggestions for improvement.'),
-      placeholderHighRating: T('Any part of HarborNAS that you like in particular?'),
+      placeholderHighRating: T('Any part of HarborOS that you like in particular?'),
       placeholderLowRating: T('If something isn’t working correctly, it may be better to use the “Report a bug” option. This way you’ll automatically get status updates as we fix it.'),
     },
-    voteForNewFeatures: T('You can also vote for new features <a target="_blank" href="https://github.com/HarborNAS/community/discussions/feature-requests">on our forum.</a>'),
+    voteForNewFeatures: T('You can also vote for new features <a target="_blank" href="https://github.com/HarborOS/community/discussions/feature-requests">on our forum.</a>'),
   },
 
   token: {
@@ -48,7 +48,7 @@ export const helptextSystemSupport = {
   },
 
   cc: {
-    tooltip: T('Email addresses to receive copies of HarborNAS Support \
+    tooltip: T('Email addresses to receive copies of HarborOS Support \
   messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. \
   Separate entries by pressing <code>Enter</code>.'),
     err: T('Email addresses must be entered in the format \
@@ -97,10 +97,10 @@ export const helptextSystemSupport = {
   },
 
   docHub: T('<a href="https://harboros.ai/docs" target="_blank">\
- HarborNAS Documentation Hub</a> - Read and contribute to the open-source documentation.'),
+ HarborOS Documentation Hub</a> - Read and contribute to the open-source documentation.'),
 
-  forums: T('<a href="https://github.com/HarborNAS/community/discussions" target="_blank">\
- HarborNAS Forums</a> - Find answers from other users in the forums.'),
+  forums: T('<a href="https://github.com/HarborOS/community/discussions" target="_blank">\
+ HarborOS Forums</a> - Find answers from other users in the forums.'),
 
   updateTxt: T('Update License'),
   enterTxt: T('Add License'),

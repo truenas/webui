@@ -35,11 +35,11 @@ describe('BackupTaskActionsComponent', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('should emit addReplicationTask event when HarborNAS backup link is clicked', () => {
+  it('should emit addReplicationTask event when HarborOS backup link is clicked', () => {
     spectator.setInput('allCount', 1);
     spectator.detectChanges();
     const spy = jest.spyOn(spectator.component.addReplicationTask, 'emit');
-    spectator.click(spectator.query('[ixTest="another-HarborNAS"]')!);
+    spectator.click(spectator.query('[ixTest="another-HarborOS"]')!);
     expect(spy).toHaveBeenCalled();
   });
 });

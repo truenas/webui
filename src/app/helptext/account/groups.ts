@@ -13,7 +13,7 @@ export const helptextGroups = {
  as the last character of the username.'),
 
   privilegesTooltip: T('Attaches privileges to the group. Only needed if you need users in this group access \
- to HarborNAS API or WebUI.'),
+ to HarborOS API or WebUI.'),
 
   sudoTooltip: T('Allow group members to use <a\
  href="https://man7.org/linux/man-pages/man8/sudo.8.html"\

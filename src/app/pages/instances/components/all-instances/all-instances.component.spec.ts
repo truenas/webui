@@ -94,7 +94,7 @@ describe('AllInstancesComponent', () => {
     expect(dialogService.warn).toHaveBeenCalledTimes(1);
     expect(dialogService.warn).toHaveBeenCalledWith(
       'Warning',
-      'Containers are experimental and only recommended for advanced users. Make all configuration changes using the HarborNAS UI. Operations using the command line are not supported.',
+      'Containers are experimental and only recommended for advanced users. Make all configuration changes using the HarborOS UI. Operations using the command line are not supported.',
     );
     expect(mockLocalStorage.setItem).toHaveBeenCalledWith('showNewVmInstancesWarning', 'true');
   });

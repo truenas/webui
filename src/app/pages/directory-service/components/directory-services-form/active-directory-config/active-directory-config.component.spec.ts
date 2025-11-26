@@ -46,7 +46,7 @@ describe('ActiveDirectoryConfigComponent', () => {
   it('should initialize form with existing config values', async () => {
     const values = await form.getValues();
     expect(values).toEqual(expect.objectContaining({
-      'HarborNAS Hostname': 'test-host',
+      'HarborOS Hostname': 'test-host',
       'Domain Name': 'test-domain.com',
       'Site Name': 'test-site',
       'Computer Account OU': 'OU=Computers,DC=test,DC=com',
@@ -61,7 +61,7 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     await form.fillForm({
-      'HarborNAS Hostname': '',
+      'HarborOS Hostname': '',
       'Domain Name': '',
     });
 
@@ -75,7 +75,7 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     await form.fillForm({
-      'HarborNAS Hostname': 'valid-host',
+      'HarborOS Hostname': 'valid-host',
       'Domain Name': 'valid-domain.com',
     });
 
@@ -89,7 +89,7 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     await form.fillForm({
-      'HarborNAS Hostname': 'new-host',
+      'HarborOS Hostname': 'new-host',
       'Domain Name': 'new-domain2.com',
       'Site Name': 'new-site',
     });
@@ -112,7 +112,7 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     await form.fillForm({
-      'HarborNAS Hostname': 'test-host2',
+      'HarborOS Hostname': 'test-host2',
       'Domain Name': 'test-domain.com',
       'Use Default Domain': false,
     });
@@ -135,7 +135,7 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     await form.fillForm({
-      'HarborNAS Hostname': 'build-test-host',
+      'HarborOS Hostname': 'build-test-host',
       'Domain Name': 'build-test-domain.com',
       'Site Name': 'build-test-site',
       'Computer Account OU': 'OU=TestComputers,DC=build,DC=test,DC=com',
@@ -158,7 +158,7 @@ describe('ActiveDirectoryConfigComponent', () => {
     });
 
     await form.fillForm({
-      'HarborNAS Hostname': '',
+      'HarborOS Hostname': '',
       'Domain Name': 'test-domain.com',
     });
 
@@ -191,14 +191,14 @@ describe('ActiveDirectoryConfigComponent', () => {
 
     // Test with only hostname filled
     await form.fillForm({
-      'HarborNAS Hostname': 'test-host',
+      'HarborOS Hostname': 'test-host',
       'Domain Name': '',
     });
     expect(isValidEmitted).toBe(false);
 
     // Test with both required fields filled
     await form.fillForm({
-      'HarborNAS Hostname': 'valid-host',
+      'HarborOS Hostname': 'valid-host',
       'Domain Name': 'valid-domain.com',
     });
     expect(isValidEmitted).toBe(true);

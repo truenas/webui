@@ -49,7 +49,7 @@ describe('HostFormComponent', () => {
       'Host NQN': 'nqn.2014-08.org',
       'Require Host Authentication': true,
       'Key For Host To Present': '1234567890',
-      'Key For HarborNAS To Present (Optional)': '111222',
+      'Key For HarborOS To Present (Optional)': '111222',
       'Also use Diffie–Hellman key exchange for additional security': true,
     });
 
@@ -97,7 +97,7 @@ describe('HostFormComponent', () => {
         'Host NQN': 'nqn.2014-08.org',
         'Require Host Authentication': true,
         'Key For Host To Present': '1234567890',
-        'Key For HarborNAS To Present (Optional)': '111222',
+        'Key For HarborOS To Present (Optional)': '111222',
         'Also use Diffie–Hellman key exchange for additional security': true,
       });
 
@@ -147,7 +147,7 @@ describe('HostFormComponent', () => {
       });
     });
 
-    it('generates HarborNAS key using basenqn from settings when the other Generate Key is pressed', async () => {
+    it('generates HarborOS key using basenqn from settings when the other Generate Key is pressed', async () => {
       await form.fillForm({
         'Host NQN': 'nqn.2014-08.org',
         'Require Host Authentication': true,
@@ -159,7 +159,7 @@ describe('HostFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('nvmet.global.config');
       expect(api.call).toHaveBeenCalledWith('nvmet.host.generate_key', ['SHA-256', 'nqn.2011-06.com.truenas']);
       expect(await form.getValues()).toMatchObject({
-        'Key For HarborNAS To Present (Optional)': '123456',
+        'Key For HarborOS To Present (Optional)': '123456',
       });
     });
   });

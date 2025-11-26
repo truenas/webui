@@ -201,7 +201,7 @@ describe('EmailFormComponent', () => {
         [
           {
             subject: 'Test Message',
-            text: 'This is a test message from HarborNAS COMMUNITY EDITION.',
+            text: 'This is a test message from HarborOS COMMUNITY EDITION.',
           },
           {
             fromemail: 'from@ixsystems.com',
@@ -310,7 +310,7 @@ describe('EmailFormComponent', () => {
         [
           {
             subject: 'Test Message',
-            text: 'This is a test message from HarborNAS COMMUNITY EDITION.',
+            text: 'This is a test message from HarborOS COMMUNITY EDITION.',
           },
           {
             fromemail: 'from@ixsystems.com',
@@ -393,7 +393,7 @@ describe('EmailFormComponent', () => {
         [
           {
             subject: 'Test Message',
-            text: 'This is a test message from HarborNAS COMMUNITY EDITION.',
+            text: 'This is a test message from HarborOS COMMUNITY EDITION.',
           },
           {
             fromemail: 'from@ixsystems.com',

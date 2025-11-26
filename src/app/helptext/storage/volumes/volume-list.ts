@@ -16,12 +16,12 @@ export const helptextVolumes = {
 core files, encryption keys for pools, and Samba 4 metadata such as the user/group cache and share level \
 permissions. Exporting this pool will transfer the system dataset to another available pool. If the only \
 available pool is encrypted, that pool will no longer be able to be locked. When no other pools exist, \
-the system dataset transfers back to the HarborNAS operating system device.'),
+the system dataset transfers back to the HarborOS operating system device.'),
     unknownState: T('The pool <i>{pool}</i>is in the database but not connected to the machine. If it was exported by \
     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />'),
     cascade: {
-      label: T('Delete saved configurations from HarborNAS?'),
-      tooltip: T('Delete all HarborNAS configurations that depend on the exported pool. Impacted configurations\
+      label: T('Delete saved configurations from HarborOS?'),
+      tooltip: T('Delete all HarborOS configurations that depend on the exported pool. Impacted configurations\
        may include services (listed above if applicable), applications, shares, and scheduled data protection tasks.'),
     },
     enterName: T('Enter <strong>{pool}</strong> below to confirm'),
@@ -31,14 +31,14 @@ the system dataset transfers back to the HarborNAS operating system device.'),
 
   upgradePoolDialogWarning: T('Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
  one-way operation that might make some features of\
- the pool incompatible with older versions of HarborNAS: '),
+ the pool incompatible with older versions of HarborOS: '),
 
   expandPoolDialog: {
     title: T('Expand pool '),
     message: T('Expand pool to fit all available disk space.'),
   },
 
-  autotrimTooltip: T('Enable for HarborNAS to periodically review data blocks and identify\
+  autotrimTooltip: T('Enable for HarborOS to periodically review data blocks and identify\
  empty blocks, or obsolete blocks that can be deleted. Unset to use dirty block\
  overwrites (default).'),
   lockingDataset: T('Locking Dataset'),

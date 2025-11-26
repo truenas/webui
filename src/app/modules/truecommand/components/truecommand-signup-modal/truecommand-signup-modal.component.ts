@@ -36,7 +36,7 @@ export class TruecommandSignupModalComponent {
   protected readonly requiredRoles = [Role.TrueCommandWrite];
 
   onSignup(): void {
-    this.window.open('https://github.com/HarborNAS');
+    this.window.open('https://github.com/HarborOS');
     this.dialogRef.close(false);
   }
 }

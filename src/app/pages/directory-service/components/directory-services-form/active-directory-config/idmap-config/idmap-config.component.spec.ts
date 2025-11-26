@@ -54,7 +54,7 @@ describe('IdmapConfigComponent', () => {
   it('should initialize form with existing idmap config', async () => {
     const values = await form.getValues();
     expect(values).toEqual(expect.objectContaining({
-      'Use HarborNAS Server IDMAP Defaults': false,
+      'Use HarborOS Server IDMAP Defaults': false,
       'IDMAP Backend': 'Active Directory',
       Name: 'test_domain',
       'Range Low': '100000001',
@@ -68,7 +68,7 @@ describe('IdmapConfigComponent', () => {
 
     const values = await form.getValues();
     expect(values).toEqual(expect.objectContaining({
-      'Use HarborNAS Server IDMAP Defaults': true,
+      'Use HarborOS Server IDMAP Defaults': true,
     }));
   });
 
@@ -79,7 +79,7 @@ describe('IdmapConfigComponent', () => {
     });
 
     await form.fillForm({
-      'Use HarborNAS Server IDMAP Defaults': false,
+      'Use HarborOS Server IDMAP Defaults': false,
       'IDMAP Backend': IdmapBackend.Rid,
       Name: 'new-domain',
       'Range Low': 150000001,
@@ -130,7 +130,7 @@ describe('IdmapConfigComponent', () => {
   describe('idmap backend types', () => {
     it('should show AD specific fields when AD backend is selected', async () => {
       await form.fillForm({
-        'Use HarborNAS Server IDMAP Defaults': false,
+        'Use HarborOS Server IDMAP Defaults': false,
         'IDMAP Backend': 'Active Directory',
       });
 
@@ -144,7 +144,7 @@ describe('IdmapConfigComponent', () => {
 
     it('should show LDAP specific fields when LDAP backend is selected', async () => {
       await form.fillForm({
-        'Use HarborNAS Server IDMAP Defaults': false,
+        'Use HarborOS Server IDMAP Defaults': false,
         'IDMAP Backend': IdmapBackend.Ldap,
       });
 
@@ -156,7 +156,7 @@ describe('IdmapConfigComponent', () => {
         'Validate Certificates': expect.any(Boolean),
         'LDAP Base DN': expect.any(String),
         Readonly: expect.any(Boolean),
-        'Use HarborNAS Server IDMAP Defaults': false,
+        'Use HarborOS Server IDMAP Defaults': false,
         Name: 'test_domain',
         'Range High': '200000000',
         'Range Low': '100000001',
@@ -165,13 +165,13 @@ describe('IdmapConfigComponent', () => {
 
     it('should show RID specific fields when RID backend is selected', async () => {
       await form.fillForm({
-        'Use HarborNAS Server IDMAP Defaults': false,
+        'Use HarborOS Server IDMAP Defaults': false,
         'IDMAP Backend': IdmapBackend.Rid,
       });
 
       const values = await form.getValues();
       expect(values).toEqual(expect.objectContaining({
-        'Use HarborNAS Server IDMAP Defaults': false,
+        'Use HarborOS Server IDMAP Defaults': false,
         'SSSD Compat': expect.any(Boolean),
         Name: 'test_domain',
         'Range High': '200000000',
@@ -183,7 +183,7 @@ describe('IdmapConfigComponent', () => {
   describe('dynamic form controls', () => {
     it('should add and remove controls based on idmap backend type', async () => {
       await form.fillForm({
-        'Use HarborNAS Server IDMAP Defaults': false,
+        'Use HarborOS Server IDMAP Defaults': false,
         'IDMAP Backend': 'Active Directory',
       });
 
@@ -201,7 +201,7 @@ describe('IdmapConfigComponent', () => {
 
     it('should preserve core controls when switching backends', async () => {
       await form.fillForm({
-        'Use HarborNAS Server IDMAP Defaults': false,
+        'Use HarborOS Server IDMAP Defaults': false,
         'IDMAP Backend': 'Active Directory',
         Name: 'test-domain',
         'Range Low': 100000001,
@@ -226,7 +226,7 @@ describe('IdmapConfigComponent', () => {
       spectator.setInput('idmap', null);
       spectator.component.ngOnInit();
 
-      const useDefaultCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use HarborNAS Server IDMAP Defaults' }));
+      const useDefaultCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use HarborOS Server IDMAP Defaults' }));
       expect(await useDefaultCheckbox.getValue()).toBe(true);
     });
 
@@ -237,13 +237,13 @@ describe('IdmapConfigComponent', () => {
       });
 
       await form.fillForm({
-        'Use HarborNAS Server IDMAP Defaults': true,
+        'Use HarborOS Server IDMAP Defaults': true,
       });
 
       expect(emittedValues[0]).toBe(true);
 
       await form.fillForm({
-        'Use HarborNAS Server IDMAP Defaults': false,
+        'Use HarborOS Server IDMAP Defaults': false,
       });
 
       expect(emittedValues[0]).toBe(false);

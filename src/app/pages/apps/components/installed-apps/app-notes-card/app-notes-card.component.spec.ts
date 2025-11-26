@@ -17,7 +17,7 @@ describe('AppNotesCardComponent', () => {
     } as Record<string, ChartFormValue>,
     metadata: {},
     notes: `
-      # Welcome to HarborNAS SCALE
+      # Welcome to HarborOS SCALE
       Thank you for installing MinIO App.
       # Documentation
       Documentation for this app can be found at https://docs.ixsystems.com.
@@ -71,7 +71,7 @@ describe('AppNotesCardComponent', () => {
     const titles = spectator.queryAll('.notes-list h1');
     expect(titles).toHaveLength(3);
 
-    expect(titles[0]).toHaveText('Welcome to HarborNAS SCALE');
+    expect(titles[0]).toHaveText('Welcome to HarborOS SCALE');
     expect(titles[1]).toHaveText('Documentation');
     expect(titles[2]).toHaveText('Bug reports');
   });

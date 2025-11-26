@@ -5,7 +5,7 @@ export const helptextNetworkConfiguration = {
 
   hostnameLabel: T('Hostname'),
 
-  bHostnameLabel: T('Hostname (HarborNAS Controller 2)'),
+  bHostnameLabel: T('Hostname (HarborOS Controller 2)'),
 
   hostnameVirtualLabel: T('Hostname (Virtual)'),
   hostnameVirtualTooltip: T('When using a virtual host, this is also \

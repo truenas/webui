@@ -5,14 +5,14 @@ import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/s
 
 describe('SysInfoComponent', () => {
   const systemInfo = {
-    version: 'HarborNAS-SCALE-22.12-MASTER-20220318-020017',
+    version: 'HarborOS-SCALE-22.12-MASTER-20220318-020017',
     system_product: 'VirtualBox',
     model: 'AMD Ryzen 3 3200G',
     memory: '5 GiB',
     system_serial: 'ffbb355c',
   };
   const licenseInfo = {
-    customer_name: 'HarborNAS',
+    customer_name: 'HarborOS',
     features: ['DEDUP', 'FIBRECHANNEL', 'VM'],
     model: 'M60',
     contract_type: 'GOLD',

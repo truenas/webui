@@ -158,7 +158,7 @@ describe('WidgetBackupComponent', () => {
 
     it('hides tiles when no data', async () => {
       expect(await widgetBackup.getTiles()).toBeNull();
-      expect(await widgetBackup.getEmptyCardMessage()).toBe('Backup to Cloud or another HarborNAS via links below');
+      expect(await widgetBackup.getEmptyCardMessage()).toBe('Backup to Cloud or another HarborOS via links below');
     });
   });
 
@@ -243,7 +243,7 @@ describe('WidgetBackupComponent', () => {
     it('shows backup actions only when one tile has received tasks', async () => {
       expect(await widgetBackup.getBannerMessage()).toBeNull();
       expect(await widgetBackup.getBackupActionMessages()).toEqual({
-        Replication: 'Backup  to cloud  or  to another HarborNAS',
+        Replication: 'Backup  to cloud  or  to another HarborOS',
         Rsync: null,
       });
     });
@@ -286,7 +286,7 @@ describe('WidgetBackupComponent', () => {
     it('shows backup actions only when one tile has received tasks', async () => {
       expect(await widgetBackup.getBannerMessage()).toBeNull();
       expect(await widgetBackup.getBackupActionMessages()).toEqual({
-        Replication: 'Backup  to cloud  or  to another HarborNAS',
+        Replication: 'Backup  to cloud  or  to another HarborOS',
         Rsync: null,
       });
     });

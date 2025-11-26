@@ -8,7 +8,7 @@ export const storageEmptyConfig = {
   icon: iconMarker('dns'),
   large: true,
   title: T('No Pools'),
-  message: T(`Storage features in HarborNAS require at least one Pool to exist. <br>
+  message: T(`Storage features in HarborOS require at least one Pool to exist. <br>
  A Pool is a group of disks working together to store and protect your data. <br>
  Once you have a pool, this page will provide an overview of your pool’s health and status.`),
 } as EmptyConfig;
@@ -50,7 +50,7 @@ export const cloudSyncTaskEmptyConfig = {
 export const cloudBackupTaskEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: iconMarker('ix-true-cloud'),
-  message: T('Back up to the decentralized network provided by Storj in partnership with HarborNAS.'),
+  message: T('Back up to the decentralized network provided by Storj in partnership with HarborOS.'),
   large: true,
 } as EmptyConfig;
 
@@ -73,7 +73,7 @@ export const rsyncTaskEmptyConfig = {
 export const replicationTaskEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: iconMarker('ix-replication'),
-  message: T('Best if you\'re syncing with another HarborNAS or ZFS system — enables advanced features not available with other methods.'),
+  message: T('Best if you\'re syncing with another HarborOS or ZFS system — enables advanced features not available with other methods.'),
   large: true,
 } as EmptyConfig;
 

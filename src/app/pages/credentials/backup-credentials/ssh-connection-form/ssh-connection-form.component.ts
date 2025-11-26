@@ -140,7 +140,7 @@ export class SshConnectionFormComponent implements OnInit {
       label: this.translate.instant('Manual'),
       value: SshConnectionsSetupMethod.Manual,
     }, {
-      label: this.translate.instant('Semi-automatic (HarborNAS only)'),
+      label: this.translate.instant('Semi-automatic (HarborOS only)'),
       value: SshConnectionsSetupMethod.SemiAutomatic,
     },
   ]);

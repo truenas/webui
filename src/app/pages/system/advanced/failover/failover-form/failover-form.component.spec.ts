@@ -58,7 +58,7 @@ describe('FailoverFormComponent', () => {
   it('shows current failover settings', async () => {
     expect(await form.getValues()).toEqual({
       'Enable Automatic Failover': true,
-      'Default HarborNAS controller': true,
+      'Default HarborOS controller': true,
       'Network Timeout Before Initiating Failover': '0',
     });
   });
@@ -108,10 +108,10 @@ describe('FailoverFormComponent', () => {
     );
   });
 
-  it('warns when Default HarborNAS controller checkbox is ticked off and changes Save button to Save And Failover', async () => {
+  it('warns when Default HarborOS controller checkbox is ticked off and changes Save button to Save And Failover', async () => {
     await form.fillForm({
       'Enable Automatic Failover': false,
-      'Default HarborNAS controller': false,
+      'Default HarborOS controller': false,
     });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(

@@ -1,11 +1,11 @@
 #!/bin/sh
 
 if [ -z "$TNIP" ] ; then
-	echo "Error, need to supply -e TNIP=<IP of HarborNAS>"
+	echo "Error, need to supply -e TNIP=<IP of HarborOS>"
 	exit 1
 fi
 
-# Set proper hostname for passthrough to HarborNAS Middleware
+# Set proper hostname for passthrough to HarborOS Middleware
 sed -i'' "s|%%HOSTNAME%%|${TNIP}|g" /etc/nginx/tn-nginx.conf
 
 # Set timestamp for the version string to force a webui cache invalidation

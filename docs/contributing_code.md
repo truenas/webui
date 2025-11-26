@@ -1,6 +1,6 @@
 # Contributing Code
 
-HarborNAS is an open-source project, and we welcome contributions from the community.\
+HarborOS is an open-source project, and we welcome contributions from the community.\
 Our code is licensed under GPL-3 license.
 
 We've created this document to explain how to contribute to the project.
@@ -17,7 +17,7 @@ We maintain a [Help Wanted list](https://ixsystems.atlassian.net/issues/?filter=
 Feel free to assign any one issue from the queue, regardless of current assignee.
 
 > [!NOTE]
-> If you have discovered a new bug in HarborNAS, it's still best to create a Jira ticket first before attempting to fix it.
+> If you have discovered a new bug in HarborOS, it's still best to create a Jira ticket first before attempting to fix it.
 
 ### Update The code
 
@@ -69,8 +69,8 @@ Once your PR is merged, it will appear in the next nightly build. :tada:
 
 We appreciate your contribution.
 
-### Get [Forum](https://github.com/HarborNAS/community/discussions) Contributor Credit!
+### Get [Forum](https://github.com/HarborOS/community/discussions) Contributor Credit!
 
-Once you have successfully had your pull-request merged into the HarborNAS repository, you are eligible for an exclusive forum badge and group to highlight your contributor status!
+Once you have successfully had your pull-request merged into the HarborOS repository, you are eligible for an exclusive forum badge and group to highlight your contributor status!
 
-To claim your contributor badge, please include a `HarborNAS Forums Username: <name>` on your pull request description. Once the pull request merges, message the forum moderators with a link to the PR and your will be granted membership to the contributors group.
+To claim your contributor badge, please include a `HarborOS Forums Username: <name>` on your pull request description. Once the pull request merges, message the forum moderators with a link to the PR and your will be granted membership to the contributors group.

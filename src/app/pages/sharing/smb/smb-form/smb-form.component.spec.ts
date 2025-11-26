@@ -611,7 +611,7 @@ describe('SmbFormComponent', () => {
       jest.spyOn(api, 'call').mockImplementation((method) => {
         if (method === 'sharing.smb.share_precheck') {
           return throwError(() => new ApiCallError({
-            data: { reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists. [EINVAL] sharing.smb.share_precheck: HarborNAS server must be joined to a directory service or have at least one local SMB user before creating an SMB share.' },
+            data: { reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists. [EINVAL] sharing.smb.share_precheck: HarborOS server must be joined to a directory service or have at least one local SMB user before creating an SMB share.' },
           } as JsonRpcError));
         }
         return of(null);

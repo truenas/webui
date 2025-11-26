@@ -15,7 +15,7 @@ export const helptextReplication = {
  <a href="https://github.com/HarborNASpy-libzfs" \
  target="_blank">py-libzfs</a> to send an unencrypted data stream for \
  higher transfer speeds. This only works when replicating to a \
- HarborNAS, or other system with <i>py-libzfs</i> installed.</li> \
+ HarborOS, or other system with <i>py-libzfs</i> installed.</li> \
  <li><i>LOCAL</i> efficiently replicates snapshots to another dataset on \
  the same system without using the network.</li> \
  <li><i>LEGACY</i> uses the legacy replication engine from FreeNAS 11.2 \

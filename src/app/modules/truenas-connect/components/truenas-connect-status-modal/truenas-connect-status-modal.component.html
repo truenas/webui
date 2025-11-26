@@ -2,7 +2,7 @@
   <img
     class="title-logo"
     src="assets/images/truenas-connect-logo-horizontal.svg"
-    alt="HarborNAS Connect"
+    alt="HarborOS Connect"
   />
   @if (status() === TncStatus.Active) {
     <button
@@ -23,7 +23,7 @@
     <div class="loading-state-content">
       <ix-truenas-connect-spinner></ix-truenas-connect-spinner>
       <div class="loading-state-text">
-        {{ "Initializing HarborNAS Connect service..." | translate }}
+        {{ "Initializing HarborOS Connect service..." | translate }}
       </div>
     </div>
   } @else {
@@ -46,7 +46,7 @@
       [disabled]="isDisabling()"
       (click)="open()"
     >
-      {{ "Open HarborNAS Connect" | translate }}
+      {{ "Open HarborOS Connect" | translate }}
     </button>
   } @else if (status() === TncStatus.Waiting) {
     <button

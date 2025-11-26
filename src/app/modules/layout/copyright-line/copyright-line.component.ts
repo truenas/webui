@@ -23,6 +23,6 @@ export class CopyrightLineComponent {
 
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   readonly targetHref = computed(() => {
-    return this.isEnterprise() ? 'https://truenas.com/production' : 'https://github.com/HarborNAS';
+    return this.isEnterprise() ? 'https://truenas.com/production' : 'https://github.com/HarborOS';
   });
 }

@@ -562,7 +562,7 @@ describe('InterfaceFormComponent', () => {
         Type: 'Bridge',
         Name: 'br0',
         'IP Address (This Controller)': '10.2.3.4/24',
-        'IP Address (HarborNAS Controller 2)': '192.168.1.2',
+        'IP Address (HarborOS Controller 2)': '192.168.1.2',
         'Virtual IP Address (Failover Address)': '192.168.1.3',
       });
 

@@ -1,4 +1,4 @@
-# Translating HarborNAS UI
+# Translating HarborOS UI
 
 ## TL;DR
 
@@ -6,7 +6,7 @@
 
 ## Details
 
-All JSON files for translating HarborNAS UI are located in [src/assets/i18n](https://github.com/HarborNASwebui/tree/master/src/assets/i18n). \
+All JSON files for translating HarborOS UI are located in [src/assets/i18n](https://github.com/HarborNASwebui/tree/master/src/assets/i18n). \
 These files can be edited using your editor of choice or directly on GitHub.
 
 Translation needs to be added to the right part of the string. For example:
@@ -23,7 +23,7 @@ becomes
 
 ## Branches
 
-Different branches correspond to different versions of HarborNAS.
+Different branches correspond to different versions of HarborOS.
 
 To keep things simple, we suggest you make changes to the `master` branch.\
 After your PR is merged, changes will appear in the next nightly.

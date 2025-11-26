@@ -6,7 +6,7 @@ export const helptextDatasetForm = {
  requested by the client software, <i>Always</i> waits for\
  data writes to complete, and <i>Disabled</i> never waits for\
  writes to complete.'),
-  disabledSyncWarning: T('HarborNAS recommends that the sync setting always \
+  disabledSyncWarning: T('HarborOS recommends that the sync setting always \
  be left to the default of "Standard" or increased to "Always". The "Disabled" setting should \
  not be used in production and only where data roll back by few seconds \
  in case of crash or power loss is not a concern.'),
@@ -107,7 +107,7 @@ export const helptextDatasetForm = {
     apps: T('Dataset for use by an application. If you plan to deploy container applications,\
  the system automatically creates the ix-apps dataset but this is not used for application data storage.'),
     smbDescription: T('By clicking the share creation checkbox below, a new share will be created on form submission with the default\
- share settings Additionally, local HarborNAS users will have access to the resulting share and some more configuration options will be available.'),
+ share settings Additionally, local HarborOS users will have access to the resulting share and some more configuration options will be available.'),
   },
 
   encryption: {

@@ -56,7 +56,7 @@ export const helptextSystemGeneral = {
     label: T('HTTPS Protocols'),
     tooltip: T('Cryptographic protocols for securing client/server connections. Select which\
  <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank">Transport Layer Security (TLS)</a>\
- versions HarborNAS can use for connection security.'),
+ versions HarborOS can use for connection security.'),
   },
 
   uiHttpsRedirect: {
@@ -99,10 +99,10 @@ export const helptextSystemGeneral = {
 
   usageCollection: {
     label: T('Usage collection & UI error reporting'),
-    tooltip: T('When enabled, anonymous usage statistics and WebUI errors are reported to HarborNAS engineering team. \
+    tooltip: T('When enabled, anonymous usage statistics and WebUI errors are reported to HarborOS engineering team. \
 No personally identifiable information is collected.\
 <br><br>\
-When disabled, anonymous usage statistics consisting only of the software version and total system capacity (e.g. HarborNAS 24.04.0, 55 TB) are still collected. \
+When disabled, anonymous usage statistics consisting only of the software version and total system capacity (e.g. HarborOS 24.04.0, 55 TB) are still collected. \
 Information about system configuration and usage is not collected.\
 <br><br>\
 <a href="https://www.truenas.com/docs/scale/gettingstarted/useragreements/datacollectionstatement/" target="_blank">See details.</a>\

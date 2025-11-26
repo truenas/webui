@@ -22,7 +22,7 @@ describe('WidgetOsVersionComponent', () => {
         mockProvider(WidgetResourcesService, {
           dashboardSystemInfo$: of({
             value: {
-              version: 'HarborNAS-SCALE-24.10.0-MASTER-20240518-113154',
+              version: 'HarborOS-SCALE-24.10.0-MASTER-20240518-113154',
             },
             isLoading: false,
             error: null,
@@ -33,7 +33,7 @@ describe('WidgetOsVersionComponent', () => {
 
     const widget = spectator.query(WidgetDatapointComponent)!;
     expect(widget).toBeTruthy();
-    expect(widget.text()).toBe('HarborNAS-SCALE-24.10.0-MASTER-20240518-113154');
+    expect(widget.text()).toBe('HarborOS-SCALE-24.10.0-MASTER-20240518-113154');
     expect(widget.label()).toBe('OS Version');
   });
 

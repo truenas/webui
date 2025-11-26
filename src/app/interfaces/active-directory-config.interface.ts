@@ -75,7 +75,7 @@ export interface PrimaryDomainIdmap {
 export interface ActiveDirectoryConfig {
   hostname: string;
   domain: string;
-  // Provide HarborNAS server defaults option and leave empty, can omit if they choose to use defaults.
+  // Provide HarborOS server defaults option and leave empty, can omit if they choose to use defaults.
   // If not, only then present idmap field. AutoRid might be removed pending support conversation
   idmap: PrimaryDomainIdmap | null;
   site: string | null;

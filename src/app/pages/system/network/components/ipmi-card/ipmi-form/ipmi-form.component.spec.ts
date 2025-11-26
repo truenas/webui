@@ -129,7 +129,7 @@ describe('IpmiFormComponent', () => {
       const formValue = await form.getValues();
 
       expect(formValue).toEqual({
-        'Remote Controller': 'Active: HarborNAS Controller 1',
+        'Remote Controller': 'Active: HarborOS Controller 1',
         DHCP: false,
         'IPv4 Default Gateway': '10.220.0.1',
         'IPv4 Address': '10.220.15.114',
@@ -143,11 +143,11 @@ describe('IpmiFormComponent', () => {
     it('loads remote controller data', async () => {
       const remoteController = await loader.getHarness(IxRadioGroupHarness);
       form = await loader.getHarness(IxFormHarness);
-      await remoteController.setValue('Standby: HarborNAS Controller 2');
+      await remoteController.setValue('Standby: HarborOS Controller 2');
       const formData = await form.getValues();
 
       expect(formData).toEqual({
-        'Remote Controller': 'Standby: HarborNAS Controller 2',
+        'Remote Controller': 'Standby: HarborOS Controller 2',
         DHCP: false,
         'IPv4 Address': '10.220.15.115',
         'IPv4 Default Gateway': '10.220.0.2',
@@ -172,7 +172,7 @@ describe('IpmiFormComponent', () => {
 
     it('updates controller data and closes modal when save is pressed', async () => {
       await form.fillForm({
-        'Remote Controller': 'Active: HarborNAS Controller 1',
+        'Remote Controller': 'Active: HarborOS Controller 1',
         DHCP: false,
         'IPv4 Default Gateway': '10.220.0.1',
         'IPv4 Address': '10.220.15.114',
@@ -197,7 +197,7 @@ describe('IpmiFormComponent', () => {
 
     it('updates remote controller data and closes modal when save is pressed', async () => {
       await form.fillForm({
-        'Remote Controller': 'Standby: HarborNAS Controller 2',
+        'Remote Controller': 'Standby: HarborOS Controller 2',
         DHCP: false,
         'IPv4 Address': '10.220.15.115',
         'IPv4 Default Gateway': '10.220.0.2',
@@ -223,7 +223,7 @@ describe('IpmiFormComponent', () => {
 
     it('updates remote controller data and closes modal when save is pressed with vlan disabled', async () => {
       await form.fillForm({
-        'Remote Controller': 'Standby: HarborNAS Controller 2',
+        'Remote Controller': 'Standby: HarborOS Controller 2',
         DHCP: false,
         'IPv4 Address': '10.220.15.115',
         'IPv4 Default Gateway': '10.220.0.2',

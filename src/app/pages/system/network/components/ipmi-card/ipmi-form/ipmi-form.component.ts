@@ -175,11 +175,11 @@ export class IpmiFormComponent implements OnInit {
     const failoverControllerLabel = (node === 'A') ? '2' : '1';
     this.remoteControllerOptions = of([
       {
-        label: this.translate.instant('Active: HarborNAS Controller {id}', { id: currentControllerLabel }),
+        label: this.translate.instant('Active: HarborOS Controller {id}', { id: currentControllerLabel }),
         value: false,
       },
       {
-        label: this.translate.instant('Standby: HarborNAS Controller {id}', { id: failoverControllerLabel }),
+        label: this.translate.instant('Standby: HarborOS Controller {id}', { id: failoverControllerLabel }),
         value: true,
       },
     ]);

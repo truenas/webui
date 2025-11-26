@@ -1,6 +1,6 @@
 # Role Checks
 
-HarborNAS allows users to create admins with custom roles.
+HarborOS allows users to create admins with custom roles.
 
 ### Readonly role is the minimum
 

@@ -11,7 +11,7 @@ describe('namingSchemaValidator', () => {
       expect(validate(new FormControl(undefined))).toBeNull();
     });
 
-    it('should accept default HarborNAS naming schema', () => {
+    it('should accept default HarborOS naming schema', () => {
       expect(validate(new FormControl('auto-%Y-%m-%d_%H-%M'))).toBeNull();
     });
 
@@ -154,7 +154,7 @@ describe('namingSchemaValidator', () => {
 
   describe('real-world ZFS snapshot naming patterns', () => {
     it('should accept common ZFS snapshot naming patterns', () => {
-      // HarborNAS default
+      // HarborOS default
       expect(validate(new FormControl('auto-%Y-%m-%d_%H-%M'))).toBeNull();
 
       // Common variations

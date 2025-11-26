@@ -88,7 +88,7 @@ describe('FailoverValidationService', () => {
       spectator.service.validateFailover().subscribe((result) => {
         expect(result).toEqual({
           success: false,
-          error: 'HarborNAS High Availability is in an inconsistent state. Please try again in a few minutes and contact the system administrator if the problem persists.',
+          error: 'HarborOS High Availability is in an inconsistent state. Please try again in a few minutes and contact the system administrator if the problem persists.',
           errorType: FailoverErrorType.FailoverFailed,
         });
       });

@@ -57,7 +57,7 @@ export const helptextSharingSmb = {
  If the server is joined to Active Directory it uses %D/%u (domain/username).'),
   autoQuotaLabel: T('Auto Quota'),
   autoQuotaTooltip: T('Set the specified ZFS quota (in gibibytes) on new datasets.\
- If the value is zero, HarborNAS disables automatic quotas for the share.'),
+ If the value is zero, HarborOS disables automatic quotas for the share.'),
 
   afpLabel: T('Legacy AFP Compatibility'),
   afpTooltip: T(
@@ -99,7 +99,7 @@ export const helptextSharingSmb = {
  Windows Server version 1903. Additional client-side configuration is \
  required to provide guest access to these clients.<br><br> \
  <i>MacOS clients:</i> Attempting to connect as a user that does not \
- exist in HarborNAS <i>does not</i> automatically connect as the guest \
+ exist in HarborOS <i>does not</i> automatically connect as the guest \
  account. The <b>Connect As:</b> <i>Guest</i> option must be \
  specifically chosen in MacOS to log in as the guest account. See the \
  <a href="https://support.apple.com/guide/mac-help/connect-mac-shared-computers-servers-mchlp1140/" target="_blank">Apple documentation</a> \

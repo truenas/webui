@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-PRODUCT=	HarborNAS
+PRODUCT=	HarborOS
 FILETIME!=	stat -c %y .
 
 clean:

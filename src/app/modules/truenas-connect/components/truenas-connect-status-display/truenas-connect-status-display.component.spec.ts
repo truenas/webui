@@ -27,7 +27,7 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.query('.waiting-state-content')).toBeTruthy();
-    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Power Up your HarborNAS Experience! Link your system with HarborNAS Connect now for additional security, alerting, and other features.');
+    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Power Up your HarborOS Experience! Link your system with HarborOS Connect now for additional security, alerting, and other features.');
   });
 
   it('should display failed state correctly', () => {
@@ -44,8 +44,8 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.query('.status-connected')).toBeTruthy();
-    expect(spectator.query('[ixTest="tnc-status"]')).toHaveText('HarborNAS Connect - Status Healthy');
-    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Your system is linked with HarborNAS Connect. Click below to open the HarborNAS Connect Management Interface');
+    expect(spectator.query('[ixTest="tnc-status"]')).toHaveText('HarborOS Connect - Status Healthy');
+    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Your system is linked with HarborOS Connect. Click below to open the HarborOS Connect Management Interface');
   });
 
   it('should display connecting state correctly', () => {
@@ -54,8 +54,8 @@ describe('TruenasConnectStatusDisplayComponent', () => {
 
     expect(spectator.query('.connecting-state-content')).toBeTruthy();
     expect(spectator.query('ix-truenas-connect-spinner')).toBeTruthy();
-    expect(spectator.query('[ixTest="tnc-status"]')).toHaveText('Setting up HarborNAS Connect');
-    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Your system is setting up with HarborNAS Connect, this may take a few moments.');
+    expect(spectator.query('[ixTest="tnc-status"]')).toHaveText('Setting up HarborOS Connect');
+    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Your system is setting up with HarborOS Connect, this may take a few moments.');
   });
 
   it('should display disabled state correctly', () => {

@@ -8,7 +8,7 @@ export const helptextServiceSmb = {
  Each alias can be up to 15 characters long.'),
   workgroupTooltip: T('Must match Windows workgroup name. \
  When this is unconfigured and Active Directory or LDAP are active, \
- HarborNAS will detect and set the correct workgroup from these services.'),
+ HarborOS will detect and set the correct workgroup from these services.'),
   descriptionTooltip: T('Optional. Enter a server description.'),
   enableSmb1Tooltip: T('Use this option to allow legacy SMB clients to connect to the\
   server. Note that SMB1 is being deprecated and it is advised\

@@ -7,7 +7,7 @@ export const helptextTopbar = {
     toggleCollapse: T('Toggle Collapse'),
     connectingToTruecommand: T('Connecting to TrueCommand'),
     truecommandStatus: T('Status of TrueCommand'),
-    tncStatus: T('Status of HarborNAS Connect'),
+    tncStatus: T('Status of HarborOS Connect'),
     update: T('Update in Progress'),
     rebootInfo: T('Reboot Required'),
     pendingNetworkChanges: T('Pending Network Changes'),
@@ -21,7 +21,7 @@ export const helptextTopbar = {
   },
 
   signupDialog: {
-    content: T('This allows your HarborNAS system to be monitored and administrated by\
+    content: T('This allows your HarborOS system to be monitored and administrated by\
  TrueCommand. Click <b>SIGNUP</b> to create a new TrueCommand Cloud instance or <b>CONNECT</b> to join an existing instance.'),
   },
 
@@ -32,7 +32,7 @@ export const helptextTopbar = {
     saveButton: T('Save'),
     apiKey: T('API Key'),
     apiTooltip: T('Enter or paste the API key provided from \
-<a href="https://github.com/HarborNAS/portal/login/" target="_blank">HarborNAS Account Services</a>. \
+<a href="https://github.com/HarborOS/portal/login/" target="_blank">HarborOS Account Services</a>. \
 Login or signup is required.'),
     enabledLabel: T('Enable'),
     enabledTooltip: T('Immediately connect to TrueCommand.'),

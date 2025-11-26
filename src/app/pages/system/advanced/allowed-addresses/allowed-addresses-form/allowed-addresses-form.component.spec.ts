@@ -127,7 +127,7 @@ describe('AllowedAddressesComponent', () => {
       const warning = spectator.query(WarningComponent);
       expect(warning.color()).toBe('red');
       expect(warning.message()).toBe(
-        'Make sure to add your current IP address to the list. Otherwise you will lose access to HarborNAS UI.',
+        'Make sure to add your current IP address to the list. Otherwise you will lose access to HarborOS UI.',
       );
     });
   });
