@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import {
-  filter, Observable,
+  filter, Observable, Subscription,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Timeout } from 'app/interfaces/timeout.interface';
@@ -42,37 +42,31 @@ export class SessionTimeoutService {
 
   protected actionWaitTimeout: Timeout;
   protected terminateCancelTimeout: Timeout;
-  private lastLifetimeValue: number | null = null;
+  private currentLifetime: number | null = null;
+  private preferencesSubscription: Subscription | null = null;
+
+  private readonly defaultLifetime = 300;
 
   private resume = (): void => {
-    this.appStore$
-      .select(selectPreferences)
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((preferences) => {
-        this.pause();
-        const lifetime = preferences.lifetime || 300;
-        if (this.lastLifetimeValue !== lifetime) {
-          this.tokenLastUsedService.updateTokenLifetime(lifetime);
-          this.lastLifetimeValue = lifetime;
-        }
-        this.actionWaitTimeout = setTimeout(() => {
-          this.stop();
-          const showWarningDialogFor = 30000;
+    this.pause();
+    const lifetime = this.currentLifetime ?? this.defaultLifetime;
+    this.actionWaitTimeout = setTimeout(() => {
+      this.stop();
+      const showWarningDialogFor = 30000;
 
-          this.terminateCancelTimeout = setTimeout(() => {
-            this.expireSession();
-          }, showWarningDialogFor);
+      this.terminateCancelTimeout = setTimeout(() => {
+        this.expireSession();
+      }, showWarningDialogFor);
 
-          this.showWarningDialog(showWarningDialogFor, lifetime)
-            .pipe(untilDestroyed(this))
-            .subscribe((shouldExtend) => {
-              clearTimeout(this.terminateCancelTimeout);
-              if (shouldExtend) {
-                this.start();
-              }
-            });
-        }, lifetime * 1000);
-      });
+      this.showWarningDialog(showWarningDialogFor, lifetime)
+        .pipe(untilDestroyed(this))
+        .subscribe((shouldExtend) => {
+          clearTimeout(this.terminateCancelTimeout);
+          if (shouldExtend) {
+            this.start();
+          }
+        });
+    }, lifetime * 1000);
   };
 
   constructor() {
@@ -107,8 +101,27 @@ export class SessionTimeoutService {
 
   start(): void {
     this.tokenLastUsedService.setupTokenLastUsedValue(this.authService.user$);
+    this.subscribeToPreferences();
     this.addListeners();
     this.resume();
+  }
+
+  private subscribeToPreferences(): void {
+    this.preferencesSubscription?.unsubscribe();
+    this.preferencesSubscription = this.appStore$
+      .select(selectPreferences)
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((preferences) => {
+        const lifetime = preferences.lifetime || this.defaultLifetime;
+        if (this.currentLifetime !== lifetime) {
+          const shouldResetTimeout = this.currentLifetime !== null;
+          this.currentLifetime = lifetime;
+          this.tokenLastUsedService.updateTokenLifetime(lifetime);
+          if (shouldResetTimeout) {
+            this.resume();
+          }
+        }
+      });
   }
 
   pause(): void {
@@ -120,6 +133,8 @@ export class SessionTimeoutService {
   stop(): void {
     this.removeListeners();
     this.pause();
+    this.preferencesSubscription?.unsubscribe();
+    this.preferencesSubscription = null;
   }
 
   private showWarningDialog(showConfirmTime: number, lifetime: number): Observable<boolean> {
