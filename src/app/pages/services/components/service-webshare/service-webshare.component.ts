@@ -61,7 +61,6 @@ export class ServiceWebshareComponent implements OnInit {
 
   ngOnInit(): void {
     this.isFormLoading.set(true);
-    // eslint-disable-next-line rxjs-angular/prefer-takeuntil
     this.api.call('webshare.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (config: WebShareConfig) => {
         this.form.patchValue({
@@ -80,7 +79,6 @@ export class ServiceWebshareComponent implements OnInit {
     const values = this.form.value;
 
     this.isFormLoading.set(true);
-    // eslint-disable-next-line rxjs-angular/prefer-takeuntil
     this.api.call('webshare.update', [values]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isFormLoading.set(false);

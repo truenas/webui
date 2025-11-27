@@ -217,8 +217,8 @@ export class PrivilegeFormComponent implements OnInit {
   private get dsGroupsUids$(): Observable<number[]> {
     return this.form.value.ds_groups.length
       ? combineLatest(
-        this.form.value.ds_groups.map((groupName) => this.userService.getGroupByName(groupName)),
-      ).pipe(map((groups) => groups.map((group) => group.gr_gid)))
+          this.form.value.ds_groups.map((groupName) => this.userService.getGroupByName(groupName)),
+        ).pipe(map((groups) => groups.map((group) => group.gr_gid)))
       : of([]);
   }
 }

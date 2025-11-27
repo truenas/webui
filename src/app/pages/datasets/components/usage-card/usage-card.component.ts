@@ -204,7 +204,6 @@ export class UsageCardComponent {
     }).pipe(
       filter((response) => !!response.response),
       takeUntilDestroyed(this.destroyRef),
-    // eslint-disable-next-line rxjs-angular/prefer-takeuntil
     ).subscribe(() => {
       this.datasetStore.datasetUpdated();
     });
@@ -216,7 +215,6 @@ export class UsageCardComponent {
     }).pipe(
       filter((response) => !!response.response),
       takeUntilDestroyed(this.destroyRef),
-    // eslint-disable-next-line rxjs-angular/prefer-takeuntil
     ).subscribe(() => {
       this.datasetStore.datasetUpdated();
     });
@@ -235,7 +233,6 @@ export class UsageCardComponent {
     }).pipe(
       filter((response) => !!response?.response),
       takeUntilDestroyed(this.destroyRef),
-    // eslint-disable-next-line rxjs-angular/prefer-takeuntil
     ).subscribe(() => {
       this.datasetStore.datasetUpdated();
     });

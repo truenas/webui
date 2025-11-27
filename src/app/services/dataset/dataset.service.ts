@@ -61,9 +61,9 @@ export class DatasetService {
   rootLevelDatasetWarning(path: string, message: TranslatedString, skip = false): Observable<boolean> {
     return isRootShare(path) && !skip
       ? this.dialog.confirm({
-        title: this.translate.instant('Warning'),
-        message,
-      })
+          title: this.translate.instant('Warning'),
+          message,
+        })
       : of(true);
   }
 }

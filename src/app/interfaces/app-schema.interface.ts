@@ -62,5 +62,5 @@ export type SerializeFormValue = HierarchicalObjectMap<ChartFormValue>
 export type TransformNodeFunction = (
   chartSchemaNode: ChartSchemaNode,
   isNew: boolean,
-  isParentImmutable: boolean
+  isParentImmutable: boolean,
 ) => DynamicFormSchemaNode[];

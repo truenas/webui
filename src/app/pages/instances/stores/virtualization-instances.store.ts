@@ -63,7 +63,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
             const selectedInstanceId = this.selectedInstanceId();
             const selectedInstance = this.selectedInstance();
 
-            if (!selectedInstance || selectedInstance.id !== selectedInstanceId) {
+            if (selectedInstance?.id !== selectedInstanceId) {
               const updatedSelectedInstance = instances.find((instance) => instance.id === selectedInstanceId);
               if (updatedSelectedInstance) {
                 this.patchState({ selectedInstance: updatedSelectedInstance });

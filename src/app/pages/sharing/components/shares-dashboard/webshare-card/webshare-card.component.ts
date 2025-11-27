@@ -189,7 +189,6 @@ export class WebShareCardComponent implements OnInit {
     }).pipe(
       filter((success) => success),
       takeUntilDestroyed(this.destroyRef),
-    // eslint-disable-next-line rxjs-angular/prefer-takeuntil
     ).subscribe(() => {
       this.refreshConfig$.next();
     });
@@ -215,7 +214,6 @@ export class WebShareCardComponent implements OnInit {
 
     slideInRef$
       .pipe(filter((result) => !!result?.response), takeUntilDestroyed(this.destroyRef))
-      // eslint-disable-next-line rxjs-angular/prefer-takeuntil
       .subscribe(() => {
         this.refreshConfig$.next();
       });
@@ -240,7 +238,6 @@ export class WebShareCardComponent implements OnInit {
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      // eslint-disable-next-line rxjs-angular/prefer-takeuntil
       .subscribe({
         next: () => {
           this.snackbar.success(this.translate.instant('WebShare deleted'));

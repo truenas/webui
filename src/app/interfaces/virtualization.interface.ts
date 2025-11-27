@@ -107,14 +107,14 @@ export interface UpdateVirtualizationInstance {
   image_os?: AllowedImageOs;
 }
 
-export type VirtualizationDevice =
-  | VirtualizationDisk
-  | VirtualizationGpu
-  | VirtualizationProxy
-  | VirtualizationTpm
-  | VirtualizationUsb
-  | VirtualizationNic
-  | VirtualizationPciDevice;
+export type VirtualizationDevice
+  = | VirtualizationDisk
+    | VirtualizationGpu
+    | VirtualizationProxy
+    | VirtualizationTpm
+    | VirtualizationUsb
+    | VirtualizationNic
+    | VirtualizationPciDevice;
 
 export interface VirtualizationDisk {
   name: string;
