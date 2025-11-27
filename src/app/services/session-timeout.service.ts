@@ -45,13 +45,20 @@ export class SessionTimeoutService {
   protected terminateCancelTimeout: Timeout;
   private currentLifetime: number | null = null;
   private preferencesSubscription: Subscription | null = null;
+  private isResumeActive = false;
 
   private readonly defaultLifetime = 300;
 
   private resume = (): void => {
+    if (this.isResumeActive) {
+      return;
+    }
+
     this.pause();
+    this.isResumeActive = true;
     const lifetime = this.currentLifetime ?? this.defaultLifetime;
     this.actionWaitTimeout = setTimeout(() => {
+      this.isResumeActive = false;
       this.removeListeners();
       const showWarningDialogFor = 30000;
 
@@ -119,6 +126,7 @@ export class SessionTimeoutService {
   }
 
   pause(): void {
+    this.isResumeActive = false;
     if (this.actionWaitTimeout) {
       clearTimeout(this.actionWaitTimeout);
     }
