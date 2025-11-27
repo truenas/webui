@@ -45,5 +45,10 @@ export const servicesElements = {
       synonyms: [T('UPS Service')],
       anchor: 'service-ups',
     },
+    webshare: {
+      hierarchy: [T('WebShare')],
+      synonyms: [T('WebShare Service')],
+      anchor: 'service-WebShare',
+    },
   },
 } satisfies UiSearchableElement;
