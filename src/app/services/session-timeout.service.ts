@@ -127,7 +127,10 @@ export class SessionTimeoutService {
     this.preferencesSubscription?.unsubscribe();
     this.preferencesSubscription = this.appStore$
       .select(selectPreferences)
-      .pipe(filter(Boolean))
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
       .subscribe((preferences) => {
         const lifetime = preferences.lifetime || this.defaultLifetime;
         if (this.currentLifetime !== lifetime) {
