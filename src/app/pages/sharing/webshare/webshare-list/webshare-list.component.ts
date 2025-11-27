@@ -160,7 +160,6 @@ export class WebShareListComponent implements OnInit {
   ngOnInit(): void {
     this.setDataProvider();
     this.setDefaultSort();
-    // eslint-disable-next-line rxjs-angular/prefer-takeuntil
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery);
     });
@@ -194,7 +193,6 @@ export class WebShareListComponent implements OnInit {
     }).pipe(
       filter((success) => success),
       takeUntilDestroyed(this.destroyRef),
-    // eslint-disable-next-line rxjs-angular/prefer-takeuntil
     ).subscribe(() => {
       this.loadWebShareConfig();
     });
@@ -212,7 +210,6 @@ export class WebShareListComponent implements OnInit {
 
     slideInRef$
       .pipe(filter((result) => result?.response), takeUntilDestroyed(this.destroyRef))
-      // eslint-disable-next-line rxjs-angular/prefer-takeuntil
       .subscribe(() => {
         this.loadWebShareConfig();
       });
@@ -237,7 +234,6 @@ export class WebShareListComponent implements OnInit {
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      // eslint-disable-next-line rxjs-angular/prefer-takeuntil
       .subscribe({
         next: () => {
           this.snackbar.success(this.translate.instant('WebShare deleted'));
