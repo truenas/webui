@@ -7,15 +7,6 @@
   ></ix-input>
 
   @if (!isAddingVdevs()) {
-    <!-- Info box when SED disks are detected -->
-    @if (hasSedCapableDisks$ | async; as hasSedDisks) {
-      @if (hasSedDisks && (isEnterprise$ | async)) {
-        <div class="sed-info-message" role="status">
-          {{ helptext.sedInfoMessage | translate }}
-        </div>
-      }
-    }
-
     <!-- Encryption type radio group -->
     <ix-radio-group
       formControlName="encryptionType"
@@ -25,6 +16,13 @@
 
     <!-- Software Encryption Standard dropdown -->
     @if (form.controls.encryptionType.value === EncryptionType.Software) {
+      <!-- Info box when SED disks are available but Software selected -->
+      @if (hasSedCapableDisks$ | async; as hasSedDisks) {
+        @if (hasSedDisks && (isEnterprise$ | async)) {
+          <ix-warning color="green" [message]="helptext.sedInfoMessage | translate"></ix-warning>
+        }
+      }
+
       <ix-select
         formControlName="encryptionStandard"
         [label]="'Encryption Standard' | translate"
@@ -37,9 +35,7 @@
     @if (form.controls.encryptionType.value === EncryptionType.Sed) {
       <!-- Show info if no password is set, warning if password exists -->
       @if (isSedPasswordSet$ | async; as isPasswordSet) {
-        <div class="sed-global-password-warning" role="alert">
-          {{ helptext.sedGlobalPasswordWarning | translate }}
-        </div>
+        <ix-warning [message]="helptext.sedGlobalPasswordWarning | translate"></ix-warning>
 
         <ix-input
           formControlName="sedPassword"
@@ -56,9 +52,7 @@
           [required]="false"
         ></ix-input>
       } @else {
-        <div class="sed-info-message" role="status">
-          {{ helptext.sedGlobalPasswordInfo | translate }}
-        </div>
+        <ix-warning color="green" [message]="helptext.sedGlobalPasswordInfo | translate"></ix-warning>
 
         <ix-input
           formControlName="sedPassword"
@@ -79,9 +73,7 @@
   } @else {
     <!-- Message when adding VDEVs to SED pool -->
     @if (pool()?.all_sed) {
-      <div class="sed-info-message" role="status">
-        {{ helptext.sedPoolVdevMessage | translate }}
-      </div>
+      <ix-warning color="green" [message]="helptext.sedPoolVdevMessage | translate"></ix-warning>
     }
   }
 

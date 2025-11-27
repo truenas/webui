@@ -225,7 +225,7 @@ describe('GeneralWizardStepComponent', () => {
     spectator.component.form.patchValue({ encryptionType: EncryptionType.Sed });
     spectator.detectChanges();
 
-    const infoMessage = spectator.query('.sed-info-message');
+    const infoMessage = spectator.query('ix-warning');
     expect(infoMessage).toBeTruthy();
     expect(infoMessage).toHaveText('The Global SED Password is a system-wide setting that applies to all pools using SED encryption.');
   });
@@ -282,7 +282,7 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
     spectator.component.form.patchValue({ encryptionType: EncryptionType.Sed });
     spectator.detectChanges();
 
-    const warningMessage = spectator.query('.sed-global-password-warning');
+    const warningMessage = spectator.query('ix-warning');
     expect(warningMessage).toBeTruthy();
     expect(warningMessage).toHaveText('The Global SED Password is a system-wide setting. A password is already configured. Entering a new password here will update it for all pools using SED encryption.');
   });

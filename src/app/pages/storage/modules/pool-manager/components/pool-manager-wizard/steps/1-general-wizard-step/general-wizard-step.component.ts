@@ -19,6 +19,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -50,6 +51,7 @@ const defaultEncryptionStandard = 'AES-256-GCM';
     MatStepperNext,
     TestDirective,
     TranslateModule,
+    WarningComponent,
   ],
 })
 export class GeneralWizardStepComponent implements OnInit, OnChanges {
