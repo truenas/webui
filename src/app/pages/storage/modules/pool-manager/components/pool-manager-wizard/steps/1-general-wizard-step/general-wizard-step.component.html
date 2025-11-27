@@ -10,8 +10,8 @@
     <!-- Info box when SED disks are detected -->
     @if (hasSedCapableDisks$ | async; as hasSedDisks) {
       @if (hasSedDisks && (isEnterprise$ | async)) {
-        <div class="sed-info-message">
-          {{ 'SED-capable (Self-Encrypting Drive) disks detected. Hardware-based encryption provides better performance and security.' | translate }}
+        <div class="sed-info-message" role="status">
+          {{ helptext.sedInfoMessage | translate }}
         </div>
       }
     }
@@ -36,36 +36,51 @@
     <!-- SED Password fields -->
     @if (form.controls.encryptionType.value === EncryptionType.Sed) {
       <!-- Show info if no password is set, warning if password exists -->
-      @if (isSedPasswordSet$ | async) {
-        <div class="sed-global-password-warning">
-          {{ 'The Global SED Password is a system-wide setting. A password is already configured. Entering a new password here will update it for all pools using SED encryption.' | translate }}
+      @if (isSedPasswordSet$ | async; as isPasswordSet) {
+        <div class="sed-global-password-warning" role="alert">
+          {{ helptext.sedGlobalPasswordWarning | translate }}
         </div>
+
+        <ix-input
+          formControlName="sedPassword"
+          [label]="helptext.sedPasswordLabel | translate"
+          [type]="'password'"
+          [required]="false"
+          [tooltip]="'Leave blank to keep the existing password, or enter a new password to update it.' | translate"
+        ></ix-input>
+
+        <ix-input
+          formControlName="sedPasswordConfirm"
+          [label]="helptext.sedPasswordConfirmLabel | translate"
+          [type]="'password'"
+          [required]="false"
+        ></ix-input>
       } @else {
-        <div class="sed-info-message">
-          {{ 'The Global SED Password is a system-wide setting that applies to all pools using SED encryption.' | translate }}
+        <div class="sed-info-message" role="status">
+          {{ helptext.sedGlobalPasswordInfo | translate }}
         </div>
+
+        <ix-input
+          formControlName="sedPassword"
+          [label]="helptext.sedPasswordLabel | translate"
+          [type]="'password'"
+          [required]="true"
+          [tooltip]="helptext.sedPasswordTooltip | translate"
+        ></ix-input>
+
+        <ix-input
+          formControlName="sedPasswordConfirm"
+          [label]="helptext.sedPasswordConfirmLabel | translate"
+          [type]="'password'"
+          [required]="true"
+        ></ix-input>
       }
-
-      <ix-input
-        formControlName="sedPassword"
-        [label]="'Global SED Password' | translate"
-        [type]="'password'"
-        [required]="true"
-        [tooltip]="'This password will be used to configure all SED-capable disks in this pool.' | translate"
-      ></ix-input>
-
-      <ix-input
-        formControlName="sedPasswordConfirm"
-        [label]="'Confirm SED Password' | translate"
-        [type]="'password'"
-        [required]="true"
-      ></ix-input>
     }
   } @else {
     <!-- Message when adding VDEVs to SED pool -->
     @if (pool()?.all_sed) {
-      <div class="sed-info-message">
-        {{ 'This pool uses SED encryption. Only SED-capable disks will be available for selection.' | translate }}
+      <div class="sed-info-message" role="status">
+        {{ helptext.sedPoolVdevMessage | translate }}
       </div>
     }
   }

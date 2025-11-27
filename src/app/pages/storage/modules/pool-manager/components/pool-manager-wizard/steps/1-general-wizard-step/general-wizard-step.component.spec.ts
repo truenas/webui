@@ -54,8 +54,10 @@ describe('GeneralWizardStepComponent', () => {
       mockProvider(PoolManagerStore, {
         startOver$,
         hasSedCapableDisks$: of(false),
+        encryptionType$: of(EncryptionType.None),
         setGeneralOptions: jest.fn(),
         setEncryptionOptions: jest.fn(),
+        setDiskWarningOptions: jest.fn(),
       }),
       mockProvider(DiskStore, {
         selectableDisks$: of([]),
@@ -256,8 +258,10 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
       mockProvider(PoolManagerStore, {
         startOver$,
         hasSedCapableDisks$: of(true),
+        encryptionType$: of(EncryptionType.None),
         setGeneralOptions: jest.fn(),
         setEncryptionOptions: jest.fn(),
+        setDiskWarningOptions: jest.fn(),
       }),
       mockProvider(DiskStore, {
         selectableDisks$: of([]),

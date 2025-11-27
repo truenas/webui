@@ -125,8 +125,8 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   protected readonly PoolCreationWizardStep = PoolCreationWizardStep;
 
-  get hasEncryption(): boolean {
-    return Boolean(this.state.encryption);
+  get hasSoftwareEncryption(): boolean {
+    return this.state.encryptionType === EncryptionType.Software;
   }
 
   get isFormDirty(): boolean {
@@ -171,31 +171,36 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   createPool(): void {
     const payload = this.prepareCreatePayload();
 
-    this.dialogService.jobDialog(
-      this.api.job('pool.create', [payload]),
-      { title: this.translate.instant('Create Pool') },
-    )
-      .afterClosed()
-      .pipe(
-        switchMap((job) => {
-          if (!this.hasEncryption) {
-            return of(null);
-          }
+    // If SED encryption is selected and a password was entered, update global SED password first
+    const sedPasswordUpdate$ = this.state.encryptionType === EncryptionType.Sed && this.state.sedPassword
+      ? this.api.call('system.advanced.update', [{ sed_passwd: this.state.sedPassword }])
+      : of(null);
 
-          return this.matDialog.open<DownloadKeyDialog, DownloadKeyDialogParams>(DownloadKeyDialog, {
-            disableClose: true,
-            data: job.result,
-          }).afterClosed();
-        }),
-        this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.generalStep?.form?.markAsPristine();
-        this.enclosureStep?.form?.markAsPristine();
-        this.snackbar.success(this.translate.instant('Pool created successfully'));
-        this.router.navigate(['/storage']);
-      });
+    sedPasswordUpdate$.pipe(
+      switchMap(() => {
+        return this.dialogService.jobDialog(
+          this.api.job('pool.create', [payload]),
+          { title: this.translate.instant('Create Pool') },
+        ).afterClosed();
+      }),
+      switchMap((job) => {
+        if (!this.hasSoftwareEncryption) {
+          return of(null);
+        }
+
+        return this.matDialog.open<DownloadKeyDialog, DownloadKeyDialogParams>(DownloadKeyDialog, {
+          disableClose: true,
+          data: job.result,
+        }).afterClosed();
+      }),
+      this.errorHandler.withErrorHandler(),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.generalStep?.form?.markAsPristine();
+      this.enclosureStep?.form?.markAsPristine();
+      this.snackbar.success(this.translate.instant('Pool created successfully'));
+      this.router.navigate(['/storage']);
+    });
   }
 
   onStepActivated(step: PoolCreationWizardStep): void {
@@ -260,7 +265,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       name: this.state.name,
       topology: topologyToPayload(this.state.topology),
       allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,
-      encryption: this.hasEncryption,
+      encryption: this.hasSoftwareEncryption,
     };
 
     if (this.state.encryption) {
