@@ -35,6 +35,12 @@ export function getStorageDeviceIcon(deviceType: ContainerDeviceType): StorageDe
         tooltip: containersHelptext.deviceBadgeTooltips.nic,
       };
 
+    case ContainerDeviceType.Gpu:
+      return {
+        name: iconMarker('mdi-expansion-card'),
+        tooltip: containersHelptext.deviceBadgeTooltips.gpu,
+      };
+
     default:
       return {
         name: iconMarker('help'),
@@ -54,6 +60,8 @@ export function getStorageDeviceClass(deviceType: ContainerDeviceType): string {
       return 'device-usb';
     case ContainerDeviceType.Nic:
       return 'device-nic';
+    case ContainerDeviceType.Gpu:
+      return 'device-gpu';
     default:
       return 'device-unknown';
   }

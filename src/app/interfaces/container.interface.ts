@@ -2,6 +2,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import {
   AllowedImageOs,
   ContainerDeviceType,
+  ContainerGpuType,
   ContainerNetworkType,
   ContainerNicDeviceType,
   ContainerRemote,
@@ -104,10 +105,26 @@ export interface ContainerUsbDevice {
   device: string | null;
 }
 
+export interface ContainerGpuDevice {
+  id?: number;
+  dtype: ContainerDeviceType.Gpu;
+  gpu_type: ContainerGpuType;
+  pci_address: string;
+}
+
+export interface AvailableGpu {
+  pci_slot: string;
+  gpu_type: ContainerGpuType;
+  description: string;
+  available: boolean;
+  error: string | null;
+}
+
 export type ContainerDevice =
   | ContainerFilesystemDevice
   | ContainerUsbDevice
-  | ContainerNicDevice;
+  | ContainerNicDevice
+  | ContainerGpuDevice;
 
 export interface ContainerImage {
   archs: string[];

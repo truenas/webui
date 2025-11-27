@@ -27,6 +27,10 @@ export function getDeviceDescription(translate: TranslateService, device: Contai
       return device.device || translate.instant(containersHelptext.deviceDescriptions.unknown);
     }
 
+    case ContainerDeviceType.Gpu: {
+      return `${device.gpu_type} GPU (${device.pci_address})`;
+    }
+
     default: {
       // This should never happen due to TypeScript exhaustiveness checking
       const exhaustiveCheck: never = device;

@@ -1,6 +1,7 @@
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { AuthMechanism } from 'app/enums/auth-mechanism.enum';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
+import { ContainerGpuType } from 'app/enums/container.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
@@ -913,6 +914,7 @@ export interface ApiCallDirectory {
   'container.device.query': { params: QueryParams<ContainerDeviceEntry>; response: ContainerDeviceEntry[] };
   'container.device.update': { params: [id: number, update: ContainerDevicePayload]; response: ContainerDeviceEntry };
   'container.device.disk_choices': { params: []; response: Record<string, string> };
+  'container.device.gpu_choices': { params: []; response: Record<string, ContainerGpuType> };
   'container.device.nic_attach_choices': { params: []; response: Record<string, string> };
   'container.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
 

@@ -15,6 +15,10 @@ export const containerDetailsElements = {
       hierarchy: [T('USB Devices')],
       anchor: 'usb-devices',
     },
+    gpuDevices: {
+      hierarchy: [T('GPU Devices')],
+      anchor: 'gpu-devices',
+    },
     disks: {
       hierarchy: [T('Disks')],
       anchor: 'disks',
