@@ -1,0 +1,9 @@
+<span class="webshare-name-container">
+  <span
+    role="text"
+    [ixTest]="[title, uniqueRowTag(row()), 'row-text']"
+    [attr.aria-label]="'WebShare name: ' + row().name"
+  >
+    {{ row().name }}
+  </span>
+</span>

@@ -1,0 +1,10 @@
+.webshare-name-container {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+
+  .home-icon {
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+}
