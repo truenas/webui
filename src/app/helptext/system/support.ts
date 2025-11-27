@@ -99,7 +99,7 @@ export const helptextSystemSupport = {
   docHub: T('<a href="https://harboros.ai/docs" target="_blank">\
  HarborOS Documentation Hub</a> - Read and contribute to the open-source documentation.'),
 
-  forums: T('<a href="https://github.com/HarborOS/community/discussions" target="_blank">\
+  forums: T('<a href="https://github.com/HarborNAS/community/discussions" target="_blank">\
  HarborOS Forums</a> - Find answers from other users in the forums.'),
 
   updateTxt: T('Update License'),

@@ -90,7 +90,7 @@ export class FileTicketComponent {
     } = this.form.value;
 
     // eslint-disable-next-line no-restricted-globals
-    window.open(`https://github.com/HarborOS/internal_wiki/issues/new?labels=bug&title=${encodeURI(title)}&body=${encodeURI('Message: \n' + message)}`, '_blank');
+    window.open(`https://github.com/HarborNAS/internal_wiki/issues/new?labels=bug&title=${encodeURI(title)}&body=${encodeURI('Message: \n' + message)}`, '_blank');
 
     this.onSuccess();
 
