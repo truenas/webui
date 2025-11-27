@@ -40,8 +40,8 @@ export class SessionTimeoutService {
   private window = inject<Window>(WINDOW);
   private localeService = inject(LocaleService);
 
-  protected actionWaitTimeout: Timeout;
-  protected terminateCancelTimeout: Timeout;
+  private actionWaitTimeout: Timeout;
+  private terminateCancelTimeout: Timeout;
   private currentLifetime: number | null = null;
   private preferencesSubscription: Subscription | null = null;
   private isResumeActive = false;
@@ -151,6 +151,11 @@ export class SessionTimeoutService {
   stop(): void {
     this.removeListeners();
     this.pause();
+    if (this.warningDialogRef) {
+      this.warningDialogRef.close();
+      this.warningDialogRef = null;
+    }
+    clearTimeout(this.terminateCancelTimeout);
     this.preferencesSubscription?.unsubscribe();
     this.preferencesSubscription = null;
   }
