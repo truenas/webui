@@ -136,12 +136,12 @@ export class ContainerFilesystemDeviceFormComponent implements OnInit {
     const existingDisk = this.existingDisk();
     return existingDisk
       ? this.api.call('container.device.update', [existingDisk.id, {
-        attributes: payload,
-      }])
+          attributes: payload,
+        }])
       : this.api.call('container.device.create', [{
-        container: this.container.id,
-        attributes: payload,
-      }]);
+          container: this.container.id,
+          attributes: payload,
+        }]);
   }
 
   protected readonly containersHelptext = containersHelptext;

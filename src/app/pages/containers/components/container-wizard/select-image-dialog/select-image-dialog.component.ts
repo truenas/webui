@@ -131,9 +131,9 @@ export class SelectImageDialog implements OnInit {
           // If version is an object, extract the version string from its properties
           const versionObj = version as Record<string, unknown>;
           versionString = (versionObj.version as string)
-          || (versionObj.name as string)
-          || (versionObj.tag as string)
-          || JSON.stringify(version);
+            || (versionObj.name as string)
+            || (versionObj.tag as string)
+            || JSON.stringify(version);
           archsArray = (versionObj.archs as string[]) || (versionObj.architectures as string[]) || ['amd64'];
           variantString = (versionObj.variant as string) || 'default';
         } else {

@@ -120,11 +120,11 @@ export interface AvailableGpu {
   error: string | null;
 }
 
-export type ContainerDevice =
-  | ContainerFilesystemDevice
-  | ContainerUsbDevice
-  | ContainerNicDevice
-  | ContainerGpuDevice;
+export type ContainerDevice
+  = | ContainerFilesystemDevice
+    | ContainerUsbDevice
+    | ContainerNicDevice
+    | ContainerGpuDevice;
 
 export interface ContainerImage {
   archs: string[];
