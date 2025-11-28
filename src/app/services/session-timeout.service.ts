@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import {
-  filter, Observable, Subscription,
+  filter, Subscription,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Timeout } from 'app/interfaces/timeout.interface';
@@ -41,15 +41,24 @@ export class SessionTimeoutService {
   private window = inject<Window>(WINDOW);
   private localeService = inject(LocaleService);
 
-  protected actionWaitTimeout: Timeout;
-  protected terminateCancelTimeout: Timeout;
+  private actionWaitTimeout: Timeout;
+  private terminateCancelTimeout: Timeout;
   private currentLifetime: number | null = null;
   private preferencesSubscription: Subscription | null = null;
   private isResumeActive = false;
+  private warningDialogRef: MatDialogRef<SessionExpiringDialog> | null = null;
 
   private readonly defaultLifetime = 300;
 
   private resume = (): void => {
+    // If warning dialog is open, user activity should close it and reset the timer
+    if (this.warningDialogRef) {
+      clearTimeout(this.terminateCancelTimeout);
+      this.warningDialogRef.close(true);
+      this.warningDialogRef = null;
+      return;
+    }
+
     if (this.isResumeActive) {
       return;
     }
@@ -59,16 +68,17 @@ export class SessionTimeoutService {
     const lifetime = this.currentLifetime ?? this.defaultLifetime;
     this.actionWaitTimeout = setTimeout(() => {
       this.isResumeActive = false;
-      this.removeListeners();
       const showWarningDialogFor = 30000;
 
       this.terminateCancelTimeout = setTimeout(() => {
         this.expireSession();
       }, showWarningDialogFor);
 
-      this.showWarningDialog(showWarningDialogFor, lifetime)
+      this.warningDialogRef = this.showWarningDialog(showWarningDialogFor, lifetime);
+      this.warningDialogRef.afterClosed()
         .pipe(untilDestroyed(this))
         .subscribe((shouldExtend) => {
+          this.warningDialogRef = null;
           clearTimeout(this.terminateCancelTimeout);
           if (shouldExtend) {
             this.start();
@@ -111,7 +121,10 @@ export class SessionTimeoutService {
     this.preferencesSubscription?.unsubscribe();
     this.preferencesSubscription = this.appStore$
       .select(selectPreferences)
-      .pipe(filter(Boolean))
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
       .subscribe((preferences) => {
         const lifetime = preferences.lifetime || this.defaultLifetime;
         if (this.currentLifetime !== lifetime) {
@@ -135,12 +148,17 @@ export class SessionTimeoutService {
   stop(): void {
     this.removeListeners();
     this.pause();
+    if (this.warningDialogRef) {
+      this.warningDialogRef.close();
+      this.warningDialogRef = null;
+    }
+    clearTimeout(this.terminateCancelTimeout);
     this.preferencesSubscription?.unsubscribe();
     this.preferencesSubscription = null;
   }
 
-  private showWarningDialog(showConfirmTime: number, lifetime: number): Observable<boolean> {
-    const dialogRef = this.matDialog.open(SessionExpiringDialog, {
+  private showWarningDialog(showConfirmTime: number, lifetime: number): MatDialogRef<SessionExpiringDialog> {
+    return this.matDialog.open(SessionExpiringDialog, {
       disableClose: true,
       data: {
         title: this.translate.instant('Logout'),
@@ -151,11 +169,10 @@ export class SessionTimeoutService {
         buttonText: this.translate.instant('Extend session'),
       } as SessionExpiringDialogOptions,
     });
-
-    return dialogRef.afterClosed();
   }
 
   private addListeners(): void {
+    this.removeListeners();
     this.window.addEventListener('mouseover', this.resume, false);
     this.window.addEventListener('keypress', this.resume, false);
   }
