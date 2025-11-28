@@ -8,7 +8,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, catchError } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
@@ -114,10 +114,13 @@ export class RaidzExtendDialog {
       ['method', '=', 'pool.attach'],
       ['state', 'in', [JobState.Running, JobState.Waiting]],
     ]]).pipe(
+      // Job result type is unknown because we're checking jobs before completion
       map((jobs: Job<unknown, [number, PoolAttachParams]>[]) => {
         // Check if any job is for the same pool
         return jobs.some((job) => job.arguments[0] === this.data.poolId);
       }),
+      // Fail-open: if job check fails, allow operation to proceed
+      catchError(() => of(false)),
     );
   }
 
