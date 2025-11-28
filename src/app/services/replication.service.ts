@@ -27,19 +27,19 @@ export class ReplicationService {
       const childDatasets$ = cachedDatasets
         ? of(cachedDatasets)
         : this.authService.hasRole([
-          Role.ReplicationTaskWrite,
-          Role.ReplicationTaskWritePull,
-        ]).pipe(
-          switchMap((hasRole) => {
-            if (hasRole) {
-              return this.api.call(
-                'replication.list_datasets',
-                [providerOptions.transport, providerOptions.sshCredential],
-              ).pipe(tap((datasets) => cachedDatasets = datasets));
-            }
-            return of([] as string[]);
-          }),
-        );
+            Role.ReplicationTaskWrite,
+            Role.ReplicationTaskWritePull,
+          ]).pipe(
+            switchMap((hasRole) => {
+              if (hasRole) {
+                return this.api.call(
+                  'replication.list_datasets',
+                  [providerOptions.transport, providerOptions.sshCredential],
+                ).pipe(tap((datasets) => cachedDatasets = datasets));
+              }
+              return of([] as string[]);
+            }),
+          );
 
       return childDatasets$.pipe(map((datasets) => {
         return datasets

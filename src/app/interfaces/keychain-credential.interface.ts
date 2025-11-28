@@ -1,9 +1,9 @@
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 
-export type KeychainCredential =
-  | KeychainSshKeyPair
-  | KeychainSshCredentials;
+export type KeychainCredential
+  = | KeychainSshKeyPair
+    | KeychainSshCredentials;
 
 export interface KeychainSshKeyPair {
   attributes: SshKeyPair;

@@ -39,14 +39,14 @@ export interface VmDiskDevice extends BaseVmDevice {
   attributes: VmDiskAttributes;
 }
 
-export type VmDevice =
-  | VmPciPassthroughDevice
-  | VmUsbPassthroughDevice
-  | VmRawFileDevice
-  | VmNicDevice
-  | VmDisplayDevice
-  | VmDiskDevice
-  | VmCdRomDevice;
+export type VmDevice
+  = | VmPciPassthroughDevice
+    | VmUsbPassthroughDevice
+    | VmRawFileDevice
+    | VmNicDevice
+    | VmDisplayDevice
+    | VmDiskDevice
+    | VmCdRomDevice;
 
 export type VmDeviceUpdate = Overwrite<Partial<Omit<VmDevice, 'id'>>, {
   attributes?: Partial<VmDevice['attributes']>;

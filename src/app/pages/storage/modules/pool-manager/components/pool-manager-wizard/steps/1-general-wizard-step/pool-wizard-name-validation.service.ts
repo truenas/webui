@@ -32,11 +32,11 @@ export class PoolWizardNameValidationService {
             return isValid === true
               ? of(null)
               : of({
-                customValidator: {
-                  message: this.errorMessage,
-                },
-                invalidPoolName: true,
-              });
+                  customValidator: {
+                    message: this.errorMessage,
+                  },
+                  invalidPoolName: true,
+                });
           }),
           catchError((error: unknown) => {
             const errorReports = this.errorParser.parseError(error) as ErrorReport;

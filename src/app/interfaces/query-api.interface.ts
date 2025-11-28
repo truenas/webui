@@ -52,19 +52,19 @@ export interface QueryOptions<T> {
   order_by?: (PropertyPath<T> | `-${Extract<PropertyPath<T>, string>}`)[];
 }
 
-export type QueryComparator =
-  | '='
-  | '!='
-  | '>'
-  | '>='
-  | '<'
-  | '<='
-  | '~' // re.match(y, x)
-  | 'in'
-  | 'nin' // not in
-  | 'rin' // x is not None and y in x
-  | 'rnin' // x is not None and y not in x
-  | '^' // x is not None and x.startswith(y)
-  | '!^' // x is not None and not x.startswith(y)
-  | '$' // x is not None and x.endswith(y)
-  | '!$'; // x is not None and not x.endswith(y)
+export type QueryComparator
+  = | '='
+    | '!='
+    | '>'
+    | '>='
+    | '<'
+    | '<='
+    | '~' // re.match(y, x)
+    | 'in'
+    | 'nin' // not in
+    | 'rin' // x is not None and y in x
+    | 'rnin' // x is not None and y not in x
+    | '^' // x is not None and x.startswith(y)
+    | '!^' // x is not None and not x.startswith(y)
+    | '$' // x is not None and x.endswith(y)
+    | '!$'; // x is not None and not x.endswith(y)
