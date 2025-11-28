@@ -9,13 +9,21 @@
 
   @if (hasNvidiaGpusWithoutDrivers()) {
     <div class="nvidia-drivers-warning">
-      <ix-icon name="mdi-alert" class="warning-icon"></ix-icon>
-      <span>
-        {{ 'NVIDIA GPUs detected, but drivers are not enabled.' | translate }}
-        <a (click)="onEnableNvidiaDriversClick()">
-          {{ 'Enable NVIDIA drivers in System Advanced Settings' | translate }}
-        </a>
-      </span>
+      <ix-icon name="info" class="warning-icon"></ix-icon>
+      <div class="warning-content">
+        <span class="warning-text">
+          {{ 'NVIDIA GPUs detected, but drivers are not enabled.' | translate }}
+        </span>
+        <button
+          mat-button
+          type="button"
+          class="enable-button"
+          ixTest="enable-nvidia-drivers"
+          (click)="enableNvidiaDrivers()"
+        >
+          {{ 'Enable NVIDIA Drivers' | translate }}
+        </button>
+      </div>
     </div>
   }
 

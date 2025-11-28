@@ -23,30 +23,25 @@
 }
 
 .nvidia-drivers-warning {
-  align-items: center;
-  background-color: var(--yellow);
-  border-radius: 4px;
-  color: var(--bg1);
+  background-color: var(--bg2);
   display: flex;
-  font-size: 14px;
+  font-size: 13px;
   gap: 8px;
-  margin: 0 16px;
   padding: 8px 12px;
 
   .warning-icon {
+    color: var(--primary);
     flex-shrink: 0;
-    height: 20px;
-    width: 20px;
+    margin-top: 6px;
   }
 
-  a {
-    color: var(--bg1);
-    cursor: pointer;
-    font-weight: 600;
-    text-decoration: underline;
+  .warning-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 
-    &:hover {
-      text-decoration: none;
-    }
+  .enable-button {
+    align-self: flex-start;
   }
 }

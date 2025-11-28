@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
-import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -11,8 +11,10 @@ import { ContainerDeviceType, ContainerGpuType, ContainerStatus } from 'app/enum
 import {
   ContainerDevice,
 } from 'app/interfaces/container.interface';
-import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddGpuDeviceMenuComponent,
@@ -26,8 +28,8 @@ import {
 import { getDeviceDescription } from 'app/pages/containers/components/common/utils/get-device-description.utils';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
-import { nvidiaDriversCardElements } from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-card/nvidia-drivers-card.elements';
 import { AppState } from 'app/store';
+import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
@@ -46,6 +48,8 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
     AddGpuDeviceMenuComponent,
     DeviceTypeBadgeComponent,
     IxIconComponent,
+    MatButton,
+    TestDirective,
   ],
 })
 export class ContainerGpuDevicesComponent {
@@ -54,8 +58,8 @@ export class ContainerGpuDevicesComponent {
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
-  private searchDirectives = inject(UiSearchDirectivesService);
-  private router = inject(Router);
+  private snackbar = inject(SnackbarService);
+  private loader = inject(LoaderService);
 
   private readonly nvidiaDriversEnabled = toSignal(
     this.store$.pipe(waitForAdvancedConfig).pipe(
@@ -97,8 +101,15 @@ export class ContainerGpuDevicesComponent {
     return getDeviceDescription(this.translate, device);
   }
 
-  protected onEnableNvidiaDriversClick(): void {
-    this.searchDirectives.setPendingUiHighlightElement(nvidiaDriversCardElements.elements.nvidiaDrivers);
-    this.router.navigate(['/system', 'advanced']);
+  protected enableNvidiaDrivers(): void {
+    this.api.call('system.advanced.update', [{ nvidia: true }]).pipe(
+      this.loader.withLoader(),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.snackbar.success(
+        this.translate.instant('NVIDIA drivers have been enabled.'),
+      );
+      this.store$.dispatch(advancedConfigUpdated());
+    });
   }
 }
