@@ -6,9 +6,9 @@ export interface TerminalConfiguration {
   connectionData: TerminalConnectionData;
 }
 
-export type TerminalConnectionData =
+export type TerminalConnectionData
   // VMs
-  | {
+  = | {
     vm_id: number;
   }
   // Containers

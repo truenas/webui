@@ -26,7 +26,7 @@ export class AppDetailsSimilarComponent implements OnChanges {
   protected router = inject(Router);
   private appService = inject(ApplicationsService);
 
-  readonly app = input.required< AvailableApp>();
+  readonly app = input.required<AvailableApp>();
 
   protected isLoading = signal(false);
   protected similarApps = signal<AvailableApp[]>([]);

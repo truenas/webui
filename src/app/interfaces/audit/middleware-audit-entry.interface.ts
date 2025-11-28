@@ -37,10 +37,10 @@ export interface MiddlewareRebootEntry extends BaseMiddlewareAuditEntry {
   };
 }
 
-export type MiddlewareAuditEntry =
-  | MiddlewareMethodCallEntry
-  | MiddlewareAuthenticationEntry
-  | MiddlewareRebootEntry;
+export type MiddlewareAuditEntry
+  = | MiddlewareMethodCallEntry
+    | MiddlewareAuthenticationEntry
+    | MiddlewareRebootEntry;
 
 export interface AuditMiddlewareCredentials {
   credentials: CredentialType;

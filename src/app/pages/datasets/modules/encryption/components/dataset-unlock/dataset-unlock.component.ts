@@ -196,10 +196,10 @@ export class DatasetUnlockComponent implements OnInit {
 
     const job$ = payload.key_file
       ? this.upload.uploadAsJob({
-        file: values.file[0],
-        method: 'pool.dataset.unlock',
-        params: [this.pk, payload],
-      })
+          file: values.file[0],
+          method: 'pool.dataset.unlock',
+          params: [this.pk, payload],
+        })
       : this.api.job('pool.dataset.unlock', [this.pk, payload]);
 
     this.dialogService.jobDialog(job$, {
@@ -238,10 +238,10 @@ export class DatasetUnlockComponent implements OnInit {
 
     const job$ = values.use_file
       ? this.upload.uploadAsJob({
-        file: values.file[0],
-        method: 'pool.dataset.encryption_summary',
-        params: [this.pk, payload],
-      })
+          file: values.file[0],
+          method: 'pool.dataset.encryption_summary',
+          params: [this.pk, payload],
+        })
       : this.api.job('pool.dataset.encryption_summary', [this.pk, payload]);
 
     this.dialogService.jobDialog(job$, {

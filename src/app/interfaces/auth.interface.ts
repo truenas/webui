@@ -44,18 +44,18 @@ export interface LoginOtpRequiredResponse {
   username: string;
 }
 
-export type LoginExResponse =
-  | LoginSuccessResponse
-  | LoginAuthErrorResponse
-  | LoginExpiredResponse
-  | LoginRedirectResponse
-  | LoginOtpRequiredResponse;
+export type LoginExResponse
+  = | LoginSuccessResponse
+    | LoginAuthErrorResponse
+    | LoginExpiredResponse
+    | LoginRedirectResponse
+    | LoginOtpRequiredResponse;
 
-export type LoginExQuery =
-  | LoginExPasswordQuery
-  | LoginExOtpTokenQuery
-  | LoginExAuthTokenQuery
-  | LoginExApiKeyQuery;
+export type LoginExQuery
+  = | LoginExPasswordQuery
+    | LoginExOtpTokenQuery
+    | LoginExAuthTokenQuery
+    | LoginExApiKeyQuery;
 
 export interface LoginExPasswordQuery {
   mechanism: LoginExMechanism.PasswordPlain;
