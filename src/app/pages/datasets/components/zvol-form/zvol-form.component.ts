@@ -753,7 +753,7 @@ export class ZvolFormComponent implements OnInit {
 
         if (datasets[0].volsize.parsed % volblocksizeIntegerValue !== 0) {
           roundedVolSize = datasets[0].volsize.parsed
-          + (volblocksizeIntegerValue - datasets[0].volsize.parsed % volblocksizeIntegerValue);
+            + (volblocksizeIntegerValue - datasets[0].volsize.parsed % volblocksizeIntegerValue);
         }
 
         if (!data.volsize || data.volsize >= roundedVolSize) {

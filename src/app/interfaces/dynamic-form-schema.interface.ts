@@ -16,18 +16,18 @@ export interface DynamicWizardSchema extends DynamicFormSchema {
   help: string;
 }
 
-export type DynamicFormSchemaNode =
-  | DynamicFormSchemaUri
-  | DynamicFormSchemaCron
-  | DynamicFormSchemaInput
-  | DynamicFormSchemaSelect
-  | DynamicFormSchemaEnum
-  | DynamicFormSchemaExplorer
-  | DynamicFormSchemaCheckbox
-  | DynamicFormSchemaIpaddr
-  | DynamicFormSchemaDict
-  | DynamicFormSchemaList
-  | DynamicFormSchemaText;
+export type DynamicFormSchemaNode
+  = | DynamicFormSchemaUri
+    | DynamicFormSchemaCron
+    | DynamicFormSchemaInput
+    | DynamicFormSchemaSelect
+    | DynamicFormSchemaEnum
+    | DynamicFormSchemaExplorer
+    | DynamicFormSchemaCheckbox
+    | DynamicFormSchemaIpaddr
+    | DynamicFormSchemaDict
+    | DynamicFormSchemaList
+    | DynamicFormSchemaText;
 
 export interface DynamicFormSchemaBase {
   controlName: string;

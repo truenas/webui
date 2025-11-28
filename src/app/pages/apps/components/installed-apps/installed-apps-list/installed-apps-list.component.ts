@@ -28,7 +28,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -116,7 +115,7 @@ export class InstalledAppsListComponent implements OnInit {
   selection = new SelectionModel<string>(true, []);
   sortingInfo: Sort = {
     active: SortableField.Application,
-    direction: SortDirection.Asc,
+    direction: 'asc',
   };
 
   readonly sortableField = SortableField;
@@ -384,7 +383,7 @@ export class InstalledAppsListComponent implements OnInit {
     this.sortingInfo = sort;
     const sourceArray = apps && apps.length > 0 ? apps : this.dataSource;
     this.dataSource = [...sourceArray].sort((a, b) => {
-      const isAsc = sort.direction === SortDirection.Asc;
+      const isAsc = sort.direction === 'asc';
 
       switch (sort.active as SortableField) {
         case SortableField.Application:

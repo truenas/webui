@@ -24,10 +24,10 @@ export function interfaceAliasesToFormAliases(networkInterface: NetworkInterface
 export function formAliasesToInterfaceAliases(
   formAliases: NetworkInterfaceFormAlias[],
 ): {
-    aliases: NetworkInterfaceAlias[];
-    failover_aliases: NetworkInterfaceAlias[];
-    failover_virtual_aliases: NetworkInterfaceAlias[];
-  } {
+  aliases: NetworkInterfaceAlias[];
+  failover_aliases: NetworkInterfaceAlias[];
+  failover_virtual_aliases: NetworkInterfaceAlias[];
+} {
   const aliases: NetworkInterfaceAlias[] = [];
   const failoverAliases: { address: string }[] = [];
   const failoverVirtualAliases: { address: string }[] = [];

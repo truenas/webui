@@ -201,8 +201,6 @@ export class ServiceSmbComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading.set(true);
 
-    // ESLint rule doesn't recognize takeUntilDestroyed with object notation subscribe
-    // eslint-disable-next-line rxjs-angular/prefer-takeuntil
     this.api.call('smb.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (config) => {
         const searchProtocolEnabled = config.search_protocols.includes(smbSearchSpotlight);
@@ -258,8 +256,6 @@ export class ServiceSmbComponent implements OnInit {
     this.isFormLoading.set(true);
     this.api.call('smb.update', [values])
       .pipe(takeUntilDestroyed(this.destroyRef))
-      // ESLint rule doesn't recognize takeUntilDestroyed with object notation subscribe
-      // eslint-disable-next-line rxjs-angular/prefer-takeuntil
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);

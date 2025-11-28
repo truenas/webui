@@ -157,10 +157,10 @@ export class GuiFormComponent implements OnInit {
     (
       !this.configData.ui_httpsredirect && values.ui_httpsredirect
         ? this.dialog.confirm({
-          title: this.translate.instant(helptext.redirectConfirmTitle),
-          message: this.translate.instant(helptext.redirectConfirmMessage),
-          hideCheckbox: true,
-        })
+            title: this.translate.instant(helptext.redirectConfirmTitle),
+            message: this.translate.instant(helptext.redirectConfirmMessage),
+            hideCheckbox: true,
+          })
         : of(true)
     ).pipe(
       filter(Boolean),

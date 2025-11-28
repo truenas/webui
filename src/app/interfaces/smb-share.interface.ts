@@ -20,16 +20,16 @@ export interface BaseShare {
   };
 }
 
-export type SmbShare =
-  | DefaultSmbShare
-  | LegacySmbShare
-  | TimeMachineSmbShare
-  | MultiProtocolSmbShare
-  | TimeLockedSmbShare
-  | PrivateDatasetsSmbShare
-  | ExternalSmbShare
-  | VeeamRepositorySmbShare
-  | FcpSmbShare;
+export type SmbShare
+  = | DefaultSmbShare
+    | LegacySmbShare
+    | TimeMachineSmbShare
+    | MultiProtocolSmbShare
+    | TimeLockedSmbShare
+    | PrivateDatasetsSmbShare
+    | ExternalSmbShare
+    | VeeamRepositorySmbShare
+    | FcpSmbShare;
 
 export enum SmbSharePurpose {
   DefaultShare = 'DEFAULT_SHARE',
@@ -118,15 +118,15 @@ export interface FcpSmbShareOptions {
   aapl_name_mangling?: boolean;
 }
 
-export type SmbShareOptions =
-  | DefaultSmbShareOptions
-  | LegacySmbShareOptions
-  | TimeMachineSmbShareOptions
-  | MultiProtocolSmbShareOptions
-  | TimeLockedSmbShareOptions
-  | PrivateDatasetsSmbShareOptions
-  | ExternalSmbShareOptions
-  | FcpSmbShareOptions;
+export type SmbShareOptions
+  = | DefaultSmbShareOptions
+    | LegacySmbShareOptions
+    | TimeMachineSmbShareOptions
+    | MultiProtocolSmbShareOptions
+    | TimeLockedSmbShareOptions
+    | PrivateDatasetsSmbShareOptions
+    | ExternalSmbShareOptions
+    | FcpSmbShareOptions;
 
 export interface LegacySmbShareOptions {
   recyclebin?: boolean;

@@ -164,7 +164,6 @@ export class WebShareSharesFormComponent implements OnInit {
 
     apiCall$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      // eslint-disable-next-line rxjs-angular/prefer-takeuntil
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
@@ -193,7 +192,6 @@ export class WebShareSharesFormComponent implements OnInit {
   private loadWebShares(): void {
     this.api.call('sharing.webshare.query', [[]])
       .pipe(takeUntilDestroyed(this.destroyRef))
-      // eslint-disable-next-line rxjs-angular/prefer-takeuntil
       .subscribe({
         next: (shares) => {
           this.webShares.set(shares);
@@ -245,7 +243,6 @@ export class WebShareSharesFormComponent implements OnInit {
     // Auto-populate name from path when path changes
     this.form.controls.path.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      // eslint-disable-next-line rxjs-angular/prefer-takeuntil
       .subscribe((path: string) => {
         // Auto-populate name only if:
         // 1. Name field is currently empty
