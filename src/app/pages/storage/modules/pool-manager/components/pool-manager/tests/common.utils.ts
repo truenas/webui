@@ -88,7 +88,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
-import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
+import { selectHasEnclosureSupport, selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 export const commonImports = [
   ReactiveFormsModule,
@@ -147,6 +147,10 @@ export const commonProviders = [
       {
         selector: selectHasEnclosureSupport,
         value: true,
+      },
+      {
+        selector: selectIsEnterprise,
+        value: false,
       },
     ],
   }),

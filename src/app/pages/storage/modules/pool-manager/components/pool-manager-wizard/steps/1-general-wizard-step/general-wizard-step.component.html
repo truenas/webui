@@ -7,19 +7,74 @@
   ></ix-input>
 
   @if (!isAddingVdevs()) {
-    <ix-checkbox
-      formControlName="encryption"
+    <!-- Encryption type radio group -->
+    <ix-radio-group
+      formControlName="encryptionType"
       [label]="'Encryption' | translate"
-    ></ix-checkbox>
-  }
+      [options]="encryptionTypeOptions$"
+    ></ix-radio-group>
 
-  @if (form.controls.encryption.value && !isAddingVdevs()) {
-    <ix-select
-      formControlName="encryptionStandard"
-      [label]="'Encryption Standard' | translate"
-      [options]="encryptionAlgorithmOptions$"
-      [required]="true"
-    ></ix-select>
+    <!-- Software Encryption Standard dropdown -->
+    @if (form.controls.encryptionType.value === EncryptionType.Software) {
+      <!-- Info box when SED disks are available but Software selected -->
+      @if (hasSedCapableDisks$ | async; as hasSedDisks) {
+        @if (hasSedDisks && (isEnterprise$ | async)) {
+          <ix-warning color="green" [message]="helptext.sedInfoMessage | translate"></ix-warning>
+        }
+      }
+
+      <ix-select
+        formControlName="encryptionStandard"
+        [label]="'Encryption Standard' | translate"
+        [options]="encryptionAlgorithmOptions$"
+        [required]="true"
+      ></ix-select>
+    }
+
+    <!-- SED Password fields -->
+    @if (form.controls.encryptionType.value === EncryptionType.Sed) {
+      <!-- Show info if no password is set, warning if password exists -->
+      @if (isSedPasswordSet$ | async; as isPasswordSet) {
+        <ix-warning [message]="helptext.sedGlobalPasswordWarning | translate"></ix-warning>
+
+        <ix-input
+          formControlName="sedPassword"
+          [label]="helptext.sedPasswordLabel | translate"
+          [type]="'password'"
+          [required]="false"
+          [tooltip]="'Leave blank to keep the existing password, or enter a new password to update it.' | translate"
+        ></ix-input>
+
+        <ix-input
+          formControlName="sedPasswordConfirm"
+          [label]="helptext.sedPasswordConfirmLabel | translate"
+          [type]="'password'"
+          [required]="false"
+        ></ix-input>
+      } @else {
+        <ix-warning color="green" [message]="helptext.sedGlobalPasswordInfo | translate"></ix-warning>
+
+        <ix-input
+          formControlName="sedPassword"
+          [label]="helptext.sedPasswordLabel | translate"
+          [type]="'password'"
+          [required]="true"
+          [tooltip]="helptext.sedPasswordTooltip | translate"
+        ></ix-input>
+
+        <ix-input
+          formControlName="sedPasswordConfirm"
+          [label]="helptext.sedPasswordConfirmLabel | translate"
+          [type]="'password'"
+          [required]="true"
+        ></ix-input>
+      }
+    }
+  } @else {
+    <!-- Message when adding VDEVs to SED pool -->
+    @if (pool()?.all_sed) {
+      <ix-warning color="green" [message]="helptext.sedPoolVdevMessage | translate"></ix-warning>
+    }
   }
 
   <ix-pool-warnings></ix-pool-warnings>
@@ -32,6 +87,7 @@
         color="primary"
         type="button"
         ixTest="next-general"
+        [disabled]="form.invalid"
       >
         {{ 'Next' | translate }}
       </button>

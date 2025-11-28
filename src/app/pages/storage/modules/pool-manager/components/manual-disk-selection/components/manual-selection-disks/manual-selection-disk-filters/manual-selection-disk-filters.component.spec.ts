@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -61,6 +62,7 @@ describe('ManualSelectionDiskFiltersComponent', () => {
       search: 'S1234',
       diskType: '',
       diskSize: '',
+      sedCapable: false,
     });
   });
 
@@ -78,6 +80,7 @@ describe('ManualSelectionDiskFiltersComponent', () => {
       search: '',
       diskType: DiskType.Hdd,
       diskSize: '',
+      sedCapable: false,
     });
   });
 
@@ -95,6 +98,60 @@ describe('ManualSelectionDiskFiltersComponent', () => {
       search: '',
       diskType: '',
       diskSize: '4 GiB',
+      sedCapable: false,
+    });
+  });
+
+  it('shows SED Capable checkbox that emits (filtersUpdated) when checked', async () => {
+    const checkbox = await form.getControl('SED Capable') as IxCheckboxHarness;
+
+    await checkbox.setValue(true);
+
+    expect(filtersUpdated).toHaveBeenCalledWith({
+      search: '',
+      diskType: '',
+      diskSize: '',
+      sedCapable: true,
+    });
+  });
+
+  describe('when SED encryption is enabled', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        props: {
+          isSedEncryption: true,
+        },
+      });
+      spectator.component.filtersUpdated.subscribe(filtersUpdated);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('checks and disables SED Capable checkbox', async () => {
+      const checkbox = await form.getControl('SED Capable') as IxCheckboxHarness;
+
+      expect(await checkbox.getValue()).toBe(true);
+      expect(await checkbox.isDisabled()).toBe(true);
+    });
+  });
+
+  describe('when SED encryption is not enabled', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        props: {
+          isSedEncryption: false,
+        },
+      });
+      spectator.component.filtersUpdated.subscribe(filtersUpdated);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('allows SED Capable checkbox to be changed', async () => {
+      const checkbox = await form.getControl('SED Capable') as IxCheckboxHarness;
+
+      expect(await checkbox.getValue()).toBe(false);
+      expect(await checkbox.isDisabled()).toBe(false);
     });
   });
 });
