@@ -9,6 +9,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -27,8 +28,15 @@ import {
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { DiskListComponent } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.component';
 import {
+  ResetSedDialog,
+} from 'app/pages/storage/modules/disks/components/disk-list/reset-sed-dialog/reset-sed-dialog.component';
+import {
+  UnlockSedDialog,
+} from 'app/pages/storage/modules/disks/components/disk-list/unlock-sed-dialog/unlock-sed-dialog.component';
+import {
   DiskWipeDialog,
 } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
+import { LicenseService } from 'app/services/license.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('DiskListComponent', () => {
@@ -67,6 +75,23 @@ describe('DiskListComponent', () => {
       devname: 'sdb',
       pool: null,
     },
+    {
+      identifier: 'identifier3',
+      name: 'sdc',
+      serial: 'serial3',
+      size: 5368709120,
+      description: 'description3',
+      transfermode: 'Auto',
+      hddstandby: 'ALWAYS ON',
+      advpowermgmt: 'DISABLED',
+      model: 'Virtual_Disk_3',
+      rotationrate: null,
+      type: 'HDD',
+      devname: 'sdc',
+      pool: null,
+      sed: true,
+      sed_status: SedStatus.Locked,
+    },
   ] as Disk[];
 
   const fakeUnusedDisks = [{
@@ -101,6 +126,9 @@ describe('DiskListComponent', () => {
           afterClosed: jest.fn(() => of(true)),
         })),
       }),
+      mockProvider(LicenseService, {
+        hasSed$: of(true),
+      }),
       provideMockStore({
         selectors: [
           {
@@ -130,6 +158,7 @@ describe('DiskListComponent', () => {
         'Serial',
         'Disk Size',
         'Pool',
+        'Self-Encrypting Drive (SED)',
       ],
       [
         '',
@@ -137,6 +166,7 @@ describe('DiskListComponent', () => {
         'serial1',
         '40 GiB',
         'boot-pool',
+        'Unsupported',
       ],
       [
         '',
@@ -144,6 +174,15 @@ describe('DiskListComponent', () => {
         'serial2',
         '5 GiB',
         'test pool (Exported)',
+        'Unsupported',
+      ],
+      [
+        '',
+        'sdc',
+        'serial3',
+        '5 GiB',
+        'N/A',
+        'Locked',
       ],
     ];
 
@@ -195,5 +234,91 @@ describe('DiskListComponent', () => {
         ],
       },
     );
+  });
+
+  it('shows unlock SED dialog when Unlock button is pressed for locked SED disk', async () => {
+    await table.expandRow(2);
+
+    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
+    await unlockButton.click();
+
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(UnlockSedDialog, {
+      data: { diskName: 'sdc' },
+    });
+  });
+
+  it('shows reset SED dialog when SED Reset button is pressed for locked SED disk', async () => {
+    await table.expandRow(2);
+
+    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'SED Reset' }));
+    await resetButton.click();
+
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ResetSedDialog, {
+      data: { diskName: 'sdc' },
+    });
+  });
+});
+
+describe('DiskListComponent - without SED license', () => {
+  let spectator: Spectator<DiskListComponent>;
+  let loader: HarnessLoader;
+  let table: IxTableHarness;
+
+  const fakeDisks = [
+    {
+      identifier: 'identifier1',
+      name: 'sda',
+      serial: 'serial1',
+      size: 42949672960,
+      pool: 'boot-pool',
+    },
+  ] as Disk[];
+
+  const createComponent = createComponentFactory({
+    component: DiskListComponent,
+    imports: [
+      MockComponent(PageHeaderComponent),
+      BasicSearchComponent,
+      IxTableColumnsSelectorComponent,
+      IxTableDetailsRowDirective,
+      IxTableDetailsRowComponent,
+    ],
+    providers: [
+      mockAuth(),
+      mockProvider(Router),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
+      }),
+      mockProvider(MatDialog),
+      mockProvider(LicenseService, {
+        hasSed$: of(false),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectPreferences,
+            value: {},
+          },
+        ],
+      }),
+      mockApi([
+        mockCall('disk.query', fakeDisks),
+        mockCall('disk.details', { unused: [], used: [] }),
+      ]),
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(IxTableHarness);
+  });
+
+  it('hides SED column when hasSed$ is false', async () => {
+    const cells = await table.getCellTexts();
+    const headerRow = cells[0];
+
+    expect(headerRow).not.toContain('Self-Encrypting Drive (SED)');
+    expect(headerRow).toEqual(['', 'Name', 'Serial', 'Disk Size', 'Pool']);
   });
 });
