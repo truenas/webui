@@ -12,12 +12,14 @@ import {
 import { startWith, take } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
+import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -49,6 +51,7 @@ const defaultEncryptionStandard = 'AES-256-GCM';
     MatStepperNext,
     TestDirective,
     TranslateModule,
+    WarningComponent,
   ],
 })
 export class GeneralWizardStepComponent implements OnInit, OnChanges {
@@ -75,12 +78,13 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
       matchOthersFgValidator(
         'sedPasswordConfirm',
         ['sedPassword'],
-        this.translate.instant('SED passwords must match.'),
+        this.translate.instant(helptextPoolCreation.sedPasswordsMustMatch),
       ),
     ],
   });
 
   protected readonly EncryptionType = EncryptionType;
+  protected readonly helptext = helptextPoolCreation;
 
   isLoading$ = this.store.isLoading$;
   poolNames$ = this.api.call('pool.query', [[], { select: ['name'], order_by: ['name'] }]).pipe(
@@ -97,19 +101,19 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   isEnterprise$ = this.store$.select(selectIsEnterprise);
   isSedPasswordSet$ = this.api.call('system.advanced.sed_global_password_is_set');
 
-  encryptionTypeOptions$ = combineLatest([
+  encryptionTypeOptions$: Observable<Option<EncryptionType>[]> = combineLatest([
     this.hasSedCapableDisks$,
     this.isEnterprise$,
   ]).pipe(
     map(([hasSedDisks, isEnterprise]) => {
-      const options = [
-        { label: this.translate.instant('None'), value: EncryptionType.None },
-        { label: this.translate.instant('Software Encryption (ZFS)'), value: EncryptionType.Software },
+      const options: Option<EncryptionType>[] = [
+        { label: this.translate.instant(helptextPoolCreation.encryptionTypeNone), value: EncryptionType.None },
+        { label: this.translate.instant(helptextPoolCreation.encryptionTypeSoftware), value: EncryptionType.Software },
       ];
 
       if (hasSedDisks && isEnterprise) {
         options.push({
-          label: this.translate.instant('Self Encrypting Drives (SED)'),
+          label: this.translate.instant(helptextPoolCreation.encryptionTypeSed),
           value: EncryptionType.Sed,
         });
       }
@@ -129,7 +133,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
       this.form.controls.name.updateValueAndValidity();
 
       // Set encryption type based on pool's SED status for disk filtering
-      if (this.pool()?.sed_encryption) {
+      if (this.pool()?.all_sed) {
         this.form.controls.encryptionType.setValue(EncryptionType.Sed);
       }
     } else {
@@ -192,16 +196,35 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
 
   private initEncryptionField(): void {
     this.form.controls.encryptionType.valueChanges.pipe(untilDestroyed(this)).subscribe((encryptionType) => {
+      // Reset password fields when encryption type changes (don't emit events to avoid triggering validation display)
+      this.form.controls.sedPassword.reset('', { emitEvent: false });
+      this.form.controls.sedPasswordConfirm.reset('', { emitEvent: false });
+      this.form.controls.sedPassword.markAsUntouched();
+      this.form.controls.sedPasswordConfirm.markAsUntouched();
+
       // Update password field validators based on encryption type
       if (encryptionType === EncryptionType.Sed) {
-        this.form.controls.sedPassword.setValidators([Validators.required]);
-        this.form.controls.sedPasswordConfirm.setValidators([Validators.required]);
+        // Only require password if global SED password is not already set
+        this.isSedPasswordSet$.pipe(take(1)).subscribe((isPasswordSet) => {
+          if (isPasswordSet) {
+            // Password is optional when one already exists
+            this.form.controls.sedPassword.clearValidators();
+            this.form.controls.sedPasswordConfirm.clearValidators();
+          } else {
+            // Password is required when none exists
+            this.form.controls.sedPassword.setValidators([Validators.required]);
+            this.form.controls.sedPasswordConfirm.setValidators([Validators.required]);
+          }
+          // Update validity without emitting events to prevent immediate error display
+          this.form.controls.sedPassword.updateValueAndValidity({ emitEvent: false });
+          this.form.controls.sedPasswordConfirm.updateValueAndValidity({ emitEvent: false });
+        });
       } else {
         this.form.controls.sedPassword.clearValidators();
         this.form.controls.sedPasswordConfirm.clearValidators();
+        this.form.controls.sedPassword.updateValueAndValidity({ emitEvent: false });
+        this.form.controls.sedPasswordConfirm.updateValueAndValidity({ emitEvent: false });
       }
-      this.form.controls.sedPassword.updateValueAndValidity();
-      this.form.controls.sedPasswordConfirm.updateValueAndValidity();
 
       // Show warning dialogs for encryption types
       if (encryptionType === EncryptionType.Software) {
