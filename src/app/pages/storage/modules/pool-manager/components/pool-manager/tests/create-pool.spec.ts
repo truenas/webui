@@ -1,12 +1,15 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { SedStatus } from 'app/enums/sed-status.enum';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -21,6 +24,7 @@ import {
   PoolManagerHarness,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/pool-manager.harness';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
+import { selectHasEnclosureSupport, selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerComponent – create pool', () => {
   let spectator: Spectator<PoolManagerComponent>;
@@ -259,5 +263,245 @@ describe('PoolManagerComponent – create pool', () => {
       }],
     );
     expect(router.navigate).toHaveBeenCalledWith(['/storage']);
+  });
+});
+
+describe('PoolManagerComponent – create pool with SED encryption', () => {
+  let spectator: Spectator<PoolManagerComponent>;
+  let wizard: PoolManagerHarness;
+
+  const sedDisks: DetailsDisk[] = [
+    {
+      devname: 'sda1',
+      name: 'sda1',
+      size: 20 * GiB,
+      type: DiskType.Hdd,
+      sed_status: SedStatus.Uninitialized,
+    } as DetailsDisk,
+    {
+      devname: 'sda2',
+      name: 'sda2',
+      size: 20 * GiB,
+      type: DiskType.Hdd,
+      sed_status: SedStatus.Uninitialized,
+    } as DetailsDisk,
+    {
+      devname: 'sda3',
+      name: 'sda3',
+      size: 20 * GiB,
+      type: DiskType.Hdd,
+      sed_status: SedStatus.Unlocked,
+    } as DetailsDisk,
+    {
+      devname: 'sda4',
+      name: 'sda4',
+      size: 20 * GiB,
+      type: DiskType.Hdd,
+      sed_status: SedStatus.Uninitialized,
+    } as DetailsDisk,
+    {
+      devname: 'sda5',
+      name: 'sda5',
+      size: 20 * GiB,
+      type: DiskType.Hdd,
+      sed_status: SedStatus.Uninitialized,
+    } as DetailsDisk,
+  ];
+
+  // Common providers without the mock store (we'll provide our own)
+  const commonProvidersWithoutStore = commonProviders.slice(0, -1);
+
+  describe('when global SED password is not set', () => {
+    const createComponent = createComponentFactory({
+      component: PoolManagerComponent,
+      imports: [...commonImports],
+      providers: [
+        ...commonProvidersWithoutStore,
+        mockApi([
+          mockCall('pool.validate_name', true),
+          mockCall('disk.details', { used: [], unused: sedDisks }),
+          mockCall('enclosure2.query', []),
+          mockCall('pool.query', []),
+          mockCall('pool.dataset.encryption_algorithm_choices', {}),
+          mockCall('system.advanced.sed_global_password_is_set', false),
+          mockCall('system.advanced.update', {} as AdvancedConfig),
+          mockJob('pool.create', fakeSuccessfulJob()),
+        ]),
+        mockProvider(PoolWizardNameValidationService, {
+          validatePoolName: () => of(null),
+        }),
+        provideMockStore({
+          selectors: [
+            { selector: selectHasEnclosureSupport, value: true },
+            { selector: selectIsEnterprise, value: true },
+          ],
+        }),
+        mockAuth(),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createComponent();
+      wizard = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, PoolManagerHarness);
+    });
+
+    it('shows SED encryption as default when SED disks available and Enterprise', async () => {
+      const stepValues = await wizard.getStepValues();
+      expect(stepValues['Encryption']).toBe('Self Encrypting Drives (SED)');
+    });
+
+    it('requires SED password when no global password exists', async () => {
+      await wizard.fillStep({
+        Name: 'sedpool',
+      });
+
+      const nextButton = await wizard.getNextButton();
+      expect(await nextButton.isDisabled()).toBe(true);
+
+      await wizard.fillStep({
+        'Global SED Password': 'testpassword123',
+        'Confirm SED Password': 'testpassword123',
+      });
+
+      expect(await nextButton.isDisabled()).toBe(false);
+    });
+  });
+
+  describe('when global SED password is already set', () => {
+    const createComponent = createComponentFactory({
+      component: PoolManagerComponent,
+      imports: [...commonImports],
+      providers: [
+        ...commonProvidersWithoutStore,
+        mockApi([
+          mockCall('pool.validate_name', true),
+          mockCall('disk.details', { used: [], unused: sedDisks }),
+          mockCall('enclosure2.query', []),
+          mockCall('pool.query', []),
+          mockCall('pool.dataset.encryption_algorithm_choices', {}),
+          mockCall('system.advanced.sed_global_password_is_set', true),
+          mockCall('system.advanced.update', {} as AdvancedConfig),
+          mockJob('pool.create', fakeSuccessfulJob()),
+        ]),
+        mockProvider(PoolWizardNameValidationService, {
+          validatePoolName: () => of(null),
+        }),
+        provideMockStore({
+          selectors: [
+            { selector: selectHasEnclosureSupport, value: true },
+            { selector: selectIsEnterprise, value: true },
+          ],
+        }),
+        mockAuth(),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createComponent();
+      wizard = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, PoolManagerHarness);
+    });
+
+    it('allows creating pool without entering password when global password exists', async () => {
+      await wizard.fillStep({
+        Name: 'sedpool2',
+      });
+
+      const nextButton = await wizard.getNextButton();
+      expect(await nextButton.isDisabled()).toBe(false);
+    });
+  });
+
+  describe('SED option visibility - not Enterprise', () => {
+    const createComponent = createComponentFactory({
+      component: PoolManagerComponent,
+      imports: [...commonImports],
+      providers: [
+        ...commonProvidersWithoutStore,
+        mockApi([
+          mockCall('pool.validate_name', true),
+          mockCall('disk.details', { used: [], unused: sedDisks }),
+          mockCall('enclosure2.query', []),
+          mockCall('pool.query', []),
+          mockCall('pool.dataset.encryption_algorithm_choices', {}),
+          mockCall('system.advanced.sed_global_password_is_set', false),
+          mockJob('pool.create', fakeSuccessfulJob()),
+        ]),
+        mockProvider(PoolWizardNameValidationService, {
+          validatePoolName: () => of(null),
+        }),
+        provideMockStore({
+          selectors: [
+            { selector: selectHasEnclosureSupport, value: true },
+            { selector: selectIsEnterprise, value: false },
+          ],
+        }),
+        mockAuth(),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createComponent();
+      wizard = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, PoolManagerHarness);
+    });
+
+    it('does not show SED option when not Enterprise', async () => {
+      const stepValues = await wizard.getStepValues();
+      expect(stepValues['Encryption']).toBe('None');
+    });
+  });
+
+  describe('SED option visibility - no SED disks', () => {
+    const nonSedDisks: DetailsDisk[] = [
+      {
+        devname: 'sda1',
+        name: 'sda1',
+        size: 20 * GiB,
+        type: DiskType.Hdd,
+        sed_status: SedStatus.Unsupported,
+      } as DetailsDisk,
+      {
+        devname: 'sda2',
+        name: 'sda2',
+        size: 20 * GiB,
+        type: DiskType.Hdd,
+      } as DetailsDisk,
+    ];
+
+    const createComponent = createComponentFactory({
+      component: PoolManagerComponent,
+      imports: [...commonImports],
+      providers: [
+        ...commonProvidersWithoutStore,
+        mockApi([
+          mockCall('pool.validate_name', true),
+          mockCall('disk.details', { used: [], unused: nonSedDisks }),
+          mockCall('enclosure2.query', []),
+          mockCall('pool.query', []),
+          mockCall('pool.dataset.encryption_algorithm_choices', {}),
+          mockCall('system.advanced.sed_global_password_is_set', false),
+          mockJob('pool.create', fakeSuccessfulJob()),
+        ]),
+        mockProvider(PoolWizardNameValidationService, {
+          validatePoolName: () => of(null),
+        }),
+        provideMockStore({
+          selectors: [
+            { selector: selectHasEnclosureSupport, value: true },
+            { selector: selectIsEnterprise, value: true },
+          ],
+        }),
+        mockAuth(),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createComponent();
+      wizard = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, PoolManagerHarness);
+    });
+
+    it('does not show SED option when no SED-capable disks', async () => {
+      const stepValues = await wizard.getStepValues();
+      expect(stepValues['Encryption']).toBe('None');
+    });
   });
 });
