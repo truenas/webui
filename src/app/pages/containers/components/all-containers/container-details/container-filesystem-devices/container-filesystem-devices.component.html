@@ -20,10 +20,7 @@
     } @else {
       @for (disk of visibleDisks(); track disk.id) {
         <div class="device">
-          <div class="device-info">
-            <ix-device-type-badge [deviceType]="disk.dtype" [showLabel]="false"></ix-device-type-badge>
-            <span class="device-description">{{ getDeviceDescription(disk) }}</span>
-          </div>
+          <span class="device-description">{{ getDeviceDescription(disk) }}</span>
 
           <ix-device-actions-menu
             [device]="disk"

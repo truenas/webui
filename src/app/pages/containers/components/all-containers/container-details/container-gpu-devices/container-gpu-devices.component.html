@@ -33,10 +33,7 @@
     } @else {
       @for (device of shownDevices(); track device.id) {
         <div class="device">
-          <div class="device-info">
-            <ix-device-type-badge [deviceType]="device.dtype" [showLabel]="false"></ix-device-type-badge>
-            <span class="device-description">{{ getDeviceDescription(device) }}</span>
-          </div>
+          <span class="device-description">{{ getDeviceDescription(device) }}</span>
 
           <ix-device-actions-menu
             [device]="device"

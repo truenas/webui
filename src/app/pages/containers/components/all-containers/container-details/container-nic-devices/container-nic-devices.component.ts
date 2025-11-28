@@ -13,9 +13,6 @@ import { AddNicMenuComponent } from 'app/pages/containers/components/all-contain
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/containers/components/common/device-actions-menu/device-actions-menu.component';
-import {
-  DeviceTypeBadgeComponent,
-} from 'app/pages/containers/components/common/device-type-badge/device-type-badge.component';
 import { getDeviceDescription } from 'app/pages/containers/components/common/utils/get-device-description.utils';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -35,7 +32,6 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
     NgxSkeletonLoaderModule,
     DeviceActionsMenuComponent,
     AddNicMenuComponent,
-    DeviceTypeBadgeComponent,
   ],
 })
 export class ContainerNicDevicesComponent {
