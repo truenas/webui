@@ -1,9 +1,10 @@
-<ix-page-header [pageTitle]="'Virtual Machines' | translate" ></ix-page-header>
-
 @if (hasVirtualizationSupport$ | async) {
   <ix-page-header>
-    <div *ixWithLoadingState="availableMemory$ as availableMemory" class="vm-summary">
-      <strong>{{ 'Available Memory' | translate }}:</strong>
+    <div
+      *ixWithLoadingState="availableMemory$ as availableMemory"
+      class="vm-summary"
+    >
+      <strong>{{ "Available Memory" | translate }}:</strong>
       <span>{{ availableMemory | ixFileSize }}</span>
       <ix-icon
         name="info"
@@ -31,7 +32,7 @@
       [ixUiSearch]="searchableElements.elements.add"
       (click)="doAdd()"
     >
-      {{ 'Add' | translate }}
+      {{ "Add" | translate }}
     </button>
   </ix-page-header>
 
@@ -39,7 +40,9 @@
     class="table"
     [ixUiSearch]="searchableElements.elements.vm"
     [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    [emptyConfig]="
+      emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)
+    "
   >
     <thead
       ix-table-head
@@ -61,10 +64,10 @@
   </ix-table>
   <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
 } @else {
+  <ix-page-header [pageTitle]="'Virtual Machines' | translate"></ix-page-header>
   <mat-card>
     <mat-card-content>
       <ix-empty [conf]="vmNotSupportedConfig"></ix-empty>
     </mat-card-content>
   </mat-card>
 }
-
