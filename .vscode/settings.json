@@ -8,6 +8,7 @@
     "src/assets/i18n",
     "src/app/modules/language"
   ],
+  "i18n-ally.pathMatcher": "{locale}.json",
   "files.associations": {
     "*.css": "tailwindcss"
   },
