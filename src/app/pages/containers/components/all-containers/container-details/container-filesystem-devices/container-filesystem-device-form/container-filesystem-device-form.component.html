@@ -1,0 +1,39 @@
+<ix-modal-header
+  [title]="title()"
+  [loading]="isLoading()"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-explorer
+          formControlName="source"
+          [label]="'Host Directory Source' | translate"
+          [tooltip]="'Select the host directory to mount inside the container' | translate"
+          [required]="true"
+          [nodeProvider]="fileProvider"
+        ></ix-explorer>
+
+        <ix-input
+          formControlName="target"
+          [label]="'Container Mount Path' | translate"
+          [tooltip]="'Path where the directory will be mounted inside the container (e.g., /data)' | translate"
+          [required]="true"
+        ></ix-input>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading()"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

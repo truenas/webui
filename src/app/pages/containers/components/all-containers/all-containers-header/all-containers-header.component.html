@@ -1,0 +1,19 @@
+<button
+  mat-button
+  ixTest="global-configuration"
+  [ixUiSearch]="searchableElements.elements.settings"
+  (click)="onGlobalConfiguration()"
+>
+  {{ 'Settings' | translate }}
+</button>
+
+@if (config()) {
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    ixTest="create-new-container"
+    [color]="'primary'"
+    [ixUiSearch]="searchableElements.elements.add"
+    (click)="onCreateContainer()"
+  >{{ 'Create New Container' | translate }}</button>
+}

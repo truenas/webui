@@ -1470,6 +1470,67 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
+      "NVIDIA Drivers"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "nvidia-drivers",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "NVIDIA Drivers",
+      "Configure NVIDIA Drivers"
+    ],
+    "synonyms": [
+      "NVIDIA Driver Settings",
+      "GPU Drivers"
+    ],
+    "requiredRoles": [
+      "SYSTEM_ADVANCED_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "nvidia-drivers-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "NVIDIA Drivers",
+      "Install NVIDIA Drivers"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "install-nvidia-drivers",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
       "NTP Server"
     ],
     "synonyms": [
@@ -3863,193 +3924,6 @@
   },
   {
     "hierarchy": [
-      "Containers",
-      "List"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers/view/def"
-    ],
-    "routerLink": null,
-    "anchor": "containers-list",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
-      "General Info"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers/view/def"
-    ],
-    "routerLink": null,
-    "anchor": "general-info",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
-      "Devices"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers/view/def"
-    ],
-    "routerLink": null,
-    "anchor": "devices",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
-      "Disks"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers/view/def"
-    ],
-    "routerLink": null,
-    "anchor": "disks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
-      "NIC"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers/view/def"
-    ],
-    "routerLink": null,
-    "anchor": "nic",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
-      "Proxies"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers/view/def"
-    ],
-    "routerLink": null,
-    "anchor": "proxies",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
-      "Idmap"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers/view/def"
-    ],
-    "routerLink": null,
-    "anchor": "idmap",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
-      "Tools"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers/view/def"
-    ],
-    "routerLink": null,
-    "anchor": "tools",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
-      "Global Settings"
-    ],
-    "synonyms": [
-      "Container Settings"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers"
-    ],
-    "routerLink": null,
-    "anchor": "vm-global-settings",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Containers",
-      "Create New Container"
-    ],
-    "synonyms": [
-      "New Container",
-      "Add Container"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "VMS"
-    ],
-    "anchorRouterLink": [
-      "/containers"
-    ],
-    "routerLink": [
-      "/containers/new"
-    ],
-    "anchor": "add-instance",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
       "Credentials",
       "Directory Services",
       "Configure Directory Services"
@@ -5486,6 +5360,175 @@
     ],
     "routerLink": null,
     "anchor": "add-backup-credential",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Containers",
+      "List"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/containers/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "containers-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Containers",
+      "General Info"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/containers/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "general-info",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Containers",
+      "USB Devices"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/containers/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "usb-devices",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Containers",
+      "GPU Devices"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/containers/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "gpu-devices",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Containers",
+      "Disks"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/containers/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "disks",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Containers",
+      "NIC"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/containers/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "nic",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Containers",
+      "Tools"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/containers/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "tools",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Containers",
+      "GlobalSettings"
+    ],
+    "synonyms": [
+      "Container Settings"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/containers"
+    ],
+    "routerLink": null,
+    "anchor": "container-global-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Containers",
+      "Create New Container"
+    ],
+    "synonyms": [
+      "New Container",
+      "Add Container"
+    ],
+    "requiredRoles": [
+      "CONTAINER_WRITE"
+    ],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/containers"
+    ],
+    "routerLink": null,
+    "anchor": "add-container",
     "triggerAnchor": null,
     "section": "ui"
   },

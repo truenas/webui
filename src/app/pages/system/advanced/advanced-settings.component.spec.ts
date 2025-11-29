@@ -25,6 +25,9 @@ import {
   NtpServersCardComponent,
 } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.component';
 import {
+  NvidiaDriversCardComponent,
+} from 'app/pages/system/advanced/nvidia-drivers/nvidia-drivers-card/nvidia-drivers-card.component';
+import {
   ReplicationSettingsCardComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.component';
 import {
@@ -62,6 +65,7 @@ describe('AdvancedSettingsComponent', () => {
         AllowedAddressesCardComponent,
         SelfEncryptingDriveCardComponent,
         IsolatedGpusCardComponent,
+        NvidiaDriversCardComponent,
         GlobalTwoFactorAuthCardComponent,
         SystemSecurityCardComponent,
         NtpServersCardComponent,
@@ -106,6 +110,7 @@ describe('AdvancedSettingsComponent', () => {
     expect(spectator.query(AllowedAddressesCardComponent)).toExist();
     expect(spectator.query(SelfEncryptingDriveCardComponent)).not.toExist();
     expect(spectator.query(IsolatedGpusCardComponent)).toExist();
+    expect(spectator.query(NvidiaDriversCardComponent)).toExist();
     expect(spectator.query(GlobalTwoFactorAuthCardComponent)).toExist();
     expect(spectator.query(SystemSecurityCardComponent)).toExist();
     expect(spectator.query(FailoverCardComponent)).toExist();

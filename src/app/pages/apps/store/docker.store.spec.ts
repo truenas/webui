@@ -19,7 +19,6 @@ describe('DockerStore', () => {
         mockCall('docker.config', {
           enable_image_updates: true,
           pool: 'pewl',
-          nvidia: true,
         } as DockerConfig),
         mockCall('docker.status', {
           status: DockerStatus.Running,
@@ -62,7 +61,6 @@ describe('DockerStore', () => {
         dockerConfig: {
           enable_image_updates: true,
           pool: 'pewl',
-          nvidia: true,
         },
         isLoading: false,
         statusData: {

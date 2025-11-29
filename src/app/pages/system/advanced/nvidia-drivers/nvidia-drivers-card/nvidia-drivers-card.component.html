@@ -1,0 +1,27 @@
+<mat-card id="nvidia-drivers" [ixUiSearch]="searchableElements.elements.nvidiaDrivers">
+  <mat-toolbar-row>
+    <h3>{{ 'NVIDIA Drivers' | translate }}</h3>
+    <div *ixWithLoadingState="nvidiaEnabled$ as nvidiaEnabled" class="actions action-icon">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        [ixTest]="['nvidia-drivers', 'configure']"
+        [ixUiSearch]="searchableElements.elements.configure"
+        (click)="onConfigurePressed(nvidiaEnabled)"
+      >
+        {{ 'Configure' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.installNvidiaDrivers">
+        <span class="label">{{ 'Install NVIDIA Drivers' | translate }}:</span>
+        <span *ixWithLoadingState="nvidiaEnabled$ as nvidiaEnabled" class="value">
+          {{ nvidiaEnabled ? ('Enabled' | translate) : ('Disabled' | translate) }}
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,25 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Tools' | translate }}
+    </h3>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div [matTooltip]="isContainerStopped() ? ('Container is not running' | translate) : ''">
+      <a
+        mat-flat-button
+        color="default"
+        ixTest="open-shell"
+        class="tool"
+        [class.disabled]="isContainerStopped()"
+        [disabled]="isContainerStopped()"
+        [routerLink]="['/containers', 'view', container().id, 'shell']"
+      >
+        <span>{{ 'Shell' | translate }}</span>
+
+        <ix-icon name="mdi-console-line"></ix-icon>
+      </a>
+    </div>
+  </mat-card-content>
+</mat-card>

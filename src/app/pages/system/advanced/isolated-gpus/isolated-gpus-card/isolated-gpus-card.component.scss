@@ -1,0 +1,24 @@
+ix-isolated-gpus-card mat-card {
+  scroll-margin-top: 16px;
+}
+
+ix-isolated-gpus-card mat-card:target {
+  animation: highlight 2s ease-out;
+  scroll-margin-top: 16px;
+}
+
+@keyframes highlight {
+  0% {
+    box-shadow: 0 0 20px 4px var(--primary), 0 0 0 4px var(--primary);
+    transform: scale(1.01);
+  }
+
+  50% {
+    box-shadow: 0 0 15px 3px var(--primary), 0 0 0 3px var(--primary);
+  }
+
+  100% {
+    box-shadow: none;
+    transform: scale(1);
+  }
+}

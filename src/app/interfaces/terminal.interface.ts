@@ -11,9 +11,9 @@ export type TerminalConnectionData
   = | {
     vm_id: number;
   }
-  // Virtualization instances
+  // Containers
   | {
-    virt_instance_id: string;
+    container_id: number;
     use_console: boolean;
   }
   // Apps
