@@ -27,6 +27,7 @@ export const containersHelptext = {
     filesystem: T('Filesystem bind mount'),
     usb: T('USB device'),
     nic: T('Network interface'),
+    gpu: T('GPU device'),
     unknown: T('Unknown device'),
   },
 

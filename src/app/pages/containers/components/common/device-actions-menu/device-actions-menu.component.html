@@ -1,17 +1,23 @@
 <div *ixRequiresRoles="requiredRoles">
-  <button
-    mat-icon-button
-    type="button"
-    [ixTest]="['actions-for', deviceDescription()]"
-    [matMenuTriggerFor]="menu"
-    [disabled]="!canManage()"
-    [class.disabled]="!canManage()"
-    [attr.tabindex]="!canManage() ? -1 : 0"
-    [matTooltip]="canManage() ? ('Actions for {device}' | translate: { device: deviceDescription() }) : manageRestrictedExplanation()"
-    [attr.aria-label]="'Actions for {device}' | translate: { device: deviceDescription() }"
+  <div
+    class="button-wrapper"
+    [matTooltip]="!canManage() && manageRestrictedExplanation() ? manageRestrictedExplanation()! : ''"
+    [matTooltipDisabled]="canManage() || !manageRestrictedExplanation()"
   >
-    <ix-icon name="more_vert"></ix-icon>
-  </button>
+    <button
+      mat-icon-button
+      type="button"
+      [ixTest]="['actions-for', deviceDescription()]"
+      [matMenuTriggerFor]="menu"
+      [disabled]="!canManage()"
+      [class.disabled]="!canManage()"
+      [attr.tabindex]="!canManage() ? -1 : 0"
+      [matTooltip]="canManage() ? ('Actions for {device}' | translate: { device: deviceDescription() }) : ''"
+      [attr.aria-label]="'Actions for {device}' | translate: { device: deviceDescription() }"
+    >
+      <ix-icon name="more_vert"></ix-icon>
+    </button>
+  </div>
 </div>
 
 <mat-menu #menu="matMenu">

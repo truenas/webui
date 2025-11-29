@@ -30,12 +30,19 @@ export enum ContainerDeviceType {
   Usb = 'USB',
   Nic = 'NIC',
   Filesystem = 'FILESYSTEM',
+  Gpu = 'GPU',
+}
+
+export enum ContainerGpuType {
+  Amd = 'AMD',
+  Nvidia = 'NVIDIA',
 }
 
 export const containerDeviceTypeLabels = new Map<ContainerDeviceType, string>([
   [ContainerDeviceType.Usb, 'USB'],
   [ContainerDeviceType.Nic, T('NIC')],
   [ContainerDeviceType.Filesystem, T('Filesystem Device')],
+  [ContainerDeviceType.Gpu, 'GPU'],
 ]);
 
 export enum ContainerNetworkType {

@@ -22,6 +22,7 @@ export interface AdvancedConfig {
   kdump_enabled: boolean;
   motd: string;
   login_banner: string;
+  nvidia: boolean;
   overprovision: number;
   powerdaemon: boolean;
   sed_user: SedUser;

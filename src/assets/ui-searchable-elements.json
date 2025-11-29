@@ -1470,6 +1470,67 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
+      "NVIDIA Drivers"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "nvidia-drivers",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "NVIDIA Drivers",
+      "Configure NVIDIA Drivers"
+    ],
+    "synonyms": [
+      "NVIDIA Driver Settings",
+      "GPU Drivers"
+    ],
+    "requiredRoles": [
+      "SYSTEM_ADVANCED_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "nvidia-drivers-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "NVIDIA Drivers",
+      "Install NVIDIA Drivers"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "install-nvidia-drivers",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
       "NTP Server"
     ],
     "synonyms": [
@@ -5353,6 +5414,24 @@
     ],
     "routerLink": null,
     "anchor": "usb-devices",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Containers",
+      "GPU Devices"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "VMS"
+    ],
+    "anchorRouterLink": [
+      "/containers/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "gpu-devices",
     "triggerAnchor": null,
     "section": "ui"
   },

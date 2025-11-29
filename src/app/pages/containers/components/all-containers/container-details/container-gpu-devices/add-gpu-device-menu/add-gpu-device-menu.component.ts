@@ -3,16 +3,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { ContainerDeviceType } from 'app/enums/container.enum';
+import { ContainerDeviceType, ContainerGpuType } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
-import {
-  AvailableUsb,
-  ContainerUsbDevice,
-} from 'app/interfaces/container.interface';
+import { ContainerGpuDevice } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -20,12 +18,20 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { AppState } from 'app/store';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
+
+interface GpuMenuItem {
+  pciAddress: string;
+  gpuType: string;
+  description: string;
+}
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-add-usb-device-menu',
-  templateUrl: './add-usb-device-menu.component.html',
-  styleUrls: ['./add-usb-device-menu.component.scss'],
+  selector: 'ix-add-gpu-device-menu',
+  templateUrl: './add-gpu-device-menu.component.html',
+  styleUrls: ['./add-gpu-device-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
@@ -38,7 +44,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     RequiresRolesDirective,
   ],
 })
-export class AddUsbDeviceMenuComponent {
+export class AddGpuDeviceMenuComponent {
   protected readonly requiredRoles = [Role.ContainerWrite];
 
   private api = inject(ApiService);
@@ -48,12 +54,19 @@ export class AddUsbDeviceMenuComponent {
   private translate = inject(TranslateService);
   private devicesStore = inject(ContainerDevicesStore);
   private containersStore = inject(ContainersStore);
+  private store$ = inject<Store<AppState>>(Store);
 
-  private readonly usbChoices = toSignal(
-    this.api.call('container.device.usb_choices').pipe(
+  protected readonly nvidiaDriversEnabled = toSignal(
+    this.store$.pipe(waitForAdvancedConfig).pipe(
+      catchError(() => of({ nvidia: false })),
+    ),
+  );
+
+  private readonly gpuChoices = toSignal(
+    this.api.call('container.device.gpu_choices').pipe(
       catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
-        return of({} as Record<string, AvailableUsb>);
+        return of({} as Record<string, ContainerGpuType>);
       }),
     ),
     { initialValue: null },
@@ -61,47 +74,53 @@ export class AddUsbDeviceMenuComponent {
 
   protected readonly isLoading = computed(() => {
     const devicesLoading = this.devicesStore.isLoading();
-    const usbChoices = this.usbChoices();
-    return devicesLoading || usbChoices === null;
+    const gpuChoices = this.gpuChoices();
+    return devicesLoading || gpuChoices === null;
   });
 
-  protected readonly availableUsbDevices = computed(() => {
-    const usbChoices = this.usbChoices();
-    if (!usbChoices) {
+  protected readonly availableGpuDevices = computed(() => {
+    const gpuChoices = this.gpuChoices();
+    const nvidiaEnabled = this.nvidiaDriversEnabled()?.nvidia ?? false;
+
+    if (!gpuChoices) {
       return [];
     }
 
-    const existingUsbDevices = this.devicesStore.devices()
-      .filter((device) => device.dtype === ContainerDeviceType.Usb);
+    const existingGpuDevices = this.devicesStore.devices()
+      .filter((device) => device.dtype === ContainerDeviceType.Gpu);
 
-    return Object.entries(usbChoices)
-      .filter(([, usb]) => {
-        if (!usb?.description) {
+    return Object.entries(gpuChoices)
+      .filter(([pciAddress, gpuType]: [string, ContainerGpuType]) => {
+        const isAlreadyAdded = existingGpuDevices
+          .some((device) => device.pci_address === pciAddress);
+
+        // Filter out NVIDIA GPUs if drivers aren't enabled
+        if (gpuType === ContainerGpuType.Nvidia && !nvidiaEnabled) {
           return false;
         }
-        const isAlreadyAdded = existingUsbDevices
-          .some((device) => device.usb?.product_id === usb.capability?.product_id);
-        return usb.available && !isAlreadyAdded;
+
+        return !isAlreadyAdded;
       })
-      .map(([devicePath, usb]) => ({ ...usb, devicePath }));
+      .map(([pciAddress, gpuType]): GpuMenuItem => ({
+        pciAddress,
+        gpuType,
+        description: `${gpuType} (${pciAddress})`,
+      }));
   });
 
   protected readonly hasDevicesToAdd = computed(() => {
-    return this.availableUsbDevices().length > 0;
+    return this.availableGpuDevices().length > 0;
   });
 
-  protected addUsb(usb: AvailableUsb & { devicePath: string }): void {
+  protected addGpu(gpu: GpuMenuItem): void {
     this.addDevice({
-      dtype: ContainerDeviceType.Usb,
-      device: null,
-      usb: {
-        vendor_id: usb.capability.vendor_id,
-        product_id: usb.capability.product_id,
-      },
-    } as ContainerUsbDevice);
+      dtype: ContainerDeviceType.Gpu,
+      gpu_type: gpu.gpuType as 'NVIDIA' | 'AMD',
+      pci_address: gpu.pciAddress,
+    } as ContainerGpuDevice);
   }
 
-  private addDevice(payload: Partial<ContainerUsbDevice>): void {
+  private addDevice(payload: Partial<ContainerGpuDevice>): void {
     const instanceId = this.containersStore.selectedContainer()?.id;
     if (!instanceId) {
       return;
@@ -109,7 +128,7 @@ export class AddUsbDeviceMenuComponent {
 
     this.api.call('container.device.create', [{
       container: instanceId,
-      attributes: payload as ContainerUsbDevice,
+      attributes: payload as ContainerGpuDevice,
     }])
       .pipe(
         this.loader.withLoader(),
@@ -117,7 +136,7 @@ export class AddUsbDeviceMenuComponent {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.snackbar.success(this.translate.instant('USB Device was added'));
+        this.snackbar.success(this.translate.instant('GPU Device was added'));
         this.devicesStore.loadDevices();
       });
   }

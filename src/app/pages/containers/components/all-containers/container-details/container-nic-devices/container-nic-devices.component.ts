@@ -7,15 +7,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
-import { ContainerDevice } from 'app/interfaces/container.interface';
+import { ContainerDevice, ContainerNicDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AddNicMenuComponent } from 'app/pages/containers/components/all-containers/container-details/container-nic-devices/add-nic-menu/add-nic-menu.component';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/containers/components/common/device-actions-menu/device-actions-menu.component';
-import {
-  DeviceTypeBadgeComponent,
-} from 'app/pages/containers/components/common/device-type-badge/device-type-badge.component';
 import { getDeviceDescription } from 'app/pages/containers/components/common/utils/get-device-description.utils';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -35,7 +32,6 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
     NgxSkeletonLoaderModule,
     DeviceActionsMenuComponent,
     AddNicMenuComponent,
-    DeviceTypeBadgeComponent,
   ],
 })
 export class ContainerNicDevicesComponent {
@@ -55,8 +51,8 @@ export class ContainerNicDevicesComponent {
     return container?.status.state === ContainerStatus.Running;
   });
 
-  protected readonly shownDevices = computed(() => {
-    return this.devicesStore.devices().filter((device) => {
+  protected readonly shownDevices = computed<ContainerNicDevice[]>(() => {
+    return this.devicesStore.devices().filter((device): device is ContainerNicDevice => {
       return device.dtype === ContainerDeviceType.Nic;
     });
   });

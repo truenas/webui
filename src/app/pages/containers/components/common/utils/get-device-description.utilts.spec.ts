@@ -1,10 +1,12 @@
 import { TranslateService } from '@ngx-translate/core';
 import {
   ContainerDeviceType,
+  ContainerGpuType,
 } from 'app/enums/container.enum';
 import {
   ContainerDevice,
   ContainerFilesystemDevice,
+  ContainerGpuDevice,
   ContainerNicDevice,
   ContainerUsbDevice,
 } from 'app/interfaces/container.interface';
@@ -126,6 +128,30 @@ describe('getDeviceDescription', () => {
 
       const result = getDeviceDescription(mockTranslate as TranslateService, device);
       expect(result).toBe('Unknown');
+    });
+  });
+
+  describe('GPU devices', () => {
+    it('should return GPU description with type and PCI address for NVIDIA', () => {
+      const device: ContainerDevice = {
+        dtype: ContainerDeviceType.Gpu,
+        gpu_type: ContainerGpuType.Nvidia,
+        pci_address: '0000:19:00.0',
+      } as ContainerGpuDevice;
+
+      const result = getDeviceDescription(mockTranslate as TranslateService, device);
+      expect(result).toBe('NVIDIA GPU (0000:19:00.0)');
+    });
+
+    it('should return GPU description with type and PCI address for AMD', () => {
+      const device: ContainerDevice = {
+        dtype: ContainerDeviceType.Gpu,
+        gpu_type: ContainerGpuType.Amd,
+        pci_address: '0000:1a:00.0',
+      } as ContainerGpuDevice;
+
+      const result = getDeviceDescription(mockTranslate as TranslateService, device);
+      expect(result).toBe('AMD GPU (0000:1a:00.0)');
     });
   });
 });

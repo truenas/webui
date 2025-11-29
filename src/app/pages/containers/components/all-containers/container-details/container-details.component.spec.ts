@@ -12,6 +12,9 @@ import {
   ContainerGeneralInfoComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-general-info/container-general-info.component';
 import {
+  ContainerGpuDevicesComponent,
+} from 'app/pages/containers/components/all-containers/container-details/container-gpu-devices/container-gpu-devices.component';
+import {
   ContainerNicDevicesComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-nic-devices/container-nic-devices.component';
 import {
@@ -31,6 +34,7 @@ describe('ContainerDetailsComponent', () => {
       MockComponents(
         ContainerGeneralInfoComponent,
         ContainerUsbDevicesComponent,
+        ContainerGpuDevicesComponent,
         ContainerFilesystemDevicesComponent,
         ContainerNicDevicesComponent,
         ContainerToolsComponent,
@@ -53,6 +57,7 @@ describe('ContainerDetailsComponent', () => {
     const expectedComponents = [
       ContainerGeneralInfoComponent,
       ContainerUsbDevicesComponent,
+      ContainerGpuDevicesComponent,
       ContainerFilesystemDevicesComponent,
       ContainerNicDevicesComponent,
       ContainerToolsComponent,
