@@ -1,9 +1,0 @@
-<div [class]="'device-type-badge ' + deviceClass()">
-  <ix-icon
-    [name]="icon().name"
-    [matTooltip]="icon().tooltip | translate"
-  ></ix-icon>
-  @if (showLabel()) {
-    <span class="device-label">{{ label() | translate }}</span>
-  }
-</div>
