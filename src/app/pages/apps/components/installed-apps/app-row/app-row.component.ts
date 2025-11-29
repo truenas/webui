@@ -19,6 +19,7 @@ import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
+import { isExternalApp } from 'app/pages/apps/utils/app-type.utils';
 
 @Component({
   selector: 'ix-app-row',
@@ -42,7 +43,7 @@ import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps
 })
 export class AppRowComponent {
   readonly app = input.required<App>();
-  readonly stats = input.required<AppStats>();
+  readonly stats = input<AppStats | null>();
   readonly selected = input.required<boolean>();
   readonly job = input<Job<void, AppStartQueryParams>>();
 
@@ -67,16 +68,29 @@ export class AppRowComponent {
     return [AppState.Deploying].includes(this.app().state);
   });
 
-  readonly incomingTrafficBits = computed(() => {
-    return this.stats().networks.reduce((sum, stats) => sum + this.bytesToBits(stats.rx_bytes), 0);
+  readonly isExternalApp = computed(() => {
+    return isExternalApp(this.app());
   });
 
-  readonly outgoingTrafficBits = computed(() => {
-    return this.stats().networks.reduce((sum, stats) => sum + this.bytesToBits(stats.tx_bytes), 0);
+  readonly trafficStats = computed(() => {
+    const networks = this.stats()?.networks;
+    if (!networks?.length) return { incoming: 0, outgoing: 0 };
+
+    return networks.reduce((acc, stats) => ({
+      incoming: acc.incoming + (stats.rx_bytes || 0) * 8,
+      outgoing: acc.outgoing + (stats.tx_bytes || 0) * 8,
+    }), { incoming: 0, outgoing: 0 });
   });
+
+  readonly incomingTrafficBits = computed(() => this.trafficStats().incoming);
+  readonly outgoingTrafficBits = computed(() => this.trafficStats().outgoing);
 
   toggleAppChecked(): void {
-    this.selectionChange.emit();
+    // Defensive check: External apps don't render checkboxes in the template,
+    // but this prevents selection changes if called programmatically
+    if (!isExternalApp(this.app())) {
+      this.selectionChange.emit();
+    }
   }
 
   start(): void {
@@ -85,13 +99,6 @@ export class AppRowComponent {
 
   stop(): void {
     this.stopApp.emit();
-  }
-
-  private bytesToBits(bytes: number): number {
-    if (bytes == null) {
-      return 0;
-    }
-    return bytes * 8;
   }
 
   restart(): void {
