@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, NEVER, Observable, filter, switchMap, tap,
@@ -32,7 +32,6 @@ import { ContainerDevicesStore } from 'app/pages/containers/stores/container-dev
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-device-actions-menu',
   templateUrl: './device-actions-menu.component.html',
@@ -53,6 +52,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class DeviceActionsMenuComponent {
   protected readonly requiredRoles = [Role.ContainerWrite];
 
+  private destroyRef = inject(DestroyRef);
   private dialog = inject(DialogService);
   private matDialog = inject(MatDialog);
   private api = inject(ApiService);
@@ -106,7 +106,7 @@ export class DeviceActionsMenuComponent {
           container,
           disk: device as ContainerFilesystemDevice,
         },
-      }).pipe(untilDestroyed(this)).subscribe((result) => {
+      }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
         if (result.response) {
           this.devicesStore.loadDevices();
         }
@@ -154,7 +154,7 @@ export class DeviceActionsMenuComponent {
             this.errorHandler.withErrorHandler(),
           );
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.snackbar.success(this.translate.instant('NIC Device was updated'));
         this.devicesStore.loadDevices();
@@ -182,7 +182,7 @@ export class DeviceActionsMenuComponent {
 
           return this.deleteDevice();
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }

@@ -1,6 +1,5 @@
-import { computed, Injectable, inject } from '@angular/core';
+import { computed, DestroyRef, Injectable, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   switchMap, catchError, tap,
@@ -24,39 +23,28 @@ const initialState: ContainerDeviceState = {
   devices: [],
 };
 
-@UntilDestroy()
 @Injectable()
 export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private containersStore = inject(ContainersStore);
+  private destroyRef = inject(DestroyRef);
 
   readonly isLoading = computed(() => this.state().isLoading);
   readonly devices = computed(() => this.state().devices);
   private readonly selectedContainer = this.containersStore.selectedContainer;
 
-  constructor() {
-    super(initialState);
-    // Note: We're triggering the loadDevices effect imperatively via tap() rather than
-    // passing the observable directly. This pattern works because the effect internally
-    // manages its subscription, but is unconventional. The effect could alternatively
-    // be refactored to accept the selectedContainer observable directly.
-    toObservable(this.selectedContainer).pipe(
+  readonly loadDevices = this.effect((container$) => {
+    return container$.pipe(
       tap((container) => {
         if (!container) {
-          this.patchState({ devices: [] });
+          this.patchState({ devices: [], isLoading: false });
         }
       }),
       filter(Boolean),
-      tap(() => this.loadDevices()),
-    ).pipe(untilDestroyed(this)).subscribe();
-  }
-
-  readonly loadDevices = this.effect((trigger$) => {
-    return trigger$.pipe(
-      switchMap(() => {
+      switchMap((container) => {
         this.patchState({ isLoading: true });
-        return this.api.call('container.device.query', [[['container', '=', this.selectedContainer().id]]]).pipe(
+        return this.api.call('container.device.query', [[['container', '=', container.id]]]).pipe(
           map((containerDevices) => containerDeviceEntriesToDevices(containerDevices)),
           tap((devices) => {
             this.patchState({
@@ -73,6 +61,11 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
       }),
     );
   });
+
+  constructor() {
+    super(initialState);
+    this.loadDevices(toObservable(this.selectedContainer));
+  }
 
   /**
    * Optimistically removes a device from the local state after successful deletion.

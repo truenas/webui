@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   finalize, of,
@@ -24,7 +24,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-global-config-form',
   templateUrl: './global-config-form.component.html',
@@ -45,6 +44,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class GlobalConfigFormComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
@@ -91,7 +91,7 @@ export class GlobalConfigFormComponent implements OnInit {
     this.api.call('lxc.config').pipe(
       this.errorHandler.withErrorHandler(),
       finalize(() => this.isLoading.set(false)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((config) => {
       this.currentConfig.set(config);
       this.form.patchValue({
@@ -120,7 +120,7 @@ export class GlobalConfigFormComponent implements OnInit {
       .pipe(
         this.errorHandler.withErrorHandler(),
         finalize(() => this.isLoading.set(false)),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Container settings updated'));

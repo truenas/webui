@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef } from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, Observable, switchMap } from 'rxjs';
@@ -25,7 +24,6 @@ import { ContainerDevicesStore } from 'app/pages/containers/stores/container-dev
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-add-nic-menu',
   templateUrl: './add-nic-menu.component.html',
@@ -45,6 +43,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class AddNicMenuComponent {
   protected readonly requiredRoles = [Role.ContainerWrite];
 
+  private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
@@ -120,7 +119,7 @@ export class AddNicMenuComponent {
           this.errorHandler.withErrorHandler(),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('NIC Device was added'));

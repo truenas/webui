@@ -9,7 +9,6 @@ import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   map, Observable, of, startWith,
@@ -27,7 +26,6 @@ export interface ContainerNicFormDialogData {
   device?: ContainerNicDevice & { id: number }; // Existing device for editing
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-container-nic-form-dialog',
   templateUrl: './container-nic-form-dialog.component.html',

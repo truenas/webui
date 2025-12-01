@@ -4,11 +4,11 @@ import {
   computed, inject,
   output,
   signal,
+  DestroyRef,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { distinctUntilChanged, map, tap } from 'rxjs';
 import { containersEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
@@ -25,7 +25,6 @@ import { ContainerListBulkActionsComponent } from 'app/pages/containers/componen
 import { ContainerRowComponent } from 'app/pages/containers/components/all-containers/container-list/container-row/container-row.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-container-list',
   templateUrl: './container-list.component.html',
@@ -44,6 +43,7 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 })
 
 export class ContainerListComponent {
+  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   private containersStore = inject(ContainersStore);
@@ -102,7 +102,7 @@ export class ContainerListComponent {
           this.containersStore.selectContainer(containerId);
         }
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
 
     setTimeout(() => {

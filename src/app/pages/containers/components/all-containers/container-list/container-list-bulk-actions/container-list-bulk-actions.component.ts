@@ -1,26 +1,29 @@
-import { Component, ChangeDetectionStrategy, computed, input, output, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, input, output, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   filter,
+  forkJoin,
+  Observable,
+  of,
   switchMap,
-  tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
 import { Container, ContainerStopParams } from 'app/interfaces/container.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { StopOptionsDialog, StopOptionsOperation } from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-container-list-bulk-actions',
   templateUrl: './container-list-bulk-actions.component.html',
@@ -39,11 +42,14 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 
 export class ContainerListBulkActionsComponent {
+  private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
+  private dialog = inject(DialogService);
   private matDialog = inject(MatDialog);
+  private loader = inject(LoaderService);
 
   readonly checkedContainers = input.required<Container[]>();
   readonly resetBulkSelection = output();
@@ -77,9 +83,22 @@ export class ContainerListBulkActionsComponent {
   });
 
   onBulkStart(): void {
-    this.stoppedCheckedContainers().forEach((container) => this.start(container.id));
-    this.resetBulkSelection.emit();
-    this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
+    const containers = this.stoppedCheckedContainers();
+    if (containers.length === 0) {
+      return;
+    }
+
+    const operations = containers.map((container) => this.start(container.id));
+    forkJoin(operations)
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.withErrorHandler(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
+        this.resetBulkSelection.emit();
+      });
   }
 
   onBulkStop(): void {
@@ -88,13 +107,21 @@ export class ContainerListBulkActionsComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        tap((options: ContainerStopParams) => {
-          this.activeCheckedContainers().forEach((container) => this.stop(container.id, options));
-          this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
-          this.resetBulkSelection.emit();
+        switchMap((options: ContainerStopParams) => {
+          const containers = this.activeCheckedContainers();
+          if (containers.length === 0) {
+            return of(null);
+          }
+          const operations = containers.map((container) => this.stop(container.id, options));
+          return forkJoin(operations);
         }),
-        untilDestroyed(this),
-      ).subscribe();
+        this.errorHandler.withErrorHandler(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
+        this.resetBulkSelection.emit();
+      });
   }
 
   onBulkRestart(): void {
@@ -103,34 +130,42 @@ export class ContainerListBulkActionsComponent {
       .afterClosed()
       .pipe(
         filter(Boolean),
-        tap((options: ContainerStopParams) => {
-          this.activeCheckedContainers().forEach((container) => this.restart(container.id, options));
-          this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
-          this.resetBulkSelection.emit();
+        switchMap((options: ContainerStopParams) => {
+          const containers = this.activeCheckedContainers();
+          if (containers.length === 0) {
+            return of(null);
+          }
+          const operations = containers.map((container) => this.restart(container.id, options));
+          return forkJoin(operations);
         }),
-        untilDestroyed(this),
-      ).subscribe();
+        this.errorHandler.withErrorHandler(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant(this.bulkActionStartedMessage));
+        this.resetBulkSelection.emit();
+      });
   }
 
-  private start(containerId: number): void {
-    this.api.call('container.start', [containerId])
-      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
-      .subscribe();
+  private start(containerId: number): Observable<void> {
+    return this.api.call('container.start', [containerId]);
   }
 
-  private stop(containerId: number, options: ContainerStopParams): void {
-    this.api.call('container.stop', [containerId, options])
-      .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
-      .subscribe();
+  private stop(containerId: number, options: ContainerStopParams): Observable<unknown> {
+    return this.dialog.jobDialog(
+      this.api.job('container.stop', [containerId, options]),
+      { title: this.translate.instant('Stopping Container') },
+    ).afterClosed();
   }
 
-  private restart(containerId: number, options: ContainerStopParams): void {
-    this.api.call('container.stop', [containerId, options])
+  private restart(containerId: number, options: ContainerStopParams): Observable<void> {
+    return this.dialog.jobDialog(
+      this.api.job('container.stop', [containerId, options]),
+      { title: this.translate.instant('Stopping Container') },
+    )
+      .afterClosed()
       .pipe(
         switchMap(() => this.api.call('container.start', [containerId])),
-        this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe();
+      );
   }
 }

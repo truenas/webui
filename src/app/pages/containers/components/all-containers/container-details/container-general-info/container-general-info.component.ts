@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -24,7 +24,6 @@ import { ContainerFormComponent } from 'app/pages/containers/components/containe
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-container-general-info',
   templateUrl: './container-general-info.component.html',
@@ -46,6 +45,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class ContainerGeneralInfoComponent {
   protected formatter = inject(IxFormatterService);
+  private destroyRef = inject(DestroyRef);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -64,7 +64,7 @@ export class ContainerGeneralInfoComponent {
   editContainer(): void {
     this.slideIn
       .open(ContainerFormComponent, { data: this.container() })
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {
           // Reload the container data if the form was saved successfully
@@ -87,7 +87,7 @@ export class ContainerGeneralInfoComponent {
         return this.api.call('container.delete', [this.container().id]);
       }),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.router.navigate(['/containers']);
     });

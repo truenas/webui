@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef } from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -27,7 +26,6 @@ interface GpuMenuItem {
   description: string;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-add-gpu-device-menu',
   templateUrl: './add-gpu-device-menu.component.html',
@@ -47,6 +45,7 @@ interface GpuMenuItem {
 export class AddGpuDeviceMenuComponent {
   protected readonly requiredRoles = [Role.ContainerWrite];
 
+  private destroyRef = inject(DestroyRef);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
@@ -133,7 +132,7 @@ export class AddGpuDeviceMenuComponent {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('GPU Device was added'));

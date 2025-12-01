@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -15,7 +15,6 @@ import { ContainerListComponent } from 'app/pages/containers/components/all-cont
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-all-containers',
   templateUrl: './all-containers.component.html',
@@ -31,6 +30,7 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   ],
 })
 export class AllContainersComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private configStore = inject(ContainerConfigStore);
   private containersStore = inject(ContainersStore);
   private dialogService = inject(DialogService);
@@ -52,7 +52,7 @@ export class AllContainersComponent implements OnInit {
       this.dialogService.warn(
         this.translate.instant('Warning'),
         this.translate.instant('Containers are experimental and only recommended for advanced users. Make all configuration changes using the TrueNAS UI. Operations using the command line are not supported.'),
-      ).pipe(untilDestroyed(this)).subscribe(() => {
+      ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
         this.window.localStorage.setItem('showNewVmInstancesWarning', 'true');
       });
     }

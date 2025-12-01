@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, signal, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, signal, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogContent, MatDialogModule, MatDialogRef,
 } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { catchError, Observable, of } from 'rxjs';
 import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
@@ -27,7 +27,6 @@ export type ContainerImageWithId = ContainerImage & {
   id: string;
 };
 
-@UntilDestroy()
 @Component({
   selector: 'ix-select-image-dialog',
   imports: [
@@ -55,6 +54,7 @@ export class SelectImageDialog implements OnInit {
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
+  private destroyRef = inject(DestroyRef);
   protected data = inject<{
     remote: ContainerRemote;
     type: ContainerType;
@@ -80,7 +80,7 @@ export class SelectImageDialog implements OnInit {
   } as EmptyConfig);
 
   constructor() {
-    this.filterForm.valueChanges.pipe(untilDestroyed(this)).subscribe(() => this.filterImages());
+    this.filterForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.filterImages());
   }
 
   ngOnInit(): void {
@@ -102,7 +102,7 @@ export class SelectImageDialog implements OnInit {
           this.errorHandler.showErrorModal(error);
           return of(error);
         }),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((registryImages: ContainerImageRegistryResponse[]) => {
         this.setFilteringOptions(registryImages);
