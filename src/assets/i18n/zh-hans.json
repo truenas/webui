@@ -5772,5 +5772,9 @@
   "Zvol": "Zvol",
   "Zvol «{name}» updated.": "Zvol «{name}» 已更新。",
   "Zvol Location": "Zvol 位置",
-  "Zvol Space Management": "Zvol空间管理"
+  "Zvol Space Management": "Zvol空间管理",
+  "Submit a Bug Report": "提交错误报告",
+  "Submit Feedback": "提交反馈",
+  "About HarborOS": "关于HarborOS",
+  "System Settings": "系统设置..."
 }

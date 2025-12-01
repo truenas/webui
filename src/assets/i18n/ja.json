@@ -5772,5 +5772,9 @@
   "Zvol": "Zvol",
   "Zvol «{name}» updated.": "Zvol «{name}» が更新されました。",
   "Zvol Location": "Zvolの場所",
-  "Zvol Space Management": "Zvolスペース管理"
+  "Zvol Space Management": "Zvolスペース管理",
+  "Submit a Bug Report": "バグレポートを送信する",
+  "Submit Feedback": "フィードバックを送信する",
+  "About HarborOS": "HarborOSについて",
+  "System Settings": "システム設定..."
 }

@@ -3174,7 +3174,7 @@
   "Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling this option allows the key server to manage creating or updating the global SED password, creating or updating individual SED passwords, and retrieving SED passwords when SEDs are unlocked. Disabling this option leaves SED password management with the local system.": "",
   "Self-Encrypting Drive Settings": "",
   "Semi-automatic (HarborOS only)": "",
-  "Send Feedback": "",
+  "Send Feedback": "發送反饋",
   "Send initial debug": "",
   "Send Mail Method": "",
   "Send Method": "",
@@ -5772,5 +5772,9 @@
   "zstd (default level, 3)": "zstd (預設等級, 3)",
   "zstd-5 (slow)": "zstd-5 (較慢)",
   "zstd-7 (very slow)": "zstd-7 (非常慢)",
-  "zstd-fast (default level, 1)": "zstd-fast (預設等級, 1)"
+  "zstd-fast (default level, 1)": "zstd-fast (預設等級, 1)",
+  "Submit a Bug Report": "提交錯誤報告",
+  "Submit Feedback": "提交反饋",
+  "About HarborOS": "關於HarborOS",
+  "System Settings": "系統設置..."
 }

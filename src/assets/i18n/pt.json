@@ -5772,5 +5772,6 @@
   "Zvol": "Zvol",
   "Zvol «{name}» updated.": "Zvol «{name}» atualizado.",
   "Zvol Location": "Localização ZVOL",
-  "Zvol Space Management": "Gerenciamento de espaço ZVOL"
+  "Zvol Space Management": "Gerenciamento de espaço ZVOL",
+  "System Settings": "Configurações do sistema..."
 }

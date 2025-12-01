@@ -31,14 +31,14 @@
         </button>
         <mat-menu #menu="matMenu">
           <button mat-menu-item (click)="showAboutNasDialog()">
-            About HarborOS
+            {{ "About HarborOS" | translate }}
           </button>
           <a mat-menu-item [routerLink]="['/system/general']">
-            System Settings...
+            {{ "System Settings" | translate }}
           </a>
         </mat-menu>
 
-        <b class="text-base font-bold">{{ pageTitle }}</b>
+        <b class="text-base font-bold">{{ pageTitle | translate }}</b>
       </div>
 
       <div
@@ -64,14 +64,14 @@
               href="https://github.com/HarborNAS/community/discussions/new?category=bug"
               target="_blank"
             >
-              Submit a Bug Report...
+              {{ "Submit a Bug Report" | translate }}
             </a>
             <a
               mat-menu-item
               href="https://github.com/HarborNAS/community/discussions/new?category=feedback"
               target="_blank"
             >
-              Submit Feedback...
+              {{ "Submit Feedback" | translate }}
             </a>
           </mat-menu>
         </span>

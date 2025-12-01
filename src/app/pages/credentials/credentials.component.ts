@@ -7,6 +7,7 @@ import {
 } from '@angular/material/sidenav';
 import { RouterOutlet, RouterModule } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { NavigationService } from 'app/services/navigation/navigation.service';
@@ -25,6 +26,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
     MatDrawerContent,
     MatNavList,
     MatListItem,
+    TranslateModule,
   ],
 })
 export class CredentialsComponent implements OnInit {

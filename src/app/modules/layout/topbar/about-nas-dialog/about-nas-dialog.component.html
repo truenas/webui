@@ -1,15 +1,17 @@
 <div class="text-center">
-  <h1 matDialogTitle>About HarborOS</h1>
+  <h1 matDialogTitle>{{ "About HarborOS" | translate }}</h1>
 
   <mat-dialog-content>
     <div class="flex gap-4">
-      <div class="!text-card-foreground w-1/4 text-right font-medium">Chip</div>
+      <div class="!text-card-foreground w-1/4 text-right font-medium">
+        {{ "CPU Model" | translate }}
+      </div>
       <div *ixWithLoadingState="cpuModel$ as cpuModel">{{ cpuModel }}</div>
     </div>
 
     <div class="flex gap-4">
       <div class="!text-card-foreground w-1/4 text-right font-medium">
-        Memory
+        {{ "Memory" | translate }}
       </div>
       <div>
         {{ systemInfo.memory }}
@@ -18,7 +20,7 @@
 
     <div class="flex gap-4">
       <div class="!text-card-foreground w-1/4 text-right font-medium">
-        Version
+        {{ "Version" | translate }}
       </div>
       <div>{{ systemInfo.version }}</div>
     </div>
@@ -34,6 +36,8 @@
   </mat-dialog-content>
 
   <mat-dialog-actions>
-    <button mat-dialog-close mat-button (click)="close()">OK</button>
+    <button mat-dialog-close mat-button (click)="close()">
+      {{ "OK" | translate }}
+    </button>
   </mat-dialog-actions>
 </div>
