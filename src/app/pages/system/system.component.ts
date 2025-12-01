@@ -7,6 +7,7 @@ import {
 } from '@angular/material/sidenav';
 import { Router, RouterOutlet, RouterModule, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -26,6 +27,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
     MatDrawerContent,
     MatNavList,
     MatListItem,
+    TranslateModule,
   ],
 })
 export class SystemComponent implements OnInit {
@@ -70,10 +72,10 @@ export class SystemComponent implements OnInit {
   }
 
   private getStateFromUrl(url: string): string | null {
-    // 移除 /system/ 前缀
+    // remove /system/ prefix
     const path = url.replace('/system/', '').split('?')[0];
 
-    // 查找匹配的菜单项
+    // find matching menu item
     const matchedItem = this.menuItems?.find((item) => path === item.state || path.startsWith(item.state + '/'));
 
     return matchedItem?.state || null;
