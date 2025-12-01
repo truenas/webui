@@ -5776,5 +5776,10 @@
   "Submit a Bug Report": "提交錯誤報告",
   "Submit Feedback": "提交反饋",
   "About HarborOS": "關於HarborOS",
-  "System Settings": "系統設置..."
+  "System Settings": "系統設置...",
+  "You can also vote for new features <a target=\"_blank\" href=\"https://github": {
+    "com/HarborNAS/community/discussionsfeature-requests\">on our forum": {
+      "</a>": ""
+    }
+  }
 }

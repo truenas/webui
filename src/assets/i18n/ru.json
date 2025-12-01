@@ -5772,5 +5772,26 @@
   "Zvol": "Том ZFS",
   "Zvol «{name}» updated.": "Том ZFS «{name}» обновлён.",
   "Zvol Location": "Расположение тома ZFS",
-  "Zvol Space Management": "Управление пространством тома ZFS"
+  "Zvol Space Management": "Управление пространством тома ZFS",
+  "You can also vote for new features <a target=\"_blank\" href=\"https://github": {
+    "__i18n_ally_root__": {
+      "__i18n_ally_root__": {
+        "com/HarborNAS/community/discussionsS/community/discussionsfeature-requests\">on our forum": {
+          "</a>": ""
+        }
+      },
+      "com/HarborNAS/community/discussionsS/community/discussionsS/community/discussionsfeature-requests\">on our forum": {
+        "</a>": ""
+      },
+      "com/HarborNAS/community/discussionsS/community/discussionsfeature-requests\">on our forum": {
+        "</a>": ""
+      },
+      "com/HarborNAS/community/discussionsfeature-requests\">on our forum": {
+        "</a>": ""
+      }
+    },
+    "com/HarborNAS/community/discussionsS/community/discussionsS/community/discussionsfeature-requests\">on our forum": {
+      "</a>": ""
+    }
+  }
 }

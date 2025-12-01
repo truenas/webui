@@ -5773,5 +5773,18 @@
   "Zvol «{name}» updated.": "Zvol «{name}» is geüpdatet.",
   "Zvol Location": "Zvol-locatie",
   "Zvol Space Management": "Zvol ruimtebeheer",
-  "System Settings": "Systeeminstellingen..."
+  "System Settings": "Systeeminstellingen...",
+  "About HarborOS": "Over HarborOS",
+  "Submit Feedback": "Feedback indienen",
+  "Submit a Bug Report": "Dien een bugrapport in",
+  "You can also vote for new features <a target=\"_blank\" href=\"https://github": {
+    "__i18n_ally_root__": {
+      "com/HarborNAS/community/discussionsS/community/discussionsS/community/discussionsfeature-requests\">on our forum": {
+        "</a>": ""
+      },
+      "com/HarborNAS/community/discussionsS/community/discussionsfeature-requests\">on our forum": {
+        "</a>": ""
+      }
+    }
+  }
 }

@@ -5773,5 +5773,16 @@
   "Zvol «{name}» updated.": "Zvol «{name}» atualizado.",
   "Zvol Location": "Localização ZVOL",
   "Zvol Space Management": "Gerenciamento de espaço ZVOL",
-  "System Settings": "Configurações do sistema..."
+  "System Settings": "Configurações do sistema...",
+  "About HarborOS": "Sobre HarbourOS",
+  "Submit Feedback": "Enviar comentários",
+  "Submit a Bug Report": "Envie um relatório de bug",
+  "You can also vote for new features <a target=\"_blank\" href=\"https://github": {
+    "com/HarborNAS/community/discussionsS/community/discussionsS/community/discussionsfeature-requests\">on our forum": {
+      "</a>": ""
+    },
+    "com/HarborNAS/community/discussionsS/community/discussionsfeature-requests\">on our forum": {
+      "</a>": ""
+    }
+  }
 }
