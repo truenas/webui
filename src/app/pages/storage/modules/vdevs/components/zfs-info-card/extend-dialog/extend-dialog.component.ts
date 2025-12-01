@@ -7,12 +7,10 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
-import { switchMap, map, catchError } from 'rxjs/operators';
-import { JobState } from 'app/enums/job-state.enum';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
@@ -20,6 +18,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { PoolExtendJobService } from 'app/pages/storage/modules/vdevs/services/pool-extend-job.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface ExtendDialogParams {
@@ -52,6 +51,7 @@ export class ExtendDialog {
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private dialogRef = inject<MatDialogRef<ExtendDialog>>(MatDialogRef);
+  private poolExtendJobService = inject(PoolExtendJobService);
   data = inject<ExtendDialogParams>(MAT_DIALOG_DATA);
 
   form = this.formBuilder.group({
@@ -66,7 +66,7 @@ export class ExtendDialog {
     event.preventDefault();
 
     // Check for existing pool.attach jobs for this pool
-    this.checkForExistingExtendJob().pipe(
+    this.poolExtendJobService.checkForExistingExtendJob(this.data.poolId).pipe(
       switchMap((hasExistingJob) => {
         if (hasExistingJob) {
           this.snackbar.error(
@@ -95,20 +95,5 @@ export class ExtendDialog {
         this.dialogRef.close(true);
       }
     });
-  }
-
-  private checkForExistingExtendJob(): Observable<boolean> {
-    return this.api.call('core.get_jobs', [[
-      ['method', '=', 'pool.attach'],
-      ['state', 'in', [JobState.Running, JobState.Waiting]],
-    ]]).pipe(
-      // Job result type is unknown because we're checking jobs before completion
-      map((jobs: Job<unknown, [number, PoolAttachParams]>[]) => {
-        // Check if any job is for the same pool
-        return jobs.some((job) => job.arguments[0] === this.data.poolId);
-      }),
-      // Fail-open: if job check fails, allow operation to proceed
-      catchError(() => of(false)),
-    );
   }
 }

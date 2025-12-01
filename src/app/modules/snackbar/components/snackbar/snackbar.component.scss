@@ -14,5 +14,6 @@
 .message {
   color: var(--fg1);
   flex-grow: 1;
+  // Reset line-height to normal to prevent multi-line error messages from having excessive spacing
   line-height: normal;
 }
