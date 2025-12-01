@@ -6,8 +6,12 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ContainerStatus } from 'app/enums/container.enum';
 import { Container } from 'app/interfaces/container.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { StopOptionsDialog, StopOptionsOperation } from 'app/pages/containers/components/all-containers/container-list/stop-options-dialog/stop-options-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ContainerListBulkActionsComponent } from './container-list-bulk-actions.component';
@@ -18,9 +22,9 @@ describe('ContainerListBulkActionsComponent', () => {
   let menu: MatMenuHarness;
 
   const checkedContainersMock = [
-    { id: '1', status: 'Running' },
-    { id: '2', status: 'Stopped' },
-  ] as unknown as Container[];
+    { id: 1, status: { state: ContainerStatus.Running } },
+    { id: 2, status: { state: ContainerStatus.Stopped } },
+  ] as Container[];
 
   const createComponent = createComponentFactory({
     component: ContainerListBulkActionsComponent,
@@ -33,7 +37,21 @@ describe('ContainerListBulkActionsComponent', () => {
           afterClosed: jest.fn(() => of(true)),
         })),
       }),
-      mockProvider(ErrorHandlerService),
+      mockProvider(ApiService, {
+        call: jest.fn(() => of(undefined)),
+        job: jest.fn(() => of(undefined)),
+      }),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: jest.fn(() => of(undefined)),
+        })),
+      }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: unknown) => source$),
+      }),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: jest.fn(() => (source$: unknown) => source$),
+      }),
     ],
   });
 
@@ -58,6 +76,7 @@ describe('ContainerListBulkActionsComponent', () => {
 
     await menu.open();
     await menu.clickItem({ text: 'Start All Selected' });
+    await spectator.fixture.whenStable();
 
     expect(startSpy).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Requested action performed for selected Containers');
@@ -81,10 +100,12 @@ describe('ContainerListBulkActionsComponent', () => {
     expect(matDialog.open).toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
   });
 
-  it('emits resetBulkSelection after actions', () => {
+  it('emits resetBulkSelection after actions', async () => {
     const resetSpy = jest.spyOn(spectator.component.resetBulkSelection, 'emit');
 
     spectator.component.onBulkStart();
+    await spectator.fixture.whenStable();
+
     expect(resetSpy).toHaveBeenCalled();
   });
 });

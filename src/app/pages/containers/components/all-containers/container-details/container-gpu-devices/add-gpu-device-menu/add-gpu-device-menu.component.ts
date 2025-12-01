@@ -136,7 +136,7 @@ export class AddGpuDeviceMenuComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('GPU Device was added'));
-        this.devicesStore.loadDevices();
+        this.devicesStore.reload();
       });
   }
 }

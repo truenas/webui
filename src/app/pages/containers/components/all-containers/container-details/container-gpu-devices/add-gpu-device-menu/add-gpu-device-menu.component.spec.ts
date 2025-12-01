@@ -91,7 +91,7 @@ describe('AddGpuDeviceMenuComponent', () => {
         pci_address: '0000:1a:00.0',
       } as ContainerDevice,
     }]);
-    expect(spectator.inject(ContainerDevicesStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(ContainerDevicesStore).reload).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('GPU Device was added');
   });
 });

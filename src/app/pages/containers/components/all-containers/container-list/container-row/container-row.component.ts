@@ -126,8 +126,9 @@ export class ContainerRowComponent {
             { title: this.translate.instant('Stopping Container') },
           ).afterClosed();
         }),
-        switchMap(() => this.api.call('container.start', [containerId])),
-        this.loader.withLoader(),
+        switchMap(() => this.api.call('container.start', [containerId]).pipe(
+          this.loader.withLoader(),
+        )),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )

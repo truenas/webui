@@ -117,7 +117,7 @@ export class AddUsbDeviceMenuComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('USB Device was added'));
-        this.devicesStore.loadDevices();
+        this.devicesStore.reload();
       });
   }
 }

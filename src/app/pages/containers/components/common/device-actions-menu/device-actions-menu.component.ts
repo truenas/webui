@@ -108,7 +108,7 @@ export class DeviceActionsMenuComponent {
         },
       }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((result) => {
         if (result.response) {
-          this.devicesStore.loadDevices();
+          this.devicesStore.reload();
         }
       });
       return;
@@ -157,7 +157,7 @@ export class DeviceActionsMenuComponent {
         takeUntilDestroyed(this.destroyRef),
       ).subscribe(() => {
         this.snackbar.success(this.translate.instant('NIC Device was updated'));
-        this.devicesStore.loadDevices();
+        this.devicesStore.reload();
       });
       return;
     }

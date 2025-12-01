@@ -165,7 +165,9 @@ export class ContainerListBulkActionsComponent {
     )
       .afterClosed()
       .pipe(
-        switchMap(() => this.api.call('container.start', [containerId])),
+        switchMap(() => this.api.call('container.start', [containerId]).pipe(
+          this.loader.withLoader(),
+        )),
       );
   }
 }

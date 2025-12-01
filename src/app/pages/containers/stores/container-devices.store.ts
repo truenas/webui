@@ -1,4 +1,4 @@
-import { computed, DestroyRef, Injectable, inject } from '@angular/core';
+import { computed, Injectable, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { ComponentStore } from '@ngrx/component-store';
 import {
@@ -6,8 +6,9 @@ import {
   EMPTY,
   filter,
   map,
+  Observable,
 } from 'rxjs';
-import { ContainerDevice } from 'app/interfaces/container.interface';
+import { Container, ContainerDevice } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { containerDeviceEntriesToDevices } from 'app/pages/containers/utils/container-device.utils';
@@ -28,13 +29,12 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private containersStore = inject(ContainersStore);
-  private destroyRef = inject(DestroyRef);
 
   readonly isLoading = computed(() => this.state().isLoading);
   readonly devices = computed(() => this.state().devices);
   private readonly selectedContainer = this.containersStore.selectedContainer;
 
-  readonly loadDevices = this.effect((container$) => {
+  readonly loadDevices = this.effect((container$: Observable<Container | undefined>) => {
     return container$.pipe(
       tap((container) => {
         if (!container) {
@@ -65,6 +65,17 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
   constructor() {
     super(initialState);
     this.loadDevices(toObservable(this.selectedContainer));
+  }
+
+  /**
+   * Manually reload devices for the currently selected container.
+   * Use this after device operations (add/edit/delete) to refresh the list.
+   */
+  reload(): void {
+    const container = this.selectedContainer();
+    if (container) {
+      this.loadDevices(container);
+    }
   }
 
   /**

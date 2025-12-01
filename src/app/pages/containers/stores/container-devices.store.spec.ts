@@ -54,7 +54,7 @@ describe('ContainerDevicesStore', () => {
   });
 
   it('should load devices when loadDevices is called', () => {
-    spectator.service.loadDevices();
+    spectator.service.reload();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalled();
     expect(spectator.service.state()).toEqual({
@@ -67,7 +67,7 @@ describe('ContainerDevicesStore', () => {
   });
 
   it('loadDevices – loads a list of devices for the selected container', () => {
-    spectator.service.loadDevices();
+    spectator.service.reload();
 
     expect(spectator.service.devices()).toEqual([
       { id: 1, name: 'device1' },
@@ -78,7 +78,7 @@ describe('ContainerDevicesStore', () => {
   });
 
   it('deviceDeleted – removes a device from list of devices for selected container', () => {
-    spectator.service.loadDevices();
+    spectator.service.reload();
     spectator.service.deviceDeleted(1);
 
     expect(spectator.service.devices()).toEqual([{ id: 2, name: 'device2' }]);
@@ -107,7 +107,7 @@ describe('ContainerDevicesStore', () => {
       const delayedResponse$ = new Subject<ContainerDeviceEntry[]>();
       jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(delayedResponse$);
 
-      spectator.service.loadDevices();
+      spectator.service.reload();
       expect(spectator.service.isLoading()).toBe(true);
 
       delayedResponse$.error(new Error('API error'));
@@ -124,13 +124,13 @@ describe('ContainerDevicesStore', () => {
       const errorHandler = spectator.inject(ErrorHandlerService);
       jest.spyOn(errorHandler, 'showErrorModal');
 
-      spectator.service.loadDevices();
+      spectator.service.reload();
 
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(error);
     });
 
     it('clears devices on API error', () => {
-      spectator.service.loadDevices();
+      spectator.service.reload();
       expect(spectator.service.devices()).toEqual([
         { id: 1, name: 'device1' },
         { id: 2, name: 'device2' },
@@ -140,7 +140,7 @@ describe('ContainerDevicesStore', () => {
         throwError(() => new Error('API error')),
       );
 
-      spectator.service.loadDevices();
+      spectator.service.reload();
 
       expect(spectator.service.devices()).toEqual([]);
     });
@@ -151,7 +151,7 @@ describe('ContainerDevicesStore', () => {
       const delayedResponse$ = new Subject<ContainerDeviceEntry[]>();
       jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(delayedResponse$);
 
-      spectator.service.loadDevices();
+      spectator.service.reload();
 
       expect(spectator.service.isLoading()).toBe(true);
 
@@ -161,7 +161,7 @@ describe('ContainerDevicesStore', () => {
     });
 
     it('sets isLoading to false after devices are loaded', () => {
-      spectator.service.loadDevices();
+      spectator.service.reload();
 
       expect(spectator.service.isLoading()).toBe(false);
       expect(spectator.service.devices()).toEqual([
@@ -173,7 +173,7 @@ describe('ContainerDevicesStore', () => {
 
   describe('deviceDeleted', () => {
     beforeEach(() => {
-      spectator.service.loadDevices();
+      spectator.service.reload();
     });
 
     it('removes only the specified device', () => {
