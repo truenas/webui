@@ -1,0 +1,85 @@
+<div class="cell checkbox">
+  <mat-checkbox
+    color="primary"
+    [ixTest]="container().name"
+    [checked]="selected()"
+    (click)="$event.stopPropagation()"
+    (change)="selectionChange.emit()"
+  ></mat-checkbox>
+</div>
+
+<div class="cell cell-name">
+  <span class="name">{{ container().name }}</span>
+</div>
+
+<div class="cell">
+  <ix-container-status-cell
+    [container]="container()"
+  ></ix-container-status-cell>
+</div>
+
+<div class="cell">
+  <span>{{ container().autostart | yesNo }}</span>
+</div>
+
+<div class="cell" [matTooltip]="'Percentage of total core utilization' | translate">
+  @if (hasMetrics()) {
+    <span>{{ metrics()?.cpu.cpu_user_percentage.toFixed(0) }}%</span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
+
+<div class="cell" [matTooltip]="'Memory Usage' | translate">
+  @if (hasMetrics()) {
+    <span>{{ metrics()?.mem_usage.mem_usage_ram_mib.toFixed(0) }} MiB</span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
+
+<div class="cell" [matTooltip]="'Disk I/O Full Pressure' | translate">
+  @if (hasMetrics()) {
+    <span>{{ metrics()?.io_full_pressure.io_full_pressure_full_60_percentage.toFixed(0) }}%</span>
+  } @else {
+    {{ 'N/A' | translate }}
+  }
+</div>
+
+<div class="cell actions">
+  @if (isStopped()) {
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-icon-button
+      matTooltipPosition="above"
+      [ixTest]="[container().name, 'start']"
+      [matTooltip]="'Start' | translate"
+      (click)="$event.stopPropagation(); start()"
+    >
+      <ix-icon name="mdi-play-circle"></ix-icon>
+    </button>
+  } @else {
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-icon-button
+      matTooltipPosition="above"
+      [ixTest]="[container().name, 'restart']"
+      [matTooltip]="'Restart' | translate"
+      (click)="$event.stopPropagation(); restart()"
+    >
+      <ix-icon name="mdi-restart"></ix-icon>
+    </button>
+
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-icon-button
+      matTooltipPosition="above"
+      [ixTest]="[container().name, 'stop']"
+      [matTooltip]="'Stop' | translate"
+      (click)="$event.stopPropagation(); stop();"
+    >
+      <ix-icon name="mdi-stop-circle"></ix-icon>
+    </button>
+  }
+  <ix-icon class="container-details" name="mdi-chevron-right"></ix-icon>
+</div>
