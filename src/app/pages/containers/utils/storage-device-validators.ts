@@ -50,7 +50,8 @@ export function containerPathValidator(): ValidatorFn {
     }
 
     // Valid path pattern - alphanumeric, underscore, hyphen, dot
-    const validPattern = /^\/([a-zA-Z0-9_.-]+\/?)*$/;
+    // Pattern avoids nested quantifiers to prevent ReDoS vulnerability
+    const validPattern = /^\/([a-zA-Z0-9_.-]+\/)*[a-zA-Z0-9_.-]*$/;
     if (!validPattern.test(value)) {
       return {
         containerPath: {

@@ -104,12 +104,13 @@ export class ContainersStore extends ComponentStore<ContainersState> {
         this.patchState({ containers: [...prevContainers, event.fields] });
         break;
       case CollectionChangeType.Changed: {
-        // TODO: Keep it until API improvements
+        // TODO(NAS-XXXXX): Remove this workaround once API is fixed to consistently use container IDs
         // Workaround for API limitation: When only the status field is updated,
         // the API sends event.id as the container name (string) instead of the container ID (number).
         // This special handling matches by name until the API is fixed to consistently use IDs.
         // Once the API improvement is made, this workaround can be removed and only the standard
         // ID-based update (below) will be needed.
+        // Risk: Could cause bugs if containers have identical names or if API behavior changes unexpectedly.
         const isStatusOnlyUpdate = event.fields && Object.keys(event.fields).length === 1 && 'status' in event.fields;
         let updatedContainers: Container[];
 
