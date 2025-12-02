@@ -17,6 +17,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ExtendDialog, ExtendDialogParams,
 } from 'app/pages/storage/modules/vdevs/components/zfs-info-card/extend-dialog/extend-dialog.component';
+import { PoolExtendJobService } from 'app/pages/storage/modules/vdevs/services/pool-extend-job.service';
 
 describe('ExtendDialogComponent', () => {
   let spectator: Spectator<ExtendDialog>;
@@ -59,6 +60,9 @@ describe('ExtendDialogComponent', () => {
           afterClosed: () => of({}),
         })),
       }),
+      mockProvider(PoolExtendJobService, {
+        checkForExistingExtendJob: jest.fn(() => of(false)),
+      }),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
@@ -94,5 +98,41 @@ describe('ExtendDialogComponent', () => {
     ]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+  });
+
+  it('shows error when extend job is already running for this pool', async () => {
+    const poolExtendJobService = spectator.inject(PoolExtendJobService);
+    jest.spyOn(poolExtendJobService, 'checkForExistingExtendJob').mockReturnValue(of(true));
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'New Disk': 'sde (10.91 TiB)',
+    });
+
+    const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
+    await extendButton.click();
+
+    expect(poolExtendJobService.checkForExistingExtendJob).toHaveBeenCalledWith(4);
+    expect(spectator.inject(DialogService).jobDialog).not.toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith(
+      'A VDEV extension operation is already in progress for this pool. Please wait for it to complete.',
+    );
+  });
+
+  it('allows operation to proceed when no existing job is found', async () => {
+    const poolExtendJobService = spectator.inject(PoolExtendJobService);
+    jest.spyOn(poolExtendJobService, 'checkForExistingExtendJob').mockReturnValue(of(false));
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'New Disk': 'sde (10.91 TiB)',
+    });
+
+    const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
+    await extendButton.click();
+
+    expect(poolExtendJobService.checkForExistingExtendJob).toHaveBeenCalledWith(4);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

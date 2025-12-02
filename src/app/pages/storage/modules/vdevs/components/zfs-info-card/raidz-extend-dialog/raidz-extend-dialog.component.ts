@@ -7,6 +7,8 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
@@ -18,6 +20,7 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { PoolExtendJobService } from 'app/pages/storage/modules/vdevs/services/pool-extend-job.service';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -53,6 +56,7 @@ export class RaidzExtendDialog {
   private dialogRef = inject<MatDialogRef<RaidzExtendDialog>>(MatDialogRef);
   private vDevsStore = inject(VDevsStore);
   private dialogService = inject(DialogService);
+  private poolExtendJobService = inject(PoolExtendJobService);
   data = inject<RaidzExtendDialogParams>(MAT_DIALOG_DATA);
 
   form = this.formBuilder.group({
@@ -73,26 +77,36 @@ export class RaidzExtendDialog {
   protected onSubmit(event: SubmitEvent): void {
     event.preventDefault();
 
-    const payload = {
-      // UI check for duplicate serials is handled in UnusedDiskSelectComponent
-      allow_duplicate_serials: true,
-      new_disk: this.form.value.newDisk,
-      target_vdev: this.data.vdev.guid,
-    } as PoolAttachParams;
+    // Check for existing pool.attach jobs for this pool
+    this.poolExtendJobService.checkForExistingExtendJob(this.data.poolId).pipe(
+      switchMap((hasExistingJob) => {
+        if (hasExistingJob) {
+          this.snackbar.error(
+            this.translate.instant('A VDEV extension operation is already in progress for this pool. Please wait for it to complete.'),
+          );
+          return of(null);
+        }
 
-    this.dialogService.jobDialog(
-      this.api.job('pool.attach', [this.data.poolId, payload]),
-      { title: this.translate.instant('Extending VDEV'), canMinimize: true },
-    )
-      .afterClosed()
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
+        const payload = {
+          // UI check for duplicate serials is handled in UnusedDiskSelectComponent
+          allow_duplicate_serials: true,
+          new_disk: this.form.value.newDisk,
+          target_vdev: this.data.vdev.guid,
+        } as PoolAttachParams;
+
+        return this.dialogService.jobDialog(
+          this.api.job('pool.attach', [this.data.poolId, payload]),
+          { title: this.translate.instant('Extending VDEV'), canMinimize: true },
+        ).afterClosed();
+      }),
+      this.errorHandler.withErrorHandler(),
+      untilDestroyed(this),
+    ).subscribe((result) => {
+      if (result) {
         this.snackbar.success(this.translate.instant('VDEV successfully extended.'));
         this.dialogRef.close(true);
-      });
+      }
+    });
   }
 
   private setFilterMinimumSizeFn(): void {
