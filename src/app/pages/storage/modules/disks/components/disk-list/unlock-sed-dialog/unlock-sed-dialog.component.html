@@ -1,0 +1,32 @@
+<h1 mat-dialog-title>{{ 'Unlock SED for {diskName}' | translate: { diskName: data.diskName } }}</h1>
+
+<div mat-dialog-content>
+  <p>{{ 'Successfully unlocking the disk will automatically update the database.' | translate }}</p>
+
+  <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+    <ix-input
+      formControlName="password"
+      type="password"
+      [label]="'Password' | translate"
+      [required]="true"
+    ></ix-input>
+  </form>
+</div>
+
+<ix-form-actions mat-dialog-actions>
+  <button mat-button type="button" ixTest="cancel" matDialogClose>
+    {{ 'Cancel' | translate }}
+  </button>
+
+  <button
+    *ixRequiresRoles="[Role.DiskWrite]"
+    mat-button
+    type="submit"
+    color="primary"
+    ixTest="unlock"
+    [disabled]="form.invalid"
+    (click)="onSubmit()"
+  >
+    {{ 'Unlock' | translate }}
+  </button>
+</ix-form-actions>

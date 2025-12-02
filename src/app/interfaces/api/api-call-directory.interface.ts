@@ -471,9 +471,11 @@ export interface ApiCallDirectory {
   // Disk
   'disk.details': { params: [params: DiskDetailsParams]; response: DiskDetailsResponse };
   'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
+  'disk.reset_sed': { params: [params: { name: string; psid: string }]; response: void };
   'disk.temperature_agg': { params: [disks: string[], days: number]; response: DiskTemperatureAgg };
   'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
+  'disk.unlock_sed': { params: [params: { name: string; password: string }]; response: void };
   'disk.update': { params: [id: string, update: DiskUpdate]; response: Disk };
 
   // Enclosure
