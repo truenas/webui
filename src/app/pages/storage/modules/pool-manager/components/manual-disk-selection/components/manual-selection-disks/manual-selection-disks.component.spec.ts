@@ -59,7 +59,6 @@ describe('ManualSelectionDisksComponent', () => {
           },
           {
             name: 'sdb',
-            sed_status: SedStatus.Unsupported,
           },
           {
             name: 'sdc',

@@ -40,10 +40,6 @@ describe('isSedCapable', () => {
     expect(isSedCapable({ sed_status: SedStatus.Locked } as DetailsDisk)).toBe(false);
   });
 
-  it('returns false when disk has UNSUPPORTED sed_status', () => {
-    expect(isSedCapable({ sed_status: SedStatus.Unsupported } as DetailsDisk)).toBe(false);
-  });
-
   it('returns false when disk has no sed_status', () => {
     expect(isSedCapable({} as DetailsDisk)).toBe(false);
   });
@@ -108,7 +104,7 @@ describe('filterAllowedDisks', () => {
     const sedDisk1 = { duplicate_serial: [] as string[], sed_status: SedStatus.Uninitialized } as DetailsDisk;
     const sedDisk2 = { duplicate_serial: [] as string[], sed_status: SedStatus.Unlocked } as DetailsDisk;
     const nonSedDisk1 = { duplicate_serial: [] as string[], sed_status: SedStatus.Locked } as DetailsDisk;
-    const nonSedDisk2 = { duplicate_serial: [] as string[], sed_status: SedStatus.Unsupported } as DetailsDisk;
+    const nonSedDisk2 = { duplicate_serial: [] as string[] } as DetailsDisk;
     const nonSedDisk3 = { duplicate_serial: [] as string[] } as DetailsDisk;
 
     const mixedDisks = [sedDisk1, nonSedDisk1, sedDisk2, nonSedDisk2, nonSedDisk3];
@@ -125,7 +121,7 @@ describe('filterAllowedDisks', () => {
 
   it('includes all disks when requireSedCapable is false', () => {
     const sedDisk = { duplicate_serial: [] as string[], sed_status: SedStatus.Uninitialized } as DetailsDisk;
-    const nonSedDisk = { duplicate_serial: [] as string[], sed_status: SedStatus.Unsupported } as DetailsDisk;
+    const nonSedDisk = { duplicate_serial: [] as string[] } as DetailsDisk;
 
     const mixedDisks = [sedDisk, nonSedDisk];
 
@@ -141,7 +137,7 @@ describe('filterAllowedDisks', () => {
 
   it('includes all disks when requireSedCapable is undefined', () => {
     const sedDisk = { duplicate_serial: [] as string[], sed_status: SedStatus.Uninitialized } as DetailsDisk;
-    const nonSedDisk = { duplicate_serial: [] as string[], sed_status: SedStatus.Unsupported } as DetailsDisk;
+    const nonSedDisk = { duplicate_serial: [] as string[] } as DetailsDisk;
 
     const mixedDisks = [sedDisk, nonSedDisk];
 

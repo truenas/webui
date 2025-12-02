@@ -170,7 +170,7 @@ describe('DiskStore', () => {
     it('returns true when there are SED-capable disks with UNINITIALIZED status', async () => {
       const disks = [
         { devname: 'sda', sed_status: SedStatus.Uninitialized } as DetailsDisk,
-        { devname: 'sdb', sed_status: SedStatus.Unsupported } as DetailsDisk,
+        { devname: 'sdb' } as DetailsDisk,
       ];
 
       jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of({
@@ -202,7 +202,7 @@ describe('DiskStore', () => {
     it('returns false when there are no SED-capable disks', async () => {
       const disks = [
         { devname: 'sda', sed_status: SedStatus.Locked } as DetailsDisk,
-        { devname: 'sdb', sed_status: SedStatus.Unsupported } as DetailsDisk,
+        { devname: 'sdb' } as DetailsDisk,
       ];
 
       jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of({
@@ -228,7 +228,7 @@ describe('DiskStore', () => {
 
     it('checks both unused and used disks for SED capability', async () => {
       const unusedSedDisks = [
-        { devname: 'sda', sed_status: SedStatus.Unsupported } as DetailsDisk,
+        { devname: 'sda' } as DetailsDisk,
       ];
 
       const usedSedDisks = [
@@ -248,7 +248,7 @@ describe('DiskStore', () => {
     it('returns true when mixed SED and non-SED disks are present', async () => {
       const disks = [
         { devname: 'sda', sed_status: SedStatus.Uninitialized } as DetailsDisk,
-        { devname: 'sdb', sed_status: SedStatus.Unsupported } as DetailsDisk,
+        { devname: 'sdb' } as DetailsDisk,
         { devname: 'sdc', sed_status: SedStatus.Locked } as DetailsDisk,
         { devname: 'sdd' } as DetailsDisk, // No sed_status
       ];

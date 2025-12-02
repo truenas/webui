@@ -457,7 +457,6 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
         name: 'sda1',
         size: 20 * GiB,
         type: DiskType.Hdd,
-        sed_status: SedStatus.Unsupported,
       } as DetailsDisk,
       {
         devname: 'sda2',
