@@ -165,7 +165,7 @@ describe('ContainerRowComponent', () => {
       expect(spectator.inject(MatDialog).open)
         .toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Stop });
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'container.stop',
         [1, { force: true, timeout: -1 }],
       );
@@ -179,7 +179,7 @@ describe('ContainerRowComponent', () => {
       expect(spectator.inject(MatDialog).open)
         .toHaveBeenCalledWith(StopOptionsDialog, { data: StopOptionsOperation.Restart });
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'container.stop',
         [1, { force: true, timeout: -1 }],
       );

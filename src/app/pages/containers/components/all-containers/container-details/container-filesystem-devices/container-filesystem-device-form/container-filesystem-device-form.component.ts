@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject, DestroyRef,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { ContainerDeviceType } from 'app/enums/container.enum';
@@ -36,7 +36,6 @@ interface ContainerFilesystemDeviceFormOptions {
   disk: ContainerFilesystemDevice | undefined;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-container-filesystem-device-form',
   styleUrls: ['./container-filesystem-device-form.component.scss'],
@@ -57,6 +56,7 @@ interface ContainerFilesystemDeviceFormOptions {
   ],
 })
 export class ContainerFilesystemDeviceFormComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private errorHandler = inject(FormErrorHandlerService);
   private api = inject(ApiService);
@@ -108,7 +108,7 @@ export class ContainerFilesystemDeviceFormComponent implements OnInit {
   protected onSubmit(): void {
     this.isLoading.set(true);
     this.prepareRequest()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         complete: () => {
           this.snackbar.success(this.translate.instant('Filesystem Device was saved'));

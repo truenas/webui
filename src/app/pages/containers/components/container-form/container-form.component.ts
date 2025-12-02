@@ -1,7 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import {
   FormArray,
   FormControl,
@@ -14,7 +14,6 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   filter, map, Observable, of, take, tap,
@@ -63,7 +62,6 @@ import { ContainerConfigStore } from 'app/pages/containers/stores/container-conf
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-container-form',
   templateUrl: './container-form.component.html',
@@ -104,6 +102,7 @@ export class ContainerFormComponent implements OnInit {
   private containersStore = inject(ContainersStore, { optional: true });
   private router = inject(Router);
   private containerConfigStore = inject(ContainerConfigStore);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.ContainerWrite];
@@ -204,7 +203,7 @@ export class ContainerFormComponent implements OnInit {
     this.config$.pipe(
       filter((config) => config !== null && !this.isEditMode() && !this.hasSetupValidators),
       take(1),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.hasSetupValidators = true;
       this.setupValidatorsForCreation();
@@ -217,7 +216,9 @@ export class ContainerFormComponent implements OnInit {
     }
 
     // Handle pool validation based on use_preferred_pool checkbox
-    this.form.controls.use_preferred_pool.valueChanges.pipe(untilDestroyed(this)).subscribe((usePreferredPool) => {
+    this.form.controls.use_preferred_pool.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((usePreferredPool) => {
       if (this.hasPreferredPool() && !this.isEditMode()) {
         if (usePreferredPool) {
           this.form.controls.pool.clearValidators();
@@ -276,7 +277,7 @@ export class ContainerFormComponent implements OnInit {
     this.isLoading.set(true);
     this.api.call('container.get_instance', [containerId]).pipe(
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (container: Container) => {
         this.editingContainer = container;
@@ -322,7 +323,7 @@ export class ContainerFormComponent implements OnInit {
         },
       })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe((image: ContainerImageWithId) => {
         this.form.controls.image.setValue(image.id);
       });
@@ -348,7 +349,7 @@ export class ContainerFormComponent implements OnInit {
     this.isLoading.set(true);
 
     if (this.isEditMode()) {
-      this.updateContainer().pipe(untilDestroyed(this)).subscribe({
+      this.updateContainer().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (updatedInstance) => {
           this.isLoading.set(false);
           this.form.markAsPristine();
@@ -366,7 +367,7 @@ export class ContainerFormComponent implements OnInit {
         },
       });
     } else {
-      this.createContainer().pipe(untilDestroyed(this)).subscribe({
+      this.createContainer().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (container) => {
           this.isLoading.set(false);
           this.form.markAsPristine();

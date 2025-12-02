@@ -5,7 +5,6 @@ import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -27,7 +26,6 @@ enum StopMethod {
   ForceImmediately = 'force_immediately',
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-stop-dialog',
   templateUrl: './stop-options-dialog.component.html',

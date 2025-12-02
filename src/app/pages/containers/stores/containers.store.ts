@@ -1,6 +1,6 @@
-import { computed, Injectable, inject } from '@angular/core';
+import { computed, DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, NavigationEnd } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { isEqual } from 'lodash-es';
 import {
@@ -31,12 +31,12 @@ const initialState: ContainersState = {
   metrics: {},
 };
 
-@UntilDestroy()
 @Injectable()
 export class ContainersStore extends ComponentStore<ContainersState> {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   readonly isLoading = computed(() => this.state().isLoading);
   readonly selectedContainer = computed(() => this.state().selectedContainer);
@@ -90,7 +90,7 @@ export class ContainersStore extends ComponentStore<ContainersState> {
           }),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
   });
 
@@ -198,7 +198,7 @@ export class ContainersStore extends ComponentStore<ContainersState> {
         tap((metrics) => this.patchState({ metrics })),
         catchError(() => EMPTY),
       )),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
   });
 }

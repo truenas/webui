@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
@@ -21,7 +21,6 @@ import { getDeviceDescription } from 'app/pages/containers/components/common/uti
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-container-filesystem-devices',
   templateUrl: './container-filesystem-devices.component.html',
@@ -43,6 +42,7 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 export class ContainerFilesystemDevicesComponent {
   protected readonly requiredRoles = [Role.ContainerWrite];
 
+  private destroyRef = inject(DestroyRef);
   private slideIn = inject(SlideIn);
   private devicesStore = inject(ContainerDevicesStore);
   private containersStore = inject(ContainersStore);
@@ -76,7 +76,7 @@ export class ContainerFilesystemDevicesComponent {
 
   private openDiskForm(disk?: ContainerFilesystemDevice): void {
     this.slideIn.open(ContainerFilesystemDeviceFormComponent, { data: { disk, container: this.container() } })
-      .pipe(filter((result) => !!result.response), untilDestroyed(this))
-      .subscribe(() => this.devicesStore.loadDevices());
+      .pipe(filter((result) => !!result.response), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.devicesStore.reload());
   }
 }

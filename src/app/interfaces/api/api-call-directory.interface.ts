@@ -80,7 +80,6 @@ import {
   Container,
   ContainerGlobalConfig,
   ContainerImageRegistryResponse,
-  CreateContainer,
   UpdateContainer,
 } from 'app/interfaces/container.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
@@ -919,15 +918,12 @@ export interface ApiCallDirectory {
   'container.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
 
   // Container (actual available endpoints only)
-  'container.create': { params: [CreateContainer]; response: Container };
   'container.delete': { params: [containerId: number]; response: boolean };
   'container.get_instance': { params: [containerId: number]; response: Container };
   'container.image.query_registry': { params: []; response: ContainerImageRegistryResponse[] };
-  'container.migrate': { params: [containerId: number]; response: boolean };
   'container.pool_choices': { params: []; response: Choices };
   'container.query': { params: QueryParams<Container>; response: Container[] };
   'container.start': { params: [containerId: number]; response: void };
-  'container.stop': { params: [containerId: number, params?: { force?: boolean }]; response: void };
   'container.update': { params: [containerId: number, update: UpdateContainer]; response: Container };
 
   // LXC (actual available endpoints only)

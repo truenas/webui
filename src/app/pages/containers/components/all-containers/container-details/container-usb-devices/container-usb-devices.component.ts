@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
@@ -17,7 +16,6 @@ import { getDeviceDescription } from 'app/pages/containers/components/common/uti
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-container-usb-devices',
   templateUrl: './container-usb-devices.component.html',

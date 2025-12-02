@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -17,7 +17,6 @@ import {
 } from 'app/pages/containers/stores/container-config.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-all-containers-header',
   templateUrl: './all-containers-header.component.html',
@@ -32,6 +31,7 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
   ],
 })
 export class AllContainersHeaderComponent {
+  private destroyRef = inject(DestroyRef);
   private slideIn = inject(SlideIn);
   private configStore = inject(ContainerConfigStore);
   private containersStore = inject(ContainersStore);
@@ -43,14 +43,14 @@ export class AllContainersHeaderComponent {
   protected onCreateContainer(): void {
     this.slideIn
       .open(ContainerFormComponent)
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
   }
 
   protected onGlobalConfiguration(): void {
     this.slideIn
       .open(GlobalConfigFormComponent, { data: this.config() })
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.configStore.initialize();

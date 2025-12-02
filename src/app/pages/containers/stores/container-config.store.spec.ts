@@ -1,6 +1,6 @@
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { Subject, throwError } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { fakeAsync, flush } from '@angular/core/testing';
+import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { of, Subject, throwError } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
@@ -17,18 +17,26 @@ describe('ContainerConfigStore', () => {
     v6_network: null,
   } as ContainerGlobalConfig;
 
+  const mockApiService = {
+    call: jest.fn(() => of(config)),
+    subscribe: jest.fn(() => configEvent$),
+  };
+
   const createService = createServiceFactory({
     service: ContainerConfigStore,
     providers: [
-      mockApi([
-        mockCall('lxc.config', config),
-      ]),
+      mockProvider(ApiService, mockApiService),
     ],
   });
 
   beforeEach(() => {
+    mockApiService.call.mockClear();
+    mockApiService.call.mockReturnValue(of(config));
     spectator = createService();
-    jest.spyOn(spectator.inject(ApiService), 'subscribe').mockReturnValue(configEvent$);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('should have default empty state', () => {
@@ -38,18 +46,22 @@ describe('ContainerConfigStore', () => {
     });
   });
 
-  it('should load config when initialize is called', () => {
+  it('should load config when initialize is called', fakeAsync(() => {
     spectator.service.initialize();
+    flush();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalled();
     expect(spectator.service.state()).toEqual({
       isLoading: false,
       config,
     });
-  });
+  }));
 
   describe('selectors', () => {
-    beforeEach(() => spectator.service.initialize());
+    beforeEach(fakeAsync(() => {
+      spectator.service.initialize();
+      flush();
+    }));
 
     it('isLoading - returns isLoading part of the state', () => {
       expect(spectator.service.isLoading()).toBe(false);
@@ -79,7 +91,7 @@ describe('ContainerConfigStore', () => {
 
       const updatedConfig: ContainerGlobalConfig = {
         ...config,
-        preferred_pool: null,
+        bridge: 'br1',
       };
 
       configEvent$.next({
@@ -120,6 +132,14 @@ describe('ContainerConfigStore', () => {
   });
 
   describe('loading state', () => {
+    it('sets isLoading to false after config is loaded', fakeAsync(() => {
+      spectator.service.initialize();
+      flush();
+
+      expect(spectator.service.isLoading()).toBe(false);
+      expect(spectator.service.config()).toEqual(config);
+    }));
+
     it('sets isLoading to true while fetching config', () => {
       const delayedResponse$ = new Subject<ContainerGlobalConfig>();
       jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(delayedResponse$);
@@ -131,13 +151,6 @@ describe('ContainerConfigStore', () => {
       delayedResponse$.next(config);
 
       expect(spectator.service.isLoading()).toBe(false);
-    });
-
-    it('sets isLoading to false after config is loaded', () => {
-      spectator.service.initialize();
-
-      expect(spectator.service.isLoading()).toBe(false);
-      expect(spectator.service.config()).toEqual(config);
     });
   });
 });

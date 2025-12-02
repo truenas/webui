@@ -94,7 +94,7 @@ describe('AddNicMenuComponent', () => {
         trust_guest_rx_filters: false,
       } as ContainerDevice,
     }]);
-    expect(spectator.inject(ContainerDevicesStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(ContainerDevicesStore).reload).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('NIC Device was added');
   });
 

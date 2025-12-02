@@ -197,6 +197,7 @@ export interface ApiJobDirectory {
   // Container
   'container.create': { params: [CreateContainer]; response: Container };
   'container.migrate': { params: [containerId: number]; response: boolean };
+  'container.stop': { params: [containerId: number, params?: { force?: boolean; force_after_timeout?: boolean }]; response: void };
 
   // VM
   'vm.device.convert': { params: [{ source: string; destination: string }]; response: boolean };
