@@ -501,18 +501,20 @@ export class AppSchemaService {
       new CustomUntypedFormArray([], this.buildSchemaControlValidator({}, schema)),
     );
 
-    if (config) {
-      let items: ChartSchemaNode[] = [];
-      chartSchemaNode.schema.items.forEach((item) => {
-        if (item.schema.attrs) {
-          item.schema.attrs.forEach((attr) => {
-            items = items.concat(attr);
-          });
-        } else {
-          items = items.concat(item);
-        }
-      });
+    let items: ChartSchemaNode[] = [];
+    chartSchemaNode.schema.items.forEach((item) => {
+      if (item.schema.attrs) {
+        item.schema.attrs.forEach((attr) => {
+          items = items.concat(attr);
+        });
+      } else {
+        items = items.concat(item);
+      }
+    });
 
+    // Use default values for new apps if no config is provided
+    let itemsToPopulate: unknown[] = [];
+    if (config) {
       const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
       let nextItem = config;
       for (const controlPath of configControlPath) {
@@ -520,22 +522,26 @@ export class AppSchemaService {
           nextItem = nextItem[controlPath] as HierarchicalObjectMap<ChartFormValue>;
         }
       }
-
       if (Array.isArray(nextItem)) {
-        for (const item of nextItem) {
-          subscription.add(
-            this.addFormListItem({
-              isNew,
-              event: {
-                array: formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormArray,
-                schema: items,
-              },
-              isParentImmutable: isParentImmutable || !!schema.immutable,
-              config: item as HierarchicalObjectMap<ChartFormValue>,
-            }),
-          );
-        }
+        itemsToPopulate = nextItem;
       }
+    } else if (isNew && schema.default && Array.isArray(schema.default)) {
+      // For new apps, use schema default values
+      itemsToPopulate = schema.default;
+    }
+
+    for (const item of itemsToPopulate) {
+      subscription.add(
+        this.addFormListItem({
+          isNew,
+          event: {
+            array: formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormArray,
+            schema: items,
+          },
+          isParentImmutable: isParentImmutable || !!schema.immutable,
+          config: item as HierarchicalObjectMap<ChartFormValue>,
+        }),
+      );
     }
   }
 

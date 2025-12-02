@@ -515,7 +515,75 @@ describe('AppSchemaService', () => {
     });
 
     it('creates form for "list"', () => {
-      expect(dynamicForm.controls.variable_list.value).toEqual([]);
+      expect(dynamicForm.controls.variable_list.value).toEqual([
+        { item_list_1: 'prefilled_1', item_list_2: 2 },
+      ]);
+    });
+
+    it('creates form for "list" with nested lists in objects', () => {
+      const beforeNestedList = [{
+        variable: 'security_policy',
+        label: 'Additional Content Security Policy',
+        schema: {
+          type: 'list',
+          default: [
+            {
+              directive: 'connect-src',
+              items: ['https://example.com/', 'https://api.example.com/'],
+            },
+            {
+              directive: 'img-src',
+              items: ['https://cdn.example.com/'],
+            },
+          ],
+          items: [{
+            variable: 'policy_entry',
+            schema: {
+              type: 'dict',
+              attrs: [
+                {
+                  variable: 'directive',
+                  label: 'Directive',
+                  schema: { type: 'string', required: true },
+                },
+                {
+                  variable: 'items',
+                  label: 'Items',
+                  schema: {
+                    type: 'list',
+                    items: [{
+                      variable: 'item',
+                      schema: { type: 'string' },
+                    }],
+                  },
+                },
+              ],
+            },
+          }],
+        },
+      }] as ChartSchemaNode[];
+
+      const nestedListForm = new UntypedFormGroup({});
+      beforeNestedList.forEach((item) => {
+        service.getNewFormControlChangesSubscription({
+          chartSchemaNode: item,
+          formGroup: nestedListForm,
+          config: {} as HierarchicalObjectMap<ChartFormValue>,
+          isNew: true,
+          isParentImmutable: false,
+        });
+      });
+
+      expect(nestedListForm.controls.security_policy.value).toEqual([
+        {
+          directive: 'connect-src',
+          items: ['https://example.com/', 'https://api.example.com/'],
+        },
+        {
+          directive: 'img-src',
+          items: ['https://cdn.example.com/'],
+        },
+      ]);
     });
 
     beforeEach(() => {
