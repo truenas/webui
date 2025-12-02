@@ -4,7 +4,7 @@ import { of, Subject } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import {
-  ContainerDevice, ContainerMetrics,
+  Container, ContainerDevice, ContainerMetrics,
 } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -16,8 +16,8 @@ describe('ContainersStore', () => {
   const event$ = new Subject<ApiEvent>();
   const metricsEvent$ = new Subject<ApiEvent<ContainerMetrics>>();
   const containers = [
-    fakeContainer({ id: 1 }),
-    fakeContainer({ id: 2 }),
+    fakeContainer({ id: 1, name: 'container1' }),
+    fakeContainer({ id: 2, name: 'container2' }),
   ];
 
   const devices = [
@@ -151,6 +151,55 @@ describe('ContainersStore', () => {
         containers[0],
         expect.objectContaining({ id: 2, name: 'container3' }),
       ]);
+    });
+
+    it('handles status-only update using name-based workaround', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      event$.next({
+        collection: 'container.query',
+        id: containers[0].name, // API sends name instead of ID for status updates
+        msg: CollectionChangeType.Changed,
+        fields: { status: 'running' } as unknown as Partial<Container>,
+      });
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        '[ContainersStore] Using name-based workaround for status update',
+        { containerId: containers[0].name },
+      );
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
+      expect(spectator.service.containers()[0].status).toBe('running');
+
+      consoleWarnSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('logs error when duplicate container names detected during status update', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      // Set up containers with duplicate names
+      const duplicateNameContainers = [
+        fakeContainer({ id: 1, name: 'duplicate' }),
+        fakeContainer({ id: 2, name: 'duplicate' }),
+      ];
+      spectator.service.patchState({ containers: duplicateNameContainers });
+
+      event$.next({
+        collection: 'container.query',
+        id: 'duplicate',
+        msg: CollectionChangeType.Changed,
+        fields: { status: 'running' } as unknown as Partial<Container>,
+      });
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        '[ContainersStore] Duplicate container names detected - name-based status update may be unreliable',
+      );
+      expect(consoleWarnSpy).toHaveBeenCalled();
+
+      consoleWarnSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
     });
 
     it('handles remove event', () => {

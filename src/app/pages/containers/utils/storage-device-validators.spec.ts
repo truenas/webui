@@ -43,6 +43,23 @@ describe('Storage Device Validators', () => {
       expect(validator(new FormControl(''))).toBeNull();
       expect(validator(new FormControl(null))).toBeNull();
     });
+
+    it('should reject paths with invalid characters', () => {
+      const validator = containerPathValidator();
+      expect(validator(new FormControl('/data$test'))).toEqual({
+        containerPath: { message: expect.any(String) },
+      });
+      expect(validator(new FormControl('/data@files'))).toEqual({
+        containerPath: { message: expect.any(String) },
+      });
+    });
+
+    it('should handle paths with many hyphens efficiently (ReDoS protection)', () => {
+      const validator = containerPathValidator();
+      // This input could cause exponential backtracking with nested quantifiers
+      const pathWithManyHyphens = '/data/' + '-'.repeat(100);
+      expect(validator(new FormControl(pathWithManyHyphens))).toBeNull();
+    });
   });
 
   describe('poolPathValidator', () => {

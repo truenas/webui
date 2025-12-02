@@ -115,6 +115,15 @@ export class ContainersStore extends ComponentStore<ContainersState> {
         let updatedContainers: Container[];
 
         if (isStatusOnlyUpdate) {
+          // Check for duplicate container names before using name-based matching
+          const containerNames = prevContainers.map((container) => container.name);
+          const hasDuplicates = containerNames.some((name, index) => containerNames.indexOf(name) !== index);
+          if (hasDuplicates) {
+            console.error('[ContainersStore] Duplicate container names detected - name-based status update may be unreliable');
+          }
+
+          console.warn('[ContainersStore] Using name-based workaround for status update', { containerId: event.id });
+
           updatedContainers = prevContainers.map((container) => {
             if (container.name === event.id) {
               return { ...container, status: event.fields.status };

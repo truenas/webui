@@ -50,9 +50,10 @@ export function containerPathValidator(): ValidatorFn {
     }
 
     // Valid path pattern - alphanumeric, underscore, hyphen, dot
-    // Pattern avoids nested quantifiers to prevent ReDoS vulnerability
-    const validPattern = /^\/([a-zA-Z0-9_.-]+\/)*[a-zA-Z0-9_.-]*$/;
-    if (!validPattern.test(value)) {
+    // Split validation to avoid nested quantifiers and prevent ReDoS vulnerability
+    const segments = value.slice(1).split('/'); // Remove leading /
+    const allValid = segments.every((seg) => /^[a-zA-Z0-9_.-]*$/.test(seg));
+    if (!allValid) {
       return {
         containerPath: {
           message: containersHelptext.validators.containerPathInvalidCharacters,
