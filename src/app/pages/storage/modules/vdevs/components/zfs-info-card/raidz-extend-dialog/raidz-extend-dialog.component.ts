@@ -7,12 +7,10 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
-import { JobState } from 'app/enums/job-state.enum';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -22,6 +20,7 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { PoolExtendJobService } from 'app/pages/storage/modules/vdevs/services/pool-extend-job.service';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -57,6 +56,7 @@ export class RaidzExtendDialog {
   private dialogRef = inject<MatDialogRef<RaidzExtendDialog>>(MatDialogRef);
   private vDevsStore = inject(VDevsStore);
   private dialogService = inject(DialogService);
+  private poolExtendJobService = inject(PoolExtendJobService);
   data = inject<RaidzExtendDialogParams>(MAT_DIALOG_DATA);
 
   form = this.formBuilder.group({
@@ -78,10 +78,10 @@ export class RaidzExtendDialog {
     event.preventDefault();
 
     // Check for existing pool.attach jobs for this pool
-    this.checkForExistingExtendJob().pipe(
+    this.poolExtendJobService.checkForExistingExtendJob(this.data.poolId).pipe(
       switchMap((hasExistingJob) => {
         if (hasExistingJob) {
-          this.snackbar.error(
+          this.snackbar.success(
             this.translate.instant('A VDEV extension operation is already in progress for this pool. Please wait for it to complete.'),
           );
           return of(null);
@@ -107,18 +107,6 @@ export class RaidzExtendDialog {
         this.dialogRef.close(true);
       }
     });
-  }
-
-  private checkForExistingExtendJob(): Observable<boolean> {
-    return this.api.call('core.get_jobs', [[
-      ['method', '=', 'pool.attach'],
-      ['state', 'in', [JobState.Running, JobState.Waiting]],
-    ]]).pipe(
-      map((jobs: Job<unknown, [number, PoolAttachParams]>[]) => {
-        // Check if any job is for the same pool
-        return jobs.some((job) => job.arguments[0] === this.data.poolId);
-      }),
-    );
   }
 
   private setFilterMinimumSizeFn(): void {
