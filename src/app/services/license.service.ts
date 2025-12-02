@@ -64,6 +64,10 @@ export class LicenseService {
 
   readonly hasKmip$ = this.store$.select(selectIsEnterprise);
 
+  readonly hasSed$ = this.store$.select(selectLicenseFeatures).pipe(
+    map((licenseFeatures) => licenseFeatures?.includes(LicenseFeature.Sed) ?? false),
+  );
+
   readonly shouldShowContainers$ = combineLatest([
     this.store$.select(selectIsEnterprise),
     this.store$.select(selectLicenseFeatures),

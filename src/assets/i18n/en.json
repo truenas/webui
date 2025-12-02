@@ -201,7 +201,6 @@
   "A unique name to identify this keypair. Automatically generated keypairs are named after the object that generated the keypair with \" Key\" appended to the name.": "",
   "A User Access Token for <a href=\"https://developer.box.com/\"  target=\"_blank\">Box</a>. An  <a href=\"https://developer.box.com/guides/authentication/tokens/access-tokens/\"  target=\"_blank\">access token</a> enables Box to verify a request  belongs to an authorized session. Example token:  <i>T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl</i>.": "",
   "A username on the FTP Host system. This user must already exist  on the FTP Host.": "",
-  "A VDEV extension operation is already in progress for this pool. Please wait for it to complete.": "",
   "A WebShare with this name already exists": "",
   "Abort": "",
   "Abort Job": "",
