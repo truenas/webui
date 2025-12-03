@@ -115,13 +115,15 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
       this.handleErrors();
     });
 
-    // Handle errors immediately if control is not in PENDING state
+    // Handle errors immediately if control is not in PENDING state.
+    // Skip marking as touched on initial display to avoid triggering
+    // side effects like auto-opening editable components.
     if (this.control().status !== 'PENDING') {
-      this.handleErrors();
+      this.handleErrors({ skipMarkAsTouched: true });
     }
   }
 
-  private handleErrors(): void {
+  private handleErrors(options: { skipMarkAsTouched?: boolean } = {}): void {
     const newErrors: (string | null)[] = Object.keys(this.control().errors || []).map((error) => {
       if (error === ixManualValidateError) {
         return null;
@@ -136,7 +138,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
 
     this.messages = newErrors.filter((message) => !!message) as string[];
 
-    if (this.control().errors) {
+    if (this.control().errors && !options.skipMarkAsTouched) {
       this.control().markAllAsTouched();
     }
 
