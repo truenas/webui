@@ -127,7 +127,9 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     this.viewInitialized$,
   ]).pipe(
     tap(([params]) => {
-      const options = this.urlOptionsService.parseUrlOptions<AuditEntry>(params.options as string) as AuditUrlOptions;
+      const options = this.urlOptionsService.parseUrlOptions<AuditEntry>(
+        params.options as string,
+      ) as AuditUrlOptions<AuditEntry>;
 
       this.dataProvider().setPagination({
         pageSize: options.pagination?.pageSize || 50,
@@ -194,7 +196,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       sorting: this.dataProvider().sorting,
       pagination: this.dataProvider().pagination,
       service: this.serviceControl.value,
-    } as AuditUrlOptions);
+    } as AuditUrlOptions<AuditEntry>);
   }
 
   onSearch(query: SearchQuery<AuditEntry>): void {
