@@ -70,7 +70,8 @@ export class WebShareService {
       }
       return { ipsWithHostnames, localIp, hostname };
     }),
-    catchError(() => {
+    catchError((error: unknown) => {
+      console.error('Failed to fetch hostname mapping for WebShare:', error);
       return of({ ipsWithHostnames: {} as Record<string, string>, localIp: '', hostname: undefined });
     }),
     shareReplay({ bufferSize: 1, refCount: true }),

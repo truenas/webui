@@ -181,7 +181,11 @@ export class WebShareCardComponent implements OnInit {
     // Trigger hostname lookup to enable WebShare opening when not on truenas.direct domain
     this.webShareService.hostnameMapping$.pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    ).subscribe({
+      error: () => {
+        // Error already handled by catchError in hostnameMapping$
+      },
+    });
   }
 
   onAddClicked(): void {
