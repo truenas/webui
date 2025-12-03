@@ -1,6 +1,6 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
@@ -33,6 +33,8 @@ describe('WebShareService', () => {
     providers: [
       mockApi([
         mockCall('sharing.webshare.query', mockWebShares),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SnackbarService),
       mockProvider(TranslateService, {
@@ -194,7 +196,10 @@ describe('WebShareService - non-TrueNAS Direct domain', () => {
   const createService = createServiceFactory({
     service: WebShareService,
     providers: [
-      mockApi([]),
+      mockApi([
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      ]),
       mockProvider(SnackbarService),
       mockProvider(TranslateService),
       mockProvider(LicenseService),
@@ -222,6 +227,127 @@ describe('WebShareService - non-TrueNAS Direct domain', () => {
   });
 });
 
+describe('WebShareService - hostname mapping', () => {
+  let spectator: SpectatorService<WebShareService>;
+
+  const mockWindow = {
+    location: {
+      protocol: 'https:',
+      hostname: '192.168.1.100',
+    },
+    open: jest.fn(),
+  };
+
+  const createService = createServiceFactory({
+    service: WebShareService,
+    providers: [
+      mockApi([
+        mockCall('tn_connect.ips_with_hostnames', {
+          '192.168.1.100': 'mynas.truenas.direct',
+          '10.0.0.5': 'other.truenas.direct',
+        }),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      ]),
+      mockProvider(SnackbarService),
+      mockProvider(TranslateService, {
+        instant: jest.fn((key: string) => key),
+      }),
+      mockProvider(LicenseService, {
+        hasTruenasConnect$: of(true),
+      }),
+      mockProvider(SlideIn),
+      mockProvider(TruenasConnectService),
+      {
+        provide: WINDOW,
+        useValue: mockWindow,
+      },
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createService();
+    jest.clearAllMocks();
+  });
+
+  it('should resolve hostname from IP mapping', async () => {
+    const result = await firstValueFrom(spectator.service.hostnameMapping$);
+
+    expect(result.hostname).toBe('mynas.truenas.direct');
+    expect(result.localIp).toBe('192.168.1.100');
+  });
+
+  it('should set canOpenWebShare to true when hostname is resolved', async () => {
+    await firstValueFrom(spectator.service.hostnameMapping$);
+
+    expect(spectator.service.canOpenWebShare()).toBe(true);
+  });
+
+  it('should open WebShare using resolved hostname', async () => {
+    await firstValueFrom(spectator.service.hostnameMapping$);
+
+    spectator.service.openWebShare('documents');
+
+    expect(mockWindow.open).toHaveBeenCalledWith(
+      'https://mynas.truenas.direct:755/webshare/documents',
+      '_blank',
+    );
+  });
+});
+
+describe('WebShareService - no hostname mapping', () => {
+  let spectator: SpectatorService<WebShareService>;
+
+  const mockWindow = {
+    location: {
+      protocol: 'https:',
+      hostname: '10.0.0.99',
+    },
+    open: jest.fn(),
+  };
+
+  const createService = createServiceFactory({
+    service: WebShareService,
+    providers: [
+      mockApi([
+        mockCall('tn_connect.ips_with_hostnames', {
+          '192.168.1.100': 'mynas.truenas.direct',
+        }),
+        mockCall('interface.websocket_local_ip', '10.0.0.99'),
+      ]),
+      mockProvider(SnackbarService),
+      mockProvider(TranslateService, {
+        instant: jest.fn((key: string) => key),
+      }),
+      mockProvider(LicenseService, {
+        hasTruenasConnect$: of(true),
+      }),
+      mockProvider(SlideIn),
+      mockProvider(TruenasConnectService),
+      {
+        provide: WINDOW,
+        useValue: mockWindow,
+      },
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createService();
+    jest.clearAllMocks();
+  });
+
+  it('should not resolve hostname when local IP is not in mapping', async () => {
+    const result = await firstValueFrom(spectator.service.hostnameMapping$);
+
+    expect(result.hostname).toBeUndefined();
+  });
+
+  it('should keep canOpenWebShare as false when no hostname is resolved', async () => {
+    await firstValueFrom(spectator.service.hostnameMapping$);
+
+    expect(spectator.service.canOpenWebShare()).toBe(false);
+  });
+});
+
 describe('WebShareService - TrueNAS Connect not configured', () => {
   let spectator: SpectatorService<WebShareService>;
 
@@ -236,7 +362,10 @@ describe('WebShareService - TrueNAS Connect not configured', () => {
   const createService = createServiceFactory({
     service: WebShareService,
     providers: [
-      mockApi([]),
+      mockApi([
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      ]),
       mockProvider(SnackbarService),
       mockProvider(TranslateService, {
         instant: jest.fn((key: string) => key),

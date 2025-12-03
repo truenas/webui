@@ -9,7 +9,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, switchMap, of, map,
+  filter, switchMap, map,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -132,11 +132,11 @@ export class WebShareListComponent implements OnInit {
           iconName: iconMarker('mdi-open-in-new'),
           tooltip: this.translate.instant('Open'),
           onClick: (row) => this.openWebShare(row),
-          disabled: () => of(!this.webShareService.isTruenasDirectDomain),
-          dynamicTooltip: () => of(
-            this.webShareService.isTruenasDirectDomain
+          disabled: () => this.webShareService.canOpenWebShare$.pipe(map((canOpen) => !canOpen)),
+          dynamicTooltip: () => this.webShareService.canOpenWebShare$.pipe(
+            map((canOpen) => (canOpen
               ? this.translate.instant('Open')
-              : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'),
+              : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'))),
           ),
         },
         {
@@ -163,6 +163,11 @@ export class WebShareListComponent implements OnInit {
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery);
     });
+
+    // Trigger hostname lookup to enable WebShare opening when not on truenas.direct domain
+    this.webShareService.hostnameMapping$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe();
   }
 
   private setDefaultSort(): void {
