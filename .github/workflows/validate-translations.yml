@@ -11,6 +11,9 @@ on:
     paths:
       - 'src/assets/i18n/**'
 
+permissions:
+  contents: read
+
 jobs:
   install:
     name: Checkout and Install
