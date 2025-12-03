@@ -108,6 +108,11 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
    */
   private subscribeToControlStatusChanges(): void {
     this.statusChangeSubscription?.unsubscribe();
+
+    // Check status before subscription to avoid race condition where status
+    // might change between subscription setup and the check.
+    const shouldHandleImmediately = this.control().status !== 'PENDING';
+
     this.statusChangeSubscription = this.control().statusChanges.pipe(
       filter((status) => status !== 'PENDING'),
       untilDestroyed(this),
@@ -118,7 +123,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
     // Handle errors immediately if control is not in PENDING state.
     // Skip marking as touched on initial display to avoid triggering
     // side effects like auto-opening editable components.
-    if (this.control().status !== 'PENDING') {
+    if (shouldHandleImmediately) {
       this.handleErrors({ skipMarkAsTouched: true });
     }
   }

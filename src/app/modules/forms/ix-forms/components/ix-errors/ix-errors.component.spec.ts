@@ -78,4 +78,13 @@ describe('IxErrorsComponent', () => {
 
     expect(spectator.component.messages).toEqual([]);
   });
+
+  it('does not mark control as touched when displaying initial errors', () => {
+    const invalidControl = new FormControl(5, [Validators.min(10)]);
+
+    spectator.setHostInput('control', invalidControl);
+    spectator.detectComponentChanges();
+
+    expect(invalidControl.touched).toBe(false);
+  });
 });
