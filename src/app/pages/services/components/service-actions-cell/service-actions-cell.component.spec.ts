@@ -1,7 +1,9 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Router } from '@angular/router';
 import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { AuditService } from 'app/enums/audit.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -17,6 +19,7 @@ import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/s
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
+import { UrlOptionsService } from 'app/services/url-options.service';
 
 describe('ServiceActionsCellComponent', () => {
   let spectator: SpectatorHost<ServiceActionsCellComponent>;
@@ -32,6 +35,8 @@ describe('ServiceActionsCellComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(Router),
+      mockProvider(UrlOptionsService),
     ],
     shallow: false,
   });
@@ -63,6 +68,23 @@ describe('ServiceActionsCellComponent', () => {
 
     const hasViewSessions = links.some((el) => el.textContent?.includes('View Sessions'));
     expect(hasViewSessions).toBe(true);
+  });
+
+  it('navigates to audit logs with correct service parameter for CIFS', () => {
+    setup({ service: ServiceName.Cifs, state: ServiceStatus.Running });
+
+    const urlOptionsService = spectator.inject(UrlOptionsService);
+    const router = spectator.inject(Router);
+    jest.spyOn(urlOptionsService, 'buildUrl').mockReturnValue('/system/audit/{"service":"SMB"}');
+
+    const viewLogsLink = spectator.queryAll('a').find((el) => el.textContent?.includes('View Logs')) as HTMLElement;
+    expect(viewLogsLink).toBeTruthy();
+    spectator.click(viewLogsLink);
+
+    expect(urlOptionsService.buildUrl).toHaveBeenCalledWith('/system/audit', {
+      service: AuditService.Smb,
+    });
+    expect(router.navigate).toHaveBeenCalledWith(['/system/audit/{"service":"SMB"}']);
   });
 
   describe('edit', () => {
