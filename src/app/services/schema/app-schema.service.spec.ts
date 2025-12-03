@@ -520,6 +520,38 @@ describe('AppSchemaService', () => {
       ]);
     });
 
+    it('creates form for "list" of primitive values (strings)', () => {
+      const primitiveListSchema = [{
+        variable: 'urls',
+        label: 'URLs',
+        schema: {
+          type: 'list',
+          default: ['https://example.com/', 'https://api.example.com/', 'https://cdn.example.com/'],
+          items: [{
+            variable: 'url',
+            schema: { type: 'string' },
+          }],
+        },
+      }] as ChartSchemaNode[];
+
+      const primitiveListForm = new UntypedFormGroup({});
+      primitiveListSchema.forEach((item) => {
+        service.getNewFormControlChangesSubscription({
+          chartSchemaNode: item,
+          formGroup: primitiveListForm,
+          config: {} as HierarchicalObjectMap<ChartFormValue>,
+          isNew: true,
+          isParentImmutable: false,
+        });
+      });
+
+      expect(primitiveListForm.controls.urls.value).toEqual([
+        { url: 'https://example.com/' },
+        { url: 'https://api.example.com/' },
+        { url: 'https://cdn.example.com/' },
+      ]);
+    });
+
     it('creates form for "list" with nested lists in objects', () => {
       const beforeNestedList = [{
         variable: 'security_policy',

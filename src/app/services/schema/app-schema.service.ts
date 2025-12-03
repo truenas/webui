@@ -143,6 +143,7 @@ export class AppSchemaService {
 
   getNewFormControlChangesSubscription(payload: FormControlPayload): Subscription {
     const { chartSchemaNode } = payload;
+
     const path = payload.path ? payload.path + '.' + chartSchemaNode.variable : chartSchemaNode.variable;
     const subscription = new Subscription();
     const schema = chartSchemaNode.schema;
@@ -420,20 +421,27 @@ export class AppSchemaService {
 
   private addCommonSchemaTypeControl(payload: CommonSchemaAddControl): void {
     const {
-      schema, isNew, formGroup, isParentImmutable, chartSchemaNode,
+      schema, isNew, formGroup, isParentImmutable, chartSchemaNode, config,
     } = payload;
 
-    let altDefault: string | boolean | number | null = '';
+    type DefaultValue = string | boolean | number | null;
+
+    let altDefault: DefaultValue = '';
     if (schema.type === ChartSchemaType.Int) {
       altDefault = null;
     } else if (schema.type === ChartSchemaType.Boolean) {
       altDefault = false;
     }
 
-    // For hidden fields with default values, always use the default value from schema
-    // For new apps, use schema default if available
-    const shouldUseSchemaDefault = (schema.hidden || isNew) && schema.default !== undefined;
-    const defaultValue = shouldUseSchemaDefault ? schema.default : altDefault;
+    // Priority: 1) config value, 2) schema default (for hidden/new), 3) alt default
+    let defaultValue: DefaultValue;
+    if (config && chartSchemaNode.variable in config) {
+      defaultValue = config[chartSchemaNode.variable] as DefaultValue;
+    } else {
+      const shouldUseSchemaDefault = (schema.hidden || isNew) && schema.default !== undefined;
+      defaultValue = shouldUseSchemaDefault ? schema.default as DefaultValue : altDefault;
+    }
+
     const newFormControl = new CustomUntypedFormControl(
       defaultValue,
       this.buildSchemaControlValidator(defaultValue, schema),
@@ -502,6 +510,7 @@ export class AppSchemaService {
     );
 
     let items: ChartSchemaNode[] = [];
+
     chartSchemaNode.schema.items.forEach((item) => {
       if (item.schema.attrs) {
         item.schema.attrs.forEach((attr) => {
@@ -530,7 +539,21 @@ export class AppSchemaService {
       itemsToPopulate = schema.default;
     }
 
+    // Check if this is a list of primitives (single item schema with non-dict type)
+    const firstItemType = items[0]?.schema?.type;
+    const isSinglePrimitiveItem = items.length === 1 && firstItemType !== undefined && String(firstItemType) !== 'dict';
+
     for (const item of itemsToPopulate) {
+      // For primitive lists, wrap the value in an object with the variable name
+      // Schema expects primitives wrapped in objects: "string" → { variable_name: "string" }
+      // This allows the form to correctly bind primitive values to form controls
+      let itemConfig: HierarchicalObjectMap<ChartFormValue>;
+      if (isSinglePrimitiveItem && (typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean')) {
+        itemConfig = { [items[0].variable]: item } as HierarchicalObjectMap<ChartFormValue>;
+      } else {
+        itemConfig = item as HierarchicalObjectMap<ChartFormValue>;
+      }
+
       subscription.add(
         this.addFormListItem({
           isNew,
@@ -539,7 +562,7 @@ export class AppSchemaService {
             schema: items,
           },
           isParentImmutable: isParentImmutable || !!schema.immutable,
-          config: item as HierarchicalObjectMap<ChartFormValue>,
+          config: itemConfig,
         }),
       );
     }
