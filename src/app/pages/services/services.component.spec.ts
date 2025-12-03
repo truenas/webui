@@ -234,7 +234,7 @@ describe('ServicesComponent', () => {
     await link.click();
 
     expect(router.navigate).toHaveBeenCalledWith([
-      '/system/audit/{"searchQuery":{"isBasicQuery":false,"filters":[["service","=","SMB"]]}}',
+      '/system/audit/{"service":"SMB"}',
     ]);
   });
 });
