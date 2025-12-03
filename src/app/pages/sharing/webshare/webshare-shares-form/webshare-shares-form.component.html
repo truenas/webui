@@ -26,6 +26,18 @@
           [required]="true"
         ></ix-input>
 
+        <div
+          class="home-share-checkbox-wrapper"
+          [matTooltip]="disabledHomeShareTooltip()"
+          [matTooltipDisabled]="!existingHomeShare()"
+        >
+          <ix-checkbox
+            formControlName="is_home_base"
+            [label]="helptext.webshare_is_home_base_label | translate"
+            [tooltip]="helptext.webshare_is_home_base_tooltip | translate"
+          ></ix-checkbox>
+        </div>
+
         <div class="warning-message">
           <ix-icon name="info"></ix-icon>
           <span>{{ helptext.webshare_warning | translate }}</span>

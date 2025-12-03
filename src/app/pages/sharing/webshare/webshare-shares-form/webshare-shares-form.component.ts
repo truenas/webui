@@ -1,10 +1,11 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef,
+  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef, computed, effect,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators, FormControl, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -16,6 +17,7 @@ import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -37,6 +39,7 @@ export interface WebShareFormData {
   name: string;
   path: string;
   isNew: boolean;
+  isHomeBase?: boolean;
 }
 
 @Component({
@@ -51,11 +54,13 @@ export interface WebShareFormData {
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
+    IxCheckboxComponent,
     IxExplorerComponent,
     ExplorerCreateDatasetComponent,
     IxIconComponent,
     FormActionsComponent,
     MatButton,
+    MatTooltip,
     TestDirective,
     TranslateModule,
   ],
@@ -71,6 +76,40 @@ export class WebShareSharesFormComponent implements OnInit {
 
   protected isFormLoading = signal(true);
   protected webShares = signal<WebShare[]>([]);
+
+  /**
+   * The ID of the share being edited, or null if creating a new share.
+   * Used to exclude the current share from home share validation.
+   */
+  private editingShareId = signal<number | null>(null);
+
+  /**
+   * Computes the existing home share from other shares (excluding the one being edited).
+   * Returns null if no other share is designated as home.
+   */
+  protected existingHomeShare = computed(() => {
+    const excludeId = this.editingShareId();
+    const shares = this.webShares();
+    const otherShares = excludeId !== null
+      ? shares.filter((share) => share.id !== excludeId)
+      : shares;
+    return otherShares.find((share) => share.is_home_base) ?? null;
+  });
+
+  /**
+   * Tooltip shown on hover when home share checkbox is disabled.
+   * Explains which share is already designated as home.
+   */
+  protected disabledHomeShareTooltip = computed(() => {
+    const existing = this.existingHomeShare();
+    if (existing) {
+      return this.translate.instant(
+        helptextSharingWebshare.validation_errors.home_share_exists,
+        { name: existing.name },
+      );
+    }
+    return '';
+  });
 
   private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -91,11 +130,23 @@ export class WebShareSharesFormComponent implements OnInit {
       Validators.pattern(/^[a-zA-Z0-9_-]+$/),
     ]],
     path: ['', Validators.required],
+    is_home_base: [false],
   });
 
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
+    });
+
+    // Disable home share checkbox when another share is already designated as home
+    effect(() => {
+      const existing = this.existingHomeShare();
+      const control = this.form.controls.is_home_base;
+      if (existing) {
+        control.disable();
+      } else {
+        control.enable();
+      }
     });
   }
 
@@ -116,6 +167,11 @@ export class WebShareSharesFormComponent implements OnInit {
 
 
   ngOnInit(): void {
+    // Set editingShareId before loading shares so the computed signal works correctly
+    const data = this.slideInRef.getData();
+    const shareId: number | undefined = data?.id;
+    this.editingShareId.set(data?.isNew ? null : (shareId ?? null));
+
     this.loadWebShares();
     this.setupValidators();
     this.initializeFormData();
@@ -132,6 +188,7 @@ export class WebShareSharesFormComponent implements OnInit {
         this.form.patchValue({
           name: data.name,
           path: data.path,
+          is_home_base: data.isHomeBase ?? false,
         });
       } else if (data.isNew && (data.name || data.path)) {
         // Creating new WebShare with pre-filled values
@@ -153,6 +210,7 @@ export class WebShareSharesFormComponent implements OnInit {
     const payload = {
       name: values.name,
       path: values.path,
+      is_home_base: values.is_home_base,
     };
 
     this.isFormLoading.set(true);
@@ -194,9 +252,11 @@ export class WebShareSharesFormComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (shares) => {
-          this.webShares.set(shares);
           this.isFormLoading.set(false);
           this.form.enable();
+          // Set webShares AFTER form.enable() so the effect can properly
+          // disable the home share checkbox if needed
+          this.webShares.set(shares);
           // Mark form as untouched after enabling to prevent validation errors
           // from showing immediately on form load
           this.form.markAsUntouched();

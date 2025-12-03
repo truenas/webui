@@ -157,8 +157,12 @@ describe('WebShareService', () => {
       });
 
       expect(rows).toEqual([
-        { id: 1, name: 'documents', path: '/mnt/tank/documents' },
-        { id: 2, name: 'media', path: '/mnt/tank/media' },
+        {
+          id: 1, name: 'documents', path: '/mnt/tank/documents', isHomeBase: false,
+        },
+        {
+          id: 2, name: 'media', path: '/mnt/tank/media', isHomeBase: false,
+        },
       ]);
 
       const api = spectator.inject(ApiService);
@@ -176,8 +180,12 @@ describe('WebShareService', () => {
       const result = spectator.service.transformToTableRows(shares);
 
       expect(result).toEqual([
-        { id: 1, name: 'share1', path: '/mnt/pool/share1' },
-        { id: 2, name: 'share2', path: '/mnt/pool/share2' },
+        {
+          id: 1, name: 'share1', path: '/mnt/pool/share1', isHomeBase: false,
+        },
+        {
+          id: 2, name: 'share2', path: '/mnt/pool/share2', isHomeBase: false,
+        },
       ]);
     });
 

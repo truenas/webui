@@ -31,6 +31,9 @@ describe('WebShareSharesFormComponent', () => {
   const mockWebShares: WebShare[] = [
     { id: 1, name: 'documents', path: '/mnt/tank/documents' },
     { id: 2, name: 'media', path: '/mnt/tank/media' },
+    {
+      id: 3, name: 'home', path: '/mnt/tank/home', is_home_base: true,
+    },
   ];
 
   const slideInRef: SlideInRef<WebShareFormData | undefined, { response: boolean; error: unknown }> = {
@@ -77,9 +80,6 @@ describe('WebShareSharesFormComponent', () => {
 
   describe('Add new WebShare', () => {
     beforeEach(() => {
-      // Mock console.warn for this test suite to avoid reactive form warnings
-      jest.spyOn(console, 'warn').mockImplementation();
-
       spectator = createComponent({
         providers: [
           mockProvider(SlideInRef, {
@@ -98,9 +98,11 @@ describe('WebShareSharesFormComponent', () => {
 
     it('should initialize form with default values for new share', () => {
       const form = spectator.component.form;
-      expect(form.value).toEqual({
+      // Use getRawValue() to include disabled fields (is_home_base is disabled when another home share exists)
+      expect(form.getRawValue()).toEqual({
         name: '',
         path: '',
+        is_home_base: false,
       });
       expect(form.controls.name.enabled).toBe(true);
     });
@@ -139,6 +141,7 @@ describe('WebShareSharesFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.create', [{
         name: 'new_share',
         path: '/mnt/tank/new_share',
+        is_home_base: false,
       }]);
 
       expect(slideInRef.close).toHaveBeenCalledWith({
@@ -175,12 +178,10 @@ describe('WebShareSharesFormComponent', () => {
       isNew: false,
       name: 'documents',
       path: '/mnt/tank/documents',
+      isHomeBase: false,
     };
 
     beforeEach(() => {
-      // Mock console.warn for this test suite to avoid reactive form warnings
-      jest.spyOn(console, 'warn').mockImplementation();
-
       spectator = createComponent({
         providers: [
           mockProvider(SlideInRef, {
@@ -199,6 +200,7 @@ describe('WebShareSharesFormComponent', () => {
       expect(form.getRawValue()).toEqual({
         name: 'documents',
         path: '/mnt/tank/documents',
+        is_home_base: false,
       });
     });
 
@@ -220,6 +222,7 @@ describe('WebShareSharesFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [1, {
         name: 'documents',
         path: '/mnt/tank/docs',
+        is_home_base: false,
       }]);
     });
 
@@ -235,7 +238,16 @@ describe('WebShareSharesFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [1, {
         name: 'updated_documents',
         path: '/mnt/tank/docs',
+        is_home_base: false,
       }]);
+    });
+
+    it('should disable home share checkbox when another share is already home', async () => {
+      const form = spectator.component.form;
+      await spectator.fixture.whenStable();
+
+      // The checkbox should be disabled because 'home' share already has is_home_base enabled
+      expect(form.controls.is_home_base.disabled).toBe(true);
     });
 
     it('should prevent renaming to an existing share name', async () => {
@@ -252,11 +264,53 @@ describe('WebShareSharesFormComponent', () => {
     });
   });
 
+  describe('Edit existing home share', () => {
+    const homeShareEditData: WebShareFormData = {
+      id: 3,
+      isNew: false,
+      name: 'home',
+      path: '/mnt/tank/home',
+      isHomeBase: true,
+    };
+
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => homeShareEditData,
+          }),
+        ],
+      });
+      api = spectator.inject(ApiService);
+      spectator.detectChanges();
+    });
+
+    it('should allow editing the existing home share while keeping it as home', async () => {
+      const form = spectator.component.form;
+      await spectator.fixture.whenStable();
+
+      // The checkbox should be enabled because we're editing the share that is already home
+      expect(form.controls.is_home_base.value).toBe(true);
+      expect(form.controls.is_home_base.disabled).toBe(false);
+
+      // Update path and submit
+      form.controls.path.setValue('/mnt/tank/new_home');
+      spectator.detectChanges();
+
+      const saveButton = spectator.query('button[type="submit"][mat-button]');
+      spectator.click(saveButton);
+
+      expect(api.call).toHaveBeenCalledWith('sharing.webshare.update', [3, {
+        name: 'home',
+        path: '/mnt/tank/new_home',
+        is_home_base: true,
+      }]);
+    });
+  });
+
   describe('Path auto-population', () => {
     beforeEach(() => {
-      // Mock console.warn for this test suite to avoid reactive form warnings
-      jest.spyOn(console, 'warn').mockImplementation();
-
       spectator = createComponent({
         providers: [
           mockProvider(SlideInRef, {
