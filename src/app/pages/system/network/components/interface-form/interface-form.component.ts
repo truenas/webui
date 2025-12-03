@@ -415,6 +415,9 @@ export class InterfaceFormComponent implements OnInit {
       .subscribe(([isHaLicensed, failoverNode]) => {
         this.isHaLicensed = isHaLicensed;
         if (isHaLicensed) {
+          this.form.controls.ipv6_auto.setValue(false);
+          this.form.controls.ipv6_auto.disable();
+
           if (failoverNode === 'A') {
             this.ipLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
             this.failoverLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 2)') as TranslatedString;

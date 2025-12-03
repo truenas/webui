@@ -524,6 +524,12 @@ describe('InterfaceFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('failover.node');
     });
 
+    it('disables Autoconfigure IPv6 when failover is licensed', async () => {
+      const ipv6AutoCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Autoconfigure IPv6' }));
+      expect(await ipv6AutoCheckbox.isDisabled()).toBe(true);
+      expect(await ipv6AutoCheckbox.isChecked()).toBe(false);
+    });
+
     it('shows and saves additional fields in Aliases when failover is licensed', async () => {
       jest.spyOn(spectator.inject(MatDialog), 'open');
 

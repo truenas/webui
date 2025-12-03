@@ -86,7 +86,7 @@
         <ix-checkbox
           formControlName="ipv6_auto"
           [label]="'Autoconfigure IPv6' | translate"
-          [tooltip]="helptext.ipv6autoTooltip | translate"
+          [tooltip]="isHaLicensed ? ('Autoconfigure IPv6 is not supported for HA systems.' | translate) : (helptext.ipv6autoTooltip | translate)"
         ></ix-checkbox>
       </ix-fieldset>
 
