@@ -521,21 +521,34 @@ export class AppSchemaService {
       }
     });
 
-    // Use default values for new apps if no config is provided
+    // Check if schema defaults are primitives or objects
+    const hasObjectDefaults = schema.default
+      && Array.isArray(schema.default)
+      && schema.default.length > 0
+      && typeof schema.default[0] === 'object';
+
+    // Use values from config if provided (for edit mode or nested lists)
     let itemsToPopulate: unknown[] = [];
     if (config) {
       const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
       let nextItem = config;
-      for (const controlPath of configControlPath) {
+      for (const pathSegment of configControlPath) {
         if (nextItem) {
-          nextItem = nextItem[controlPath] as HierarchicalObjectMap<ChartFormValue>;
+          nextItem = nextItem[pathSegment] as HierarchicalObjectMap<ChartFormValue>;
         }
       }
       if (Array.isArray(nextItem)) {
         itemsToPopulate = nextItem;
       }
-    } else if (isNew && schema.default && Array.isArray(schema.default)) {
-      // For new apps, use schema default values
+
+      // If config provided but no items found, populate from schema defaults
+      // This handles nested lists where config is passed but doesn't contain list data
+      if (itemsToPopulate.length === 0 && isNew && schema.default && Array.isArray(schema.default)) {
+        itemsToPopulate = schema.default;
+      }
+    } else if (isNew && !hasObjectDefaults && schema.default && Array.isArray(schema.default)) {
+      // No config but has primitive defaults - populate them (nested primitive lists)
+      // Object defaults are handled by ix-list component, so we skip those
       itemsToPopulate = schema.default;
     }
 
