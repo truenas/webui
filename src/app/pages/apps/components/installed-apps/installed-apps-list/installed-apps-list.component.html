@@ -1,9 +1,9 @@
 <div class="table-header">
   <h2>{{ 'Applications' | translate }}</h2>
 
-  @if (hasCheckedApps) {
+  @if (hasCheckedApps()) {
     <ix-installed-apps-list-bulk-actions
-      [checkedApps]="checkedApps"
+      [checkedApps]="checkedApps()"
       (bulkStart)="onBulkStart()"
       (bulkStop)="onBulkStop()"
       (bulkUpdate)="onBulkUpdate()"
@@ -42,8 +42,8 @@
             <mat-checkbox
               color="primary"
               ixTest="select-all-app"
-              [checked]="allAppsChecked"
-              [indeterminate]="!allAppsChecked && !!selection.selected.length"
+              [checked]="allAppsChecked()"
+              [indeterminate]="!allAppsChecked() && !!selection.selected.length"
               (change)="toggleAppsChecked($event.checked)"
             ></mat-checkbox>
           }
@@ -68,11 +68,11 @@
       <div
         class="app-update-header"
         [matColumnDef]="sortableField.Updates"
-        [mat-sort-header]="hasUpdates ? sortableField.Updates : ''"
-        [disabled]="!hasUpdates"
+        [mat-sort-header]="hasUpdates() ? sortableField.Updates : ''"
+        [disabled]="!hasUpdates()"
       >
         <span>{{ 'Updates' | translate }}</span>
-        @if (hasUpdates) {
+        @if (hasUpdates()) {
           <ix-icon
             class="has-updates-icon"
             name="mdi-alert-circle"
@@ -132,6 +132,7 @@
             class="section-header"
             role="button"
             tabindex="0"
+            aria-live="polite"
             [attr.aria-expanded]="truenasAppsExpanded()"
             [attr.aria-controls]="'truenas-apps-section'"
             [attr.aria-label]="'Toggle TrueNAS Apps section' | translate"
@@ -150,14 +151,14 @@
                   tabindex="0"
                   [app]="app"
                   [stats]="getAppStats(app.name) | async"
-                  [class.selected]="selectedApp?.id === app.id"
+                  [class.selected]="selectedApp()?.id === app.id"
                   [selected]="selection.isSelected(app.id)"
                   [job]="appJobs.get(app.name)"
                   (startApp)="start(app.name)"
                   (stopApp)="stop(app.name)"
                   (restartApp)="restart(app.name)"
                   (clickStatus)="openStatusDialog(app.name)"
-                  (selectionChange)="selection.toggle(app.id)"
+                  (selectionChange)="toggleAppSelection(app.id)"
                   (click)="viewDetails(app)"
                   (keydown.enter)="viewDetails(app)"
                 ></ix-app-row>
@@ -173,9 +174,10 @@
             class="section-header"
             role="button"
             tabindex="0"
+            aria-live="polite"
             [attr.aria-expanded]="externalAppsExpanded()"
             [attr.aria-controls]="'external-apps-section'"
-            [attr.aria-label]="'Toggle Other Apps section' | translate"
+            [attr.aria-label]="'Toggle External Apps section' | translate"
             (click)="externalAppsExpanded.set(!externalAppsExpanded())"
             (keydown.enter)="externalAppsExpanded.set(!externalAppsExpanded()); $event.preventDefault()"
             (keydown.space)="externalAppsExpanded.set(!externalAppsExpanded()); $event.preventDefault()"
@@ -191,14 +193,14 @@
                   tabindex="0"
                   [app]="app"
                   [stats]="getAppStats(app.name) | async"
-                  [class.selected]="selectedApp?.id === app.id"
+                  [class.selected]="selectedApp()?.id === app.id"
                   [selected]="selection.isSelected(app.id)"
                   [job]="appJobs.get(app.name)"
                   (startApp)="start(app.name)"
                   (stopApp)="stop(app.name)"
                   (restartApp)="restart(app.name)"
                   (clickStatus)="openStatusDialog(app.name)"
-                  (selectionChange)="selection.toggle(app.id)"
+                  (selectionChange)="toggleAppSelection(app.id)"
                   (click)="viewDetails(app)"
                   (keydown.enter)="viewDetails(app)"
                 ></ix-app-row>

@@ -15,7 +15,7 @@ export interface TrafficStats {
 /**
  * Safely adds two numbers, treating null/undefined/NaN as 0.
  */
-function safeAdd(a: number | null | undefined, b: number | null | undefined): number {
+export function safeAdd(a: number | null | undefined, b: number | null | undefined): number {
   const numA = typeof a === 'number' && !Number.isNaN(a) ? a : 0;
   const numB = typeof b === 'number' && !Number.isNaN(b) ? b : 0;
   return numA + numB;
@@ -74,4 +74,26 @@ export function sumNetworkField(
     const value = net?.[field];
     return safeAdd(sum, value);
   }, 0);
+}
+
+/**
+ * Calculates the sum of a specific network field converted to bits (bytes * 8).
+ * Useful for aggregating network statistics across multiple apps.
+ *
+ * @param networks Array of network interface statistics
+ * @param field The field to sum ('rx_bytes' or 'tx_bytes')
+ * @returns Total bits for the specified field
+ *
+ * @example
+ * const totalRxBits = sumNetworkFieldAsBits([
+ *   { rx_bytes: 1000, tx_bytes: 2000 },
+ *   { rx_bytes: 500, tx_bytes: 1500 }
+ * ], 'rx_bytes');
+ * // returns 12000 (1500 bytes * 8 bits)
+ */
+export function sumNetworkFieldAsBits(
+  networks: NetworkStats[] | null | undefined,
+  field: 'rx_bytes' | 'tx_bytes',
+): number {
+  return sumNetworkField(networks, field) * 8;
 }

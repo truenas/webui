@@ -48,7 +48,7 @@ import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { isExternalApp, isTruenasApp } from 'app/pages/apps/utils/app-type.utils';
-import { sumNetworkField } from 'app/pages/apps/utils/network-stats.utils';
+import { safeAdd, sumNetworkFieldAsBits } from 'app/pages/apps/utils/network-stats.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState as WebuiAppState } from 'app/store';
 
@@ -116,10 +116,13 @@ export class InstalledAppsListComponent implements OnInit {
   // Modern signal-based architecture - installedApps from store
   protected readonly installedApps = toSignal(this.installedAppsStore.installedApps$, { initialValue: [] });
 
-  selectedApp: App | undefined;
+  readonly selectedApp = signal<App | undefined>(undefined);
   searchQuery = signal('');
   appJobs = new Map<string, Job<void, AppStartQueryParams>>();
   selection = new SelectionModel<string>(true, []);
+
+  // Signal to track selection changes for reactive computed properties
+  private selectionChanged = signal(0);
 
   // Sorting state as signals for reactivity
   private sortField = signal<SortableField>(SortableField.Application);
@@ -165,9 +168,11 @@ export class InstalledAppsListComponent implements OnInit {
     });
   });
 
-  get isSelectedAppVisible(): boolean {
-    return this.filteredApps()?.some((app: App) => app.id === this.selectedApp?.id);
-  }
+  readonly isSelectedAppVisible = computed(() => {
+    const selected = this.selectedApp();
+    if (!selected) return false;
+    return this.filteredApps().some((app: App) => app.id === selected.id);
+  });
 
   readonly filteredApps = computed(() => {
     return this.sortedApps()
@@ -182,49 +187,60 @@ export class InstalledAppsListComponent implements OnInit {
     return this.filteredApps().filter((app: App) => isExternalApp(app));
   });
 
-  get allAppsChecked(): boolean {
+  // Map for O(1) app lookups
+  private readonly appsById = computed(() => {
+    return new Map(this.sortedApps().map((app) => [app.id, app]));
+  });
+
+  readonly allAppsChecked = computed(() => {
+    this.selectionChanged(); // Track selection changes
     return this.selection.selected.length === this.filteredTruenasApps().length
       && this.filteredTruenasApps().length > 0;
-  }
+  });
 
-  get hasCheckedApps(): boolean {
-    return this.checkedAppsNames.length > 0;
-  }
+  readonly hasCheckedApps = computed(() => {
+    this.selectionChanged(); // Track selection changes
+    return this.selection.selected.length > 0;
+  });
 
-  get appsUpdateAvailable(): number {
-    return this.sortedApps()
-      .filter((app) => app.upgrade_available).length;
-  }
+  readonly appsUpdateAvailable = computed(() => {
+    return this.sortedApps().filter((app) => app.upgrade_available).length;
+  });
 
-  get hasUpdates(): boolean {
+  readonly hasUpdates = computed(() => {
     return this.sortedApps().some((app) => app.upgrade_available);
-  }
+  });
 
-  get checkedAppsNames(): string[] {
+  readonly checkedAppsNames = computed(() => {
+    this.selectionChanged(); // Track selection changes
     return this.selection.selected;
-  }
+  });
 
-  get checkedApps(): App[] {
-    return this.checkedAppsNames
-      .map((id) => this.sortedApps().find((app) => app.id === id))
-      .filter((app): app is App => isTruenasApp(app));
-  }
+  readonly checkedApps = computed(() => {
+    this.selectionChanged(); // Track selection changes
+    const appsMap = this.appsById();
+    return this.selection.selected
+      .map((id) => appsMap.get(id))
+      .filter((app): app is App => !!app && isTruenasApp(app));
+  });
 
-  get activeCheckedApps(): App[] {
+  readonly activeCheckedApps = computed(() => {
+    this.selectionChanged(); // Track selection changes
     return this.sortedApps().filter(
       (app) => [AppState.Running, AppState.Deploying].includes(app.state)
         && this.selection.isSelected(app.id)
         && isTruenasApp(app),
     );
-  }
+  });
 
-  get stoppedCheckedApps(): App[] {
+  readonly stoppedCheckedApps = computed(() => {
+    this.selectionChanged(); // Track selection changes
     return this.sortedApps().filter(
       (app) => [AppState.Stopped, AppState.Crashed].includes(app.state)
         && this.selection.isSelected(app.id)
         && isTruenasApp(app),
     );
-  }
+  });
 
   ngOnInit(): void {
     this.loadInstalledApps();
@@ -251,6 +267,12 @@ export class InstalledAppsListComponent implements OnInit {
     } else {
       this.selection.clear();
     }
+    this.selectionChanged.update((count) => count + 1); // Trigger reactivity
+  }
+
+  toggleAppSelection(appId: string): void {
+    this.selection.toggle(appId);
+    this.selectionChanged.update((count) => count + 1); // Trigger reactivity
   }
 
   private showLoadStatus(
@@ -377,13 +399,13 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   onBulkStart(): void {
-    this.stoppedCheckedApps.forEach((app) => this.start(app.name));
+    this.stoppedCheckedApps().forEach((app) => this.start(app.name));
     this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
     this.toggleAppsChecked(false);
   }
 
   onBulkStop(): void {
-    this.activeCheckedApps.forEach((app) => this.stop(app.name));
+    this.activeCheckedApps().forEach((app) => this.stop(app.name));
     this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
     this.toggleAppsChecked(false);
   }
@@ -401,7 +423,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   onBulkDelete(): void {
-    forkJoin(this.checkedAppsNames.map((appName) => this.appService.checkIfAppIxVolumeExists(appName)))
+    forkJoin(this.checkedAppsNames().map((appName) => this.appService.checkIfAppIxVolumeExists(appName)))
       .pipe(
         this.loader.withLoader(),
         switchMap((ixVolumesExist) => {
@@ -411,7 +433,7 @@ export class InstalledAppsListComponent implements OnInit {
             AppDeleteDialogOutputData
           >(AppDeleteDialog, {
             data: {
-              name: this.checkedAppsNames.join(', '),
+              name: this.checkedAppsNames().join(', '),
               showRemoveVolumes: ixVolumesExist.some(Boolean),
             },
           }).afterClosed();
@@ -445,7 +467,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private executeBulkDeletion(options: AppDeleteDialogOutputData): Observable<Job<CoreBulkResponse[]>> {
-    const bulkDeletePayload = this.checkedAppsNames.map((name) => [
+    const bulkDeletePayload = this.checkedAppsNames().map((name) => [
       name,
       {
         remove_images: options.removeImages,
@@ -488,7 +510,7 @@ export class InstalledAppsListComponent implements OnInit {
 
     const selectedApp = appId && this.sortedApps().find((app) => app.id === appId);
     if (selectedApp) {
-      this.selectedApp = selectedApp;
+      this.selectedApp.set(selectedApp);
       this.toggleShowMobileDetails.emit(true);
       this.cdr.markForCheck();
 
@@ -506,7 +528,7 @@ export class InstalledAppsListComponent implements OnInit {
       this.location.replaceState(['/apps', 'installed'].join('/'));
     }
 
-    this.selectedApp = firstApp;
+    this.selectedApp.set(firstApp);
     this.cdr.markForCheck();
   }
 
@@ -537,12 +559,6 @@ export class InstalledAppsListComponent implements OnInit {
     return this.appsStats.getStatsForApp(name);
   }
 
-  private safeAdd(a: number | null | undefined, b: number | null | undefined): number {
-    const numA = typeof a === 'number' && !Number.isNaN(a) ? a : 0;
-    const numB = typeof b === 'number' && !Number.isNaN(b) ? b : 0;
-    return numA + numB;
-  }
-
   readonly totalUtilization$ = this.installedAppsStore.installedApps$.pipe(
     debounceTime(300),
     switchMap((apps) => {
@@ -569,12 +585,12 @@ export class InstalledAppsListComponent implements OnInit {
             }
 
             return {
-              cpu: this.safeAdd(totals.cpu, stats.cpu_usage),
-              memory: this.safeAdd(totals.memory, stats.memory),
-              blkioRead: this.safeAdd(totals.blkioRead, stats.blkio?.read),
-              blkioWrite: this.safeAdd(totals.blkioWrite, stats.blkio?.write),
-              networkRxBits: this.safeAdd(totals.networkRxBits, sumNetworkField(stats.networks, 'rx_bytes') * 8),
-              networkTxBits: this.safeAdd(totals.networkTxBits, sumNetworkField(stats.networks, 'tx_bytes') * 8),
+              cpu: safeAdd(totals.cpu, stats.cpu_usage),
+              memory: safeAdd(totals.memory, stats.memory),
+              blkioRead: safeAdd(totals.blkioRead, stats.blkio?.read),
+              blkioWrite: safeAdd(totals.blkioWrite, stats.blkio?.write),
+              networkRxBits: safeAdd(totals.networkRxBits, sumNetworkFieldAsBits(stats.networks, 'rx_bytes')),
+              networkTxBits: safeAdd(totals.networkTxBits, sumNetworkFieldAsBits(stats.networks, 'tx_bytes')),
             };
           }, {
             cpu: 0,

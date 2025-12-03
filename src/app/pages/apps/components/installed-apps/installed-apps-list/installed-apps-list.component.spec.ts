@@ -150,6 +150,9 @@ describe('InstalledAppsListComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     applicationsService = spectator.inject(ApplicationsService);
+
+    // Reset apps to default state before each test
+    installedApps$.next(apps);
   });
 
   it('shows a list of apps', () => {
@@ -222,7 +225,6 @@ describe('InstalledAppsListComponent', () => {
   });
 
   it('updates several applications', async () => {
-    spectator.component.dataSource = apps;
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpdate.emit();
@@ -265,15 +267,14 @@ describe('InstalledAppsListComponent', () => {
 
   it('handles sortChanged with empty apps array correctly', () => {
     const component = spectator.component;
-    const originalDataSource = [...apps];
-    component.dataSource = originalDataSource;
 
-    component.setDatasourceWithSort({ active: 'application', direction: 'asc' }, []);
+    component.setDatasourceWithSort({ active: 'application', direction: 'asc' });
 
-    expect(component.dataSource).toHaveLength(3);
-    expect(component.dataSource[0].name).toBe('external-nginx');
-    expect(component.dataSource[1].name).toBe('test-app-1');
-    expect(component.dataSource[2].name).toBe('test-app-2');
+    const filtered = component.filteredApps();
+    expect(filtered).toHaveLength(3);
+    expect(filtered[0].name).toBe('external-nginx');
+    expect(filtered[1].name).toBe('test-app-1');
+    expect(filtered[2].name).toBe('test-app-2');
   });
 
   it('handles sortChanged with valid apps array correctly', () => {
@@ -284,18 +285,23 @@ describe('InstalledAppsListComponent', () => {
       metadata: { name: 'new-app', train: 'test' },
       state: AppState.Running,
       upgrade_available: false,
+      source: 'TRUENAS',
     }] as App[];
 
-    component.setDatasourceWithSort({ active: 'application', direction: 'asc' }, newApps);
+    // Update the store's apps to trigger reactive update
+    installedApps$.next(newApps);
+    spectator.detectChanges();
 
-    expect(component.dataSource).toHaveLength(1);
-    expect(component.dataSource[0].name).toBe('new-app');
+    component.setDatasourceWithSort({ active: 'application', direction: 'asc' });
+
+    const filtered = component.filteredApps();
+    expect(filtered).toHaveLength(1);
+    expect(filtered[0].name).toBe('new-app');
   });
 
   describe('external apps', () => {
     it('filters TrueNAS apps and external apps into separate lists', () => {
       const component = spectator.component;
-      component.dataSource = apps;
 
       const truenasApps = component.filteredTruenasApps();
       const externalApps = component.filteredExternalApps();
@@ -311,12 +317,13 @@ describe('InstalledAppsListComponent', () => {
 
     it('excludes external apps from bulk selection', () => {
       const component = spectator.component;
-      component.dataSource = apps;
 
       // Select all apps
-      component.selection.select('ix-test-app-1', 'ix-test-app-2', 'external-nginx');
+      component.toggleAppSelection('ix-test-app-1');
+      component.toggleAppSelection('ix-test-app-2');
+      component.toggleAppSelection('external-nginx');
 
-      const checkedApps = component.checkedApps;
+      const checkedApps = component.checkedApps();
 
       // Only TrueNAS apps should be in checkedApps
       expect(checkedApps).toHaveLength(2);
@@ -326,12 +333,12 @@ describe('InstalledAppsListComponent', () => {
 
     it('excludes external apps from active checked apps', () => {
       const component = spectator.component;
-      component.dataSource = apps;
 
       // Select all running apps (including external)
-      component.selection.select('ix-test-app-1', 'external-nginx');
+      component.toggleAppSelection('ix-test-app-1');
+      component.toggleAppSelection('external-nginx');
 
-      const activeCheckedApps = component.activeCheckedApps;
+      const activeCheckedApps = component.activeCheckedApps();
 
       // Only TrueNAS running apps should be included
       expect(activeCheckedApps).toHaveLength(1);
@@ -341,12 +348,11 @@ describe('InstalledAppsListComponent', () => {
 
     it('excludes external apps from stopped checked apps', () => {
       const component = spectator.component;
-      component.dataSource = apps;
 
       // Select stopped app
-      component.selection.select('ix-test-app-2');
+      component.toggleAppSelection('ix-test-app-2');
 
-      const stoppedCheckedApps = component.stoppedCheckedApps;
+      const stoppedCheckedApps = component.stoppedCheckedApps();
 
       // Only TrueNAS stopped apps should be included
       expect(stoppedCheckedApps).toHaveLength(1);
@@ -435,7 +441,7 @@ describe('InstalledAppsListComponent', () => {
 
       // Trigger new emission with updated mock
       installedApps$.next(apps);
-      tick(300);  // Advance past debounceTime(300)
+      tick(300); // Advance past debounceTime(300)
 
       const utilization = await firstValueFrom(component.totalUtilization$);
 
