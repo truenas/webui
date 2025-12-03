@@ -2,11 +2,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { WINDOW } from 'app/helpers/window.helper';
 import { Container } from 'app/interfaces/container.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/testing/mock-master-detail-view.component';
 import { AllContainersHeaderComponent } from 'app/pages/containers/components/all-containers/all-containers-header/all-containers-header.component';
 import { AllContainersComponent } from 'app/pages/containers/components/all-containers/all-containers.component';
@@ -17,10 +14,6 @@ import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-
 
 describe('AllContainersComponent', () => {
   let spectator: Spectator<AllContainersComponent>;
-  const mockLocalStorage = {
-    getItem: jest.fn(),
-    setItem: jest.fn(),
-  };
 
   const createComponent = createComponentFactory({
     component: AllContainersComponent,
@@ -46,9 +39,6 @@ describe('AllContainersComponent', () => {
         ],
       }),
       mockAuth(),
-      mockProvider(DialogService, {
-        warn: jest.fn(() => of(true)),
-      }),
       mockProvider(ContainerConfigStore, {
         initialize: jest.fn(),
         config: () => ({
@@ -64,51 +54,16 @@ describe('AllContainersComponent', () => {
         containers: jest.fn(() => [] as Container[]),
         isLoading: jest.fn(() => false),
       }),
-      {
-        provide: WINDOW,
-        useValue: {
-          localStorage: mockLocalStorage,
-          document: {
-            querySelector: jest.fn(),
-          },
-          addEventListener: jest.fn(),
-        },
-      },
     ],
   });
 
   beforeEach(() => {
     spectator = createComponent();
-    jest.clearAllMocks();
   });
 
   it('initializes config store on init', () => {
     spectator.component.ngOnInit();
     expect(spectator.inject(ContainerConfigStore).initialize).toHaveBeenCalled();
     expect(spectator.inject(ContainersStore).initialize).toHaveBeenCalled();
-  });
-
-  it('shows warning dialog and updates localStorage if warning has not been shown before', () => {
-    mockLocalStorage.getItem.mockReturnValue(null);
-
-    spectator.component.ngOnInit();
-
-    const dialogService = spectator.inject(DialogService);
-
-    expect(dialogService.warn).toHaveBeenCalledTimes(1);
-    expect(dialogService.warn).toHaveBeenCalledWith(
-      'Warning',
-      'Containers are experimental and only recommended for advanced users. Make all configuration changes using the TrueNAS UI. Operations using the command line are not supported.',
-    );
-    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('showNewVmInstancesWarning', 'true');
-  });
-
-  it('does not show warning dialog if it has been shown before', () => {
-    mockLocalStorage.getItem.mockReturnValue('true');
-
-    spectator.component.ngOnInit();
-
-    const dialogService = spectator.inject(DialogService);
-    expect(dialogService.warn).not.toHaveBeenCalled();
   });
 });
