@@ -24,7 +24,7 @@
   ></ix-basic-search>
 </div>
 
-@if ((dataSource.length && !filteredApps().length) || (!dataSource.length && !isLoading())) {
+@if ((sortedApps().length && !filteredApps().length) || (!sortedApps().length && !isLoading())) {
   <ix-empty [conf]="entityEmptyConf"></ix-empty>
 } @else {
   <div
@@ -38,7 +38,7 @@
     <div class="app-header-row">
       <div>
         <span class="name-header">
-          @if (dataSource.length) {
+          @if (sortedApps().length) {
             <mat-checkbox
               color="primary"
               ixTest="select-all-app"
@@ -94,7 +94,7 @@
     (matSortChange)="setDatasourceWithSort($event)"
   >
     <div class="app-inner">
-      @if (dataSource.length) {
+      @if (sortedApps().length) {
         <div class="utilization-summary" role="status" aria-live="polite" aria-atomic="true">
           @if (totalUtilization$ | async; as utilization) {
             <div class="cell cell-checkbox"></div>

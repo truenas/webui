@@ -20,6 +20,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { isExternalApp } from 'app/pages/apps/utils/app-type.utils';
+import { calculateNetworkTraffic } from 'app/pages/apps/utils/network-stats.utils';
 
 @Component({
   selector: 'ix-app-row',
@@ -73,13 +74,7 @@ export class AppRowComponent {
   });
 
   readonly trafficStats = computed(() => {
-    const networks = this.stats()?.networks;
-    if (!networks?.length) return { incoming: 0, outgoing: 0 };
-
-    return networks.reduce((acc, stats) => ({
-      incoming: acc.incoming + (stats.rx_bytes || 0) * 8,
-      outgoing: acc.outgoing + (stats.tx_bytes || 0) * 8,
-    }), { incoming: 0, outgoing: 0 });
+    return calculateNetworkTraffic(this.stats()?.networks);
   });
 
   readonly incomingTrafficBits = computed(() => this.trafficStats().incoming);

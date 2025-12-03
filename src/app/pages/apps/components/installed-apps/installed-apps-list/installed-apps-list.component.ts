@@ -13,7 +13,7 @@ import {
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, debounceTime, filter, forkJoin, map, Observable, of, shareReplay, switchMap,
+  catchError, combineLatest, debounceTime, filter, forkJoin, map, Observable, of, shareReplay, switchMap,
 } from 'rxjs';
 import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
 import { AppState } from 'app/enums/app-state.enum';
@@ -48,6 +48,7 @@ import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { isExternalApp, isTruenasApp } from 'app/pages/apps/utils/app-type.utils';
+import { sumNetworkField } from 'app/pages/apps/utils/network-stats.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState as WebuiAppState } from 'app/store';
 
@@ -112,11 +113,18 @@ export class InstalledAppsListComponent implements OnInit {
   protected readonly searchableElements = installedAppsElements;
   readonly isLoading = toSignal(this.installedAppsStore.isLoading$, { requireSync: true });
 
-  dataSource: App[] = [];
+  // Modern signal-based architecture - installedApps from store
+  protected readonly installedApps = toSignal(this.installedAppsStore.installedApps$, { initialValue: [] });
+
   selectedApp: App | undefined;
   searchQuery = signal('');
   appJobs = new Map<string, Job<void, AppStartQueryParams>>();
   selection = new SelectionModel<string>(true, []);
+
+  // Sorting state as signals for reactivity
+  private sortField = signal<SortableField>(SortableField.Application);
+  private sortDirection = signal<'asc' | 'desc'>('asc');
+
   sortingInfo: Sort = {
     active: SortableField.Application,
     direction: 'asc',
@@ -133,12 +141,36 @@ export class InstalledAppsListComponent implements OnInit {
     title: this.translate.instant(helptextApps.message.loading),
   };
 
+  // Computed signal for sorted apps (reactive to store changes and sorting)
+  protected readonly sortedApps = computed(() => {
+    const apps = [...this.installedApps()];
+    const field = this.sortField();
+    const isAsc = this.sortDirection() === 'asc';
+
+    return apps.sort((a, b) => {
+      switch (field) {
+        case SortableField.Application:
+          return doSortCompare(a.name, b.name, isAsc);
+        case SortableField.State:
+          return doSortCompare(a.state, b.state, isAsc);
+        case SortableField.Updates:
+          return doSortCompare(
+            a.upgrade_available ? 1 : 0,
+            b.upgrade_available ? 1 : 0,
+            isAsc,
+          );
+        default:
+          return doSortCompare(a.name, b.name, isAsc);
+      }
+    });
+  });
+
   get isSelectedAppVisible(): boolean {
     return this.filteredApps()?.some((app: App) => app.id === this.selectedApp?.id);
   }
 
   readonly filteredApps = computed(() => {
-    return this.dataSource
+    return this.sortedApps()
       .filter((app) => app?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase()));
   });
 
@@ -151,7 +183,8 @@ export class InstalledAppsListComponent implements OnInit {
   });
 
   get allAppsChecked(): boolean {
-    return this.selection.selected.length === this.filteredTruenasApps().length && this.filteredTruenasApps().length > 0;
+    return this.selection.selected.length === this.filteredTruenasApps().length
+      && this.filteredTruenasApps().length > 0;
   }
 
   get hasCheckedApps(): boolean {
@@ -159,12 +192,12 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   get appsUpdateAvailable(): number {
-    return this.dataSource
+    return this.sortedApps()
       .filter((app) => app.upgrade_available).length;
   }
 
   get hasUpdates(): boolean {
-    return this.dataSource.some((app) => app.upgrade_available);
+    return this.sortedApps().some((app) => app.upgrade_available);
   }
 
   get checkedAppsNames(): string[] {
@@ -173,12 +206,12 @@ export class InstalledAppsListComponent implements OnInit {
 
   get checkedApps(): App[] {
     return this.checkedAppsNames
-      .map((id) => this.dataSource.find((app) => app.id === id))
-      .filter((app): app is App => !!app && isTruenasApp(app));
+      .map((id) => this.sortedApps().find((app) => app.id === id))
+      .filter((app): app is App => isTruenasApp(app));
   }
 
   get activeCheckedApps(): App[] {
-    return this.dataSource.filter(
+    return this.sortedApps().filter(
       (app) => [AppState.Running, AppState.Deploying].includes(app.state)
         && this.selection.isSelected(app.id)
         && isTruenasApp(app),
@@ -186,7 +219,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   get stoppedCheckedApps(): App[] {
-    return this.dataSource.filter(
+    return this.sortedApps().filter(
       (app) => [AppState.Stopped, AppState.Crashed].includes(app.state)
         && this.selection.isSelected(app.id)
         && isTruenasApp(app),
@@ -262,7 +295,6 @@ export class InstalledAppsListComponent implements OnInit {
     ]).pipe(
       filter(([pool]) => {
         if (!pool) {
-          this.dataSource = [];
           this.showLoadStatus(EmptyType.FirstUse);
           this.cdr.markForCheck();
           this.redirectToInstalledApps();
@@ -271,7 +303,6 @@ export class InstalledAppsListComponent implements OnInit {
       }),
       filter(([,dockerStarted]) => {
         if (!dockerStarted) {
-          this.dataSource = [];
           this.showLoadStatus(EmptyType.Errors);
           this.cdr.markForCheck();
           this.redirectToInstalledApps();
@@ -280,7 +311,6 @@ export class InstalledAppsListComponent implements OnInit {
       }),
       filter(([,, apps]) => {
         if (!apps.length) {
-          this.dataSource = [];
           this.showLoadStatus(EmptyType.NoPageData);
           this.cdr.markForCheck();
           this.redirectToInstalledApps();
@@ -289,8 +319,7 @@ export class InstalledAppsListComponent implements OnInit {
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: ([,, apps]) => {
-        this.setDatasourceWithSort(this.sortingInfo, apps);
+      next: () => {
         this.selectAppForDetails(this.appId());
         this.cdr.markForCheck();
       },
@@ -305,7 +334,6 @@ export class InstalledAppsListComponent implements OnInit {
       )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
         this.appJobs.set(name, job);
-        this.setDatasourceWithSort(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }
@@ -319,7 +347,6 @@ export class InstalledAppsListComponent implements OnInit {
       .subscribe({
         next: (job: Job<void, AppStartQueryParams>) => {
           this.appJobs.set(name, job);
-          this.setDatasourceWithSort(this.sortingInfo);
           this.cdr.markForCheck();
         },
       });
@@ -333,7 +360,6 @@ export class InstalledAppsListComponent implements OnInit {
       )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
         this.appJobs.set(name, job);
-        this.setDatasourceWithSort(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }
@@ -363,7 +389,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   onBulkUpdate(updateAll = false): void {
-    const apps = this.dataSource.filter((app) => (
+    const apps = this.sortedApps().filter((app) => (
       updateAll ? app.upgrade_available : this.selection.isSelected(app.id)
     ));
     this.matDialog.open(AppBulkUpdateComponent, { data: apps })
@@ -399,40 +425,23 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   /**
-   * Sorts the dataSource array by the specified field and direction.
+   * Updates sorting configuration using signals for reactive updates.
    *
    * Sorting Strategy:
    * - Sorts by Application name, State, or Updates availability
-   * - Both TrueNAS and External apps are sorted together in a single operation
+   * - Both TrueNAS and External apps are sorted together via sortedApps computed signal
    * - This ensures consistent alphabetical/state ordering across all apps
    *
    * Template Rendering:
-   * - The template splits this sorted array into separate sections via
-   *   filteredTruenasApps and filteredExternalApps getters
-   * - Each section preserves the sort order from this unified sort
+   * - The template splits the sorted array into separate sections via
+   *   filteredTruenasApps and filteredExternalApps computed signals
+   * - Each section preserves the sort order from sortedApps
    * - Example: If sorted A-Z, both sections will be alphabetically ordered
    */
-  setDatasourceWithSort(sort: Sort, apps?: App[]): void {
+  setDatasourceWithSort(sort: Sort): void {
     this.sortingInfo = sort;
-    const sourceArray = apps && apps.length > 0 ? apps : this.dataSource;
-    this.dataSource = [...sourceArray].sort((a, b) => {
-      const isAsc = sort.direction === 'asc';
-
-      switch (sort.active as SortableField) {
-        case SortableField.Application:
-          return doSortCompare(a.name, b.name, isAsc);
-        case SortableField.State:
-          return doSortCompare(a.state, b.state, isAsc);
-        case SortableField.Updates:
-          return doSortCompare(
-            a.upgrade_available ? 1 : 0,
-            b.upgrade_available ? 1 : 0,
-            isAsc,
-          );
-        default:
-          return doSortCompare(a.name, b.name, isAsc);
-      }
-    });
+    this.sortField.set(sort.active as SortableField);
+    this.sortDirection.set(sort.direction as 'asc' | 'desc');
   }
 
   private executeBulkDeletion(options: AppDeleteDialogOutputData): Observable<Job<CoreBulkResponse[]>> {
@@ -452,7 +461,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private handleDeletionResult(job: Job<CoreBulkResponse[]>): void {
-    if (!this.dataSource.length) {
+    if (!this.sortedApps().length) {
       this.redirectToInstalledApps();
     }
 
@@ -473,11 +482,11 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private selectAppForDetails(appId: string | null): void {
-    if (!this.dataSource.length) {
+    if (!this.sortedApps().length) {
       return;
     }
 
-    const selectedApp = appId && this.dataSource.find((app) => app.id === appId);
+    const selectedApp = appId && this.sortedApps().find((app) => app.id === appId);
     if (selectedApp) {
       this.selectedApp = selectedApp;
       this.toggleShowMobileDetails.emit(true);
@@ -490,7 +499,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private selectFirstApp(): void {
-    const [firstApp] = this.dataSource;
+    const [firstApp] = this.sortedApps();
     if (firstApp.metadata.train && firstApp.id) {
       this.location.replaceState(['/apps', 'installed', firstApp.metadata.train, firstApp.id].join('/'));
     } else {
@@ -520,7 +529,6 @@ export class InstalledAppsListComponent implements OnInit {
       .subscribe((event) => {
         const [name] = event.fields.arguments;
         this.appJobs.set(name, event.fields);
-        this.setDatasourceWithSort(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }
@@ -533,16 +541,6 @@ export class InstalledAppsListComponent implements OnInit {
     const numA = typeof a === 'number' && !Number.isNaN(a) ? a : 0;
     const numB = typeof b === 'number' && !Number.isNaN(b) ? b : 0;
     return numA + numB;
-  }
-
-  private safeNetworkSum(networks: { rx_bytes?: number; tx_bytes?: number }[] | null | undefined, field: 'rx_bytes' | 'tx_bytes'): number {
-    if (!Array.isArray(networks) || networks.length === 0) {
-      return 0;
-    }
-    return networks.reduce((sum, net) => {
-      const value = net?.[field];
-      return this.safeAdd(sum, value);
-    }, 0);
   }
 
   readonly totalUtilization$ = this.installedAppsStore.installedApps$.pipe(
@@ -575,10 +573,22 @@ export class InstalledAppsListComponent implements OnInit {
               memory: this.safeAdd(totals.memory, stats.memory),
               blkioRead: this.safeAdd(totals.blkioRead, stats.blkio?.read),
               blkioWrite: this.safeAdd(totals.blkioWrite, stats.blkio?.write),
-              networkRxBits: this.safeAdd(totals.networkRxBits, this.safeNetworkSum(stats.networks, 'rx_bytes') * 8),
-              networkTxBits: this.safeAdd(totals.networkTxBits, this.safeNetworkSum(stats.networks, 'tx_bytes') * 8),
+              networkRxBits: this.safeAdd(totals.networkRxBits, sumNetworkField(stats.networks, 'rx_bytes') * 8),
+              networkTxBits: this.safeAdd(totals.networkTxBits, sumNetworkField(stats.networks, 'tx_bytes') * 8),
             };
           }, {
+            cpu: 0,
+            memory: 0,
+            blkioRead: 0,
+            blkioWrite: 0,
+            networkRxBits: 0,
+            networkTxBits: 0,
+          });
+        }),
+        catchError((error: unknown) => {
+          console.error('Error fetching app stats:', error);
+          // Return zero utilization on error (e.g., app deleted mid-fetch)
+          return of({
             cpu: 0,
             memory: 0,
             blkioRead: 0,

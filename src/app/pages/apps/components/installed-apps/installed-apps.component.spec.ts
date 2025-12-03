@@ -12,10 +12,10 @@ import {
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { MockComponent, MockDeclaration, MockModule, MockPipe } from 'ng-mocks';
-import { ImgFallbackDirective, ImgFallbackModule } from 'ngx-img-fallback';
+import { MockComponent, MockDeclaration, MockPipe } from 'ng-mocks';
+import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -39,8 +39,8 @@ import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-ro
 import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { InstalledAppsListBulkActionsComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list-bulk-actions/installed-apps-list-bulk-actions.component';
-import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 import { InstalledAppsListComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list.component';
+import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -63,6 +63,8 @@ describe('InstalledAppsComponent', () => {
     state: AppState.Running,
     source: 'TRUENAS',
   } as App;
+
+  const installedApps$ = new BehaviorSubject<App[]>([app]);
 
   const createComponent = createRoutingFactory({
     component: InstalledAppsComponent,
@@ -104,7 +106,7 @@ describe('InstalledAppsComponent', () => {
       }),
       mockProvider(InstalledAppsStore, {
         isLoading$: of(false),
-        installedApps$: of([app]),
+        installedApps$,
       }),
       mockProvider(LayoutService, {
         navigatePreservingScroll: jest.fn(() => of()),
@@ -170,17 +172,9 @@ describe('InstalledAppsComponent', () => {
     spectator = createComponent();
     applicationsService = spectator.inject(ApplicationsService);
 
-    // Wait for component initialization
+    // Wait for component initialization and subscriptions to complete
     await spectator.fixture.whenStable();
     spectator.detectChanges();
-
-    // Manually set the dataSource on the child component
-    // The child's subscriptions might not complete in the test environment
-    const listComponent = spectator.component.installedAppsList();
-    if (listComponent) {
-      listComponent.dataSource = [app];
-      spectator.detectChanges();
-    }
   });
 
   it('shows a list of installed apps', () => {
