@@ -34,11 +34,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
-import { UrlOptions, UrlOptionsService } from 'app/services/url-options.service';
-
-interface AuditUrlOptions extends UrlOptions<AuditEntry> {
-  service?: AuditService;
-}
+import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
 @Component({
@@ -132,7 +128,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     this.viewInitialized$,
   ]).pipe(
     tap(([params]) => {
-      const options = this.urlOptionsService.parseUrlOptions(params.options as string) as AuditUrlOptions;
+      const options = this.urlOptionsService.parseUrlOptions<AuditEntry>(params.options as string) as AuditUrlOptions;
 
       this.dataProvider().setPagination({
         pageSize: options.pagination?.pageSize || 50,

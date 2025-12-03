@@ -1,16 +1,19 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatMenuHarness } from '@angular/material/menu/testing';
+import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { AuditService } from 'app/enums/audit.enum';
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
+import { UrlOptionsService } from 'app/services/url-options.service';
 
 describe('ServiceExtraActionsComponent', () => {
   let spectator: Spectator<ServiceExtraActionsComponent>;
@@ -25,6 +28,8 @@ describe('ServiceExtraActionsComponent', () => {
         mockJob('service.control', fakeSuccessfulJob()),
       ]),
       mockProvider(SnackbarService),
+      mockProvider(Router),
+      mockProvider(UrlOptionsService),
     ],
   });
 
@@ -136,5 +141,27 @@ describe('ServiceExtraActionsComponent', () => {
     await menu.clickItem({ text: 'Turn On Service' });
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('service.control', [ServiceOperation.Start, ServiceName.Cifs, { silent: false }]);
+  });
+
+  it('navigates to audit logs with correct service parameter when Audit Logs is clicked', async () => {
+    await setupTest({
+      id: 1,
+      service: ServiceName.Cifs,
+      state: ServiceStatus.Running,
+      enable: false,
+    } as Service);
+
+    const urlOptionsService = spectator.inject(UrlOptionsService);
+    const router = spectator.inject(Router);
+    jest.spyOn(urlOptionsService, 'buildUrl').mockReturnValue('/system/audit/{"service":"SMB"}');
+    jest.spyOn(router, 'navigateByUrl');
+
+    await menu.open();
+    await menu.clickItem({ text: 'Audit Logs' });
+
+    expect(urlOptionsService.buildUrl).toHaveBeenCalledWith('/system/audit', {
+      service: AuditService.Smb,
+    });
+    expect(router.navigateByUrl).toHaveBeenCalledWith('/system/audit/{"service":"SMB"}');
   });
 });
