@@ -267,7 +267,7 @@ export class WebShareSharesFormComponent implements OnInit {
           this.dialog.error({
             title: this.translate.instant('Error Loading WebShares'),
             message: this.translate.instant('Could not retrieve existing WebShare configurations. Please check your connection and try again.'),
-            stackTrace: (error as Error)?.message,
+            stackTrace: error instanceof Error ? error.message : String(error),
           });
           this.slideInRef.close({ response: false, error: null });
         },
