@@ -2,7 +2,9 @@ import {
   AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal, inject,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,6 +32,7 @@ import { SelectOption } from 'app/interfaces/option.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import {
   externalSmbSharePath,
+  FcpSmbShareOptions,
   smbSharePurposeTooltips, SmbSharePurpose, smbSharePurposeLabels, SmbShare,
   TimeMachineSmbShareOptions,
   LegacySmbShareOptions, SmbShareOptions,
@@ -40,6 +43,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -87,6 +91,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxSelectComponent,
     IxCheckboxComponent,
     IxChipsComponent,
+    IxErrorsComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
@@ -246,6 +251,30 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   protected rootNodes = signal<ExplorerNodeData[]>([]);
 
+  private auditValidator(): ValidatorFn {
+    return (control): ValidationErrors | null => {
+      const auditGroup = control.value;
+      if (!auditGroup.enable) {
+        return null;
+      }
+
+      const watchList = auditGroup.watch_list || [];
+      const ignoreList = auditGroup.ignore_list || [];
+
+      if (watchList.length === 0 && ignoreList.length === 0) {
+        return {
+          auditRequiresGroups: {
+            message: this.translate.instant(
+              'At least one group must be specified in Watch List or Ignore List to enable audit logging.',
+            ),
+          },
+        };
+      }
+
+      return null;
+    };
+  }
+
   protected form = this.formBuilder.group({
     // Common for all share purposes
     purpose: [SmbSharePurpose.DefaultShare as SmbSharePurpose | null],
@@ -260,7 +289,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       enable: [false],
       watch_list: [[] as string[]],
       ignore_list: [[] as string[]],
-    }),
+    }, { validators: this.auditValidator() }),
 
     // Only relevant to legacy shares
     recyclebin: [false],
@@ -405,8 +434,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     ).subscribe((autoCreate) => {
       if (!autoCreate) {
         this.form.controls.dataset_naming_schema.setValue(null);
-      } else if (this.form.controls.dataset_naming_schema.value === null) {
-        this.form.controls.dataset_naming_schema.setValue('');
       }
     });
   }
@@ -525,6 +552,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         if (field === 'auto_quota' && control.value === null) {
           (control as FormControl).patchValue(0, { emitEvent: false });
         }
+
+        // For FCP_SHARE, force aapl_name_mangling to true and disable it
+        if (preset === SmbSharePurpose.FcpShare && field === 'aapl_name_mangling') {
+          (control as FormControl).patchValue(true, { emitEvent: false });
+          control.disable({ emitEvent: false });
+        }
       }
     });
   }
@@ -617,7 +650,17 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       smbShare.options = options;
     }
 
+    // For FCP_SHARE, ensure aapl_name_mangling is in options even though control is disabled
+    if (purpose === SmbSharePurpose.FcpShare) {
+      const fcpOptions = smbShare.options as FcpSmbShareOptions;
+      fcpOptions.aapl_name_mangling = true;
+    }
+
+    // Convert empty string to null for dataset_naming_schema to allow server defaults
     const timeMachineOptions = smbShare.options as TimeMachineSmbShareOptions;
+    if (timeMachineOptions?.dataset_naming_schema === '') {
+      timeMachineOptions.dataset_naming_schema = null;
+    }
 
     if (
       presetFields.includes('timemachine_quota')
@@ -791,8 +834,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   private updateExtensionsWarning(): void {
+    const purpose = this.form.controls.purpose.value;
+    const requiresExtensions = purpose === SmbSharePurpose.TimeMachineShare
+      || purpose === SmbSharePurpose.FcpShare;
     this.showExtensionsWarning.set(
-      !this.smbConfig()?.aapl_extensions && this.form.controls.purpose.value === SmbSharePurpose.TimeMachineShare,
+      !this.smbConfig()?.aapl_extensions && requiresExtensions,
     );
   }
 

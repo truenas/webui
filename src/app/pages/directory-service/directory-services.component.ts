@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -83,6 +84,7 @@ interface DataCard {
     MatList,
     MatListItem,
     TranslateModule,
+    MatTooltip,
   ],
 })
 export class DirectoryServicesComponent implements OnInit {
@@ -162,12 +164,12 @@ export class DirectoryServicesComponent implements OnInit {
         this.directoryServicesConfig.set(directoryServicesConfig);
         this.directoryServicesStatus.set(servicesState);
         this.isActiveDirectoryEnabled = servicesState.type === DirectoryServiceType.ActiveDirectory
-        && servicesState.status !== DirectoryServiceStatus.Disabled;
+          && servicesState.status !== DirectoryServiceStatus.Disabled;
         this.isLdapEnabled = servicesState.type === DirectoryServiceType.Ldap
-        && servicesState.status !== DirectoryServiceStatus.Disabled;
+          && servicesState.status !== DirectoryServiceStatus.Disabled;
 
         this.isIpaEnabled = servicesState.type === DirectoryServiceType.Ipa
-        && servicesState.status !== DirectoryServiceStatus.Disabled;
+          && servicesState.status !== DirectoryServiceStatus.Disabled;
         const adConfig = directoryServicesConfig?.configuration as ActiveDirectoryConfig;
         if (adConfig && directoryServicesConfig) {
           const items: Option[] = [
@@ -241,8 +243,8 @@ export class DirectoryServicesComponent implements OnInit {
               label: this.translate.instant(helptextDashboard.ldap.credentialType),
               value: directoryServicesConfig?.credential
                 ? this.translate.instant(
-                  credentialTypeLabels[directoryServicesConfig.credential.credential_type],
-                )
+                    credentialTypeLabels[directoryServicesConfig.credential.credential_type],
+                  )
                 : null,
             },
           );
@@ -313,11 +315,11 @@ export class DirectoryServicesComponent implements OnInit {
 
         // Update enabled states based on new status
         this.isActiveDirectoryEnabled = status.type === DirectoryServiceType.ActiveDirectory
-        && status.status !== DirectoryServiceStatus.Disabled;
+          && status.status !== DirectoryServiceStatus.Disabled;
         this.isLdapEnabled = status.type === DirectoryServiceType.Ldap
-        && status.status !== DirectoryServiceStatus.Disabled;
+          && status.status !== DirectoryServiceStatus.Disabled;
         this.isIpaEnabled = status.type === DirectoryServiceType.Ipa
-        && status.status !== DirectoryServiceStatus.Disabled;
+          && status.status !== DirectoryServiceStatus.Disabled;
 
         // Refresh the cards to update the UI with new status
         this.refreshCards();

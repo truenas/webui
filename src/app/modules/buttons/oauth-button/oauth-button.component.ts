@@ -169,7 +169,7 @@ export class OauthButtonComponent implements OnDestroy {
 
   private doCommonOauthLoginLogic(
     authFn: (
-      message: OauthMessage<MailOauthConfig> | OauthMessage<OauthProviderData> | OauthJiraMessage
+      message: OauthMessage<MailOauthConfig> | OauthMessage<OauthProviderData> | OauthJiraMessage,
     ) => void,
   ): void {
     this.window.removeEventListener('message', authFn, false);

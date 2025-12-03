@@ -177,7 +177,8 @@ describe('PoolManagerComponent – start over functionality', () => {
     // SPARE step activated
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Spare (Optional)');
     await wizard.fillStep({
-      'Select Disk for Spare VDEV': 'sda2 - HDD (20 GiB)',
+      'Disk Size': '20 GiB (HDD)',
+      Width: '1',
     });
     await wizard.clickNext();
 
@@ -231,7 +232,11 @@ describe('PoolManagerComponent – start over functionality', () => {
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('General Info');
     expect(await wizard.getStepValues()).toStrictEqual({
       Name: '',
-      Encryption: false,
+      Encryption: 'None',
+    });
+    // Fill in name before proceeding
+    await wizard.fillStep({
+      Name: 'newpool',
     });
     await wizard.clickNext();
 
@@ -264,7 +269,8 @@ describe('PoolManagerComponent – start over functionality', () => {
     // SPARE step activated and reset to default
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Spare (Optional)');
     expect(await wizard.getStepValues()).toStrictEqual({
-      'Select Disk for Spare VDEV': '',
+      'Disk Size': '',
+      Width: '',
     });
     await wizard.clickNext();
 
@@ -296,7 +302,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     });
 
     expect(await wizard.getConfigurationPreviewSummary()).toEqual({
-      'Name:': 'None',
+      'Name:': 'newpool',
       'Encryption:': 'None',
       'Total Raw Capacity:': '0 B',
     });

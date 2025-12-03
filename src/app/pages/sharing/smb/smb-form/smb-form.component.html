@@ -134,10 +134,11 @@
             [tooltip]="helptextSharingSmb.auditLogTooltip | translate"
           ></ix-checkbox>
 
+          <ix-errors [control]="form.controls.audit"></ix-errors>
+
           @if (form.value.audit.enable) {
             <ix-chips
               formControlName="watch_list"
-              [hint]="'Keep this list empty to Watch All' | translate"
               [label]="'Watch List' | translate"
               [tooltip]="helptextSharingSmb.watchListTooltip | translate"
               [autocompleteProvider]="groupProvider"
@@ -209,7 +210,7 @@
               ></ix-checkbox>
             }
 
-            @if (form.controls.aapl_name_mangling.enabled) {
+            @if (form.controls.aapl_name_mangling.enabled || form.controls.purpose.value === SmbPresetType.FcpShare) {
               <ix-checkbox
                 formControlName="aapl_name_mangling"
                 [label]="helptextSharingSmb.aaplNameManglingLabel | translate"

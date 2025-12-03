@@ -24,7 +24,7 @@ export const helptextServiceSsh = {
 
   tcpfwdTooltip: T('Set to allow users to bypass firewall restrictions\
  using the SSH port <a\
- href="https://www.symantec.com/connect/articles/ssh-port-forwarding"\
+ href="https://www.ssh.com/academy/ssh/tunneling-example"\
  target="_blank">forwarding feature</a>.'),
 
   compressionTooltip: T('Set to attempt to reduce latency over slow networks.'),

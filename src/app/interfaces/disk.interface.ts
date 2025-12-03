@@ -3,6 +3,7 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
+import { SedStatus } from 'app/enums/sed-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnclosureAndSlot, TemperatureAgg } from 'app/interfaces/storage.interface';
 
@@ -28,6 +29,8 @@ export interface Disk {
   transfermode: string;
   type: DiskType;
   zfs_guid: string;
+  sed?: boolean | null;
+  sed_status?: SedStatus;
 }
 
 export interface StorageDashboardDisk extends Disk {
@@ -54,6 +57,11 @@ export interface ExtraDiskQueryOptions {
      * Will join pool name for each disk.
      */
     pools?: boolean;
+
+    /**
+     * Will include SED status for each disk.
+     */
+    sed_status?: boolean;
   };
 }
 
@@ -86,6 +94,7 @@ export interface DetailsDisk {
   blocks: number;
   serial_lunid: string;
   rotationrate: number | null;
+  sed_status?: SedStatus;
   stripesize: number;
   parts: unknown[];
   dif: boolean;

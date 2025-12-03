@@ -1,0 +1,21 @@
+.environment-variable {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+}
+
+.image-field {
+  align-items: end;
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+
+  .input {
+    flex: 1;
+  }
+
+  button {
+    margin-bottom: 1.34375em;
+  }
+}

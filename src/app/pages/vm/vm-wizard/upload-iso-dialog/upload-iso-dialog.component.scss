@@ -1,4 +1,10 @@
+@import 'scss-imports/variables';
+
 :host {
   display: block;
-  min-width: 370px;
+  width: 450px;
+
+  @media(max-width: $breakpoint-md) {
+    width: 100%;
+  }
 }

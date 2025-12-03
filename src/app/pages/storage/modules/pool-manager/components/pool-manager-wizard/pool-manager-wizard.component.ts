@@ -32,6 +32,7 @@ import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components
 import {
   DownloadKeyDialog, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
+import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { PoolCreationWizardStep, getPoolCreationWizardStepIndex } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -124,8 +125,8 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   protected readonly PoolCreationWizardStep = PoolCreationWizardStep;
 
-  get hasEncryption(): boolean {
-    return Boolean(this.state.encryption);
+  get hasSoftwareEncryption(): boolean {
+    return this.state.encryptionType === EncryptionType.Software;
   }
 
   get isFormDirty(): boolean {
@@ -155,10 +156,6 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  protected existingPoolHasSpares(): boolean {
-    return !!this.existingPool?.topology?.spare?.length;
-  }
-
   getTopLevelWarningForStep(step: PoolCreationWizardStep): string | null | undefined {
     return this.topLevelWarningsForEachStep?.[step];
   }
@@ -174,31 +171,36 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   createPool(): void {
     const payload = this.prepareCreatePayload();
 
-    this.dialogService.jobDialog(
-      this.api.job('pool.create', [payload]),
-      { title: this.translate.instant('Create Pool') },
-    )
-      .afterClosed()
-      .pipe(
-        switchMap((job) => {
-          if (!this.hasEncryption) {
-            return of(null);
-          }
+    // If SED encryption is selected and a password was entered, update global SED password first
+    const sedPasswordUpdate$ = this.state.encryptionType === EncryptionType.Sed && this.state.sedPassword
+      ? this.api.call('system.advanced.update', [{ sed_passwd: this.state.sedPassword }])
+      : of(null);
 
-          return this.matDialog.open<DownloadKeyDialog, DownloadKeyDialogParams>(DownloadKeyDialog, {
-            disableClose: true,
-            data: job.result,
-          }).afterClosed();
-        }),
-        this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.generalStep?.form?.markAsPristine();
-        this.enclosureStep?.form?.markAsPristine();
-        this.snackbar.success(this.translate.instant('Pool created successfully'));
-        this.router.navigate(['/storage']);
-      });
+    sedPasswordUpdate$.pipe(
+      switchMap(() => {
+        return this.dialogService.jobDialog(
+          this.api.job('pool.create', [payload]),
+          { title: this.translate.instant('Create Pool') },
+        ).afterClosed();
+      }),
+      switchMap((job) => {
+        if (!this.hasSoftwareEncryption) {
+          return of(null);
+        }
+
+        return this.matDialog.open<DownloadKeyDialog, DownloadKeyDialogParams>(DownloadKeyDialog, {
+          disableClose: true,
+          data: job.result,
+        }).afterClosed();
+      }),
+      this.errorHandler.withErrorHandler(),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.generalStep?.form?.markAsPristine();
+      this.enclosureStep?.form?.markAsPristine();
+      this.snackbar.success(this.translate.instant('Pool created successfully'));
+      this.router.navigate(['/storage']);
+    });
   }
 
   onStepActivated(step: PoolCreationWizardStep): void {
@@ -263,7 +265,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       name: this.state.name,
       topology: topologyToPayload(this.state.topology),
       allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,
-      encryption: this.hasEncryption,
+      encryption: this.hasSoftwareEncryption,
     };
 
     if (this.state.encryption) {
@@ -271,6 +273,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
         generate_key: true,
         algorithm: this.state.encryption,
       };
+    }
+
+    if (this.state.encryptionType === EncryptionType.Sed) {
+      payload.all_sed = true;
     }
 
     return payload;

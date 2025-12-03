@@ -1,0 +1,27 @@
+@if (isLoading()) {
+  <ngx-skeleton-loader class="loader"></ngx-skeleton-loader>
+} @else if (hasDevicesToAdd()) {
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    ixTest="add-device"
+    [matMenuTriggerFor]="addDeviceMenu"
+  >
+    {{ 'Add' | translate }}
+  </button>
+
+  <mat-menu #addDeviceMenu="matMenu">
+    @if (availableGpuDevices().length) {
+      <h4 class="menu-header">{{ 'GPU Devices' | translate }}</h4>
+      @for (gpu of availableGpuDevices(); track gpu.pciAddress) {
+        <button
+          mat-menu-item
+          [ixTest]="['add-gpu-device', gpu.description]"
+          (click)="addGpu(gpu)"
+        >
+          {{ gpu.description }}
+        </button>
+      }
+    }
+  </mat-menu>
+}

@@ -157,7 +157,7 @@ export class UpdateComponent implements OnInit {
       return '';
     }
 
-    return this.newVersion()?.manifest?.changelog.replace(/\n/g, '\n');
+    return this.newVersion()?.manifest?.changelog.replace(/\n/g, '<br>');
   });
 
   protected readonly releaseNotesContext = computed(() => ({

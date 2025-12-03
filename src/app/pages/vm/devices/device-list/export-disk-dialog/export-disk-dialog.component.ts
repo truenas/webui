@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogRef,
@@ -18,6 +18,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { validateNotPoolRoot } from 'app/modules/forms/ix-forms/validators/validators';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -75,35 +76,11 @@ export class ExportDiskDialogComponent {
     value: format.value,
   })));
 
-  /**
-   * Validates that the selected path is not a pool root or /mnt itself.
-   * Pool roots are paths like /mnt/poolname with no subdirectories.
-   * The backend requires a child dataset to be selected.
-   */
-  private readonly validateNotPoolRoot = (control: AbstractControl): ValidationErrors | null => {
-    const path = control.value?.trim() as string;
-    if (!path) {
-      return null; // Let required validator handle empty values
-    }
-
-    // Normalize path by removing trailing slashes for consistent validation
-    const normalizedPath = path.replace(/\/+$/, '');
-
-    // Reject /mnt itself or pool root pattern: /mnt/poolname (no subdirectories)
-    const poolRootPattern = /^\/mnt\/[^/]+$/;
-    if (normalizedPath === '/mnt' || poolRootPattern.test(normalizedPath)) {
-      return {
-        poolRoot: {
-          message: this.translate.instant(this.helptext.export_disk_pool_root_error),
-        },
-      };
-    }
-
-    return null;
-  };
-
   form = this.fb.group({
-    destinationDir: ['', [Validators.required, this.validateNotPoolRoot]],
+    destinationDir: ['', [
+      Validators.required,
+      validateNotPoolRoot(this.translate.instant(this.helptext.export_disk_pool_root_error)),
+    ]],
     imageName: [this.generateDefaultImageName(), [Validators.required]],
     format: ['qcow2', [Validators.required]],
   });

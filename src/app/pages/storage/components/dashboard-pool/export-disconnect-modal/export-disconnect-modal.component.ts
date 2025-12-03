@@ -215,7 +215,7 @@ export class ExportDisconnectModalComponent implements OnInit {
         this.showServicesToBeRestartedDialog(error.job.exc_info.extra);
         return;
       }
-      if (error.job.extra && error.job.extra.code === 'unstoppable_processes') {
+      if (error.job.extra?.code === 'unstoppable_processes') {
         this.showUnstoppableErrorDialog(error.job);
         return;
       }

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -19,6 +20,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
+import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
@@ -42,6 +44,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     RequiresRolesDirective,
     MatMenuItem,
     TranslateModule,
+    MatTooltip,
   ],
 })
 export class ServiceExtraActionsComponent {
@@ -91,6 +94,9 @@ export class ServiceExtraActionsComponent {
         break;
       case ServiceName.Cifs:
         this.slideIn.open(ServiceSmbComponent);
+        break;
+      case ServiceName.WebShare:
+        this.slideIn.open(ServiceWebshareComponent);
         break;
       default:
         break;
