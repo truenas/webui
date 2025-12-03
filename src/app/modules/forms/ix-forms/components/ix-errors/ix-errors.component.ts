@@ -95,8 +95,18 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
     this.statusChangeSubscription?.unsubscribe();
   }
 
+  /**
+   * Subscribes to control status changes to update error messages.
+   *
+   * This manually works around Angular issue where statusChanges doesn't emit
+   * on initial control setup: https://github.com/angular/angular/issues/10816
+   *
+   * We also handle errors immediately on subscription if the control is not
+   * in PENDING state, ensuring validation errors present at initialization
+   * (e.g., when a form is populated with invalid data from the backend)
+   * are displayed right away without requiring user interaction.
+   */
   private subscribeToControlStatusChanges(): void {
-    // This manually works around: https://github.com/angular/angular/issues/10816
     this.statusChangeSubscription?.unsubscribe();
     this.statusChangeSubscription = this.control().statusChanges.pipe(
       filter((status) => status !== 'PENDING'),
@@ -105,8 +115,10 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
       this.handleErrors();
     });
 
-    // Handle errors immediately in case control already has errors on init
-    this.handleErrors();
+    // Handle errors immediately if control is not in PENDING state
+    if (this.control().status !== 'PENDING') {
+      this.handleErrors();
+    }
   }
 
   private handleErrors(): void {

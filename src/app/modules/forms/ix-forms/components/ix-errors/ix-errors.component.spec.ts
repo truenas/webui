@@ -49,4 +49,33 @@ describe('IxErrorsComponent', () => {
 
     expect(spectator.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Errors in Name: Minimum value is 10');
   });
+
+  it('does not announce errors when control is in PENDING state', () => {
+    jest.clearAllMocks();
+
+    const asyncControl = new FormControl('', {
+      asyncValidators: () => new Promise(() => {}),
+    });
+
+    spectator.setHostInput('control', asyncControl);
+    spectator.detectComponentChanges();
+
+    expect(spectator.inject(LiveAnnouncer).announce).not.toHaveBeenCalled();
+  });
+
+  it('clears errors when control becomes valid', () => {
+    const dynamicControl = new FormControl('', [Validators.required]);
+
+    spectator.setHostInput('control', dynamicControl);
+    spectator.detectComponentChanges();
+
+    expect(spectator.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Errors in Name: Name is required');
+
+    jest.clearAllMocks();
+
+    dynamicControl.setValue('valid value');
+    spectator.detectComponentChanges();
+
+    expect(spectator.component.messages).toEqual([]);
+  });
 });
