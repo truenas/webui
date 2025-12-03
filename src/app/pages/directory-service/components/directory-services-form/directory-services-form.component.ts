@@ -105,7 +105,7 @@ export class DirectoryServicesFormComponent implements OnInit {
     enable: [false, Validators.required],
     enable_account_cache: [true, Validators.required],
     enable_dns_updates: [false, Validators.required],
-    timeout: [30, [Validators.required, Validators.min(1), Validators.max(40)]],
+    timeout: [30, [Validators.required, Validators.min(5), Validators.max(60)]],
     kerberos_realm: [null],
   });
 

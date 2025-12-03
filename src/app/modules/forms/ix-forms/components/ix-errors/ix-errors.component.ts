@@ -104,6 +104,9 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
     ).subscribe(() => {
       this.handleErrors();
     });
+
+    // Handle errors immediately in case control already has errors on init
+    this.handleErrors();
   }
 
   private handleErrors(): void {

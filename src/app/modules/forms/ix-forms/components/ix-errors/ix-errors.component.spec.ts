@@ -40,4 +40,13 @@ describe('IxErrorsComponent', () => {
 
     expect(spectator.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Errors in Name: Custom error');
   });
+
+  it('displays errors immediately when control has errors on init', () => {
+    const invalidControl = new FormControl(5, [Validators.min(10)]);
+
+    spectator.setHostInput('control', invalidControl);
+    spectator.detectComponentChanges();
+
+    expect(spectator.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Errors in Name: Minimum value is 10');
+  });
 });
