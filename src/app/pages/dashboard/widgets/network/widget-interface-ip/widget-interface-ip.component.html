@@ -3,14 +3,14 @@
     <mat-card *ixWithLoadingState="ipAddressList() as ipList" class="card">
       <mat-card-content class="card-content">
         <div class="header">
-          <h3>{{ widgetName() | translate }}</h3>
+          <h3>{{ widgetName() }}</h3>
         </div>
         <div class="ip-addresses" role="list" [attr.aria-label]="'Network addresses' | translate">
           @for (ipData of ipList; track ipData.address) {
             <div class="ip-line" role="listitem">
-              <span class="ip-address" [attr.aria-label]="'IP Address' | translate">{{ ipData.address }}</span>
+              <span class="ip-address">{{ ipData.address }}</span>
               @if (ipData.label) {
-                <span class="ip-label" [attr.aria-label]="ipData.label">{{ ipData.label }}</span>
+                <span class="ip-label">{{ ipData.label }}</span>
               }
             </div>
           }
@@ -21,7 +21,7 @@
     <ix-widget-datapoint
       *ixWithLoadingState="ips() as ips"
       [size]="size()"
-      [label]="widgetName() | translate"
+      [label]="widgetName()"
       [text]="ips"
     ></ix-widget-datapoint>
   }

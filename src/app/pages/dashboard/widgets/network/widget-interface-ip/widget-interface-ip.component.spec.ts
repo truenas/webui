@@ -202,20 +202,16 @@ describe('WidgetInterfaceIpComponent', () => {
       haSpectator.detectChanges();
       const ipAddressesList = haSpectator.query('.ip-addresses');
       expect(ipAddressesList).toHaveAttribute('role', 'list');
-      expect(ipAddressesList).toHaveAttribute('aria-label');
+      expect(ipAddressesList).toHaveAttribute('aria-label', 'Network addresses');
 
       const ipLines = haSpectator.queryAll('.ip-line');
       ipLines.forEach((line) => {
         expect(line).toHaveAttribute('role', 'listitem');
-
-        const ipAddress = line.querySelector('.ip-address');
-        expect(ipAddress).toHaveAttribute('aria-label', 'IP Address');
       });
 
-      const ipLabels = haSpectator.queryAll('.ip-label');
-      ipLabels.forEach((ipLabel) => {
-        expect(ipLabel).toHaveAttribute('aria-label');
-      });
+      // Verify content is present without redundant aria-labels
+      expect(haSpectator.queryAll('.ip-address')).not.toHaveLength(0);
+      expect(haSpectator.queryAll('.ip-label')).not.toHaveLength(0);
     });
 
     it('renders empty list when interface is not found', () => {
@@ -302,16 +298,11 @@ describe('WidgetInterfaceIpComponent', () => {
       expect(ipLines[2].querySelector('.ip-label')).toHaveText('(Other Controller)');
     });
 
-    it('verifies aria-label attributes match label text', () => {
+    it('has proper container accessibility label', () => {
       haSpectatorWithOtherIp.detectChanges();
-      const ipLabels = haSpectatorWithOtherIp.queryAll('.ip-label');
-
-      expect(ipLabels).toHaveLength(3);
-      ipLabels.forEach((ipLabel) => {
-        const ariaLabel = ipLabel.getAttribute('aria-label');
-        const labelText = ipLabel.textContent?.trim();
-        expect(ariaLabel).toBe(labelText);
-      });
+      const container = haSpectatorWithOtherIp.query('.ip-addresses');
+      expect(container).toHaveAttribute('role', 'list');
+      expect(container).toHaveAttribute('aria-label', 'Network addresses');
     });
   });
 

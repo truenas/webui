@@ -49,7 +49,6 @@ describe('SnapshotAddFormComponent', () => {
       mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
       mockProvider(SlideInRef, slideInRef),
-      mockAuth(),
     ],
   });
 
