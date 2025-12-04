@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, output, signal,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, output, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -78,8 +78,10 @@ export class UnlockSedDisksComponent {
   });
 
   protected isUnlocking = signal(false);
+  protected exceptionsCount = signal(0);
 
-  protected get availableDisksForException(): Option[] {
+  protected availableDisksForException = computed(() => {
+    this.exceptionsCount();
     const usedDiskNames = new Set(
       this.form.controls.exceptions.controls.map((control) => control.controls.diskName.value),
     );
@@ -89,7 +91,7 @@ export class UnlockSedDisksComponent {
         label: `${disk.name} - ${disk.model} (${disk.serial})`,
         value: disk.name,
       }));
-  }
+  });
 
   protected getOptionsForException(index: number): Observable<Option[]> {
     const currentDiskName = this.form.controls.exceptions.at(index).controls.diskName.value;
@@ -110,7 +112,7 @@ export class UnlockSedDisksComponent {
   }
 
   protected addException(): void {
-    const available = this.availableDisksForException;
+    const available = this.availableDisksForException();
     if (available.length === 0) return;
 
     this.form.controls.exceptions.push(
@@ -119,10 +121,12 @@ export class UnlockSedDisksComponent {
         password: [''],
       }),
     );
+    this.exceptionsCount.set(this.form.controls.exceptions.length);
   }
 
   protected removeException(index: number): void {
     this.form.controls.exceptions.removeAt(index);
+    this.exceptionsCount.set(this.form.controls.exceptions.length);
   }
 
   protected onSkip(): void {
@@ -174,9 +178,12 @@ export class UnlockSedDisksComponent {
           }));
           this.unlocked.emit();
         } else {
+          const errorMessages = errors
+            .map((err, i) => `${bulkParams[results.indexOf(err)]?.name || this.translate.instant('Disk {index}', { index: i + 1 })}: ${err.error}`)
+            .join('\n');
           this.dialogService.error({
-            title: this.translate.instant('Error'),
-            message: errors[0].error,
+            title: this.translate.instant('Failed to Unlock Disks'),
+            message: errorMessages,
           });
         }
       },
