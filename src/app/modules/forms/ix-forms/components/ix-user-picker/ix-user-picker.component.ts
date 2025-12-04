@@ -317,6 +317,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
       distinctUntilChanged(),
       filter((selectedOption) => selectedOption === newOption),
       switchMap(() => this.slideIn.open(UserFormComponent, { wide: true })),
+      filter((response: SlideInResponse) => !response.error),
       tap((response: SlideInResponse<User>) => {
         // TODO: Handle it better. Show all users and select newly created.
         this.filterChanged$.next(this.getValueFromSlideInResponse(response));
