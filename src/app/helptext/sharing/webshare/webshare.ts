@@ -13,6 +13,9 @@ export const helptextSharingWebshare = {
   webshare_path_label: T('Path'),
   webshare_path_tooltip: T('The directory path to share. Must be under /mnt/<poolname>/. All subdirectories will be accessible.'),
 
+  webshare_is_home_base_label: T('Home Share'),
+  webshare_is_home_base_tooltip: T('If set, this share is used as the base path for user home directories. Only one share can have this enabled.'),
+
   webshare_warning: T('WebShares are recursive - all subdirectories within the selected path will be accessible to authorized users based on their filesystem permissions.'),
 
   validation_errors: {
@@ -25,6 +28,7 @@ export const helptextSharingWebshare = {
     path_nested: T('This path is already covered by the WebShare "{name}" at {path}'),
     path_contains_existing: T('This path would include the existing WebShare "{name}" at {path}'),
     path_not_found: T('Path does not exist'),
+    home_share_exists: T('Another WebShare "{name}" is already designated as the home share'),
   },
 
   delete_dialog_title: T('Delete WebShare'),

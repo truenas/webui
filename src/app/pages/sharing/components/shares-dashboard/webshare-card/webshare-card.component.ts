@@ -209,6 +209,7 @@ export class WebShareCardComponent implements OnInit {
         isNew: false,
         name: row.name,
         path: row.path,
+        isHomeBase: row.isHomeBase,
       },
     });
 

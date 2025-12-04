@@ -96,11 +96,14 @@ export class WebShareService {
    * @param shares - Array of WebShare objects
    * @returns Array of WebShare table rows
    */
-  transformToTableRows(shares: { id: number; name: string; path: string }[]): WebShareTableRow[] {
+  transformToTableRows(
+    shares: { id: number; name: string; path: string; is_home_base?: boolean }[],
+  ): WebShareTableRow[] {
     return shares.map((share) => ({
       id: share.id,
       name: share.name,
       path: share.path,
+      isHomeBase: share.is_home_base ?? false,
     }));
   }
 }
