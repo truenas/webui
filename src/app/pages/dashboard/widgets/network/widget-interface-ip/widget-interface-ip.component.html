@@ -10,7 +10,7 @@
             <div class="ip-line" role="listitem">
               <span class="ip-address" [attr.aria-label]="'IP Address' | translate">{{ ipData.address }}</span>
               @if (ipData.label) {
-                <span class="ip-label" [attr.aria-label]="'Type' | translate">{{ ipData.label | translate }}</span>
+                <span class="ip-label" [attr.aria-label]="ipData.label">{{ ipData.label }}</span>
               }
             </div>
           }

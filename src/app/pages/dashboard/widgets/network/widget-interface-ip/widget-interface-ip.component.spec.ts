@@ -197,6 +197,28 @@ describe('WidgetInterfaceIpComponent', () => {
       expect(ipLines[1].querySelector('.ip-address')).toHaveText('10.220.16.58');
       expect(ipLines[1].querySelector('.ip-label')).toHaveText('(This Controller)');
     });
+
+    it('has proper accessibility attributes', () => {
+      haSpectator.detectChanges();
+      const ipAddressesList = haSpectator.query('.ip-addresses');
+      expect(ipAddressesList).toHaveAttribute('role', 'list');
+      expect(ipAddressesList).toHaveAttribute('aria-label');
+
+      const ipLines = haSpectator.queryAll('.ip-line');
+      ipLines.forEach((line) => {
+        expect(line).toHaveAttribute('role', 'listitem');
+
+        const ipAddress = line.querySelector('.ip-address');
+        expect(ipAddress).toHaveAttribute('aria-label', 'IP Address');
+      });
+
+      const ipLabels = haSpectator.queryAll('.ip-label');
+      ipLabels.forEach((ipLabel) => {
+        expect(ipLabel).toHaveAttribute('aria-label');
+        const ariaLabel = ipLabel.getAttribute('aria-label');
+        expect(['(Virtual IP)', '(This Controller)', '(Other Controller)']).toContain(ariaLabel);
+      });
+    });
   });
 
   describe('HA mode with other controller IPs', () => {
@@ -261,6 +283,18 @@ describe('WidgetInterfaceIpComponent', () => {
 
       expect(ipLines[2].querySelector('.ip-address')).toHaveText('10.220.39.128');
       expect(ipLines[2].querySelector('.ip-label')).toHaveText('(Other Controller)');
+    });
+
+    it('verifies aria-label attributes match label text', () => {
+      haSpectatorWithOtherIp.detectChanges();
+      const ipLabels = haSpectatorWithOtherIp.queryAll('.ip-label');
+
+      expect(ipLabels).toHaveLength(3);
+      ipLabels.forEach((ipLabel) => {
+        const ariaLabel = ipLabel.getAttribute('aria-label');
+        const labelText = ipLabel.textContent?.trim();
+        expect(ariaLabel).toBe(labelText);
+      });
     });
   });
 });

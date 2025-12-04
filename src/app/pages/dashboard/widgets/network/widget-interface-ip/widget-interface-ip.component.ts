@@ -89,10 +89,14 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
    * This shared logic prevents duplication between string and structured data formatters.
    */
   private categorizeIpAddresses(
-    networkInterface: NetworkInterface,
+    networkInterface: NetworkInterface | undefined,
     interfaceType: NetworkInterfaceAliasType,
   ): CategorizedIpAddresses {
-    const stateAliases = networkInterface?.state?.aliases.filter((alias) => alias.type === interfaceType) || [];
+    if (!networkInterface) {
+      return { virtual: [], failover: [], other: [] };
+    }
+
+    const stateAliases = networkInterface.state?.aliases.filter((alias) => alias.type === interfaceType) || [];
     const virtualAliases = networkInterface.failover_virtual_aliases?.filter(
       (alias) => alias.type === interfaceType,
     ) || [];
@@ -142,17 +146,17 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
 
     // 1. Virtual IPs
     categorized.virtual.forEach((alias) => {
-      ipList.push({ address: alias.address, label: '(Virtual IP)' });
+      ipList.push({ address: alias.address, label: `(${this.translate.instant('Virtual IP')})` });
     });
 
     // 2. This controller's IPs
     categorized.failover.forEach((alias) => {
-      ipList.push({ address: alias.address, label: '(This Controller)' });
+      ipList.push({ address: alias.address, label: `(${this.translate.instant('This Controller')})` });
     });
 
     // 3. Other controller's IPs
     categorized.other.forEach((alias) => {
-      ipList.push({ address: alias.address, label: '(Other Controller)' });
+      ipList.push({ address: alias.address, label: `(${this.translate.instant('Other Controller')})` });
     });
 
     return ipList;
