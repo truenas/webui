@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, output,
+  ChangeDetectionStrategy, Component, computed, input, output,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { App } from 'app/interfaces/app.interface';
@@ -7,6 +7,7 @@ import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/a
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { AppNotesCardComponent } from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-card.component';
 import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-apps/app-workloads-card/app-workloads-card.component';
+import { isExternalApp } from 'app/pages/apps/utils/app-type.utils';
 
 @Component({
   selector: 'ix-app-details-panel',
@@ -26,4 +27,8 @@ export class AppDetailsPanelComponent {
   readonly startApp = output();
   readonly stopApp = output();
   readonly closeMobileDetails = output();
+
+  protected readonly isExternalApp = computed(() => {
+    return isExternalApp(this.app());
+  });
 }

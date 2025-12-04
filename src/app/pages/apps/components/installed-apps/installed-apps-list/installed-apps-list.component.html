@@ -1,9 +1,9 @@
 <div class="table-header">
   <h2>{{ 'Applications' | translate }}</h2>
 
-  @if (hasCheckedApps) {
+  @if (hasCheckedApps()) {
     <ix-installed-apps-list-bulk-actions
-      [checkedApps]="checkedApps"
+      [checkedApps]="checkedApps()"
       (bulkStart)="onBulkStart()"
       (bulkStop)="onBulkStop()"
       (bulkUpdate)="onBulkUpdate()"
@@ -24,7 +24,7 @@
   ></ix-basic-search>
 </div>
 
-@if ((dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading())) {
+@if ((sortedApps().length && !filteredApps().length) || (!sortedApps().length && !isLoading())) {
   <ix-empty [conf]="entityEmptyConf"></ix-empty>
 } @else {
   <div
@@ -38,12 +38,12 @@
     <div class="app-header-row">
       <div>
         <span class="name-header">
-          @if (dataSource.length) {
+          @if (sortedApps().length) {
             <mat-checkbox
               color="primary"
               ixTest="select-all-app"
-              [checked]="allAppsChecked"
-              [indeterminate]="!allAppsChecked && !!selection.selected.length"
+              [checked]="allAppsChecked()"
+              [indeterminate]="!allAppsChecked() && !!selection.selected.length"
               (change)="toggleAppsChecked($event.checked)"
             ></mat-checkbox>
           }
@@ -68,11 +68,11 @@
       <div
         class="app-update-header"
         [matColumnDef]="sortableField.Updates"
-        [mat-sort-header]="hasUpdates ? sortableField.Updates : ''"
-        [disabled]="!hasUpdates"
+        [mat-sort-header]="hasUpdates() ? sortableField.Updates : ''"
+        [disabled]="!hasUpdates()"
       >
         <span>{{ 'Updates' | translate }}</span>
-        @if (hasUpdates) {
+        @if (hasUpdates()) {
           <ix-icon
             class="has-updates-icon"
             name="mdi-alert-circle"
@@ -94,25 +94,121 @@
     (matSortChange)="setDatasourceWithSort($event)"
   >
     <div class="app-inner">
-      <div class="apps-rows">
-        @for (app of filteredApps; track app.name) {
-          <ix-app-row
+      @if (sortedApps().length) {
+        <div class="utilization-summary" role="status" aria-live="polite" aria-atomic="true">
+          @if (totalUtilization$ | async; as utilization) {
+            <div class="cell cell-checkbox"></div>
+            <div class="cell cell-name">
+              <strong>{{ 'Apps Utilization' | translate }}</strong>
+            </div>
+            <div class="cell cell-status"></div>
+            <div class="cell cell-cpu">
+              <strong>{{ (utilization.cpu || 0).toFixed(0) }}%</strong>
+            </div>
+            <div class="cell cell-ram">
+              <strong>{{ utilization.memory | ixFileSize }}</strong>
+            </div>
+            <div class="cell cell-io">
+              <strong>
+                {{ utilization.blkioRead | ixFileSize }} - {{ utilization.blkioWrite | ixFileSize }}
+              </strong>
+            </div>
+            <div class="cell cell-network">
+              <strong>
+                {{ utilization.networkRxBits | ixNetworkSpeed }}
+                -
+                {{ utilization.networkTxBits | ixNetworkSpeed }}
+              </strong>
+            </div>
+            <div class="cell cell-update"></div>
+            <div class="cell cell-action"></div>
+          }
+        </div>
+      }
+
+      @if (filteredTruenasApps().length) {
+        <div class="apps-section">
+          <h3
+            class="section-header"
+            role="button"
             tabindex="0"
-            [app]="app"
-            [stats]="getAppStats(app.name) | async"
-            [class.selected]="selectedApp?.id === app.id"
-            [selected]="selection.isSelected(app.id)"
-            [job]="appJobs.get(app.name)"
-            (startApp)="start(app.name)"
-            (stopApp)="stop(app.name)"
-            (restartApp)="restart(app.name)"
-            (clickStatus)="openStatusDialog(app.name)"
-            (selectionChange)="selection.toggle(app.id)"
-            (click)="viewDetails(app)"
-            (keydown.enter)="viewDetails(app)"
-          ></ix-app-row>
-        }
-      </div>
+            aria-live="polite"
+            [attr.aria-expanded]="truenasAppsExpanded()"
+            [attr.aria-controls]="'truenas-apps-section'"
+            [attr.aria-label]="'Toggle TrueNAS Apps section' | translate"
+            (click)="truenasAppsExpanded.set(!truenasAppsExpanded())"
+            (keydown.enter)="truenasAppsExpanded.set(!truenasAppsExpanded()); $event.preventDefault()"
+            (keydown.space)="truenasAppsExpanded.set(!truenasAppsExpanded()); $event.preventDefault()"
+          >
+            <ix-icon [name]="truenasAppsExpanded() ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
+            {{ 'Apps managed by TrueNAS' | translate }}
+            <span class="app-count">({{ filteredTruenasApps().length }})</span>
+          </h3>
+          @if (truenasAppsExpanded()) {
+            <div class="apps-rows" id="truenas-apps-section">
+              @for (app of filteredTruenasApps(); track app.name) {
+                <ix-app-row
+                  tabindex="0"
+                  [app]="app"
+                  [stats]="getAppStats(app.name) | async"
+                  [class.selected]="selectedApp()?.id === app.id"
+                  [selected]="selection.isSelected(app.id)"
+                  [job]="appJobs.get(app.name)"
+                  (startApp)="start(app.name)"
+                  (stopApp)="stop(app.name)"
+                  (restartApp)="restart(app.name)"
+                  (clickStatus)="openStatusDialog(app.name)"
+                  (selectionChange)="toggleAppSelection(app.id)"
+                  (click)="viewDetails(app)"
+                  (keydown.enter)="viewDetails(app)"
+                ></ix-app-row>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      @if (filteredExternalApps().length) {
+        <div class="apps-section">
+          <h3
+            class="section-header"
+            role="button"
+            tabindex="0"
+            aria-live="polite"
+            [attr.aria-expanded]="externalAppsExpanded()"
+            [attr.aria-controls]="'external-apps-section'"
+            [attr.aria-label]="'Toggle External Apps section' | translate"
+            (click)="externalAppsExpanded.set(!externalAppsExpanded())"
+            (keydown.enter)="externalAppsExpanded.set(!externalAppsExpanded()); $event.preventDefault()"
+            (keydown.space)="externalAppsExpanded.set(!externalAppsExpanded()); $event.preventDefault()"
+          >
+            <ix-icon [name]="externalAppsExpanded() ? 'mdi-chevron-down' : 'mdi-chevron-right'"></ix-icon>
+            {{ 'External Apps' | translate }}
+            <span class="app-count">({{ filteredExternalApps().length }})</span>
+          </h3>
+          @if (externalAppsExpanded()) {
+            <div class="apps-rows" id="external-apps-section">
+              @for (app of filteredExternalApps(); track app.name) {
+                <ix-app-row
+                  tabindex="0"
+                  [app]="app"
+                  [stats]="getAppStats(app.name) | async"
+                  [class.selected]="selectedApp()?.id === app.id"
+                  [selected]="selection.isSelected(app.id)"
+                  [job]="appJobs.get(app.name)"
+                  (startApp)="start(app.name)"
+                  (stopApp)="stop(app.name)"
+                  (restartApp)="restart(app.name)"
+                  (clickStatus)="openStatusDialog(app.name)"
+                  (selectionChange)="toggleAppSelection(app.id)"
+                  (click)="viewDetails(app)"
+                  (keydown.enter)="viewDetails(app)"
+                ></ix-app-row>
+              }
+            </div>
+          }
+        </div>
+      }
     </div>
   </div>
 }

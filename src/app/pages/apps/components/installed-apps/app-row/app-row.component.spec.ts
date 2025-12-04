@@ -21,6 +21,7 @@ describe('AppRowComponent', () => {
     name: 'app_name',
     state: AppState.Running,
     metadata: { icon: 'https://image/' },
+    source: 'TRUENAS',
   } as App;
 
   const stats = {
