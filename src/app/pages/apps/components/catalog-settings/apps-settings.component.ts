@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import {
   FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
@@ -60,7 +59,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
     RequiresRolesDirective,
     TestDirective,
     TranslateModule,
-    AsyncPipe,
   ],
   providers: [
     DockerStore,
@@ -76,13 +74,11 @@ export class AppsSettingsComponent implements OnInit {
   private translate = inject(TranslateService);
   private urlValidationService = inject(UrlValidationService);
 
-  protected hasNvidiaCard$ = this.api.call('docker.nvidia_present');
   protected isFormLoading = signal(false);
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
   protected form = this.fb.nonNullable.group({
     preferred_trains: [[] as string[], Validators.required],
-    nvidia: [null as boolean | null],
     enable_image_updates: [true],
     address_pools: new FormArray<FormGroup<{
       base: FormControl<string>;
@@ -100,7 +96,6 @@ export class AppsSettingsComponent implements OnInit {
 
   readonly tooltips = {
     preferred_trains: helptextApps.settingsForm.preferredTrains.tooltip,
-    install_nvidia_driver: helptextApps.settingsForm.installNvidiaDriver.tooltip,
     registry_mirrors: helptextApps.settingsForm.registryMirrors.generalTooltip,
   };
 
@@ -141,7 +136,6 @@ export class AppsSettingsComponent implements OnInit {
           preferred_trains: catalogConfig.preferred_trains,
           enable_image_updates: dockerConfig.enable_image_updates,
           address_pools: dockerConfig.address_pools,
-          nvidia: dockerConfig.nvidia,
           registry_mirrors: dockerConfig.registry_mirrors || [],
         });
       });
@@ -185,7 +179,6 @@ export class AppsSettingsComponent implements OnInit {
       this.api.job('docker.update', [{
         enable_image_updates: values.enable_image_updates,
         address_pools: values.address_pools,
-        nvidia: Boolean(values.nvidia),
         registry_mirrors: values.registry_mirrors,
       }]),
     ])

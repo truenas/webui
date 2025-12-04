@@ -21,8 +21,7 @@ export const helptextServiceFtp = {
   bannerTooltip: T('Specify the message displayed to local login users after\
  authentication. Not displayed to anonymous login users.'),
   resumeTooltip: T('Set to allow FTP clients to resume interrupted transfers.'),
-  defaultrootTooltip: T('When set, a local user is only allowed access to their home\
- directory if they are a member of the <i>wheel</i> group.'),
+  defaultrootTooltip: T('When set, all local users are only allowed to access their home directory.'),
   reversednsTooltip: T('Set to perform reverse DNS lookups on client IPs.\
  This can cause long delays if reverse DNS is not configured.'),
   masqaddressTooltip: T('Public IP address or hostname. Set if FTP clients\

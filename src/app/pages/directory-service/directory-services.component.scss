@@ -75,9 +75,9 @@
   padding-top: 12px;
 
   .value {
-    word-break: break-word;
     overflow-wrap: break-word;
     white-space: normal;
+    word-break: break-word;
   }
 }
 

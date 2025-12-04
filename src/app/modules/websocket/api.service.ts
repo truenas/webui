@@ -157,7 +157,9 @@ export class ApiService {
     const uuid = uuidv4();
     return of(uuid).pipe(
       switchMap(() => {
-        performance.mark(`${method} - ${uuid} - start`);
+        if (typeof performance !== 'undefined' && typeof performance.mark === 'function') {
+          performance.mark(`${method} - ${uuid} - start`);
+        }
 
         this.wsHandler.scheduleCall({
           id: uuid,
@@ -180,6 +182,16 @@ export class ApiService {
   ): OperatorFunction<SuccessfulResponse | ErrorResponse, SuccessfulResponse> {
     return switchMap((message: SuccessfulResponse | ErrorResponse) => {
       if (isErrorResponse(message)) {
+        // Always create end mark on error to match the start mark
+        if (typeof performance !== 'undefined' && typeof performance.mark === 'function' && typeof performance.measure === 'function') {
+          performance.mark(`${method} - ${uuid} - end`);
+          try {
+            performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
+          } catch {
+            // Ignore if start mark doesn't exist
+          }
+        }
+
         if (message?.error?.data?.errname === ApiErrorName.NotAuthenticated) {
           this.wsStatus.setLoginStatus(false);
           return EMPTY;
@@ -188,13 +200,15 @@ export class ApiService {
         return throwError(() => new ApiCallError(message.error as JsonRpcError));
       }
 
-      try {
+      if (typeof performance !== 'undefined' && typeof performance.mark === 'function' && typeof performance.measure === 'function') {
         performance.mark(`${method} - ${uuid} - end`);
-        performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
-      } catch (error) {
-        // Ignore performance measurement errors (e.g., when start mark doesn't exist for mocked responses)
-        console.warn(`Performance measurement failed for ${method}:`, error);
+        try {
+          performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
+        } catch {
+          // Ignore if start mark doesn't exist
+        }
       }
+
       return of(message);
     });
   }

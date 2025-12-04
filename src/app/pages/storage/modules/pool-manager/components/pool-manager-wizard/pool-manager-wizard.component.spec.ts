@@ -50,6 +50,7 @@ import {
 import {
   ReviewWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
+import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
@@ -66,6 +67,7 @@ describe('PoolManagerWizardComponent', () => {
   const state = {
     name: 'pewl',
     encryption: null,
+    encryptionType: EncryptionType.None,
     diskSettings: {
       allowNonUniqueSerialDisks: true,
     },
@@ -251,6 +253,7 @@ describe('PoolManagerWizardComponent', () => {
       state$.next({
         ...state,
         encryption: 'AES-256-GCM',
+        encryptionType: EncryptionType.Software,
       });
 
       await wizard.selectStep({ label: 'Review' });
