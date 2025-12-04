@@ -87,8 +87,8 @@ jobs:
     name: Run tests (Standard)
     needs: [install, check-ux-team]
     if: |
-      always() && 
-      needs.install.result == 'success' && 
+      always() &&
+      needs.install.result == 'success' &&
       (github.event_name != 'pull_request' || needs.check-ux-team.outputs.is_member != 'true')
     strategy:
       fail-fast: false
@@ -114,7 +114,7 @@ jobs:
   report-coverage:
     name: Collect coverage
     runs-on: ubuntu-latest
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && github.repository == 'truenas/webui' }}
     needs: [test, test-ux-team]
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
