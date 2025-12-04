@@ -16,7 +16,10 @@
           <ix-icon name="mdi-lock" class="disk-icon"></ix-icon>
           <div class="disk-details">
             <span class="disk-name">{{ disk.name }}</span>
-            <span class="disk-meta">{{ disk.model }} &bull; Serial: {{ disk.serial }}</span>
+            <div class="disk-meta-row">
+              <span class="disk-meta">{{ disk.model }}</span>
+              <span class="disk-meta">{{ 'Serial' | translate }}: {{ disk.serial }}</span>
+            </div>
           </div>
         </div>
         <span class="status-badge">
