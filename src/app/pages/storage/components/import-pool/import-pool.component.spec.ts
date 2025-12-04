@@ -173,20 +173,24 @@ describe('ImportPoolComponent', () => {
       ],
     });
 
-    it('shows locked SED disks screen when locked disks are detected', () => {
+    it('shows locked SED disks screen when locked disks are detected and does not call pool.import_find yet', () => {
       const lockedSpectator = createComponentWithLockedDisks();
+      const lockedApi = lockedSpectator.inject(ApiService);
 
       expect(lockedSpectator.query('ix-locked-sed-disks')).toBeTruthy();
       expect(lockedSpectator.query('ix-fieldset')).toBeFalsy();
+      expect(lockedApi.job).not.toHaveBeenCalledWith('pool.import_find');
     });
 
-    it('shows pool import form after skip is clicked', async () => {
+    it('calls pool.import_find and shows pool import form after skip is clicked', async () => {
       const lockedSpectator = createComponentWithLockedDisks();
       const lockedLoader = TestbedHarnessEnvironment.loader(lockedSpectator.fixture);
+      const lockedApi = lockedSpectator.inject(ApiService);
 
       const skipButton = await lockedLoader.getHarness(MatButtonHarness.with({ text: 'Skip' }));
       await skipButton.click();
 
+      expect(lockedApi.job).toHaveBeenCalledWith('pool.import_find');
       expect(lockedSpectator.query('ix-locked-sed-disks')).toBeFalsy();
       expect(lockedSpectator.query('ix-fieldset')).toBeTruthy();
     });
