@@ -1,0 +1,52 @@
+<div class="locked-sed-disks">
+  <div class="warning-box">
+    <div class="warning-header">
+      <ix-icon name="mdi-lock"></ix-icon>
+      <span>{{ 'Locked SED Disks Detected' | translate }}</span>
+    </div>
+    <p class="warning-message">
+      {{ 'The system has detected locked Self-Encrypting Drives (SED). These disks must be unlocked before they can be used to import pools. Would you like to unlock them now?' | translate }}
+    </p>
+  </div>
+
+  <div class="disk-list">
+    @for (disk of lockedDisks(); track disk.name) {
+      <div class="disk-item">
+        <div class="disk-info">
+          <ix-icon name="mdi-lock" class="disk-icon"></ix-icon>
+          <div class="disk-details">
+            <span class="disk-name">{{ disk.name }}</span>
+            <span class="disk-meta">{{ disk.model }} &bull; Serial: {{ disk.serial }}</span>
+          </div>
+        </div>
+        <span class="status-badge">
+          {{ 'Locked' | translate }}
+        </span>
+      </div>
+    }
+  </div>
+
+  <p class="instruction-text">
+    {{ 'You can choose to unlock these disks now, or skip this step and proceed with importing pools from unlocked disks only.' | translate }}
+  </p>
+
+  <div class="actions">
+    <button
+      mat-button
+      type="button"
+      ixTest="skip"
+      (click)="onSkip()"
+    >
+      {{ 'Skip' | translate }}
+    </button>
+    <button
+      mat-button
+      type="button"
+      color="primary"
+      ixTest="unlock"
+      (click)="onUnlock()"
+    >
+      {{ 'Unlock' | translate }}
+    </button>
+  </div>
+</div>
