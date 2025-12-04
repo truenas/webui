@@ -143,7 +143,6 @@ export class AppSchemaService {
 
   getNewFormControlChangesSubscription(payload: FormControlPayload): Subscription {
     const { chartSchemaNode } = payload;
-
     const path = payload.path ? payload.path + '.' + chartSchemaNode.variable : chartSchemaNode.variable;
     const subscription = new Subscription();
     const schema = chartSchemaNode.schema;
@@ -435,7 +434,7 @@ export class AppSchemaService {
 
     // Priority: 1) config value, 2) schema default (for hidden/new), 3) alt default
     let defaultValue: DefaultValue;
-    if (config && chartSchemaNode.variable in config) {
+    if (config && isPlainObject(config) && chartSchemaNode.variable in config) {
       defaultValue = config[chartSchemaNode.variable] as DefaultValue;
     } else {
       const shouldUseSchemaDefault = (schema.hidden || isNew) && schema.default !== undefined;
@@ -514,6 +513,7 @@ export class AppSchemaService {
     const itemsToPopulate = this.getItemsToPopulate(schema, config, formGroup, chartSchemaNode, isNew);
 
     // Check if this is a list of primitives (single item schema with non-dict type)
+    // Note: items[0]?.schema?.type will be undefined if items is empty, which is a valid schema state
     const firstItemType = items[0]?.schema?.type;
     const isSinglePrimitiveItem = items.length === 1
       && firstItemType !== undefined
@@ -589,6 +589,9 @@ export class AppSchemaService {
     if (config) {
       const pathSegments = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
       let nextItem: unknown = config;
+      // Traverse path segments to find the nested value
+      // Note: path segments can include array indices as strings (e.g., '0', '1'), which works
+      // correctly with both objects and arrays in JavaScript (arrays are objects with numeric keys)
       for (const pathSegment of pathSegments) {
         if (nextItem && typeof nextItem === 'object' && nextItem !== null) {
           nextItem = (nextItem as Record<string, unknown>)[pathSegment];

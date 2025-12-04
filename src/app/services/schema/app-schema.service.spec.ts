@@ -915,6 +915,55 @@ describe('AppSchemaService', () => {
     });
   });
 
+  describe('nested list with config path resolving to undefined', () => {
+    it('uses schema defaults for nested lists when config path resolves to undefined', () => {
+      const schema: ChartSchemaNode = {
+        variable: 'parent_dict',
+        label: 'Parent Dict',
+        schema: {
+          type: 'dict' as ChartSchemaType.Dict,
+          attrs: [{
+            variable: 'nested_list',
+            label: 'Nested List',
+            schema: {
+              type: 'list' as ChartSchemaType.List,
+              default: ['default1', 'default2'],
+              items: [{
+                variable: 'item',
+                label: 'Item',
+                schema: {
+                  type: 'string' as ChartSchemaType.String,
+                },
+              }],
+            },
+          }],
+        },
+      };
+
+      // Config has parent_dict but not nested_list
+      const config = { parent_dict: { other_field: 'value' } };
+
+      const formGroup = new UntypedFormGroup({});
+      service.getNewFormControlChangesSubscription({
+        isNew: true,
+        chartSchemaNode: schema,
+        formGroup,
+        config,
+        isParentImmutable: false,
+      });
+
+      // Expect nested_list to use schema defaults
+      const parentDict = formGroup.get('parent_dict') as UntypedFormGroup;
+      expect(parentDict).toBeTruthy();
+      const nestedList = parentDict.get('nested_list') as FormArray;
+      expect(nestedList).toBeTruthy();
+      expect(nestedList.value).toEqual([
+        { item: 'default1' },
+        { item: 'default2' },
+      ]);
+    });
+  });
+
   describe('GPU UUID handling for hidden fields', () => {
     const gpuSchemaNode: ChartSchemaNode = {
       variable: 'nvidia_gpu_selection',
