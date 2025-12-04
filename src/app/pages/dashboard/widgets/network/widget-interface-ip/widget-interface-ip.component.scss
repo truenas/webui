@@ -12,6 +12,11 @@ $ip-label-opacity: 0.6;
   justify-content: center;
   width: 100%;
 
+  // Required to display multiple IP addresses with line breaks in non-HA mode
+  // Using ::ng-deep is necessary here because we need to style the internal structure
+  // of ix-widget-datapoint component. Once WidgetDatapointComponent provides a proper
+  // API for this (e.g., a whiteSpace input), this should be refactored.
+  // stylelint-disable-next-line selector-pseudo-element-no-unknown
   ::ng-deep ix-widget-datapoint .container > div {
     white-space: pre-line;
   }

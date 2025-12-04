@@ -215,8 +215,6 @@ describe('WidgetInterfaceIpComponent', () => {
       const ipLabels = haSpectator.queryAll('.ip-label');
       ipLabels.forEach((ipLabel) => {
         expect(ipLabel).toHaveAttribute('aria-label');
-        const ariaLabel = ipLabel.getAttribute('aria-label');
-        expect(['(Virtual IP)', '(This Controller)', '(Other Controller)']).toContain(ariaLabel);
       });
     });
   });

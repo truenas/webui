@@ -85,6 +85,16 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
   private interfaces = toSignal(this.resources.networkInterfaces$);
 
   /**
+   * Filters aliases by the specified interface type (IPv4 or IPv6).
+   */
+  private filterAliasesByType(
+    aliases: NetworkInterface['state']['aliases'] | undefined,
+    interfaceType: NetworkInterfaceAliasType,
+  ): NetworkInterface['state']['aliases'] {
+    return aliases?.filter((alias) => alias.type === interfaceType) || [];
+  }
+
+  /**
    * Categorizes IP addresses into virtual IPs, failover IPs, and other controller IPs.
    * This shared logic prevents duplication between string and structured data formatters.
    *
@@ -101,15 +111,11 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
       return { virtual: [], failover: [], other: [] };
     }
 
-    const stateAliases = networkInterface.state?.aliases.filter((alias) => alias.type === interfaceType) || [];
+    const stateAliases = this.filterAliasesByType(networkInterface.state?.aliases, interfaceType);
     // Virtual and failover aliases come from dedicated properties, not state.aliases
     // This ensures they're displayed even if not currently active in state
-    const virtualAliases = networkInterface.failover_virtual_aliases?.filter(
-      (alias) => alias.type === interfaceType,
-    ) || [];
-    const failoverAliases = networkInterface.failover_aliases?.filter(
-      (alias) => alias.type === interfaceType,
-    ) || [];
+    const virtualAliases = this.filterAliasesByType(networkInterface.failover_virtual_aliases, interfaceType);
+    const failoverAliases = this.filterAliasesByType(networkInterface.failover_aliases, interfaceType);
 
     // Track which addresses are already labeled as virtual or failover
     const labeledAddresses = new Set([
@@ -118,11 +124,17 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
     ]);
 
     // Remaining addresses from state that aren't virtual or failover
+    // In HA systems, these are typically IPs from the other controller that appear in this
+    // controller's state.aliases but aren't in failover_aliases or failover_virtual_aliases
     const otherAliases = stateAliases.filter((alias) => !labeledAddresses.has(alias.address));
 
     return { virtual: virtualAliases, failover: failoverAliases, other: otherAliases };
   }
 
+  /**
+   * Gets IP addresses as a formatted string for non-HA mode display.
+   * Returns error messages for missing interfaces or empty results.
+   */
   private getIpAddresses(interfaces: NetworkInterface[], interfaceId: string): string {
     const networkInterface = interfaces.find((nic) => nic.name === interfaceId);
 
@@ -131,15 +143,19 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
     }
 
     const interfaceType = this.interfaceType();
-    const stateAliases = networkInterface?.state?.aliases.filter((alias) => alias.type === interfaceType) || [];
+    const stateAliases = this.filterAliasesByType(networkInterface.state?.aliases, interfaceType);
 
-    if (!stateAliases?.length) {
+    if (!stateAliases.length) {
       return this.translate.instant('N/A');
     }
 
     return uniqBy(stateAliases, 'address').map((alias) => alias.address).join('\n');
   }
 
+  /**
+   * Gets IP addresses as structured data for HA mode list display.
+   * Returns empty array for missing interfaces, allowing the template to render an empty list gracefully.
+   */
   private getIpAddressList(interfaces: NetworkInterface[], interfaceId: string): IpAddressData[] {
     const networkInterface = interfaces.find((nic) => nic.name === interfaceId);
 
@@ -153,17 +169,17 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
 
     // 1. Virtual IPs
     uniqBy(categorized.virtual, 'address').forEach((alias) => {
-      ipList.push({ address: alias.address, label: `(${this.translate.instant('Virtual IP')})` });
+      ipList.push({ address: alias.address, label: this.translate.instant('(Virtual IP)') });
     });
 
     // 2. This controller's IPs
     uniqBy(categorized.failover, 'address').forEach((alias) => {
-      ipList.push({ address: alias.address, label: `(${this.translate.instant('This Controller')})` });
+      ipList.push({ address: alias.address, label: this.translate.instant('(This Controller)') });
     });
 
-    // 3. Other controller's IPs
+    // 3. Other controller's IPs (addresses in state but not in failover or virtual categories)
     uniqBy(categorized.other, 'address').forEach((alias) => {
-      ipList.push({ address: alias.address, label: `(${this.translate.instant('Other Controller')})` });
+      ipList.push({ address: alias.address, label: this.translate.instant('(Other Controller)') });
     });
 
     return ipList;
