@@ -557,9 +557,8 @@ export class AppSchemaService {
     const isSinglePrimitiveItem = items.length === 1 && firstItemType !== undefined && String(firstItemType) !== 'dict';
 
     for (const item of itemsToPopulate) {
-      // For primitive lists, wrap the value in an object with the variable name
-      // Schema expects primitives wrapped in objects: "string" → { variable_name: "string" }
-      // This allows the form to correctly bind primitive values to form controls
+      // Wrap primitive values for lists with primitive schemas
+      // Objects (like nested lists in dicts) are already in the correct format
       let itemConfig: HierarchicalObjectMap<ChartFormValue>;
       if (isSinglePrimitiveItem && (typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean')) {
         itemConfig = { [items[0].variable]: item } as HierarchicalObjectMap<ChartFormValue>;

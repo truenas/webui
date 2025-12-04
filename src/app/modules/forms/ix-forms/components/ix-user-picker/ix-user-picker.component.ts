@@ -317,11 +317,33 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
       distinctUntilChanged(),
       filter((selectedOption) => selectedOption === newOption),
       switchMap(() => this.slideIn.open(UserFormComponent, { wide: true })),
-      filter((response: SlideInResponse) => !response.error),
       tap((response: SlideInResponse<User>) => {
-        // TODO: Handle it better. Show all users and select newly created.
-        this.filterChanged$.next(this.getValueFromSlideInResponse(response));
-        // TODO: Make it better. Rely on close event of slide-in.
+        if (!response.error && response.response) {
+          // User created successfully - select the newly created user
+          const newUser = response.response;
+          const newUserOption: Option = {
+            label: newUser.username,
+            value: newUser[this.comboboxProviderHandler()?.valueField || 'username'],
+          };
+
+          this.selectedOption.set(newUserOption);
+          this.value = newUserOption.value;
+          if (this.inputElementRef()?.nativeElement) {
+            this.inputElementRef().nativeElement.value = newUserOption.label;
+          }
+          this.onChange(newUserOption.value);
+          this.cdr.markForCheck();
+
+          // Refresh options to include the newly created user
+          this.filterChanged$.next('');
+        } else {
+          // User cancelled - clear selection to allow "Add New" to be clicked again
+          this.selectedOption.set(null);
+          if (this.inputElementRef()?.nativeElement) {
+            this.inputElementRef().nativeElement.value = '';
+          }
+        }
+
         setTimeout(() => this.autocompleteTrigger().closePanel(), 350);
       }),
       untilDestroyed(this),

@@ -609,11 +609,16 @@ describe('AppSchemaService', () => {
       expect(nestedListForm.controls.security_policy.value).toEqual([
         {
           directive: 'connect-src',
-          items: ['https://example.com/', 'https://api.example.com/'],
+          items: [
+            { item: 'https://example.com/' },
+            { item: 'https://api.example.com/' },
+          ],
         },
         {
           directive: 'img-src',
-          items: ['https://cdn.example.com/'],
+          items: [
+            { item: 'https://cdn.example.com/' },
+          ],
         },
       ]);
     });
