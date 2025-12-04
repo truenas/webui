@@ -165,7 +165,8 @@ export class UnlockSedDisksComponent {
     ).subscribe({
       next: (job: Job<CoreBulkResponse[]>) => {
         const results = job.result;
-        const errors = results.filter((result) => result.error !== null);
+        const resultsWithIndex = results.map((result, index) => ({ result, index }));
+        const errors = resultsWithIndex.filter(({ result }) => result.error !== null);
         const successCount = results.length - errors.length;
 
         if (errors.length === 0) {
@@ -179,7 +180,7 @@ export class UnlockSedDisksComponent {
           this.unlocked.emit();
         } else {
           const errorMessages = errors
-            .map((err, i) => `${bulkParams[results.indexOf(err)]?.name || this.translate.instant('Disk {index}', { index: i + 1 })}: ${err.error}`)
+            .map(({ result, index }) => `${bulkParams[index].name}: ${result.error}`)
             .join('\n');
           this.dialogService.error({
             title: this.translate.instant('Failed to Unlock Disks'),

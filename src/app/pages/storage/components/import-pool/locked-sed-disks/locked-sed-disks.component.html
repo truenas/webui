@@ -1,5 +1,5 @@
 <div class="locked-sed-disks">
-  <div class="warning-box">
+  <div class="warning-box" role="alert">
     <div class="warning-header">
       <ix-icon name="mdi-lock"></ix-icon>
       <span>{{ 'Locked SED Disks Detected' | translate }}</span>
@@ -9,11 +9,11 @@
     </p>
   </div>
 
-  <div class="disk-list">
+  <div class="disk-list" role="list" [attr.aria-label]="'Locked SED disks' | translate">
     @for (disk of lockedDisks(); track disk.name) {
-      <div class="disk-item">
+      <div class="disk-item" role="listitem">
         <div class="disk-info">
-          <ix-icon name="mdi-lock" class="disk-icon"></ix-icon>
+          <ix-icon name="mdi-lock" class="disk-icon" [attr.aria-hidden]="true"></ix-icon>
           <div class="disk-details">
             <span class="disk-name">{{ disk.name }}</span>
             <div class="disk-meta-row">
