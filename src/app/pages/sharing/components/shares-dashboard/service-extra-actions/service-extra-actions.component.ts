@@ -28,7 +28,7 @@ import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { UrlOptionsService } from 'app/services/url-options.service';
+import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
 @Component({
@@ -114,11 +114,8 @@ export class ServiceExtraActionsComponent {
 
   viewLogs(): void {
     const url = this.urlOptions.buildUrl('/system/audit', {
-      searchQuery: {
-        isBasicQuery: false,
-        filters: [['service', '=', AuditService.Smb]],
-      },
-    });
+      service: AuditService.Smb,
+    } as AuditUrlOptions);
     this.router.navigateByUrl(url);
   }
 

@@ -19,7 +19,7 @@ import { ServiceWebshareComponent } from 'app/pages/services/components/service-
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { ServicesService } from 'app/services/services.service';
-import { UrlOptionsService } from 'app/services/url-options.service';
+import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.service';
 
 @Component({
   selector: 'ix-service-actions-cell',
@@ -102,11 +102,8 @@ export class ServiceActionsCellComponent {
 
   private auditLogsUrl(): string {
     return this.urlOptions.buildUrl('/system/audit', {
-      searchQuery: {
-        isBasicQuery: false,
-        filters: [['service', '=', AuditService.Smb]],
-      },
-    });
+      service: AuditService.Smb,
+    } as AuditUrlOptions);
   }
 
   private sessionsUrl(): string[] {
