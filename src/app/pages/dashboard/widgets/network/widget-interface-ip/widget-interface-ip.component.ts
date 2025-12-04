@@ -120,32 +120,8 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
     }
 
     const interfaceType = this.interfaceType();
-
-    // For HA systems, show IPs with labels one per line
-    if (this.isHaLicensed()) {
-      const categorized = this.categorizeIpAddresses(networkInterface, interfaceType);
-      const ipLines: string[] = [];
-
-      // 1. Virtual IPs
-      categorized.virtual.forEach((alias) => {
-        ipLines.push(`${alias.address} ${this.translate.instant('(VIP)')}`);
-      });
-
-      // 2. This controller's IPs
-      categorized.failover.forEach((alias) => {
-        ipLines.push(`${alias.address} ${this.translate.instant('(This Controller)')}`);
-      });
-
-      // 3. Other controller's IPs
-      categorized.other.forEach((alias) => {
-        ipLines.push(`${alias.address} ${this.translate.instant('(Other Controller)')}`);
-      });
-
-      return ipLines.length > 0 ? ipLines.join('\n') : this.translate.instant('N/A');
-    }
-
-    // Non-HA systems: show IPs as before
     const stateAliases = networkInterface?.state?.aliases.filter((alias) => alias.type === interfaceType) || [];
+
     if (!stateAliases?.length) {
       return this.translate.instant('N/A');
     }
