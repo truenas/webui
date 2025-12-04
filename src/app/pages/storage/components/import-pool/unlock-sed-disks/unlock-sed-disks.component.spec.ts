@@ -144,4 +144,100 @@ describe('UnlockSedDisksComponent', () => {
     const passwordInputs = await loader.getAllHarnesses(IxInputHarness.with({ label: 'Password' }));
     expect(passwordInputs).toHaveLength(1);
   });
+
+  describe('partial success', () => {
+    const partialSuccessResponse: CoreBulkResponse[] = [
+      { error: null, result: null },
+      { error: 'Invalid password', result: null },
+    ];
+
+    const createPartialComponent = createComponentFactory({
+      component: UnlockSedDisksComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockApi([
+          mockJob('core.bulk', fakeSuccessfulJob(partialSuccessResponse)),
+          mockCall('system.advanced.update'),
+        ]),
+        mockProvider(SnackbarService),
+        mockProvider(ErrorHandlerService),
+        mockProvider(DialogService, {
+          jobDialog: jest.fn(() => ({
+            afterClosed: () => of(fakeSuccessfulJob(partialSuccessResponse)),
+          })),
+        }),
+        mockAuth(),
+      ],
+    });
+
+    it('shows partial success message when some disks fail to unlock', async () => {
+      const spectatorPartial = createPartialComponent({
+        props: { lockedDisks },
+      });
+      const partialLoader = TestbedHarnessEnvironment.loader(spectatorPartial.fixture);
+
+      jest.spyOn(spectatorPartial.component.unlocked, 'emit');
+
+      const passwordInput = await partialLoader.getHarness(IxInputHarness.with({ label: 'Global SED Password' }));
+      await passwordInput.setValue('testpassword');
+
+      const unlockButton = await partialLoader.getHarness(MatButtonHarness.with({ text: 'Unlock Disks' }));
+      await unlockButton.click();
+
+      expect(spectatorPartial.inject(SnackbarService).success).toHaveBeenCalledWith(
+        expect.stringContaining('1 of 2'),
+      );
+      expect(spectatorPartial.component.unlocked.emit).toHaveBeenCalled();
+    });
+  });
+
+  describe('all fail', () => {
+    const allFailResponse: CoreBulkResponse[] = [
+      { error: 'Invalid password', result: null },
+      { error: 'Device busy', result: null },
+    ];
+
+    const createFailComponent = createComponentFactory({
+      component: UnlockSedDisksComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockApi([
+          mockJob('core.bulk', fakeSuccessfulJob(allFailResponse)),
+          mockCall('system.advanced.update'),
+        ]),
+        mockProvider(SnackbarService),
+        mockProvider(ErrorHandlerService),
+        mockProvider(DialogService, {
+          jobDialog: jest.fn(() => ({
+            afterClosed: () => of(fakeSuccessfulJob(allFailResponse)),
+          })),
+          error: jest.fn(),
+        }),
+        mockAuth(),
+      ],
+    });
+
+    it('shows error dialog when all disks fail to unlock', async () => {
+      const spectatorFail = createFailComponent({
+        props: { lockedDisks },
+      });
+      const failLoader = TestbedHarnessEnvironment.loader(spectatorFail.fixture);
+
+      jest.spyOn(spectatorFail.component.unlocked, 'emit');
+
+      const passwordInput = await failLoader.getHarness(IxInputHarness.with({ label: 'Global SED Password' }));
+      await passwordInput.setValue('testpassword');
+
+      const unlockButton = await failLoader.getHarness(MatButtonHarness.with({ text: 'Unlock Disks' }));
+      await unlockButton.click();
+
+      expect(spectatorFail.inject(DialogService).error).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Failed to Unlock Disks',
+          message: expect.stringContaining('ada0'),
+        }),
+      );
+      expect(spectatorFail.component.unlocked.emit).not.toHaveBeenCalled();
+    });
+  });
 });
