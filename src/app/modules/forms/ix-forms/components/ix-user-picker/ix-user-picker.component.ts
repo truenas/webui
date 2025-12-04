@@ -318,43 +318,9 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
       filter((selectedOption) => selectedOption === newOption),
       switchMap(() => this.slideIn.open(UserFormComponent, { wide: true })),
       tap((response: SlideInResponse<User>) => {
-        if (!response.error && response.response) {
-          // User created successfully - select the newly created user
-          const newUser = response.response;
-
-          // Fetch fresh options which will include the newly created user
-          this.loading.set(true);
-          this.comboboxProviderHandler()?.fetch('').pipe(
-            catchError(() => {
-              this.hasErrorInOptions.set(true);
-              return EMPTY;
-            }),
-            untilDestroyed(this),
-          ).subscribe((options) => {
-            this.options.set([this.addNewUserOption, ...options]);
-
-            // Find and select the newly created user from the options
-            const newUserOption = options.find((option) => option.label === newUser.username);
-            if (newUserOption) {
-              this.selectedOption.set(newUserOption);
-              this.value = newUserOption.value;
-              if (this.inputElementRef()?.nativeElement) {
-                this.inputElementRef().nativeElement.value = newUserOption.label;
-              }
-              this.onChange(newUserOption.value);
-            }
-
-            this.loading.set(false);
-            this.cdr.markForCheck();
-          });
-        } else {
-          // User cancelled - clear selection to allow "Add New" to be clicked again
-          this.selectedOption.set(null);
-          if (this.inputElementRef()?.nativeElement) {
-            this.inputElementRef().nativeElement.value = '';
-          }
-        }
-
+        // TODO: Handle it better. Show all users and select newly created.
+        this.filterChanged$.next(this.getValueFromSlideInResponse(response));
+        // TODO: Make it better. Rely on close event of slide-in.
         setTimeout(() => this.autocompleteTrigger().closePanel(), 350);
       }),
       untilDestroyed(this),
