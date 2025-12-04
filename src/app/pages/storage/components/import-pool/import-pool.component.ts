@@ -13,8 +13,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { DiskDetailsResponse } from 'app/interfaces/disk.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -96,25 +94,48 @@ export class ImportPoolComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadData();
+    this.checkForLockedDisks();
   }
 
-  private loadData(): void {
+  private checkForLockedDisks(): void {
     this.isLoading.set(true);
     this.currentStep.set('loading');
 
     forkJoin([
-      this.api.job('pool.import_find'),
       this.api.call('disk.details'),
       this.api.call('system.advanced.sed_global_password'),
     ]).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: ([importablePoolFindJob, diskDetails, sedGlobalPassword]: [
-        Job<PoolFindResult[]>,
-        DiskDetailsResponse,
-        string,
-      ]) => {
+      next: ([diskDetails, sedGlobalPassword]) => {
+        this.isLoading.set(false);
+        this.globalSedPassword.set(sedGlobalPassword || '');
+
+        const allDisks = [...diskDetails.used, ...diskDetails.unused];
+        const lockedDisks = filterLockedSedDisks(allDisks);
+        this.lockedSedDisks.set(lockedDisks);
+
+        if (lockedDisks.length > 0) {
+          this.currentStep.set('locked-sed');
+        } else {
+          this.loadImportablePools();
+        }
+      },
+      error: (error: unknown) => {
+        this.isLoading.set(false);
+        this.errorHandler.showErrorModal(error);
+      },
+    });
+  }
+
+  private loadImportablePools(): void {
+    this.isLoading.set(true);
+    this.currentStep.set('loading');
+
+    this.api.job('pool.import_find').pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (importablePoolFindJob) => {
         this.isLoading.set(false);
 
         if (importablePoolFindJob.state !== JobState.Success) {
@@ -133,17 +154,7 @@ export class ImportPoolComponent implements OnInit {
         } as Option));
         this.pool.options = of(opts);
 
-        this.globalSedPassword.set(sedGlobalPassword || '');
-
-        const allDisks = [...diskDetails.used, ...diskDetails.unused];
-        const lockedDisks = filterLockedSedDisks(allDisks);
-        this.lockedSedDisks.set(lockedDisks);
-
-        if (lockedDisks.length > 0) {
-          this.currentStep.set('locked-sed');
-        } else {
-          this.currentStep.set('import');
-        }
+        this.currentStep.set('import');
       },
       error: (error: unknown) => {
         this.isLoading.set(false);
@@ -153,7 +164,7 @@ export class ImportPoolComponent implements OnInit {
   }
 
   protected onLockedSedSkip(): void {
-    this.currentStep.set('import');
+    this.loadImportablePools();
   }
 
   protected onLockedSedUnlock(): void {
@@ -161,11 +172,11 @@ export class ImportPoolComponent implements OnInit {
   }
 
   protected onUnlockSkip(): void {
-    this.currentStep.set('import');
+    this.loadImportablePools();
   }
 
   protected onUnlockSuccess(): void {
-    this.loadData();
+    this.checkForLockedDisks();
   }
 
   protected onSubmit(): void {
