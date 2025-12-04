@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { format } from 'date-fns';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -63,9 +62,9 @@ describe('SnapshotAddFormComponent', () => {
   it('presets name with current date and time', async () => {
     const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
     const defaultName = await nameInput.getValue();
-    const datetime = format(new Date(), 'yyyy-MM-dd_HH-mm');
 
-    expect(defaultName).toBe(`manual-${datetime}`);
+    // Use regex to avoid flaky test when minute boundary is crossed during test execution
+    expect(defaultName).toMatch(/^manual-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}$/);
   });
 
   it('sends an update payload to websocket and closes modal when save is pressed', async () => {

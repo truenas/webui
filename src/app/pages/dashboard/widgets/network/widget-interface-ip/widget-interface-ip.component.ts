@@ -45,7 +45,7 @@ interface CategorizedIpAddresses {
 export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
   private resources = inject(WidgetResourcesService);
   private translate = inject(TranslateService);
-  private store$ = inject<Store<AppState>>(Store);
+  private store$ = inject(Store<AppState>);
 
   size = input.required<SlotSize>();
   settings = input.required<WidgetInterfaceIpSettings>();
@@ -66,6 +66,11 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
   protected widgetName = computed(() => {
     return this.translate.instant('{nic} Address', { nic: this.interfaceId() }) || '';
   });
+
+  // Memoized translated labels to avoid repeated translate.instant() calls
+  private virtualIpLabel = computed(() => this.translate.instant('(Virtual IP)'));
+  private thisControllerLabel = computed(() => this.translate.instant('(This Controller)'));
+  private otherControllerLabel = computed(() => this.translate.instant('(Other Controller)'));
 
   protected ips = computed(() => {
     const interfaceId = this.interfaceId();
@@ -111,6 +116,8 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
       return { virtual: [], failover: [], other: [] };
     }
 
+    // Use defensive optional chaining for all alias properties even though they're typed as required
+    // This provides better runtime safety if API responses don't match type definitions
     const stateAliases = this.filterAliasesByType(networkInterface.state?.aliases, interfaceType);
     // Virtual and failover aliases come from dedicated properties, not state.aliases
     // This ensures they're displayed even if not currently active in state
@@ -168,18 +175,21 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
     const ipList: IpAddressData[] = [];
 
     // 1. Virtual IPs
+    const virtualLabel = this.virtualIpLabel();
     uniqBy(categorized.virtual, 'address').forEach((alias) => {
-      ipList.push({ address: alias.address, label: this.translate.instant('(Virtual IP)') });
+      ipList.push({ address: alias.address, label: virtualLabel });
     });
 
     // 2. This controller's IPs
+    const thisControllerLabelValue = this.thisControllerLabel();
     uniqBy(categorized.failover, 'address').forEach((alias) => {
-      ipList.push({ address: alias.address, label: this.translate.instant('(This Controller)') });
+      ipList.push({ address: alias.address, label: thisControllerLabelValue });
     });
 
     // 3. Other controller's IPs (addresses in state but not in failover or virtual categories)
+    const otherControllerLabelValue = this.otherControllerLabel();
     uniqBy(categorized.other, 'address').forEach((alias) => {
-      ipList.push({ address: alias.address, label: this.translate.instant('(Other Controller)') });
+      ipList.push({ address: alias.address, label: otherControllerLabelValue });
     });
 
     return ipList;

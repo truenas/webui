@@ -217,6 +217,25 @@ describe('WidgetInterfaceIpComponent', () => {
         expect(ipLabel).toHaveAttribute('aria-label');
       });
     });
+
+    it('renders empty list when interface is not found', () => {
+      haSpectator.setInput('settings', { interface: 'eth404' });
+      haSpectator.detectChanges();
+
+      const ipLines = haSpectator.queryAll('.ip-line');
+      expect(ipLines).toHaveLength(0);
+    });
+
+    it('renders empty list when interface has no IPv6 addresses', () => {
+      haSpectator.setInput('settings', {
+        interface: 'eth0',
+        widgetName: 'IPv6 Address',
+      });
+      haSpectator.detectChanges();
+
+      const ipLines = haSpectator.queryAll('.ip-line');
+      expect(ipLines).toHaveLength(0);
+    });
   });
 
   describe('HA mode with other controller IPs', () => {
