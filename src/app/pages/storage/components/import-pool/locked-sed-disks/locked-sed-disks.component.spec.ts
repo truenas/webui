@@ -4,7 +4,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { LockedSedDisksComponent, LockedSedDisk } from './locked-sed-disks.component';
+import { filterLockedSedDisks, LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
+import { LockedSedDisksComponent } from './locked-sed-disks.component';
 
 describe('LockedSedDisksComponent', () => {
   let spectator: Spectator<LockedSedDisksComponent>;
@@ -86,7 +87,7 @@ describe('LockedSedDisksComponent', () => {
         },
       ] as DetailsDisk[];
 
-      const result = LockedSedDisksComponent.filterLockedSedDisks(allDisks);
+      const result = filterLockedSedDisks(allDisks);
 
       expect(result).toHaveLength(2);
       expect(result[0].name).toBe('ada0');
@@ -100,7 +101,7 @@ describe('LockedSedDisksComponent', () => {
         },
       ] as DetailsDisk[];
 
-      const result = LockedSedDisksComponent.filterLockedSedDisks(allDisks);
+      const result = filterLockedSedDisks(allDisks);
 
       expect(result).toHaveLength(0);
     });
