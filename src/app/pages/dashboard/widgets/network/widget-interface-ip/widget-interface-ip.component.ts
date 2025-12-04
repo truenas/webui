@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import uniqBy from 'lodash-es/uniqBy';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
@@ -13,6 +14,8 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
 import {
   WidgetInterfaceIpSettings,
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
+import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @Component({
   selector: 'ix-widget-interface-ip',
@@ -28,9 +31,12 @@ import {
 export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
   private resources = inject(WidgetResourcesService);
   private translate = inject(TranslateService);
+  private store$ = inject<Store<AppState>>(Store);
 
   size = input.required<SlotSize>();
   settings = input.required<WidgetInterfaceIpSettings>();
+
+  protected isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
 
   protected interfaceId = computed(() => {
     if (this.settings()?.interface) {
@@ -62,12 +68,58 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
       return this.translate.instant('Network interface {interface} not found.', { interface: interfaceId });
     }
 
-    const ipAliases = networkInterface?.state?.aliases.filter((alias) => alias.type === this.interfaceType());
+    const interfaceType = this.interfaceType();
 
-    if (!ipAliases?.length) {
+    // Get all aliases from state
+    const stateAliases = networkInterface?.state?.aliases.filter((alias) => alias.type === interfaceType) || [];
+
+    // For HA systems, show IPs with labels
+    if (this.isHaLicensed()) {
+      const ipLines: string[] = [];
+
+      // 1. Virtual IPs (VIPs) from failover_virtual_aliases
+      const virtualAliases = networkInterface.failover_virtual_aliases?.filter(
+        (alias) => alias.type === interfaceType,
+      ) || [];
+      virtualAliases.forEach((alias) => {
+        ipLines.push(`${alias.address} ${this.translate.instant('(VIP)')}`);
+      });
+
+      // 2. Failover aliases (controller-specific IPs)
+      const failoverAliases = networkInterface.failover_aliases?.filter(
+        (alias) => alias.type === interfaceType,
+      ) || [];
+      failoverAliases.forEach((alias) => {
+        ipLines.push(`${alias.address} ${this.translate.instant('(This Controller)')}`);
+      });
+
+      // 3. Regular aliases (if any that aren't already shown)
+      const regularAliases = networkInterface.aliases?.filter(
+        (alias) => alias.type === interfaceType,
+      ) || [];
+      const shownAddresses = new Set([
+        ...virtualAliases.map((a) => a.address),
+        ...failoverAliases.map((a) => a.address),
+      ]);
+      regularAliases.forEach((alias) => {
+        if (!shownAddresses.has(alias.address)) {
+          ipLines.push(alias.address);
+        }
+      });
+
+      // If no HA-specific IPs, fall back to state aliases
+      if (ipLines.length === 0 && stateAliases.length > 0) {
+        return uniqBy(stateAliases, 'address').map((alias) => alias.address).join('\n');
+      }
+
+      return ipLines.length > 0 ? ipLines.join('\n') : this.translate.instant('N/A');
+    }
+
+    // Non-HA systems: show IPs as before
+    if (!stateAliases?.length) {
       return this.translate.instant('N/A');
     }
 
-    return uniqBy(ipAliases, 'address').map((alias) => alias.address).join('\n');
+    return uniqBy(stateAliases, 'address').map((alias) => alias.address).join('\n');
   }
 }

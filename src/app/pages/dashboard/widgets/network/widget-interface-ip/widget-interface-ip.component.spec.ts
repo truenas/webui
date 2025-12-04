@@ -1,23 +1,34 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { WidgetInterfaceIpComponent } from './widget-interface-ip.component';
 
 describe('WidgetInterfaceIpComponent', () => {
   let spectator: Spectator<WidgetInterfaceIpComponent>;
+
   const createComponent = createComponentFactory({
     component: WidgetInterfaceIpComponent,
     providers: [
+      provideMockStore({
+        selectors: [
+          { selector: selectIsHaLicensed, value: false },
+        ],
+      }),
       mockProvider(WidgetResourcesService, {
         networkInterfaces$: of({
           isLoading: false,
           value: [
             {
               name: 'eth0',
+              aliases: [],
+              failover_aliases: [],
+              failover_virtual_aliases: [],
               state: {
                 aliases: [
                   { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.1' },
@@ -27,6 +38,9 @@ describe('WidgetInterfaceIpComponent', () => {
             },
             {
               name: 'eth1',
+              aliases: [],
+              failover_aliases: [],
+              failover_virtual_aliases: [],
               state: {
                 aliases: [
                   { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::1' },
@@ -36,6 +50,8 @@ describe('WidgetInterfaceIpComponent', () => {
             {
               name: 'eth2',
               aliases: [],
+              failover_aliases: [],
+              failover_virtual_aliases: [],
               state: {
                 aliases: [
                   { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.10' },
@@ -119,6 +135,62 @@ describe('WidgetInterfaceIpComponent', () => {
       expect(widget).toBeTruthy();
       expect(widget.label()).toBe('eth0 Address');
       expect(widget.text()).toBe('192.168.1.1\n192.168.1.2');
+    });
+  });
+
+  describe('HA mode', () => {
+    let haSpectator: Spectator<WidgetInterfaceIpComponent>;
+
+    const createHaComponent = createComponentFactory({
+      component: WidgetInterfaceIpComponent,
+      providers: [
+        provideMockStore({
+          selectors: [
+            { selector: selectIsHaLicensed, value: true },
+          ],
+        }),
+        mockProvider(WidgetResourcesService, {
+          networkInterfaces$: of({
+            isLoading: false,
+            value: [
+              {
+                name: 'eth0',
+                aliases: [],
+                failover_aliases: [
+                  { type: NetworkInterfaceAliasType.Inet, address: '10.220.16.58' },
+                ],
+                failover_virtual_aliases: [
+                  { type: NetworkInterfaceAliasType.Inet, address: '10.220.16.60' },
+                ],
+                state: {
+                  aliases: [
+                    { type: NetworkInterfaceAliasType.Inet, address: '10.220.16.58' },
+                    { type: NetworkInterfaceAliasType.Inet, address: '10.220.16.60' },
+                  ],
+                },
+              },
+            ],
+          }),
+        }),
+      ],
+    });
+
+    beforeEach(() => {
+      haSpectator = createHaComponent({
+        props: {
+          settings: {
+            interface: 'eth0',
+          },
+          size: SlotSize.Quarter,
+        },
+      });
+    });
+
+    it('renders IP addresses with HA labels', () => {
+      haSpectator.detectChanges();
+      const widget = haSpectator.query(WidgetDatapointComponent)!;
+      expect(widget).toBeTruthy();
+      expect(widget.text()).toBe('10.220.16.60 (VIP)\n10.220.16.58 (This Controller)');
     });
   });
 });
