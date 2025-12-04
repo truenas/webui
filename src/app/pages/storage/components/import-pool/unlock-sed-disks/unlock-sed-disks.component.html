@@ -18,7 +18,7 @@
       <p class="section-hint">{{ 'Override the global password for specific disks that use a different password.' | translate }}</p>
 
       <div class="exceptions-list" formArrayName="exceptions">
-        @for (exception of exceptions.controls; track $index) {
+        @for (exception of form.controls.exceptions.controls; track $index) {
           <div class="exception-item" [formGroupName]="$index">
             <div class="exception-row">
               <ix-select

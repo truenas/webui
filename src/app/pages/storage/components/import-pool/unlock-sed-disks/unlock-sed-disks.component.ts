@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
+  FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -24,7 +24,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { LockedSedDisk } from 'app/pages/storage/components/import-pool/locked-sed-disks/locked-sed-disks.component';
+import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -79,13 +79,9 @@ export class UnlockSedDisksComponent {
 
   protected isUnlocking = signal(false);
 
-  get exceptions(): FormArray {
-    return this.form.controls.exceptions;
-  }
-
   protected get availableDisksForException(): Option[] {
     const usedDiskNames = new Set(
-      this.exceptions.controls.map((control) => control.get('diskName')?.value as string),
+      this.form.controls.exceptions.controls.map((control) => control.controls.diskName.value),
     );
     return this.lockedDisks()
       .filter((disk) => !usedDiskNames.has(disk.name))
@@ -96,11 +92,11 @@ export class UnlockSedDisksComponent {
   }
 
   protected getOptionsForException(index: number): Observable<Option[]> {
-    const currentDiskName = this.exceptions.at(index).get('diskName')?.value as string;
+    const currentDiskName = this.form.controls.exceptions.at(index).controls.diskName.value;
     const usedDiskNames = new Set(
-      this.exceptions.controls
+      this.form.controls.exceptions.controls
         .filter((_, i) => i !== index)
-        .map((control) => control.get('diskName')?.value as string),
+        .map((control) => control.controls.diskName.value),
     );
 
     const options = this.lockedDisks()
@@ -117,7 +113,7 @@ export class UnlockSedDisksComponent {
     const available = this.availableDisksForException;
     if (available.length === 0) return;
 
-    this.exceptions.push(
+    this.form.controls.exceptions.push(
       this.formBuilder.group({
         diskName: [''],
         password: [''],
@@ -126,7 +122,7 @@ export class UnlockSedDisksComponent {
   }
 
   protected removeException(index: number): void {
-    this.exceptions.removeAt(index);
+    this.form.controls.exceptions.removeAt(index);
   }
 
   protected onSkip(): void {

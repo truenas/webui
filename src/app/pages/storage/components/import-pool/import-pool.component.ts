@@ -1,11 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
-import {
-  UntilDestroy, untilDestroyed,
-} from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, forkJoin, map, of, switchMap,
@@ -30,12 +28,12 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { LockedSedDisk, LockedSedDisksComponent } from './locked-sed-disks/locked-sed-disks.component';
+import { LockedSedDisksComponent } from './locked-sed-disks/locked-sed-disks.component';
 import { UnlockSedDisksComponent } from './unlock-sed-disks/unlock-sed-disks.component';
+import { filterLockedSedDisks, LockedSedDisk } from './utils/sed-disk.utils';
 
 type ImportStep = 'loading' | 'locked-sed' | 'unlock-sed' | 'import';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-import-pool',
   templateUrl: './import-pool.component.html',
@@ -65,6 +63,7 @@ export class ImportPoolComponent implements OnInit {
   private router = inject(Router);
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.PoolWrite];
@@ -109,7 +108,7 @@ export class ImportPoolComponent implements OnInit {
       this.api.call('disk.details'),
       this.api.call('system.advanced.sed_global_password'),
     ]).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ([importablePoolFindJob, diskDetails, sedGlobalPassword]: [
         Job<PoolFindResult[]>,
@@ -137,7 +136,7 @@ export class ImportPoolComponent implements OnInit {
         this.globalSedPassword.set(sedGlobalPassword || '');
 
         const allDisks = [...diskDetails.used, ...diskDetails.unused];
-        const lockedDisks = LockedSedDisksComponent.filterLockedSedDisks(allDisks);
+        const lockedDisks = filterLockedSedDisks(allDisks);
         this.lockedSedDisks.set(lockedDisks);
 
         if (lockedDisks.length > 0) {
@@ -178,7 +177,7 @@ export class ImportPoolComponent implements OnInit {
       .pipe(
         switchMap(() => this.checkIfUnlockNeeded()),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(([datasets, shouldTryUnlocking]) => {
         this.slideInRef.close({ response: true });
@@ -190,9 +189,10 @@ export class ImportPoolComponent implements OnInit {
   }
 
   private checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
+    const selectedPool = this.importablePools.find((pool) => pool.guid === this.formGroup.value.guid);
     return this.api.call(
       'pool.dataset.query',
-      [[['name', '=', this.importablePools.find((importablePool) => importablePool.guid === this.formGroup.value.guid).name]]],
+      [[['name', '=', selectedPool?.name]]],
     )
       .pipe(
         this.loader.withLoader(),

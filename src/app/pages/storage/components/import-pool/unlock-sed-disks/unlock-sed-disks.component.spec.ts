@@ -14,7 +14,7 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { LockedSedDisk } from 'app/pages/storage/components/import-pool/locked-sed-disks/locked-sed-disks.component';
+import { LockedSedDisk } from 'app/pages/storage/components/import-pool/utils/sed-disk.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UnlockSedDisksComponent } from './unlock-sed-disks.component';
 
