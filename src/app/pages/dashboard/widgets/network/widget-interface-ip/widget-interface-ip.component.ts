@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import uniqBy from 'lodash-es/uniqBy';
@@ -17,6 +18,17 @@ import {
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
+interface IpAddressData {
+  address: string;
+  label?: string;
+}
+
+interface CategorizedIpAddresses {
+  virtual: NetworkInterface['failover_virtual_aliases'];
+  failover: NetworkInterface['failover_aliases'];
+  other: NetworkInterface['state']['aliases'];
+}
+
 @Component({
   selector: 'ix-widget-interface-ip',
   templateUrl: './widget-interface-ip.component.html',
@@ -26,6 +38,8 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     WithLoadingStateDirective,
     WidgetDatapointComponent,
     TranslateModule,
+    MatCard,
+    MatCardContent,
   ],
 })
 export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
@@ -59,7 +73,44 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
     return mapLoadedValue(this.interfaces(), (interfaces) => this.getIpAddresses(interfaces, interfaceId));
   });
 
+  protected ipAddressList = computed(() => {
+    if (!this.isHaLicensed()) {
+      return null;
+    }
+
+    const interfaceId = this.interfaceId();
+    return mapLoadedValue(this.interfaces(), (interfaces) => this.getIpAddressList(interfaces, interfaceId));
+  });
+
   private interfaces = toSignal(this.resources.networkInterfaces$);
+
+  /**
+   * Categorizes IP addresses into virtual IPs, failover IPs, and other controller IPs.
+   * This shared logic prevents duplication between string and structured data formatters.
+   */
+  private categorizeIpAddresses(
+    networkInterface: NetworkInterface,
+    interfaceType: NetworkInterfaceAliasType,
+  ): CategorizedIpAddresses {
+    const stateAliases = networkInterface?.state?.aliases.filter((alias) => alias.type === interfaceType) || [];
+    const virtualAliases = networkInterface.failover_virtual_aliases?.filter(
+      (alias) => alias.type === interfaceType,
+    ) || [];
+    const failoverAliases = networkInterface.failover_aliases?.filter(
+      (alias) => alias.type === interfaceType,
+    ) || [];
+
+    // Track which addresses are already labeled as virtual or failover
+    const labeledAddresses = new Set([
+      ...virtualAliases.map((a) => a.address),
+      ...failoverAliases.map((a) => a.address),
+    ]);
+
+    // Remaining addresses from state that aren't virtual or failover
+    const otherAliases = stateAliases.filter((alias) => !labeledAddresses.has(alias.address));
+
+    return { virtual: virtualAliases, failover: failoverAliases, other: otherAliases };
+  }
 
   private getIpAddresses(interfaces: NetworkInterface[], interfaceId: string): string {
     const networkInterface = interfaces.find((nic) => nic.name === interfaceId);
@@ -70,56 +121,64 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
 
     const interfaceType = this.interfaceType();
 
-    // Get all aliases from state
-    const stateAliases = networkInterface?.state?.aliases.filter((alias) => alias.type === interfaceType) || [];
-
-    // For HA systems, show IPs with labels
+    // For HA systems, show IPs with labels one per line
     if (this.isHaLicensed()) {
+      const categorized = this.categorizeIpAddresses(networkInterface, interfaceType);
       const ipLines: string[] = [];
 
-      // 1. Virtual IPs (VIPs) from failover_virtual_aliases
-      const virtualAliases = networkInterface.failover_virtual_aliases?.filter(
-        (alias) => alias.type === interfaceType,
-      ) || [];
-      virtualAliases.forEach((alias) => {
+      // 1. Virtual IPs
+      categorized.virtual.forEach((alias) => {
         ipLines.push(`${alias.address} ${this.translate.instant('(VIP)')}`);
       });
 
-      // 2. Failover aliases (controller-specific IPs)
-      const failoverAliases = networkInterface.failover_aliases?.filter(
-        (alias) => alias.type === interfaceType,
-      ) || [];
-      failoverAliases.forEach((alias) => {
+      // 2. This controller's IPs
+      categorized.failover.forEach((alias) => {
         ipLines.push(`${alias.address} ${this.translate.instant('(This Controller)')}`);
       });
 
-      // 3. Regular aliases (if any that aren't already shown)
-      const regularAliases = networkInterface.aliases?.filter(
-        (alias) => alias.type === interfaceType,
-      ) || [];
-      const shownAddresses = new Set([
-        ...virtualAliases.map((a) => a.address),
-        ...failoverAliases.map((a) => a.address),
-      ]);
-      regularAliases.forEach((alias) => {
-        if (!shownAddresses.has(alias.address)) {
-          ipLines.push(alias.address);
-        }
+      // 3. Other controller's IPs
+      categorized.other.forEach((alias) => {
+        ipLines.push(`${alias.address} ${this.translate.instant('(Other Controller)')}`);
       });
-
-      // If no HA-specific IPs, fall back to state aliases
-      if (ipLines.length === 0 && stateAliases.length > 0) {
-        return uniqBy(stateAliases, 'address').map((alias) => alias.address).join('\n');
-      }
 
       return ipLines.length > 0 ? ipLines.join('\n') : this.translate.instant('N/A');
     }
 
     // Non-HA systems: show IPs as before
+    const stateAliases = networkInterface?.state?.aliases.filter((alias) => alias.type === interfaceType) || [];
     if (!stateAliases?.length) {
       return this.translate.instant('N/A');
     }
 
     return uniqBy(stateAliases, 'address').map((alias) => alias.address).join('\n');
+  }
+
+  private getIpAddressList(interfaces: NetworkInterface[], interfaceId: string): IpAddressData[] {
+    const networkInterface = interfaces.find((nic) => nic.name === interfaceId);
+
+    if (!networkInterface) {
+      return [];
+    }
+
+    const interfaceType = this.interfaceType();
+    const categorized = this.categorizeIpAddresses(networkInterface, interfaceType);
+    const ipList: IpAddressData[] = [];
+
+    // 1. Virtual IPs
+    categorized.virtual.forEach((alias) => {
+      ipList.push({ address: alias.address, label: '(Virtual IP)' });
+    });
+
+    // 2. This controller's IPs
+    categorized.failover.forEach((alias) => {
+      ipList.push({ address: alias.address, label: '(This Controller)' });
+    });
+
+    // 3. Other controller's IPs
+    categorized.other.forEach((alias) => {
+      ipList.push({ address: alias.address, label: '(Other Controller)' });
+    });
+
+    return ipList;
   }
 }
