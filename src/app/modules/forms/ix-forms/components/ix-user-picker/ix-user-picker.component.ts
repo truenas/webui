@@ -321,21 +321,32 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
         if (!response.error && response.response) {
           // User created successfully - select the newly created user
           const newUser = response.response;
-          const newUserOption: Option = {
-            label: newUser.username,
-            value: newUser[this.comboboxProviderHandler()?.valueField || 'username'],
-          };
 
-          this.selectedOption.set(newUserOption);
-          this.value = newUserOption.value;
-          if (this.inputElementRef()?.nativeElement) {
-            this.inputElementRef().nativeElement.value = newUserOption.label;
-          }
-          this.onChange(newUserOption.value);
-          this.cdr.markForCheck();
+          // Fetch fresh options which will include the newly created user
+          this.loading.set(true);
+          this.comboboxProviderHandler()?.fetch('').pipe(
+            catchError(() => {
+              this.hasErrorInOptions.set(true);
+              return EMPTY;
+            }),
+            untilDestroyed(this),
+          ).subscribe((options) => {
+            this.options.set([this.addNewUserOption, ...options]);
 
-          // Refresh options to include the newly created user
-          this.filterChanged$.next('');
+            // Find and select the newly created user from the options
+            const newUserOption = options.find((option) => option.label === newUser.username);
+            if (newUserOption) {
+              this.selectedOption.set(newUserOption);
+              this.value = newUserOption.value;
+              if (this.inputElementRef()?.nativeElement) {
+                this.inputElementRef().nativeElement.value = newUserOption.label;
+              }
+              this.onChange(newUserOption.value);
+            }
+
+            this.loading.set(false);
+            this.cdr.markForCheck();
+          });
         } else {
           // User cancelled - clear selection to allow "Add New" to be clicked again
           this.selectedOption.set(null);
