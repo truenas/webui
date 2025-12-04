@@ -8,13 +8,15 @@ import {
 } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, map, of, switchMap,
+  Observable, forkJoin, map, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { DiskDetailsResponse } from 'app/interfaces/disk.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -28,6 +30,10 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { LockedSedDisk, LockedSedDisksComponent } from './locked-sed-disks/locked-sed-disks.component';
+import { UnlockSedDisksComponent } from './unlock-sed-disks/unlock-sed-disks.component';
+
+type ImportStep = 'loading' | 'locked-sed' | 'unlock-sed' | 'import';
 
 @UntilDestroy()
 @Component({
@@ -46,6 +52,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    LockedSedDisksComponent,
+    UnlockSedDisksComponent,
   ],
 })
 export class ImportPoolComponent implements OnInit {
@@ -63,6 +71,10 @@ export class ImportPoolComponent implements OnInit {
 
   readonly helptext = helptextImport;
   protected isLoading = signal(false);
+  protected currentStep = signal<ImportStep>('loading');
+  protected lockedSedDisks = signal<LockedSedDisk[]>([]);
+  protected globalSedPassword = signal('');
+
   importablePools: {
     name: string;
     guid: string;
@@ -85,31 +97,76 @@ export class ImportPoolComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadData();
+  }
+
+  private loadData(): void {
     this.isLoading.set(true);
-    this.api.job('pool.import_find').pipe(untilDestroyed(this)).subscribe({
-      next: (importablePoolFindJob) => {
+    this.currentStep.set('loading');
+
+    forkJoin([
+      this.api.job('pool.import_find'),
+      this.api.call('disk.details'),
+      this.api.call('system.advanced.sed_global_password'),
+    ]).pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: ([importablePoolFindJob, diskDetails, sedGlobalPassword]: [
+        Job<PoolFindResult[]>,
+        DiskDetailsResponse,
+        string,
+      ]) => {
+        this.isLoading.set(false);
+
         if (importablePoolFindJob.state !== JobState.Success) {
           return;
         }
 
-        this.isLoading.set(false);
         const result: PoolFindResult[] = importablePoolFindJob.result;
         this.importablePools = result.map((pool) => ({
           name: pool.name,
           guid: pool.guid,
         }));
+
         const opts = result.map((pool) => ({
           label: `${pool.name} | ${pool.guid}`,
           value: pool.guid,
         } as Option));
         this.pool.options = of(opts);
+
+        this.globalSedPassword.set(sedGlobalPassword || '');
+
+        const allDisks = [...diskDetails.used, ...diskDetails.unused];
+        const lockedDisks = LockedSedDisksComponent.filterLockedSedDisks(allDisks);
+        this.lockedSedDisks.set(lockedDisks);
+
+        if (lockedDisks.length > 0) {
+          this.currentStep.set('locked-sed');
+        } else {
+          this.currentStep.set('import');
+        }
       },
       error: (error: unknown) => {
         this.isLoading.set(false);
-
         this.errorHandler.showErrorModal(error);
       },
     });
+  }
+
+  protected onLockedSedSkip(): void {
+    this.currentStep.set('import');
+  }
+
+  protected onLockedSedUnlock(): void {
+    this.currentStep.set('unlock-sed');
+  }
+
+  protected onUnlockSkip(): void {
+    this.currentStep.set('import');
+  }
+
+  protected onUnlockSuccess(): void {
+    this.loadData();
   }
 
   protected onSubmit(): void {
