@@ -87,6 +87,11 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
   /**
    * Categorizes IP addresses into virtual IPs, failover IPs, and other controller IPs.
    * This shared logic prevents duplication between string and structured data formatters.
+   *
+   * Note: Virtual and failover IPs are sourced from their dedicated properties
+   * (failover_virtual_aliases, failover_aliases) and will be displayed even if they're
+   * not present in state.aliases. This is intentional for HA systems where failover
+   * hasn't occurred yet but we still want to show the configured failover IPs.
    */
   private categorizeIpAddresses(
     networkInterface: NetworkInterface | undefined,
@@ -97,6 +102,8 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
     }
 
     const stateAliases = networkInterface.state?.aliases.filter((alias) => alias.type === interfaceType) || [];
+    // Virtual and failover aliases come from dedicated properties, not state.aliases
+    // This ensures they're displayed even if not currently active in state
     const virtualAliases = networkInterface.failover_virtual_aliases?.filter(
       (alias) => alias.type === interfaceType,
     ) || [];
@@ -145,17 +152,17 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
     const ipList: IpAddressData[] = [];
 
     // 1. Virtual IPs
-    categorized.virtual.forEach((alias) => {
+    uniqBy(categorized.virtual, 'address').forEach((alias) => {
       ipList.push({ address: alias.address, label: `(${this.translate.instant('Virtual IP')})` });
     });
 
     // 2. This controller's IPs
-    categorized.failover.forEach((alias) => {
+    uniqBy(categorized.failover, 'address').forEach((alias) => {
       ipList.push({ address: alias.address, label: `(${this.translate.instant('This Controller')})` });
     });
 
     // 3. Other controller's IPs
-    categorized.other.forEach((alias) => {
+    uniqBy(categorized.other, 'address').forEach((alias) => {
       ipList.push({ address: alias.address, label: `(${this.translate.instant('Other Controller')})` });
     });
 

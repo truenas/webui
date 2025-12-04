@@ -3150,6 +3150,7 @@
   "Netgroup Object Class": "",
   "Netgroup Triple Attribute": "",
   "Network": "",
+  "Network addresses": "",
   "Network activity has been administratively disabled for update operation. Please use Manual Update.": "",
   "Network addresses allowed to use this initiator. Leave blank to allow all      networks or list network addresses with a CIDR mask. Separate entries by pressing      <code>Enter</code>.": "",
   "Network community string.  The community string acts like a user ID or password. A user with  the correct community string has access to network information. The  default is <i>public</i>. For more information, see  <a href=\"https://community.helpsystems.com/knowledge-base/intermapper/snmp/snmp-community-strings/\"  target=\"_blank\">What is an SNMP Community String?</a>.": "",

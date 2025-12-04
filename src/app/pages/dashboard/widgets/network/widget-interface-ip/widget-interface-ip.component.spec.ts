@@ -297,4 +297,81 @@ describe('WidgetInterfaceIpComponent', () => {
       });
     });
   });
+
+  describe('HA mode with IPv6', () => {
+    let haIpv6Spectator: Spectator<WidgetInterfaceIpComponent>;
+
+    const createHaIpv6Component = createComponentFactory({
+      component: WidgetInterfaceIpComponent,
+      providers: [
+        provideMockStore({
+          selectors: [
+            { selector: selectIsHaLicensed, value: true },
+          ],
+        }),
+        mockProvider(WidgetResourcesService, {
+          networkInterfaces$: of({
+            isLoading: false,
+            value: [
+              {
+                name: 'eth0',
+                aliases: [],
+                failover_aliases: [
+                  { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::1' },
+                ],
+                failover_virtual_aliases: [
+                  { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::10' },
+                ],
+                state: {
+                  aliases: [
+                    { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::1' },
+                    { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::10' },
+                    { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::2' },
+                  ],
+                },
+              },
+            ],
+          }),
+        }),
+      ],
+    });
+
+    beforeEach(() => {
+      haIpv6Spectator = createHaIpv6Component({
+        props: {
+          settings: {
+            interface: 'eth0',
+            widgetName: 'IPv6 Address',
+          },
+          size: SlotSize.Quarter,
+        },
+      });
+    });
+
+    it('renders IPv6 addresses with HA labels correctly', () => {
+      haIpv6Spectator.detectChanges();
+      const ipLines = haIpv6Spectator.queryAll('.ip-line');
+      expect(ipLines).toHaveLength(3);
+
+      expect(ipLines[0].querySelector('.ip-address')).toHaveText('fe80::10');
+      expect(ipLines[0].querySelector('.ip-label')).toHaveText('(Virtual IP)');
+
+      expect(ipLines[1].querySelector('.ip-address')).toHaveText('fe80::1');
+      expect(ipLines[1].querySelector('.ip-label')).toHaveText('(This Controller)');
+
+      expect(ipLines[2].querySelector('.ip-address')).toHaveText('fe80::2');
+      expect(ipLines[2].querySelector('.ip-label')).toHaveText('(Other Controller)');
+    });
+
+    it('filters IPv6 addresses correctly using interfaceType', () => {
+      haIpv6Spectator.detectChanges();
+      const ipLines = haIpv6Spectator.queryAll('.ip-line');
+
+      // All displayed addresses should be IPv6
+      ipLines.forEach((line) => {
+        const ipAddress = line.querySelector('.ip-address')?.textContent?.trim();
+        expect(ipAddress).toMatch(/^fe80::/);
+      });
+    });
+  });
 });
