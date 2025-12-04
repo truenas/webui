@@ -138,13 +138,10 @@ describe('UnlockSedDisksComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disk Exception' }));
     await addButton.click();
 
-    const exceptionItems = spectator.queryAll('.exception-item');
-    expect(exceptionItems).toHaveLength(1);
+    const diskSelects = await loader.getAllHarnesses(IxSelectHarness.with({ label: 'Disk' }));
+    expect(diskSelects).toHaveLength(1);
 
-    const diskSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Disk' }));
-    expect(diskSelect).toBeTruthy();
-
-    const passwordInput = await loader.getHarness(IxInputHarness.with({ label: 'Password' }));
-    expect(passwordInput).toBeTruthy();
+    const passwordInputs = await loader.getAllHarnesses(IxInputHarness.with({ label: 'Password' }));
+    expect(passwordInputs).toHaveLength(1);
   });
 });

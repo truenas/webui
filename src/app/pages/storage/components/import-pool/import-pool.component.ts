@@ -190,9 +190,12 @@ export class ImportPoolComponent implements OnInit {
 
   private checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
     const selectedPool = this.importablePools.find((pool) => pool.guid === this.formGroup.value.guid);
+    if (!selectedPool) {
+      return of([[], false]);
+    }
     return this.api.call(
       'pool.dataset.query',
-      [[['name', '=', selectedPool?.name]]],
+      [[['name', '=', selectedPool.name]]],
     )
       .pipe(
         this.loader.withLoader(),

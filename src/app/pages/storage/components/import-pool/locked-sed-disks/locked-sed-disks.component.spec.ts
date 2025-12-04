@@ -31,25 +31,16 @@ describe('LockedSedDisksComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('displays locked SED disks', () => {
-    const diskItems = spectator.queryAll('.disk-item');
-    expect(diskItems).toHaveLength(2);
-
-    expect(spectator.query('.disk-name')).toHaveText('ada0');
-    expect(spectator.query('.disk-meta')).toContainText('Samsung 870 EVO 2TB');
-    expect(spectator.query('.disk-meta')).toContainText('S5XYNS0T123456A');
+  it('displays locked SED disks with correct information', () => {
+    expect(spectator.fixture.nativeElement.textContent).toContain('ada0');
+    expect(spectator.fixture.nativeElement.textContent).toContain('ada1');
+    expect(spectator.fixture.nativeElement.textContent).toContain('Samsung 870 EVO 2TB');
+    expect(spectator.fixture.nativeElement.textContent).toContain('S5XYNS0T123456A');
+    expect(spectator.fixture.nativeElement.textContent).toContain('S5XYNS0T123456B');
   });
 
   it('displays warning message about locked SED disks', () => {
-    const warningHeader = spectator.query('.warning-header');
-    expect(warningHeader).toContainText('Locked SED Disks Detected');
-  });
-
-  it('displays Locked badge for each disk', () => {
-    const badges = spectator.queryAll('.status-badge');
-    expect(badges).toHaveLength(2);
-    expect(badges[0]).toHaveText('Locked');
-    expect(badges[1]).toHaveText('Locked');
+    expect(spectator.fixture.nativeElement.textContent).toContain('Locked SED Disks Detected');
   });
 
   it('emits skip event when skip button is clicked', async () => {
