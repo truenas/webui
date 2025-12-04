@@ -177,8 +177,8 @@ describe('ImportPoolComponent', () => {
       const lockedSpectator = createComponentWithLockedDisks();
       const lockedApi = lockedSpectator.inject(ApiService);
 
-      expect(lockedSpectator.query('ix-locked-sed-disks')).toBeTruthy();
-      expect(lockedSpectator.query('ix-fieldset')).toBeFalsy();
+      expect(lockedSpectator.fixture.nativeElement.textContent).toContain('Locked SED Disks Detected');
+      expect(lockedSpectator.fixture.nativeElement.textContent).not.toContain('Pool');
       expect(lockedApi.job).not.toHaveBeenCalledWith('pool.import_find');
     });
 
@@ -191,8 +191,8 @@ describe('ImportPoolComponent', () => {
       await skipButton.click();
 
       expect(lockedApi.job).toHaveBeenCalledWith('pool.import_find');
-      expect(lockedSpectator.query('ix-locked-sed-disks')).toBeFalsy();
-      expect(lockedSpectator.query('ix-fieldset')).toBeTruthy();
+      expect(lockedSpectator.fixture.nativeElement.textContent).not.toContain('Locked SED Disks Detected');
+      expect(lockedSpectator.fixture.nativeElement.textContent).toContain('Pool');
     });
 
     it('shows unlock step when unlock is clicked', async () => {
@@ -202,8 +202,8 @@ describe('ImportPoolComponent', () => {
       const unlockButton = await lockedLoader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
       await unlockButton.click();
 
-      expect(lockedSpectator.query('ix-locked-sed-disks')).toBeFalsy();
-      expect(lockedSpectator.query('ix-unlock-sed-disks')).toBeTruthy();
+      expect(lockedSpectator.fixture.nativeElement.textContent).not.toContain('Locked SED Disks Detected');
+      expect(lockedSpectator.fixture.nativeElement.textContent).toContain('Global SED Password');
     });
   });
 });

@@ -8,9 +8,9 @@
       [required]="true"
     ></ix-input>
 
-    <mat-checkbox formControlName="updateGlobalSettings" ixTest="update-global-settings">
+    <mat-checkbox formControlName="updateGlobalSettings" ixTest="update-global-settings" aria-describedby="update-global-hint">
       <span class="checkbox-label">{{ 'Update global settings (applies to all disks/pools)' | translate }}</span>
-      <span class="checkbox-hint">{{ 'Save this password to the system configuration for future use with these disks.' | translate }}</span>
+      <span id="update-global-hint" class="checkbox-hint">{{ 'Save this password to the system configuration for future use with these disks.' | translate }}</span>
     </mat-checkbox>
 
     <div class="exceptions-section">
@@ -51,7 +51,7 @@
         type="button"
         class="add-exception-button"
         ixTest="add-exception"
-        [disabled]="availableDisksForException.length === 0"
+        [disabled]="availableDisksForException().length === 0"
         (click)="addException()"
       >
         <ix-icon name="mdi-plus"></ix-icon>
