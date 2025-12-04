@@ -509,17 +509,7 @@ export class AppSchemaService {
       new CustomUntypedFormArray([], this.buildSchemaControlValidator({}, schema)),
     );
 
-    let items: ChartSchemaNode[] = [];
-
-    chartSchemaNode.schema.items.forEach((item) => {
-      if (item.schema.attrs) {
-        item.schema.attrs.forEach((attr) => {
-          items = items.concat(attr);
-        });
-      } else {
-        items = items.concat(item);
-      }
-    });
+    const items = this.getListSchemaItems(chartSchemaNode);
 
     const itemsToPopulate = this.getItemsToPopulate(schema, config, formGroup, chartSchemaNode, isNew);
 
@@ -533,7 +523,7 @@ export class AppSchemaService {
       // Wrap primitive values for lists with primitive schemas
       // Objects (like nested lists in dicts) are already in the correct format
       let itemConfig: HierarchicalObjectMap<ChartFormValue>;
-      if (isSinglePrimitiveItem && (typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean')) {
+      if (isSinglePrimitiveItem && this.isPrimitiveValue(item)) {
         itemConfig = { [items[0].variable]: item } as HierarchicalObjectMap<ChartFormValue>;
       } else {
         itemConfig = item as HierarchicalObjectMap<ChartFormValue>;
@@ -553,15 +543,33 @@ export class AppSchemaService {
     }
   }
 
+  private getListSchemaItems(chartSchemaNode: ChartSchemaNode): ChartSchemaNode[] {
+    const items: ChartSchemaNode[] = [];
+    chartSchemaNode.schema.items.forEach((item) => {
+      if (item.schema.attrs) {
+        items.push(...item.schema.attrs);
+      } else {
+        items.push(item);
+      }
+    });
+    return items;
+  }
+
+  private isPrimitiveValue(value: unknown): value is string | number | boolean {
+    const type = typeof value;
+    return type === 'string' || type === 'number' || type === 'boolean';
+  }
+
   /**
    * Determines which items should be populated in a list control.
    * Handles three scenarios:
-   * 1. Edit mode with existing config data
-   * 2. New mode with schema defaults (primitives only)
-   * 3. Nested lists where config is provided but may not contain list data
+   * 1. Edit mode with existing config data - populates items from the provided config object
+   * 2. Create mode with schema defaults (primitives only) - populates from schema.default array
+   * 3. Nested lists where config is provided
+   * but path doesn't resolve to list data - populates from schema.default array
    *
    * Object defaults (e.g., [{key: 'value'}]) are intentionally skipped here because
-   * the ix-list component handles them directly through user interaction.
+   * the ix-list component handles them directly through user interaction (clicking "Add" button).
    * Only primitive defaults (e.g., ['string1', 'string2']) are populated automatically.
    */
   private getItemsToPopulate(
@@ -579,9 +587,9 @@ export class AppSchemaService {
 
     // Try to get items from config first (edit mode or nested lists with data)
     if (config) {
-      const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
+      const pathSegments = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
       let nextItem: unknown = config;
-      for (const pathSegment of configControlPath) {
+      for (const pathSegment of pathSegments) {
         if (nextItem && typeof nextItem === 'object' && nextItem !== null) {
           nextItem = (nextItem as Record<string, unknown>)[pathSegment];
         }
@@ -590,9 +598,9 @@ export class AppSchemaService {
         return nextItem;
       }
 
-      // If config provided but no items found, populate from schema defaults
+      // If config provided but path didn't resolve to array data, use schema defaults
       // This handles nested lists where config is passed but doesn't contain list data
-      if (isNew && schema.default && Array.isArray(schema.default)) {
+      if (nextItem === undefined && schema.default && Array.isArray(schema.default)) {
         return schema.default;
       }
     } else if (isNew && !hasObjectDefaults && schema.default && Array.isArray(schema.default)) {
