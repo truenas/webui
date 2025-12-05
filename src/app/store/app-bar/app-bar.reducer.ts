@@ -12,16 +12,16 @@ export type AppBarState = AppBarItem;
 
 export const initialState: AppBarItem[] = [
   {
-    status: 'minimized',
+    status: 'open',
     name: 'Desktop',
     icon: iconMarker('mdi-monitor'),
     state: 'desktop',
   },
-  // 可以在这里添加更多初始项
+  // more items can be added dynamically
 ];
 
 function updateItem(state: AppBarState[], stateId: string, changes: Partial<AppBarState>): AppBarState[] {
-  return state.map((item) => (item.state === stateId ? { ...item, ...changes } : item));
+  return state.map((item) => (item.state === stateId ? { ...item, ...changes } : { ...item, status: 'minimized' as const }));
 }
 
 export const appBarReducer = createReducer(
@@ -32,7 +32,7 @@ export const appBarReducer = createReducer(
       return updateItem(state, item.state, { ...item, status: 'open' as const });
     }
 
-    return [...state, { ...item, status: 'open' as const }];
+    return [...state.map((i) => ({ ...i, status: 'minimized' as const })), { ...item, status: 'open' as const }];
   }),
   on(appBarClosed, (state, { stateName }) => state.filter((item) => item.state !== stateName)),
   on(appBarMinimized, (state, { stateName }) => updateItem(state, stateName, { status: 'minimized' as const })),

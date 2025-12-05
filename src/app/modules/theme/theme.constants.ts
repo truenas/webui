@@ -22,7 +22,7 @@ export const defaultTheme: Theme = {
   red: '#CE2929',
   magenta: '#C006C7',
   violet: '#7617D8',
-  blue: '#0095D5',
+  blue: '#6715FF',
   cyan: '#00d0d6',
   green: '#71BF44',
   pink: '#ffc0cb',

@@ -20,6 +20,3 @@ export const appBarAdded = createAction(
   '[AppBar] Added',
   props<{ item: AppBarItem }>(),
 );
-
-// 打开/缩小
-// 打开应用，如果不存在则添加
