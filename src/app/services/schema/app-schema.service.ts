@@ -420,20 +420,27 @@ export class AppSchemaService {
 
   private addCommonSchemaTypeControl(payload: CommonSchemaAddControl): void {
     const {
-      schema, isNew, formGroup, isParentImmutable, chartSchemaNode,
+      schema, isNew, formGroup, isParentImmutable, chartSchemaNode, config,
     } = payload;
 
-    let altDefault: string | boolean | number | null = '';
+    type DefaultValue = string | boolean | number | null;
+
+    let altDefault: DefaultValue = '';
     if (schema.type === ChartSchemaType.Int) {
       altDefault = null;
     } else if (schema.type === ChartSchemaType.Boolean) {
       altDefault = false;
     }
 
-    // For hidden fields with default values, always use the default value from schema
-    // For new apps, use schema default if available
-    const shouldUseSchemaDefault = (schema.hidden || isNew) && schema.default !== undefined;
-    const defaultValue = shouldUseSchemaDefault ? schema.default : altDefault;
+    // Priority: 1) config value, 2) schema default (for hidden/new), 3) alt default
+    let defaultValue: DefaultValue;
+    if (config && isPlainObject(config) && chartSchemaNode.variable in config) {
+      defaultValue = config[chartSchemaNode.variable] as DefaultValue;
+    } else {
+      const shouldUseSchemaDefault = (schema.hidden || isNew) && schema.default !== undefined;
+      defaultValue = shouldUseSchemaDefault ? schema.default as DefaultValue : altDefault;
+    }
+
     const newFormControl = new CustomUntypedFormControl(
       defaultValue,
       this.buildSchemaControlValidator(defaultValue, schema),
@@ -501,42 +508,111 @@ export class AppSchemaService {
       new CustomUntypedFormArray([], this.buildSchemaControlValidator({}, schema)),
     );
 
-    if (config) {
-      let items: ChartSchemaNode[] = [];
-      chartSchemaNode.schema.items.forEach((item) => {
-        if (item.schema.attrs) {
-          item.schema.attrs.forEach((attr) => {
-            items = items.concat(attr);
-          });
-        } else {
-          items = items.concat(item);
-        }
-      });
+    const items = this.getListSchemaItems(chartSchemaNode);
 
-      const configControlPath = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
-      let nextItem = config;
-      for (const controlPath of configControlPath) {
-        if (nextItem) {
-          nextItem = nextItem[controlPath] as HierarchicalObjectMap<ChartFormValue>;
-        }
+    const itemsToPopulate = this.getItemsToPopulate(schema, config, formGroup, chartSchemaNode, isNew);
+
+    // Check if this is a list of primitives (single item schema with non-dict type)
+    // Note: items[0]?.schema?.type will be undefined if items is empty, which is a valid schema state
+    const firstItemType = items[0]?.schema?.type;
+    const isSinglePrimitiveItem = items.length === 1
+      && firstItemType !== undefined
+      && firstItemType !== ChartSchemaType.Dict;
+
+    for (const item of itemsToPopulate) {
+      // Wrap primitive values for lists with primitive schemas
+      // Objects (like nested lists in dicts) are already in the correct format
+      let itemConfig: HierarchicalObjectMap<ChartFormValue>;
+      if (isSinglePrimitiveItem && this.isPrimitiveValue(item)) {
+        itemConfig = { [items[0].variable]: item } as HierarchicalObjectMap<ChartFormValue>;
+      } else {
+        itemConfig = item as HierarchicalObjectMap<ChartFormValue>;
       }
 
-      if (Array.isArray(nextItem)) {
-        for (const item of nextItem) {
-          subscription.add(
-            this.addFormListItem({
-              isNew,
-              event: {
-                array: formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormArray,
-                schema: items,
-              },
-              isParentImmutable: isParentImmutable || !!schema.immutable,
-              config: item as HierarchicalObjectMap<ChartFormValue>,
-            }),
-          );
-        }
-      }
+      subscription.add(
+        this.addFormListItem({
+          isNew,
+          event: {
+            array: formGroup.controls[chartSchemaNode.variable] as CustomUntypedFormArray,
+            schema: items,
+          },
+          isParentImmutable: isParentImmutable || !!schema.immutable,
+          config: itemConfig,
+        }),
+      );
     }
+  }
+
+  private getListSchemaItems(chartSchemaNode: ChartSchemaNode): ChartSchemaNode[] {
+    const items: ChartSchemaNode[] = [];
+    chartSchemaNode.schema.items.forEach((item) => {
+      if (item.schema.attrs) {
+        items.push(...item.schema.attrs);
+      } else {
+        items.push(item);
+      }
+    });
+    return items;
+  }
+
+  private isPrimitiveValue(value: unknown): value is string | number | boolean {
+    const type = typeof value;
+    return type === 'string' || type === 'number' || type === 'boolean';
+  }
+
+  /**
+   * Determines which items should be populated in a list control.
+   * Handles three scenarios:
+   * 1. Edit mode with existing config data - populates items from the provided config object
+   * 2. Create mode with schema defaults (primitives only) - populates from schema.default array
+   * 3. Nested lists where config is provided
+   * but path doesn't resolve to list data - populates from schema.default array
+   *
+   * Object defaults (e.g., [{key: 'value'}]) are intentionally skipped here because
+   * the ix-list component handles them directly through user interaction (clicking "Add" button).
+   * Only primitive defaults (e.g., ['string1', 'string2']) are populated automatically.
+   */
+  private getItemsToPopulate(
+    schema: ChartSchemaNodeConf,
+    config: unknown,
+    formGroup: CustomUntypedFormGroup | FormGroup,
+    chartSchemaNode: ChartSchemaNode,
+    isNew: boolean,
+  ): (HierarchicalObjectMap<ChartFormValue> | string | number | boolean)[] {
+    // Check if schema defaults are primitives or objects
+    const hasObjectDefaults = schema.default
+      && Array.isArray(schema.default)
+      && schema.default.length > 0
+      && typeof schema.default[0] === 'object';
+
+    // Try to get items from config first (edit mode or nested lists with data)
+    if (config) {
+      const pathSegments = this.getControlPath(formGroup.controls[chartSchemaNode.variable], '').split('.');
+      let nextItem: unknown = config;
+      // Traverse path segments to find the nested value
+      // Note: path segments can include array indices as strings (e.g., '0', '1'), which works
+      // correctly with both objects and arrays in JavaScript (arrays are objects with numeric keys)
+      for (const pathSegment of pathSegments) {
+        if (nextItem && typeof nextItem === 'object' && nextItem !== null) {
+          nextItem = (nextItem as Record<string, unknown>)[pathSegment];
+        }
+      }
+      if (Array.isArray(nextItem)) {
+        return nextItem;
+      }
+
+      // If config provided but path didn't resolve to array data, use schema defaults
+      // This handles nested lists where config is passed but doesn't contain list data
+      if (nextItem === undefined && schema.default && Array.isArray(schema.default)) {
+        return schema.default;
+      }
+    } else if (isNew && !hasObjectDefaults && schema.default && Array.isArray(schema.default)) {
+      // No config but has primitive defaults - populate them (nested primitive lists)
+      // Object defaults are skipped because they require user interaction via ix-list
+      return schema.default;
+    }
+
+    return [];
   }
 
   private handleAddFormControlWithSchemaHidden(payload: CommonSchemaAddControl): void {
