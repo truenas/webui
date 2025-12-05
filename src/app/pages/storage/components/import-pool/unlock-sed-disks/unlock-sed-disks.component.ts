@@ -78,10 +78,12 @@ export class UnlockSedDisksComponent {
   });
 
   protected isUnlocking = signal(false);
-  protected exceptionsCount = signal(0);
+
+  // Signal to track FormArray changes since FormArray is not signal-based
+  private exceptionsVersion = signal(0);
 
   protected availableDisksForException = computed(() => {
-    this.exceptionsCount();
+    this.exceptionsVersion(); // Trigger recompute when exceptions change
     const usedDiskNames = new Set(
       this.form.controls.exceptions.controls.map((control) => control.controls.diskName.value),
     );
@@ -121,12 +123,12 @@ export class UnlockSedDisksComponent {
         password: [''],
       }),
     );
-    this.exceptionsCount.set(this.form.controls.exceptions.length);
+    this.exceptionsVersion.update((version) => version + 1);
   }
 
   protected removeException(index: number): void {
     this.form.controls.exceptions.removeAt(index);
-    this.exceptionsCount.set(this.form.controls.exceptions.length);
+    this.exceptionsVersion.update((version) => version + 1);
   }
 
   protected onSkip(): void {

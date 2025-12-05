@@ -190,12 +190,17 @@ export class ImportPoolComponent implements OnInit {
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(([datasets, shouldTryUnlocking]) => {
-        this.slideInRef.close({ response: true });
-        this.snackbar.success(this.translate.instant('Pool imported successfully.'));
-        if (shouldTryUnlocking) {
-          this.router.navigate(['/datasets', datasets[0].id, 'unlock']);
-        }
+      .subscribe({
+        next: ([datasets, shouldTryUnlocking]) => {
+          this.slideInRef.close({ response: true });
+          this.snackbar.success(this.translate.instant('Pool imported successfully.'));
+          if (shouldTryUnlocking) {
+            this.router.navigate(['/datasets', datasets[0].id, 'unlock']);
+          }
+        },
+        error: () => {
+          this.isLoading.set(false);
+        },
       });
   }
 
