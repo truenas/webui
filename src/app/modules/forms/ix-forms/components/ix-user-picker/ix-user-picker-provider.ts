@@ -42,9 +42,14 @@ export class UserPickerProvider implements IxComboboxProvider {
   }
 
   private queryUsers(search: string): Observable<Option[]> {
-    const queryArgs: QueryParams<User> = [...this.queryParams];
-    queryArgs[1].offset = this.page * this.pageSize;
-    queryArgs[1].limit = this.pageSize;
+    // Create a shallow copy of query params to avoid mutating the original arrays/objects.
+    // ParamsBuilder may freeze or reuse query param objects, so we need to create new copies
+    // before adding dynamic filters (smb, username search) and pagination (offset, limit).
+    // Note: This is a shallow copy - nested objects in filters are not deep cloned.
+    const queryArgs: QueryParams<User> = [
+      [...this.queryParams[0]],
+      { ...this.queryParams[1], offset: this.page * this.pageSize, limit: this.pageSize },
+    ];
 
     search = search?.trim();
     if (this.queryType === ComboboxQueryType.Smb) {

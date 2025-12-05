@@ -177,9 +177,15 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
         this.onChange(this.value);
       } else if (this.value !== null) {
         const selectedOptionFromValue = this.options().find((option) => option.value === this.value);
-        this.selectedOption.set(selectedOptionFromValue
-          ? { ...selectedOptionFromValue }
-          : { label: this.value as string, value: this.value });
+        if (selectedOptionFromValue) {
+          this.selectedOption.set({ ...selectedOptionFromValue });
+        } else {
+          // If selected value is not in fetched options, add it manually
+          // This handles newly created items that may not be in the backend cache yet
+          const missingOption = { label: this.value as string, value: this.value };
+          this.selectedOption.set(missingOption);
+          this.options.set([this.addNewUserOption, missingOption, ...options]);
+        }
       }
 
       this.loading.set(false);
@@ -308,8 +314,14 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     this.cdr.markForCheck();
   }
 
-  getValueFromSlideInResponse(result: SlideInResponse<User>): string {
-    return result.response.username;
+  getValueFromSlideInResponse(result: SlideInResponse<User>): string | number {
+    const provider = this.comboboxProviderHandler();
+    // Check if provider has valueField property (UserPickerProvider specific)
+    const hasValueField = provider && 'valueField' in provider;
+    const valueField: keyof Pick<User, 'username' | 'uid' | 'id'> = hasValueField
+      ? (provider as unknown as { valueField: keyof Pick<User, 'username' | 'uid' | 'id'> }).valueField
+      : 'username';
+    return result.response[valueField];
   }
 
   private listenForAddNew(): void {
@@ -317,11 +329,39 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
       distinctUntilChanged(),
       filter((selectedOption) => selectedOption === newOption),
       switchMap(() => this.slideIn.open(UserFormComponent, { wide: true })),
-      filter((response: SlideInResponse) => !response.error),
       tap((response: SlideInResponse<User>) => {
-        // TODO: Handle it better. Show all users and select newly created.
-        this.filterChanged$.next(this.getValueFromSlideInResponse(response));
-        // TODO: Make it better. Rely on close event of slide-in.
+        if (!response.error && response.response) {
+          // User created successfully - select the newly created user
+          const newUser = response.response;
+          const newUserOption: Option = {
+            label: newUser.username,
+            value: this.getValueFromSlideInResponse(response),
+          };
+
+          this.selectedOption.set(newUserOption);
+          this.value = newUserOption.value;
+          if (this.inputElementRef()?.nativeElement) {
+            this.inputElementRef().nativeElement.value = newUserOption.label;
+          }
+          this.onChange(newUserOption.value);
+
+          // Add the newly created user to the options list immediately
+          // This avoids race conditions with the debounced filterChanged$ observable
+          const existingOptions = this.options().slice(1); // Remove "Add New" from index 0
+          // Check if user already exists to prevent duplicates
+          if (!existingOptions.some((opt) => opt.value === newUserOption.value)) {
+            this.options.set([this.addNewUserOption, newUserOption, ...existingOptions]);
+          }
+
+          this.cdr.markForCheck();
+        } else {
+          // User cancelled - clear selection to allow "Add New" to be clicked again
+          this.selectedOption.set(null);
+          if (this.inputElementRef()?.nativeElement) {
+            this.inputElementRef().nativeElement.value = '';
+          }
+        }
+
         setTimeout(() => this.autocompleteTrigger().closePanel(), 350);
       }),
       untilDestroyed(this),
