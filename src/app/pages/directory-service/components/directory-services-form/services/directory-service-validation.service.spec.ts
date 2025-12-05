@@ -56,7 +56,7 @@ describe('DirectoryServiceValidationService', () => {
   describe('calculateFormValidity', () => {
     it('should return false when no service type is selected', () => {
       testForm.patchValue({ service_type: null });
-      const isValid = service.calculateFormValidity(testForm, null);
+      const isValid = service.calculateFormValidity(testForm.valid, null);
       expect(isValid).toBe(false);
     });
 
@@ -69,7 +69,7 @@ describe('DirectoryServiceValidationService', () => {
       service.setActiveDirectoryValid(true);
       service.setCredentialValid(true);
 
-      const isValid = service.calculateFormValidity(testForm, DirectoryServiceType.ActiveDirectory);
+      const isValid = service.calculateFormValidity(testForm.valid, DirectoryServiceType.ActiveDirectory);
       expect(isValid).toBe(true);
     });
 
@@ -82,7 +82,7 @@ describe('DirectoryServiceValidationService', () => {
       service.setActiveDirectoryValid(false);
       service.setCredentialValid(true);
 
-      const isValid = service.calculateFormValidity(testForm, DirectoryServiceType.ActiveDirectory);
+      const isValid = service.calculateFormValidity(testForm.valid, DirectoryServiceType.ActiveDirectory);
       expect(isValid).toBe(false);
     });
 
@@ -95,7 +95,7 @@ describe('DirectoryServiceValidationService', () => {
       service.setActiveDirectoryValid(true);
       service.setCredentialValid(false);
 
-      const isValid = service.calculateFormValidity(testForm, DirectoryServiceType.ActiveDirectory);
+      const isValid = service.calculateFormValidity(testForm.valid, DirectoryServiceType.ActiveDirectory);
       expect(isValid).toBe(false);
     });
 
@@ -108,7 +108,7 @@ describe('DirectoryServiceValidationService', () => {
       service.setActiveDirectoryValid(true);
       service.setCredentialValid(true);
 
-      const isValid = service.calculateFormValidity(testForm, DirectoryServiceType.ActiveDirectory);
+      const isValid = service.calculateFormValidity(testForm.valid, DirectoryServiceType.ActiveDirectory);
       expect(isValid).toBe(false);
     });
 
@@ -122,7 +122,7 @@ describe('DirectoryServiceValidationService', () => {
       service.setLdapValid(true);
       service.setCredentialValid(true);
 
-      const isValid = service.calculateFormValidity(testForm, DirectoryServiceType.Ldap);
+      const isValid = service.calculateFormValidity(testForm.valid, DirectoryServiceType.Ldap);
       expect(isValid).toBe(true);
     });
   });

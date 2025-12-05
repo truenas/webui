@@ -40,4 +40,53 @@ describe('IxErrorsComponent', () => {
 
     expect(spectator.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Errors in Name: Custom error');
   });
+
+  it('displays errors immediately when control has errors on init', () => {
+    const invalidControl = new FormControl(5, [Validators.min(10)]);
+
+    spectator.setHostInput('control', invalidControl);
+    spectator.detectComponentChanges();
+
+    expect(spectator.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Errors in Name: Minimum value is 10');
+    expect(spectator.query('.form-error')).toExist();
+    expect(spectator.query('mat-error')).toHaveText('Minimum value is 10');
+  });
+
+  it('does not announce errors when control is in PENDING state', () => {
+    jest.clearAllMocks();
+
+    const asyncControl = new FormControl('', {
+      asyncValidators: () => new Promise(() => {}),
+    });
+
+    spectator.setHostInput('control', asyncControl);
+    spectator.detectComponentChanges();
+
+    expect(spectator.inject(LiveAnnouncer).announce).not.toHaveBeenCalled();
+  });
+
+  it('clears errors when control becomes valid', () => {
+    const dynamicControl = new FormControl('', [Validators.required]);
+
+    spectator.setHostInput('control', dynamicControl);
+    spectator.detectComponentChanges();
+
+    expect(spectator.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Errors in Name: Name is required');
+
+    jest.clearAllMocks();
+
+    dynamicControl.setValue('valid value');
+    spectator.detectComponentChanges();
+
+    expect(spectator.component.messages).toEqual([]);
+  });
+
+  it('does not mark control as touched when displaying initial errors', () => {
+    const invalidControl = new FormControl(5, [Validators.min(10)]);
+
+    spectator.setHostInput('control', invalidControl);
+    spectator.detectComponentChanges();
+
+    expect(invalidControl.touched).toBe(false);
+  });
 });
