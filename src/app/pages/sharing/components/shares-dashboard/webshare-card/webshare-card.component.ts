@@ -198,6 +198,10 @@ export class WebShareCardComponent implements OnInit {
     this.webShareService.openWebShare();
   }
 
+  openTruenasConnectDialog(): void {
+    this.truenasConnectService.openStatusModal();
+  }
+
   openWebShareByName(row: WebShareTableRow): void {
     this.webShareService.openWebShare(row.name);
   }

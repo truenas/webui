@@ -1,23 +1,36 @@
 mat-card {
   height: 100%;
-
-  &.card-disabled {
-    opacity: 0.6;
-  }
 }
 
 .card-title {
   align-items: center;
   display: flex;
 
-  .license-required {
-    color: var(--red);
-    font-size: 14px;
-    font-weight: normal;
-    margin-left: 8px;
-  }
-
   ix-icon {
     margin-left: 5px;
+  }
+}
+
+.info-message {
+  align-items: center;
+  background-color: var(--bg1);
+  border: 1px solid var(--lines);
+  border-radius: 4px;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 16px;
+
+  ix-icon {
+    color: var(--primary);
+  }
+
+  &.clickable {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: var(--bg2);
+    }
   }
 }
