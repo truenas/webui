@@ -41,6 +41,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
 
   private statusChangeSubscription: Subscription;
   messages: string[] = [];
+  protected showErrorsForUntouched = false;
 
   readonly defaultErrMessages = {
     min: (min: number) => this.translate.instant('Minimum value is {min}', { min }),
@@ -124,6 +125,11 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
     // Skip marking as touched on initial display to avoid triggering
     // side effects like auto-opening editable components.
     if (shouldHandleImmediately) {
+      // If control has errors on init, show them even if control is untouched.
+      // This handles the case where form is populated with invalid data from API.
+      if (this.control().errors) {
+        this.showErrorsForUntouched = true;
+      }
       this.handleErrors({ skipMarkAsTouched: true });
     }
   }

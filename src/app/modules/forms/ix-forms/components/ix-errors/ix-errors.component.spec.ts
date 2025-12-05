@@ -48,6 +48,8 @@ describe('IxErrorsComponent', () => {
     spectator.detectComponentChanges();
 
     expect(spectator.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Errors in Name: Minimum value is 10');
+    expect(spectator.query('.form-error')).toExist();
+    expect(spectator.query('mat-error')).toHaveText('Minimum value is 10');
   });
 
   it('does not announce errors when control is in PENDING state', () => {
