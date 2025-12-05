@@ -1,0 +1,108 @@
+.unlock-sed-disks {
+  padding: 16px 0;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+mat-checkbox {
+  display: flex;
+  flex-direction: column;
+
+  .checkbox-label {
+    display: block;
+    font-weight: 500;
+  }
+
+  .checkbox-hint {
+    color: var(--fg2);
+    display: block;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+
+.exceptions-section {
+  background-color: var(--bg1);
+  border: 1px solid var(--lines);
+  border-radius: 4px;
+  margin-top: 8px;
+  padding: 16px;
+}
+
+.section-title {
+  color: var(--fg1);
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.section-hint {
+  color: var(--fg2);
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+
+.exceptions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.exception-item {
+  background-color: var(--bg2);
+  border: 1px solid var(--lines);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.exception-row {
+  align-items: flex-start;
+  display: flex;
+  gap: 8px;
+}
+
+.disk-select {
+  flex: 1;
+}
+
+.remove-button {
+  color: var(--fg2);
+  flex-shrink: 0;
+  margin-top: 16px;
+
+  &:hover {
+    color: var(--red);
+  }
+}
+
+.add-exception-button {
+  align-items: center;
+  border: 1px dashed var(--lines);
+  border-radius: 4px;
+  color: var(--fg2);
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin-top: 12px;
+  padding: 8px 16px;
+  width: 100%;
+
+  &:hover:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+
+  ix-icon {
+    font-size: 18px;
+  }
+}
