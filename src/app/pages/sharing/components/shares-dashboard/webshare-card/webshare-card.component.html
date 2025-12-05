@@ -1,12 +1,9 @@
-<mat-card [class.card-disabled]="!(hasTruenasConnect$ | async)">
+<mat-card>
   <mat-toolbar-row>
     <div class="toolbar-row-title">
       <a [ixTest]="['webshare', 'open-in-new']" [routerLink]="['/sharing', 'webshare']">
         <h3 class="card-title">
           {{ 'WebShare' | translate }}
-          @if (!(hasTruenasConnect$ | async)) {
-            <span class="license-required">({{ 'Requires TrueNAS Connect to be configured' | translate }})</span>
-          }
           <ix-icon name="open_in_new"></ix-icon>
         </h3>
       </a>
@@ -48,6 +45,13 @@
       ></ix-service-extra-actions>
     </div>
   </mat-toolbar-row>
+
+  @if (!(hasTruenasConnect$ | async)) {
+    <div class="info-message clickable" (click)="openTruenasConnectDialog()">
+      <ix-icon name="info"></ix-icon>
+      <span>{{ 'WebShare service requires TrueNAS Connect to be configured and active.' | translate }}</span>
+    </div>
+  }
 
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <ix-empty [conf]="emptyConfig"></ix-empty>
