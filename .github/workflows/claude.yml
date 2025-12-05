@@ -31,9 +31,10 @@ jobs:
           fetch-depth: 10
 
       - name: Automatic PR Review
-        uses: anthropics/claude-code-action@v1.0.16
+        uses: anthropics/claude-code-action@v1.0.22
         with:
           anthropic_api_key: ${{ secrets.CLAUDE_API_KEY }}
+          model: claude-opus-4-5-20251101
           track_progress: true
           use_sticky_comment: true
           prompt: |
