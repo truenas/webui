@@ -7,12 +7,18 @@ import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfa
 import { addMessageWithLimit } from 'app/modules/websocket-debug-panel/utils/reducer-utils';
 import * as WebSocketDebugActions from './websocket-debug.actions';
 
+export interface PrefilledMockConfig {
+  methodName: string;
+  responseResult: unknown;
+}
+
 export interface WebSocketDebugState {
   messages: WebSocketDebugMessage[];
   mockConfigs: MockConfig[];
   isPanelOpen: boolean;
   activeTab: string;
   messageLimit: number;
+  prefilledMockConfig: PrefilledMockConfig | null;
   enclosureMock: {
     enabled: boolean;
     controllerModel: EnclosureModel | null;
@@ -27,6 +33,7 @@ export const initialState: WebSocketDebugState = {
   isPanelOpen: false,
   activeTab: tabs.WEBSOCKET,
   messageLimit: defaultMessageLimit,
+  prefilledMockConfig: null,
   enclosureMock: {
     enabled: false,
     controllerModel: null,
@@ -111,5 +118,14 @@ export const webSocketDebugReducer = createReducer(
   on(WebSocketDebugActions.enclosureMockConfigLoaded, (state, { config }) => ({
     ...state,
     enclosureMock: config || initialState.enclosureMock,
+  })),
+  on(WebSocketDebugActions.createMockFromResponse, (state, { methodName, responseResult }) => ({
+    ...state,
+    activeTab: tabs.MOCK_CONFIG,
+    prefilledMockConfig: { methodName, responseResult },
+  })),
+  on(WebSocketDebugActions.clearPrefilledMockConfig, (state) => ({
+    ...state,
+    prefilledMockConfig: null as PrefilledMockConfig | null,
   })),
 );

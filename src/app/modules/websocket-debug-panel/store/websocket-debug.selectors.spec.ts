@@ -64,6 +64,7 @@ describe('WebSocketDebug Selectors', () => {
     isPanelOpen: true,
     activeTab: 'websocket',
     messageLimit: 200,
+    prefilledMockConfig: null,
     enclosureMock: {
       enabled: false,
       controllerModel: null,

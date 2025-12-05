@@ -4,7 +4,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import * as WebSocketDebugActions from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
-import { selectMockConfigs } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { selectMockConfigs, selectPrefilledMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { MockConfigListComponent } from './mock-config-list.component';
 
 describe('MockConfigListComponent', () => {
@@ -46,6 +46,10 @@ describe('MockConfigListComponent', () => {
             selector: selectMockConfigs,
             value: mockConfigs,
           },
+          {
+            selector: selectPrefilledMockConfig,
+            value: null,
+          },
         ],
       }),
     ],
@@ -56,8 +60,16 @@ describe('MockConfigListComponent', () => {
     store$ = spectator.inject(MockStore);
     jest.spyOn(store$, 'dispatch');
 
-    // Mock the selectSignal method
-    jest.spyOn(store$, 'selectSignal').mockImplementation(() => signal(mockConfigs));
+    // Mock the selectSignal method to return appropriate values based on selector
+    jest.spyOn(store$, 'selectSignal').mockImplementation((selector) => {
+      if (selector === selectMockConfigs) {
+        return signal(mockConfigs);
+      }
+      if (selector === selectPrefilledMockConfig) {
+        return signal(null);
+      }
+      return signal(null);
+    });
   });
 
   it('should create', () => {
@@ -140,6 +152,7 @@ describe('MockConfigListComponent', () => {
 
       expect(spectator.component['showForm']).toBe(true);
       expect(spectator.component['editingConfig']).toBeNull();
+      expect(spectator.component['prefilledMockData']).toBeNull();
     });
 
     it('should show form for editing config', () => {
@@ -168,13 +181,17 @@ describe('MockConfigListComponent', () => {
       expect(spectator.component['editingConfig']).toBeNull();
     });
 
-    it('should not dispatch action when editing existing config', () => {
+    it('should not dispatch addMockConfig when editing existing config', () => {
       spectator.component['editingConfig'] = mockConfigs[0];
       store$.dispatch = jest.fn();
 
       spectator.component['onFormSubmit'](mockConfigs[0]);
 
-      expect(store$.dispatch).not.toHaveBeenCalled();
+      // Should only dispatch clearPrefilledMockConfig, not addMockConfig
+      expect(store$.dispatch).toHaveBeenCalledTimes(1);
+      expect(store$.dispatch).toHaveBeenCalledWith(
+        WebSocketDebugActions.clearPrefilledMockConfig(),
+      );
       expect(spectator.component['showForm']).toBe(false);
       expect(spectator.component['editingConfig']).toBeNull();
     });
@@ -187,6 +204,7 @@ describe('MockConfigListComponent', () => {
 
       expect(spectator.component['showForm']).toBe(false);
       expect(spectator.component['editingConfig']).toBeNull();
+      expect(spectator.component['prefilledMockData']).toBeNull();
     });
   });
 

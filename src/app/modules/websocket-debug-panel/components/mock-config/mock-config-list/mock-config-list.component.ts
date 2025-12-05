@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, inject, untracked,
 } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -15,9 +15,10 @@ import {
   isErrorResponse, isSuccessResponse,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import {
-  addMockConfig, deleteMockConfig, toggleMockConfig, exportMockConfigs,
+  addMockConfig, clearPrefilledMockConfig, deleteMockConfig, toggleMockConfig, exportMockConfigs,
 } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
-import { selectMockConfigs } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
+import { PrefilledMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.reducer';
+import { selectMockConfigs, selectPrefilledMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 
 // Constants for configuration display
 const maxStringPreviewLength = 50;
@@ -42,14 +43,31 @@ const maxObjectKeysPreview = 3;
 export class MockConfigListComponent {
   private readonly store = inject(Store);
   private readonly dialog = inject(DialogService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   protected readonly mockConfigs = this.store.selectSignal(selectMockConfigs);
+  protected readonly prefilledConfig = this.store.selectSignal(selectPrefilledMockConfig);
   protected showForm = false;
   protected editingConfig: MockConfig | null = null;
+  protected prefilledMockData: PrefilledMockConfig | null = null;
 
   protected readonly hasEnabledMocks = computed(() => {
     return this.mockConfigs().some((config) => config.enabled);
   });
+
+  constructor() {
+    effect(() => {
+      const prefilled = this.prefilledConfig();
+      if (prefilled) {
+        untracked(() => {
+          this.prefilledMockData = prefilled;
+          this.editingConfig = null;
+          this.showForm = true;
+          this.cdr.markForCheck();
+        });
+      }
+    });
+  }
 
   protected toggleConfig(id: string): void {
     this.store.dispatch(toggleMockConfig({ id }));
@@ -66,6 +84,7 @@ export class MockConfigListComponent {
 
   protected addNewConfig(): void {
     this.editingConfig = null;
+    this.prefilledMockData = null;
     this.showForm = true;
   }
 
@@ -77,11 +96,15 @@ export class MockConfigListComponent {
     }
     this.showForm = false;
     this.editingConfig = null;
+    this.prefilledMockData = null;
+    this.store.dispatch(clearPrefilledMockConfig());
   }
 
   protected onFormCancel(): void {
     this.showForm = false;
     this.editingConfig = null;
+    this.prefilledMockData = null;
+    this.store.dispatch(clearPrefilledMockConfig());
   }
 
   protected exportConfigs(): void {

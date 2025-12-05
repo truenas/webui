@@ -17,6 +17,7 @@ describe('WebSocketDebugReducer', () => {
       expect(state.isPanelOpen).toBe(false);
       expect(state.activeTab).toBe('websocket');
       expect(state.messageLimit).toBe(200);
+      expect(state.prefilledMockConfig).toBeNull();
       expect(state.enclosureMock).toEqual({
         enabled: false,
         controllerModel: null,
@@ -437,6 +438,34 @@ describe('WebSocketDebugReducer', () => {
       const state = webSocketDebugReducer(stateWithMessage, action);
 
       expect(state.messages[0].isExpanded).toBe(false); // No changes
+    });
+  });
+
+  describe('prefilled mock config actions', () => {
+    it('should set prefilled mock config from response', () => {
+      const action = WebSocketDebugActions.createMockFromResponse({
+        methodName: 'test.method',
+        responseResult: { data: 'test' },
+      });
+      const state = webSocketDebugReducer(initialState, action);
+
+      expect(state.activeTab).toBe('mock-configurations');
+      expect(state.prefilledMockConfig).toEqual({
+        methodName: 'test.method',
+        responseResult: { data: 'test' },
+      });
+    });
+
+    it('should clear prefilled mock config', () => {
+      const stateWithPrefilled: WebSocketDebugState = {
+        ...initialState,
+        prefilledMockConfig: { methodName: 'test', responseResult: {} },
+      };
+
+      const action = WebSocketDebugActions.clearPrefilledMockConfig();
+      const state = webSocketDebugReducer(stateWithPrefilled, action);
+
+      expect(state.prefilledMockConfig).toBeNull();
     });
   });
 });

@@ -81,6 +81,15 @@ export const exportMockConfigs = createAction(
   `${actionPrefix} Export Mock Configs`,
 );
 
+export const createMockFromResponse = createAction(
+  `${actionPrefix} Create Mock From Response`,
+  props<{ methodName: string; responseResult: unknown }>(),
+);
+
+export const clearPrefilledMockConfig = createAction(
+  `${actionPrefix} Clear Prefilled Mock Config`,
+);
+
 export const toggleMessageExpansion = createAction(
   `${actionPrefix} Toggle Message Expansion`,
   props<{ messageId: string }>(),
