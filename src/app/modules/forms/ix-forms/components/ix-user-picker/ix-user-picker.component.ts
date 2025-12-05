@@ -18,8 +18,8 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY,
   fromEvent,
+  of,
   Subject,
 } from 'rxjs';
 import {
@@ -160,15 +160,18 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     this.comboboxProviderHandler()?.fetch(filterValue).pipe(
       catchError(() => {
         this.hasErrorInOptions.set(true);
-        return EMPTY;
+        // Return empty array to show "Add New" option even on error
+        return of<Option[]>([]);
       }),
       untilDestroyed(this),
-    ).subscribe((options) => {
-      if (this.hasErrorInOptions()) {
-        this.options.set(options);
-      } else {
-        this.options.set([this.addNewUserOption, ...options]);
+    ).subscribe((options: Option[]) => {
+      // Reset error flag on successful fetch
+      if (options.length > 0 || !this.hasErrorInOptions()) {
+        this.hasErrorInOptions.set(false);
       }
+
+      // Always include "Add New" option
+      this.options.set([this.addNewUserOption, ...options]);
 
       const selectedOptionFromLabel = this.options().find((option) => option.label === filterValue);
       if (selectedOptionFromLabel) {
@@ -314,12 +317,20 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     this.cdr.markForCheck();
   }
 
+  /**
+   * Type guard to check if provider has a valueField property
+   */
+  private hasValueField(provider: unknown): provider is { valueField: keyof Pick<User, 'username' | 'uid' | 'id'> } {
+    return provider !== null
+      && typeof provider === 'object'
+      && 'valueField' in provider
+      && (provider.valueField === 'username' || provider.valueField === 'uid' || provider.valueField === 'id');
+  }
+
   getValueFromSlideInResponse(result: SlideInResponse<User>): string | number {
     const provider = this.comboboxProviderHandler();
-    // Check if provider has valueField property (UserPickerProvider specific)
-    const hasValueField = provider && 'valueField' in provider;
-    const valueField: keyof Pick<User, 'username' | 'uid' | 'id'> = hasValueField
-      ? (provider as unknown as { valueField: keyof Pick<User, 'username' | 'uid' | 'id'> }).valueField
+    const valueField: keyof Pick<User, 'username' | 'uid' | 'id'> = this.hasValueField(provider)
+      ? provider.valueField
       : 'username';
     return result.response[valueField];
   }
@@ -329,6 +340,18 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
       distinctUntilChanged(),
       filter((selectedOption) => selectedOption === newOption),
       switchMap(() => this.slideIn.open(UserFormComponent, { wide: true })),
+      catchError((error: unknown) => {
+        // Handle slide-in errors gracefully
+        console.error('Error opening user form:', error);
+        // Clear selection to allow "Add New" to be clicked again
+        this.selectedOption.set(null);
+        if (this.inputElementRef()?.nativeElement) {
+          this.inputElementRef().nativeElement.value = '';
+        }
+        this.autocompleteTrigger()?.closePanel();
+        return of(null);
+      }),
+      filter((response) => response !== null),
       tap((response: SlideInResponse<User>) => {
         if (!response.error && response.response) {
           // User created successfully - select the newly created user
@@ -362,7 +385,8 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
           }
         }
 
-        setTimeout(() => this.autocompleteTrigger().closePanel(), 350);
+        // Close panel immediately - the selection is already set
+        this.autocompleteTrigger()?.closePanel();
       }),
       untilDestroyed(this),
     ).subscribe();
