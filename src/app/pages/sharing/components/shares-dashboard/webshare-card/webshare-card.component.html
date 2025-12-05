@@ -34,6 +34,9 @@
         [ixTest]="['webshare', 'add']"
         [attr.aria-label]="'Add WebShare' | translate"
         [disabled]="!(hasTruenasConnect$ | async)"
+        [matTooltip]="(hasTruenasConnect$ | async)
+          ? ''
+          : ('TrueNAS Connect must be configured to add WebShare shares' | translate)"
         (click)="onAddClicked()"
       >
         {{ 'Add' | translate }}
@@ -51,9 +54,10 @@
       class="info-message clickable"
       role="button"
       tabindex="0"
+      aria-live="polite"
       (click)="openTruenasConnectDialog()"
       (keydown.enter)="openTruenasConnectDialog()"
-      (keydown.space)="openTruenasConnectDialog()"
+      (keydown.space)="openTruenasConnectDialog(); $event.preventDefault()"
     >
       <ix-icon name="info"></ix-icon>
       <span>{{ 'WebShare service requires TrueNAS Connect to be configured and active.' | translate }}</span>
