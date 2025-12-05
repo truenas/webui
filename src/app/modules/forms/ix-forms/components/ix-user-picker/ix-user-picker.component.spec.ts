@@ -279,6 +279,60 @@ describe('IxUserPickerComponent', () => {
       }));
     });
 
+    describe('with custom valueField', () => {
+      let uidSpectator: SpectatorHost<IxUserPickerComponent>;
+      const uidFormControl = new FormControl<unknown>();
+      const mockSlideInWithUid = {
+        open: jest.fn(() => of({
+          response: { username: 'testuser', uid: 1001, id: 500 } as User,
+          error: false,
+        } as SlideInResponse<User>)),
+      };
+
+      const createHostWithUidProvider = createHostFactory({
+        component: IxUserPickerComponent,
+        imports: [
+          ReactiveFormsModule,
+        ],
+        providers: [
+          mockProvider(SlideIn, mockSlideInWithUid),
+        ],
+      });
+
+      beforeEach(() => {
+        uidFormControl.reset();
+        // Create a provider that uses 'uid' as the value field
+        const providerWithUid = new SimpleComboboxProvider([]);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (providerWithUid as any).valueField = 'uid';
+
+        uidSpectator = createHostWithUidProvider(`<ix-user-picker
+          [formControl]="formControl"
+          [provider]="provider"
+        ></ix-user-picker>`, {
+          hostProps: {
+            formControl: uidFormControl,
+            provider: providerWithUid,
+          },
+        });
+      });
+
+      it('respects provider valueField configuration for uid', fakeAsync(() => {
+        uidSpectator.component.ngOnInit();
+        tick(300);
+
+        // Trigger "Add New"
+        uidFormControl.setValue(newOption);
+        tick();
+
+        // Verify the value is uid (1001) not username
+        expect(uidSpectator.component.selectedOption()?.value).toBe(1001);
+        expect(uidSpectator.component.value).toBe(1001);
+
+        discardPeriodicTasks();
+      }));
+    });
+
     describe('when user creation is cancelled', () => {
       let cancelSpectator: SpectatorHost<IxUserPickerComponent>;
       const cancelFormControl = new FormControl<unknown>();

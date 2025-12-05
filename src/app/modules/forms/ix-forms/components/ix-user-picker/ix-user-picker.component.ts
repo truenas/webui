@@ -40,6 +40,7 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -69,6 +70,7 @@ import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-fo
 export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
   controlDirective = inject(NgControl);
   private cdr = inject(ChangeDetectorRef);
+  private errorHandler = inject(ErrorHandlerService);
 
   readonly label = input<TranslatedString>();
   readonly hint = input<TranslatedString>();
@@ -229,7 +231,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
           this.loading.set(true);
           this.cdr.markForCheck();
 
-          const nextPage = this.filterValue !== null && this.filterValue !== undefined ? this.filterValue : '';
+          const nextPage = this.filterValue ?? '';
           this.comboboxProviderHandler()?.nextPage(nextPage)
             .pipe(untilDestroyed(this)).subscribe((options) => {
               this.loading.set(false);
@@ -342,7 +344,7 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
       switchMap(() => this.slideIn.open(UserFormComponent, { wide: true })),
       catchError((error: unknown) => {
         // Handle slide-in errors gracefully
-        console.error('Error opening user form:', error);
+        this.errorHandler.handleError(error);
         // Clear selection to allow "Add New" to be clicked again
         this.selectedOption.set(null);
         if (this.inputElementRef()?.nativeElement) {
