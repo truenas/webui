@@ -47,7 +47,14 @@
   </mat-toolbar-row>
 
   @if (!(hasTruenasConnect$ | async)) {
-    <div class="info-message clickable" (click)="openTruenasConnectDialog()">
+    <div
+      class="info-message clickable"
+      role="button"
+      tabindex="0"
+      (click)="openTruenasConnectDialog()"
+      (keydown.enter)="openTruenasConnectDialog()"
+      (keydown.space)="openTruenasConnectDialog()"
+    >
       <ix-icon name="info"></ix-icon>
       <span>{{ 'WebShare service requires TrueNAS Connect to be configured and active.' | translate }}</span>
     </div>

@@ -313,8 +313,7 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
   it('opens TrueNAS Connect dialog when info message is clicked', () => {
     const truenasConnectService = spectator.inject(TruenasConnectService);
 
-    const infoMessage = spectator.query('.info-message');
-    infoMessage.dispatchEvent(new Event('click'));
+    spectator.click('.info-message');
 
     expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
   });
