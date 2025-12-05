@@ -20,7 +20,7 @@ export class NavigationService {
       name: T('Dashboard'),
       type: MenuItemType.Link,
       tooltip: T('Dashboard'),
-      icon: iconMarker('dashboard'),
+      icon: iconMarker('ix-desktop-dashboard'),
       state: 'dashboard',
     },
     {
@@ -98,14 +98,14 @@ export class NavigationService {
       name: T('Reporting'),
       type: MenuItemType.Link,
       tooltip: T('Reports'),
-      icon: iconMarker('insert_chart'),
+      icon: iconMarker('ix-desktop-reporting'),
       state: 'reportsdashboard/cpu',
     },
     {
       name: T('System'),
       type: MenuItemType.SlideOut,
       tooltip: T('System'),
-      icon: iconMarker('settings'),
+      icon: iconMarker('ix-desktop-system'),
       state: 'system',
       sub: [
         { name: T('Update'), state: 'update' },
