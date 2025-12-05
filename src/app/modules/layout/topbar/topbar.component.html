@@ -1,136 +1,140 @@
-<nav [attr.aria-label]="'Top bar' | translate">
-  <mat-toolbar
-    class="topbar backdrop-blur-md !bg-background/10 !text-foreground border-b border-border/10"
-  >
-    <mat-toolbar-row>
-      <!-- Sidenav toggle button -->
-      <div class="flex justify-start gap-4 items-center">
-        <button
-          matIconButton
-          class="mat-icon-button"
-          [matMenuTriggerFor]="menu"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 453.42 228.14"
-            class="!text-foreground"
-          >
-            <g>
-              <g>
-                <path
-                  fill="currentColor"
-                  d="M145.57,0h82.57c0,125.8-102.34,228.14-228.14,228.14v-82.57c80.27,0,145.57-65.3,145.57-145.58Z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M307.85,228.14h-82.57C225.28,102.34,327.62,0,453.42,0v82.57c-80.27,0-145.57,65.3-145.57,145.58Z"
-                />
-              </g>
-            </g>
-          </svg>
-        </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="showAboutNasDialog()">
-            {{ "About HarborOS" | translate }}
-          </button>
-          <a mat-menu-item [routerLink]="['/system/general']">
-            {{ "System Settings" | translate }}
-          </a>
-        </mat-menu>
-
-        <b class="text-base font-bold">{{ pageTitle | translate }}</b>
-      </div>
-
-      <div
-        class="topbar-mobile-footer"
-        [class.has-console-footer]="hasConsoleFooter$ | async"
-      >
-        <div class="topbar-button-right">
-          <ix-global-search-trigger></ix-global-search-trigger>
-        </div>
-
-        <span [matTooltip]="'Send Feedback' | translate">
+<div class="h-[104px] flex items-center w-full">
+  <nav class="w-full" [attr.aria-label]="'Top bar' | translate">
+    <mat-toolbar class="topbar bg-transparent!">
+      <mat-toolbar-row>
+        <!-- Sidenav toggle button -->
+        <div class="flex justify-start gap-4 items-center w-full">
           <button
-            mat-icon-button
-            class="topbar-button-right"
-            ixTest="leave-feedback"
-            [matMenuTriggerFor]="feedbackMenu"
+            matIconButton
+            class="mat-icon-button"
+            [matMenuTriggerFor]="menu"
           >
-            <ix-icon class="!text-foreground" name="mdi-emoticon"></ix-icon>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 453.42 228.14"
+              class="!text-foreground"
+            >
+              <g>
+                <g>
+                  <path
+                    fill="currentColor"
+                    d="M145.57,0h82.57c0,125.8-102.34,228.14-228.14,228.14v-82.57c80.27,0,145.57-65.3,145.57-145.58Z"
+                  />
+                  <path
+                    fill="currentColor"
+                    d="M307.85,228.14h-82.57C225.28,102.34,327.62,0,453.42,0v82.57c-80.27,0-145.57,65.3-145.57,145.58Z"
+                  />
+                </g>
+              </g>
+            </svg>
           </button>
-          <mat-menu #feedbackMenu="matMenu">
-            <a
-              mat-menu-item
-              href="https://github.com/HarborNAS/community/discussions/new?category=bug"
-              target="_blank"
-            >
-              {{ "Submit a Bug Report" | translate }}
-            </a>
-            <a
-              mat-menu-item
-              href="https://github.com/HarborNAS/community/discussions/new?category=feedback"
-              target="_blank"
-            >
-              {{ "Submit Feedback" | translate }}
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="showAboutNasDialog()">
+              {{ "About HarborOS" | translate }}
+            </button>
+            <a mat-menu-item [routerLink]="['/system/general']">
+              {{ "System Settings" | translate }}
             </a>
           </mat-menu>
-        </span>
 
-        <!-- <ix-truecommand-button></ix-truecommand-button> -->
-        <!-- @if (hasTncConfig()) {
+          <b class="text-base font-bold">{{ pageTitle | translate }}</b>
+        </div>
+
+        <div
+          class="topbar-mobile-footer"
+          [class.has-console-footer]="hasConsoleFooter$ | async"
+        >
+          <div class="topbar-button-right">
+            <ix-global-search-trigger></ix-global-search-trigger>
+          </div>
+
+          <span [matTooltip]="'Send Feedback' | translate">
+            <button
+              mat-icon-button
+              class="topbar-button-right bg-white! size-[50px]!"
+              ixTest="leave-feedback"
+              [matMenuTriggerFor]="feedbackMenu"
+            >
+              <ix-icon class="!text-foreground" name="mdi-emoticon"></ix-icon>
+            </button>
+            <mat-menu #feedbackMenu="matMenu">
+              <a
+                mat-menu-item
+                href="https://github.com/HarborNAS/community/discussions/new?category=bug"
+                target="_blank"
+              >
+                {{ "Submit a Bug Report" | translate }}
+              </a>
+              <a
+                mat-menu-item
+                href="https://github.com/HarborNAS/community/discussions/new?category=feedback"
+                target="_blank"
+              >
+                {{ "Submit Feedback" | translate }}
+              </a>
+            </mat-menu>
+          </span>
+
+          <!-- <ix-truecommand-button></ix-truecommand-button> -->
+          <!-- @if (hasTncConfig()) {
           <ix-truenas-connect-button></ix-truenas-connect-button>
         } -->
 
-        @if (hasRebootRequiredReasons()) {
+          @if (hasRebootRequiredReasons()) {
+            <button
+              mat-icon-button
+              class="topbar-button-right size-[50px]! bg-background"
+              ixTest="reboot-info"
+              [matTooltip]="tooltips.rebootInfo | translate"
+              (click)="showRebootInfoDialog()"
+            >
+              <ix-icon
+                class="movement !text-foreground"
+                name="update"
+              ></ix-icon>
+            </button>
+          }
+
+          <!-- finish update -->
+          @if (updateIsRunning) {
+            <button
+              mat-icon-button
+              id="update-running"
+              class="topbar-button-right"
+              ixTest="update-is-running"
+              [matTooltip]="tooltips.update | translate"
+              (click)="showUpdateDialog()"
+            >
+              <ix-icon class="movement" name="system_update_alt"></ix-icon>
+            </button>
+          }
+
+          <ix-checkin-indicator></ix-checkin-indicator>
+          <ix-resilvering-indicator></ix-resilvering-indicator>
+          <ix-ha-status-icon></ix-ha-status-icon>
+          <ix-jobs-indicator></ix-jobs-indicator>
+
+          <!-- Alert toggle button -->
+          @let alertBadgeCount = alertBadgeCount$ | async;
           <button
+            matBadgeSize="small"
+            matBadgeColor="warn"
             mat-icon-button
-            class="topbar-button-right"
-            ixTest="reboot-info"
-            [matTooltip]="tooltips.rebootInfo | translate"
-            (click)="showRebootInfoDialog()"
+            class="topbar-button-right bg-background! size-[50px]! rounded-full!"
+            ixTest="alerts-indicator"
+            [matBadge]="alertBadgeCount"
+            [matBadgeHidden]="alertBadgeCount === 0"
+            [matTooltip]="tooltips.alerts | translate"
+            [ixUiSearch]="searchableElements.elements.alerts"
+            (click)="onAlertIndicatorPressed()"
           >
-            <ix-icon class="movement !text-foreground" name="update"></ix-icon>
+            <ix-icon class="!text-foreground" name="notifications"></ix-icon>
           </button>
-        }
 
-        <!-- finish update -->
-        @if (updateIsRunning) {
-          <button
-            mat-icon-button
-            id="update-running"
-            class="topbar-button-right"
-            ixTest="update-is-running"
-            [matTooltip]="tooltips.update | translate"
-            (click)="showUpdateDialog()"
-          >
-            <ix-icon class="movement" name="system_update_alt"></ix-icon>
-          </button>
-        }
-        <ix-checkin-indicator></ix-checkin-indicator>
-        <ix-resilvering-indicator></ix-resilvering-indicator>
-        <ix-ha-status-icon></ix-ha-status-icon>
-        <ix-jobs-indicator></ix-jobs-indicator>
-
-        <!-- Alert toggle button -->
-        @let alertBadgeCount = alertBadgeCount$ | async;
-        <button
-          matBadgeSize="small"
-          matBadgeColor="warn"
-          mat-icon-button
-          class="topbar-button-right"
-          ixTest="alerts-indicator"
-          [matBadge]="alertBadgeCount"
-          [matBadgeHidden]="alertBadgeCount === 0"
-          [matTooltip]="tooltips.alerts | translate"
-          [ixUiSearch]="searchableElements.elements.alerts"
-          (click)="onAlertIndicatorPressed()"
-        >
-          <ix-icon class="!text-foreground" name="notifications"></ix-icon>
-        </button>
-
-        <ix-user-menu></ix-user-menu>
-        <ix-power-menu></ix-power-menu>
-      </div>
-    </mat-toolbar-row>
-  </mat-toolbar>
-</nav>
+          <ix-user-menu></ix-user-menu>
+          <ix-power-menu></ix-power-menu>
+        </div>
+      </mat-toolbar-row>
+    </mat-toolbar>
+  </nav>
+</div>

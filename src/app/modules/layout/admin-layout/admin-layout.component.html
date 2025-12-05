@@ -1,7 +1,8 @@
+<!-- 'background-image': `url('assets/images/backgrounds/white-bg.jpg')`, -->
 <mat-sidenav-container
   class="app-side-nav-container flex flex-col h-full overflow-hidden"
   [style]="{
-    'background-image': `url('assets/images/backgrounds/white-bg.jpg')`,
+    background: '#e4d3fd',
   }"
 >
   <ix-app-bar></ix-app-bar>
@@ -9,11 +10,11 @@
 
   <main
     mat-sidenav-content
-    class="pl-20 h-full pt-[36px] overflow-hidden"
+    class="h-full pt-[104px] pb-[30px] pr-[30px] pl-[110px] overflow-hidden"
     [ngClass]=""
   >
     <div
-      class="relative h-full overflow-y-auto"
+      class="relative h-full overflow-y-auto bg-white rounded-xl"
       [ngClass]="router.url.startsWith('/desktop') ? '' : 'bg-background'"
     >
       <router-outlet></router-outlet>
