@@ -63,6 +63,8 @@ describe('WebShareListComponent', () => {
         mockCall('sharing.webshare.query', mockWebShares),
         mockCall('sharing.webshare.delete', true),
         mockCall('tn_connect.config', mockTruenasConnectConfig),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
@@ -326,6 +328,8 @@ describe('WebShareListComponent - TrueNAS Connect not configured', () => {
       mockApi([
         mockCall('sharing.webshare.query', []),
         mockCall('tn_connect.config', mockTruenasConnectConfigDisabled),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),

@@ -1,7 +1,12 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
-import { switchMap, take, map } from 'rxjs/operators';
+import {
+  Observable, of, forkJoin, catchError,
+} from 'rxjs';
+import {
+  switchMap, take, map, shareReplay,
+} from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -36,14 +41,53 @@ export class WebShareService {
   readonly isTruenasDirectDomain = this.window.location.hostname.includes('.truenas.direct');
 
   /**
+   * Hostname resolved from TrueNAS Connect IP mappings.
+   * When not on a truenas.direct domain, we check if the local IP has a matching hostname.
+   */
+  private truenasConnectHostname = signal<string | null>(null);
+  readonly truenasConnectHostname$ = toObservable(this.truenasConnectHostname);
+
+  /**
+   * Whether WebShare can be opened (either on truenas.direct domain or with a resolved hostname).
+   */
+  readonly canOpenWebShare = signal<boolean>(this.isTruenasDirectDomain);
+  readonly canOpenWebShare$ = toObservable(this.canOpenWebShare);
+
+  /**
+   * Observable that fetches and caches the IP to hostname mapping.
+   * Combines tn_connect.ips_with_hostnames and interface.websocket_local_ip to determine
+   * if there's a truenas.direct hostname available for the current connection.
+   */
+  readonly hostnameMapping$ = forkJoin([
+    this.api.call('tn_connect.ips_with_hostnames'),
+    this.api.call('interface.websocket_local_ip'),
+  ]).pipe(
+    map(([ipsWithHostnames, localIp]) => {
+      const hostname = ipsWithHostnames[localIp];
+      if (hostname) {
+        this.truenasConnectHostname.set(hostname);
+        this.canOpenWebShare.set(true);
+      }
+      return { ipsWithHostnames, localIp, hostname };
+    }),
+    catchError((error: unknown) => {
+      console.error('Failed to fetch hostname mapping for WebShare:', error);
+      return of({ ipsWithHostnames: {} as Record<string, string>, localIp: '', hostname: undefined });
+    }),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  /**
    * Opens a WebShare in a new browser window/tab.
+   * Uses the truenas.direct hostname if available (either from current domain or resolved from IP mapping).
    * @param shareName - Optional name of the specific share to open. If omitted, opens the root WebShare listing.
    */
   openWebShare(shareName?: string): void {
-    const protocol = this.window.location.protocol;
-    const hostname = this.window.location.hostname;
+    const hostname = this.isTruenasDirectDomain
+      ? this.window.location.hostname
+      : this.truenasConnectHostname();
     const path = shareName ? `/webshare/${shareName}` : '/webshare/';
-    const webShareUrl = `${protocol}//${hostname}:${this.webSharePort}${path}`;
+    const webShareUrl = `https://${hostname}:${this.webSharePort}${path}`;
     const newWindow = this.window.open(webShareUrl, '_blank');
 
     if (!newWindow) {
