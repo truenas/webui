@@ -1,9 +1,15 @@
+import { WebSharePasskey } from 'app/enums/webshare-passkey.enum';
+
 export interface WebShareConfig {
   id: number;
   search: boolean;
+  passkey: WebSharePasskey;
 }
 
-export type WebShareConfigUpdate = Partial<Omit<WebShareConfig, 'id'>>;
+export interface WebShareConfigUpdate {
+  search?: boolean;
+  passkey?: WebSharePasskey;
+}
 
 export interface WebShare {
   id: number;

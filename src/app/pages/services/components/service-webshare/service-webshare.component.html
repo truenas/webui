@@ -13,6 +13,14 @@
           [label]="'Enable TrueSearch' | translate"
           [tooltip]="helptext.search_enabled_tooltip | translate"
         ></ix-checkbox>
+
+        <ix-select
+          formControlName="passkey"
+          [label]="'Passkey' | translate"
+          [tooltip]="helptext.passkey_tooltip | translate"
+          [options]="passkeyOptions$"
+          [required]="true"
+        ></ix-select>
       </ix-fieldset>
 
       <ix-form-actions>
