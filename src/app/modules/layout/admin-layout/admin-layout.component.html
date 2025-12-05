@@ -10,14 +10,16 @@
 
   <main
     mat-sidenav-content
-    class="h-full pt-[104px] pb-[30px] pr-[30px] pl-[110px] overflow-hidden"
+    class="h-full pt-[104px] pb-[30px] pr-[30px] pl-[110px]"
     [ngClass]=""
   >
     <div
-      class="relative h-full overflow-y-auto bg-white rounded-xl"
+      class="relative h-full rounded-xl overflow-hidden"
       [ngClass]="router.url.startsWith('/desktop') ? '' : 'bg-background'"
     >
-      <router-outlet></router-outlet>
+      <div class="overflow-auto h-full">
+        <router-outlet></router-outlet>
+      </div>
     </div>
   </main>
 
