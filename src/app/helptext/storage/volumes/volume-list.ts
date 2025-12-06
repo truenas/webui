@@ -16,7 +16,7 @@ export const helptextVolumes = {
 core files, encryption keys for pools, and Samba 4 metadata such as the user/group cache and share level \
 permissions. Exporting this pool will transfer the system dataset to another available pool. If the only \
 available pool is encrypted, that pool will no longer be able to be locked. When no other pools exist, \
-the system dataset transfers back to the HarborOS operating system device.'),
+the system dataset transfers back to the TrueNAS operating system device.'),
     unknownState: T('The pool <i>{pool}</i>is in the database but not connected to the machine. If it was exported by \
     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />'),
     cascade: {
@@ -31,7 +31,7 @@ the system dataset transfers back to the HarborOS operating system device.'),
 
   upgradePoolDialogWarning: T('Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
  one-way operation that might make some features of\
- the pool incompatible with older versions of HarborOS: '),
+ the pool incompatible with older versions of TrueNAS: '),
 
   expandPoolDialog: {
     title: T('Expand pool '),

@@ -74,8 +74,8 @@ If not checked, <i>zfs allow</i> must be used to grant non-user permissions to p
   encryptionKeyFormatLabel: T('Encryption Key Format'),
   encryptionKeyFormatTooltip: T('Choose between a <i>Hex</i> (base 16 numeral) or <i>Passphrase</i> (alphanumeric) style encryption key.'),
 
-  encryptionKeyLocationHarborosdbLabel: T('Store Encryption key in Sending TrueNAS database'),
-  encryptionKeyLocationHarborosdbTooltip: T('Set to store the encryption key in the TrueNAS database.'),
+  encryptionKeyLocationTruenasdbLabel: T('Store Encryption key in Sending TrueNAS database'),
+  encryptionKeyLocationTruenasdbTooltip: T('Set to store the encryption key in the TrueNAS database.'),
 
   encryptionKeyLocationLabel: T('Encryption Key Location in Target System'),
   encryptionKeyLocationTooltip: T('Choose a temporary location for the encryption key that will decrypt replicated data.'),

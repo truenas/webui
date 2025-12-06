@@ -6,7 +6,7 @@ export const helptextSshConnections = {
  This can include copying SSH keys and modifying the <i>root</i> user \
  account on that system.<br><br> \
  <i>Semi-automatic</i> only works when configuring an SSH connection \
- with a remote HarborOS system. This method uses the URL and login \
+ with a remote TrueNAS system. This method uses the URL and login \
  credentials of the remote system to connect and exchange SSH keys.'),
 
   hostTooltip: T('Hostname or IP address of the remote system.'),

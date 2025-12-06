@@ -176,12 +176,12 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   }
 
   private setFormValues(replication: ReplicationTask): void {
-    const usesHarborosKeyDb = replication.encryption_key_location === truenasDbKeyLocation;
+    const usesTruenasKeyDb = replication.encryption_key_location === truenasDbKeyLocation;
 
     this.form.patchValue({
       ...replication,
-      encryption_key_location_truenasdb: usesHarborosKeyDb || !replication.encryption,
-      encryption_key_location: usesHarborosKeyDb ? '' : (replication.encryption_key_location || ''),
+      encryption_key_location_truenasdb: usesTruenasKeyDb || !replication.encryption,
+      encryption_key_location: usesTruenasKeyDb ? '' : (replication.encryption_key_location || ''),
     });
 
     if (this.isHex) {

@@ -23,7 +23,7 @@ import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-ind
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
-import { HarborosLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
+import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
@@ -83,7 +83,7 @@ function createTopbarComponent(options: ComponentOptions = {}): {
         JobsIndicatorComponent,
         UserMenuComponent,
         PowerMenuComponent,
-        HarborosLogoComponent,
+        TruenasLogoComponent,
         TruenasConnectButtonComponent,
         TruecommandButtonComponent,
       ),

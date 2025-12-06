@@ -32,7 +32,7 @@ export const helptextSystemUpdate = {
   continueDialogAction: T('Continue with the upgrade'),
 
   clickForInformationLink: T('Click for information on\
-    <a href="https://harboros.ai/docs" target="_blank">HarborOS SCALE Migration, Nightly trains\
+    <a href="https://www.truenas.com/docs/truenasupgrades/" target="_blank">TrueNAS SCALE Migration, Nightly trains\
     and other upgrade options.</a>'),
 
   haUpdate: {
@@ -46,6 +46,6 @@ export const helptextSystemUpdate = {
  Continue with the update?'),
 
   haUpdateConfirmation: T('Upgrades both controllers. Files are downloaded to the Active Controller\
- and then transferred to the Standby Controller. The upgrade process starts concurrently on both HarborOS Controllers.\
+ and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers.\
  Continue with the update?'),
 };

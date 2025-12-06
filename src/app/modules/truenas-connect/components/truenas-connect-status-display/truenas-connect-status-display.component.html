@@ -2,7 +2,7 @@
   <div class="waiting-state-content">
     <div ixTest="tnc-status-reason" class="waiting-state-text">
       {{
-        "Power Up your HarborOS Experience! Link your system with HarborOS Connect now for additional security, alerting, and other features."
+        "Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting, and other features."
           | translate
       }}
     </div>
@@ -24,12 +24,12 @@
   <div class="status-header">
     <ix-icon class="status-connected" name="check_circle"></ix-icon>
     <span ixTest="tnc-status" class="active-header">{{
-      "HarborOS Connect - Status Healthy" | translate
+      "TrueNAS Connect - Status Healthy" | translate
     }}</span>
   </div>
   <div ixTest="tnc-status-reason" class="active-description">
     {{
-      "Your system is linked with HarborOS Connect. Click below to open the HarborOS Connect Management Interface"
+      "Your system is linked with TrueNAS Connect. Click below to open the TrueNAS Connect Management Interface"
         | translate
     }}
   </div>
@@ -37,11 +37,11 @@
   <div class="connecting-state-content">
     <ix-truenas-connect-spinner></ix-truenas-connect-spinner>
     <div ixTest="tnc-status" class="connecting-header">
-      {{ "Setting up HarborOS Connect" | translate }}
+      {{ "Setting up TrueNAS Connect" | translate }}
     </div>
     <div ixTest="tnc-status-reason" class="connecting-description">
       {{
-        "Your system is setting up with HarborOS Connect, this may take a few moments."
+        "Your system is setting up with TrueNAS Connect, this may take a few moments."
           | translate
       }}
     </div>
@@ -54,6 +54,6 @@
     <span ixTest="tnc-status">{{ status() }}</span>
   </div>
   <div ixTest="tnc-status-reason">
-    {{ HarborosConnectStatusReason[rawStatus()] | translate }}
+    {{ TruenasConnectStatusReason[rawStatus()] | translate }}
   </div>
 }

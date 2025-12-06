@@ -155,10 +155,8 @@
       @if (form.controls.encryption_key_location_truenasdb.enabled) {
         <ix-checkbox
           formControlName="encryption_key_location_truenasdb"
-          [label]="helptext.encryptionKeyLocationHarborosdbLabel | translate"
-          [tooltip]="
-            helptext.encryptionKeyLocationHarborosdbTooltip | translate
-          "
+          [label]="helptext.encryptionKeyLocationTruenasdbLabel | translate"
+          [tooltip]="helptext.encryptionKeyLocationTruenasdbTooltip | translate"
         ></ix-checkbox>
       }
       @if (form.controls.encryption_key_location.enabled) {

@@ -19,7 +19,7 @@ import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/comp
 })
 export class TruenasConnectStatusDisplayComponent {
   readonly TncStatus = TncStatus;
-  readonly HarborosConnectStatusReason = TruenasConnectStatusReason;
+  readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
 
   status = input.required<typeof TncStatus[keyof typeof TncStatus]>();
   rawStatus = input.required<TruenasConnectStatus>();

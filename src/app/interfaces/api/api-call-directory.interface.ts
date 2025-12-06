@@ -865,13 +865,13 @@ export interface ApiCallDirectory {
   'truecommand.config': { params: void; response: TrueCommandConfig };
   'truecommand.update': { params: [UpdateTrueCommand]; response: TrueCommandUpdateResponse };
 
-  // HarborOS Connect
+  // TrueNAS Connect
   'tn_connect.config': { params: void; response: TruenasConnectConfig };
   'tn_connect.update': { params: [TruenasConnectUpdate]; response: TruenasConnectConfig };
   'tn_connect.generate_claim_token': { params: void; response: string };
   'tn_connect.get_registration_uri': { params: void; response: string };
 
-  // HarborOS
+  // TrueNAS
   'truenas.accept_eula': { params: void; response: void };
   'truenas.get_eula': { params: void; response: string };
   'truenas.is_eula_accepted': { params: void; response: boolean };

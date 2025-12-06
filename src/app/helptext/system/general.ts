@@ -56,7 +56,7 @@ export const helptextSystemGeneral = {
     label: T('HTTPS Protocols'),
     tooltip: T('Cryptographic protocols for securing client/server connections. Select which\
  <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank">Transport Layer Security (TLS)</a>\
- versions HarborOS can use for connection security.'),
+ versions TrueNAS can use for connection security.'),
   },
 
   uiHttpsRedirect: {
@@ -105,7 +105,7 @@ No personally identifiable information is collected.\
 When disabled, anonymous usage statistics consisting only of the software version and total system capacity (e.g. TrueNAS 24.04.0, 55 TB) are still collected. \
 Information about system configuration and usage is not collected.\
 <br><br>\
-<a href="https://harboros.ai/docs" target="_blank">See details.</a>\
+<a href="https://www.truenas.com/docs/scale/gettingstarted/useragreements/datacollectionstatement/" target="_blank">See details.</a>\
     '),
     stigModeTooltip: T('This option is disabled in STIG mode.'),
   },

@@ -115,7 +115,7 @@ Valid range is 1 byte to 16 MiB. You can enter values like "128K", "1M", "4096",
     apps: T('Dataset for use by an application. If you plan to deploy container applications,\
  the system automatically creates the ix-apps dataset but this is not used for application data storage.'),
     smbDescription: T('By clicking the share creation checkbox below, a new share will be created on form submission with the default\
- share settings Additionally, local HarborOS users will have access to the resulting share and some more configuration options will be available.'),
+ share settings Additionally, local TrueNAS users will have access to the resulting share and some more configuration options will be available.'),
   },
 
   encryption: {

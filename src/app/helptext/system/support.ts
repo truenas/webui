@@ -96,7 +96,7 @@ export const helptextSystemSupport = {
     message: T('Production status successfully updated'),
   },
 
-  docHub: T('<a href="http://TrueNAS.com/docs/" target="_blank">\
+  docHub: T('<a href="https://www.truenas.com/docs/hub/" target="_blank">\
  TrueNAS Documentation Hub</a> - Read and contribute to the open-source documentation.'),
 
   forums: T('<a href="https://forums.truenas.com/" target="_blank">\

@@ -18,7 +18,7 @@ export const helptextInterfacesForm = {
   ipv6autoTooltip: T('Set to automatically configure the IPv6. Only one interface can be configured this way.'),
   enableLearningTooltip: T('Toggle off to defer interface learning until runtime, preventing premature state transitions and potential issues during system startup.'),
   aliasAddressTooltip: T('Define an alias for the interface \
- on this HarborOS controller. The alias can be an IPv4 or IPv6 \
+ on this TrueNAS controller. The alias can be an IPv4 or IPv6 \
  address.'),
   bridgeMembersTooltip: T('Network interfaces to include in the bridge.'),
   failover: {
@@ -34,9 +34,9 @@ export const helptextInterfacesForm = {
  system to failover when any interface fails requires marking each \
  interface as critical and placing them in separate groups.'),
     aliasAddressTooltip: T('Alias for the identical interface \
- on the other HarborOS controller. The alias can be an IPv4 or IPv6 address.'),
+ on the other TrueNAS controller. The alias can be an IPv4 or IPv6 address.'),
     virtualAliasAddressTooltip: T('Define an alias that can \
- connect to the interface on either HarborOS controller. This address \
+ connect to the interface on either TrueNAS controller. This address \
  remains active if a Controller failover occurs.'),
   },
   vlan: {

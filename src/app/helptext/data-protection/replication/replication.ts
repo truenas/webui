@@ -12,10 +12,10 @@ export const helptextReplication = {
  created connection in <b>System > SSH Connections</b>.</li> \
  <li><i>SSH+NETCAT</i> uses SSH to establish a connection to the \
  destination system, then uses \
- <a href="https://github.com/HarborNAS" \
+ <a href="https://github.com/truenas/py-libzfs" \
  target="_blank">py-libzfs</a> to send an unencrypted data stream for \
  higher transfer speeds. This only works when replicating to a \
- HarborOS, or other system with <i>py-libzfs</i> installed.</li> \
+ TrueNAS, or other system with <i>py-libzfs</i> installed.</li> \
  <li><i>LOCAL</i> efficiently replicates snapshots to another dataset on \
  the same system without using the network.</li> \
  <li><i>LEGACY</i> uses the legacy replication engine from FreeNAS 11.2 \
@@ -168,7 +168,7 @@ to determine snapshots creation order.'),
 
   encryptionKeyPassphraseTooltip: helptextReplicationWizard.encryptionKeyPassphraseTooltip,
 
-  encryptionKeyLocationHarborosdbTooltip: helptextReplicationWizard.encryptionKeyLocationHarborosdbTooltip,
+  encryptionKeyLocationTruenasdbTooltip: helptextReplicationWizard.encryptionKeyLocationTruenasdbTooltip,
 
   encryptionKeyLocationTooltip: helptextReplicationWizard.encryptionKeyLocationTooltip,
 

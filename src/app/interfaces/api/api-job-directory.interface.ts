@@ -179,7 +179,7 @@ export interface ApiJobDirectory {
   // SystemDataset
   'systemdataset.update': { params: [SystemDatasetUpdate]; response: SystemDatasetConfig };
 
-  // HarborOS
+  // TrueNAS
   'truenas.set_production': {
     params: [production: boolean, attach_debug: boolean];
     response: { ticket: number; url: string };

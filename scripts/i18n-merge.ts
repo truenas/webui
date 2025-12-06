@@ -58,6 +58,8 @@ function applyLinkHandling(value: string): string {
   const replacements: { re: RegExp; to: string }[] = [
     { re: /https?:\/\/(www\.)?truenas\.com\/docs/gi, to: 'https://harboros.ai/docs' },
     { re: /https?:\/\/(www\.)?truenas\.com(?!\/docs)/gi, to: 'https://harboros.ai' },
+    { re: /https?:\/\/www\.ixsystems\.com/gi, to: 'https://harboros.ai' },
+    { re: /https?:\/\/portal\.truenas\.com\/portal\/login/gi, to: 'https://portal.harboros.ai/portal/login' },
     { re: /https?:\/\/forums\.truenas\.com\b/gi, to: 'https://github.com/HarborNAS/community/discussions' },
     { re: /https:\/\/discord.gg\/Q3St5fPETd\b/gi, to: 'https://github.com/HarborNAS/community/discussions' },
     { re: /https?:\/\/github\.com\/truenas\b/gi, to: 'https://github.com/HarborNAS' },
@@ -69,7 +71,7 @@ function applyLinkHandling(value: string): string {
 }
 
 function brandReplace(value: string): string {
-  return value.replace(/TrueNAS/g, 'HarborOS');
+  return value.replace(/TrueNAS/g, 'HarborOS').replace(/truenas/g, 'harboros');
 }
 
 function getSafeEnv(): NodeJS.ProcessEnv {

@@ -94,7 +94,7 @@ export class FailoverValidationService {
           return of({
             success: false,
             error: this.translate.instant(
-              'HarborOS High Availability is in an inconsistent state. Please try again in a few minutes and contact the system administrator if the problem persists.',
+              'TrueNAS High Availability is in an inconsistent state. Please try again in a few minutes and contact the system administrator if the problem persists.',
             ),
             errorType: FailoverErrorType.FailoverFailed,
           });
