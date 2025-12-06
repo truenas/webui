@@ -1,5 +1,5 @@
-@import 'scss-imports/cssvars';
-@import 'text-security/text-security.css';
+@import "scss-imports/cssvars";
+@import "text-security/text-security.css";
 
 :host {
   color: var(--fg1);
@@ -7,6 +7,8 @@
   margin-bottom: 12px;
   margin-top: 12px;
   padding: 8px 0;
+  border-radius: 12px;
+  overflow: hidden;
 
   :host-context(ix-editable) & {
     margin-bottom: 0;
@@ -85,7 +87,7 @@
 
 .input-container {
   .toggle_pw {
-    @include variable(display, --toggle_pw_display_prop, 'inline');
+    @include variable(display, --toggle_pw_display_prop, "inline");
     opacity: var(--disabled-opacity);
   }
 

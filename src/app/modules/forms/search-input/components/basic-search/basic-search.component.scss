@@ -1,5 +1,5 @@
-@import 'scss-imports/variables';
-@import 'mixins/layout';
+@import "scss-imports/variables";
+@import "mixins/layout";
 
 :host {
   align-items: center;
@@ -9,6 +9,7 @@
   display: flex;
   padding: 2px 8px;
   position: relative;
+  border-radius: 12px;
 
   .prefix-icon {
     display: inline-flex;
