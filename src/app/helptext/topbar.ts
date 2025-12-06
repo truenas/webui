@@ -7,7 +7,7 @@ export const helptextTopbar = {
     toggleCollapse: T('Toggle Collapse'),
     connectingToTruecommand: T('Connecting to TrueCommand'),
     truecommandStatus: T('Status of TrueCommand'),
-    tncStatus: T('Status of HarborOS Connect'),
+    tncStatus: T('Status of TrueNAS Connect'),
     update: T('Update in Progress'),
     rebootInfo: T('Reboot Required'),
     pendingNetworkChanges: T('Pending Network Changes'),
@@ -21,7 +21,7 @@ export const helptextTopbar = {
   },
 
   signupDialog: {
-    content: T('This allows your HarborOS system to be monitored and administrated by\
+    content: T('This allows your TrueNAS system to be monitored and administrated by\
  TrueCommand. Click <b>SIGNUP</b> to create a new TrueCommand Cloud instance or <b>CONNECT</b> to join an existing instance.'),
   },
 

@@ -20,8 +20,8 @@ the system dataset transfers back to the HarborOS operating system device.'),
     unknownState: T('The pool <i>{pool}</i>is in the database but not connected to the machine. If it was exported by \
     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />'),
     cascade: {
-      label: T('Delete saved configurations from HarborOS?'),
-      tooltip: T('Delete all HarborOS configurations that depend on the exported pool. Impacted configurations\
+      label: T('Delete saved configurations from TrueNAS?'),
+      tooltip: T('Delete all TrueNAS configurations that depend on the exported pool. Impacted configurations\
        may include services (listed above if applicable), applications, shares, and scheduled data protection tasks.'),
     },
     enterName: T('Enter <strong>{pool}</strong> below to confirm'),
@@ -38,7 +38,7 @@ the system dataset transfers back to the HarborOS operating system device.'),
     message: T('Expand pool to fit all available disk space.'),
   },
 
-  autotrimTooltip: T('Enable for HarborOS to periodically review data blocks and identify\
+  autotrimTooltip: T('Enable for TrueNAS to periodically review data blocks and identify\
  empty blocks, or obsolete blocks that can be deleted. Unset to use dirty block\
  overwrites (default).'),
   lockingDataset: T('Locking Dataset'),

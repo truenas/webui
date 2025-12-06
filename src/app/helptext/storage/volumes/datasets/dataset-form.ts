@@ -6,7 +6,7 @@ export const helptextDatasetForm = {
  requested by the client software, <i>Always</i> waits for\
  data writes to complete, and <i>Disabled</i> never waits for\
  writes to complete.'),
-  disabledSyncWarning: T('HarborOS recommends that the sync setting always \
+  disabledSyncWarning: T('TrueNAS recommends that the sync setting always \
  be left to the default of "Standard" or increased to "Always". The "Disabled" setting should \
  not be used in production and only where data roll back by few seconds \
  in case of crash or power loss is not a concern.'),

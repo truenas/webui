@@ -3,8 +3,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export const helptextSystemSupport = {
   proactive: {
     title: T('Proactive Support'),
-    instructions: T('Silver / Gold Coverage Customers can enable HarborOS Proactive Support. This \
- automatically emails HarborOS when certain conditions occur on this HarborOS system. The HarborOS Support \
+    instructions: T('Silver / Gold Coverage Customers can enable TrueNAS Proactive Support. This \
+ automatically emails TrueNAS when certain conditions occur on this TrueNAS system. The TrueNAS Support \
  Team will promptly communicate with the Contacts saved below to quickly resolve any issue that may \
  have occurred on the system.'),
     primaryContact: T('Primary Contact'),
@@ -25,7 +25,7 @@ export const helptextSystemSupport = {
   review: {
     message: {
       placeholder: T('Share your thoughts on our product\'s features, usability, or any suggestions for improvement.'),
-      placeholderHighRating: T('Any part of HarborOS that you like in particular?'),
+      placeholderHighRating: T('Any part of TrueNAS that you like in particular?'),
       placeholderLowRating: T('If something isn’t working correctly, it may be better to use the “Report a bug” option. This way you’ll automatically get status updates as we fix it.'),
     },
     voteForNewFeatures: T('You can also vote for new features <a target="_blank" href="https://github.com/HarborNAS/community/discussionsfeature-requests">on our forum.</a>'),
@@ -48,7 +48,7 @@ export const helptextSystemSupport = {
   },
 
   cc: {
-    tooltip: T('Email addresses to receive copies of HarborOS Support \
+    tooltip: T('Email addresses to receive copies of TrueNAS Support \
   messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. \
   Separate entries by pressing <code>Enter</code>.'),
     err: T('Email addresses must be entered in the format \
@@ -96,11 +96,11 @@ export const helptextSystemSupport = {
     message: T('Production status successfully updated'),
   },
 
-  docHub: T('<a href="https://harboros.ai/docs" target="_blank">\
- HarborOS Documentation Hub</a> - Read and contribute to the open-source documentation.'),
+  docHub: T('<a href="http://TrueNAS.com/docs/" target="_blank">\
+ TrueNAS Documentation Hub</a> - Read and contribute to the open-source documentation.'),
 
-  forums: T('<a href="https://github.com/HarborNAS/community/discussions" target="_blank">\
- HarborOS Forums</a> - Find answers from other users in the forums.'),
+  forums: T('<a href="https://forums.truenas.com/" target="_blank">\
+ TrueNAS Forums</a> - Find answers from other users in the forums.'),
 
   updateTxt: T('Update License'),
   enterTxt: T('Add License'),

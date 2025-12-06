@@ -13,15 +13,15 @@ export const helptextActiveDirectory = {
  is not needed to edit, start, or stop the service.'),
   loggingVerbosityTooltip: T('Increase logging verbosity related to the\
  active directory service in /var/log/middlewared.log'),
-  allowTrustedDomainsTooltip: T('Allow clients to access the HarborOS server if they are members\
- of domains that have a trust relationship with the domain to which HarborOS is joined.\
+  allowTrustedDomainsTooltip: T('Allow clients to access the TrueNAS server if they are members\
+ of domains that have a trust relationship with the domain to which TrueNAS is joined.\
  This requires valid idmap backend configuration for all trusted domains.'),
   defaultDomainsTooltip: T('AD users and groups by default will have a domain name prefix (`DOMAIN\\`).\
  In some edge cases this may cause erratic behavior from some clients and applications that are poorly\
  designed and cannot handle the prefix. Set only if required for a specific application or client.\
  Note that using this setting is not recommended as it may cause collisions with local user account names.'),
   dnsUpdatesTooltip: T('Set to enable Samba to do DNS updates when joining a domain.'),
-  disableCacheTooltip: T('HarborOS maintains a cache of users and groups for API consumers\
+  disableCacheTooltip: T('TrueNAS maintains a cache of users and groups for API consumers\
  (including the WebUI). This is a convenience feature that may be disabled if the domain contains large\
  numbers of users and groups or if the caching generates excessive load on the domain controller.'),
 

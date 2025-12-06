@@ -44,7 +44,7 @@ export const helptextCloudSync = {
  target="_blank">Amazon S3 Storage Classes</a> for more information.'),
 
   acknowledgeAbuseLabel: T('Allow files which return cannotDownloadAbusiveFile to be downloaded.'),
-  acknowledgeAbuseTooltip: T('If downloading a file returns the error "This file has been identified as malware or spam and cannot be downloaded" with the error code "cannotDownloadAbusiveFile" then enable this flag to indicate you acknowledge the risks of downloading the file and HarborOS will download it anyway.'),
+  acknowledgeAbuseTooltip: T('If downloading a file returns the error "This file has been identified as malware or spam and cannot be downloaded" with the error code "cannotDownloadAbusiveFile" then enable this flag to indicate you acknowledge the risks of downloading the file and TrueNAS will download it anyway.'),
 
   fastListLabel: T('Use --fast-list'),
   fastListTooltip: T('[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list)\

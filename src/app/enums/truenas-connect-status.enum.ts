@@ -28,9 +28,9 @@ export const TncStatus = {
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const TruenasConnectStatusReason: Record<TruenasConnectStatus, string> = {
-  [TruenasConnectStatus.Disabled]: T('HarborOS Connect is disabled'),
+  [TruenasConnectStatus.Disabled]: T('TrueNAS Connect is disabled'),
   [TruenasConnectStatus.ClaimTokenMissing]: T('Waiting for claim token to be generated'),
-  [TruenasConnectStatus.RegistrationFinalizationWaiting]: T('Waiting for registration with HarborOS Connect to complete'),
+  [TruenasConnectStatus.RegistrationFinalizationWaiting]: T('Waiting for registration with TrueNAS Connect to complete'),
   [TruenasConnectStatus.RegistrationFinalizationFailed]: T('Registration finalization failed'),
   [TruenasConnectStatus.RegistrationFinalizationTimeout]: T('Registration finalization timed out'),
   [TruenasConnectStatus.RegistrationFinalizationSuccess]: T('Registration finalization successful'),
@@ -41,5 +41,5 @@ export const TruenasConnectStatusReason: Record<TruenasConnectStatus, string> = 
   [TruenasConnectStatus.CertRenewalInProgress]: T('Certificate renewal is in progress'),
   [TruenasConnectStatus.CertRenewalFailure]: T('Failed to renew certificate'),
   [TruenasConnectStatus.CertRenewalSuccess]: T('Certificate renewal was successful'),
-  [TruenasConnectStatus.Configured]: T('HarborOS Connect is active'),
+  [TruenasConnectStatus.Configured]: T('TrueNAS Connect is active'),
 };

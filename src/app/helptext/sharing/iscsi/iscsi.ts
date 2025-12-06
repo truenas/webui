@@ -103,13 +103,13 @@ export const helptextIscsi = {
    configured at the pool level when using zvols or at the extent level \
    for both file and device based extents.'),
 
-    aluaTooltip: T('Do not enable ALUA on HarborOS unless it is also supported \
+    aluaTooltip: T('Do not enable ALUA on TrueNAS unless it is also supported \
     by and enabled on the client computers. ALUA only works when enabled \
     on both the client and server.'),
 
-    iserTooltip: T('Activates iSCSI Extensions for RDMA (iSER) in HarborOS, enabling\
+    iserTooltip: T('Activates iSCSI Extensions for RDMA (iSER) in TrueNAS, enabling\
  the iSCSI protocol to directly transfer data into and out of SCSI memory buffers for improved\
- performance. Enabling is limited to HarborOS Enterprise-licensed systems and requires the system\
+ performance. Enabling is limited to TrueNAS Enterprise-licensed systems and requires the system\
  and network environment have Remote Direct Memory Access (RDMA)-capable hardware.'),
   },
 
