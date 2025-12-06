@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -9,8 +9,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { VmDeviceType, vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -61,9 +63,33 @@ export class DeleteVmDialogComponent implements OnInit {
   });
 
   readonly helptext = helptextVmList;
+  protected devices = signal<VmDevice[]>([]);
 
   ngOnInit(): void {
     this.setConfirmationValidator();
+    this.loadDevices();
+  }
+
+  private loadDevices(): void {
+    this.api.call('vm.device.query', [[['vm', '=', this.vm.id]]])
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe((devices) => {
+        // Only show DISK and RAW devices
+        const filteredDevices = devices.filter((device) => {
+          return [VmDeviceType.Disk, VmDeviceType.Raw].includes(device.attributes.dtype);
+        });
+        this.devices.set(filteredDevices);
+      });
+  }
+
+  protected getDeviceLabel(device: VmDevice): string {
+    const typeLabel = this.translate.instant(vmDeviceTypeLabels.get(device.attributes.dtype));
+    // Only DISK and RAW devices are shown, both have path property
+    const path = 'path' in device.attributes ? device.attributes.path : '';
+    return `${typeLabel} (${path})`;
   }
 
   onDelete(): void {

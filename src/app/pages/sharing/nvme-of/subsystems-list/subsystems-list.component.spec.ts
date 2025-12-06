@@ -78,7 +78,6 @@ describe('SubsystemsListComponent', () => {
     mockSubsystemsDataProvicer.setRows(mockSubsystems);
     spectator = createComponent({
       props: {
-        isMobileView: false,
         dataProvider: mockSubsystemsDataProvicer,
       },
     });

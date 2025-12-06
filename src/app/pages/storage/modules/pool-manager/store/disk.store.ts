@@ -5,6 +5,7 @@ import { sortBy } from 'lodash-es';
 import { Observable, tap } from 'rxjs';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { isSedCapable } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface DiskState {
@@ -33,6 +34,11 @@ export class DiskStore extends ComponentStore<DiskState> {
       const disksWithExportedPools = usedDisks.filter((disk) => !disk.imported_zpool);
       return sortBy([...unusedDisks, ...disksWithExportedPools], 'devname');
     },
+  );
+
+  readonly hasSedCapableDisks$ = this.select(
+    this.selectableDisks$,
+    (disks) => disks.some((disk) => isSedCapable(disk)),
   );
 
   constructor() {

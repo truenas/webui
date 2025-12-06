@@ -6,14 +6,14 @@ export interface TerminalConfiguration {
   connectionData: TerminalConnectionData;
 }
 
-export type TerminalConnectionData =
+export type TerminalConnectionData
   // VMs
-  | {
+  = | {
     vm_id: number;
   }
-  // Virtualization instances
+  // Containers
   | {
-    virt_instance_id: string;
+    container_id: number;
     use_console: boolean;
   }
   // Apps

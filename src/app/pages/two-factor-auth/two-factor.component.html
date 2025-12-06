@@ -19,20 +19,45 @@
       }
       @if (globalTwoFactorEnabled() && !userTwoFactorAuthConfigured()) {
         <p>
-          {{ 'Two-Factor Authentication has been enabled on this system. You are required to setup your 2FA authentication. You will not be able to proceed without setting up 2FA for your account. Make sure to scan the QR code with your authenticator app in the end before logging out of the system or navigating away. Otherwise, you will be locked out of the system and will be unable to login after logging out.' | translate }}
+          {{ 'Two-Factor Authentication has been enabled on this system. It is strongly recommended to set up 2FA for your account to enhance security. Make sure to scan the QR code with your authenticator app before logging out or navigating away, otherwise you may have difficulty accessing your account later.' | translate }}
         </p>
       }
-      <button
-        mat-button
-        color="primary"
-        type="button"
-        ixTest="renew-secret"
-        [disabled]="isFormLoading()"
-        [ixUiSearch]="searchableElements.elements.configure2FaSecret"
-        (click)="renewSecretOrEnable2Fa()"
-      >
-        {{ userTwoFactorAuthConfigured() ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate) }}
-      </button>
+      <div class="button-group">
+        <button
+          mat-button
+          color="primary"
+          type="button"
+          ixTest="renew-secret"
+          [disabled]="isFormLoading()"
+          [ixUiSearch]="searchableElements.elements.configure2FaSecret"
+          (click)="renewSecretOrEnable2Fa()"
+        >
+          {{ userTwoFactorAuthConfigured() ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate) }}
+        </button>
+        @if (userTwoFactorAuthConfigured()) {
+          <button
+            mat-button
+            color="warn"
+            type="button"
+            ixTest="unset-2fa-secret"
+            [disabled]="isFormLoading()"
+            (click)="unset2FaSecret()"
+          >
+            {{ 'Unset 2FA Secret' | translate }}
+          </button>
+        }
+        @if (showSkipButton()) {
+          <button
+            mat-button
+            type="button"
+            ixTest="skip-2fa-setup"
+            [disabled]="isFormLoading()"
+            (click)="onSkipSetup()"
+          >
+            {{ 'Skip Setup' | translate }}
+          </button>
+        }
+      </div>
     </div>
   </mat-card-actions>
 

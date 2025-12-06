@@ -10,7 +10,7 @@ export class NetworkSpeedPipe implements PipeTransform {
 
   transform(value: number): string {
     return this.translate.instant('{bits}/s', {
-      bits: buildNormalizedFileSize(value, 'B', 10),
+      bits: buildNormalizedFileSize(value, 'b', 10),
     });
   }
 }

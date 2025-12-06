@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -16,6 +17,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     IxIconComponent,
     MatInput,
+    MatTooltip,
     ReactiveFormsModule,
     TestDirective,
     FormsModule,

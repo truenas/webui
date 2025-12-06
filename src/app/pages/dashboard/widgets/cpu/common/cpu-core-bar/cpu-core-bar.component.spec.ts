@@ -4,12 +4,31 @@ import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { CpuCoreBarComponent } from 'app/pages/dashboard/widgets/cpu/common/cpu-core-bar/cpu-core-bar.component';
 
 describe('CpuCoreBarComponent', () => {
   let spectator: Spectator<CpuCoreBarComponent>;
+  const cpuData = {
+    user: 0,
+    nice: 0,
+    system: 0,
+    idle: 0,
+    iowait: 0,
+    irq: 0,
+    softirq: 0,
+    steal: 0,
+    guest: 0,
+    guest_nice: 0,
+    cpu0: { usage: 6, temp: 31 },
+    cpu1: { usage: 30, temp: 43 },
+    cpu2: { usage: 70, temp: 40 },
+    cpu3: { usage: 9, temp: 39 },
+    cpu: { usage: 75, temp: 43 },
+  } as AllCpusUpdate;
+
   const createComponent = createComponentFactory({
     component: CpuCoreBarComponent,
     imports: [
@@ -22,16 +41,9 @@ describe('CpuCoreBarComponent', () => {
       mockProvider(
         WidgetResourcesService,
         {
-          realtimeUpdates$: of({
-            fields: {
-              cpu: {
-                cpu0: { usage: 6, temp: 31 },
-                cpu1: { usage: 30, temp: 43 },
-                cpu2: { usage: 70, temp: 40 },
-                cpu3: { usage: 9, temp: 39 },
-                cpu: { usage: 75, temp: 43 },
-              },
-            },
+          cpuUpdatesWithStaleDetection: () => of({
+            value: cpuData,
+            isStale: false,
           }),
         },
       ),

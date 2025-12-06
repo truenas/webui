@@ -169,10 +169,10 @@ export class MockConfigListComponent {
         const debugError = error instanceof WebSocketDebugError
           ? error
           : new WebSocketDebugError(
-            'Failed to import mock configurations',
-            'IMPORT_ERROR',
-            error,
-          );
+              'Failed to import mock configurations',
+              'IMPORT_ERROR',
+              error,
+            );
         console.error(debugError.message, debugError);
 
         this.dialog.error({ title: 'Import Failed', message: debugError.message });

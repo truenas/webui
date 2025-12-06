@@ -1,5 +1,5 @@
-import { TreeControl } from '@angular/cdk/tree';
 import { Observable, take } from 'rxjs';
+import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 
 export class TreeFlattener<T, F, K = F> {
   constructor(
@@ -53,7 +53,7 @@ export class TreeFlattener<T, F, K = F> {
    * Expand flattened node with current expansion status.
    * The returned list may have different length.
    */
-  expandFlattenedNodes(nodes: F[], treeControl: TreeControl<F, K>): F[] {
+  expandFlattenedNodes(nodes: F[], treeExpansion: TreeExpansion<F, K>): F[] {
     const results: F[] = [];
     const currentExpand: boolean[] = [];
     currentExpand[0] = true;
@@ -67,7 +67,7 @@ export class TreeFlattener<T, F, K = F> {
         results.push(node);
       }
       if (this.isExpandable(node)) {
-        currentExpand[this.getLevel(node) + 1] = treeControl.isExpanded(node);
+        currentExpand[this.getLevel(node) + 1] = treeExpansion.isExpanded(node);
       }
     });
     return results;

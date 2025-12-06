@@ -27,6 +27,7 @@ describe('EnclosureDashboardComponent', () => {
     componentProviders: [
       mockProvider(EnclosureStore, {
         selectedEnclosure: jest.fn(),
+        isLoading: jest.fn(),
         initiate: jest.fn(),
         listenForDiskUpdates: jest.fn(() => of()),
         selectEnclosure: jest.fn(),
@@ -45,13 +46,34 @@ describe('EnclosureDashboardComponent', () => {
     spectator = createComponent();
   });
 
-  it('shows empty message when no enclosure is available', () => {
-    spectator.inject(EnclosureStore, true).selectedEnclosure.mockReturnValueOnce(undefined);
+  it('shows loading indicator when enclosures are loading', () => {
+    const enclosureStore = spectator.inject(EnclosureStore, true);
+    enclosureStore.isLoading.mockReturnValue(true);
+    enclosureStore.selectedEnclosure.mockReturnValue(undefined);
 
     spectator.detectChanges();
 
     const emptyComponent = spectator.query(EmptyComponent);
     expect(emptyComponent).toExist();
+
+    // Verify store methods are being called correctly
+    expect(enclosureStore.isLoading).toHaveBeenCalled();
+    expect(enclosureStore.selectedEnclosure).toHaveBeenCalled();
+  });
+
+  it('shows unavailable message when no enclosure is available after loading', () => {
+    const enclosureStore = spectator.inject(EnclosureStore, true);
+    enclosureStore.isLoading.mockReturnValue(false);
+    enclosureStore.selectedEnclosure.mockReturnValue(undefined);
+
+    spectator.detectChanges();
+
+    const emptyComponent = spectator.query(EmptyComponent);
+    expect(emptyComponent).toExist();
+
+    // Verify store methods are being called correctly
+    expect(enclosureStore.isLoading).toHaveBeenCalled();
+    expect(enclosureStore.selectedEnclosure).toHaveBeenCalled();
   });
 
   it('initializes store when component is initialized', () => {

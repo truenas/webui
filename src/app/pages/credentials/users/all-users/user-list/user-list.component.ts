@@ -1,4 +1,4 @@
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, output, input, signal, inject } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -36,7 +36,6 @@ import { UserAccessCellComponent } from './user-access-cell/user-access-cell.com
     IxTableHeadComponent,
     IxTablePagerComponent,
     IxTableCellDirective,
-    NgTemplateOutlet,
     UsersSearchComponent,
     UserAccessCellComponent,
   ],
@@ -46,7 +45,6 @@ export class UserListComponent {
   private translate = inject(TranslateService);
   private searchDirectives = inject(UiSearchDirectivesService);
 
-  readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
   readonly userSelected = output<User>();
   protected readonly currentBatch = signal<User[]>([]);
@@ -87,10 +85,7 @@ export class UserListComponent {
 
   navigateToDetails(user: User): void {
     this.userSelected.emit(user);
-
-    if (this.isMobileView()) {
-      this.toggleShowMobileDetails.emit(true);
-    }
+    this.toggleShowMobileDetails.emit(true);
   }
 
   private handlePendingGlobalSearchElement(): void {
@@ -102,8 +97,9 @@ export class UserListComponent {
   }
 
   expanded(row: User): void {
+    if (!row) return;
+
     this.navigateToDetails(row);
-    if (!row || !this.isMobileView()) return;
     this.toggleShowMobileDetails.emit(true);
   }
 }

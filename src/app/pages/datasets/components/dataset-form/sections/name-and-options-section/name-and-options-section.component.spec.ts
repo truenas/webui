@@ -142,5 +142,59 @@ describe('NameAndOptionsSectionComponent', () => {
 
       expect(await nameControl.getErrorText()).not.toBeNull();
     });
+
+    it('emits invalid state when name is empty on form initialization', () => {
+      const emitSpy = jest.spyOn(spectator.component.formValidityChange, 'emit');
+
+      spectator.setInput({
+        parent: parentDataset,
+      });
+
+      // Should emit false because name is required but empty
+      expect(emitSpy).toHaveBeenCalledWith(false);
+    });
+
+    it('does not show validation errors immediately when form opens with empty name', () => {
+      spectator.setInput({
+        parent: parentDataset,
+      });
+
+      const nameControl = spectator.component.form.controls.name;
+
+      // Field should be invalid but untouched and pristine
+      expect(nameControl.invalid).toBe(true);
+      expect(nameControl.untouched).toBe(true);
+      expect(nameControl.pristine).toBe(true);
+    });
+
+    it('emits valid state when valid name is entered', async () => {
+      spectator.setInput({
+        parent: parentDataset,
+      });
+
+      const emitSpy = jest.spyOn(spectator.component.formValidityChange, 'emit');
+      emitSpy.mockClear(); // Clear previous calls from initialization
+
+      await form.fillForm({
+        Name: 'valid-dataset-name',
+      });
+
+      // Should emit true because name is now valid
+      expect(emitSpy).toHaveBeenCalledWith(true);
+    });
+
+    it('marks name field as untouched after validators are added', () => {
+      spectator.setInput({
+        parent: parentDataset,
+      });
+
+      const nameControl = spectator.component.form.controls.name;
+
+      // Validators should be working (field is invalid when empty)
+      expect(nameControl.invalid).toBe(true);
+      expect(nameControl.errors).toBeTruthy();
+      // Field should still be untouched to prevent showing errors
+      expect(nameControl.untouched).toBe(true);
+    });
   });
 });

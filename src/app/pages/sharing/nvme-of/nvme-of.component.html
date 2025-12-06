@@ -26,13 +26,13 @@
   #masterDetailView="masterDetailViewContext"
   [selectedItem]="subsystem"
   [showDetails]="showDetails"
+  (mobileDetailsClosed)="dataProvider.expandedRow = null"
 >
   <ix-subsystems-list
     #masterList
     master
     [dataProvider]="dataProvider"
     [isLoading]="isLoading()"
-    [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
     (subsystemSelected)="onSubsystemSelected($event)"
     (search)="onFilter($event)"

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -19,6 +20,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
+import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
@@ -26,7 +28,7 @@ import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { UrlOptionsService } from 'app/services/url-options.service';
+import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
 @Component({
@@ -42,6 +44,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     RequiresRolesDirective,
     MatMenuItem,
     TranslateModule,
+    MatTooltip,
   ],
 })
 export class ServiceExtraActionsComponent {
@@ -92,6 +95,9 @@ export class ServiceExtraActionsComponent {
       case ServiceName.Cifs:
         this.slideIn.open(ServiceSmbComponent);
         break;
+      case ServiceName.WebShare:
+        this.slideIn.open(ServiceWebshareComponent);
+        break;
       default:
         break;
     }
@@ -108,11 +114,8 @@ export class ServiceExtraActionsComponent {
 
   viewLogs(): void {
     const url = this.urlOptions.buildUrl('/system/audit', {
-      searchQuery: {
-        isBasicQuery: false,
-        filters: [['service', '=', AuditService.Smb]],
-      },
-    });
+      service: AuditService.Smb,
+    } as AuditUrlOptions);
     this.router.navigateByUrl(url);
   }
 

@@ -1,6 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { Role } from 'app/enums/role.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -119,5 +120,233 @@ describe('UserFormStore', () => {
     }]);
   });
 
-  // TODO: Add more tests
+  describe('computed signals', () => {
+    it('should return correct smbAccess value', () => {
+      spectator.service.setAllowedAccessConfig({
+        smbAccess: true,
+        truenasAccess: false,
+        sshAccess: false,
+        shellAccess: false,
+      });
+
+      expect(spectator.service.smbAccess()).toBe(true);
+    });
+
+    it('should return correct sshAccess value', () => {
+      spectator.service.setAllowedAccessConfig({
+        smbAccess: false,
+        truenasAccess: false,
+        sshAccess: true,
+        shellAccess: false,
+      });
+
+      expect(spectator.service.sshAccess()).toBe(true);
+    });
+
+    it('should return correct shellAccess value', () => {
+      spectator.service.setAllowedAccessConfig({
+        smbAccess: false,
+        truenasAccess: false,
+        sshAccess: false,
+        shellAccess: true,
+      });
+
+      expect(spectator.service.shellAccess()).toBe(true);
+    });
+
+    it('should return correct truenasAccess value', () => {
+      spectator.service.setAllowedAccessConfig({
+        smbAccess: false,
+        truenasAccess: true,
+        sshAccess: false,
+        shellAccess: false,
+      });
+
+      expect(spectator.service.truenasAccess()).toBe(true);
+    });
+
+    it('should return correct isStigMode value', () => {
+      spectator.service.initialize();
+      expect(spectator.service.isStigMode()).toBe(false);
+    });
+  });
+
+  describe('setAllowedAccessConfig', () => {
+    it('should update allowed access configuration', () => {
+      const newConfig = {
+        smbAccess: false,
+        truenasAccess: true,
+        sshAccess: true,
+        shellAccess: true,
+      };
+
+      spectator.service.setAllowedAccessConfig(newConfig);
+
+      expect(spectator.service.state().setupDetails.allowedAccess).toEqual(newConfig);
+    });
+  });
+
+  describe('updateSetupDetails', () => {
+    it('should update setup details partially', () => {
+      spectator.service.updateSetupDetails({
+        defaultPermissions: false,
+      });
+
+      expect(spectator.service.state().setupDetails.defaultPermissions).toBe(false);
+      // Other fields should remain unchanged
+      expect(spectator.service.state().setupDetails.stigPassword).toBe(UserStigPasswordOption.DisablePassword);
+    });
+
+    it('should update homeModeOldValue', () => {
+      spectator.service.updateSetupDetails({
+        homeModeOldValue: '755',
+      });
+
+      expect(spectator.service.homeModeOldValue()).toBe('755');
+    });
+
+    it('should update role', () => {
+      spectator.service.updateSetupDetails({
+        role: 'readonly_admin' as Role,
+      });
+
+      expect(spectator.service.role()).toBe('readonly_admin');
+    });
+
+    it('should update stigPassword option', () => {
+      spectator.service.updateSetupDetails({
+        stigPassword: UserStigPasswordOption.OneTimePassword,
+      });
+
+      expect(spectator.service.state().setupDetails.stigPassword).toBe(UserStigPasswordOption.OneTimePassword);
+    });
+  });
+
+  describe('updateUserConfig', () => {
+    it('should merge new user config with existing config', () => {
+      spectator.service.updateUserConfig({
+        username: 'john',
+        full_name: 'John Doe',
+      });
+
+      expect(spectator.service.userConfig()).toEqual({
+        username: 'john',
+        full_name: 'John Doe',
+      });
+
+      // Update with additional fields
+      spectator.service.updateUserConfig({
+        email: 'john@example.com',
+      });
+
+      expect(spectator.service.userConfig()).toEqual({
+        username: 'john',
+        full_name: 'John Doe',
+        email: 'john@example.com',
+      });
+    });
+  });
+
+  describe('createUser with STIG mode', () => {
+    it('should create user with disabled password in STIG mode', () => {
+      spectator.service.initialize();
+      spectator.service.updateSetupDetails({
+        stigPassword: UserStigPasswordOption.DisablePassword,
+      });
+      spectator.service.updateUserConfig({
+        username: 'operator',
+        full_name: 'Operator',
+        password_disabled: true,
+      });
+
+      spectator.service.createUser();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.create', [{
+        full_name: 'Operator',
+        password: null,
+        password_disabled: true,
+        sudo_commands: [],
+        sudo_commands_nopasswd: [],
+        uid: null,
+        username: 'operator',
+      }]);
+    });
+
+    it('should create user with one-time password in STIG mode', () => {
+      spectator.service.initialize();
+      spectator.service.updateSetupDetails({
+        stigPassword: UserStigPasswordOption.OneTimePassword,
+      });
+      spectator.service.updateUserConfig({
+        username: 'operator',
+        full_name: 'Operator',
+      });
+
+      spectator.service.createUser();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.create', [{
+        full_name: 'Operator',
+        password: null,
+        random_password: true,
+        sudo_commands: [],
+        sudo_commands_nopasswd: [],
+        uid: null,
+        username: 'operator',
+      }]);
+    });
+  });
+
+  describe('updateUser with home_create', () => {
+    it('should make two API calls when home_create is true', () => {
+      spectator.service.initialize();
+      spectator.service.updateUserConfig({
+        username: 'test',
+        home: '/mnt/tank/home/test',
+        home_create: true,
+        shell: '/usr/bin/bash',
+      });
+
+      spectator.service.updateUser(1000, spectator.service.userConfig()).subscribe();
+
+      // First call to create home directory
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [1000, {
+        home_create: true,
+        home: '/mnt/tank/home/test',
+      }]);
+
+      // Second call should update user without home_create
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [1000, {
+        username: 'test',
+        shell: '/usr/bin/bash',
+      }]);
+    });
+
+    it('should make single API call when home_create is false', () => {
+      spectator.service.initialize();
+      spectator.service.updateUserConfig({
+        username: 'test',
+        home: '/mnt/tank/home/test',
+        shell: '/usr/bin/bash',
+      });
+
+      spectator.service.updateUser(1000, spectator.service.userConfig()).subscribe();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [1000, {
+        username: 'test',
+        home: '/mnt/tank/home/test',
+        shell: '/usr/bin/bash',
+      }]);
+    });
+  });
+
+  describe('isNewUser signal', () => {
+    it('should be true by default', () => {
+      expect(spectator.service.isNewUser()).toBe(true);
+    });
+
+    it('should be settable', () => {
+      spectator.service.isNewUser.set(false);
+      expect(spectator.service.isNewUser()).toBe(false);
+    });
+  });
 });

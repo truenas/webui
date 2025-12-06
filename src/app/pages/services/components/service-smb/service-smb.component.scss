@@ -7,3 +7,27 @@
 ix-input[hidden] {
   display: none;
 }
+
+.truenas-connect-notice {
+  background-color: var(--bg-hover);
+  border-radius: 4px;
+  margin-bottom: 16px;
+  padding: 12px;
+}
+
+.truenas-connect-link {
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:focus {
+    border-radius: 2px;
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}

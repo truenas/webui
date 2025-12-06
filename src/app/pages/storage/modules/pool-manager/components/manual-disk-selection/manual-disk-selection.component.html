@@ -5,6 +5,7 @@
         <div class="header dialog-header"><h3>{{ 'Manual Selection' | translate }}</h3></div>
         <ix-manual-selection-disks
           [enclosures]="data.enclosures"
+          [isSedEncryption]="data.isSedEncryption || false"
         ></ix-manual-selection-disks>
       </div>
       <mat-divider class="divider" [vertical]="true"></mat-divider>

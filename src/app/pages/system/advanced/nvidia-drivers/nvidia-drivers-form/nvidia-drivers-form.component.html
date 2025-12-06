@@ -1,0 +1,32 @@
+<ix-modal-header
+  [requiredRoles]="requiredRoles"
+  [title]="'NVIDIA Drivers' | translate"
+  [loading]="isFormLoading()"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-checkbox
+          formControlName="nvidia"
+          [label]="'Install NVIDIA Drivers' | translate"
+          [tooltip]="'Enable NVIDIA GPU support for containers and VMs.' | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading()"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

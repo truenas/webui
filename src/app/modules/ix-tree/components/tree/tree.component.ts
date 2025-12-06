@@ -1,9 +1,10 @@
 import { Direction, Directionality } from '@angular/cdk/bidi';
 import { DataSource } from '@angular/cdk/collections';
-import { CdkTree, TreeControl } from '@angular/cdk/tree';
+import { CdkTree } from '@angular/cdk/tree';
 import { ChangeDetectorRef, Component, Input, IterableDiffer, IterableDiffers, OnDestroy, OnInit, ViewChild, ViewContainerRef, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
+import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 
 // eslint-disable-next-line @angular-eslint/use-component-selector
 @Component({
@@ -23,7 +24,7 @@ export class Tree<T, K = T> extends CdkTree<T, K> implements OnInit, OnDestroy {
 
   // eslint-disable-next-line @stylistic/ts/max-len
   // eslint-disable-next-line @angular-eslint/no-input-rename, @typescript-eslint/no-explicit-any,@angular-eslint/prefer-signals
-  @Input('ixTreeControl') override treeControl!: TreeControl<T, any>;
+  @Input('ixTreeControl') override treeControl!: TreeExpansion<T, any>;
 
   // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input('ixDataSource')

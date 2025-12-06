@@ -49,11 +49,11 @@ export class TargetNameValidationService {
               return responseError === null
                 ? of(null)
                 : of({
-                  customValidator: {
-                    message: this.getError(responseError) || responseError,
-                  },
-                  invalidTargetName: true,
-                });
+                    customValidator: {
+                      message: this.getError(responseError) || responseError,
+                    },
+                    invalidTargetName: true,
+                  });
             }),
           );
         }),

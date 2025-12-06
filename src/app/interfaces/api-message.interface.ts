@@ -46,11 +46,11 @@ export interface JsonRpcError {
   data?: ApiErrorDetails;
 }
 
-export type IncomingMessage =
-  | SuccessfulResponse
-  | ErrorResponse
-  | CollectionUpdateMessage
-  | NotifyUnsubscribedMessage;
+export type IncomingMessage
+  = | SuccessfulResponse
+    | ErrorResponse
+    | CollectionUpdateMessage
+    | NotifyUnsubscribedMessage;
 
 export type ApiMethod = ApiCallMethod | ApiJobMethod | ApiEventMethod;
 

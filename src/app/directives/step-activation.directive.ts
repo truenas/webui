@@ -1,6 +1,6 @@
-import { Directive, OnInit, output, inject } from '@angular/core';
+import { DestroyRef, Directive, OnInit, output, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatStep, MatStepper } from '@angular/material/stepper';
-import { UntilDestroy } from '@ngneat/until-destroy';
 
 /**
  * Tells when a specific mat-step was activated.
@@ -8,18 +8,18 @@ import { UntilDestroy } from '@ngneat/until-destroy';
  * <mat-step ixStepActivation (activate)="onActivate()"></mat-step>
  * ```
  */
-@UntilDestroy()
 @Directive({
   selector: '[ixStepActivation]',
 })
 export class StepActivationDirective implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private step = inject(MatStep);
   private stepper = inject(MatStepper);
 
   readonly activate = output();
 
   ngOnInit(): void {
-    this.stepper.selectionChange.subscribe((event) => {
+    this.stepper.selectionChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
       if (this.step !== event.selectedStep) {
         return;
       }

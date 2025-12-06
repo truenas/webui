@@ -15,13 +15,15 @@
       </button>
     </div>
     <div [class]="['container', size()]">
-      @if (!isLoading()) {
+      @if (isStale()) {
+        <ix-widget-stale-data-notice></ix-widget-stale-data-notice>
+      } @else if (!isLoading()) {
         <mat-grid-list
           [cols]="isTwoTilesInRow ? 2 : 1"
           [gutterSize]="isThreeTilesInColumn ? '7px' : '12px'"
           [rowHeight]="poolsInfo().length ? (isThreeTilesInColumn ? '100px' : '153px') : '300px'"
         >
-          @for (poolInfo of poolsInfo().slice(0, 6); track poolInfo) {
+          @for (poolInfo of poolsInfo().slice(0, 6); track poolInfo.name) {
             <mat-grid-tile class="grid-tile">
               <div class="tile" [class.skimpy-tile]="isThreeTilesInColumn">
                 <div class="tile-header">

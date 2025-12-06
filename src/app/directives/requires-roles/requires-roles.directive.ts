@@ -1,16 +1,19 @@
-import { Directive, HostBinding, Input, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, Directive, Input, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { isEqual } from 'lodash-es';
 import { take } from 'rxjs';
 import { HasAccessDirective } from 'app/directives/has-access/has-access.directive';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 
-@UntilDestroy()
 @Directive({
   selector: '[ixRequiresRoles]',
+  host: {
+    '[class]': 'elementClass',
+  },
 })
 export class RequiresRolesDirective extends HasAccessDirective {
+  private readonly destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
 
   private previousRoles: Role[] | null = null;
@@ -31,7 +34,7 @@ export class RequiresRolesDirective extends HasAccessDirective {
 
     this.authService
       .hasRole(roles)
-      .pipe(take(1), untilDestroyed(this))
+      .pipe(take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe((hasRole) => this.ixHasAccess = hasRole);
   }
 
@@ -39,7 +42,6 @@ export class RequiresRolesDirective extends HasAccessDirective {
 
   // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input('class')
-  @HostBinding('class')
   override get elementClass(): string {
     return this.cssClassList.join(' ');
   }

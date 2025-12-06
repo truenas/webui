@@ -3,43 +3,71 @@
 
 .actions-bar {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 12px;
-  justify-content: space-between;
 
-  @media (max-width: $breakpoint-sm) {
-    display: block;
+  .top-row {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: space-between;
+
+    .service-select {
+      flex-shrink: 0;
+      margin-bottom: 0;
+      margin-top: 0;
+      min-width: 130px;
+      padding: 0;
+    }
+
+    .export-container {
+      align-items: center;
+      display: flex;
+    }
   }
 
-  .search-container {
-    column-gap: 12px;
+  .search-row {
+    align-items: flex-start;
     display: flex;
-    flex: 1;
-
-    @media (max-width: $breakpoint-singlecolumn) {
-      width: 100%;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      display: block;
-    }
-
-    .search-button-wrapper {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-
-      @media (max-width: $breakpoint-sm) {
-        margin-top: 8px;
-      }
-    }
+    gap: 12px;
+    width: 100%;
 
     .search-input {
-      @media (min-width: $breakpoint-sm) {
-        max-width: 90%;
-      }
+      flex: 1;
+      min-width: 0;
+    }
 
-      width: 100%;
+    button {
+      flex-shrink: 0;
+    }
+  }
+}
+
+:host ::ng-deep .mat-mdc-menu-panel .mat-mdc-menu-item.selected {
+  background-color: var(--alt-bg2);
+  font-weight: 500;
+}
+
+// Extracted to reduce nesting depth
+// Note: !important is required here to override Material's highly specific default styles
+.actions-bar .top-row .service-select {
+  ::ng-deep {
+    .label {
+      font-size: 15px !important;
+
+      .required {
+        display: none;
+      }
+    }
+
+    .input-container {
+      background: rgba(0, 0, 0, 0.1);
+      min-width: 130px;
+
+      .mat-mdc-select-trigger {
+        font-size: 15px !important;
+      }
     }
   }
 }

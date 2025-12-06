@@ -26,4 +26,8 @@
   &.status-unknown {
     color: var(--yellow);
   }
+
+  &.status-spare {
+    color: var(--cyan);
+  }
 }

@@ -3,13 +3,13 @@ import {
   BreakpointState,
   BreakpointObserver,
 } from '@angular/cdk/layout';
-import { CdkTreeNodePadding, FlatTreeControl } from '@angular/cdk/tree';
+import { CdkTreeNodePadding } from '@angular/cdk/tree';
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TrackByFunction, HostBinding, computed, viewChild, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import {
-  ActivatedRoute, NavigationStart, Router,
+  ActivatedRoute, NavigationSkipped, NavigationStart, Router,
   RouterLink, RouterLinkActive,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -43,7 +43,9 @@ import {
 } from 'app/modules/ix-tree/components/tree-virtual-scroll-view/tree-virtual-scroll-view.component';
 import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-def.directive';
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
+import { createFlatTreeControl } from 'app/modules/ix-tree/tree-control.factory';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
+import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -153,7 +155,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   // Flat API
   getLevel = (dataset: DatasetDetails): number => (dataset?.name?.split('/')?.length || 0) - 1;
   isExpandable = (dataset: DatasetDetails): boolean => Number(dataset?.children?.length) > 0;
-  treeControl = new FlatTreeControl<DatasetDetails, string>(
+  treeControl: TreeExpansion<DatasetDetails, string> = createFlatTreeControl<DatasetDetails, string>(
     this.getLevel,
     this.isExpandable,
     { trackBy: (dataset: DatasetDetails) => dataset.id },
@@ -172,12 +174,11 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   constructor() {
     this.router.events
-      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
-      .subscribe(() => {
-        if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
-          this.closeMobileDetails();
-        }
-      });
+      .pipe(
+        filter((event) => event instanceof NavigationSkipped || event instanceof NavigationStart),
+        untilDestroyed(this),
+      )
+      .subscribe(() => this.closeMobileDetails());
   }
 
   ngOnInit(): void {
@@ -245,6 +246,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   protected closeMobileDetails(): void {
     this.showMobileDetails = false;
+    this.cdr.markForCheck();
   }
 
   protected createPool(): void {

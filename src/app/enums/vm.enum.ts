@@ -13,11 +13,6 @@ export const vmTimeNames = new Map<VmTime, string>([
 export enum VmBootloader {
   Uefi = 'UEFI',
   UefiCsm = 'UEFI_CSM',
-
-  /**
-   * @deprecated
-   */
-  Grub = 'GRUB',
 }
 
 export enum VmDeviceType {

@@ -20,7 +20,17 @@
       }
       <div class="details-item">
         <div class="label">{{ 'Encryption' | translate }}:</div>
-        <div class="value">{{ (encryption$ | async) || unknownProp }}</div>
+        <div class="value">
+          @if ((encryptionType$ | async) === EncryptionType.None) {
+            {{ 'None' | translate }}
+          } @else if ((encryptionType$ | async) === EncryptionType.Software) {
+            {{ 'Software (ZFS)' | translate }} - {{ (encryption$ | async) || unknownProp }}
+          } @else if ((encryptionType$ | async) === EncryptionType.Sed) {
+            {{ 'Hardware (SED)' | translate }}
+          } @else {
+            {{ unknownProp }}
+          }
+        </div>
       </div>
       <div class="details-item">
         <div class="label">{{ 'Total Raw Capacity' | translate }}:</div>

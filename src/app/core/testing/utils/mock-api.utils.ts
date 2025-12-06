@@ -73,7 +73,7 @@ export function mockApi(
           const pluralRegex = /\{\s*(\w+)\s*,\s*plural\s*,\s*((?:[^{}]|\{[^}]*\})+)\s*\}/g;
 
           result = result.replace(pluralRegex, (match, paramName, pluralRules) => {
-            if (!params || params[paramName] === undefined) {
+            if (params?.[paramName] === undefined) {
               return match;
             }
 

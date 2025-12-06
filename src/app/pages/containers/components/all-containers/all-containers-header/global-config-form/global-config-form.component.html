@@ -1,0 +1,56 @@
+<ix-modal-header
+  [title]="'Settings' | translate"
+  [requiredRoles]="requiredRoles"
+  [loading]="isLoading()"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+
+      <ix-fieldset [title]="'Preferred Pool' | translate">
+        <ix-select
+          formControlName="preferred_pool"
+          [label]="'Preferred Pool' | translate"
+          [tooltip]="'Default pool to use when creating containers if pool is not explicitly specified.' | translate"
+          [options]="poolOptions$"
+        ></ix-select>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="'Default Network' | translate">
+        <ix-select
+          formControlName="bridge"
+          [label]="'Bridge' | translate"
+          [options]="bridgeOptions$"
+          [hideEmpty]="true"
+        ></ix-select>
+
+        @if (isAutoBridge) {
+          <ix-ip-input-with-netmask
+            formControlName="v4_network"
+            [label]="'IPv4 Network' | translate"
+            [required]="true"
+          ></ix-ip-input-with-netmask>
+
+          <ix-ip-input-with-netmask
+            formControlName="v6_network"
+            [label]="'IPv6 Network' | translate"
+          ></ix-ip-input-with-netmask>
+        }
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading()"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

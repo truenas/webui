@@ -169,11 +169,11 @@ export class VmWizardComponent implements OnInit {
     // Start with image import if needed
     const startFlow$ = this.diskForm.import_image && this.diskForm.image_source
       ? this.handleImageImportBeforeVmCreation().pipe(
-        switchMap((zvolPath) => {
-          importedZvolPath = zvolPath;
-          return this.createVm();
-        }),
-      )
+          switchMap((zvolPath) => {
+            importedZvolPath = zvolPath;
+            return this.createVm();
+          }),
+        )
       : this.createVm();
 
     startFlow$.pipe(

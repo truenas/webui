@@ -99,4 +99,12 @@ export const helptextZvol = {
     keyLabel: T('Key'),
     keyTooltip: T('Enter or paste a string to use as the encryption key for this dataset.'),
   },
+
+  useSpecialVdevsTooltip: T('Enable to store data in special metadata vdevs. \
+When enabled, you can customize the threshold size that determines which blocks are stored in special vdevs. \
+Before enabling this option, ensure a special/metadata vdev has been added to the pool.'),
+
+  specialSmallBlocksCustomTooltip: T('Specify the threshold size for storing data in special vdevs. \
+Data blocks smaller than or equal to this value will be stored in special vdevs, while larger blocks will use regular vdevs. \
+Valid range is 1 byte to 16 MiB. You can enter values like "128K", "1M", "4096", etc.'),
 };

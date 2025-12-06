@@ -1,6 +1,6 @@
 import { PercentPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatGridList, MatGridTile } from '@angular/material/grid-list';
@@ -15,12 +15,13 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { isTopologyDisk } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import {
@@ -46,6 +47,7 @@ import {
     RequiresRolesDirective,
     NgxSkeletonLoaderModule,
     TranslateModule,
+    WidgetStaleDataNoticeComponent,
   ],
 })
 export class WidgetStorageComponent {
@@ -56,8 +58,14 @@ export class WidgetStorageComponent {
 
   size = input.required<SlotSize>();
 
-  protected realtimeUpdates = toSignal(this.resources.realtimeUpdates$);
-  protected isLoading = computed(() => !this.pools() || !this.poolStats());
+  protected poolDataState = toSignal(
+    this.resources.poolUpdatesWithStaleDetection().pipe(takeUntilDestroyed()),
+  );
+
+  protected scanState = toSignal(this.resources.scanUpdatesWithStaleDetection().pipe(takeUntilDestroyed()));
+
+  protected isStale = computed(() => this.poolDataState()?.isStale ?? false);
+  protected isLoading = computed(() => (!this.pools() || !this.poolStats()) && !this.isStale());
   poolsInfo = computed(() => {
     const pools = this.pools();
 
@@ -82,7 +90,7 @@ export class WidgetStorageComponent {
   });
 
   protected poolStats = computed(() => {
-    return this.realtimeUpdates()?.fields?.pools;
+    return this.poolDataState()?.value;
   });
 
   protected readonly requiredRoles = [Role.PoolWrite];
@@ -253,29 +261,44 @@ export class WidgetStorageComponent {
     };
   }
 
+  /** helper function to format the scrub/resilver percentage displayed on the dashboard.
+   */
+  private formatScanPercentage(scan: PoolScanUpdate): string {
+    return this.percentPipe.transform(scan.percentage / 100, '1.2-2') || '?';
+  }
+
   private getScanItemInfo(pool: Pool): ItemInfo {
     let level: StatusLevel;
     let icon: MarkedIcon;
     let value: string;
 
-    const isScrub = pool.scan?.function === PoolScanFunction.Scrub;
-    const isScanFinished = pool.scan?.state === PoolScanState.Finished;
-    const isScanInProgress = pool.scan?.state === PoolScanState.Scanning;
-    const endTime = pool?.scan?.end_time?.$date;
+    const scanUpdate = this.scanState();
+    let scan = pool.scan;
+    if (!scanUpdate.isStale && scanUpdate?.value?.name === pool.name) {
+      scan = scanUpdate.value.scan;
+    }
+
+    const isScrub = scan?.function === PoolScanFunction.Scrub;
+    const isScanFinished = scan?.state === PoolScanState.Finished;
+    const isScanInProgress = scan?.state === PoolScanState.Scanning;
+    const endTime = scan?.end_time?.$date;
 
     const label = isScrub
       ? this.translate.instant('Last Scrub')
       : this.translate.instant('Last Resilver');
 
-    if (endTime && isScanInProgress) {
+    if (!endTime && isScanInProgress) {
+      // case: scan is in progress.
       icon = statusIcons.arrowCircleRight;
       level = StatusLevel.Safe;
-      value = this.percentPipe.transform(pool.scan.percentage, '1.2-2') || '?';
+      value = this.formatScanPercentage(scan);
     } else if (endTime && !isScanInProgress) {
+      // case: scan is finished.
       icon = isScanFinished ? statusIcons.checkCircle : statusIcons.error;
       level = isScanFinished ? StatusLevel.Safe : StatusLevel.Warn;
       value = this.formatDateTimePipe.transform(endTime);
     } else {
+      // case: if it's not done nor in progress, **we assume it has not run**.
       icon = statusIcons.neutral;
       level = StatusLevel.Neutral;
       value = this.translate.instant('Never');

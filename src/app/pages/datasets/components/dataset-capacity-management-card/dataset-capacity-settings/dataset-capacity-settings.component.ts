@@ -23,7 +23,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { getUserProperty, isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @UntilDestroy()
 @Component({
@@ -144,17 +144,22 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   }
 
   private setDatasetForEdit(dataset: DatasetDetails): void {
+    const refquotaWarning = getUserProperty<number>(dataset, 'refquota_warning');
+    const refquotaCritical = getUserProperty<number>(dataset, 'refquota_critical');
+    const quotaWarning = getUserProperty<number>(dataset, 'quota_warning');
+    const quotaCritical = getUserProperty<number>(dataset, 'quota_critical');
+
     this.oldValues = {
       refquota: dataset.refquota.parsed,
-      refquota_warning: dataset.refquota_warning?.parsed ?? this.defaultQuotaWarning,
-      refquota_warning_inherit: isPropertyInherited(dataset.refquota_warning),
-      refquota_critical: dataset.refquota_critical?.parsed ?? this.defaultQuotaCritical,
-      refquota_critical_inherit: isPropertyInherited(dataset.refquota_critical),
+      refquota_warning: refquotaWarning?.parsed ?? this.defaultQuotaWarning,
+      refquota_warning_inherit: isPropertyInherited(refquotaWarning),
+      refquota_critical: refquotaCritical?.parsed ?? this.defaultQuotaCritical,
+      refquota_critical_inherit: isPropertyInherited(refquotaCritical),
       quota: dataset.quota.parsed,
-      quota_warning: dataset.quota_warning?.parsed ?? this.defaultQuotaWarning,
-      quota_warning_inherit: isPropertyInherited(dataset.quota_warning),
-      quota_critical: dataset.quota_critical?.parsed ?? this.defaultQuotaCritical,
-      quota_critical_inherit: isPropertyInherited(dataset.quota_critical),
+      quota_warning: quotaWarning?.parsed ?? this.defaultQuotaWarning,
+      quota_warning_inherit: isPropertyInherited(quotaWarning),
+      quota_critical: quotaCritical?.parsed ?? this.defaultQuotaCritical,
+      quota_critical_inherit: isPropertyInherited(quotaCritical),
       refreservation: dataset.refreservation.parsed,
       reservation: dataset.reservation.parsed,
     };

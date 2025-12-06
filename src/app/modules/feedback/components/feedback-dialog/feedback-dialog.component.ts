@@ -1,11 +1,12 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
@@ -23,7 +24,8 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { SystemGeneralService } from 'app/services/system-general.service';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -46,14 +48,13 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     FileTicketComponent,
     TranslateModule,
     CastPipe,
-    AsyncPipe,
   ],
 })
 export class FeedbackDialog implements OnInit {
   private feedbackService = inject(FeedbackService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
-  private systemGeneralService = inject(SystemGeneralService);
+  private store$ = inject<Store<AppState>>(Store);
   protected dialogRef = inject<MatDialogRef<FeedbackDialog>>(MatDialogRef);
   private requestedType = inject<FeedbackType>(MAT_DIALOG_DATA);
 
@@ -61,7 +62,7 @@ export class FeedbackDialog implements OnInit {
   protected isLoadingTypes = false;
   protected typeControl = new FormControl(undefined as FeedbackType | undefined);
   protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypesLabels, this.translate));
-  protected isEnterprise$ = this.systemGeneralService.isEnterprise$;
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected allowedTypes: FeedbackType[] = [];
 
   get isReview(): boolean {

@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Observable } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -36,7 +37,9 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
         provide: MAT_DIALOG_DATA,
         useValue: fakeZfsSnapshotDataSource,
       },
-      mockProvider(LoaderService),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: Observable<unknown>) => source$),
+      }),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockApi([
@@ -71,6 +74,12 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
         ['test-dataset@second-snapshot'],
       ],
     ]);
+    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
     expect(spectator.fixture.nativeElement).toHaveText('Deleted 2 snapshots');
+  });
+
+  it('should disable delete button when form is invalid', async () => {
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    expect(await deleteButton.isDisabled()).toBe(true);
   });
 });

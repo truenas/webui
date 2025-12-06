@@ -4,6 +4,7 @@ import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTooltip } from '@angular/material/tooltip';
 import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -49,6 +50,7 @@ import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-se
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { bwlimitValidator } from 'app/modules/forms/ix-forms/validators/bwlimit-validation/bwlimit-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -91,6 +93,7 @@ type FormValue = CloudSyncFormComponent['form']['value'];
     IxExplorerComponent,
     TestDirective,
     IxIconComponent,
+    MatTooltip,
     CloudCredentialsSelectComponent,
     IxCheckboxComponent,
     SchedulerComponent,
@@ -178,7 +181,7 @@ export class CloudSyncFormComponent implements OnInit {
     encryption_password: [''],
     encryption_salt: [''],
     transfers: [4],
-    bwlimit: [[] as string[]],
+    bwlimit: [[] as string[], bwlimitValidator()],
   });
 
   isCredentialInvalid$ = new BehaviorSubject(false);
@@ -658,12 +661,21 @@ export class CloudSyncFormComponent implements OnInit {
     const formValue = this.form.value;
     const attributes: CloudSyncTaskUpdate['attributes'] = {};
 
+    const bwlimit = prepareBwlimit(formValue.bwlimit);
+    // attempt to find any NaNs that made it through despite the validator.
+    // this should **not** happen; however, if it somehow does, throw an error.
+    bwlimit.forEach((limit, i) => {
+      if (Number.isNaN(limit.bandwidth)) {
+        throw new Error(`Specified bandwidth limit ${formValue.bwlimit[i]} is invalid`);
+      }
+    });
+
     const value: CloudSyncTaskUpdate = {
       ...formValue,
       attributes,
       include: [],
       path: undefined,
-      bwlimit: prepareBwlimit(formValue.bwlimit),
+      bwlimit,
       schedule: formValue.cloudsync_picker ? crontabToSchedule(formValue.cloudsync_picker) : {},
       snapshot: formValue.direction === Direction.Pull ? false : formValue.snapshot,
     };

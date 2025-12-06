@@ -159,20 +159,27 @@ describe('MockResponseService', () => {
         events: [event],
       };
 
-      const responses$ = service.responses$.pipe(take(2), toArray());
+      const responses$ = service.responses$.pipe(take(3), toArray());
       const responsesPromise = firstValueFrom(responses$);
 
       service.generateMockResponse(mockRequest, configWithEvents);
 
       const responses = await responsesPromise;
-      expect(responses).toHaveLength(2);
+      expect(responses).toHaveLength(3);
       expect(responses[0]).toMatchObject({
         jsonrpc: '2.0',
         id: mockRequest.id,
         result: isSuccessResponse(mockConfig.response) ? mockConfig.response.result : null,
       });
 
-      const eventMessage = responses[1] as CollectionUpdateMessage;
+      // First event is the "added" event
+      const addedEvent = responses[1] as CollectionUpdateMessage;
+      expect(addedEvent.method).toBe('collection_update');
+      expect(addedEvent.params.msg).toBe(CollectionChangeType.Added);
+      expect(addedEvent.params.collection).toBe('core.get_jobs');
+
+      // Second event is the custom "changed" event
+      const eventMessage = responses[2] as CollectionUpdateMessage;
       expect(eventMessage.method).toBe('collection_update');
       expect(eventMessage.params.msg).toBe(CollectionChangeType.Changed);
       expect(eventMessage.params.collection).toBe('core.get_jobs');
@@ -182,7 +189,6 @@ describe('MockResponseService', () => {
         message_ids: [mockRequest.id],
         method: mockRequest.method,
         arguments: mockRequest.params,
-        transient: true,
       });
     });
   });
@@ -373,7 +379,7 @@ describe('MockResponseService', () => {
 
       // Collect all responses including events
       const allResponses$ = service.responses$.pipe(
-        take(4), // 1 initial response + 3 events
+        take(5), // 1 initial response + 1 added event + 3 changed events
         toArray(),
       );
       const responsesPromise = firstValueFrom(allResponses$);
@@ -383,8 +389,8 @@ describe('MockResponseService', () => {
       const responses = await responsesPromise;
       const eventMessages = responses.filter((resp) => 'method' in resp && resp.method === 'collection_update') as CollectionUpdateMessage[];
 
-      // Check we got all 3 events
-      expect(eventMessages).toHaveLength(3);
+      // Check we got all 4 events (1 added + 3 changed)
+      expect(eventMessages).toHaveLength(4);
 
       // Check timing and content of each event
       const endTime = Date.now();
@@ -392,18 +398,21 @@ describe('MockResponseService', () => {
       expect(totalElapsed).toBeGreaterThanOrEqual(140); // Total time for all events
 
       // Check each event's content
+      // First event is "added" with initial state
+      expect(eventMessages[0].params.msg).toBe(CollectionChangeType.Added);
+
+      // Remaining events are the custom "changed" events
       // Type assertion for fields that include progress
       interface EventFields { progress: { percent: number; description: string } }
-      expect((eventMessages[0].params.fields as EventFields).progress).toEqual({ percent: 25, description: 'Starting' });
-      expect((eventMessages[1].params.fields as EventFields).progress).toEqual({ percent: 75, description: 'Almost done' });
-      expect((eventMessages[2].params.fields as EventFields).progress).toEqual({ percent: 100, description: 'Complete' });
+      expect((eventMessages[1].params.fields as EventFields).progress).toEqual({ percent: 25, description: 'Starting' });
+      expect((eventMessages[2].params.fields as EventFields).progress).toEqual({ percent: 75, description: 'Almost done' });
+      expect((eventMessages[3].params.fields as EventFields).progress).toEqual({ percent: 100, description: 'Complete' });
     });
 
     it('should use provided event field values', async () => {
       const customEvent: MockEvent = {
         delay: 0,
         fields: {
-          id: 999,
           message_ids: ['custom-id'],
           method: 'custom.method' as never,
           arguments: [{ custom: 'args' }],
@@ -418,15 +427,30 @@ describe('MockResponseService', () => {
         events: [customEvent],
       };
 
-      const responses$ = service.responses$.pipe(take(2), toArray());
+      const responses$ = service.responses$.pipe(take(3), toArray());
       const responsesPromise = firstValueFrom(responses$);
 
       service.generateMockResponse(mockRequest, configWithCustomEvent);
 
       const responses = await responsesPromise;
-      const eventResponse = responses.find((resp) => 'method' in resp && resp.method === 'collection_update');
-      expect(eventResponse).toBeDefined();
-      expect(eventResponse!.params.fields).toMatchObject(customEvent.fields);
+      const eventResponses = responses.filter((resp) => 'method' in resp && resp.method === 'collection_update') as CollectionUpdateMessage[];
+
+      // Should have 2 events: added + custom changed event
+      expect(eventResponses).toHaveLength(2);
+
+      // The second event should be the custom changed event with provided fields
+      const customChangedEvent = eventResponses[1];
+      expect(customChangedEvent.params.msg).toBe(CollectionChangeType.Changed);
+      expect(customChangedEvent.params.fields).toMatchObject({
+        message_ids: ['custom-id'],
+        method: 'custom.method',
+        arguments: [{ custom: 'args' }],
+        transient: false,
+        time_started: { $date: 123456789 },
+        state: 'RUNNING',
+      });
+      // The id should be the generated job ID, not a custom value
+      expect((customChangedEvent.params.fields as { id: number }).id).toBeDefined();
     });
   });
 });

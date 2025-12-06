@@ -5,11 +5,14 @@ export interface DockerConfig {
   pool: string;
   dataset: string;
   enable_image_updates: boolean;
-  nvidia: boolean;
   address_pools: DockerAddressPool[];
   migrate_applications?: boolean;
-  secure_registry_mirrors?: string[];
-  insecure_registry_mirrors?: string[];
+  registry_mirrors?: RegistryMirror[];
+}
+
+export interface RegistryMirror {
+  url: string;
+  insecure?: boolean;
 }
 
 export interface DockerAddressPool {
@@ -19,11 +22,9 @@ export interface DockerAddressPool {
 
 export interface DockerConfigUpdate {
   pool?: string | null;
-  nvidia?: boolean;
   address_pools?: DockerAddressPool[];
   enable_image_updates?: boolean;
-  secure_registry_mirrors?: string[];
-  insecure_registry_mirrors?: string[];
+  registry_mirrors?: RegistryMirror[];
 }
 
 export interface DockerStatusData {

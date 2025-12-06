@@ -1,8 +1,9 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 // import { finalize } from 'rxjs';
@@ -20,8 +21,9 @@ import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/ima
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 // import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 
 export const maxRatingValue = 5;
 export const maxFileSizeBytes = 5 * MiB;
@@ -44,7 +46,6 @@ export const maxFileSizeBytes = 5 * MiB;
     MatButton,
     TestDirective,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class FileReviewComponent {
@@ -52,7 +53,7 @@ export class FileReviewComponent {
   // private errorHandler = inject(ErrorHandlerService);
   private imageValidator = inject(ImageValidatorService);
   private feedbackService = inject(FeedbackService);
-  private systemGeneralService = inject(SystemGeneralService);
+  private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
 
   readonly dialogRef = input.required<MatDialogRef<FeedbackDialog>>();
@@ -60,7 +61,7 @@ export class FileReviewComponent {
 
   readonly isLoadingChange = output<boolean>();
 
-  protected isEnterprise$ = this.systemGeneralService.isEnterprise$;
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   protected form = this.formBuilder.group({
     rating: [undefined as number | undefined, [Validators.required, rangeValidator(1, maxRatingValue)]],

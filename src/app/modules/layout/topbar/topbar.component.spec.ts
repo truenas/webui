@@ -11,13 +11,14 @@ import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { HarborosConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
+import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
@@ -26,8 +27,8 @@ import { HarborosLogoComponent } from 'app/modules/layout/topbar/truenas-logo/tr
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
-import { HarborosConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { HarborosConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { RebootInfoState } from 'app/store/reboot-info/reboot-info.reducer';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
@@ -83,7 +84,7 @@ function createTopbarComponent(options: ComponentOptions = {}): {
         UserMenuComponent,
         PowerMenuComponent,
         HarborosLogoComponent,
-        HarborosConnectButtonComponent,
+        TruenasConnectButtonComponent,
         TruecommandButtonComponent,
       ),
     ],
@@ -96,17 +97,25 @@ function createTopbarComponent(options: ComponentOptions = {}): {
       mockProvider(UiSearchProvider),
       mockProvider(MatDialog, matDialog),
       mockApi([]),
-      mockProvider(HarborosConnectService, {
+      mockProvider(TruenasConnectService, {
         config: mockConfigSignal,
       }),
       provideMockStore({
+        initialState: {
+          systemInfo: {
+            systemInfo: null,
+            productType: ProductType.CommunityEdition,
+            isIxHardware: false,
+            buildYear: 2024,
+          },
+        },
         selectors: [
           {
             selector: selectRebootInfo,
             value: fakeRebootInfo,
           },
           {
-            selector: selectUpdateJob,
+            selector: selectUpdateJobs,
             value: updateJob,
           },
           {

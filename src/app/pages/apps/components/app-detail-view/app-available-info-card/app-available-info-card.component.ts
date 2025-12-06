@@ -1,12 +1,12 @@
 import {
   ChangeDetectionStrategy, Component,
-  input, computed,
+  input,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { formatRelative } from 'date-fns';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -18,6 +18,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./app-available-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    FormatDateTimePipe,
     NgxSkeletonLoaderModule,
     OrNotAvailablePipe,
     TranslateModule,
@@ -28,11 +29,4 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class AppAvailableInfoCardComponent {
   readonly isLoading = input<boolean>(true);
   readonly app = input<AvailableApp>();
-  readonly relativeDate = computed(() => {
-    const app = this.app();
-    if (!app) {
-      return '';
-    }
-    return formatRelative(new Date(app.last_update.$date), new Date());
-  });
 }

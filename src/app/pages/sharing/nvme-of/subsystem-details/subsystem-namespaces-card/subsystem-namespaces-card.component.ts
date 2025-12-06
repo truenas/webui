@@ -8,7 +8,9 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { Role } from 'app/enums/role.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfNamespace, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -43,6 +45,7 @@ import { DeleteNamespaceDialogComponent } from './delete-namespace-dialog/delete
     TestDirective,
     UiSearchDirective,
     MatButton,
+    RequiresRolesDirective,
   ],
 })
 export class SubsystemNamespacesCardComponent {
@@ -55,6 +58,8 @@ export class SubsystemNamespacesCardComponent {
   protected readonly helptext = helptextNvmeOf;
 
   protected readonly searchableElements = subsystemNamespacesCardElements;
+
+  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected onAddNamespace(): void {
     this.slideIn.open(NamespaceFormComponent, {

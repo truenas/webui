@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+import { NgClass, TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, effect, inject, OnInit, signal,
 } from '@angular/core';
@@ -46,6 +46,7 @@ interface RowState {
     IxIconComponent,
     TranslateModule,
     TestDirective,
+    TitleCasePipe,
   ],
 })
 export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements OnInit {

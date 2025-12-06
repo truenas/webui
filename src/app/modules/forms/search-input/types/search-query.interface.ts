@@ -1,8 +1,8 @@
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 
-export type SearchQuery<T> =
-  | BasicSearchQuery
-  | AdvancedSearchQuery<T>;
+export type SearchQuery<T>
+  = | BasicSearchQuery
+    | AdvancedSearchQuery<T>;
 
 export interface BasicSearchQuery {
   isBasicQuery: true;

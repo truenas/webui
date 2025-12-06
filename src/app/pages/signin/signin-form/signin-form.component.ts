@@ -20,7 +20,9 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 
@@ -45,6 +47,7 @@ export class SigninFormComponent implements OnInit {
   private formBuilder = inject(NonNullableFormBuilder);
   private errorHandler = inject(FormErrorHandlerService);
   private signinStore = inject(SigninStore);
+  private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
@@ -154,7 +157,7 @@ export class SigninFormComponent implements OnInit {
         { links },
       );
       this.cdr.markForCheck();
-      this.signinStore.showSnackbar(this.translate.instant('Logging in at the current URL is not possible.'));
+      this.snackbar.error(this.translate.instant('Logging in at the current URL is not possible.'));
 
       return;
     }
@@ -209,11 +212,11 @@ export class SigninFormComponent implements OnInit {
 
   protected readonly iconMarker = iconMarker;
 
-  protected handleError(errorMessage: string): void {
+  protected handleError(errorMessage: TranslatedString): void {
     this.signinStore.setLoadingState(false);
     this.lastLoginError = errorMessage;
     this.isLastLoginAttemptFailed = true;
     this.cdr.markForCheck();
-    this.signinStore.showSnackbar(errorMessage);
+    this.snackbar.error(errorMessage);
   }
 }

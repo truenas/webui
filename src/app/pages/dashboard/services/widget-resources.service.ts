@@ -4,19 +4,29 @@ import { subHours } from 'date-fns';
 import {
   Observable, Subject, catchError, debounceTime,
   filter,
-  forkJoin, map, of, repeat, shareReplay, startWith, throttleTime, timer,
+  forkJoin, map, NEVER, of, repeat, shareReplay, startWith, throttleTime, timer,
 } from 'rxjs';
+import { detectStaleData, StaleDataState } from 'app/helpers/operators/detect-stale-data.operator';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { ReportingData } from 'app/interfaces/reporting.interface';
+import {
+  AllCpusUpdate, MemoryUpdate, AllNetworkInterfacesUpdate, ReportingData,
+} from 'app/interfaces/reporting.interface';
+import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+
+export interface PoolUsage {
+  available: number;
+  used: number;
+  total: number;
+}
 
 /**
  * This service provides data for widgets.
@@ -71,6 +81,12 @@ export class WidgetResourcesService {
   );
 
   readonly pools$ = this.api.callAndSubscribe('pool.query').pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  // since pool.query doesn't emit events for scan updates, we need to subscribe to
+  // the `pool.scan` endpoint to actually receive real-time scrub/resilver updates.
+  readonly scans$ = this.api.subscribe('pool.scan').pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
@@ -151,5 +167,75 @@ export class WidgetResourcesService {
 
   refreshDashboardSystemInfo(): void {
     this.triggerRefreshDashboardSystemInfo$.next();
+  }
+
+  /**
+   * Returns CPU data with stale detection.
+   * Data is considered stale if no updates received within 5 seconds.
+   * Errors in the stream are caught and the observable completes silently.
+   */
+  cpuUpdatesWithStaleDetection(): Observable<StaleDataState<AllCpusUpdate>> {
+    return this.realtimeUpdates$.pipe(
+      map((update) => update.fields.cpu),
+      catchError(() => NEVER),
+      detectStaleData(5000),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+  }
+
+  /**
+   * Returns memory data with stale detection.
+   * Data is considered stale if no updates received within 5 seconds.
+   * Errors in the stream are caught and the observable completes silently.
+   */
+  memoryUpdatesWithStaleDetection(): Observable<StaleDataState<MemoryUpdate>> {
+    return this.realtimeUpdates$.pipe(
+      map((update) => update.fields.memory),
+      catchError(() => NEVER),
+      detectStaleData(5000),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+  }
+
+  /**
+   * Returns network interface data with stale detection.
+   * Data is considered stale if no updates received within 5 seconds.
+   * Errors in the stream are caught and the observable completes silently.
+   */
+  networkInterfaceUpdatesWithStaleDetection(): Observable<StaleDataState<AllNetworkInterfacesUpdate>> {
+    return this.realtimeUpdates$.pipe(
+      map((update) => update.fields.interfaces),
+      catchError(() => NEVER),
+      detectStaleData(5000),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+  }
+
+  /**
+   * Returns pool data with stale detection.
+   * Data is considered stale if no updates received within 5 seconds.
+   * Errors in the stream are caught and the observable completes silently.
+   */
+  poolUpdatesWithStaleDetection(): Observable<StaleDataState<Record<string, PoolUsage>>> {
+    return this.realtimeUpdates$.pipe(
+      map((update) => update.fields.pools),
+      catchError(() => NEVER),
+      detectStaleData(5000),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
+  }
+
+  /**
+   * Returns scan data with stale detection.
+   * Data is considered stale if no updates received within 5 seconds.
+   * Errors in the stream are caught and the observable completes silently.
+   */
+  scanUpdatesWithStaleDetection(): Observable<StaleDataState<PoolScan>> {
+    return this.scans$.pipe(
+      map((update) => update.fields),
+      catchError(() => NEVER),
+      detectStaleData(5000),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    );
   }
 }

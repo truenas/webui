@@ -23,6 +23,11 @@ describe('RedirectDialogComponent', () => {
   });
 
   beforeEach(() => {
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: jest.fn().mockResolvedValue(undefined),
+      },
+    });
     spectator = createComponent();
   });
 
@@ -35,15 +40,11 @@ describe('RedirectDialogComponent', () => {
   });
 
   it('copies URL when Copy URL is pressed', async () => {
-    if (!document.execCommand) {
-      return;
-    }
-
-    jest.spyOn(document, 'execCommand').mockImplementation();
+    const writeTextSpy = jest.spyOn(navigator.clipboard, 'writeText').mockResolvedValue();
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Copy URL' }));
     await button.click();
 
-    expect(document.execCommand).toHaveBeenCalledWith('copy');
+    expect(writeTextSpy).toHaveBeenCalledWith('http://10.24.30.2/redirect');
   });
 });

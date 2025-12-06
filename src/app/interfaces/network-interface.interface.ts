@@ -52,11 +52,11 @@ export interface LinkAggregationNetworkInterface extends BaseNetworkInterface {
   xmit_hash_policy: XmitHashPolicy;
 }
 
-export type NetworkInterface =
-  | PhysicalNetworkInterface
-  | LinkAggregationNetworkInterface
-  | BridgeNetworkInterface
-  | VlanNetworkInterface;
+export type NetworkInterface
+  = | PhysicalNetworkInterface
+    | LinkAggregationNetworkInterface
+    | BridgeNetworkInterface
+    | VlanNetworkInterface;
 
 export interface NetworkInterfaceAlias {
   type?: NetworkInterfaceAliasType;

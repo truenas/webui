@@ -64,7 +64,6 @@ export class TargetListComponent implements OnInit {
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
 
-  readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
   readonly dataProvider = input.required<AsyncDataProvider<IscsiTarget>>();
   readonly targets = input<IscsiTarget[]>();
@@ -132,12 +131,10 @@ export class TargetListComponent implements OnInit {
   }
 
   expanded(target: IscsiTarget): void {
-    if (this.isMobileView()) {
-      this.toggleShowMobileDetails.emit(!!target);
-      if (!target) {
-        this.dataProvider().expandedRow = null;
-        this.cdr.markForCheck();
-      }
+    this.toggleShowMobileDetails.emit(!!target);
+    if (!target) {
+      this.dataProvider().expandedRow = null;
+      this.cdr.markForCheck();
     }
   }
 

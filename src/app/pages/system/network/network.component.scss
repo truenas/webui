@@ -47,4 +47,10 @@ div.disabled-notice {
 #timeout-field {
   text-align: center;
   width: 50px;
+
+  input {
+    color: var(--fg2);
+    font-weight: 700;
+    text-align: center;
+  }
 }

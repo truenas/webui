@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -41,11 +42,11 @@ import { accessCardElements } from 'app/pages/system/advanced/access/access-card
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -84,11 +85,12 @@ export class AccessCardComponent implements OnInit {
   private loader = inject(LoaderService);
   private api = inject(ApiService);
   private firstTimeWarning = inject(FirstTimeWarningService);
-  private systemGeneralService = inject(SystemGeneralService);
   protected emptyService = inject(EmptyService);
 
   protected readonly searchableElements = accessCardElements;
   protected readonly requiredRoles = [Role.AuthSessionsWrite];
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+
   readonly sessionTimeout$ = this.store$.pipe(
     waitForPreferences,
     map((preferences) => {
@@ -138,10 +140,6 @@ export class AccessCardComponent implements OnInit {
     uniqueRowTag: (row) => 'session-' + this.getUsername(row) + '-' + row.origin,
     ariaLabels: (row) => [this.getUsername(row), this.translate.instant('Session')],
   });
-
-  get isEnterprise(): boolean {
-    return this.systemGeneralService.isEnterprise;
-  }
 
   ngOnInit(): void {
     const sessions$ = this.api.call('auth.sessions', [[['internal', '=', false]]]).pipe(

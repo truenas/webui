@@ -108,7 +108,7 @@ describe('ReplicationTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Last Snapshot', 'Enabled', 'State', 'Last Run', ''],
-      ['APPS/test2 - APPS/test3', 'APPS/test2@auto-2023-09-19_00-00', '', 'FINISHED', '1 min. ago', ''],
+      ['APPS/test2 - APPS/test3', 'APPS/test2@auto-2023-09-19_00-00', '', 'Finished', '1 min. ago', ''],
     ];
 
     const cells = await table.getCellTexts();

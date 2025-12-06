@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { JobsState } from 'app/modules/jobs/store/job.reducer';
-import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
+import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 
 @UntilDestroy()
 @Component({
@@ -29,6 +29,6 @@ import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
 export class UpdateDialog {
   private store$ = inject<Store<JobsState>>(Store);
 
-  selectRunningJobs$ = this.store$.select(selectUpdateJob);
+  selectRunningJobs$ = this.store$.select(selectUpdateJobs);
   contentText = inject<{ message: string; title: string }>(MAT_DIALOG_DATA);
 }

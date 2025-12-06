@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatRipple } from '@angular/material/core';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -19,15 +20,15 @@ import {
   reopenAllAlertsPressed,
 } from 'app/modules/alerts/store/alert.actions';
 import {
-  AlertSlice,
   selectAlertState,
   selectDismissedAlerts,
   selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { SystemGeneralService } from 'app/services/system-general.service';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -52,9 +53,8 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class AlertsPanelComponent implements OnInit {
-  private store$ = inject<Store<AlertSlice>>(Store);
+  private store$ = inject<Store<AppState>>(Store);
   private router = inject(Router);
-  private systemService = inject(SystemGeneralService);
   private cdr = inject(ChangeDetectorRef);
 
   protected readonly requiredRoles = [Role.AlertListWrite];
@@ -64,6 +64,7 @@ export class AlertsPanelComponent implements OnInit {
   unreadAlerts$ = this.store$.select(selectUnreadAlerts);
   dismissedAlerts$ = this.store$.select(selectDismissedAlerts);
 
+  private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = false;
 
   ngOnInit(): void {
@@ -92,7 +93,7 @@ export class AlertsPanelComponent implements OnInit {
   }
 
   private checkHaStatus(): void {
-    if (!this.systemService.isEnterprise) {
+    if (!this.isEnterprise()) {
       return;
     }
 

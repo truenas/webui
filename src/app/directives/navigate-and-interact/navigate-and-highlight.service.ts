@@ -1,14 +1,14 @@
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription, timer } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class NavigateAndHighlightService {
+  private readonly destroyRef = inject(DestroyRef);
   private router = inject(Router);
   private window = inject<Window>(WINDOW);
 
@@ -58,7 +58,7 @@ export class NavigateAndHighlightService {
     const updatePosition = (): void => this.updateOverlayPosition(targetElement, this.prevHighlightDiv);
     this.window.addEventListener('scroll', updatePosition, true);
 
-    this.prevSubscription = timer(2150).pipe(untilDestroyed(this)).subscribe(() => {
+    this.prevSubscription = timer(2150).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.cleanupPreviousHighlight();
       this.window.removeEventListener('scroll', updatePosition, true);
     });

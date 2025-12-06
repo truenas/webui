@@ -69,12 +69,12 @@ export const ldapSupportedCredentialTypes: Option<DirectoryServiceCredentialType
   },
 ];
 
-export type DirectoryServiceCredential =
-  | KerberosCredentialUser
-  | KerberosCredentialPrincipal // Provide options from kerberos.keytab.kerberos_principal_choices
-  | LdapCredentialPlain
-  | LdapCredentialAnonymous
-  | LdapCredentialMutualTls; // Provide options from a new endpoint
+export type DirectoryServiceCredential
+  = | KerberosCredentialUser
+    | KerberosCredentialPrincipal // Provide options from kerberos.keytab.kerberos_principal_choices
+    | LdapCredentialPlain
+    | LdapCredentialAnonymous
+    | LdapCredentialMutualTls; // Provide options from a new endpoint
 
 export function isLdapCredentialPlain(
   credential: DirectoryServiceCredential | null | undefined,

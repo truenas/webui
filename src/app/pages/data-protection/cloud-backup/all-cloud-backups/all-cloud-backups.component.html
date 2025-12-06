@@ -18,13 +18,13 @@
   #masterDetailView="masterDetailViewContext"
   [showDetails]="showDetails"
   [selectedItem]="cloudBackup"
+  (mobileDetailsClosed)="dataProvider.expandedRow = null"
 >
   <ix-cloud-backup-list
     #masterList
     master
     [dataProvider]="dataProvider"
     [cloudBackups]="cloudBackups()"
-    [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-cloud-backup-list>
 

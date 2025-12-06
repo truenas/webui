@@ -58,7 +58,6 @@ export class SubsystemsListComponent {
   private cdr = inject(ChangeDetectorRef);
   private searchDirectives = inject(UiSearchDirectivesService);
 
-  readonly isMobileView = input<boolean>();
   readonly isLoading = input(false);
   readonly toggleShowMobileDetails = output<boolean>();
   readonly subsystemSelected = output<NvmeOfSubsystemDetails>();
@@ -112,13 +111,12 @@ export class SubsystemsListComponent {
   }
 
   protected expanded(subsys: NvmeOfSubsystemDetails): void {
-    if (this.isMobileView()) {
-      this.toggleShowMobileDetails.emit(!!subsys);
-      if (!subsys) {
-        this.dataProvider().expandedRow = null;
-        this.cdr.markForCheck();
-      }
+    this.toggleShowMobileDetails.emit(!!subsys);
+    if (!subsys) {
+      this.dataProvider().expandedRow = null;
+      this.cdr.markForCheck();
     }
+
     if (subsys) {
       this.subsystemSelected.emit(subsys);
     }

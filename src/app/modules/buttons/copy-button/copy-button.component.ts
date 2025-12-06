@@ -43,6 +43,8 @@ export class CopyButtonComponent {
       textArea.value = text;
       document.body.appendChild(textArea);
       textArea.select();
+      // Fallback for browsers that don't support navigator.clipboard
+      // eslint-disable-next-line sonarjs/deprecation
       document.execCommand('copy');
       textArea.remove();
       resolve();

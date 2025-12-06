@@ -11,7 +11,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { EMPTY, Observable, Subscription } from 'rxjs';
-import { catchError, debounceTime, tap } from 'rxjs/operators';
+import { catchError, debounceTime, shareReplay, tap } from 'rxjs/operators';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -52,10 +52,6 @@ export type IxSelectValue = SelectOptionValueType;
   hostDirectives: [
     { ...registeredDirectiveConfig },
   ],
-  host: {
-    tabindex: '0',
-    '(focus)': 'onHostFocus()',
-  },
 })
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
   controlDirective = inject(NgControl);
@@ -176,6 +172,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
           this.isLoading = false;
           this.cdr.markForCheck();
         }),
+        shareReplay({ bufferSize: 1, refCount: true }),
       );
 
       this.optsSubscription?.unsubscribe();
@@ -223,15 +220,6 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
    */
   focus(): void {
     if (this.matSelect) {
-      this.matSelect.focus();
-    }
-  }
-
-  /**
-   * Handle focus on the host element
-   */
-  onHostFocus(): void {
-    if (this.matSelect && !this.isDisabled) {
       this.matSelect.focus();
     }
   }

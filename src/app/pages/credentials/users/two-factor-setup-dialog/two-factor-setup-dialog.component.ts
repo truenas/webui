@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
-import { MatDialogClose } from '@angular/material/dialog';
+import { MatDialogClose, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
@@ -25,8 +25,13 @@ import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.compone
 })
 export class TwoFactorSetupDialog {
   private authService = inject(AuthService);
+  private dialogRef = inject(MatDialogRef<TwoFactorSetupDialog>);
 
   protected canFinish = toSignal(
     this.authService.userTwoFactorConfig$.pipe(map((config) => config.secret_configured)),
   );
+
+  protected onSkipSetup(): void {
+    this.dialogRef.close(true);
+  }
 }

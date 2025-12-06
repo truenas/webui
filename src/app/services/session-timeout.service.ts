@@ -1,13 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import {
-  filter, Observable,
+  filter, Subscription,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Timeout } from 'app/interfaces/timeout.interface';
@@ -18,8 +17,10 @@ import {
   SessionExpiringDialogOptions,
 } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { LocaleService } from 'app/modules/language/locale.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -33,40 +34,56 @@ export class SessionTimeoutService {
   private matDialog = inject(MatDialog);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private snackbar = inject(MatSnackBar);
+  private snackbar = inject(SnackbarService);
   private appStore$ = inject<Store<AppState>>(Store);
   private tokenLastUsedService = inject(TokenLastUsedService);
-  private wsStatus = inject(WebSocketStatusService);
   private window = inject<Window>(WINDOW);
+  private localeService = inject(LocaleService);
 
-  protected actionWaitTimeout: Timeout;
-  protected terminateCancelTimeout: Timeout;
+  private actionWaitTimeout: Timeout;
+  private terminateCancelTimeout: Timeout;
+  private currentLifetime: number | null = null;
+  private preferencesSubscription: Subscription | null = null;
+  private isResumeActive = false;
+  private warningDialogRef: MatDialogRef<SessionExpiringDialog> | null = null;
+
+  private readonly defaultLifetime = 300;
 
   private resume = (): void => {
-    this.appStore$
-      .select(selectPreferences)
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((preferences) => {
-        this.pause();
-        const lifetime = preferences.lifetime || 300;
-        this.actionWaitTimeout = setTimeout(() => {
-          this.stop();
-          const showWarningDialogFor = 30000;
+    // If warning dialog is open, user activity should close it and reset the timer
+    if (this.warningDialogRef) {
+      clearTimeout(this.terminateCancelTimeout);
+      this.warningDialogRef.close(true);
+      this.warningDialogRef = null;
+      return;
+    }
 
-          this.terminateCancelTimeout = setTimeout(() => {
-            this.expireSession();
-          }, showWarningDialogFor);
+    if (this.isResumeActive) {
+      return;
+    }
 
-          this.showWarningDialog(showWarningDialogFor, lifetime)
-            .pipe(untilDestroyed(this))
-            .subscribe((shouldExtend) => {
-              clearTimeout(this.terminateCancelTimeout);
-              if (shouldExtend) {
-                this.start();
-              }
-            });
-        }, lifetime * 1000);
-      });
+    this.pause();
+    this.isResumeActive = true;
+    const lifetime = this.currentLifetime ?? this.defaultLifetime;
+    this.actionWaitTimeout = setTimeout(() => {
+      this.isResumeActive = false;
+      const showWarningDialogFor = 30000;
+
+      this.terminateCancelTimeout = setTimeout(() => {
+        this.expireSession();
+      }, showWarningDialogFor);
+
+      this.warningDialogRef = this.showWarningDialog(showWarningDialogFor, lifetime);
+      this.warningDialogRef.afterClosed()
+        .pipe(untilDestroyed(this))
+        .subscribe((shouldExtend) => {
+          this.warningDialogRef = null;
+          clearTimeout(this.terminateCancelTimeout);
+          if (shouldExtend) {
+            this.start();
+          }
+        });
+    }, lifetime * 1000);
   };
 
   constructor() {
@@ -84,21 +101,51 @@ export class SessionTimeoutService {
     this.authService.clearAuthToken();
     this.router.navigate(['/signin']);
     this.dialogService.closeAllDialogs();
-    this.snackbar.open(
-      this.translate.instant('Session expired'),
-      this.translate.instant('Close'),
-      { duration: 4000, verticalPosition: 'bottom' },
-    );
+
     this.authService.logout().pipe(untilDestroyed(this)).subscribe();
+  }
+
+  showSessionExpiredMessage(): void {
+    this.snackbar.open({
+      message: this.translate.instant('Session expired'),
+      icon: iconMarker('mdi-clock-alert-outline'),
+      iconCssColor: 'var(--orange)',
+      button: {
+        title: this.translate.instant('Close'),
+      },
+    });
   }
 
   start(): void {
     this.tokenLastUsedService.setupTokenLastUsedValue(this.authService.user$);
+    this.subscribeToPreferences();
     this.addListeners();
     this.resume();
   }
 
+  private subscribeToPreferences(): void {
+    this.preferencesSubscription?.unsubscribe();
+    this.preferencesSubscription = this.appStore$
+      .select(selectPreferences)
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe((preferences) => {
+        const lifetime = preferences.lifetime || this.defaultLifetime;
+        if (this.currentLifetime !== lifetime) {
+          const shouldResetTimeout = this.currentLifetime !== null;
+          this.currentLifetime = lifetime;
+          this.tokenLastUsedService.updateTokenLifetime(lifetime);
+          if (shouldResetTimeout) {
+            this.resume();
+          }
+        }
+      });
+  }
+
   pause(): void {
+    this.isResumeActive = false;
     if (this.actionWaitTimeout) {
       clearTimeout(this.actionWaitTimeout);
     }
@@ -107,25 +154,31 @@ export class SessionTimeoutService {
   stop(): void {
     this.removeListeners();
     this.pause();
+    if (this.warningDialogRef) {
+      this.warningDialogRef.close();
+      this.warningDialogRef = null;
+    }
+    clearTimeout(this.terminateCancelTimeout);
+    this.preferencesSubscription?.unsubscribe();
+    this.preferencesSubscription = null;
   }
 
-  private showWarningDialog(showConfirmTime: number, lifetime: number): Observable<boolean> {
-    const dialogRef = this.matDialog.open(SessionExpiringDialog, {
+  private showWarningDialog(showConfirmTime: number, lifetime: number): MatDialogRef<SessionExpiringDialog> {
+    return this.matDialog.open(SessionExpiringDialog, {
       disableClose: true,
       data: {
         title: this.translate.instant('Logout'),
         message: this.translate.instant(`
               It looks like your session has been inactive for more than {lifetime} seconds.<br>
               For security reasons we will log you out at {time}.
-            `, { time: format(new Date(new Date().getTime() + showConfirmTime), 'HH:mm:ss'), lifetime }),
+            `, { time: format(new Date(new Date().getTime() + showConfirmTime), this.localeService.getPreferredTimeFormat()), lifetime }),
         buttonText: this.translate.instant('Extend session'),
       } as SessionExpiringDialogOptions,
     });
-
-    return dialogRef.afterClosed();
   }
 
   private addListeners(): void {
+    this.removeListeners();
     this.window.addEventListener('mouseover', this.resume, false);
     this.window.addEventListener('keypress', this.resume, false);
   }

@@ -59,17 +59,23 @@
 }
 
 .switch-link {
+  align-items: center;
   color: var(--primary);
   cursor: pointer;
-  flex-grow: 0;
-  flex-shrink: 1;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 12px;
+  gap: 4px;
   user-select: none;
   white-space: nowrap;
 
-  @media (max-width: $breakpoint-sm) {
-    margin-top: 0;
-    white-space: inherit;
-    width: 70px;
+  ix-icon {
+    font-size: 16px;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 1.5px var(--focus-bg) inset;
+    outline-width: 0;
   }
 }
 

@@ -211,7 +211,7 @@ export class AppInfoCardComponent {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
+        this.router.navigate(['/apps', 'installed']);
       });
   }
 

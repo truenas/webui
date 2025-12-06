@@ -209,18 +209,18 @@ export class VmwareSnapshotFormComponent implements OnInit {
     (
       datastoreObj.filesystems[0] !== values.filesystem
         ? this.dialogService.confirm({
-          title: this.translate.instant('Are you sure?'),
-          message: this.translate.instant(
-            'The filesystem {filesystemName} is {filesystemDescription}, but datastore {datastoreName} is {datastoreDescription}. Is this correct?',
-            {
-              filesystemName: fileSystemObj.name,
-              filesystemDescription: fileSystemObj.description || this.translate.instant('(No description)'),
-              datastoreName: datastoreObj.name,
-              datastoreDescription: datastoreObj.description || this.translate.instant('(No description)'),
-            },
-          ),
-          hideCheckbox: true,
-        })
+            title: this.translate.instant('Are you sure?'),
+            message: this.translate.instant(
+              'The filesystem {filesystemName} is {filesystemDescription}, but datastore {datastoreName} is {datastoreDescription}. Is this correct?',
+              {
+                filesystemName: fileSystemObj.name,
+                filesystemDescription: fileSystemObj.description || this.translate.instant('(No description)'),
+                datastoreName: datastoreObj.name,
+                datastoreDescription: datastoreObj.description || this.translate.instant('(No description)'),
+              },
+            ),
+            hideCheckbox: true,
+          })
         : of(true)
     ).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       request$.pipe(untilDestroyed(this)).subscribe({

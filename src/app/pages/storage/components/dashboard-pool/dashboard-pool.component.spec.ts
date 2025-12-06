@@ -10,6 +10,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { PoolStatus } from 'app/enums/pool-status.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -38,6 +39,7 @@ describe('DashboardPoolComponent', () => {
   const pool = {
     name: 'deadpool',
     id: 4,
+    status: PoolStatus.Online,
   } as Pool;
   const createComponent = createComponentFactory({
     component: DashboardPoolComponent,
@@ -135,6 +137,13 @@ describe('DashboardPoolComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.upgrade', [pool.id]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+  });
+
+  it('hides the Upgrade button when pool is offline', async () => {
+    spectator.setInput('pool', { ...pool, status: PoolStatus.Offline });
+    const upgradeButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Upgrade' }));
+    spectator.detectChanges();
+    expect(upgradeButton).toBeNull();
   });
 
   it('shows a Storage Health card for the pool', () => {

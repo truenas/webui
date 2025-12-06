@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
-import { Component, ChangeDetectionStrategy, output, input, OnInit, ChangeDetectorRef, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,7 +8,7 @@ import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
 import { MatColumnDef } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
-  ActivatedRoute, NavigationEnd, NavigationStart, Router,
+  ActivatedRoute, Router,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -28,7 +28,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -103,8 +102,7 @@ export class InstalledAppsListComponent implements OnInit {
   private loader = inject(LoaderService);
   private layoutService = inject(LayoutService);
 
-  readonly appId = toSignal(this.activatedRoute.params.pipe(map((params) => params['appId'])));
-  readonly isMobileView = input<boolean>();
+  readonly appId = toSignal<string | undefined>(this.activatedRoute.params.pipe(map((params) => params['appId'])));
   readonly toggleShowMobileDetails = output<boolean>();
 
   protected readonly searchableElements = installedAppsElements;
@@ -117,7 +115,7 @@ export class InstalledAppsListComponent implements OnInit {
   selection = new SelectionModel<string>(true, []);
   sortingInfo: Sort = {
     active: SortableField.Application,
-    direction: SortDirection.Asc,
+    direction: 'asc',
   };
 
   readonly sortableField = SortableField;
@@ -176,37 +174,15 @@ export class InstalledAppsListComponent implements OnInit {
     );
   }
 
-  constructor() {
-    this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationStart || event instanceof NavigationEnd),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
-          this.closeMobileDetails();
-          this.selectedApp = undefined;
-          this.cdr.markForCheck();
-        }
-      });
-  }
-
   ngOnInit(): void {
     this.loadInstalledApps();
     this.listenForStatusUpdates();
   }
 
-  closeMobileDetails(): void {
-    this.toggleShowMobileDetails.emit(false);
-  }
-
   viewDetails(app: App): void {
-    this.selectAppForDetails(app.id);
     this.layoutService.navigatePreservingScroll(this.router, ['/apps/installed', app.metadata.train, app.id]);
 
-    if (this.isMobileView()) {
-      this.toggleShowMobileDetails.emit(true);
-    }
+    this.selectAppForDetails(app.id);
   }
 
   protected onListFiltered(query: string): void {
@@ -270,7 +246,7 @@ export class InstalledAppsListComponent implements OnInit {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.FirstUse);
           this.cdr.markForCheck();
-          this.redirectToInstalledAppsWithoutDetails();
+          this.redirectToInstalledApps();
         }
         return !!pool;
       }),
@@ -279,7 +255,7 @@ export class InstalledAppsListComponent implements OnInit {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.Errors);
           this.cdr.markForCheck();
-          this.redirectToInstalledAppsWithoutDetails();
+          this.redirectToInstalledApps();
         }
         return !!dockerStarted;
       }),
@@ -288,15 +264,15 @@ export class InstalledAppsListComponent implements OnInit {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.NoPageData);
           this.cdr.markForCheck();
-          this.redirectToInstalledAppsWithoutDetails();
+          this.redirectToInstalledApps();
         }
         return !!apps.length;
       }),
       untilDestroyed(this),
     ).subscribe({
       next: ([,, apps]) => {
-        this.sortChanged(this.sortingInfo, apps);
-        this.selectAppForDetails(this.appId() as string);
+        this.setDatasourceWithSort(this.sortingInfo, apps);
+        this.selectAppForDetails(this.appId());
         this.cdr.markForCheck();
       },
     });
@@ -310,7 +286,7 @@ export class InstalledAppsListComponent implements OnInit {
       )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
         this.appJobs.set(name, job);
-        this.sortChanged(this.sortingInfo);
+        this.setDatasourceWithSort(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }
@@ -324,7 +300,7 @@ export class InstalledAppsListComponent implements OnInit {
       .subscribe({
         next: (job: Job<void, AppStartQueryParams>) => {
           this.appJobs.set(name, job);
-          this.sortChanged(this.sortingInfo);
+          this.setDatasourceWithSort(this.sortingInfo);
           this.cdr.markForCheck();
         },
       });
@@ -338,7 +314,7 @@ export class InstalledAppsListComponent implements OnInit {
       )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
         this.appJobs.set(name, job);
-        this.sortChanged(this.sortingInfo);
+        this.setDatasourceWithSort(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }
@@ -403,11 +379,11 @@ export class InstalledAppsListComponent implements OnInit {
       .subscribe((job: Job<CoreBulkResponse[]>) => this.handleDeletionResult(job));
   }
 
-  sortChanged(sort: Sort, apps?: App[]): void {
+  setDatasourceWithSort(sort: Sort, apps?: App[]): void {
     this.sortingInfo = sort;
     const sourceArray = apps && apps.length > 0 ? apps : this.dataSource;
     this.dataSource = [...sourceArray].sort((a, b) => {
-      const isAsc = sort.direction === SortDirection.Asc;
+      const isAsc = sort.direction === 'asc';
 
       switch (sort.active as SortableField) {
         case SortableField.Application:
@@ -444,7 +420,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   private handleDeletionResult(job: Job<CoreBulkResponse[]>): void {
     if (!this.dataSource.length) {
-      this.redirectToInstalledAppsWithoutDetails();
+      this.redirectToInstalledApps();
     }
 
     this.dialogService.closeAllDialogs();
@@ -471,7 +447,9 @@ export class InstalledAppsListComponent implements OnInit {
     const selectedApp = appId && this.dataSource.find((app) => app.id === appId);
     if (selectedApp) {
       this.selectedApp = selectedApp;
+      this.toggleShowMobileDetails.emit(true);
       this.cdr.markForCheck();
+
       return;
     }
 
@@ -494,8 +472,8 @@ export class InstalledAppsListComponent implements OnInit {
     this.onListFiltered('');
   }
 
-  private redirectToInstalledAppsWithoutDetails(): void {
-    this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
+  private redirectToInstalledApps(): void {
+    this.router.navigate(['/apps', 'installed']);
   }
 
   private redirectToAvailableApps(): void {
@@ -509,7 +487,7 @@ export class InstalledAppsListComponent implements OnInit {
       .subscribe((event) => {
         const [name] = event.fields.arguments;
         this.appJobs.set(name, event.fields);
-        this.sortChanged(this.sortingInfo);
+        this.setDatasourceWithSort(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }

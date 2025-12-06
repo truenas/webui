@@ -1,20 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TinyColor } from '@ctrl/tinycolor';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { map } from 'rxjs';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { GaugeData } from 'app/modules/charts/view-chart-gauge/view-chart-gauge.component';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 
 @Component({
   selector: 'ix-cpu-core-bar',
   templateUrl: './cpu-core-bar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgxSkeletonLoaderModule, BaseChartDirective],
+  imports: [NgxSkeletonLoaderModule, BaseChartDirective, WidgetStaleDataNoticeComponent],
 })
 export class CpuCoreBarComponent {
   private resources = inject(WidgetResourcesService);
@@ -23,13 +23,17 @@ export class CpuCoreBarComponent {
   hideTemperature = input<boolean>(false);
   hideUsage = input<boolean>(false);
 
-  protected cpuData = toSignal(this.resources.realtimeUpdates$.pipe(
-    map((update) => update.fields.cpu),
-  ));
+  protected cpuDataState = toSignal(
+    this.resources.cpuUpdatesWithStaleDetection().pipe(takeUntilDestroyed()),
+  );
 
-  protected isLoading = computed(() => !this.cpuData());
+  protected isStale = computed(() => this.cpuDataState()?.isStale ?? false);
+  protected isLoading = computed(() => !this.cpuDataState()?.value && !this.isStale());
   protected coreCount = computed(() => {
-    const cpus = Object.keys(this.cpuData())
+    const cpuData = this.cpuDataState()?.value;
+    if (!cpuData) return 0;
+
+    const cpus = Object.keys(cpuData)
       .filter((key) => key.startsWith('cpu'))
       .map((key) => key.replace('cpu', ''))
       .filter(Boolean)
@@ -40,7 +44,10 @@ export class CpuCoreBarComponent {
   });
 
   stats = computed(() => {
-    const data = this.parseCpuData(this.cpuData());
+    const cpuData = this.cpuDataState()?.value;
+    if (!cpuData) return { labels: [], values: [] };
+
+    const data = this.parseCpuData(cpuData);
 
     return {
       labels: Array.from({ length: this.coreCount() }, (_, i) => (i + 1).toString()),

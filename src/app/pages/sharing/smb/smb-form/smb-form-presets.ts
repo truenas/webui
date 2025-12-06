@@ -22,4 +22,5 @@ export const presetEnabledFields: Partial<{
   ],
   [SmbSharePurpose.ExternalShare]: ['remote_path'],
   [SmbSharePurpose.VeeamRepositoryShare]: [],
+  [SmbSharePurpose.FcpShare]: ['aapl_name_mangling'],
 };

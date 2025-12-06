@@ -1,7 +1,7 @@
 <div class="item">
   <h2 class="value">
     @if (pool(); as loadedPool) {
-      {{ loadedPool.status }}
+      {{ loadedPool.status | titlecase }}
     } @else {
       <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
     }

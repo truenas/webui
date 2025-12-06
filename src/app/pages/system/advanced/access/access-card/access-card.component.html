@@ -32,7 +32,7 @@
           {{ asDuration(sessionTimeout) }}
         </span>
       </mat-list-item>
-      @if (isEnterprise) {
+      @if (isEnterprise()) {
         <mat-list-item>
           <span class="label">{{ 'Allow Directory Service users to access WebUI' | translate }}:</span>
           <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">

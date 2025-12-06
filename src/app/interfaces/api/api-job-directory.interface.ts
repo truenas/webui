@@ -12,6 +12,10 @@ import { CloudBackupRestoreParams, CloudBackupSnapshot } from 'app/interfaces/cl
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
 import { PullContainerImageParams, PullContainerImageResponse } from 'app/interfaces/container-image.interface';
+import {
+  Container,
+  CreateContainer,
+} from 'app/interfaces/container.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import {
@@ -50,14 +54,6 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
-import {
-  CreateVirtualizationInstance, ImportZvolParams,
-  UpdateVirtualizationInstance,
-  VirtualizationGlobalConfig,
-  VirtualizationGlobalConfigUpdate,
-  VirtualizationInstance,
-  VirtualizationStopParams,
-} from 'app/interfaces/virtualization.interface';
 import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 export interface ApiJobDirectory {
@@ -198,19 +194,10 @@ export interface ApiJobDirectory {
   'update.file': { params: [{ resume: boolean }?]; response: void };
   'update.run': { params: [UpdateParams]; response: void };
 
-  // Virt
-  'virt.global.update': { params: [VirtualizationGlobalConfigUpdate]; response: VirtualizationGlobalConfig };
-  'virt.volume.import_iso': { params: [{ name: string }]; response: { name: string } };
-  'virt.volume.import_zvol': { params: [ImportZvolParams]; response: void };
-  'virt.instance.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
-  'virt.instance.delete': { params: [instanceId: string]; response: boolean };
-  'virt.instance.restart': { params: [instanceId: string, params: VirtualizationStopParams]; response: boolean };
-  'virt.instance.start': { params: [instanceId: string]; response: boolean };
-  'virt.instance.stop': { params: [instanceId: string, params: VirtualizationStopParams]; response: boolean };
-  'virt.instance.update': {
-    params: [instanceId: string, update: UpdateVirtualizationInstance];
-    response: VirtualizationInstance;
-  };
+  // Container
+  'container.create': { params: [CreateContainer]; response: Container };
+  'container.migrate': { params: [containerId: number]; response: boolean };
+  'container.stop': { params: [containerId: number, params?: { force?: boolean; force_after_timeout?: boolean }]; response: void };
 
   // VM
   'vm.device.convert': { params: [{ source: string; destination: string }]; response: boolean };

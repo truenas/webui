@@ -3,6 +3,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { NvmeOfHost, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
@@ -26,6 +27,9 @@ describe('SubsystemHostsCardComponent', () => {
       }),
       mockProvider(NvmeOfStore, {
         initialize: jest.fn(),
+      }),
+      mockProvider(AuthService, {
+        hasRole: jest.fn(() => of(true)),
       }),
     ],
   });

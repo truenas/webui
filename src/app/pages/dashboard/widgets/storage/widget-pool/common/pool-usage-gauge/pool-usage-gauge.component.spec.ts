@@ -79,16 +79,15 @@ describe('PoolUsageGaugeComponent', () => {
           { name: 'sda', size: 1024 ** 3 * 5 },
           { name: 'sdb', size: 1024 ** 3 * 5 },
         ] as Disk[])),
-        realtimeUpdates$: of({
-          fields: {
-            pools: {
-              dozer: {
-                available: 557187072,
-                used: 2261385216,
-                total: 2818572288,
-              },
+        poolUpdatesWithStaleDetection: () => of({
+          value: {
+            dozer: {
+              available: 557187072,
+              used: 2261385216,
+              total: 2818572288,
             },
           },
+          isStale: false,
         }),
       }),
     ],

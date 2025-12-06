@@ -37,6 +37,7 @@ describe('TwoFactorComponent', () => {
       }),
       mockApi([
         mockCall('user.renew_2fa_secret'),
+        mockCall('user.unset_2fa_secret'),
       ]),
       mockProvider(AuthService, {
         user$: of({
@@ -130,5 +131,75 @@ describe('TwoFactorComponent', () => {
       interval: 30,
       otp_digits: 6,
     }]);
+  });
+
+  it('unsets 2FA secret when unset button is clicked', async () => {
+    spectator.component.userTwoFactorAuthConfigured.set(true);
+    spectator.detectChanges();
+
+    const unsetBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Unset 2FA Secret' }));
+    await unsetBtn.click();
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: 'Unset Two-Factor Authentication?',
+      message: 'Are you sure you want to unset two-factor authentication? '
+        + 'This will remove your current 2FA configuration and you will need to set it up again to use 2FA.',
+      buttonText: 'Unset 2FA',
+      cancelText: 'Cancel',
+      hideCheckbox: true,
+      buttonColor: 'warn',
+    });
+
+    expect(api.call).toHaveBeenCalledWith('user.unset_2fa_secret', ['dummy']);
+  });
+
+  it('emits skipSetup event when skip button is clicked in setup dialog', async () => {
+    jest.spyOn(spectator.component.skipSetup, 'emit');
+    spectator.setInput('isSetupDialog', true);
+    spectator.component.userTwoFactorAuthConfigured.set(false);
+    spectator.detectChanges();
+
+    const skipBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Skip Setup' }));
+    await skipBtn.click();
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: 'Skip Two-Factor Authentication Setup?',
+      message: 'Two-factor authentication significantly improves the security of your account. '
+        + 'Are you sure you want to skip this setup? You can enable it later from your user settings.',
+      buttonText: 'Skip Setup',
+      cancelText: 'Continue Setup',
+      hideCheckbox: true,
+    });
+
+    expect(spectator.component.skipSetup.emit).toHaveBeenCalled();
+  });
+
+  it('shows unset button only when 2FA is configured', () => {
+    spectator.component.userTwoFactorAuthConfigured.set(false);
+    spectator.detectChanges();
+
+    let unsetBtn = spectator.query('button[ixTest="unset-2fa-secret"]');
+    expect(unsetBtn).toBeFalsy();
+
+    spectator.component.userTwoFactorAuthConfigured.set(true);
+    spectator.detectChanges();
+
+    unsetBtn = spectator.query('button[ixTest="unset-2fa-secret"]');
+    expect(unsetBtn).toBeTruthy();
+  });
+
+  it('shows skip button only in setup dialog when 2FA is not configured', () => {
+    spectator.setInput('isSetupDialog', false);
+    spectator.component.userTwoFactorAuthConfigured.set(false);
+    spectator.detectChanges();
+
+    let skipBtn = spectator.query('button[ixTest="skip-2fa-setup"]');
+    expect(skipBtn).toBeFalsy();
+
+    spectator.setInput('isSetupDialog', true);
+    spectator.detectChanges();
+
+    skipBtn = spectator.query('button[ixTest="skip-2fa-setup"]');
+    expect(skipBtn).toBeTruthy();
   });
 });

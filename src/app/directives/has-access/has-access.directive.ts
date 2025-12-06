@@ -1,10 +1,11 @@
-import { ComponentRef, Directive, HostBinding, Input, TemplateRef, ViewContainerRef, inject } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { ComponentRef, Directive, Input, inputBinding, TemplateRef, ViewContainerRef, inject } from '@angular/core';
 import { MissingAccessWrapperComponent } from 'app/directives/has-access/missing-access-wrapper.component';
 
-@UntilDestroy()
 @Directive({
   selector: '[ixHasAccess]',
+  host: {
+    '[class]': 'elementClass',
+  },
 })
 export class HasAccessDirective {
   protected templateRef = inject<TemplateRef<HTMLElement>>(TemplateRef);
@@ -23,9 +24,12 @@ export class HasAccessDirective {
     this.previousAccess = hasAccess;
 
     if (!hasAccess) {
-      this.wrapperContainer = this.viewContainerRef.createComponent(MissingAccessWrapperComponent);
-      this.wrapperContainer.setInput('template', this.templateRef);
-      this.wrapperContainer.setInput('class', this.elementClass);
+      this.wrapperContainer = this.viewContainerRef.createComponent(MissingAccessWrapperComponent, {
+        bindings: [
+          inputBinding('class', () => this.elementClass),
+          inputBinding('template', () => this.templateRef),
+        ],
+      });
     } else {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
     }
@@ -35,7 +39,6 @@ export class HasAccessDirective {
 
   // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input('class')
-  @HostBinding('class')
   get elementClass(): string {
     return this.cssClassList.join(' ');
   }

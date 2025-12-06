@@ -24,7 +24,7 @@ export const helptextPoolCreation = {
   logVdevDescription: T('ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed.'),
   spareVdevDescription: T('Drive reserved for inserting into DATA pool VDEVs when an active drive has failed.'),
   specialVdevDescription: T('Special Allocation class, used to create Fusion pools. Optional VDEV type\
- which is used to speed up metadata and small block IO.'),
+ which is used to speed up metadata and blocks below configured size.'),
   dedupVdevDescription: T('De-duplication tables are stored on this special VDEV type. These VDEVs must\
  be sized to X GiB for each X TiB of general storage.'),
   exportedPoolWarning: T('This disk is part of the exported pool {pool}. Adding this disk to a new or other existing pools will make {pool} unable to import. You will lose any and all data in {pool}. Please make sure you have backed up any sensitive data in {pool} before reusing/repurposing this disk.'),
@@ -40,4 +40,17 @@ export const helptextPoolCreation = {
 
   addVdevStripeSpecialWarning: T('Adding a stripe metadata VDEV introduces a single point of failure to your pool.'),
   addVdevStripeDedupWarning: T('Adding a stripe dedup VDEV introduces a single point of failure to your pool.'),
+
+  // SED Encryption
+  sedInfoMessage: T('SED-capable (Self-Encrypting Drive) disks detected. Hardware-based encryption provides better performance and security.'),
+  sedGlobalPasswordInfo: T('The Global SED Password is a system-wide setting that applies to all pools using SED encryption.'),
+  sedGlobalPasswordWarning: T('The Global SED Password is a system-wide setting. A password is already configured. Entering a new password here will update it for all pools using SED encryption.'),
+  sedPasswordLabel: T('Global SED Password'),
+  sedPasswordConfirmLabel: T('Confirm SED Password'),
+  sedPasswordTooltip: T('This password will be used to configure all SED-capable disks in this pool.'),
+  sedPasswordsMustMatch: T('SED passwords must match.'),
+  encryptionTypeNone: T('None'),
+  encryptionTypeSoftware: T('Software Encryption (ZFS)'),
+  encryptionTypeSed: T('Self Encrypting Drives (SED)'),
+  sedPoolVdevMessage: T('This pool uses SED encryption. Only SED-capable disks will be available for selection.'),
 };

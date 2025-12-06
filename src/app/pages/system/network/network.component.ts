@@ -107,7 +107,7 @@ export class NetworkComponent implements OnInit {
   }
 
   constructor() {
-    this.navigation = this.router.getCurrentNavigation();
+    this.navigation = this.router.currentNavigation();
   }
 
   ngOnInit(): void {

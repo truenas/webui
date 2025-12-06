@@ -15,8 +15,8 @@ export interface WidgetComponentWithoutSettings {
   size: InputSignal<SlotSize>;
 }
 
-export type WidgetComponent<Settings extends SomeWidgetSettings = null> =
-  Settings extends null
+export type WidgetComponent<Settings extends SomeWidgetSettings = null>
+  = Settings extends null
     ? WidgetComponentWithoutSettings
     : WidgetComponentWithSettings<Settings>;
 

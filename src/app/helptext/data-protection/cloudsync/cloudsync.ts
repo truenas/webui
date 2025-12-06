@@ -133,7 +133,7 @@ export const helptextCloudSync = {
   transfersLabel: T('Transfers'),
   transfersTooltip: T('Number of simultaneous file transfers. Enter a\
  number based on the available bandwidth and destination system\
- performance. See <a href="https://rclone.org/docs/#transfers-n"\
+ performance. See <a href="https://rclone.org/docs/#transfers-int"\
  target="_blank">rclone --transfers</a>.'),
 
   enabledLabel: T('Enabled'),
@@ -145,7 +145,7 @@ export const helptextCloudSync = {
  <samp>18:00,30MB</samp> <samp>23:00,off</samp>.\
  Units can be specified with a suffix of <samp>b</samp> (default),\
  <samp>k</samp>, <samp>M</samp>, or <samp>G</samp>.\
- See <a href="https://rclone.org/docs/#bwlimit-bandwidth-spec"\
+ See <a href="https://rclone.org/docs/#bwlimit-bwtimetable"\
  target="_blank">rclone --bwlimit</a>.'),
 
   excludeLabel: T('Exclude'),

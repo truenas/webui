@@ -66,4 +66,8 @@
   justify-content: center;
   margin: 20px;
   min-height: 15vh;
+
+  @media (max-width: $breakpoint-sm) {
+    min-width: 80vw;
+  }
 }

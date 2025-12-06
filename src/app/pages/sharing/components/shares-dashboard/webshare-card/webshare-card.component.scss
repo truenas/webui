@@ -1,0 +1,23 @@
+mat-card {
+  height: 100%;
+
+  &.card-disabled {
+    opacity: 0.6;
+  }
+}
+
+.card-title {
+  align-items: center;
+  display: flex;
+
+  .license-required {
+    color: var(--red);
+    font-size: 14px;
+    font-weight: normal;
+    margin-left: 8px;
+  }
+
+  ix-icon {
+    margin-left: 5px;
+  }
+}

@@ -6,6 +6,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ControllerType } from 'app/enums/controller-type.enum';
+import { ExportFormat } from 'app/enums/export-format.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -98,5 +99,67 @@ describe('ExportButtonComponent', () => {
       method: 'audit.export',
       mimeType: 'text/csv',
     });
+  });
+
+  it('should use custom displayFormat when provided', async () => {
+    spectator.setInput('displayFormat', 'JSON');
+    spectator.setInput('fileType', 'tgz');
+    spectator.detectChanges();
+
+    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Export As JSON' }));
+    expect(await button.getText()).toContain('JSON');
+  });
+
+  it('should use fileType in button text when displayFormat is not provided', async () => {
+    spectator.setInput('fileType', 'json');
+    spectator.detectChanges();
+
+    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Export As JSON' }));
+    expect(await button.getText()).toContain('JSON');
+  });
+
+  it('should use exportFormat input for job params', async () => {
+    spectator.setInput('exportFormat', ExportFormat.Json);
+    spectator.setInput('displayFormat', 'JSON');
+    spectator.setInput('fileType', 'tgz');
+    spectator.detectChanges();
+
+    const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export As JSON' }));
+    await exportButton.click();
+
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(jobMethod, [{
+      export_format: 'JSON',
+      'query-filters': [],
+      'query-options': {},
+    }]);
+  });
+
+  it('should use YAML export format when specified', async () => {
+    spectator.setInput('exportFormat', ExportFormat.Yaml);
+    spectator.setInput('displayFormat', 'YAML');
+    spectator.setInput('fileType', 'tgz');
+    spectator.detectChanges();
+
+    const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export As YAML' }));
+    await exportButton.click();
+
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(jobMethod, [{
+      export_format: 'YAML',
+      'query-filters': [],
+      'query-options': {},
+    }]);
+  });
+
+  it('should apply custom aria-label when provided', () => {
+    spectator.setInput('ariaLabel', 'Export audit logs as JSON');
+    spectator.detectChanges();
+
+    const button = spectator.query('button');
+    expect(button.getAttribute('aria-label')).toBe('Export audit logs as JSON');
+  });
+
+  it('should use default aria-label when not provided', () => {
+    const button = spectator.query('button');
+    expect(button.getAttribute('aria-label')).toBe('Export');
   });
 });

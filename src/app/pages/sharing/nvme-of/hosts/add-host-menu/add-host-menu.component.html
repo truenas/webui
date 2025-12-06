@@ -1,5 +1,6 @@
 @if (noHostsExist()) {
   <button
+    *ixRequiresRoles="requiredRoles"
     mat-button
     type="button"
     [ixTest]="'add-host'"
@@ -10,6 +11,7 @@
 }
 @else {
   <button
+    *ixRequiresRoles="requiredRoles"
     mat-button
     type="button"
     [ixTest]="'add-host'"

@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
+import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
@@ -43,6 +44,7 @@ describe('PoolWarningsComponent', () => {
     providers: [
       mockProvider(PoolManagerStore, {
         setDiskWarningOptions: jest.fn(),
+        encryptionType$: of(EncryptionType.None),
       }),
       mockProvider(DiskStore, {
         selectableDisks$: of([duplicateSerialDisk, exportedPoolDisk, duplicateSerialAndExportedPoolDisk]),

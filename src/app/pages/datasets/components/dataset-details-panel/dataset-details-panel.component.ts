@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject, output } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
@@ -61,6 +61,7 @@ export class DatasetDetailsPanelComponent {
 
   readonly dataset = input.required<DatasetDetails>();
   readonly systemDataset = input<string>();
+  readonly closeMobileDetails = output();
 
   protected readonly requiredRoles = [Role.DatasetWrite];
   protected readonly searchableElements = datasetDetailsPanelElements;
@@ -119,6 +120,6 @@ export class DatasetDetailsPanelComponent {
   }
 
   onCloseMobileDetails(): void {
-    this.router.navigate(['/datasets'], { state: { hideMobileDetails: true } });
+    this.closeMobileDetails.emit();
   }
 }

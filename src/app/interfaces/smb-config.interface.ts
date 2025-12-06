@@ -1,5 +1,7 @@
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
 
+export const smbSearchSpotlight = 'SPOTLIGHT' as const;
+
 export interface SmbConfig {
   aapl_extensions: boolean;
   admin_group: string | null;
@@ -21,6 +23,7 @@ export interface SmbConfig {
   unixcharset: string;
   workgroup: string;
   encryption: SmbEncryption;
+  search_protocols: string[];
 }
 
 export type SmbConfigUpdate = {

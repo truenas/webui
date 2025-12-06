@@ -1,6 +1,6 @@
 import { PercentPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, OnInit, inject } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { formatDuration } from 'date-fns';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -14,6 +14,7 @@ import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { StorageService } from 'app/services/storage.service';
 
@@ -31,6 +32,7 @@ const maxPct = 80;
     FormatDateTimePipe,
     FileSizePipe,
     PercentPipe,
+    WidgetStaleDataNoticeComponent,
   ],
 })
 export class PoolUsageGaugeComponent implements OnInit {
@@ -46,9 +48,13 @@ export class PoolUsageGaugeComponent implements OnInit {
   protected chartFillColor: string;
   protected chartBlankColor: string;
 
-  protected isDatasetLoading = computed(() => !this.poolStats());
+  protected poolDataState = toSignal(
+    this.resources.poolUpdatesWithStaleDetection().pipe(takeUntilDestroyed()),
+  );
+
+  protected isStale = computed(() => this.poolDataState()?.isStale ?? false);
+  protected isDatasetLoading = computed(() => !this.poolStats() && !this.isStale());
   protected isDisksLoading = computed(() => !this.disks());
-  protected realtimeUpdates = toSignal(this.resources.realtimeUpdates$);
 
   protected disks = toSignal(toObservable(this.pool).pipe(
     filter(Boolean),
@@ -56,7 +62,7 @@ export class PoolUsageGaugeComponent implements OnInit {
   ), { initialValue: [] });
 
   protected poolStats = computed(() => {
-    return this.realtimeUpdates()?.fields?.pools?.[this.pool()?.name];
+    return this.poolDataState()?.value?.[this.pool()?.name];
   });
 
   protected capacity = computed(() => {

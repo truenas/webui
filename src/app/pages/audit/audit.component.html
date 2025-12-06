@@ -23,11 +23,11 @@
   #masterDetailView="masterDetailViewContext"
   [selectedItem]="dataProvider.expandedRow"
   [ixUiSearch]="searchableElements.elements.audit"
+  (mobileDetailsClosed)="dataProvider.expandedRow = null"
 >
   <ix-audit-list
     master
     [dataProvider]="dataProvider"
-    [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-audit-list>
 

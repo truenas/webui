@@ -18,12 +18,13 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { Role } from 'app/enums/role.enum';
 import { UpdateCode } from 'app/enums/system-update.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { UpdateConfig, UpdateProfileChoices, UpdateStatus } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
+import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -76,6 +77,7 @@ export class UpdateComponent implements OnInit {
   private dialogService = inject(DialogService);
   private sysGenService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
+  private window = inject<Window>(WINDOW);
 
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
@@ -155,7 +157,7 @@ export class UpdateComponent implements OnInit {
       return '';
     }
 
-    return this.newVersion()?.manifest?.changelog.replace(/\n/g, '\n');
+    return this.newVersion()?.manifest?.changelog.replace(/\n/g, '<br>');
   });
 
   protected readonly releaseNotesContext = computed(() => ({
@@ -168,7 +170,7 @@ export class UpdateComponent implements OnInit {
     map((info) => info.remote_info.version),
   ));
 
-  protected isUpdateInProgress$ = this.store$.select(selectUpdateJob).pipe(
+  protected isUpdateInProgress$ = this.store$.select(selectUpdateJobs).pipe(
     map((jobs) => jobs.length > 0),
   );
 
@@ -289,6 +291,9 @@ export class UpdateComponent implements OnInit {
   }
 
   private nonHaUpdateFinished(): Observable<boolean> {
+    // Mark that update completed successfully - reload page after restart to get latest UI
+    this.window.sessionStorage.setItem('updateCompleted', 'true');
+
     return this.dialogService.confirm({
       title: this.translate.instant(helptext.haUpdate.completeTitle),
       message: this.translate.instant('Update completed successfully. The system will restart shortly'),

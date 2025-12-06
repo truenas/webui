@@ -77,7 +77,9 @@
     </div>
   </div>
   <div class="right">
-    @if (!isDatasetLoading()) {
+    @if (isStale()) {
+      <ix-widget-stale-data-notice></ix-widget-stale-data-notice>
+    } @else if (!isDatasetLoading()) {
       <ix-gauge-chart
         [colorFill]="usedPercentage() === 0 ? chartBlankColor : isLowCapacity() ? chartLowCapacityColor : chartFillColor"
         [colorBlank]="chartBlankColor"

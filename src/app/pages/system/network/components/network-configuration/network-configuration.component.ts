@@ -8,7 +8,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { arrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
@@ -34,6 +33,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 /**
  * Additional options available in UI.
@@ -267,12 +267,14 @@ export class NetworkConfigurationComponent implements OnInit {
       },
     );
 
-    if (this.systemGeneralService.getProductType() === ProductType.Enterprise) {
-      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
-        this.hostnameB.hidden = !isHaLicensed;
-        this.hostnameVirtual.hidden = !isHaLicensed;
-      });
-    }
+    this.store$.select(selectIsEnterprise).pipe(untilDestroyed(this)).subscribe((isEnterprise) => {
+      if (isEnterprise) {
+        this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+          this.hostnameB.hidden = !isHaLicensed;
+          this.hostnameVirtual.hidden = !isHaLicensed;
+        });
+      }
+    });
   }
 
   private loadConfig(): void {

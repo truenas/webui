@@ -210,6 +210,17 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     await wizard.clickNext();
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Spare (Optional)');
 
+    await wizard.fillStep({
+      'Disk Size': '20 GiB (HDD)',
+      Width: '1',
+    });
+
+    expect(await wizard.getNewDevicesConfigurationPreviewSummary()).toMatchObject({
+      'Data:': '1 × MIRROR | 2 × 20 GiB (HDD)',
+      'Log:': '1 × STRIPE | 1 × 20 GiB (HDD)',
+      'Spare:': '1 × 20 GiB (HDD)',
+    });
+
     // Cache step
     await wizard.clickNext();
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Cache (Optional)');
@@ -253,12 +264,12 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
             { type: TopologyItemType.Mirror, disks: ['sda3', 'sda0'] },
           ],
           dedup: [
-            { type: TopologyItemType.Mirror, disks: ['sda2', 'sda5', 'sda6'] },
+            { type: TopologyItemType.Mirror, disks: ['sda5', 'sda6', 'sda7'] },
           ],
           log: [
             { type: TopologyItemType.Stripe, disks: ['sda1'] },
           ],
-          spares: [],
+          spares: ['sda2'],
           special: [],
         },
         allow_duplicate_serials: false,

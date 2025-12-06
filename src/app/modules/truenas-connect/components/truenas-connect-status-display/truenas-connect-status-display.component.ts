@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { TncStatus, HarborosConnectStatus, HarborosConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
+import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { HarborosConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
+import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
 
 @Component({
   selector: 'ix-truenas-connect-status-display',
@@ -11,16 +11,16 @@ import { HarborosConnectSpinnerComponent } from 'app/modules/truenas-connect/com
     IxIconComponent,
     TranslateModule,
     TestDirective,
-    HarborosConnectSpinnerComponent,
+    TruenasConnectSpinnerComponent,
   ],
   templateUrl: './truenas-connect-status-display.component.html',
   styleUrl: './truenas-connect-status-display.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HarborosConnectStatusDisplayComponent {
+export class TruenasConnectStatusDisplayComponent {
   readonly TncStatus = TncStatus;
-  readonly HarborosConnectStatusReason = HarborosConnectStatusReason;
+  readonly HarborosConnectStatusReason = TruenasConnectStatusReason;
 
   status = input.required<typeof TncStatus[keyof typeof TncStatus]>();
-  rawStatus = input.required<HarborosConnectStatus>();
+  rawStatus = input.required<TruenasConnectStatus>();
 }

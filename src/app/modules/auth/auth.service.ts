@@ -8,6 +8,7 @@ import {
   catchError,
   combineLatest,
   filter,
+  finalize,
   map,
   Observable,
   of,
@@ -60,6 +61,10 @@ export class AuthService implements OnDestroy {
 
   // Flag to prevent premature adminUiInitialized dispatch
   private sessionInitialized = false;
+
+  // Track whether logout was manual to avoid showing "session expired" message
+  private isManualLogout = new BehaviorSubject<boolean>(false);
+  readonly isManualLogout$ = this.isManualLogout.asObservable();
 
   /**
    * This is 10 seconds less than 300 seconds which is the default life
@@ -234,6 +239,7 @@ export class AuthService implements OnDestroy {
   }
 
   logout(): Observable<void> {
+    this.isManualLogout.next(true);
     return this.api.call('auth.logout').pipe(
       tap(() => {
         this.clearAuthToken();
@@ -242,7 +248,10 @@ export class AuthService implements OnDestroy {
         this.api.clearSubscriptions();
         this.sessionInitialized = false;
         this.pendingAuthData = null;
+        this.loggedInUser$.next(null); // Clear user data on logout
+        this.cachedGlobalTwoFactorConfig$.next(null); // Clear cached 2FA config
       }),
+      finalize(() => this.isManualLogout.next(false)),
     );
   }
 
@@ -346,7 +355,7 @@ export class AuthService implements OnDestroy {
       switchMap(() => this.api.call('auth.mechanism_choices').pipe(
         catchError((wsError: unknown) => {
           console.error(wsError);
-          return of([]);
+          return of<AuthMechanism[]>([]);
         }),
       )),
       map((choices) => choices.includes(AuthMechanism.TokenPlain)),

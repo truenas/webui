@@ -1,9 +1,9 @@
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 
-export type KeychainCredential =
-  | KeychainSshKeyPair
-  | KeychainSshCredentials;
+export type KeychainCredential
+  = | KeychainSshKeyPair
+    | KeychainSshCredentials;
 
 export interface KeychainSshKeyPair {
   attributes: SshKeyPair;
@@ -26,3 +26,12 @@ export interface KeychainSshCredentials {
 
 export type KeychainCredentialCreate = Omit<KeychainCredential, 'id'>;
 export type KeychainCredentialUpdate = Omit<KeychainCredential, 'id' | 'type'>;
+
+export interface KeychainCredentialDeleteOptions {
+  cascade?: boolean;
+}
+
+export interface KeychainCredentialUsedBy {
+  title: string;
+  unbind_method: string;
+}

@@ -118,7 +118,7 @@ export class IpaConfigComponent implements OnInit {
       this.validationService.enableControl(this.form, 'smb_domain_domain_name');
       this.validationService.enableControl(this.form, 'smb_domain_domain_sid');
       this.validationService.enableControl(this.form, 'smb_domain_name', [
-        Validators.pattern(/^(?![0-9]*$)[a-zA-Z0-9.-_!@#$%^&()'{}~]{1,15}$/),
+        Validators.pattern(/^(?![0-9]*$)[a-zA-Z0-9.\-_!@#$%^&()'{}~]{1,15}$/),
       ]);
       this.validationService.enableControl(this.form, 'smb_domain_range_high');
       this.validationService.enableControl(this.form, 'smb_domain_range_low');

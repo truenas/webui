@@ -1,9 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, forkJoin, map, Observable, take,
@@ -14,8 +16,9 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { SedStatus } from 'app/enums/sed-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
+import { Disk, DetailsDisk, ExtraDiskQueryOptions } from 'app/interfaces/disk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -41,14 +44,17 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
+import { ResetSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/reset-sed-dialog/reset-sed-dialog.component';
+import { sedStatusColumn } from 'app/pages/storage/modules/disks/components/disk-list/sed-status-cell/sed-status-cell.component';
+import { UnlockSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/unlock-sed-dialog/unlock-sed-dialog.component';
 import { DiskWipeDialog } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
+import { LicenseService } from 'app/services/license.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface DiskUi extends Disk {
   selected?: boolean;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-disk-list',
   templateUrl: './disk-list.component.html',
@@ -82,6 +88,8 @@ export class DiskListComponent implements OnInit {
   private slideIn = inject(SlideIn);
   protected emptyService = inject(EmptyService);
   private cdr = inject(ChangeDetectorRef);
+  private licenseService = inject(LicenseService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
   protected readonly searchableElements = diskListElements;
@@ -103,7 +111,7 @@ export class DiskListComponent implements OnInit {
       onColumnCheck: (checked) => {
         this.dataProvider.currentPage$.pipe(
           take(1),
-          untilDestroyed(this),
+          takeUntilDestroyed(this.destroyRef),
         ).subscribe((disks) => {
           disks.forEach((disk) => disk.selected = checked);
           this.dataProvider.setRows([]);
@@ -178,6 +186,11 @@ export class DiskListComponent implements OnInit {
       },
       hidden: true,
     }),
+    sedStatusColumn({
+      title: this.translate.instant('Self-Encrypting Drive (SED)'),
+      propertyName: 'sed_status',
+      hidden: true,
+    }),
   ], {
     uniqueRowTag: (row) => `disk-${row.name}`,
     ariaLabels: (row) => [row.name, this.translate.instant('Disk')],
@@ -221,27 +234,47 @@ export class DiskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const request$ = forkJoin([
-      this.api.call('disk.details').pipe(
-        map((diskDetails) => [
-          ...diskDetails.unused,
-          ...diskDetails.used.filter((disk) => disk.exported_zpool),
-        ]),
-      ),
-      this.api.call('disk.query', [[], { extra: { pools: true, passwords: true } }]),
-    ]).pipe(
-      map(([unusedDisks, disks]) => {
-        this.unusedDisks = unusedDisks;
-        this.disks = disks.map((disk) => ({
-          ...disk,
-          pool: this.getPoolColumn(disk),
-          selected: false,
-        }));
-        return this.disks;
-      }),
-    );
-    this.dataProvider = new AsyncDataProvider(request$);
-    this.dataProvider.load();
+    this.licenseService.hasSed$.pipe(
+      take(1),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((hasSed) => {
+      if (hasSed) {
+        const sedColumn = this.columns.find((column) => column.propertyName === 'sed_status');
+        if (sedColumn) {
+          sedColumn.hidden = false;
+        }
+      }
+
+      const extraOptions: ExtraDiskQueryOptions = {
+        extra: {
+          pools: true,
+          passwords: true,
+          ...(hasSed && { sed_status: true }),
+        },
+      };
+
+      const request$ = forkJoin([
+        this.api.call('disk.details').pipe(
+          map((diskDetails) => [
+            ...diskDetails.unused,
+            ...diskDetails.used.filter((disk) => disk.exported_zpool),
+          ]),
+        ),
+        this.api.call('disk.query', [[], extraOptions]),
+      ]).pipe(
+        map(([unusedDisks, disks]) => {
+          this.unusedDisks = unusedDisks;
+          this.disks = disks.map((disk) => ({
+            ...disk,
+            pool: this.getPoolColumn(disk),
+            selected: false,
+          }));
+          return this.disks;
+        }),
+      );
+      this.dataProvider = new AsyncDataProvider(request$);
+      this.dataProvider.load();
+    });
   }
 
   protected edit(disks: DiskUi[]): void {
@@ -256,7 +289,7 @@ export class DiskListComponent implements OnInit {
 
     slideInRef$.pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.dataProvider.load());
   }
 
@@ -268,9 +301,29 @@ export class DiskListComponent implements OnInit {
         exportedPool,
       },
     });
-    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    dialog.afterClosed().pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.dataProvider.load();
     });
+  }
+
+  protected unlock(disk: Disk): void {
+    this.matDialog.open(UnlockSedDialog, {
+      data: { diskName: disk.name },
+    }).afterClosed().pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.dataProvider.load();
+    });
+  }
+
+  protected resetSed(disk: Disk): void {
+    this.matDialog.open(ResetSedDialog, {
+      data: { diskName: disk.name },
+    }).afterClosed().pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.dataProvider.load();
+    });
+  }
+
+  protected isSedLocked(disk: Disk): boolean {
+    return disk.sed && disk.sed_status === SedStatus.Locked;
   }
 
   protected isUnusedDisk(disk: Disk): boolean {

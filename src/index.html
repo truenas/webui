@@ -1,61 +1,43 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="-1" />
-    <meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
-    <script
-      nomodule=""
-      src="assets/scripts/ie-support/ie-polyfills.min.js"
-    ></script>
-    <title id="main-page-title"></title>
-    <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="apple-touch-icon"
-      sizes="120x120"
-      href="assets/favicons/apple-touch-icon.png"
-    />
-    <link rel="manifest" href="assets/favicons/site.webmanifest" />
-    <link
-      rel="mask-icon"
-      href="assets/favicons/safari-pinned-tab.svg"
-      color="#000000"
-    />
-    <meta name="msapplication-TileColor" content="#2d89ef" />
-    <meta name="robots" content="noindex" />
-    <meta
-      name="msapplication-config"
-      content="assets/favicons/browserconfig.xml"
-    />
-    <meta name="theme-color" content="#ffffff" />
-    <script>
-      const bg1 = localStorage.getItem("bg1");
-      const fg1 = localStorage.getItem("fg1");
-      document.documentElement.style.setProperty("--bg1", bg1 || "#1E1E1E");
-      document.documentElement.style.setProperty("--fg1", fg1 || "#fff");
-      performance.mark("index.html");
-    </script>
-    <style>
-      :root {
-        --bg1: "";
-        --fg1: "";
-      }
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="-1">
+  <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+  <script nomodule="" src="assets/scripts/ie-support/ie-polyfills.min.js"></script>
+  <title id="main-page-title"></title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/favicons/apple-touch-icon.png">
+  <link rel="manifest" href="assets/favicons/site.webmanifest">
+  <link rel="mask-icon" href="assets/favicons/safari-pinned-tab.svg" color="#000000">
+  <meta name="msapplication-TileColor" content="#2d89ef">
+  <meta name="robots" content="noindex">
+  <meta name="msapplication-config" content="assets/favicons/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+  <script>
+    const bg1 = localStorage.getItem('bg1')
+    const fg1 = localStorage.getItem('fg1')
+    document.documentElement.style.setProperty('--bg1', bg1 || '#1E1E1E');
+    document.documentElement.style.setProperty('--fg1', fg1 || '#fff');
+    performance.mark('index.html');
+  </script>
+  <style>
+    :root {
+      --bg1: '';
+      --fg1: '';
+    }
 
-      * {
-        box-sizing: border-box;
-      }
+    html {
+      background: var(--bg1);
+    }
 
-      html {
-        background: var(--bg1);
+    @keyframes loading {
+      50% {
+        opacity: 0;
       }
-
-      @keyframes loading {
-        50% {
-          opacity: 0;
-        }
-      }
+    }
     </style>
   </head>
 

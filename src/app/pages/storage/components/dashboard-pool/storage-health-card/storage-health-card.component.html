@@ -16,7 +16,7 @@
         {{ 'Scrub Now' | translate }}
       </button>
     } @else {
-      @if (isScrub) {
+      @if (isScrub()) {
       } @else {
         <button mat-button disabled ixTest="scrub-disabled">{{ 'Scrub' | translate }}</button>
       }

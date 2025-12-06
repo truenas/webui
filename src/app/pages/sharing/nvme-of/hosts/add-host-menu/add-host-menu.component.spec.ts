@@ -7,6 +7,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { NvmeOfHost } from 'app/interfaces/nvme-of.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { AddHostMenuComponent } from 'app/pages/sharing/nvme-of/hosts/add-host-menu/add-host-menu.component';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
@@ -34,6 +35,9 @@ describe('AddHostMenuComponent', () => {
   const createComponent = createComponentFactory({
     component: AddHostMenuComponent,
     providers: [
+      mockProvider(AuthService, {
+        hasRole: jest.fn(() => of(true)),
+      }),
       mockProvider(NvmeOfStore, {
         hosts: allHosts,
       }),

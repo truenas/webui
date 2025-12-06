@@ -1,4 +1,4 @@
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, output, computed, inject } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -39,7 +39,6 @@ import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-dat
     IxTableHeadComponent,
     IxTablePagerComponent,
     MatTooltip,
-    NgTemplateOutlet,
     UiSearchDirective,
     AuditSearchComponent,
     TranslateModule,
@@ -52,7 +51,6 @@ export class AuditListComponent {
   private translate = inject(TranslateService);
 
   readonly dataProvider = input.required<AuditApiDataProvider>();
-  readonly isMobileView = input.required<boolean>();
 
   protected readonly searchableElements = auditElements;
   protected readonly toggleShowMobileDetails = output<boolean>();
@@ -99,11 +97,12 @@ export class AuditListComponent {
 
   getUserAvatarForLog(row: AuditEntry): SafeHtml {
     // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization
-    return this.sanitizer.bypassSecurityTrustHtml(toSvg(row.username, this.isMobileView() ? 20 : 30));
+    return this.sanitizer.bypassSecurityTrustHtml(toSvg(row.username, 25));
   }
 
   expanded(row: AuditEntry): void {
-    if (!row || !this.isMobileView()) return;
+    if (!row) return;
+
     this.toggleShowMobileDetails.emit(true);
   }
 }

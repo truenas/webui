@@ -84,7 +84,7 @@ describe('AdvancedSearchComponent – editing', () => {
     });
 
     it('emits (switchToBasic) when Switch To Basic is pressed', async () => {
-      expect(await (await searchHarness.getSwitchLink()).text()).toBe('Switch To Basic');
+      expect(await (await searchHarness.getSwitchLink()).text()).toBe('Basic');
       await searchHarness.clickSwitchToBasic();
 
       expect(spectator.component.switchToBasic.emit).toHaveBeenCalled();

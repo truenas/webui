@@ -34,7 +34,11 @@ export function mockWindow(overrides: DeepPartial<Window> = {}): ValueProvider {
   // Manually handle deep merge to ensure all properties are preserved
   const deepMerge = (target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> => {
     Object.keys(source).forEach((key) => {
-      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && !(source[key] instanceof Function)) {
+      // Guard against prototype pollution
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        return; // skip unsafe keys
+      }
+      if (source[key] !== null && typeof source[key] === 'object' && !Array.isArray(source[key])) {
         if (!target[key]) {
           target[key] = {};
         }

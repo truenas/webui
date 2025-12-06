@@ -1,4 +1,6 @@
 name: 'Latest Docker Image - master'
+permissions:
+  contents: read
 
 on:
   push:

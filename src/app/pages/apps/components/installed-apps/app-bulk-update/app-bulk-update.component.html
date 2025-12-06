@@ -13,11 +13,12 @@
           <ix-fake-progress-bar [loading]="loadingMap.get(bulkItem.key)"></ix-fake-progress-bar>
           <mat-panel-title>
             <ix-bulk-list-item [item]="bulkItem.value">
+              @let versionParts = bulkItem.value.item.human_version.split('_');
               {{ bulkItem.key }}
-              {{ bulkItem.value.item.human_version.split('_')[0] }}
+              {{ versionParts[0] }}
 
               <div class="version">
-                <span>{{ bulkItem.value.item.human_version.split('_')[1] }}</span>
+                <span>{{ versionParts[1] || versionParts[0] }}</span>
                 <ix-icon name="mdi-arrow-right-thin"></ix-icon>
                 @if (isItemExpanded(bulkItem)){
                   <span>{{ form.get(bulkItem.key)?.value }}</span>

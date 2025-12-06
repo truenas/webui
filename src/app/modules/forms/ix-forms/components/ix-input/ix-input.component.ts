@@ -177,8 +177,10 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     return this.invalid || Number(this.value?.toString()?.length) > 0;
   }
 
-  resetInput(inputElement: HTMLInputElement): void {
-    inputElement.value = '';
+  resetInput(): void {
+    const resetInputElement = this.inputElementRef()?.nativeElement;
+    if (!resetInputElement) return;
+    resetInputElement.value = '';
     this.invalid = false;
     this.value = '';
     this.formatted = '';

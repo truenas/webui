@@ -1,4 +1,3 @@
-import { NestedTreeControl } from '@angular/cdk/tree';
 import { NgClass, AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
 import { RouterLinkActive } from '@angular/router';
@@ -20,6 +19,8 @@ import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-d
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
+import { createNestedTreeControl } from 'app/modules/ix-tree/tree-control.factory';
+import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-info/disk-info.component';
 import {
   ManualDiskSelectionFilters,
@@ -29,6 +30,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
 import { ManualDiskDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
+import { isSedCapable } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import { ManualSelectionDiskFiltersComponent } from './manual-selection-disk-filters/manual-selection-disk-filters.component';
 
 interface EnclosureDisk extends DetailsDisk {
@@ -77,11 +79,13 @@ export class ManualSelectionDisksComponent implements OnInit {
   protected dragToggleStore$ = inject(ManualDiskDragToggleStore);
 
   readonly enclosures = input.required<Enclosure[]>();
+  readonly isSedEncryption = input<boolean>(false);
 
   dataSource: NestedTreeDataSource<DiskOrGroup>;
-  treeControl = new NestedTreeControl<DiskOrGroup, string>((node) => node.children, {
-    trackBy: (node) => node.identifier,
-  });
+  treeControl: TreeExpansion<DiskOrGroup, string> = createNestedTreeControl<DiskOrGroup, string>(
+    (node) => node.children,
+    { trackBy: (node) => node.identifier },
+  );
 
   filtersUpdated = new BehaviorSubject<ManualDiskSelectionFilters>({});
 
@@ -173,8 +177,9 @@ export class ManualSelectionDisksComponent implements OnInit {
             || diskNameNormalized.includes(searchStringNormalized)
           )
         : true;
+      const sedCapableMatches = filterValues.sedCapable ? isSedCapable(disk) : true;
 
-      return typeMatches && sizeMatches && searchMatches;
+      return typeMatches && sizeMatches && searchMatches && sedCapableMatches;
     });
   }
 

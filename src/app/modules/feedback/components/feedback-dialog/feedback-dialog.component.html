@@ -35,7 +35,7 @@
       (isLoadingChange)="onIsLoadingChange($event)"
     ></ix-file-review>
   } @else {
-    @if (isEnterprise$ | async) {
+    @if (isEnterprise()) {
       <ix-file-ticket-licensed
         [dialogRef]="dialogRef"
         [isLoading]="isLoading"

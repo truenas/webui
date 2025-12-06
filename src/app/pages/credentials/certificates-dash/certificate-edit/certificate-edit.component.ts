@@ -111,7 +111,8 @@ export class CertificateEditComponent implements OnInit {
       data: {
         certificate: this.isCsr ? this.certificate.CSR : this.certificate.certificate,
         name: this.certificate.name,
-        extension: 'crt',
+        extension: this.isCsr ? 'csr' : 'crt',
+        mimeType: this.isCsr ? 'application/pkcs10' : 'application/x-x509-user-cert',
       } as ViewCertificateDialogData,
     });
   }
@@ -121,7 +122,8 @@ export class CertificateEditComponent implements OnInit {
       data: {
         certificate: this.certificate.privatekey,
         name: this.certificate.name,
-        extension: 'crt',
+        extension: 'key',
+        mimeType: 'application/x-pem-file',
       } as ViewCertificateDialogData,
     });
   }

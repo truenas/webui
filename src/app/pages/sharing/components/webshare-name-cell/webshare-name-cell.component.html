@@ -1,0 +1,16 @@
+<span class="webshare-name-container">
+  <span
+    role="text"
+    [ixTest]="[title, uniqueRowTag(row()), 'row-text']"
+    [attr.aria-label]="'WebShare name: ' + row().name"
+  >
+    {{ row().name }}
+  </span>
+  @if (row().isHomeBase) {
+    <ix-icon
+      class="home-icon"
+      name="folder_shared"
+      [matTooltip]="'Home Share' | translate"
+    ></ix-icon>
+  }
+</span>

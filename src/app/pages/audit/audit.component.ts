@@ -123,7 +123,7 @@ export class AuditComponent implements OnInit, OnDestroy {
       propertyName: 'message_timestamp',
       direction: SortDirection.Desc,
       active: 1,
-    });
+    }, true);
     this.dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((auditEntries) => {
       this.dataProvider.expandedRow = this.masterDetailView().isMobileView() ? null : auditEntries[0];
       this.cdr.markForCheck();

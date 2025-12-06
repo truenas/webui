@@ -3,7 +3,7 @@
     <span class="name">{{ ownName() }}</span>
   </div>
   <div class="cell cell-status" [style.background-color]="statusColor()">
-    <span>{{ topologyItem().status }}</span>
+    <span>{{ topologyItem().status | titlecase }}</span>
     @if (!isDisk() && !isMirror() && poolInstance()?.status_detail) {
       <ix-icon
         name="mdi-information-outline"
@@ -27,7 +27,8 @@
     @if (isDisk() || isMirror()) {
       <button
         mat-icon-button
-        aria-label="Actions"
+        [matTooltip]="'Actions' | translate"
+        [attr.aria-label]="'Actions' | translate"
         [ixTest]="[ownName(), 'actions']"
         [matMenuTriggerFor]="menu"
       >

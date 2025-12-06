@@ -117,6 +117,14 @@ export class SigninComponent implements OnInit {
     this.isConnected$
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
+        // Check if this is after a system update - reload page to get latest UI
+        const isUpdateRestart = this.window.sessionStorage.getItem('updateCompleted') === 'true';
+        if (isUpdateRestart) {
+          this.window.sessionStorage.removeItem('updateCompleted');
+          this.window.location.reload();
+          return;
+        }
+
         this.signinStore.init();
       });
   }

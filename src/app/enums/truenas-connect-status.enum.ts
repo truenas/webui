@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export enum HarborosConnectStatus {
+export enum TruenasConnectStatus {
   Disabled = 'DISABLED',
   ClaimTokenMissing = 'CLAIM_TOKEN_MISSING',
   RegistrationFinalizationWaiting = 'REGISTRATION_FINALIZATION_WAITING',
@@ -27,19 +27,19 @@ export const TncStatus = {
 };
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export const HarborosConnectStatusReason: Record<HarborosConnectStatus, string> = {
-  [HarborosConnectStatus.Disabled]: T('HarborOS Connect is disabled'),
-  [HarborosConnectStatus.ClaimTokenMissing]: T('Waiting for claim token to be generated'),
-  [HarborosConnectStatus.RegistrationFinalizationWaiting]: T('Waiting for registration with HarborOS Connect to complete'),
-  [HarborosConnectStatus.RegistrationFinalizationFailed]: T('Registration finalization failed'),
-  [HarborosConnectStatus.RegistrationFinalizationTimeout]: T('Registration finalization timed out'),
-  [HarborosConnectStatus.RegistrationFinalizationSuccess]: T('Registration finalization successful'),
-  [HarborosConnectStatus.CertGenerationInProgress]: T('Certificate generation is in progress'),
-  [HarborosConnectStatus.CertGenerationFailed]: T('Certificate generation failed'),
-  [HarborosConnectStatus.CertGenerationSuccess]: T('Certificate generation was successful'),
-  [HarborosConnectStatus.CertConfigurationFailure]: T('Failed to configure certificate in system UI'),
-  [HarborosConnectStatus.CertRenewalInProgress]: T('Certificate renewal is in progress'),
-  [HarborosConnectStatus.CertRenewalFailure]: T('Failed to renew certificate'),
-  [HarborosConnectStatus.CertRenewalSuccess]: T('Certificate renewal was successful'),
-  [HarborosConnectStatus.Configured]: T('HarborOS Connect is active'),
+export const TruenasConnectStatusReason: Record<TruenasConnectStatus, string> = {
+  [TruenasConnectStatus.Disabled]: T('HarborOS Connect is disabled'),
+  [TruenasConnectStatus.ClaimTokenMissing]: T('Waiting for claim token to be generated'),
+  [TruenasConnectStatus.RegistrationFinalizationWaiting]: T('Waiting for registration with HarborOS Connect to complete'),
+  [TruenasConnectStatus.RegistrationFinalizationFailed]: T('Registration finalization failed'),
+  [TruenasConnectStatus.RegistrationFinalizationTimeout]: T('Registration finalization timed out'),
+  [TruenasConnectStatus.RegistrationFinalizationSuccess]: T('Registration finalization successful'),
+  [TruenasConnectStatus.CertGenerationInProgress]: T('Certificate generation is in progress'),
+  [TruenasConnectStatus.CertGenerationFailed]: T('Certificate generation failed'),
+  [TruenasConnectStatus.CertGenerationSuccess]: T('Certificate generation was successful'),
+  [TruenasConnectStatus.CertConfigurationFailure]: T('Failed to configure certificate in system UI'),
+  [TruenasConnectStatus.CertRenewalInProgress]: T('Certificate renewal is in progress'),
+  [TruenasConnectStatus.CertRenewalFailure]: T('Failed to renew certificate'),
+  [TruenasConnectStatus.CertRenewalSuccess]: T('Certificate renewal was successful'),
+  [TruenasConnectStatus.Configured]: T('HarborOS Connect is active'),
 };

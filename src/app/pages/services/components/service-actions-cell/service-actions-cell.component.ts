@@ -15,10 +15,11 @@ import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/s
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
+import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { NvmeOfConfigurationComponent } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { ServicesService } from 'app/services/services.service';
-import { UrlOptionsService } from 'app/services/url-options.service';
+import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.service';
 
 @Component({
   selector: 'ix-service-actions-cell',
@@ -91,6 +92,9 @@ export class ServiceActionsCellComponent {
       case ServiceName.Cifs:
         this.slideIn.open(ServiceSmbComponent);
         break;
+      case ServiceName.WebShare:
+        this.slideIn.open(ServiceWebshareComponent);
+        break;
       default:
         break;
     }
@@ -98,11 +102,8 @@ export class ServiceActionsCellComponent {
 
   private auditLogsUrl(): string {
     return this.urlOptions.buildUrl('/system/audit', {
-      searchQuery: {
-        isBasicQuery: false,
-        filters: [['service', '=', AuditService.Smb]],
-      },
-    });
+      service: AuditService.Smb,
+    } as AuditUrlOptions);
   }
 
   private sessionsUrl(): string[] {

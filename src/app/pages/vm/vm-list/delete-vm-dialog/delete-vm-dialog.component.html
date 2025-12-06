@@ -6,6 +6,18 @@
       [label]="'Delete Virtual Machine Data?' | translate"
       [tooltip]="helptext.delete_dialog.zvolsTooltip | translate"
     ></ix-checkbox>
+
+    @if (form.value.zvols && devices().length) {
+      <div class="devices-section" role="region" aria-labelledby="devices-heading" aria-live="polite">
+        <h3 id="devices-heading">{{ helptext.delete_dialog.devicesListHeader | translate }}</h3>
+        <ul class="devices-list">
+          @for (device of devices(); track device.id) {
+            <li>{{ getDeviceLabel(device) }}</li>
+          }
+        </ul>
+      </div>
+    }
+
     <ix-checkbox
       formControlName="force"
       [label]="'Force Delete?' | translate"

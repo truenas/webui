@@ -34,6 +34,7 @@ export interface ManualDiskSelectionParams {
   inventory: DetailsDisk[];
   vdevs: DetailsDisk[][];
   vdevsLimit: number | null;
+  isSedEncryption?: boolean;
 }
 
 @UntilDestroy()

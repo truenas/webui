@@ -13,7 +13,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   imports: [IxIconComponent],
 })
 export class TransferModeExplanationComponent {
-  readonly mode = input.required< TransferMode>();
+  readonly mode = input.required<TransferMode>();
 
   readonly TransferMode = TransferMode;
 

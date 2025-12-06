@@ -7,4 +7,4 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrl: './truenas-connect-spinner.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HarborosConnectSpinnerComponent { }
+export class TruenasConnectSpinnerComponent { }

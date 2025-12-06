@@ -58,6 +58,14 @@ describe('EmailFormComponent', () => {
     ],
     providers: [
       provideMockStore({
+        initialState: {
+          systemInfo: {
+            systemInfo: { hostname: 'host.truenas.com' },
+            productType: ProductType.CommunityEdition,
+            isIxHardware: false,
+            buildYear: 2024,
+          },
+        },
         selectors: [
           { selector: selectSystemInfo, value: { hostname: 'host.truenas.com' } },
         ],
@@ -76,9 +84,7 @@ describe('EmailFormComponent', () => {
         }),
       }),
       mockProvider(SnackbarService),
-      mockProvider(SystemGeneralService, {
-        getProductType: () => ProductType.CommunityEdition,
-      }),
+      mockProvider(SystemGeneralService),
       mockAuth(),
       mockWindow({
         open: jest.fn(),

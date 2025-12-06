@@ -86,7 +86,9 @@ export class IsolatedGpusFormComponent implements OnInit {
       take(1),
       untilDestroyed(this),
     ).subscribe((config) => {
-      this.formGroup.setValue({ isolated_gpu_pci_ids: config.isolated_gpu_pci_ids });
+      this.formGroup.setValue({
+        isolated_gpu_pci_ids: config.isolated_gpu_pci_ids,
+      });
       this.cdr.markForCheck();
     });
 
@@ -101,7 +103,7 @@ export class IsolatedGpusFormComponent implements OnInit {
 
   onSubmit(): void {
     this.isFormLoading.set(true);
-    const isolatedGpuPciIds = this.formGroup.controls.isolated_gpu_pci_ids.value;
+    const { isolated_gpu_pci_ids: isolatedGpuPciIds } = this.formGroup.value;
 
     this.api.call('system.advanced.update_gpu_pci_ids', [isolatedGpuPciIds]).pipe(
       untilDestroyed(this),

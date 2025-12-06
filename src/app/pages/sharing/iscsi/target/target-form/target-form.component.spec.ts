@@ -262,9 +262,10 @@ describe('TargetFormComponent', () => {
       spectator.component.auths$.subscribe((options) => auth = options);
 
       expect(api.call).toHaveBeenNthCalledWith(1, 'fc.capable');
-      expect(api.call).toHaveBeenNthCalledWith(2, 'iscsi.portal.query', []);
-      expect(api.call).toHaveBeenNthCalledWith(3, 'iscsi.initiator.query', []);
-      expect(api.call).toHaveBeenNthCalledWith(4, 'iscsi.auth.query', []);
+      expect(api.call).toHaveBeenNthCalledWith(2, 'tn_connect.config');
+      expect(api.call).toHaveBeenNthCalledWith(3, 'iscsi.portal.query', []);
+      expect(api.call).toHaveBeenNthCalledWith(4, 'iscsi.initiator.query', []);
+      expect(api.call).toHaveBeenNthCalledWith(5, 'iscsi.auth.query', []);
 
       expect(spectator.component.hasFibreChannel()).toBe(true);
 

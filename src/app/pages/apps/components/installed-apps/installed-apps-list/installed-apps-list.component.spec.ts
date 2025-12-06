@@ -233,8 +233,7 @@ describe('InstalledAppsListComponent', () => {
     const originalDataSource = [...apps];
     component.dataSource = originalDataSource;
 
-    // Call sortChanged with empty array - should use existing dataSource
-    component.sortChanged({ active: 'application', direction: 'asc' }, []);
+    component.setDatasourceWithSort({ active: 'application', direction: 'asc' }, []);
 
     expect(component.dataSource).toHaveLength(2);
     expect(component.dataSource[0].name).toBe('test-app-1');
@@ -251,8 +250,7 @@ describe('InstalledAppsListComponent', () => {
       upgrade_available: false,
     }] as App[];
 
-    // Call sortChanged with valid array - should use the provided apps
-    component.sortChanged({ active: 'application', direction: 'asc' }, newApps);
+    component.setDatasourceWithSort({ active: 'application', direction: 'asc' }, newApps);
 
     expect(component.dataSource).toHaveLength(1);
     expect(component.dataSource[0].name).toBe('new-app');

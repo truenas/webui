@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnChanges, inject, computed } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,6 +11,7 @@ import { filter, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
+import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -85,6 +86,9 @@ export class DashboardPoolComponent implements OnChanges {
 
   protected readonly requiredRoles = [Role.PoolWrite];
   protected readonly searchableElements = dashboardPoolElements;
+  protected isOnline = computed(() => {
+    return this.pool().status === PoolStatus.Online;
+  });
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.isLoading || !this.isLoading()) {

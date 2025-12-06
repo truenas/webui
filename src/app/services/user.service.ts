@@ -7,7 +7,6 @@ import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-// TODO: Clean up this service.
 @Injectable({ providedIn: 'root' })
 export class UserService {
   protected api = inject(ApiService);
@@ -20,60 +19,53 @@ export class UserService {
   protected queryOptions = { limit: 50 };
 
   private groupQueryDsCacheByName(name: string): Observable<Group[]> {
-    if (!name?.length) {
+    const trimmedName = name?.trim();
+    if (!trimmedName) {
       return of([]);
     }
-    let queryArgs: QueryFilter<Group>[] = [];
-    name = name.trim();
-    if (name.length > 0) {
-      queryArgs = [['name', '=', name]];
-    }
+    const queryArgs: QueryFilter<Group>[] = [['name', '=', trimmedName]];
     return this.api.call(this.groupQuery, [queryArgs, { ...this.queryOptions }]);
   }
 
   groupQueryDsCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
-    let queryArgs: QueryFilter<Group>[] = [];
-    search = search.trim();
-    if (search.length > 0) {
-      queryArgs = [['group', '~', `(?i).*${search.replaceAll('\\', '\\\\')}`]];
-    }
-    if (hideBuiltIn) {
-      queryArgs = queryArgs.concat([['builtin', '=', false]]);
-    }
-    return combineLatest([
-      this.groupQueryDsCacheByName(search),
-      this.api.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]),
-    ]).pipe(map(([groupSearchedByName, groups]) => {
-      const groupIds = groupSearchedByName.map((groupsByName) => groupsByName.id);
-      groups = groups.filter(
-        (group) => {
-          return !groupIds.some((gid) => gid === group.id);
-        },
-      );
-      return [...groups, ...groupSearchedByName];
-    }));
-  }
+    const trimmedSearch = search.trim();
+    const queryArgs: QueryFilter<Group>[] = [];
 
-  smbGroupQueryDsCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
-    const queryArgs: QueryFilter<Group>[] = [['smb', '=', true]];
-    search = search.trim();
-    if (search.length > 0) {
-      queryArgs.push(['group', '^', search]);
+    if (trimmedSearch) {
+      queryArgs.push(['group', '~', `(?i).*${trimmedSearch.replaceAll('\\', '\\\\')}`]);
     }
     if (hideBuiltIn) {
       queryArgs.push(['builtin', '=', false]);
     }
+
     return combineLatest([
-      this.groupQueryDsCacheByName(search),
+      this.groupQueryDsCacheByName(trimmedSearch),
       this.api.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]),
     ]).pipe(map(([groupSearchedByName, groups]) => {
-      const groupIds = groupSearchedByName.map((groupsByName) => groupsByName.id);
-      groups = groups.filter(
-        (group) => {
-          return !groupIds.some((gid) => gid === group.id);
-        },
-      );
-      return [...groups, ...groupSearchedByName];
+      const groupIds = new Set(groupSearchedByName.map((group) => group.id));
+      const filteredGroups = groups.filter((group) => !groupIds.has(group.id));
+      return [...filteredGroups, ...groupSearchedByName];
+    }));
+  }
+
+  smbGroupQueryDsCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
+    const trimmedSearch = search.trim();
+    const queryArgs: QueryFilter<Group>[] = [['smb', '=', true]];
+
+    if (trimmedSearch) {
+      queryArgs.push(['group', '^', trimmedSearch]);
+    }
+    if (hideBuiltIn) {
+      queryArgs.push(['builtin', '=', false]);
+    }
+
+    return combineLatest([
+      this.groupQueryDsCacheByName(trimmedSearch),
+      this.api.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]),
+    ]).pipe(map(([groupSearchedByName, groups]) => {
+      const groupIds = new Set(groupSearchedByName.map((group) => group.id));
+      const filteredGroups = groups.filter((group) => !groupIds.has(group.id));
+      return [...filteredGroups, ...groupSearchedByName];
     }));
   }
 
@@ -82,11 +74,8 @@ export class UserService {
   }
 
   userQueryDsCache(search = '', offset = 0): Observable<User[]> {
-    let queryArgs: QueryFilter<User>[] = [];
-    search = search.trim();
-    if (search.length > 0) {
-      queryArgs = [['username', '^', search]];
-    }
+    const trimmedSearch = search.trim();
+    const queryArgs: QueryFilter<User>[] = trimmedSearch ? [['username', '^', trimmedSearch]] : [];
     return this.api.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]);
   }
 
@@ -95,10 +84,10 @@ export class UserService {
   }
 
   smbUserQueryDsCache(search = '', offset = 0): Observable<User[]> {
+    const trimmedSearch = search.trim();
     const queryArgs: QueryFilter<User>[] = [['smb', '=', true]];
-    search = search.trim();
-    if (search.length > 0) {
-      queryArgs.push(['username', '^', search]);
+    if (trimmedSearch) {
+      queryArgs.push(['username', '^', trimmedSearch]);
     }
     return this.api.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]);
   }

@@ -1,14 +1,13 @@
 import { ComponentType } from '@angular/cdk/portal';
 import { Injectable, inject } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild,
 } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, of, switchMap, take, tap,
   combineLatest,
-  EMPTY,
 } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { PasswordChangeRequiredDialog } from 'app/pages/credentials/users/password-change-required-dialog/password-change-required-dialog.component';
@@ -25,8 +24,35 @@ export class BlockingActionGuardService implements CanActivateChild {
   private matDialog = inject(MatDialog);
 
   private twoFactorDialogOpen = false;
+  private dialogRef: MatDialogRef<TwoFactorSetupDialog> | null = null;
+  private hasCheckedTwoFactorSetup = false; // Track if we've already checked 2FA this session
+
+  constructor() {
+    // Reset dialog state on service initialization
+    this.twoFactorDialogOpen = false;
+    this.hasCheckedTwoFactorSetup = false;
+
+    // Reset state when user logs out
+    this.wsStatus.isAuthenticated$.pipe(
+      untilDestroyed(this),
+    ).subscribe((isAuthenticated) => {
+      if (!isAuthenticated) {
+        this.twoFactorDialogOpen = false;
+        this.dialogRef = null;
+        this.hasCheckedTwoFactorSetup = false; // Reset the check flag on logout
+      }
+    });
+  }
 
   canActivateChild(_: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+    // Check if we have a stale dialog reference or if the dialog was closed unexpectedly
+    if (this.twoFactorDialogOpen) {
+      if (!this.dialogRef?.componentInstance) {
+        this.twoFactorDialogOpen = false;
+        this.dialogRef = null;
+      }
+    }
+
     return this.wsStatus.isAuthenticated$.pipe(
       take(1),
       switchMap((isAuthenticated) => {
@@ -42,24 +68,48 @@ export class BlockingActionGuardService implements CanActivateChild {
     return combineLatest([
       this.authService.isPasswordChangeRequired$.pipe(take(1)),
       this.authService.isTwoFactorSetupRequired(),
-      this.authService.isFullAdmin().pipe(take(1)),
     ]).pipe(
       take(1),
       switchMap(([
         isPasswordChangeRequired,
         isTwoFactorSetupRequired,
-        isFullAdmin,
       ]) => {
         let twoFactorDialog$: Observable<boolean> = of(true);
-        if (isTwoFactorSetupRequired) {
-          if (this.isAdminUsingSystemSettings(isFullAdmin, state) || state.url.endsWith('/two-factor-auth')) {
+
+        // Only check 2FA setup once per session
+        if (isTwoFactorSetupRequired && !this.hasCheckedTwoFactorSetup) {
+          if (state.url.endsWith('/two-factor-auth')) {
             twoFactorDialog$ = of(true);
+            this.hasCheckedTwoFactorSetup = true; // Mark as checked even if on 2FA page
           } else if (this.twoFactorDialogOpen) {
-            twoFactorDialog$ = EMPTY;
+            twoFactorDialog$ = of(true);
           } else {
             this.twoFactorDialogOpen = true;
-            twoFactorDialog$ = this.openFullScreenDialog(TwoFactorSetupDialog).pipe(
-              tap(() => this.twoFactorDialogOpen = false),
+            this.hasCheckedTwoFactorSetup = true; // Mark as checked when dialog opens
+            this.dialogRef = this.matDialog.open(TwoFactorSetupDialog, {
+              maxWidth: '100vw',
+              maxHeight: '100vh',
+              height: '100%',
+              width: '100%',
+              panelClass: 'full-screen-modal',
+              disableClose: true,
+            });
+
+            twoFactorDialog$ = this.dialogRef.afterClosed().pipe(
+              tap({
+                next: () => {
+                  this.twoFactorDialogOpen = false;
+                  this.dialogRef = null;
+                },
+                error: () => {
+                  this.twoFactorDialogOpen = false;
+                  this.dialogRef = null;
+                },
+                complete: () => {
+                  this.twoFactorDialogOpen = false;
+                  this.dialogRef = null;
+                },
+              }),
             );
           }
         }
@@ -74,10 +124,6 @@ export class BlockingActionGuardService implements CanActivateChild {
         return passwordChangeRequired$ ?? (twoFactorDialog$ ?? of(true));
       }),
     );
-  }
-
-  private isAdminUsingSystemSettings(isFullAdmin: boolean, state: RouterStateSnapshot): boolean {
-    return isFullAdmin && state.url.startsWith('/system');
   }
 
   private openFullScreenDialog<T>(component: ComponentType<T>): Observable<boolean> {

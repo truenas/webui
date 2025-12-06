@@ -2,22 +2,21 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import {
   Spectator,
   createComponentFactory,
   mockProvider,
 } from '@ngneat/spectator/jest';
 import { of, throwError } from 'rxjs';
-import { HarborosConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { HarborosConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { HarborosConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
-import { HarborosConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
-describe('HarborosConnectStatusModalComponent', () => {
-  let spectator: Spectator<HarborosConnectStatusModalComponent>;
+describe('TruenasConnectStatusModalComponent', () => {
+  let spectator: Spectator<TruenasConnectStatusModalComponent>;
   let loader: HarnessLoader;
 
   const config = signal({
@@ -27,20 +26,19 @@ describe('HarborosConnectStatusModalComponent', () => {
     tnc_base_url: 'https://truenas.connect.dev.ixsystems.net/',
     account_service_base_url: 'https://account-service.dev.ixsystems.net/',
     leca_service_base_url: 'https://leca-server.dev.ixsystems.net/',
-    status: HarborosConnectStatus.Configured,
-  } as HarborosConnectConfig);
+    status: TruenasConnectStatus.Configured,
+  } as TruenasConnectConfig);
 
   const createComponent = createComponentFactory({
-    component: HarborosConnectStatusModalComponent,
-    imports: [NoopAnimationsModule],
+    component: TruenasConnectStatusModalComponent,
     providers: [
-      mockProvider(HarborosConnectService, {
+      mockProvider(TruenasConnectService, {
         config,
         connect: jest.fn(() => of(null)),
         disableService: jest.fn(() => of(null)),
         enableService: jest.fn(() => of(null)),
         generateToken: jest.fn(() => of('')),
-        openHarborosConnectWindow: jest.fn(),
+        openTruenasConnectWindow: jest.fn(),
       }),
       mockProvider(DialogService, {
         error: jest.fn(),
@@ -57,48 +55,48 @@ describe('HarborosConnectStatusModalComponent', () => {
 
   beforeEach(() => {
     // Reset config to a known state before each test
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.Configured }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('should show Open HarborOS Connect button when configured', async () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.Configured }));
+  it('should show Open TrueNAS Connect button when configured', async () => {
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator.detectChanges();
 
     const openBtn = await loader.getHarness(
       MatButtonHarness.with({
-        text: 'Open HarborOS Connect',
+        text: 'Open TrueNAS Connect',
       }),
     );
     expect(openBtn).toBeTruthy();
 
-    const tncService = spectator.inject(HarborosConnectService);
-    const openHarborosConnectWindowSpy = jest.spyOn(tncService, 'openHarborosConnectWindow');
+    const tncService = spectator.inject(TruenasConnectService);
+    const openTruenasConnectWindowSpy = jest.spyOn(tncService, 'openTruenasConnectWindow');
     await openBtn.click();
-    expect(openHarborosConnectWindowSpy).toHaveBeenCalledWith(config().tnc_base_url);
+    expect(openTruenasConnectWindowSpy).toHaveBeenCalledWith(config().tnc_base_url);
   });
 
   it('should display the status as ACTIVE', () => {
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('HarborOS Connect - Status Healthy');
-    expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain('Your system is linked with HarborOS Connect');
+    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('TrueNAS Connect - Status Healthy');
+    expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain('Your system is linked with TrueNAS Connect');
   });
 
   it('should display the status as WAITING', () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.ClaimTokenMissing }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.ClaimTokenMissing }));
     spectator.detectChanges();
     expect(spectator.query('[ixTest="tnc-status"]')).toBeNull();
 
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.RegistrationFinalizationWaiting }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationWaiting }));
     spectator.detectChanges();
     expect(spectator.query('[ixTest="tnc-status"]')).toBeNull();
   });
 
   it('should show "Get Connected" button in waiting state', async () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.RegistrationFinalizationWaiting }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationWaiting }));
     spectator.detectChanges();
 
-    const connectSpy = jest.spyOn(spectator.inject(HarborosConnectService), 'connect');
+    const connectSpy = jest.spyOn(spectator.inject(TruenasConnectService), 'connect');
     const getConnectedBtn = await loader.getHarness(
       MatButtonHarness.with({
         text: 'Get Connected',
@@ -109,10 +107,10 @@ describe('HarborosConnectStatusModalComponent', () => {
   });
 
   it('should call generateToken when status is ClaimTokenMissing', async () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.ClaimTokenMissing }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.ClaimTokenMissing }));
     spectator.detectChanges();
 
-    const service = spectator.inject(HarborosConnectService);
+    const service = spectator.inject(TruenasConnectService);
     const generateTokenSpy = jest.spyOn(service, 'generateToken');
     const connectSpy = jest.spyOn(service, 'connect');
 
@@ -127,11 +125,36 @@ describe('HarborosConnectStatusModalComponent', () => {
     expect(connectSpy).toHaveBeenCalled();
   });
 
-  it('should handle error when clicking Get Connected button', async () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.RegistrationFinalizationWaiting }));
+  it('should call generateToken when connecting with REGISTRATION_FINALIZATION_TIMEOUT status', async () => {
+    // Start with disabled status, which shows "Get Connected" button
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Disabled }));
     spectator.detectChanges();
 
-    const service = spectator.inject(HarborosConnectService);
+    const service = spectator.inject(TruenasConnectService);
+    // After enabling, status becomes REGISTRATION_FINALIZATION_TIMEOUT
+    const enableSpy = jest.spyOn(service, 'enableService').mockReturnValue(of({
+      status: TruenasConnectStatus.RegistrationFinalizationTimeout,
+    } as TruenasConnectConfig));
+    const generateTokenSpy = jest.spyOn(service, 'generateToken').mockReturnValue(of('test-token'));
+    const connectSpy = jest.spyOn(service, 'connect').mockReturnValue(of(null));
+
+    const getConnectedBtn = await loader.getHarness(
+      MatButtonHarness.with({
+        text: 'Get Connected',
+      }),
+    );
+    await getConnectedBtn.click();
+
+    expect(enableSpy).toHaveBeenCalled();
+    expect(generateTokenSpy).toHaveBeenCalled();
+    expect(connectSpy).toHaveBeenCalled();
+  });
+
+  it('should handle error when clicking Get Connected button', async () => {
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationWaiting }));
+    spectator.detectChanges();
+
+    const service = spectator.inject(TruenasConnectService);
     const connectSpy = jest.spyOn(service, 'connect').mockReturnValue(throwError(() => new Error('Connection failed')));
     const dialogService = spectator.inject(DialogService);
     const errorSpy = jest.spyOn(dialogService, 'error');
@@ -151,10 +174,10 @@ describe('HarborosConnectStatusModalComponent', () => {
   });
 
   it('should handle error when generateToken fails', async () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.ClaimTokenMissing }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.ClaimTokenMissing }));
     spectator.detectChanges();
 
-    const service = spectator.inject(HarborosConnectService);
+    const service = spectator.inject(TruenasConnectService);
     const generateTokenSpy = jest.spyOn(service, 'generateToken').mockReturnValue(throwError(() => new Error('Token generation failed')));
     const dialogService = spectator.inject(DialogService);
     const errorSpy = jest.spyOn(dialogService, 'error');
@@ -174,13 +197,13 @@ describe('HarborosConnectStatusModalComponent', () => {
   });
 
   it('should show disable service button when configured', () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.Configured }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator.detectChanges();
 
     const dialogService = spectator.inject(DialogService);
     (dialogService as { confirm: jest.Mock }).confirm = jest.fn(() => of(true));
     const confirmSpy = dialogService.confirm as jest.Mock;
-    const disableSpy = jest.spyOn(spectator.inject(HarborosConnectService), 'disableService');
+    const disableSpy = jest.spyOn(spectator.inject(TruenasConnectService), 'disableService');
     const disableBtn = spectator.query('[ixTest="tnc-disable-service"]');
     expect(disableBtn).toBeTruthy();
 
@@ -194,10 +217,10 @@ describe('HarborosConnectStatusModalComponent', () => {
   });
 
   it('should handle error when clicking disable service button', () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.Configured }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator.detectChanges();
 
-    const service = spectator.inject(HarborosConnectService);
+    const service = spectator.inject(TruenasConnectService);
     const disableSpy = jest.spyOn(service, 'disableService').mockReturnValue(throwError(() => new Error('Disable failed')));
     const dialogService = spectator.inject(DialogService);
     (dialogService as { confirm: jest.Mock }).confirm = jest.fn(() => of(true));
@@ -216,10 +239,10 @@ describe('HarborosConnectStatusModalComponent', () => {
   });
 
   it('should not disable service when user cancels confirmation', () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.Configured }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator.detectChanges();
 
-    const service = spectator.inject(HarborosConnectService);
+    const service = spectator.inject(TruenasConnectService);
     const disableSpy = jest.spyOn(service, 'disableService');
     const dialogService = spectator.inject(DialogService);
     (dialogService as { confirm: jest.Mock }).confirm = jest.fn(() => of(false));
@@ -233,63 +256,63 @@ describe('HarborosConnectStatusModalComponent', () => {
   });
 
   it('should display the status as CONNECTING with custom text', () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.RegistrationFinalizationSuccess }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationSuccess }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborOS Connect');
-    expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain('Your system is setting up with HarborOS Connect');
+    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up TrueNAS Connect');
+    expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain('Your system is setting up with TrueNAS Connect');
     expect(spectator.query('ix-truenas-connect-spinner')).toBeTruthy();
 
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.CertGenerationInProgress }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertGenerationInProgress }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborOS Connect');
+    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up TrueNAS Connect');
 
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.CertGenerationSuccess }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertGenerationSuccess }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborOS Connect');
+    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up TrueNAS Connect');
 
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.CertRenewalInProgress }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertRenewalInProgress }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborOS Connect');
+    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up TrueNAS Connect');
 
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.CertRenewalSuccess }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertRenewalSuccess }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up HarborOS Connect');
+    expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Setting up TrueNAS Connect');
   });
 
   it('should display custom error message for FAILED state', () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.RegistrationFinalizationFailed }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationFailed }));
     spectator.detectChanges();
     expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Connection Failed...');
     expect(spectator.query('[ixTest="tnc-status-reason"]').textContent).toContain('Something went wrong!');
 
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.RegistrationFinalizationTimeout }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationTimeout }));
     spectator.detectChanges();
     expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Connection Failed...');
 
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.CertGenerationFailed }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertGenerationFailed }));
     spectator.detectChanges();
     expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Connection Failed...');
 
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.CertConfigurationFailure }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertConfigurationFailure }));
     spectator.detectChanges();
     expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Connection Failed...');
 
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.CertRenewalFailure }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertRenewalFailure }));
     spectator.detectChanges();
     expect(spectator.query('[ixTest="tnc-status"]').textContent).toContain('Connection Failed...');
   });
 
   it('should display disabled status as WAITING (shows Get Connected button)', () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.Disabled }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Disabled }));
     spectator.detectChanges();
-    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Power Up your HarborOS Experience! Link your system with HarborOS Connect now for additional security, alerting, and other features.');
+    expect(spectator.query('[ixTest="tnc-status-reason"]')).toHaveText('Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting, and other features.');
   });
 
   it('should not automatically enable service when dialog opens (removed behavior)', () => {
     // Update the config to disabled state
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.Disabled, enabled: false }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Disabled, enabled: false }));
 
-    const service = spectator.inject(HarborosConnectService);
+    const service = spectator.inject(TruenasConnectService);
     const enableSpy = jest.spyOn(service, 'enableService');
 
     spectator.detectChanges();
@@ -299,13 +322,12 @@ describe('HarborosConnectStatusModalComponent', () => {
   });
 
   it('should show "Retry Connection" button in failed state and retry process', async () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.RegistrationFinalizationFailed }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationFailed }));
     spectator.detectChanges();
 
-    const service = spectator.inject(HarborosConnectService);
+    const service = spectator.inject(TruenasConnectService);
     const disableSpy = jest.spyOn(service, 'disableService').mockReturnValue(of(null));
     const enableSpy = jest.spyOn(service, 'enableService').mockReturnValue(of(null));
-    const connectSpy = jest.spyOn(service, 'connect').mockReturnValue(of(null));
 
     const retryBtn = await loader.getHarness(
       MatButtonHarness.with({
@@ -316,14 +338,13 @@ describe('HarborosConnectStatusModalComponent', () => {
 
     expect(disableSpy).toHaveBeenCalled();
     expect(enableSpy).toHaveBeenCalled();
-    expect(connectSpy).not.toHaveBeenCalled();
   });
 
   it('should handle error when clicking Retry Connection button', async () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.RegistrationFinalizationFailed }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationFailed }));
     spectator.detectChanges();
 
-    const service = spectator.inject(HarborosConnectService);
+    const service = spectator.inject(TruenasConnectService);
     const disableSpy = jest.spyOn(service, 'disableService').mockReturnValue(throwError(() => new Error('Retry failed')));
     const dialogService = spectator.inject(DialogService);
     const errorSpy = jest.spyOn(dialogService, 'error');
@@ -344,8 +365,8 @@ describe('HarborosConnectStatusModalComponent', () => {
 
   it('should display waiting status correctly', () => {
     const waitingStatuses = [
-      HarborosConnectStatus.ClaimTokenMissing,
-      HarborosConnectStatus.RegistrationFinalizationWaiting,
+      TruenasConnectStatus.ClaimTokenMissing,
+      TruenasConnectStatus.RegistrationFinalizationWaiting,
     ];
 
     waitingStatuses.forEach((status) => {
@@ -357,17 +378,17 @@ describe('HarborosConnectStatusModalComponent', () => {
 
       expect(statusElement).toBeNull();
       expect(statusReasonElement).toBeTruthy();
-      expect(statusReasonElement?.textContent).toContain('Power Up your HarborOS Experience');
+      expect(statusReasonElement?.textContent).toContain('Power Up your TrueNAS Experience');
     });
   });
 
   it('should display connecting status correctly', () => {
     const connectingStatuses = [
-      HarborosConnectStatus.RegistrationFinalizationSuccess,
-      HarborosConnectStatus.CertGenerationInProgress,
-      HarborosConnectStatus.CertGenerationSuccess,
-      HarborosConnectStatus.CertRenewalInProgress,
-      HarborosConnectStatus.CertRenewalSuccess,
+      TruenasConnectStatus.RegistrationFinalizationSuccess,
+      TruenasConnectStatus.CertGenerationInProgress,
+      TruenasConnectStatus.CertGenerationSuccess,
+      TruenasConnectStatus.CertRenewalInProgress,
+      TruenasConnectStatus.CertRenewalSuccess,
     ];
 
     connectingStatuses.forEach((status) => {
@@ -376,17 +397,17 @@ describe('HarborosConnectStatusModalComponent', () => {
 
       const statusElement = spectator.query('[ixTest="tnc-status"]');
       expect(statusElement).toBeTruthy();
-      expect(statusElement?.textContent).toContain('Setting up HarborOS Connect');
+      expect(statusElement?.textContent).toContain('Setting up TrueNAS Connect');
     });
   });
 
   it('should display failed status correctly', () => {
     const failedStatuses = [
-      HarborosConnectStatus.RegistrationFinalizationFailed,
-      HarborosConnectStatus.RegistrationFinalizationTimeout,
-      HarborosConnectStatus.CertGenerationFailed,
-      HarborosConnectStatus.CertConfigurationFailure,
-      HarborosConnectStatus.CertRenewalFailure,
+      TruenasConnectStatus.RegistrationFinalizationFailed,
+      TruenasConnectStatus.RegistrationFinalizationTimeout,
+      TruenasConnectStatus.CertGenerationFailed,
+      TruenasConnectStatus.CertConfigurationFailure,
+      TruenasConnectStatus.CertRenewalFailure,
     ];
 
     failedStatuses.forEach((status) => {
@@ -400,29 +421,29 @@ describe('HarborosConnectStatusModalComponent', () => {
   });
 
   it('should display configured status as active', () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.Configured }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
     spectator.detectChanges();
 
     const statusElement = spectator.query('[ixTest="tnc-status"]');
     expect(statusElement).toBeTruthy();
-    expect(statusElement?.textContent).toContain('HarborOS Connect - Status Healthy');
+    expect(statusElement?.textContent).toContain('TrueNAS Connect - Status Healthy');
   });
 
   it('should display disabled status as waiting (no longer shows DISABLED)', () => {
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.Disabled }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Disabled }));
     spectator.detectChanges();
 
     // Disabled status now maps to waiting which shows different content
     const statusElement = spectator.query('[ixTest="tnc-status-reason"]');
     expect(statusElement).toBeTruthy();
-    expect(statusElement?.textContent).toContain('Power Up your HarborOS Experience!');
+    expect(statusElement?.textContent).toContain('Power Up your TrueNAS Experience!');
   });
 
   it('should not auto-enable service when status is configured', () => {
     // Reset config to Configured status
-    config.update((conf) => ({ ...conf, status: HarborosConnectStatus.Configured }));
+    config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
 
-    const service = spectator.inject(HarborosConnectService);
+    const service = spectator.inject(TruenasConnectService);
     const enableSpy = jest.spyOn(service, 'enableService');
 
     spectator.detectChanges();
@@ -438,19 +459,77 @@ describe('HarborosConnectStatusModalComponent', () => {
     expect(() => spectator.detectChanges()).not.toThrow();
 
     // Should not call enableService when config is null
-    const service = spectator.inject(HarborosConnectService);
+    const service = spectator.inject(TruenasConnectService);
     const enableSpy = jest.spyOn(service, 'enableService');
     spectator.detectChanges();
     expect(enableSpy).not.toHaveBeenCalled();
   });
 
   it('should handle undefined status in config', () => {
-    config.update((conf) => ({ ...conf, status: undefined as HarborosConnectStatus }));
+    config.update((conf) => ({ ...conf, status: undefined as TruenasConnectStatus }));
     spectator.detectChanges();
 
     // Undefined status maps to waiting (default case)
     const statusElement = spectator.query('[ixTest="tnc-status-reason"]');
     expect(statusElement).toBeTruthy();
-    expect(statusElement!.textContent).toContain('Power Up your HarborOS Experience!');
+    expect(statusElement!.textContent).toContain('Power Up your TrueNAS Experience!');
+  });
+
+  describe('Documentation link', () => {
+    it('should show documentation link in Active state with security and accessibility attributes', () => {
+      config.update((conf) => ({ ...conf, status: TruenasConnectStatus.Configured }));
+      spectator.detectChanges();
+
+      const docLink = spectator.query('.documentation-link a') as HTMLAnchorElement;
+      expect(docLink).toBeTruthy();
+      expect(docLink.href).toBe('https://connect.truenas.com/');
+      expect(docLink.target).toBe('_blank');
+      expect(docLink.rel).toBe('noopener noreferrer');
+      expect(docLink.textContent).toContain('Learn more about TrueNAS Connect');
+      expect(docLink.textContent).toContain('opens in a new tab');
+
+      // Check for external link icon
+      const icon = docLink.querySelector('ix-icon[name="mdi-open-in-new"]');
+      expect(icon).toBeTruthy();
+      expect(icon.getAttribute('aria-hidden')).toBe('true');
+
+      // Check for screen reader text
+      const srText = docLink.querySelector('.sr-only');
+      expect(srText).toBeTruthy();
+      expect(srText.textContent).toContain('opens in a new tab');
+    });
+
+    it('should show documentation link in Waiting state', () => {
+      config.update((conf) => ({ ...conf, status: TruenasConnectStatus.ClaimTokenMissing }));
+      spectator.detectChanges();
+
+      const docLink = spectator.query('.documentation-link a') as HTMLAnchorElement;
+      expect(docLink).toBeTruthy();
+      expect(docLink.href).toBe('https://connect.truenas.com/');
+      expect(docLink.target).toBe('_blank');
+      expect(docLink.rel).toBe('noopener noreferrer');
+    });
+
+    it('should show documentation link in Failed state', () => {
+      config.update((conf) => ({ ...conf, status: TruenasConnectStatus.RegistrationFinalizationFailed }));
+      spectator.detectChanges();
+
+      const docLink = spectator.query('.documentation-link a') as HTMLAnchorElement;
+      expect(docLink).toBeTruthy();
+      expect(docLink.href).toBe('https://connect.truenas.com/');
+      expect(docLink.target).toBe('_blank');
+      expect(docLink.rel).toBe('noopener noreferrer');
+    });
+
+    it('should show documentation link in Connecting state', () => {
+      config.update((conf) => ({ ...conf, status: TruenasConnectStatus.CertGenerationInProgress }));
+      spectator.detectChanges();
+
+      const docLink = spectator.query('.documentation-link a') as HTMLAnchorElement;
+      expect(docLink).toBeTruthy();
+      expect(docLink.href).toBe('https://connect.truenas.com/');
+      expect(docLink.target).toBe('_blank');
+      expect(docLink.rel).toBe('noopener noreferrer');
+    });
   });
 });

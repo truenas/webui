@@ -9,8 +9,10 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -126,7 +128,7 @@ describe('SnapshotTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Pool/Dataset', 'Keep for', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['APPS/test2', '2 week(s)', 'At 00:00, every day', 'Disabled', '1 min. ago', '', 'PENDING', ''],
+      ['APPS/test2', '2 week(s)', 'At 00:00, every day', 'Disabled', '1 min. ago', '', 'Pending', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -180,5 +182,48 @@ describe('SnapshotTaskCardComponent', () => {
       'pool.snapshottask.update',
       [1, { enabled: true }],
     );
+  });
+
+  it('subscribes to pool.snapshottask.query websocket events on init', () => {
+    expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('pool.snapshottask.query');
+  });
+
+  it('refreshes data when pool.snapshottask.query websocket event is received', () => {
+    const component = spectator.component;
+    const websocketMock = spectator.inject(MockApiService);
+    const loadSpy = jest.spyOn(component.dataProvider, 'load');
+
+    // Emit a websocket event
+    websocketMock.emitSubscribeEvent({
+      id: 'test-event-1',
+      msg: CollectionChangeType.Changed,
+      collection: 'pool.snapshottask.query',
+      fields: { id: 1, state: { state: 'RUNNING' } } as PeriodicSnapshotTask,
+    });
+
+    // Verify dataProvider.load() was called
+    expect(loadSpy).toHaveBeenCalled();
+  });
+
+  it('refreshes data when ADDED event is received', () => {
+    const component = spectator.component;
+    const websocketMock = spectator.inject(MockApiService);
+    const loadSpy = jest.spyOn(component.dataProvider, 'load');
+
+    // Emit ADDED event
+    websocketMock.emitSubscribeEvent({
+      id: 'test-event-2',
+      msg: CollectionChangeType.Added,
+      collection: 'pool.snapshottask.query',
+      fields: {
+        id: 2,
+        dataset: 'APPS/test3',
+        enabled: true,
+        state: { state: 'PENDING' },
+      } as PeriodicSnapshotTask,
+    });
+
+    // Verify dataProvider.load() was called
+    expect(loadSpy).toHaveBeenCalled();
   });
 });

@@ -16,7 +16,6 @@ import { Timeout } from 'app/interfaces/timeout.interface';
  */
 @Directive({
   selector: '[animateOut]',
-  standalone: true,
 })
 export class AnimateOutDirective implements OnChanges, OnDestroy {
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);

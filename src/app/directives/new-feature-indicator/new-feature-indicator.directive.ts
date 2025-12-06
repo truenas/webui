@@ -1,5 +1,5 @@
-import { ComponentRef, Directive, input, OnChanges, OnInit, TemplateRef, ViewContainerRef, inject } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DestroyRef, Directive, input, inputBinding, OnChanges, OnInit, TemplateRef, ViewContainerRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NewFeatureIndicatorWrapperComponent } from 'app/directives/new-feature-indicator/new-feature-indicator-wrapper.component';
 import { NewFeatureIndicator } from 'app/directives/new-feature-indicator/new-feature-indicator.interface';
 import { NewFeatureIndicatorService } from 'app/directives/new-feature-indicator/new-feature-indicator.service';
@@ -15,16 +15,15 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
  * ></button>
  * ```
  */
-@UntilDestroy()
 @Directive({
   selector: '[ixNewFeatureIndicator]',
 })
 export class NewFeatureIndicatorDirective implements OnInit, OnChanges {
+  private readonly destroyRef = inject(DestroyRef);
   private indicatorService = inject(NewFeatureIndicatorService);
   private templateRef = inject<TemplateRef<unknown>>(TemplateRef);
   private viewContainerRef = inject(ViewContainerRef);
 
-  private wrapperContainer: ComponentRef<NewFeatureIndicatorWrapperComponent>;
   private indicator: NewFeatureIndicator;
 
   readonly newFeatureIndicator = input.required<NewFeatureIndicator>({
@@ -32,7 +31,7 @@ export class NewFeatureIndicatorDirective implements OnInit, OnChanges {
   });
 
   constructor() {
-    this.indicatorService.onShown.pipe(untilDestroyed(this)).subscribe((indicator) => {
+    this.indicatorService.onShown.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((indicator) => {
       if (indicator === this.indicator) {
         this.updateIndicator();
       }
@@ -58,8 +57,11 @@ export class NewFeatureIndicatorDirective implements OnInit, OnChanges {
       return;
     }
 
-    this.wrapperContainer = this.viewContainerRef.createComponent(NewFeatureIndicatorWrapperComponent);
-    this.wrapperContainer.setInput('template', this.templateRef);
-    this.wrapperContainer.setInput('indicator', this.indicator);
+    this.viewContainerRef.createComponent(NewFeatureIndicatorWrapperComponent, {
+      bindings: [
+        inputBinding('template', () => this.templateRef),
+        inputBinding('indicator', () => this.indicator),
+      ],
+    });
   }
 }

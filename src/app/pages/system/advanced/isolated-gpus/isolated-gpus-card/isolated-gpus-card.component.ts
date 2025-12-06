@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewEncapsulation, inject,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -24,9 +26,11 @@ import { GpuService } from 'app/services/gpu/gpu.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-isolated-gpus-card',
-  styleUrls: ['../../../general-settings/common-settings-card.scss'],
+  styleUrls: ['./isolated-gpus-card.component.scss'],
   templateUrl: './isolated-gpus-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
+  encapsulation: ViewEncapsulation.None,
   imports: [
     MatCard,
     UiSearchDirective,
@@ -35,10 +39,10 @@ import { GpuService } from 'app/services/gpu/gpu.service';
     MatButton,
     TestDirective,
     MatCardContent,
-    EmptyComponent,
     MatList,
     MatListItem,
     TranslateModule,
+    EmptyComponent,
   ],
 })
 export class IsolatedGpusCardComponent implements OnInit {

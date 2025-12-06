@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ProductType } from 'app/enums/product-type.enum';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -66,6 +67,14 @@ describe('AccessCardComponent', () => {
         mockCall('auth.terminate_other_sessions'),
       ]),
       provideMockStore({
+        initialState: {
+          systemInfo: {
+            systemInfo: null,
+            productType: ProductType.Enterprise,
+            isIxHardware: false,
+            buildYear: 2024,
+          },
+        },
         selectors: [
           {
             selector: selectPreferences,
@@ -97,9 +106,7 @@ describe('AccessCardComponent', () => {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(SlideInRef),
-      mockProvider(SystemGeneralService, {
-        isEnterprise: jest.fn(() => true),
-      }),
+      mockProvider(SystemGeneralService),
       mockAuth(),
     ],
   });

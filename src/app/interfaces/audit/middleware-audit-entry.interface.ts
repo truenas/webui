@@ -21,7 +21,7 @@ export interface MiddlewareMethodCallData {
 }
 
 export interface MiddlewareAuthenticationEntry extends BaseMiddlewareAuditEntry {
-  event: AuditEvent.Authentication;
+  event: AuditEvent.Authentication | AuditEvent.Logout;
   event_data: MiddlewareAuthenticationEventData;
 }
 
@@ -37,10 +37,10 @@ export interface MiddlewareRebootEntry extends BaseMiddlewareAuditEntry {
   };
 }
 
-export type MiddlewareAuditEntry =
-  | MiddlewareMethodCallEntry
-  | MiddlewareAuthenticationEntry
-  | MiddlewareRebootEntry;
+export type MiddlewareAuditEntry
+  = | MiddlewareMethodCallEntry
+    | MiddlewareAuthenticationEntry
+    | MiddlewareRebootEntry;
 
 export interface AuditMiddlewareCredentials {
   credentials: CredentialType;

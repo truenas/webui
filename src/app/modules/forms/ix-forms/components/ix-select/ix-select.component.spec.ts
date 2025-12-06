@@ -240,9 +240,16 @@ describe('IxSelectComponent', () => {
   });
 
   describe('special cases', () => {
-    it('only subscribes once to options observable', () => {
-      const options1$ = of([]);
-      jest.spyOn(options1$, 'subscribe');
+    it('only executes options observable once despite multiple subscriptions', () => {
+      // Track how many times the observable source is executed
+      let executionCount = 0;
+      const options1$ = new Observable<SelectOption[]>((subscriber) => {
+        executionCount++;
+        subscriber.next([
+          { label: 'Option 1', value: '1' },
+        ]);
+        subscriber.complete();
+      });
 
       spectator = createHost(
         '<ix-select [formControl]="control" [options]="options$"></ix-select>',
@@ -254,13 +261,19 @@ describe('IxSelectComponent', () => {
         },
       );
 
-      // One subscription in the component and another in the template.
-      expect(options1$.subscribe).toHaveBeenCalledTimes(2);
+      // Despite having two subscriptions (one in component, one in template via async pipe),
+      // the observable source should only execute once thanks to shareReplay(1)
+      expect(executionCount).toBe(1);
 
-      const options2$ = of([]);
+      const options2$ = new Observable<SelectOption[]>((subscriber) => {
+        executionCount++;
+        subscriber.next([]);
+        subscriber.complete();
+      });
       spectator.setHostInput('options$', options2$);
-      // Unchanged
-      expect(options1$.subscribe).toHaveBeenCalledTimes(2);
+
+      // New observable should execute once
+      expect(executionCount).toBe(2);
     });
   });
 });

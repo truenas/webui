@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, inject,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton, MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -28,7 +29,7 @@ import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
+import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { AboutNasDialog } from 'app/modules/layout/topbar/about-nas-dialog/about-nas-dialog.component';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
@@ -38,7 +39,7 @@ import { ResilveringIndicatorComponent } from 'app/modules/layout/topbar/resilve
 import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { HarborosConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -46,6 +47,7 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 @UntilDestroy()
@@ -84,7 +86,7 @@ export class TopbarComponent implements OnInit {
   private appStore$ = inject<Store<AppState>>(Store);
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
-  private tnc = inject(HarborosConnectService);
+  private tnc = inject(TruenasConnectService);
   private apiService = inject<ApiService>(ApiService);
   // private matIconRegistry = inject(MatIconRegistry);
   private domSanitizer = inject(DomSanitizer);
@@ -92,6 +94,7 @@ export class TopbarComponent implements OnInit {
   updateIsDone: Subscription;
 
   updateDialog: MatDialogRef<UpdateDialog>;
+  private readonly isEnterprise = toSignal(this.appStore$.select(selectIsEnterprise));
   isHaLicensed = false;
   updateIsRunning = false;
   systemWillRestart = false;
@@ -115,7 +118,6 @@ export class TopbarComponent implements OnInit {
   readonly alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
 
-
   updateText = computed(() => {
     if (this.isHaLicensed || !this.systemWillRestart) {
       return this.translate.instant(helptextGlobal.sysUpdateMessage);
@@ -134,7 +136,7 @@ export class TopbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.systemGeneralService.isEnterprise) {
+    if (this.isEnterprise()) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
         this.cdr.markForCheck();
@@ -158,7 +160,7 @@ export class TopbarComponent implements OnInit {
     //   this.domSanitizer.bypassSecurityTrustResourceUrl('assets/images/logo.svg'),
     // );
 
-    this.store$.select(selectUpdateJob).pipe(untilDestroyed(this)).subscribe((jobs) => {
+    this.store$.select(selectUpdateJobs).pipe(untilDestroyed(this)).subscribe((jobs) => {
       const job = jobs[0];
       if (!job) {
         this.updateIsRunning = false;

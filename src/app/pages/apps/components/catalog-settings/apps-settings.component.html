@@ -52,40 +52,36 @@
           }
         </ix-list>
 
-        @if (hasNvidiaCard$ | async) {
-          <ix-checkbox
-            formControlName="nvidia"
-            [label]="'Install NVIDIA Drivers' | translate"
-            [tooltip]="tooltips.install_nvidia_driver | translate"
-          ></ix-checkbox>
-        }
+        <ix-list
+          formArrayName="registry_mirrors"
+          class="registry-mirrors"
+          [empty]="form.controls.registry_mirrors.controls.length === 0"
+          [label]="'Registry Mirrors' | translate"
+          [tooltip]="tooltips.registry_mirrors | translate"
+          [formArray]="form.controls.registry_mirrors"
+          (add)="addRegistryMirror()"
+        >
+          @for (mirror of form.controls.registry_mirrors.controls; track mirror; let i = $index) {
+            <ix-list-item
+              [formGroupName]="i"
+              [label]="'Registry Mirror' | translate"
+              (delete)="removeRegistryMirror(i)"
+            >
+              <div class="registry-mirror">
+                <ix-input
+                  formControlName="url"
+                  [label]="'Mirror URL' | translate"
+                  [required]="true"
+                ></ix-input>
 
-        <ix-details-table class="mirrors">
-          <ix-details-item
-            [label]="'Registry Mirrors' | translate"
-            [tooltip]="tooltips.registry_mirrors | translate"
-          >
-            <ix-editable>
-              <div view>
-                {{ '{count, plural, =0 {No mirrors} =1 {1 mirror} other {# mirrors}}' | translate : { count: mirrorsCount } }}
+                <ix-checkbox
+                  formControlName="insecure"
+                  [label]="'Insecure' | translate"
+                ></ix-checkbox>
               </div>
-
-              <div edit>
-                <ix-chips
-                  formControlName="secure_registry_mirrors"
-                  [label]="'Secure Mirror URLs' | translate"
-                  [tooltip]="tooltips.secure_registry_mirrors | translate"
-                ></ix-chips>
-
-                <ix-chips
-                  formControlName="insecure_registry_mirrors"
-                  [label]="'Insecure Mirror URLs' | translate"
-                  [tooltip]="tooltips.insecure_registry_mirrors | translate"
-                ></ix-chips>
-              </div>
-            </ix-editable>
-          </ix-details-item>
-        </ix-details-table>
+            </ix-list-item>
+          }
+        </ix-list>
 
         <ix-checkbox
           formControlName="enable_image_updates"

@@ -168,21 +168,21 @@ export interface SmbSetAclEntry extends BaseSmbAuditEntry {
   event_data: SmbFileEventData;
 }
 
-export type SmbAuditEntry =
-  | SmbConnectEntry
-  | SmbDisconnectEntry
-  | SmbCreateEntry
-  | SmbCloseEntry
-  | SmbReadEntry
-  | SmbWriteEntry
-  | SmbOffloadReadEntry
-  | SmbOffloadWriteEntry
-  | SmbRenameEntry
-  | SmbUnlinkEntry
-  | SmbSetQuotaEntry
-  | SmbAuthenticationEntry
-  | SmbSetAttrEntry
-  | SmbSetAclEntry;
+export type SmbAuditEntry
+  = | SmbConnectEntry
+    | SmbDisconnectEntry
+    | SmbCreateEntry
+    | SmbCloseEntry
+    | SmbReadEntry
+    | SmbWriteEntry
+    | SmbOffloadReadEntry
+    | SmbOffloadWriteEntry
+    | SmbRenameEntry
+    | SmbUnlinkEntry
+    | SmbSetQuotaEntry
+    | SmbAuthenticationEntry
+    | SmbSetAttrEntry
+    | SmbSetAclEntry;
 
 export interface AuditSmbServiceData {
   vers: AuditVersions;

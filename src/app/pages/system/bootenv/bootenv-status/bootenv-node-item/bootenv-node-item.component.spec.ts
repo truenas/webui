@@ -63,6 +63,6 @@ describe('BootenvNodeItemComponent', () => {
   });
 
   it('shows pool status', () => {
-    expect(spectator.query('.cell-status')).toHaveText('ONLINE');
+    expect(spectator.query('.cell-status')).toHaveText('Online');
   });
 });

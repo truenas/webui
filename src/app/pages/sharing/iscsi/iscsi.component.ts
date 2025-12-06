@@ -5,7 +5,6 @@ import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { async } from 'rxjs';
 import { filter, startWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -101,6 +100,4 @@ export class IscsiComponent {
   protected openGlobalTargetConfiguration(): void {
     this.slideIn.open(GlobalTargetConfigurationComponent);
   }
-
-  protected readonly async = async;
 }

@@ -56,10 +56,10 @@ export class RegisteredControlDirective implements AfterViewInit, OnDestroy {
     this.controlRegistered = true;
 
     this.registeredName = this.control?.name?.toString()
-    || this.formControlName()?.toString()
-    || this.formArrayName()?.toString()
-    || this.formGroupName()?.toString()
-    || '';
+      || this.formControlName()?.toString()
+      || this.formArrayName()?.toString()
+      || this.formGroupName()?.toString()
+      || '';
 
     const labelValue = this.label() || this.registeredName || 'Unnamed Control';
 

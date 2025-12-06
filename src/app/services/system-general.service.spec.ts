@@ -42,21 +42,6 @@ describe('SystemGeneralService', () => {
     api = spectator.inject(MockApiService);
   });
 
-  describe('loadProductType', () => {
-    it('should load and set product type', () => {
-      spectator.service.loadProductType().subscribe();
-
-      expect(spectator.service.getProductType()).toBe(ProductType.CommunityEdition);
-    });
-  });
-
-  describe('isEnterprise', () => {
-    it('should return false for CommunityEdition product type', () => {
-      spectator.service.loadProductType().subscribe();
-
-      expect(spectator.service.isEnterprise).toBe(false);
-    });
-  });
 
   describe('getCertificates', () => {
     it('should call certificate.query API', () => {

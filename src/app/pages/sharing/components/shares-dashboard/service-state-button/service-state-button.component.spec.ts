@@ -35,11 +35,11 @@ describe('ServiceStateButtonComponent', () => {
   it('shows service status based on service state', async () => {
     spectator.setInput('service', { id: 1, service: ServiceName.Nfs, state: ServiceStatus.Running } as Service);
     spectator.setInput('count', 5);
-    const runningButton = await loader.getHarness(MatButtonHarness.with({ text: 'RUNNING' }));
+    const runningButton = await loader.getHarness(MatButtonHarness.with({ text: 'Running' }));
     expect(runningButton).toExist();
 
     spectator.setInput('service', { id: 1, service: ServiceName.Nfs, state: ServiceStatus.Stopped } as Service);
-    const stoppedButton = await loader.getHarness(MatButtonHarness.with({ text: 'STOPPED' }));
+    const stoppedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stopped' }));
     expect(stoppedButton).toExist();
     expect((await (await stoppedButton.host()).getAttribute('class'))?.split(' ').includes('fn-theme-grey')).toBe(true);
 

@@ -77,9 +77,8 @@ export class NestedTreeDataSource<T extends { children?: T[] }> extends DataSour
   private sort(value: T[]): T[] {
     return value.map((item) => {
       if (item.children?.length) {
-        item.children.sort(this.sortComparer);
+        item.children = this.sort(item.children.toSorted(this.sortComparer)) as T['children'];
       }
-      this.sort(item.children);
       return item;
     });
   }

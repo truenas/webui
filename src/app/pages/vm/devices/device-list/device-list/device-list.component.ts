@@ -3,13 +3,14 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, 
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { VmDeviceType, vmDeviceTypeLabels } from 'app/enums/vm.enum';
+import { VmDeviceType, VmState, vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -64,6 +65,7 @@ import { ExportDiskDialogComponent } from 'app/pages/vm/devices/device-list/expo
     IxIconComponent,
     MatMenu,
     MatMenuItem,
+    MatTooltip,
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
@@ -86,6 +88,7 @@ export class DeviceListComponent implements OnInit {
   searchQuery = signal('');
   devices: VmDevice[] = [];
   vmName = '';
+  isVmRunning = signal(false);
 
   columns = createTable<VmDevice>([
     textColumn({
@@ -120,6 +123,7 @@ export class DeviceListComponent implements OnInit {
     this.setDefaultSort();
     this.loadDevices();
     this.loadVmName();
+    this.subscribeToVmUpdates();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
@@ -131,6 +135,19 @@ export class DeviceListComponent implements OnInit {
     ).subscribe((vms: VirtualMachine[]) => {
       if (vms.length > 0) {
         this.vmName = vms[0].name;
+        this.isVmRunning.set(vms[0].status.state === VmState.Running);
+      }
+    });
+  }
+
+  subscribeToVmUpdates(): void {
+    this.api.subscribe('vm.query').pipe(
+      untilDestroyed(this),
+    ).subscribe((event) => {
+      if (event.id === this.vmId) {
+        this.vmName = event.fields.name;
+        this.isVmRunning.set(event.fields.status.state === VmState.Running);
+        this.cdr.markForCheck();
       }
     });
   }
@@ -187,6 +204,12 @@ export class DeviceListComponent implements OnInit {
     this.matDialog.open(DeviceDetailsComponent, {
       data: device,
     });
+  }
+
+  handleExportDisk(device: VmDevice): void {
+    if (!this.isVmRunning()) {
+      this.onExportDisk(device);
+    }
   }
 
   onExportDisk(device: VmDevice): void {

@@ -32,6 +32,22 @@
     }
   }
 
+  mat-radio-group[disabled] {
+    mat-radio-button label {
+      color: var(--fg2);
+    }
+
+    .mdc-radio__outer-circle {
+      border-color: var(--fg2);
+      opacity: 0.5;
+    }
+
+    .mdc-radio__inner-circle {
+      background-color: var(--fg2);
+      opacity: 0.6;
+    }
+  }
+
   .radio-item {
     flex: 1 1 100%;
 

@@ -1,67 +1,47 @@
 name: Claude Review
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, ready_for_review]
     branches:
       - master
     paths-ignore:
       - 'src/assets/i18n/**'
 jobs:
+  check-ux-team:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/check-ux-team.yml
+
   review:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [check-ux-team]
     if: |
-      !github.event.pull_request.draft &&
+      needs.check-ux-team.outputs.is_member == 'true' &&
       !contains(github.event.pull_request.labels.*.name, 'skip-claude')
     permissions:
       contents: read
-      pull-requests: read
+      issues: write
+      pull-requests: write
       id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 10
 
       - name: Automatic PR Review
-        uses: anthropics/claude-code-action@v0.0.55
+        uses: anthropics/claude-code-action@v1.0.22
         with:
           anthropic_api_key: ${{ secrets.CLAUDE_API_KEY }}
+          model: claude-opus-4-5-20251101
+          track_progress: true
           use_sticky_comment: true
-          timeout_minutes: "20"
-          direct_prompt: |
-            Please review this pull request and provide comprehensive feedback.
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
 
-            Focus on:
-            - Code quality and best practices
-            - Maintainability, good architecture design and patterns
-            - Adherence to project conventions
-            - Potential bugs or issues
-            - Performance considerations
-            - Security implications
+            Please review this pull request using the guidelines below.
+            It should be already checked out in the current directory.
 
-            Do not provide:
-            - summary of what PR does
-            - list of steps you took to review
-            - numeric rating or score
-
-            When describing positive aspects of the PR, just mention them briefly in one - three sentences.
-
-            Ignore small nit-picky issues like formatting or style unless they significantly impact readability.
-
-            Provide constructive feedback with specific suggestions for improvement.
-            Use inline comments to highlight specific areas of concern.
-
-            Some common pitfalls to watch for:
-            - Fixing issue in a specific place without considering other places or overall architecture.
-            - Leaving in unused code.
-            - Forgetting to take into account i18n or accessibility.
-            - Writing tests that interact with methods that should be private or protected.
-
-            Sometimes PRs may contain changes to `src/assets/i18n/**`.
-            Reordering of strings and addition/removal of keys corresponding to code changes are expected and normal.
-
-            Use enthusiastic and positive tone, you can use some emojis.
-
-            Keep review brief and focused:
-            - do not repeat yourself
-            - keep overall assessment concise (one sentence)
+            {{file:.claude/review-prompt.md}}

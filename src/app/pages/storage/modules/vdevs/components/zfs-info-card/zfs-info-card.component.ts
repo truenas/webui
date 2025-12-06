@@ -113,11 +113,15 @@ export class ZfsInfoCardComponent {
   });
 
   readonly canDetachDisk = computed(() => {
+    const parentItem = this.topologyParentItem();
+    if (!parentItem) {
+      return false;
+    }
     return [
       TopologyItemType.Mirror,
       TopologyItemType.Replacing,
       TopologyItemType.Spare,
-    ].includes(this.topologyParentItem().type);
+    ].includes(parentItem.type);
   });
 
   readonly canOfflineDisk = computed(() => {

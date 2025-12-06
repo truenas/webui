@@ -1,32 +1,40 @@
 @if (slot().pool_info; as poolInfo) {
-  @switch (poolInfo.disk_status) {
-    @case (EnclosureDiskStatus.Online) {
-      <ix-icon name="check_circle" class="status-icon status-online"></ix-icon>
-    }
-    @case (EnclosureDiskStatus.Faulted) {
-      <ix-icon name="error" class="status-icon status-faulted"></ix-icon>
-    }
-    @case (EnclosureDiskStatus.Degraded) {
-      <ix-icon name="error" class="status-icon status-degraded"></ix-icon>
-    }
-    @case (EnclosureDiskStatus.Unknown) {
-      <ix-icon name="mdi-help-circle" class="status-icon status-unknown"></ix-icon>
-    }
-    @case (EnclosureDiskStatus.Offline) {
-      <ix-icon name="mdi-minus-circle" class="status-icon status-offline"></ix-icon>
-    }
-    @case (EnclosureDiskStatus.Unavail) {
-      <ix-icon name="mdi-minus-circle" class="status-icon status-unavailable"></ix-icon>
-    }
-    @case (EnclosureDiskStatus.Removed) {
-      <ix-icon name="mdi-minus-circle" class="status-icon status-removed"></ix-icon>
-    }
-    @default {
-      <ix-icon name="check_circle" class="status-icon"></ix-icon>
-    }
+  @if (poolInfo.vdev_type === vDevType.Spare || poolInfo.vdev_type?.includes('spare')) {
+    <ix-icon name="mdi-database-plus" class="status-icon status-spare"></ix-icon>
+  } @else {
+    @switch (poolInfo.disk_status) {
+        @case (EnclosureDiskStatus.Online) {
+          <ix-icon name="check_circle" class="status-icon status-online"></ix-icon>
+        }
+        @case (EnclosureDiskStatus.Faulted) {
+          <ix-icon name="error" class="status-icon status-faulted"></ix-icon>
+        }
+        @case (EnclosureDiskStatus.Degraded) {
+          <ix-icon name="error" class="status-icon status-degraded"></ix-icon>
+        }
+        @case (EnclosureDiskStatus.Unknown) {
+          <ix-icon name="mdi-help-circle" class="status-icon status-unknown"></ix-icon>
+        }
+        @case (EnclosureDiskStatus.Offline) {
+          <ix-icon name="mdi-minus-circle" class="status-icon status-offline"></ix-icon>
+        }
+        @case (EnclosureDiskStatus.Unavail) {
+          <ix-icon name="mdi-minus-circle" class="status-icon status-unavailable"></ix-icon>
+        }
+        @case (EnclosureDiskStatus.Removed) {
+          <ix-icon name="mdi-minus-circle" class="status-icon status-removed"></ix-icon>
+        }
+        @default {
+          <ix-icon name="check_circle" class="status-icon"></ix-icon>
+        }
+      }
   }
 
-  {{ poolInfo.disk_status | mapValue: enclosureDiskStatusLabels | translate }}
+  @if (poolInfo.vdev_type === vDevType.Spare || poolInfo.vdev_type?.includes('spare')) {
+    {{ 'Spare' | translate }}
+  } @else {
+    {{ poolInfo.disk_status | mapValue: enclosureDiskStatusLabels | translate }}
+  }
 }
 @else {
   <ix-icon

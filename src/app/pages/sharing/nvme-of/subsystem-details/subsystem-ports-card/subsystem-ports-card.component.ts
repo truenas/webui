@@ -6,7 +6,9 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { Role } from 'app/enums/role.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { NvmeOfPort, NvmeOfSubsystemDetails } from 'app/interfaces/nvme-of.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -39,6 +41,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TestDirective,
     UiSearchDirective,
     MatTooltip,
+    RequiresRolesDirective,
   ],
 })
 export class SubsystemPortsCardComponent {
@@ -54,6 +57,8 @@ export class SubsystemPortsCardComponent {
   protected helptext = helptextNvmeOf;
 
   protected readonly searchableElements = subsystemPortsCardElements;
+
+  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected onPortAdded(port: NvmeOfPort): void {
     this.nvmeOfService.associatePorts(this.subsystem(), [port])

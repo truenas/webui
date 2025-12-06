@@ -4,12 +4,12 @@ import 'zone.js';
 import 'zone.js/testing';
 import { HighContrastModeDetector } from '@angular/cdk/a11y';
 import { APP_BASE_HREF } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MATERIAL_SANITY_CHECKS, MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -107,7 +107,6 @@ jest.setTimeout(30 * 1000);
 
 defineGlobalsInjections({
   imports: [
-    HttpClientModule,
     MatCheckboxModule,
     MatSlideToggleModule,
     MatMenuModule,
@@ -182,14 +181,11 @@ defineGlobalsInjections({
     MockComponent(ModalHeaderComponent),
   ],
   providers: [
+    provideHttpClient(),
     MockProvider(HighContrastModeDetector),
     {
       provide: APP_BASE_HREF,
       useValue: '',
-    },
-    {
-      provide: MATERIAL_SANITY_CHECKS,
-      useValue: false,
     },
     {
       provide: WINDOW,

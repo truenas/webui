@@ -162,8 +162,7 @@ export class AppBulkUpdateComponent {
   private setInitialValues(): void {
     this.apps.forEach((app) => {
       this.bulkItems.set(app.name, { state: BulkListItemState.Initial, item: app });
-      const [, latestVersion] = app.metadata.app_version.split('_');
-      this.form.addControl(app.name, this.formBuilder.control<string>(latestVersion));
+      this.form.addControl(app.name, this.formBuilder.control<string>(app.latest_version));
     });
   }
 

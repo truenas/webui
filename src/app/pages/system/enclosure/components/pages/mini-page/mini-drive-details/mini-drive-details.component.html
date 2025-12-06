@@ -25,7 +25,11 @@
   <li class="item">
     <div class="label">{{ 'VDEV' | translate }}:</div>
     <div class="value">
-      {{ slot().pool_info?.vdev_name || ('Unassigned' | translate) }}
+      @if (slot().pool_info; as poolInfo) {
+        {{ getFriendlyVdevName(poolInfo.vdev_name, poolInfo.vdev_type) }}
+      } @else {
+        {{ 'Unassigned' | translate }}
+      }
     </div>
   </li>
 

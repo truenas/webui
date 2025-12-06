@@ -87,7 +87,6 @@ export class LicenseComponent {
             disableClose: true,
           })
           // Deliberate. Keeps subscribe effect going after form is closed.
-          // eslint-disable-next-line rxjs-angular/prefer-takeuntil
           .subscribe(() => {
             this.window.location.reload();
           });

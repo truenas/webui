@@ -107,7 +107,7 @@
         ></ix-log-wizard-step>
       </mat-step>
 
-      @if ((!(usesDraidLayout$ | async)) && state.topology[PoolCreationWizardStep.Spare] && !existingPoolHasSpares()) {
+      @if ((!(usesDraidLayout$ | async)) && state.topology[PoolCreationWizardStep.Spare]) {
         <mat-step
           ixStepActivation
           [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Spare)"

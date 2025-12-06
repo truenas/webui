@@ -24,6 +24,7 @@ describe('ViewCertificateDialogComponent', () => {
           name: 'truenas',
           certificate: '---BEGIN CERTIFICATE---',
           extension: 'crt',
+          mimeType: 'application/x-x509-user-cert',
         } as ViewCertificateDialogData,
       },
       mockProvider(DownloadService),
@@ -53,6 +54,7 @@ describe('ViewCertificateDialogComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Download' }));
     await button.click();
 
-    expect(spectator.inject(DownloadService).downloadText).toHaveBeenCalledWith('---BEGIN CERTIFICATE---', 'truenas.crt');
+    const expectedBlob = new Blob(['---BEGIN CERTIFICATE---'], { type: 'application/x-x509-user-cert' });
+    expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(expectedBlob, 'truenas.crt');
   });
 });

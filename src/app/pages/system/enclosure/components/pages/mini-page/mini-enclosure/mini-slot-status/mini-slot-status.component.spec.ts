@@ -1,5 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
@@ -106,5 +107,49 @@ describe('MiniSlotStatusComponent', () => {
     expect(spectator.query('ix-icon')).toHaveAttribute('name', 'mdi-minus-circle');
     expect(spectator.query('ix-icon')).toHaveClass('status-offline');
     expect(spectator.fixture.nativeElement).toHaveText('Offline');
+  });
+
+  it('shows the correct icon and class for Spare drives', () => {
+    spectator = createComponent({
+      props: {
+        slot: {
+          pool_info: {
+            disk_status: EnclosureDiskStatus.Avail,
+            vdev_type: VDevType.Spare,
+          },
+        } as DashboardEnclosureSlot,
+      },
+    });
+
+    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'mdi-database-plus');
+    expect(spectator.query('ix-icon')).toHaveClass('status-spare');
+    expect(spectator.fixture.nativeElement).toHaveText('Spare');
+  });
+
+  it('uses MapValuePipe to display status labels correctly', () => {
+    // Test various statuses through MapValuePipe
+    const statusTests = [
+      { status: EnclosureDiskStatus.Online, expected: 'Online' },
+      { status: EnclosureDiskStatus.Faulted, expected: 'Faulted' },
+      { status: EnclosureDiskStatus.Degraded, expected: 'Degraded' },
+      { status: EnclosureDiskStatus.Unknown, expected: 'Unknown' },
+      { status: EnclosureDiskStatus.Offline, expected: 'Offline' },
+      { status: EnclosureDiskStatus.Unavail, expected: 'Unavailable' },
+      { status: EnclosureDiskStatus.Removed, expected: 'Removed' },
+    ];
+
+    statusTests.forEach(({ status, expected }) => {
+      spectator = createComponent({
+        props: {
+          slot: {
+            pool_info: {
+              disk_status: status,
+            },
+          } as DashboardEnclosureSlot,
+        },
+      });
+
+      expect(spectator.fixture.nativeElement).toHaveText(expected);
+    });
   });
 });

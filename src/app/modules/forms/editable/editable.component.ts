@@ -3,11 +3,12 @@ import { DOCUMENT } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, contentChildren, ElementRef, input, OnDestroy, output, signal, viewChild, inject, afterNextRender, Injector } from '@angular/core';
 import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { fromEvent, Subject, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
+import { combineLatest, fromEvent, Subject, Subscription, timer } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, startWith, takeUntil } from 'rxjs/operators';
+import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FocusService } from 'app/services/focus.service';
 
 /**
  * Editable component that allows inline editing of a value.
@@ -45,10 +46,12 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private document = inject(DOCUMENT);
   private injector = inject(Injector);
+  private validationErrorService = inject(ValidationErrorCommunicationService);
+  private focusService = inject(FocusService);
   private destroy$ = new Subject<void>();
   private clickOutsideSubscription?: Subscription;
   private keydownSubscription?: Subscription;
-  private previouslyFocusedElement?: HTMLElement;
+  private mousedownTarget: HTMLElement | null = null;
 
 
   readonly emptyValue = input(this.translate.instant('Not Set'));
@@ -90,7 +93,10 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.checkVisibleValue();
+    this.setupValidationErrorListener();
+    this.setupReactiveErrorWatcher();
   }
+
 
   ngOnDestroy(): void {
     this.removeClickOutsideListener();
@@ -138,14 +144,13 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   }
 
   open(): void {
-    // Store the currently focused element for restoration later
-    this.previouslyFocusedElement = this.document.activeElement as HTMLElement;
+    this.focusService.captureCurrentFocus();
     this.isOpen.set(true);
     this.addClickOutsideListener();
     this.addKeydownListener();
 
     afterNextRender(() => {
-      this.elementRef.nativeElement.querySelector<HTMLElement>(focusableElements)?.focus();
+      this.focusService.focusFirstFocusableElement(this.elementRef.nativeElement);
       const editSlot = this.elementRef.nativeElement.querySelector<HTMLElement>('.edit-slot');
       if (editSlot) {
         editSlot.scrollIntoView({
@@ -171,18 +176,7 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
     this.removeClickOutsideListener();
     this.removeKeydownListener();
 
-    // Restore focus to the previously focused element
-    if (this.previouslyFocusedElement) {
-      try {
-        if (this.document.contains(this.previouslyFocusedElement)
-          && this.previouslyFocusedElement.isConnected) {
-          this.previouslyFocusedElement.focus();
-        }
-      } catch (error) {
-        console.warn('Failed to restore focus:', error);
-      }
-    }
-    this.previouslyFocusedElement = undefined;
+    this.focusService.restoreFocus();
 
     setTimeout(() => {
       this.checkVisibleValue();
@@ -197,14 +191,41 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
     // Remove existing listener to prevent duplicates
     this.removeClickOutsideListener();
 
-    this.clickOutsideSubscription = fromEvent(this.document, 'click', { capture: true })
+    // Track where mousedown occurred to prevent closing on text selection
+    const mousedown$ = fromEvent<MouseEvent>(this.document, 'mousedown', { capture: true });
+    const mouseup$ = fromEvent<MouseEvent>(this.document, 'mouseup', { capture: true });
+
+    // Subscribe to mousedown to track where the click started
+    const mousedownSubscription = mousedown$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((event: Event) => {
-        const target = event.target as HTMLElement;
-        if (!this.isElementWithin(target)) {
+      .subscribe((event) => {
+        this.mousedownTarget = event.target as HTMLElement;
+      });
+
+    // Subscribe to mouseup to detect actual "click outside" behavior
+    const mouseupSubscription = mouseup$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        const mouseupTarget = event.target as HTMLElement;
+
+        // Only close if both mousedown AND mouseup occurred outside the editable
+        // This prevents closing when selecting text that ends outside the input
+        if (
+          this.mousedownTarget
+          && !this.isElementWithin(this.mousedownTarget)
+          && !this.isElementWithin(mouseupTarget)
+        ) {
           this.tryToClose();
         }
+
+        // Reset the mousedown target after handling
+        this.mousedownTarget = null;
       });
+
+    // Combine both subscriptions
+    this.clickOutsideSubscription = new Subscription();
+    this.clickOutsideSubscription.add(mousedownSubscription);
+    this.clickOutsideSubscription.add(mouseupSubscription);
   }
 
   private addKeydownListener(): void {
@@ -219,6 +240,13 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
 
   private handleKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
+      const globalSearchOverlay = this.document.querySelector('.topbar-panel');
+      if (globalSearchOverlay) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
       this.tryToClose();
     }
   }
@@ -233,5 +261,131 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   private removeKeydownListener(): void {
     this.keydownSubscription?.unsubscribe();
     this.keydownSubscription = undefined;
+  }
+
+  private setupValidationErrorListener(): void {
+    this.validationErrorService.validationErrors$
+      .pipe(
+        filter((errorEvent) => this.isFieldRelevantToThisEditable(errorEvent.fieldName)),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((errorEvent) => {
+        this.handleValidationErrorEvent(errorEvent);
+      });
+  }
+
+  private isFieldRelevantToThisEditable(fieldName: string): boolean {
+    if (!fieldName) {
+      return false;
+    }
+
+    const controls = this.controls();
+
+    // If no controls, this editable doesn't handle any fields
+    if (controls.length === 0) {
+      return false;
+    }
+
+    // Check if any of our form controls match the field name
+    let hasMatchingControl = false;
+    let hasStructuredParent = false;
+
+    for (const control of controls) {
+      if (!control) {
+        continue;
+      }
+
+      // Try to get control name from form group
+      const parent = control.parent;
+      if (parent && 'controls' in parent) {
+        hasStructuredParent = true;
+        const parentControls = parent.controls as Record<string, AbstractControl>;
+        const controlName = Object.keys(parentControls).find((key) => parentControls[key] === control);
+        if (controlName === fieldName) {
+          hasMatchingControl = true;
+          break;
+        }
+      }
+    }
+
+    // If we found a matching control name, use it
+    if (hasMatchingControl) {
+      return true;
+    }
+
+    // If no controls have structured parents (like in tests),
+    // be permissive but only for this editable's controls
+    if (!hasStructuredParent && controls.length > 0) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private handleValidationErrorEvent(errorEvent: { fieldName: string }): void {
+    const { fieldName } = errorEvent;
+    if (!fieldName) {
+      return;
+    }
+
+    // Use RxJS timer instead of setTimeout to handle validation error propagation
+    // This provides better testability and cancellation support
+    timer(50).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe(() => {
+      const hasErrors = this.controls().some((control) => control?.errors && Object.keys(control.errors).length > 0);
+
+      if (hasErrors && !this.isOpen()) {
+        this.open();
+      }
+    });
+  }
+
+
+  private setupReactiveErrorWatcher(): void {
+    afterNextRender(() => {
+      const controls = this.controls();
+      if (controls.length === 0) {
+        return;
+      }
+
+      // Watch for status changes on all controls
+      const statusChanges$ = combineLatest(
+        controls.map((control) => control.statusChanges.pipe(startWith(control.status))),
+      );
+
+      statusChanges$
+        .pipe(
+          distinctUntilChanged(),
+          debounceTime(0),
+          filter(() => !this.isOpen()),
+          takeUntil(this.destroy$),
+        )
+        .subscribe(() => {
+          const hasErrors = this.controls().some(
+            (control) => control?.errors && Object.keys(control.errors).length > 0,
+          );
+          // Only auto-open if errors are present and this isn't initial form setup
+          if (hasErrors && this.shouldAutoOpenForErrors()) {
+            this.open();
+          }
+        });
+    }, { injector: this.injector });
+  }
+
+  private shouldAutoOpenForErrors(): boolean {
+    // Auto-open if any control has been touched (user interaction)
+    if (this.controls().some((control) => control?.touched)) {
+      return true;
+    }
+
+    // For untouched controls, only auto-open if they have both errors AND dirty state
+    // Dirty indicates the value was programmatically set (like saved invalid data)
+    // but not touched by user, which distinguishes it from initial empty state
+    return this.controls().some((control) => {
+      return control?.dirty
+        && control?.errors
+        && Object.keys(control.errors).length > 0;
+    });
   }
 }

@@ -33,7 +33,8 @@ export class ViewCertificateDialog {
 
   onDownloadPressed(): void {
     const fileName = `${this.data.name}.${this.data.extension}`;
+    const blob = new Blob([this.data.certificate], { type: this.data.mimeType });
 
-    this.download.downloadText(this.data.certificate, fileName);
+    this.download.downloadBlob(blob, fileName);
   }
 }

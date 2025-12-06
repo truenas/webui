@@ -96,11 +96,14 @@ export class KerberosKeytabsFormComponent implements OnInit {
 
     const fReader: FileReader = new FileReader();
     if (values.file?.length) {
-      fReader.readAsBinaryString(values.file[0]);
+      fReader.readAsArrayBuffer(values.file[0]);
     }
 
     fReader.onloadend = () => {
-      const file = btoa(fReader.result as string);
+      const arrayBuffer = fReader.result as ArrayBuffer;
+      const bytes = new Uint8Array(arrayBuffer);
+      const binaryString = Array.from(bytes).map((byte) => String.fromCharCode(byte)).join('');
+      const file = btoa(binaryString);
       const payload = {
         name: values.name,
         file,

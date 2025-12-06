@@ -48,6 +48,21 @@ const fakeAppTwo = {
   },
 } as App;
 
+const fakeAppThree = {
+  name: 'test-app-three',
+  version: '1',
+  id: 'test-app-three',
+  state: AppState.Running,
+  upgrade_available: true,
+  human_version: '1.2.9',
+  latest_version: '1.2.10',
+  metadata: {
+    app_version: '1.2.10',
+    icon: 'path-to-icon',
+    train: 'stable',
+  },
+} as App;
+
 const fakeUpgradeSummary: AppUpgradeSummary = {
   changelog: '<h1>Changelog</h1>',
   available_versions_for_upgrade: [
@@ -88,7 +103,7 @@ describe('AppBulkUpdateComponent', () => {
     providers: [
       {
         provide: MAT_DIALOG_DATA,
-        useValue: [fakeAppOne, fakeAppTwo],
+        useValue: [fakeAppOne, fakeAppTwo, fakeAppThree],
       },
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
@@ -109,7 +124,7 @@ describe('AppBulkUpdateComponent', () => {
 
   it('checks dialog confirmation text', () => {
     expect(spectator.fixture.nativeElement).toHaveText(
-      'The following 2 applications will be updated. Are you sure you want to proceed?',
+      'The following 3 applications will be updated. Are you sure you want to proceed?',
     );
   });
 
@@ -120,6 +135,7 @@ describe('AppBulkUpdateComponent', () => {
     const jobArguments: CoreBulkQuery = ['app.upgrade', [
       ['test-app-one', { app_version: '15.3.36' }],
       ['test-app-two'],
+      ['test-app-three'],
     ]];
 
     const updatedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Update' }));
@@ -127,5 +143,13 @@ describe('AppBulkUpdateComponent', () => {
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Updating Apps. Please check on the progress in Task Manager.');
+  });
+
+  it('displays version correctly for apps without underscore in version string', () => {
+    const nativeElement = spectator.fixture.nativeElement as HTMLElement;
+
+    expect(nativeElement).toHaveText('test-app-three');
+    expect(nativeElement).toHaveText('1.2.9');
+    expect(nativeElement).toHaveText('1.2.10');
   });
 });

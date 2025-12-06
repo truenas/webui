@@ -31,7 +31,7 @@ describe('PoolStatusComponent', () => {
 
     spectator.setInput('pool', mockPool);
 
-    expect(spectator.query('.value')).toHaveText(PoolStatus.Online);
+    expect(spectator.query('.value')).toHaveText('Online');
     expect(spectator.query('ngx-skeleton-loader')).toBeFalsy();
   });
 

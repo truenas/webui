@@ -101,6 +101,6 @@ export function updatePreferences(state: PreferencesState, update: Partial<Prefe
     preferences: {
       ...state.preferences,
       ...update,
-    },
+    } as Preferences,
   };
 }

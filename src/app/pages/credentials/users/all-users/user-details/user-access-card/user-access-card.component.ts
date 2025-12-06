@@ -11,6 +11,7 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
+import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
@@ -77,6 +78,11 @@ export class UserAccessCardComponent {
   protected readonly searchableElements = userAccessCardElements;
 
   protected readonly globalTwoFactorConfig = toSignal(this.authService.getGlobalTwoFactorConfig());
+  protected readonly currentUser = toSignal(this.authService.user$);
+
+  protected readonly isCurrentUser = computed(() => {
+    return this.currentUser()?.pw_name === this.user().username;
+  });
 
   readonly sshAccessStatus = computed<string | null>(() => {
     if (this.user().sshpubkey && this.user().ssh_password_enabled) {
@@ -181,5 +187,15 @@ export class UserAccessCardComponent {
       this.snackbar.success(this.translate.instant('Two-Factor Authentication settings cleared'));
       this.reloadUsers.emit();
     });
+  }
+
+  protected formatSudoCommands(commands: string[]): string {
+    if (!commands?.length) {
+      return '';
+    }
+
+    return commands
+      .map((cmd) => (cmd === allCommands ? this.translate.instant('All') : cmd))
+      .join(', ');
   }
 }

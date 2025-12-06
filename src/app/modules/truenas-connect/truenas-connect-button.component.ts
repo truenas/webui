@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { HarborosConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
 @UntilDestroy()
 @Component({
@@ -24,20 +23,12 @@ import { HarborosConnectStatusModalComponent } from 'app/modules/truenas-connect
   styleUrl: './truenas-connect-button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HarborosConnectButtonComponent {
-  private matDialog = inject(MatDialog);
+export class TruenasConnectButtonComponent {
+  private truenasConnectService = inject(TruenasConnectService);
 
   tooltips = helptextTopbar.tooltips;
 
   protected showStatus(): void {
-    this.matDialog.open(HarborosConnectStatusModalComponent, {
-      width: '400px',
-      hasBackdrop: true,
-      panelClass: 'topbar-panel',
-      position: {
-        top: '48px',
-        right: '16px',
-      },
-    });
+    this.truenasConnectService.openStatusModal();
   }
 }

@@ -9,32 +9,30 @@ import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/comp
 import { DataWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/3-data-wizard-step/data-wizard-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
+const fakeInventory = [
+  {
+    identifier: '{serial_lunid}8HG7MZJH_5000cca2700de678',
+    name: 'sdo',
+    number: 2272,
+    serial: '8HG7MZJH',
+    size: 12000138625024,
+    type: 'HDD',
+  },
+  {
+    identifier: '{serial_lunid}8DJ61EBH_5000cca2537bba6c',
+    name: 'sdv',
+    number: 16720,
+    serial: '8DJ61EBH',
+    size: 12000138625024,
+    type: 'HDD',
+  },
+];
+
 describe('DataWizardStepComponent', () => {
   let spectator: Spectator<DataWizardStepComponent>;
 
-  const fakeInventory = [
-    {
-      identifier: '{serial_lunid}8HG7MZJH_5000cca2700de678',
-      name: 'sdo',
-      number: 2272,
-      serial: '8HG7MZJH',
-      size: 12000138625024,
-      type: 'HDD',
-    },
-    {
-      identifier: '{serial_lunid}8DJ61EBH_5000cca2537bba6c',
-      name: 'sdv',
-      number: 16720,
-      serial: '8DJ61EBH',
-      size: 12000138625024,
-      type: 'HDD',
-    },
-  ];
-
   const createComponent = createComponentFactory({
     component: DataWizardStepComponent,
-    imports: [
-    ],
     declarations: [
       MockComponent(LayoutStepComponent),
     ],

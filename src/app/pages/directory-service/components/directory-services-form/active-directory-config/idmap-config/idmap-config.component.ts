@@ -40,7 +40,7 @@ export class IdmapConfigComponent implements OnInit {
     use_default_idmap: [true],
     builtin: this.fb.group({
       name: [null as string, [
-        Validators.pattern(/^(?![0-9]*$)[a-zA-Z0-9.-_!@#$%^&()'{}~]{1,15}$/),
+        Validators.pattern(/^(?![0-9]*$)[a-zA-Z0-9._\-!@#$%^&()'{}~]{1,15}$/),
       ]],
       range_low: [90000001 as number, Validators.required],
       range_high: [100000000 as number, Validators.required],
@@ -49,7 +49,7 @@ export class IdmapConfigComponent implements OnInit {
       idmap_backend: [null as IdmapBackend, Validators.required],
       name: [null as string, [
         Validators.required,
-        Validators.pattern(/^(?![0-9]*$)[a-zA-Z0-9.-_!@#$%^&()'{}~]{1,15}$/),
+        Validators.pattern(/^(?![0-9]*$)[a-zA-Z0-9._\-!@#$%^&()'{}~]{1,15}$/),
       ]],
       range_low: [100000001 as number, [
         Validators.required,

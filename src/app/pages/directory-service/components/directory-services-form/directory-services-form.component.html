@@ -89,6 +89,15 @@
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
+          type="button"
+          ixTest="clear-config"
+          (click)="onClearConfig()"
+        >
+          {{ 'Clear Config' | translate }}
+        </button>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
           type="submit"
           color="primary"
           ixTest="save"

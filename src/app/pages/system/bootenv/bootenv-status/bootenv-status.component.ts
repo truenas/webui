@@ -1,4 +1,3 @@
-import { NestedTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,6 +23,8 @@ import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-d
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
+import { createNestedTreeControl } from 'app/modules/ix-tree/tree-control.factory';
+import { TreeExpansion } from 'app/modules/ix-tree/tree-expansion.interface';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -87,9 +88,10 @@ export class BootStatusListComponent implements OnInit {
 
   protected isLoading = signal(false);
   dataSource: NestedTreeDataSource<VDevNestedDataNode>;
-  treeControl = new NestedTreeControl<VDevNestedDataNode, string>((vdev) => vdev.children, {
-    trackBy: (vdev) => vdev.guid,
-  });
+  treeControl: TreeExpansion<VDevNestedDataNode, string> = createNestedTreeControl<VDevNestedDataNode, string>(
+    (vdev) => vdev.children,
+    { trackBy: (vdev) => vdev.guid },
+  );
 
   poolInstance: PoolInstance;
   readonly hasNestedChild = (_: number, node: VDevNestedDataNode): boolean => {

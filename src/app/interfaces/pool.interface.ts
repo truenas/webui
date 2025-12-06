@@ -48,6 +48,7 @@ export interface Pool {
   algorithm: ZfsProperty<string, string>;
   dedup_table_quota: string | null;
   dedup_table_size: number;
+  all_sed?: boolean;
 }
 
 export type PoolTopology = Record<VDevType, VDevItem[]>;
@@ -74,6 +75,7 @@ export interface CreatePool {
     passphrase?: string;
     key?: string;
   };
+  all_sed?: boolean;
   name: string;
   topology: UpdatePoolTopology;
   checksum?: string;

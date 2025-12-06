@@ -13,4 +13,4 @@ TSTAMP=$(date +%s)
 sed -i'' "s|%%VERTAG%%|${TSTAMP}|g" /etc/nginx/tn-nginx.conf
 
 echo "To connect to WebUI: http://localhost:<port>"
-nginx -c /etc/nginx/tn-nginx.conf 
+nginx -c /etc/nginx/tn-nginx.conf

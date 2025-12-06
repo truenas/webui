@@ -30,8 +30,7 @@ export class RedirectDialog {
   readonly el = viewChild.required<ElementRef<HTMLInputElement>>('el');
 
   copyToClipboard(): void {
-    this.el().nativeElement.focus();
-    this.el().nativeElement.select();
-    document.execCommand('copy');
+    const value = this.el().nativeElement.value;
+    navigator.clipboard.writeText(value);
   }
 }

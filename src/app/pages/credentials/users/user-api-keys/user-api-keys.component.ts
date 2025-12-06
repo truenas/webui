@@ -188,7 +188,7 @@ export class UserApiKeysComponent implements OnInit {
   }
 
   openForm(apiKey?: ApiKey): void {
-    this.slideIn.open(ApiKeyFormComponent, { data: apiKey }).pipe(
+    this.slideIn.open(ApiKeyFormComponent, { data: { editingKey: apiKey } }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.dataProvider.load());

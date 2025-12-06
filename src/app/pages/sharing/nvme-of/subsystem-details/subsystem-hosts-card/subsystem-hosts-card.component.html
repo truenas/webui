@@ -43,6 +43,7 @@
 
               <span class="host-actions">
                 <button
+                  *ixRequiresRoles="requiredRoles"
                   mat-icon-button
                   [ixTest]="['remove-host-association', host.hostnqn]"
                   [matTooltip]="'Remove host from the subsystem' | translate"

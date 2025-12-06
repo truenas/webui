@@ -29,10 +29,10 @@ export interface MockApiJobResponse {
   response: Job | ((params: unknown) => Job);
   id?: number;
 }
-export type CallResponseOrFactory<M extends ApiCallMethod> =
-  | ApiCallResponse<M>
-  | ((params: ApiCallParams<M>) => ApiCallResponse<M>);
+export type CallResponseOrFactory<M extends ApiCallMethod>
+  = | ApiCallResponse<M>
+    | ((params: ApiCallParams<M>) => ApiCallResponse<M>);
 
-export type JobResponseOrFactory<M extends ApiJobMethod> =
-  | Job<ApiJobResponse<M>>
-  | ((params: ApiJobParams<M>) => Job<ApiJobResponse<M>>);
+export type JobResponseOrFactory<M extends ApiJobMethod>
+  = | Job<ApiJobResponse<M>>
+    | ((params: ApiJobParams<M>) => Job<ApiJobResponse<M>>);

@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
+import { VmDeviceType, VmDiskMode, VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -70,7 +70,7 @@ describe('DeviceListComponent', () => {
     providers: [
       mockApi([
         mockCall('vm.device.query', devices),
-        mockCall('vm.query', [{ id: 76, name: 'Test VM' } as VirtualMachine]),
+        mockCall('vm.query', [{ id: 76, name: 'Test VM', status: { state: VmState.Stopped } } as VirtualMachine]),
         mockJob('vm.device.convert', fakeSuccessfulJob(true)),
       ]),
       mockAuth(),
@@ -158,6 +158,44 @@ describe('DeviceListComponent', () => {
       expect(spectator.component.isDiskDevice(null)).toBe(false);
       expect(spectator.component.isDiskDevice(undefined)).toBe(false);
       expect(spectator.component.isDiskDevice({} as VmDevice)).toBe(false);
+    });
+
+    it('sets VM running state based on VM query', () => {
+      const apiService = spectator.inject(ApiService);
+
+      (apiService.call as jest.Mock).mockReturnValue(
+        of([{ id: 76, name: 'Test VM', status: { state: VmState.Running } } as VirtualMachine]),
+      );
+
+      spectator.component.loadVmName();
+
+      expect(spectator.component.isVmRunning()).toBe(true);
+    });
+
+    it('does not open export dialog when handleExportDisk is called and VM is running', () => {
+      const dialog = spectator.inject(MatDialog);
+      spectator.component.isVmRunning.set(true);
+
+      spectator.component.handleExportDisk(devices[1]);
+
+      expect(dialog.open).not.toHaveBeenCalled();
+    });
+
+    it('opens export dialog when handleExportDisk is called and VM is not running', () => {
+      const dialog = spectator.inject(MatDialog);
+      spectator.component.isVmRunning.set(false);
+
+      spectator.component.handleExportDisk(devices[1]);
+
+      expect(dialog.open).toHaveBeenCalledWith(
+        ExportDiskDialogComponent,
+        expect.objectContaining({
+          data: expect.objectContaining({
+            device: devices[1],
+            vmName: 'Test VM',
+          }),
+        }),
+      );
     });
 
     it('opens export dialog when onExportDisk is called', () => {

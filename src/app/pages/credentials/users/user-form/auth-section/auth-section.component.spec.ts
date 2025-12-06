@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
@@ -46,9 +46,10 @@ describe('AuthSectionComponent', () => {
   });
 
   describe('password fields', () => {
-    it('shows Password and "Disable Password" fields when creating a new user', async () => {
+    it('shows Password, Confirm Password and "Disable Password" fields when creating a new user', async () => {
       expect(await form.getValues()).toMatchObject({
         Password: '',
+        'Confirm Password': '',
         'Disable Password': false,
       });
     });
@@ -66,13 +67,79 @@ describe('AuthSectionComponent', () => {
       }));
     });
 
-    it('disables password field when Disable Password is ticked', async () => {
+    it('disables password fields when Disable Password is ticked', async () => {
       await form.fillForm({ 'Disable Password': true });
 
-      expect(await form.getDisabledState()).toEqual({
+      expect(await form.getDisabledState()).toMatchObject({
         Password: true,
+        'Confirm Password': true,
         'Disable Password': false,
       });
+    });
+
+    it('shows validation error when passwords do not match', async () => {
+      await form.fillForm({
+        Password: 'password123',
+        'Confirm Password': 'different-password',
+      });
+
+      const confirmPasswordInput = spectator.query('[formControlName="password_confirm"]');
+      confirmPasswordInput?.dispatchEvent(new Event('blur'));
+      spectator.detectChanges();
+
+      // Check that the validator sets the correct error
+      expect(spectator.component.form.controls.password_confirm.hasError('matchOther')).toBe(true);
+      expect(spectator.component.form.controls.password_confirm.errors?.['matchOther']).toEqual({
+        message: 'Passwords do not match',
+      });
+    });
+
+    it('does not show validation error when passwords match', async () => {
+      await form.fillForm({
+        Password: 'password123',
+        'Confirm Password': 'password123',
+      });
+
+      const confirmPasswordInput = spectator.query('[formControlName="password_confirm"]');
+      confirmPasswordInput?.dispatchEvent(new Event('blur'));
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.password_confirm.hasError('matchOther')).toBe(false);
+    });
+
+    it('shows password confirmation field only when password is entered for editing user', async () => {
+      spectator.setInput('editingUser', { id: 1, username: 'test' });
+      spectator.detectChanges();
+
+      // Initially, no confirmation field should be visible
+      const labels = await form.getLabels();
+      expect(labels).not.toContain('Confirm Password');
+
+      // After entering password, confirmation field should appear
+      await form.fillForm({ 'Change Password': 'newpassword' });
+      const labelsAfter = await form.getLabels();
+      expect(labelsAfter).toContain('Confirm Password');
+    });
+
+    it('validates password confirmation is required for new users', async () => {
+      // For new users, password_confirm should be required
+      expect(spectator.component.form.controls.password_confirm.hasValidator(Validators.required)).toBe(true);
+
+      // Clear the confirmation field
+      await form.fillForm({ 'Confirm Password': '' });
+
+      spectator.component.form.controls.password_confirm.markAsTouched();
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.password_confirm.hasError('required')).toBe(true);
+    });
+
+    it('does not require password confirmation for editing users initially', () => {
+      spectator.setInput('editingUser', { id: 1, username: 'test' });
+      spectator.detectChanges();
+
+      // For editing users, password_confirm should not be required initially
+      expect(spectator.component.form.controls.password_confirm.hasValidator(Validators.required)).toBe(false);
     });
 
     it('checks stig mode fields when "STIG Mode" is true', async () => {
@@ -85,10 +152,33 @@ describe('AuthSectionComponent', () => {
       expect(value).toBe('Generate Temporary One-Time Password');
     });
 
-    it('does not show "Disable Password" when smbAccess is enabled', async () => {
+    it('shows "Disable Password" as disabled and unchecked when smbAccess is enabled', async () => {
       smbAccess.set(true);
+      spectator.detectChanges();
 
-      expect(await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Disable Password' }))).toBeNull();
+      const disablePasswordCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Disable Password' }));
+      expect(await disablePasswordCheckbox.isDisabled()).toBe(true);
+      expect(await disablePasswordCheckbox.getValue()).toBe(false);
+    });
+
+    it('enables "Disable Password" checkbox when smbAccess is disabled', async () => {
+      // Start with SMB enabled
+      smbAccess.set(true);
+      spectator.detectChanges();
+
+      const disablePasswordCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Disable Password' }));
+      expect(await disablePasswordCheckbox.isDisabled()).toBe(true);
+
+      // Disable SMB access
+      smbAccess.set(false);
+      spectator.detectChanges();
+
+      // Checkbox should now be enabled
+      expect(await disablePasswordCheckbox.isDisabled()).toBe(false);
+
+      // Should be able to toggle the checkbox
+      await disablePasswordCheckbox.setValue(true);
+      expect(await disablePasswordCheckbox.getValue()).toBe(true);
     });
 
     // TODO: it shows "Change Password" field when editing a user that has a password
@@ -118,12 +208,19 @@ describe('AuthSectionComponent', () => {
       expect(await loader.getHarness(IxCheckboxHarness.with({ label: 'Allow SSH Login with Password (not recommended)' }))).toBeTruthy();
     });
 
-    it('disables "Allow SSH Login with Password" when password is disabled', async () => {
+    it('provides SSH access through key-based authentication when password is disabled', async () => {
+      // When password is disabled, users can still get SSH access via SSH keys
       await form.fillForm({ 'Disable Password': true });
 
-      expect(await form.getDisabledState()).toMatchObject({
-        'Allow SSH Login with Password (not recommended)': true,
-      });
+      // SSH key field should still be available for SSH access
+      expect(await loader.getHarness(IxTextareaHarness.with({ label: 'Public SSH Key' }))).toBeTruthy();
+
+      // User can enter an SSH key to enable SSH access
+      await form.fillForm({ 'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...' });
+
+      expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(expect.objectContaining({
+        sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
+      }));
     });
 
     it('disables Disable Password when "Allow SSH Login with Password" is set', async () => {
@@ -132,6 +229,16 @@ describe('AuthSectionComponent', () => {
       expect(await form.getDisabledState()).toMatchObject({
         'Disable Password': true,
       });
+    });
+
+    it('requires validation when SSH access is enabled but no authentication method is provided', async () => {
+      // SSH password should not be automatically enabled - users need to choose
+      expect(await form.getValues()).toMatchObject({
+        'Allow SSH Login with Password (not recommended)': false,
+      });
+
+      // Without any authentication method, form should have validation error
+      expect(spectator.component.form.hasError('sshAccessRequired')).toBe(true);
     });
 
     it('updates the store when SSH fields are changed', async () => {
@@ -160,6 +267,133 @@ describe('AuthSectionComponent', () => {
         'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
         'Allow SSH Login with Password (not recommended)': true,
       });
+    });
+
+    it('validates that SSH access requires at least one authentication method', async () => {
+      // Without auto-enable logic, SSH password should be false by default
+      expect(spectator.component.form.value.ssh_password_enabled).toBe(false);
+
+      // Form should have SSH access validation error since no authentication method is configured
+      expect(spectator.component.form.hasError('sshAccessRequired')).toBe(true);
+
+      // Enable SSH password authentication should remove the error
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      expect(spectator.component.form.hasError('sshAccessRequired')).toBe(false);
+
+      // Disable SSH password authentication should bring back the error
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': false });
+      expect(spectator.component.form.hasError('sshAccessRequired')).toBe(true);
+
+      // Adding SSH key should remove SSH access error
+      await form.fillForm({ 'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...' });
+      expect(spectator.component.form.hasError('sshAccessRequired')).toBe(false);
+    });
+  });
+
+  describe('SSH password enabled validation', () => {
+    beforeEach(() => {
+      sshAccess.set(true);
+    });
+
+    it('shows validation error when SSH password enabled without valid home directory', async () => {
+      spectator.setInput('homeDirectory', '');
+      spectator.setInput('shell', '/usr/bin/bash');
+      spectator.detectChanges();
+
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(true);
+      expect(spectator.component.form.getError('ssh_password_enabled')).toEqual({
+        message: 'Cannot be enabled without a valid home path and login shell.',
+      });
+    });
+
+    it('shows validation error when SSH password enabled without valid shell', async () => {
+      spectator.setInput('homeDirectory', '/mnt/tank/user');
+      spectator.setInput('shell', '/usr/sbin/nologin');
+      spectator.detectChanges();
+
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(true);
+      expect(spectator.component.form.getError('ssh_password_enabled')).toEqual({
+        message: 'Cannot be enabled without a valid home path and login shell.',
+      });
+    });
+
+    it('does not show validation error when SSH password enabled with valid home and shell', async () => {
+      spectator.setInput('homeDirectory', '/mnt/tank/user');
+      spectator.setInput('shell', '/usr/bin/bash');
+      spectator.detectChanges();
+
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
+    });
+
+    it('revalidates when home directory changes', async () => {
+      spectator.setInput('homeDirectory', '');
+      spectator.setInput('shell', '/usr/bin/bash');
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(true);
+
+      spectator.setInput('homeDirectory', '/mnt/tank/user');
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
+    });
+
+    it('revalidates when shell changes', async () => {
+      spectator.setInput('homeDirectory', '/mnt/tank/user');
+      spectator.setInput('shell', '/usr/sbin/nologin');
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': true });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(true);
+
+      spectator.setInput('shell', '/usr/bin/bash');
+      spectator.detectChanges();
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
+    });
+
+    it('does not validate when SSH password is not enabled', async () => {
+      spectator.setInput('homeDirectory', '');
+      spectator.setInput('shell', '/usr/sbin/nologin');
+      spectator.detectChanges();
+
+      await form.fillForm({ 'Allow SSH Login with Password (not recommended)': false });
+
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
+    });
+
+    it('does not validate when SSH access is disabled even if password checkbox is checked', async () => {
+      // Setup initial state with SSH access enabled and valid home/shell
+      spectator.setInput('homeDirectory', '/mnt/tank/user');
+      spectator.setInput('shell', '/usr/bin/bash');
+      spectator.detectChanges();
+
+      // Fill in required password fields to make form valid
+      await form.fillForm({
+        Password: 'test-password',
+        'Confirm Password': 'test-password',
+        'Allow SSH Login with Password (not recommended)': true,
+      });
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
+
+      // Now disable SSH access (simulating unchecking SSH Access in allowed-access-section)
+      sshAccess.set(false);
+      spectator.detectChanges();
+
+      // Change shell to nologin (which happens when shell access is disabled)
+      spectator.setInput('shell', '/usr/sbin/nologin');
+      spectator.detectChanges();
+
+      // The ssh_password_enabled validator should not run because SSH access is disabled
+      // This validates the fix for the reported bug https://ixsystems.atlassian.net/browse/NAS-138307
+      expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
     });
   });
 });

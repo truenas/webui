@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, input, computed, signal, inject } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -11,7 +11,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter, switchMap, map,
   tap,
-  throttleTime,
   catchError, of,
 } from 'rxjs';
 import { kb } from 'app/constants/bits.constant';
@@ -26,6 +25,7 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
+import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -54,6 +54,7 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
     NetworkChartComponent,
     TranslateModule,
     NetworkSpeedPipe,
+    WidgetStaleDataNoticeComponent,
   ],
 })
 export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
@@ -78,26 +79,32 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
     initialValue: { isLoading: true, value: null } as LoadingState<DashboardNetworkInterface>,
   });
 
+  protected networkDataState = toSignal(
+    this.resources.networkInterfaceUpdatesWithStaleDetection().pipe(takeUntilDestroyed()),
+  );
+
   protected interfaceUsage = toSignal(this.interface$.pipe(
     filter((state) => Boolean(!state.isLoading && state.value)),
     map((state) => state.value.name),
-    switchMap((interfaceId) => this.resources.realtimeUpdates$.pipe(
-      throttleTime(1000),
-      map((update) => update.fields.interfaces[interfaceId]),
+    switchMap((interfaceId) => this.networkDataState$.pipe(
+      filter((state) => Boolean(state?.value)),
+      map((state) => state.value[interfaceId]),
+      filter(Boolean),
+      tap((realtimeUpdate) => {
+        this.cachedNetworkStats.update((cachedStats) => {
+          return [
+            ...cachedStats,
+            [
+              realtimeUpdate.received_bytes_rate * 8,
+              realtimeUpdate.sent_bytes_rate * 8,
+            ],
+          ].slice(-3600);
+        });
+      }),
     )),
-    filter(Boolean),
-    tap((realtimeUpdate) => {
-      this.cachedNetworkStats.update((cachedStats) => {
-        return [
-          ...cachedStats,
-          [
-            realtimeUpdate.received_bytes_rate * 8,
-            realtimeUpdate.sent_bytes_rate * 8,
-          ],
-        ].slice(-3600);
-      });
-    }),
   ));
+
+  private networkDataState$ = toObservable(this.networkDataState);
 
   protected linkState = computed(() => {
     const interfaceUsage = this.interfaceUsage();
@@ -115,8 +122,11 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
     return this.isFullSize() ? fullSizeNetworkWidgetAspectRatio : halfSizeNetworkWidgetAspectRatio;
   });
 
+  protected isStale = computed(() => this.networkDataState()?.isStale ?? false);
   protected isLoading = computed(() => {
-    return this.interface().isLoading || !this.initialNetworkStats() || !this.interfaceUsage() || !this.networkStats();
+    const hasNoData = this.interface().isLoading || !this.initialNetworkStats()
+      || !this.interfaceUsage() || !this.networkStats();
+    return hasNoData && !this.isStale();
   });
 
   protected initialNetworkStats = toSignal(this.interface$.pipe(

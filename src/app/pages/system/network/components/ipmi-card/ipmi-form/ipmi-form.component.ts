@@ -8,12 +8,11 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { forkJoin, Observable, of } from 'rxjs';
+import { combineLatest, forkJoin, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiQueryParams, IpmiUpdate } from 'app/interfaces/ipmi.interface';
@@ -36,6 +35,7 @@ import { RedirectService } from 'app/services/redirect.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -202,6 +202,9 @@ export class IpmiFormComponent implements OnInit {
       this.form.controls.vlan_id.removeValidators([Validators.required]);
     }
     this.form.controls.vlan_id.updateValueAndValidity();
+
+    // Update manage button state after form values are set
+    this.updateManageButtonState();
   }
 
   private loadDataOnRemoteControllerChange(): void {
@@ -296,12 +299,23 @@ export class IpmiFormComponent implements OnInit {
         this.form.controls.vlan_id.updateValueAndValidity();
       });
 
-    this.form.controls.ipaddress.valueChanges
+    // Listen to both DHCP and IP address changes to update manage button state
+    combineLatest([
+      this.form.controls.dhcp.valueChanges,
+      this.form.controls.ipaddress.valueChanges,
+    ])
       .pipe(untilDestroyed(this))
-      .subscribe((value) => {
-        this.isManageButtonDisabled = (value === '0.0.0.0' || value === '' || this.form.controls.dhcp.value || this.form.controls.ipaddress.invalid);
-        this.managementIp = value;
+      .subscribe(() => {
+        this.updateManageButtonState();
       });
+  }
+
+  private updateManageButtonState(): void {
+    const ipAddress = this.form.controls.ipaddress.value;
+    const isIpInvalid = this.form.controls.ipaddress.invalid;
+
+    this.managementIp = ipAddress;
+    this.isManageButtonDisabled = !ipAddress || ipAddress === '0.0.0.0' || isIpInvalid;
   }
 
   private loadFlashingStatus(): Observable<unknown> {
@@ -314,21 +328,25 @@ export class IpmiFormComponent implements OnInit {
   }
 
   private loadFailoverData(): Observable<unknown> {
-    if (this.systemGeneralService.getProductType() !== ProductType.Enterprise) {
-      return of(null);
-    }
-
-    return this.store$.select(selectIsHaLicensed).pipe(
-      switchMap((isHaLicensed) => {
-        if (!isHaLicensed) {
+    return this.store$.select(selectIsEnterprise).pipe(
+      switchMap((isEnterprise) => {
+        if (!isEnterprise) {
           return of(null);
         }
 
-        return this.api.call('failover.node').pipe(
-          tap((node) => {
-            this.createControllerOptions(node);
-            this.loadDataOnRemoteControllerChange();
-            this.form.controls.apply_remote.setValue(false);
+        return this.store$.select(selectIsHaLicensed).pipe(
+          switchMap((isHaLicensed) => {
+            if (!isHaLicensed) {
+              return of(null);
+            }
+
+            return this.api.call('failover.node').pipe(
+              tap((node) => {
+                this.createControllerOptions(node);
+                this.loadDataOnRemoteControllerChange();
+                this.form.controls.apply_remote.setValue(false);
+              }),
+            );
           }),
         );
       }),

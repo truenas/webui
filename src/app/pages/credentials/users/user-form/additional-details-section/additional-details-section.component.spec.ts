@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
@@ -123,8 +122,8 @@ describe('AdditionalDetailsSectionComponent', () => {
       const table = await loader.getHarness(DetailsTableHarness);
       const values = await table.getValues();
 
-      expect(values['Sudo Commands']).toContain('ALL');
-      expect(values['Sudo Commands']).toContain('rm -rf /');
+      expect(values['Sudo Commands']).toContain('Allowed Sudo Commands: All');
+      expect(values['Sudo Commands']).toContain('Allowed Sudo Commands (No Password): rm -rf /');
     });
 
     it('shows "Not Set" when sudo commands are empty', async () => {
@@ -227,7 +226,7 @@ describe('AdditionalDetailsSectionComponent', () => {
         Groups: 'Primary Group: test-group  Auxiliary Groups:  test-group-2, test-group-3',
         'Home Directory': '/home/test',
         Shell: '/usr/bin/bash',
-        'Sudo Commands': 'Allowed sudo commands: ALL  Allowed Sudo Commands (No Password): rm -rf /',
+        'Sudo Commands': 'Allowed Sudo Commands: All  Allowed Sudo Commands (No Password): rm -rf /',
       });
 
       expect(spectator.inject(UserFormStore).updateSetupDetails).toHaveBeenCalledWith({
@@ -249,7 +248,7 @@ describe('AdditionalDetailsSectionComponent', () => {
   });
 
   describe('home directory fields', () => {
-    it('disables permissions when home directory is empty', async () => {
+    it('normalizes empty home directory to default path and hides permissions', async () => {
       spectator = createComponent({
         props: { editingUser: { ...mockUser, home: '' } },
       });
@@ -259,11 +258,12 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
 
-      const checkbox = await loader.getAllHarnesses(MatCheckboxHarness.with({ label: /Default Permissions/ }));
-      await checkbox[0].uncheck();
+      // Empty home should be normalized to /var/empty
+      expect(spectator.component.form.controls.home.value).toBe('/var/empty');
 
-      const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
-      expect(await perms.isDisabled()).toBe(true);
+      // Permissions should not be shown for /var/empty
+      const perms = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      expect(perms).toBeNull();
     });
 
     it('enables permissions after setting a home directory', async () => {
@@ -283,8 +283,10 @@ describe('AdditionalDetailsSectionComponent', () => {
       await explorer.setValue('/mnt/tank/user');
       spectator.detectChanges();
 
-      const checkbox = await loader.getAllHarnesses(MatCheckboxHarness.with({ label: /Default Permissions/ }));
-      await checkbox[0].uncheck();
+      const checkbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Default Permissions' }));
+      if (checkbox) {
+        await checkbox.setValue(false);
+      }
 
       const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
       expect(await perms.isDisabled()).toBe(false);
@@ -300,8 +302,10 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
 
-      const checkbox = await loader.getAllHarnesses(MatCheckboxHarness.with({ label: /Default Permissions/ }));
-      await checkbox[0].uncheck();
+      const checkbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Default Permissions' }));
+      if (checkbox) {
+        await checkbox.setValue(false);
+      }
 
       const perms = await loader.getHarness(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
       await perms.setValue('755');
@@ -310,7 +314,90 @@ describe('AdditionalDetailsSectionComponent', () => {
       await createCheckbox.setValue(true);
       spectator.detectChanges();
 
-      expect(await perms.getValue()).toBe('700');
+      // When "Create Home Directory" is checked, it should set default permissions and hide the permissions component
+      expect(spectator.component.form.controls.default_permissions.value).toBe(true);
+      expect(spectator.component.form.controls.home_mode.value).toBe('700');
+
+      // The permissions component should be hidden when default_permissions is true
+      const hiddenPerms = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+      expect(hiddenPerms).toBeNull();
+    });
+
+    it('remains visible when home directory path is cleared and defaults to /var/empty', async () => {
+      spectator = createComponent({
+        props: { editingUser: mockUser },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+
+      // Open the editable field
+      await homeEditable.open();
+
+      // Get the explorer and clear the value
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      await explorer.setValue('');
+      spectator.detectChanges();
+
+      // Close the editable by pressing escape
+      await homeEditable.tryToClose();
+
+      // The field should still be visible and show the normalized default path
+      expect(await homeEditable.getShownValue()).toBe('/var/empty');
+
+      // Verify that the form control was normalized to the default path
+      expect(spectator.component.form.controls.home.value).toBe('/var/empty');
+
+      // Verify that the store was updated with the default path
+      expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(
+        expect.objectContaining({
+          home: '/var/empty',
+        }),
+      );
+
+      // Should be able to open and edit again
+      await homeEditable.open();
+      const reopenedExplorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      expect(await reopenedExplorer.isDisabled()).toBe(false);
+    });
+
+    it('handles empty → valid → empty flow correctly', async () => {
+      spectator = createComponent({
+        props: { editingUser: { ...mockUser, home: '' } },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      // Start with empty home - should be normalized to /var/empty
+      expect(spectator.component.form.controls.home.value).toBe('/var/empty');
+
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+      await homeEditable.open();
+
+      // Set a valid path
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      await explorer.setValue('/mnt/tank/users/testuser');
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.home.value).toBe('/mnt/tank/users/testuser');
+      expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(
+        expect.objectContaining({
+          home: '/mnt/tank/users/testuser',
+        }),
+      );
+
+      // Clear the path again
+      await explorer.setValue('');
+      spectator.detectChanges();
+
+      // Should be normalized back to /var/empty
+      expect(spectator.component.form.controls.home.value).toBe('/var/empty');
+      expect(spectator.inject(UserFormStore).updateUserConfig).toHaveBeenCalledWith(
+        expect.objectContaining({
+          home: '/var/empty',
+        }),
+      );
     });
   });
 
@@ -334,6 +421,88 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(await explorer.isDisabled()).toBe(true);
       expect(await createCheckbox.isDisabled()).toBe(true);
       expect(perms).toBeNull();
+    });
+  });
+
+  describe('default permissions checkbox', () => {
+    it('syncs checkbox state based on form values', () => {
+      spectator = createComponent();
+
+      // Test default permissions (700)
+      spectator.component.form.patchValue({ home_mode: '700' });
+      expect(spectator.component.form.controls.default_permissions.value).toBe(true);
+
+      // Test custom permissions (755)
+      spectator.component.form.patchValue({ home_mode: '755' });
+      expect(spectator.component.form.controls.default_permissions.value).toBe(false);
+
+      // Test setting default_permissions back to true
+      spectator.component.form.patchValue({ default_permissions: true });
+      expect(spectator.component.form.controls.home_mode.value).toBe('700');
+    });
+
+    it('always includes home_mode in user config updates', () => {
+      spectator = createComponent();
+      const updateSpy = jest.spyOn(spectator.inject(UserFormStore), 'updateUserConfig');
+
+      // Set custom permissions
+      spectator.component.form.patchValue({
+        home_mode: '755',
+        default_permissions: false,
+      });
+
+      // Trigger the form value change subscription
+      spectator.detectChanges();
+
+      expect(updateSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          home_mode: '755',
+        }),
+      );
+    });
+
+    it('hides permissions entirely for users with /var/empty home path', async () => {
+      spectator = createComponent({
+        props: { editingUser: { ...mockUser, home: '/var/empty' } },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      // Trigger the setupEditUserForm logic
+      spectator.detectChanges();
+
+      // Should hide the entire permissions section for /var/empty users
+      expect(spectator.component.shouldShowPermissions()).toBe(false);
+
+      // The permissions components should not be present in DOM
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+      await homeEditable.open();
+
+      const defaultPermsCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Default Permissions' }));
+      const permissionsComponent = await loader.getHarnessOrNull(IxPermissionsHarness.with({ label: 'Home Directory Permissions' }));
+
+      expect(defaultPermsCheckbox).toBeNull();
+      expect(permissionsComponent).toBeNull();
+    });
+
+    it('shows permissions for users with regular home directories', async () => {
+      spectator = createComponent({
+        props: { editingUser: { ...mockUser, home: '/home/test' } },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      spectator.detectChanges();
+
+      // Should show permissions section for regular home directories
+      expect(spectator.component.shouldShowPermissions()).toBe(true);
+
+      // The permissions components should be present in DOM
+      const table = await loader.getHarness(DetailsTableHarness);
+      const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
+      await homeEditable.open();
+
+      const defaultPermsCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Default Permissions' }));
+      expect(defaultPermsCheckbox).not.toBeNull();
     });
   });
 });

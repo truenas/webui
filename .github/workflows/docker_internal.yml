@@ -1,4 +1,6 @@
 name: 'Internal PR Docker Build'
+permissions:
+  contents: read
 
 on:
   pull_request:

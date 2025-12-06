@@ -17,6 +17,11 @@ describe('BlockingActionGuardService', () => {
   const mockIsAuthenticated$ = new BehaviorSubject(false);
   const mockIsFullAdmin$ = new BehaviorSubject(true);
 
+  const mockDialogRef = {
+    afterClosed: jest.fn(() => of(true)),
+    componentInstance: {},
+  };
+
   const createService = createServiceFactory({
     service: BlockingActionGuardService,
     providers: [
@@ -30,9 +35,7 @@ describe('BlockingActionGuardService', () => {
         isFullAdmin: jest.fn(() => mockIsFullAdmin$),
       }),
       mockProvider(MatDialog, {
-        open: jest.fn(() => ({
-          afterClosed: () => of(true),
-        })),
+        open: jest.fn(() => mockDialogRef),
       }),
       mockProvider(DialogService, {
         fullScreenDialog: jest.fn(() => of(undefined)),
@@ -69,7 +72,7 @@ describe('BlockingActionGuardService', () => {
     expect(isAllowed).toBe(true);
   });
 
-  it('allows system page access for full admin regardless of 2FA status', async () => {
+  it('shows 2FA dialog for full admin accessing system pages when 2FA is required', async () => {
     mockIsAuthenticated$.next(true);
     mockIsTwoFactorSetupRequired$.next(true);
     mockIsFullAdmin$.next(true);
@@ -78,6 +81,15 @@ describe('BlockingActionGuardService', () => {
       spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/system/upgrade' } as RouterStateSnapshot),
     );
     expect(isAllowed).toBe(true);
+
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(TwoFactorSetupDialog, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      disableClose: true,
+    });
   });
 
   it('shows two-factor warning when 2FA is enabled and user has not configured it', async () => {
@@ -97,6 +109,27 @@ describe('BlockingActionGuardService', () => {
       panelClass: 'full-screen-modal',
       disableClose: true,
     });
+  });
+
+  it('shows 2FA dialog only once per session', async () => {
+    mockIsAuthenticated$.next(true);
+    mockIsTwoFactorSetupRequired$.next(true);
+
+    const routeSnapshot = {} as ActivatedRouteSnapshot;
+    const stateSnapshot = { url: '/dashboard' } as RouterStateSnapshot;
+
+    // First navigation should show dialog
+    await firstValueFrom(spectator.service.canActivateChild(routeSnapshot, stateSnapshot));
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledTimes(1);
+
+    // Simulate dialog closed
+    mockDialogRef.afterClosed.mockReturnValue(of(true));
+
+    // Second navigation should NOT show dialog again (already checked this session)
+    await firstValueFrom(spectator.service.canActivateChild(routeSnapshot, { url: '/storage' } as RouterStateSnapshot));
+
+    // Should still be called only once
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledTimes(1);
   });
 
   it('prevents opening multiple two-factor dialogs simultaneously', async () => {

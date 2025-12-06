@@ -11,7 +11,6 @@ import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -56,9 +55,7 @@ describe('SystemSecurityFormComponent', () => {
         jobDialog: jest.fn(() => ({ afterClosed: () => of(undefined) })),
       }),
       mockProvider(SnackbarService),
-      mockProvider(SystemGeneralService, {
-        getProductType: () => ProductType.CommunityEdition,
-      }),
+      mockProvider(SystemGeneralService),
       mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => fakeSystemSecurityConfig),

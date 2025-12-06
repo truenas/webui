@@ -63,6 +63,9 @@ export class ErrorDialog {
   }
 
   protected downloadLogs(): void {
+    if (!this.error.logs) {
+      return;
+    }
     const logsId = this.error.logs.id;
     this.api.call('core.job_download_logs', [logsId, `${logsId}.log`]).pipe(
       switchMap((url) => {

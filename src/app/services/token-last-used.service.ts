@@ -5,7 +5,6 @@ import {
   debounceTime,
   filter, map, Observable, switchMap, tap,
 } from 'rxjs';
-import { oneMinuteMillis } from 'app/constants/time.constant';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
@@ -20,9 +19,10 @@ export class TokenLastUsedService {
   private window = inject<Window>(WINDOW);
 
   private tokenLastUsed$ = new BehaviorSubject<string | null>(this.window.localStorage.getItem('tokenLastUsed'));
+  private readonly defaultLifetimeSeconds = 300; // 5 minutes default
 
   /**
-   * Check if token was used no more than 5 minutes ago (default)
+   * Check if token was used within the configured session timeout
   */
   get isTokenWithinTimeline$(): Observable<boolean> {
     return this.tokenLastUsed$.pipe(
@@ -31,13 +31,22 @@ export class TokenLastUsedService {
           return false;
         }
 
-        const tokenRecentUsageLifetime = 5 * oneMinuteMillis;
+        const storedLifetime = this.window.localStorage.getItem('tokenLifetime');
+        const lifetimeSeconds = storedLifetime ? Number(storedLifetime) : this.defaultLifetimeSeconds;
+        const tokenRecentUsageLifetime = lifetimeSeconds * 1000;
         const tokenLastUsedTime = new Date(tokenLastUsed).getTime();
         const currentTime = Date.now();
 
         return currentTime - tokenLastUsedTime <= tokenRecentUsageLifetime;
       }),
     );
+  }
+
+  /**
+   * Update the session lifetime value used for token validation
+   */
+  updateTokenLifetime(lifetimeSeconds: number): void {
+    this.window.localStorage.setItem('tokenLifetime', String(lifetimeSeconds));
   }
 
   setupTokenLastUsedValue(user$: Observable<LoggedInUser | null>): void {
@@ -59,5 +68,6 @@ export class TokenLastUsedService {
   clearTokenLastUsed(): void {
     this.tokenLastUsed$.next(null);
     this.window.localStorage.removeItem('tokenLastUsed');
+    this.window.localStorage.removeItem('tokenLifetime');
   }
 }

@@ -17,9 +17,10 @@ import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
+import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { hasNonUniqueSerial, hasExportedPool } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
+import { hasNonUniqueSerial, hasExportedPool, isSedCapable } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 
 @UntilDestroy()
 @Component({
@@ -81,9 +82,17 @@ export class PoolWarningsComponent implements OnInit {
   }
 
   private initUnsafeDisksWarnings(): void {
-    this.diskStore.selectableDisks$.pipe(untilDestroyed(this)).subscribe((allDisks) => {
-      this.nonUniqueSerialDisks = allDisks.filter(hasNonUniqueSerial);
-      this.disksWithExportedPools = allDisks.filter(hasExportedPool);
+    combineLatest([
+      this.diskStore.selectableDisks$,
+      this.store.encryptionType$,
+    ]).pipe(untilDestroyed(this)).subscribe(([allDisks, encryptionType]) => {
+      // Filter disks based on SED encryption requirement
+      const filteredDisks = encryptionType === EncryptionType.Sed
+        ? allDisks.filter(isSedCapable)
+        : allDisks;
+
+      this.nonUniqueSerialDisks = filteredDisks.filter(hasNonUniqueSerial);
+      this.disksWithExportedPools = filteredDisks.filter(hasExportedPool);
 
       this.setNonUniqueSerialDisksWarning();
       this.setExportedPoolOptions();

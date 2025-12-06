@@ -42,7 +42,7 @@
             [sourceName]="'Connected Initiators' | translate"
             [targetName]="'Allowed Initiators' | translate"
             [source]="allInitiators()"
-            [destination]="selectedInitiators()"
+            [(destination)]="selectedInitiators"
           ></ix-dual-listbox>
 
           <button

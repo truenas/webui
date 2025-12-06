@@ -68,6 +68,11 @@ export const sharingRoutes: Routes = [
         data: { title: T('NVMe-oF'), breadcrumb: null },
         loadChildren: () => import('app/pages/sharing/nvme-of/nvme-of.routes').then((module) => module.nvmeOfRoutes),
       },
+      {
+        path: 'webshare',
+        data: { title: T('WebShare'), breadcrumb: null },
+        loadChildren: () => import('app/pages/sharing/webshare/webshare.routes').then((module) => module.webShareRoutes),
+      },
     ],
   },
 ];

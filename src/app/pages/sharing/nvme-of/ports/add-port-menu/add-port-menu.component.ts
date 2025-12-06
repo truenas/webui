@@ -7,6 +7,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { sortBy } from 'lodash-es';
 import { filter } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { Role } from 'app/enums/role.enum';
 import { NvmeOfPort } from 'app/interfaces/nvme-of.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -31,6 +33,7 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
     MatMenuTrigger,
     PortDescriptionComponent,
     MatDivider,
+    RequiresRolesDirective,
   ],
 })
 export class AddPortMenuComponent {
@@ -50,6 +53,8 @@ export class AddPortMenuComponent {
     const unusedPorts = this.allPorts().filter((port) => !usedPortIds.includes(port.id));
     return sortBy(unusedPorts, ['addr_trtype', 'addr_traddr', 'addr_trsvcid']);
   });
+
+  protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
   protected openPortForm(): void {
     this.slideIn

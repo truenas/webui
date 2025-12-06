@@ -15,7 +15,10 @@
       </button>
     </div>
 
-    <div [class]="['container', size()]">
+    @if (isStale()) {
+      <ix-widget-stale-data-notice></ix-widget-stale-data-notice>
+    } @else {
+      <div [class]="['container', size()]">
       <div class="stats">
         <h2 class="total-memory">
           @if (isLoading()) {
@@ -24,7 +27,7 @@
               [theme]="{ height: 42, background: 'var(--alt-bg2)', opacity: 0.25 }"
             ></ngx-skeleton-loader>
           } @else {
-            {{ formatUnit(memory().physical_memory_total) }}
+            {{ formatUnit(memoryState().value.physical_memory_total) }}
             <span class="units">GiB</span>
           }
         </h2>
@@ -77,6 +80,7 @@
           ></canvas>
         </ng-template>
       </div>
-    </div>
+      </div>
+    }
   </mat-card-content>
 </mat-card>

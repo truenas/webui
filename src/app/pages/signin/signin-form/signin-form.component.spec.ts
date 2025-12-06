@@ -11,6 +11,7 @@ import { LoginResult } from 'app/enums/login-result.enum';
 import { LoginExResponse, LoginExResponseType, LoginSuccessResponse } from 'app/interfaces/auth.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SigninFormComponent } from 'app/pages/signin/signin-form/signin-form.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 
@@ -38,11 +39,11 @@ describe('SigninFormComponent', () => {
         stream: jest.fn((key: string) => of(key)),
         currentLang: 'en',
       }),
+      mockProvider(SnackbarService),
       mockProvider(SigninStore, {
         setLoadingState: jest.fn(),
         handleSuccessfulLogin: jest.fn(),
         isLoading$: of(false),
-        showSnackbar: jest.fn(),
         getLoginErrorMessage: jest.fn((result, isOtp) => {
           if (result === LoginResult.NoAccess) {
             return 'User is lacking permissions to access WebUI.';
@@ -123,7 +124,7 @@ describe('SigninFormComponent', () => {
 
       expect(signinStore.setLoadingState).toHaveBeenCalledWith(false);
       expect(signinStore.getLoginErrorMessage).toHaveBeenCalledWith(LoginResult.NoAccess);
-      expect(signinStore.showSnackbar).toHaveBeenCalledWith('User is lacking permissions to access WebUI.');
+      expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('User is lacking permissions to access WebUI.');
     });
 
     it('handles wrong credentials login failure', async () => {
@@ -142,7 +143,7 @@ describe('SigninFormComponent', () => {
 
       expect(signinStore.setLoadingState).toHaveBeenCalledWith(false);
       expect(signinStore.getLoginErrorMessage).toHaveBeenCalledWith(LoginResult.NoToken);
-      expect(signinStore.showSnackbar).toHaveBeenCalledWith('Wrong username or password. Please try again.');
+      expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('Wrong username or password. Please try again.');
       expect(spectator.query('.error p')).toHaveText('Wrong username or password. Please try again.');
     });
 
@@ -201,7 +202,7 @@ describe('SigninFormComponent', () => {
 
       expect(signinStore.getLoginErrorMessage).toHaveBeenCalledWith(LoginResult.NoAccess, true);
       expect(spectator.component.form.value.otp).toBe('');
-      expect(signinStore.showSnackbar).toHaveBeenCalledWith('User is lacking permissions to access WebUI.');
+      expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('User is lacking permissions to access WebUI.');
     });
   });
 });

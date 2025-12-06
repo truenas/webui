@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -52,6 +53,7 @@ import { TaskService } from 'app/services/task.service';
     TestDirective,
     RouterLink,
     IxIconComponent,
+    MatTooltip,
     RequiresRolesDirective,
     MatButton,
     IxTableComponent,
@@ -142,6 +144,14 @@ export class SnapshotTaskCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(snapshotTasks$);
     this.getSnapshotTasks();
+
+    this.api.subscribe('pool.snapshottask.query').pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.getSnapshotTasks();
+      },
+    });
   }
 
   protected getSnapshotTasks(): void {
@@ -161,9 +171,6 @@ export class SnapshotTaskCardComponent implements OnInit {
       switchMap(() => this.api.call('pool.snapshottask.delete', [snapshotTask.id])),
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
-        this.getSnapshotTasks();
-      },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
       },
@@ -174,9 +181,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     this.slideIn.open(SnapshotTaskFormComponent, { data: row, wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.getSnapshotTasks();
-    });
+    ).subscribe();
   }
 
   protected onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
@@ -184,11 +189,7 @@ export class SnapshotTaskCardComponent implements OnInit {
       .call('pool.snapshottask.update', [snapshotTask.id, { enabled: !snapshotTask.enabled } as PeriodicSnapshotTaskUi])
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: () => {
-          this.getSnapshotTasks();
-        },
         error: (error: unknown) => {
-          this.getSnapshotTasks();
           this.errorHandler.showErrorModal(error);
         },
       });

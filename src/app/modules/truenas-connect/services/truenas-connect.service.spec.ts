@@ -6,18 +6,18 @@ import {
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import {
-  HarborosConnectStatus,
-  HarborosConnectStatusReason,
+  TruenasConnectStatus,
+  TruenasConnectStatusReason,
 } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { HarborosConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
-import { HarborosConnectService, resetGlobalHarborosConnectWindow } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { TruenasConnectService, resetGlobalTruenasConnectWindow } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
-describe('HarborosConnectService', () => {
-  let spectator: SpectatorService<HarborosConnectService>;
-  const config: HarborosConnectConfig = {
+describe('TruenasConnectService', () => {
+  let spectator: SpectatorService<TruenasConnectService>;
+  const config: TruenasConnectConfig = {
     id: 1,
     ips: [''],
     interfaces: [],
@@ -28,8 +28,8 @@ describe('HarborosConnectService', () => {
     account_service_base_url: 'https://account-service-test.ixsystems.com',
     leca_service_base_url: 'https://leca-test.ixsystems.com',
     heartbeat_url: 'https://heartbeat-test.ixsystems.com',
-    status: HarborosConnectStatus.Configured,
-    status_reason: HarborosConnectStatusReason[HarborosConnectStatus.Configured],
+    status: TruenasConnectStatus.Configured,
+    status_reason: TruenasConnectStatusReason[TruenasConnectStatus.Configured],
     registration_details: {
       scopes: [],
       account_id: '',
@@ -44,13 +44,13 @@ describe('HarborosConnectService', () => {
   const url
     = 'https://tnc.ixsystems.net/en/#/auth/login?redirectUrl=%2Fsystem%2Fregister%3Fversion%3D25.10.0-MASTER-20250409-224807%26model%3DUNKNOWN%26system_id%3D249cdb8d-5bfc-49f0-981b-f2184eb7992e%26token%3Deb48fa51-6e6e-4f4f-ab30-976bb209bfa6';
   const createService = createServiceFactory({
-    service: HarborosConnectService,
+    service: TruenasConnectService,
     providers: [
       mockApi([
         mockCall('tn_connect.config', config),
         mockCall('tn_connect.update', {
           ...config,
-          status: HarborosConnectStatus.Disabled,
+          status: TruenasConnectStatus.Disabled,
         }),
         mockCall('tn_connect.generate_claim_token'),
         mockCall('tn_connect.get_registration_uri', url),
@@ -67,49 +67,31 @@ describe('HarborosConnectService', () => {
   beforeEach(() => {
     spectator = createService();
     // Reset global window reference for clean test state
-    resetGlobalHarborosConnectWindow();
+    resetGlobalTruenasConnectWindow();
   });
 
   it('should disable a tnc service', () => {
     const errorHandler = spectator.inject(ErrorHandlerService);
-    spectator.service.config.set(config);
     spectator.service.disableService().subscribe();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'tn_connect.update',
       [{
         enabled: false,
-        ips: [''],
-        interfaces: [],
-        use_all_interfaces: true,
       }],
     );
     expect(errorHandler.withErrorHandler).toHaveBeenCalled();
   });
 
-  it('should throw error when config is null in disableService', () => {
-    spectator.service.config.set(null);
-    expect(() => spectator.service.disableService()).toThrow('HarborOS Connect config is not available');
-  });
-
   it('should enable a tnc service', () => {
     const errorHandler = spectator.inject(ErrorHandlerService);
-    spectator.service.config.set(config);
     spectator.service.enableService().subscribe();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'tn_connect.update',
       [{
         enabled: true,
-        ips: [''],
-        interfaces: [],
-        use_all_interfaces: true,
       }],
     );
     expect(errorHandler.withErrorHandler).toHaveBeenCalled();
-  });
-
-  it('should throw error when config is null in enableService', () => {
-    spectator.service.config.set(null);
-    expect(() => spectator.service.enableService()).toThrow('HarborOS Connect config is not available');
   });
 
   it('should generate claim_token', () => {
@@ -140,7 +122,7 @@ describe('HarborosConnectService', () => {
     );
     expect(windowMock.open).toHaveBeenCalledWith(
       url,
-      'HarborOSConnect',
+      'TrueNASConnect',
       'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes',
     );
     expect(mockTncWindow.focus).toHaveBeenCalled();
@@ -160,11 +142,11 @@ describe('HarborosConnectService', () => {
 
     // First connection - should open new window
     const firstUrl = 'https://first-url.com';
-    spectator.service.openHarborosConnectWindow(firstUrl);
+    spectator.service.openTruenasConnectWindow(firstUrl);
     expect(windowMock.open).toHaveBeenCalledTimes(1);
     expect(windowMock.open).toHaveBeenCalledWith(
       firstUrl,
-      'HarborOSConnect',
+      'TrueNASConnect',
       'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes',
     );
     expect(mockTncWindow.focus).toHaveBeenCalledTimes(1);
@@ -174,11 +156,11 @@ describe('HarborosConnectService', () => {
 
     // Second connection - should reuse existing window with empty URL (focus only)
     const secondUrl = 'https://second-url.com';
-    spectator.service.openHarborosConnectWindow(secondUrl);
+    spectator.service.openTruenasConnectWindow(secondUrl);
 
     // Should call open again but with empty URL for focus only
     expect(windowMock.open).toHaveBeenCalledTimes(2);
-    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'HarborOSConnect');
+    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'TrueNASConnect');
     expect(mockTncWindow.focus).toHaveBeenCalledTimes(1); // Called once in the second attempt
     // URL should NOT be changed - no navigation
     expect(mockTncWindow.location.href).toBe(''); // Original URL unchanged
@@ -207,7 +189,7 @@ describe('HarborosConnectService', () => {
 
     // First connection - open window
     const firstUrl = 'https://first-url.com';
-    spectator.service.openHarborosConnectWindow(firstUrl);
+    spectator.service.openTruenasConnectWindow(firstUrl);
     expect(windowMock.open).toHaveBeenCalledTimes(1);
 
     // Simulate window being closed
@@ -215,13 +197,13 @@ describe('HarborosConnectService', () => {
 
     // Second connection - should open new window since previous is closed
     const secondUrl = 'https://second-url.com';
-    spectator.service.openHarborosConnectWindow(secondUrl);
+    spectator.service.openTruenasConnectWindow(secondUrl);
 
     // Should open new window since previous was closed
     expect(windowMock.open).toHaveBeenCalledTimes(2);
     expect(windowMock.open).toHaveBeenLastCalledWith(
       secondUrl,
-      'HarborOSConnect',
+      'TrueNASConnect',
       'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes',
     );
     expect(mockNewWindow.focus).toHaveBeenCalled();
@@ -237,11 +219,11 @@ describe('HarborosConnectService', () => {
     windowMock.open = jest.fn().mockReturnValue(mockTncWindow);
 
     const testUrl = 'https://test-url.com';
-    spectator.service.openHarborosConnectWindow(testUrl);
+    spectator.service.openTruenasConnectWindow(testUrl);
 
     expect(windowMock.open).toHaveBeenCalledWith(
       testUrl,
-      'HarborOSConnect',
+      'TrueNASConnect',
       'menubar=yes,location=yes,resizable=yes,scrollbars=yes,status=yes',
     );
     expect(mockTncWindow.focus).toHaveBeenCalled();
@@ -260,7 +242,7 @@ describe('HarborosConnectService', () => {
     windowMock.open = jest.fn().mockReturnValue(mockTncWindow);
 
     // First connection - open window
-    spectator.service.openHarborosConnectWindow(sameUrl);
+    spectator.service.openTruenasConnectWindow(sameUrl);
     expect(windowMock.open).toHaveBeenCalledTimes(1);
 
     // Reset focus mock and location.href setter
@@ -268,11 +250,11 @@ describe('HarborosConnectService', () => {
     const originalHref = mockTncWindow.location.href;
 
     // Second connection with same URL - should only focus, not navigate
-    spectator.service.openHarborosConnectWindow(sameUrl);
+    spectator.service.openTruenasConnectWindow(sameUrl);
 
     // Should call open again with empty URL (focus only) and not change location
     expect(windowMock.open).toHaveBeenCalledTimes(2); // Called twice: first with URL, second with empty
-    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'HarborOSConnect');
+    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'TrueNASConnect');
     expect(mockTncWindow.focus).toHaveBeenCalledTimes(1);
     expect(mockTncWindow.location.href).toBe(originalHref); // URL unchanged
   });
@@ -291,18 +273,18 @@ describe('HarborosConnectService', () => {
     windowMock.open = jest.fn().mockReturnValue(mockTncWindow);
 
     // First connection
-    spectator.service.openHarborosConnectWindow(firstUrl);
+    spectator.service.openTruenasConnectWindow(firstUrl);
     expect(windowMock.open).toHaveBeenCalledTimes(1);
 
     // Reset focus mock
     mockTncWindow.focus.mockClear();
 
     // Second connection with different URL - should only focus, no navigation
-    spectator.service.openHarborosConnectWindow(secondUrl);
+    spectator.service.openTruenasConnectWindow(secondUrl);
 
     // Should call open with empty URL (focus only) and not navigate
     expect(windowMock.open).toHaveBeenCalledTimes(2); // Called twice: first with URL, second with empty
-    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'HarborOSConnect');
+    expect(windowMock.open).toHaveBeenNthCalledWith(2, '', 'TrueNASConnect');
     expect(mockTncWindow.focus).toHaveBeenCalledTimes(1);
     expect(mockTncWindow.location.href).toBe(firstUrl); // URL unchanged - stays at original
   });
@@ -311,89 +293,5 @@ describe('HarborosConnectService', () => {
     expect(spectator.service.config()).toEqual(config);
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('tn_connect.config');
     expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('tn_connect.config');
-  });
-
-  it('should force use_all_interfaces to true when both ips and interfaces are empty for enableService', () => {
-    const configWithEmptyArrays = {
-      ...config,
-      ips: [] as string[],
-      interfaces: [] as string[],
-      use_all_interfaces: false, // Start with false
-    };
-    spectator.service.config.set(configWithEmptyArrays);
-    spectator.service.enableService().subscribe();
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
-      'tn_connect.update',
-      [{
-        enabled: true,
-        ips: [],
-        interfaces: [],
-        use_all_interfaces: true, // Should be forced to true
-      }],
-    );
-  });
-
-  it('should force use_all_interfaces to true when both ips and interfaces are empty for disableService', () => {
-    const configWithEmptyArrays = {
-      ...config,
-      ips: [] as string[],
-      interfaces: [] as string[],
-      use_all_interfaces: false, // Start with false
-    };
-    spectator.service.config.set(configWithEmptyArrays);
-    spectator.service.disableService().subscribe();
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
-      'tn_connect.update',
-      [{
-        enabled: false,
-        ips: [],
-        interfaces: [],
-        use_all_interfaces: true, // Should be forced to true
-      }],
-    );
-  });
-
-  it('should preserve use_all_interfaces when ips array has values', () => {
-    const configWithIps = {
-      ...config,
-      ips: ['192.168.1.100'],
-      interfaces: [] as string[],
-      use_all_interfaces: false, // Should be preserved
-    };
-    spectator.service.config.set(configWithIps);
-    spectator.service.enableService().subscribe();
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
-      'tn_connect.update',
-      [{
-        enabled: true,
-        ips: ['192.168.1.100'],
-        interfaces: [],
-        use_all_interfaces: false, // Should remain false
-      }],
-    );
-  });
-
-  it('should preserve use_all_interfaces when interfaces array has values', () => {
-    const configWithInterfaces = {
-      ...config,
-      ips: [] as string[],
-      interfaces: ['eth0'],
-      use_all_interfaces: false, // Should be preserved
-    };
-    spectator.service.config.set(configWithInterfaces);
-    spectator.service.enableService().subscribe();
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
-      'tn_connect.update',
-      [{
-        enabled: true,
-        ips: [],
-        interfaces: ['eth0'],
-        use_all_interfaces: false, // Should remain false
-      }],
-    );
   });
 });

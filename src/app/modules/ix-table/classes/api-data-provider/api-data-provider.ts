@@ -62,20 +62,38 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
     );
   }
 
-  override setSorting(sorting: TableSort<ApiCallResponseType<T>>): void {
+  /**
+   * Sets the sorting configuration for the data provider.
+   * @param sorting - The sorting configuration to apply
+   * @param skipLoad - When true, prevents triggering a data reload. Useful during component
+   *                   initialization to set multiple parameters before the first load.
+   *                   Avoids race conditions by skipping the emptyType$ check and load trigger.
+   */
+  override setSorting(sorting: TableSort<ApiCallResponseType<T>>, skipLoad = false): void {
     this.sorting = sorting;
-    this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
-      this.sortingStrategy.handleCurrentPage(this.load.bind(this));
-    });
+    if (!skipLoad) {
+      this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
+        this.sortingStrategy.handleCurrentPage(this.load.bind(this));
+      });
+    }
     this.sortingOrPaginationUpdate.emit();
   }
 
-  override setPagination(pagination: TablePagination): void {
+  /**
+   * Sets the pagination configuration for the data provider.
+   * @param pagination - The pagination configuration to apply
+   * @param skipLoad - When true, prevents triggering a data reload. Useful during component
+   *                   initialization to set multiple parameters before the first load.
+   *                   Avoids race conditions by skipping the emptyType$ check and load trigger.
+   */
+  override setPagination(pagination: TablePagination, skipLoad = false): void {
     this.pagination = pagination;
 
-    this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
-      this.paginationStrategy.handleCurrentPage(this.load.bind(this));
-    });
+    if (!skipLoad) {
+      this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
+        this.paginationStrategy.handleCurrentPage(this.load.bind(this));
+      });
+    }
     this.sortingOrPaginationUpdate.emit();
   }
 

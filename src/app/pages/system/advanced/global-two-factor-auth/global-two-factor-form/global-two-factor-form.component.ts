@@ -68,7 +68,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     ssh: [false],
   });
 
-  enableWarning: string = this.translate.instant('Once enabled, users will be required to set up two factor authentication next time they login.');
+  enableWarning: string = this.translate.instant('Once enabled, users will be prompted to set up two-factor authentication next time they login. They can choose to skip the setup if desired.');
 
   protected twoFactorConfig: GlobalTwoFactorConfig;
 
@@ -105,9 +105,9 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     };
     const confirmation$ = shouldWarn
       ? this.dialogService.confirm({
-        title: this.translate.instant('Warning!'),
-        message: this.translate.instant('Changing global 2FA settings might cause user secrets to reset. Which means users will have to reconfigure their 2FA. Are you sure you want to continue?'),
-      })
+          title: this.translate.instant('Warning!'),
+          message: this.translate.instant('Changing global 2FA settings might cause user secrets to reset. Which means users will have to reconfigure their 2FA. Are you sure you want to continue?'),
+        })
       : of(true);
     confirmation$.pipe(
       filter(Boolean),

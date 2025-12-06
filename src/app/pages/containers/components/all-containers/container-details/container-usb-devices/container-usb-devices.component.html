@@ -1,0 +1,30 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'USB Devices' | translate }}
+    </h3>
+
+    <ix-add-usb-device-menu></ix-add-usb-device-menu>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (isLoadingDevices()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      @for (device of shownDevices(); track device.id) {
+        <div class="device">
+          <span class="device-description">{{ getDeviceDescription(device) }}</span>
+
+          <ix-device-actions-menu
+            [device]="device"
+            [showEdit]="false"
+            [isDisabled]="isContainerRunning()"
+            [disabledTooltip]="isContainerRunning() ? ('Cannot modify devices while container is running. Please stop the container first.' | translate) : null"
+          ></ix-device-actions-menu>
+        </div>
+      } @empty {
+        <div class="no-devices">{{ 'No USB devices added.' | translate }}</div>
+      }
+    }
+  </mat-card-content>
+</mat-card>

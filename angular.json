@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "harboros-scale-ui": {
+    "truenas-scale-ui": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -24,8 +24,10 @@
             },
             "index": "src/index.html",
             "tsConfig": "src/tsconfig.app.json",
-            "polyfills": ["src/polyfills.ts"],
-            "assets": ["src/assets"],
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
+            "assets": ["src/assets", "src/sw.js"],
             "stylePreprocessorOptions": {
               "sass": {
                 "silenceDeprecations": [
@@ -35,13 +37,18 @@
                   "import"
                 ]
               },
-              "includePaths": ["./src/assets/styles", "./node_modules"]
+              "includePaths": [
+                "./src/assets/styles",
+                "./node_modules"
+              ]
             },
             "styles": [
               "node_modules/@bugsplat/angular-tree-component/css/angular-tree-component.css",
               "src/assets/styles/index.scss"
             ],
-            "scripts": ["node_modules/marked/marked.min.js"],
+            "scripts": [
+              "node_modules/marked/marked.min.js"
+            ],
             "extractLicenses": false,
             "sourceMap": true,
             "optimization": false,
@@ -67,18 +74,18 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "buildTarget": "harboros-scale-ui:build"
+            "buildTarget": "truenas-scale-ui:build"
           },
           "configurations": {
             "production": {
-              "buildTarget": "harboros-scale-ui:build:production"
+              "buildTarget": "truenas-scale-ui:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n",
           "options": {
-            "buildTarget": "harboros-scale-ui:build"
+            "buildTarget": "truenas-scale-ui:build"
           }
         }
       }

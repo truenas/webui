@@ -90,6 +90,18 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
 
     this.setFormValues();
     this.setNameDisabledStatus();
+
+    // Force validation to run after validators are added
+    this.form.controls.name.updateValueAndValidity();
+
+    // Reset touched state when inputs change (e.g., when form is opened for a new dataset)
+    // Must be done AFTER updateValueAndValidity to prevent showing errors immediately
+    if (!this.existing()) {
+      this.form.controls.name.markAsUntouched();
+      this.form.controls.name.markAsPristine();
+    }
+
+    this.emitValidity();
   }
 
   ngOnInit(): void {
@@ -99,7 +111,13 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
 
     merge(this.form.statusChanges, this.datasetPresetForm.statusChanges)
       .pipe(untilDestroyed(this))
-      .subscribe((status) => this.formValidityChange.emit(status === 'VALID'));
+      .subscribe(() => this.emitValidity());
+
+    // Ensure form starts in untouched state to prevent validation errors from showing immediately
+    this.form.markAsUntouched();
+
+    // Emit initial validity state
+    this.emitValidity();
   }
 
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {
@@ -112,7 +130,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
 
     return {
       ...payload,
-      name: payload.name && this.form.controls.name.valid ? `${this.parent()?.name}/${payload.name}` : null,
+      name: payload.name ? `${this.parent()?.name}/${payload.name}` : '',
     };
   }
 
@@ -172,7 +190,14 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
           smbNameControl.patchValue('');
         }
 
+        // Update validity after changing validators
+        smbNameControl.updateValueAndValidity();
         this.cdr.markForCheck();
       });
+  }
+
+  private emitValidity(): void {
+    const isValid = this.form.valid && this.datasetPresetForm.valid;
+    this.formValidityChange.emit(isValid);
   }
 }

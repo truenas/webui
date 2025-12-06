@@ -56,16 +56,15 @@ describe('WidgetInterfaceComponent', () => {
           isLoading: false,
           error: null,
         }),
-        realtimeUpdates$: of({
-          fields: {
-            interfaces: {
-              ens1: {
-                received_bytes_rate: 2048,
-                sent_bytes_rate: 4096,
-                link_state: LinkState.Up,
-              },
+        networkInterfaceUpdatesWithStaleDetection: () => of({
+          value: {
+            ens1: {
+              received_bytes_rate: 2048,
+              sent_bytes_rate: 4096,
+              link_state: LinkState.Up,
             },
           },
+          isStale: false,
         }),
         networkInterfaceLastHourStats: jest.fn(() => of([
           {
@@ -120,8 +119,8 @@ describe('WidgetInterfaceComponent', () => {
 
     it('shows interface traffic', fakeAsync(() => {
       spectator.tick(1);
-      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kB/s');
-      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kB/s');
+      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
+      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
     }));
 
     it('shows a chart with network traffic', () => {
@@ -170,8 +169,8 @@ describe('WidgetInterfaceComponent', () => {
 
       expect(spectator.query('.info-header-title')).toHaveText('ens1');
       expect(spectator.query('.info-list-item.state')).toHaveText('LINK STATE UP');
-      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kB/s');
-      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kB/s');
+      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
+      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
     });
   });
 
@@ -204,8 +203,8 @@ describe('WidgetInterfaceComponent', () => {
 
     it('shows interface traffic', fakeAsync(() => {
       spectator.tick(1);
-      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kB/s');
-      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kB/s');
+      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
+      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
     }));
 
     it('shows a chart with network traffic', () => {
@@ -277,8 +276,8 @@ describe('WidgetInterfaceComponent', () => {
 
     it('shows interface traffic', fakeAsync(() => {
       spectator.tick(1);
-      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kB/s');
-      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kB/s');
+      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
+      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
     }));
 
     it('ensures chart is not rendered', fakeAsync(() => {

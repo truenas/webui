@@ -60,20 +60,20 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
       switchMap((poolId) => {
         return this.api.call('pool.query', [[['id', '=', +poolId]]]);
       }),
-      tapResponse(
-        (pools) => {
+      tapResponse({
+        next: (pools) => {
           this.patchState({
             pool: cloneDeep(pools[0]),
             isLoading: false,
           });
         },
-        (error: unknown) => {
+        error: (error: unknown) => {
           this.patchState({
             isLoading: false,
           });
           this.errorHandler.showErrorModal(error);
         },
-      ),
+      }),
       filter((pools) => !!pools),
     );
   });

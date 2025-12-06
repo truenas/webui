@@ -153,15 +153,15 @@ export interface TtyRecordEntry extends BaseSystemAuditEntry {
   event_data: TtyRecordEventData;
 }
 
-export type SystemAuditEntry =
-  | SystemGenericEntry
-  | SystemLoginEntry
-  | SystemCredentialEntry
-  | SystemEscalationEntry
-  | ExportEntry
-  | PrivilegedEntry
-  | IdentityEntry
-  | TimeChangeEntry
-  | ModuleLoadEntry
-  | ServiceEntry
-  | TtyRecordEntry;
+export type SystemAuditEntry
+  = | SystemGenericEntry
+    | SystemLoginEntry
+    | SystemCredentialEntry
+    | SystemEscalationEntry
+    | ExportEntry
+    | PrivilegedEntry
+    | IdentityEntry
+    | TimeChangeEntry
+    | ModuleLoadEntry
+    | ServiceEntry
+    | TtyRecordEntry;

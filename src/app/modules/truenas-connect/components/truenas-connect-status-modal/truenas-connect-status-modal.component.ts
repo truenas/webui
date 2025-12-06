@@ -10,14 +10,14 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, catchError, finalize, of, switchMap, Observable,
 } from 'rxjs';
-import { TncStatus, HarborosConnectStatus, HarborosConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
-import { HarborosConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { TncStatus, TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { HarborosConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
-import { HarborosConnectStatusDisplayComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-display/truenas-connect-status-display.component';
-import { HarborosConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
+import { TruenasConnectStatusDisplayComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-display/truenas-connect-status-display.component';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
 @UntilDestroy()
 @Component({
@@ -33,20 +33,20 @@ import { HarborosConnectService } from 'app/modules/truenas-connect/services/tru
     MatTooltip,
     TranslateModule,
     TestDirective,
-    HarborosConnectSpinnerComponent,
-    HarborosConnectStatusDisplayComponent,
+    TruenasConnectSpinnerComponent,
+    TruenasConnectStatusDisplayComponent,
   ],
   templateUrl: './truenas-connect-status-modal.component.html',
   styleUrl: './truenas-connect-status-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HarborosConnectStatusModalComponent {
-  protected tnc = inject(HarborosConnectService);
+export class TruenasConnectStatusModalComponent {
+  protected tnc = inject(TruenasConnectService);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
 
-  readonly HarborosConnectStatus = HarborosConnectStatus;
-  readonly HarborosConnectStatusReason = HarborosConnectStatusReason;
+  readonly TruenasConnectStatus = TruenasConnectStatus;
+  readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
   readonly TncStatus = TncStatus;
 
   protected isLoading = signal(false);
@@ -56,24 +56,24 @@ export class HarborosConnectStatusModalComponent {
 
   protected status = computed(() => {
     switch (this.tnc.config()?.status) {
-      case HarborosConnectStatus.Configured:
+      case TruenasConnectStatus.Configured:
         return TncStatus.Active;
-      case HarborosConnectStatus.ClaimTokenMissing:
-      case HarborosConnectStatus.RegistrationFinalizationWaiting:
+      case TruenasConnectStatus.ClaimTokenMissing:
+      case TruenasConnectStatus.RegistrationFinalizationWaiting:
         return TncStatus.Waiting;
-      case HarborosConnectStatus.RegistrationFinalizationSuccess:
-      case HarborosConnectStatus.CertGenerationInProgress:
-      case HarborosConnectStatus.CertGenerationSuccess:
-      case HarborosConnectStatus.CertRenewalInProgress:
-      case HarborosConnectStatus.CertRenewalSuccess:
+      case TruenasConnectStatus.RegistrationFinalizationSuccess:
+      case TruenasConnectStatus.CertGenerationInProgress:
+      case TruenasConnectStatus.CertGenerationSuccess:
+      case TruenasConnectStatus.CertRenewalInProgress:
+      case TruenasConnectStatus.CertRenewalSuccess:
         return TncStatus.Connecting;
-      case HarborosConnectStatus.RegistrationFinalizationFailed:
-      case HarborosConnectStatus.RegistrationFinalizationTimeout:
-      case HarborosConnectStatus.CertGenerationFailed:
-      case HarborosConnectStatus.CertConfigurationFailure:
-      case HarborosConnectStatus.CertRenewalFailure:
+      case TruenasConnectStatus.RegistrationFinalizationFailed:
+      case TruenasConnectStatus.RegistrationFinalizationTimeout:
+      case TruenasConnectStatus.CertGenerationFailed:
+      case TruenasConnectStatus.CertConfigurationFailure:
+      case TruenasConnectStatus.CertRenewalFailure:
         return TncStatus.Failed;
-      case HarborosConnectStatus.Disabled:
+      case TruenasConnectStatus.Disabled:
       default:
         // Show "Get Connected" button for disabled state instead of dead-end "disabled" message
         return TncStatus.Waiting;
@@ -83,7 +83,7 @@ export class HarborosConnectStatusModalComponent {
   protected open(): void {
     const baseUrl = this.tnc.config()?.tnc_base_url;
     if (baseUrl) {
-      this.tnc.openHarborosConnectWindow(baseUrl);
+      this.tnc.openTruenasConnectWindow(baseUrl);
     }
   }
 
@@ -91,16 +91,19 @@ export class HarborosConnectStatusModalComponent {
     this.isConnecting.set(true);
 
     // Enable service first if it's disabled
-    let enableIfNeeded$: Observable<HarborosConnectConfig> = of(this.tnc.config());
-    if (this.tnc.config()?.status === HarborosConnectStatus.Disabled) {
+    let enableIfNeeded$: Observable<TruenasConnectConfig> = of(this.tnc.config());
+    if (this.tnc.config()?.status === TruenasConnectStatus.Disabled) {
       enableIfNeeded$ = this.tnc.enableService();
     }
 
     enableIfNeeded$
       .pipe(
-        // NOW check if we need token generation based on current status
-        switchMap(() => {
-          if (this.tnc.config()?.status === HarborosConnectStatus.ClaimTokenMissing) {
+        // NOW check if we need token generation based on updated config
+        switchMap((config) => {
+          if (
+            config?.status === TruenasConnectStatus.ClaimTokenMissing
+            || config?.status === TruenasConnectStatus.RegistrationFinalizationTimeout
+          ) {
             return this.tnc.generateToken();
           }
           return of('');
@@ -111,7 +114,7 @@ export class HarborosConnectStatusModalComponent {
         catchError((_: unknown) => {
           this.dialog.error({
             title: this.translate.instant('Connection Error'),
-            message: this.translate.instant('Failed to connect to HarborOS Connect'),
+            message: this.translate.instant('Failed to connect to TrueNAS Connect'),
           });
           return EMPTY;
         }),
@@ -123,8 +126,8 @@ export class HarborosConnectStatusModalComponent {
 
   protected disableService(): void {
     this.dialog.confirm({
-      title: this.translate.instant('Disable HarborOS Connect'),
-      message: this.translate.instant('Are you sure you wish to disable HarborOS Connect? You will be able to re-connect this system later.'),
+      title: this.translate.instant('Disable TrueNAS Connect'),
+      message: this.translate.instant('Are you sure you wish to disable TrueNAS Connect? You will be able to re-connect this system later.'),
       buttonText: this.translate.instant('Disable'),
     })
       .pipe(
@@ -138,7 +141,7 @@ export class HarborosConnectStatusModalComponent {
               catchError((_: unknown) => {
                 this.dialog.error({
                   title: this.translate.instant('Disable Error'),
-                  message: this.translate.instant('Failed to disable HarborOS Connect service'),
+                  message: this.translate.instant('Failed to disable TrueNAS Connect service'),
                 });
                 return EMPTY;
               }),
@@ -158,7 +161,7 @@ export class HarborosConnectStatusModalComponent {
         catchError((_: unknown) => {
           this.dialog.error({
             title: this.translate.instant('Retry Error'),
-            message: this.translate.instant('Failed to retry HarborOS Connect connection'),
+            message: this.translate.instant('Failed to retry TrueNAS Connect connection'),
           });
           return EMPTY;
         }),

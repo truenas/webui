@@ -70,8 +70,15 @@
   }
 }
 
-.card-list-item .value {
-  word-break: break-all;
+.card-list-item {
+  padding-bottom: 12px;
+  padding-top: 12px;
+
+  .value {
+    overflow-wrap: break-word;
+    white-space: normal;
+    word-break: break-word;
+  }
 }
 
 .empty-message p {

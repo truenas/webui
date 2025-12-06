@@ -3,4 +3,5 @@ export enum LicenseFeature {
   FibreChannel = 'FIBRECHANNEL',
   Dedup = 'DEDUP',
   Vm = 'VM',
+  Sed = 'SED',
 }

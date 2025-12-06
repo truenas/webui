@@ -47,6 +47,17 @@ describe('FeedbackService', () => {
         mockCall('system.host_id', 'testHostId'),
       ]),
       provideMockStore({
+        initialState: {
+          systemInfo: {
+            systemInfo: {
+              version: 'SCALE-24.04',
+              system_product: 'M40',
+            },
+            productType: ProductType.Enterprise,
+            isIxHardware: true,
+            buildYear: 2024,
+          },
+        },
         selectors: [
           {
             selector: selectProductType,
@@ -59,7 +70,9 @@ describe('FeedbackService', () => {
                 version: 'SCALE-24.04',
                 system_product: 'M40',
               },
+              productType: ProductType.Enterprise,
               isIxHardware: true,
+              buildYear: 2024,
             } as SystemInfoState,
           },
         ],
@@ -77,9 +90,7 @@ describe('FeedbackService', () => {
           cancel: jest.fn(),
         })),
       }),
-      mockProvider(SystemGeneralService, {
-        getProductType: jest.fn(() => ProductType.Enterprise),
-      }),
+      mockProvider(SystemGeneralService),
       mockProvider(DialogService, {
         generalDialog: jest.fn(() => of(true)),
       }),
