@@ -1,10 +1,12 @@
 import { JsonPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, AfterViewInit, ChangeDetectorRef, ViewChild, ElementRef, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, AfterViewInit, ChangeDetectorRef, ViewChild, ElementRef, inject, DestroyRef,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -13,7 +15,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { scrollToBottomDelayMs } from 'app/modules/websocket-debug-panel/constants';
 import { WebSocketDebugMessage } from 'app/modules/websocket-debug-panel/interfaces/websocket-debug.interface';
-import { clearMessages, toggleMessageExpansion } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
+import { clearMessages, createMockFromResponse, toggleMessageExpansion } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectMessages } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 
 interface FormattedWebSocketDebugMessage extends WebSocketDebugMessage {
@@ -22,7 +24,10 @@ interface FormattedWebSocketDebugMessage extends WebSocketDebugMessage {
   messagePreview: string;
 }
 
-@UntilDestroy()
+interface JsonRpcSuccessResponse {
+  result: unknown;
+}
+
 @Component({
   selector: 'ix-message-list',
   standalone: true,
@@ -43,6 +48,7 @@ interface FormattedWebSocketDebugMessage extends WebSocketDebugMessage {
 export class MessageListComponent implements AfterViewInit {
   private store$ = inject(Store);
   private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChild('messageViewport', { read: ElementRef }) protected messageViewport?: ElementRef<HTMLDivElement>;
   messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
@@ -65,7 +71,7 @@ export class MessageListComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     // Subscribe to messages for both empty state check and auto-scroll
     this.formattedMessages$.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((messages) => {
       this.formattedMessagesArray = messages;
       this.applyFilter();
@@ -94,6 +100,30 @@ export class MessageListComponent implements AfterViewInit {
   protected toggleMessage(messageId: string): void {
     // Create a new action to toggle message expansion
     this.store$.dispatch(toggleMessageExpansion({ messageId }));
+  }
+
+  protected createMockFromMessage(message: FormattedWebSocketDebugMessage): void {
+    const methodName = message.methodName;
+    let responseResult: unknown = null;
+
+    if (this.isJsonRpcSuccessResponse(message.message)) {
+      responseResult = message.message.result;
+    }
+
+    this.store$.dispatch(createMockFromResponse({ methodName, responseResult }));
+  }
+
+  protected canCreateMock(message: FormattedWebSocketDebugMessage): boolean {
+    // Show icon for incoming responses that have a result and a known method name
+    return message.direction === 'in'
+      && this.isJsonRpcSuccessResponse(message.message)
+      && !!message.methodName
+      && message.methodName !== 'Unknown'
+      && message.methodName !== 'Response';
+  }
+
+  private isJsonRpcSuccessResponse(msg: unknown): msg is JsonRpcSuccessResponse {
+    return msg != null && typeof msg === 'object' && 'result' in msg;
   }
 
   protected applyFilter(): void {
