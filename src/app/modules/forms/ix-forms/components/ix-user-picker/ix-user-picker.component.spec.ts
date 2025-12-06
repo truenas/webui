@@ -381,5 +381,53 @@ describe('IxUserPickerComponent', () => {
         discardPeriodicTasks();
       }));
     });
+
+    describe('when slide-in throws error', () => {
+      let errorSpectator: SpectatorHost<IxUserPickerComponent>;
+      const errorFormControl = new FormControl<unknown>();
+      const mockSlideInError = {
+        open: jest.fn(() => {
+          throw new Error('Slide-in error');
+        }),
+      };
+
+      const createHostWithErrorSlideIn = createHostFactory({
+        component: IxUserPickerComponent,
+        imports: [
+          ReactiveFormsModule,
+        ],
+        providers: [
+          mockProvider(SlideIn, mockSlideInError),
+        ],
+      });
+
+      beforeEach(() => {
+        errorFormControl.reset();
+        errorSpectator = createHostWithErrorSlideIn(`<ix-user-picker
+          [formControl]="formControl"
+          [provider]="provider"
+        ></ix-user-picker>`, {
+          hostProps: {
+            formControl: errorFormControl,
+            provider: new SimpleComboboxProvider([]),
+          },
+        });
+      });
+
+      it('handles errors gracefully and clears selection', fakeAsync(() => {
+        errorSpectator.component.ngOnInit();
+        tick(300);
+
+        // Trigger "Add New"
+        errorFormControl.setValue(newOption);
+        tick();
+
+        // Verify selection is cleared on error
+        expect(errorSpectator.component.selectedOption()).toBeNull();
+        expect(errorSpectator.query('input')).toHaveValue('');
+
+        discardPeriodicTasks();
+      }));
+    });
   });
 });
