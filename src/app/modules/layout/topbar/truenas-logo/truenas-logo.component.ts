@@ -50,13 +50,14 @@ export class HarborosLogoComponent {
   });
 
   readonly fullSizeIcon = computed(() => {
-    if (this.isEnterprise()) {
-      return this.useWhite()
-        ? iconMarker('ix-harbor-logo')
-        : iconMarker('ix-harbor-logo');
-    }
-    return this.useWhite()
-      ? iconMarker('ix-harbor-logo')
-      : iconMarker('ix-harbor-logo');
+    return iconMarker('ix-harbor-logo');
+    // if (this.isEnterprise()) {
+    //   return this.useWhite()
+    //     ? iconMarker('ix-harbor-logo')
+    //     : iconMarker('ix-harbor-logo');
+    // }
+    // return this.useWhite()
+    //   ? iconMarker('ix-harbor-logo')
+    //   : iconMarker('ix-harbor-logo');
   });
 }

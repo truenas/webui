@@ -268,9 +268,9 @@ body * {
 }
 
 .sidebar-panel.mat-sidenav
-  .mat-nav-list
-  .sidebar-list-item
-  .mat-mdc-list-item-unscoped-content {
+.mat-nav-list
+.sidebar-list-item
+.mat-mdc-list-item-unscoped-content {
   display: block;
   font-size: 0.875rem !important;
   height: auto;

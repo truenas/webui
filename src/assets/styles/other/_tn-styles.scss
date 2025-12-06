@@ -1,5 +1,5 @@
-@use "@angular/material" as mat;
-@import "scss-imports/cssvars";
+@use '@angular/material' as mat;
+@import 'scss-imports/cssvars';
 $standard-height: 40px;
 @include mat.all-component-typographies();
 @include mat.elevation-classes();
@@ -7,32 +7,24 @@ $standard-height: 40px;
 @include mat.slide-toggle-density(-1);
 @include mat.radio-density(-1);
 @include mat.checkbox-density(-1);
-@import "angular15";
-@import "material-overrides";
+@import 'angular15';
+@import 'material-overrides';
 
 $ix-primary: mat.m2-define-palette($md-primary);
 $ix-accent: mat.m2-define-palette($md-accent);
 
-$ix-typography: mat.m2-define-typography-config(
-  $body-1: mat.m2-define-typography-level(
-      $font-size: 0.875rem,
-      $font-family: var(--font-family-body),
-    ),
-  $body-2: mat.m2-define-typography-level(
-      $font-size: 0.875rem,
-      $font-family: var(--font-family-body),
-    ),
-);
+$ix-typography: mat.m2-define-typography-config($body-1: mat.m2-define-typography-level($font-size: 0.875rem,
+$font-family: var(--font-family-body),),
+$body-2: mat.m2-define-typography-level($font-size: 0.875rem,
+$font-family: var(--font-family-body),),);
 
-$ix-theme: mat.m2-define-light-theme(
-  (
-    color: (
-      primary: $ix-primary,
-      accent: $ix-accent,
-    ),
-    typography: $ix-typography,
-  )
-);
+$ix-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $ix-primary,
+    accent: $ix-accent,
+  ),
+  typography: $ix-typography,
+));
 
 $primary-dark: darken(map-get($md-primary, 500), 8%);
 
@@ -48,10 +40,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-color-primary,
   .sidebar-panel.mat-sidenav
-    .sidebar-list-item.open
-    .sub-menu
-    .mat-mdc-list-item.selected
-    a {
+  .sidebar-list-item.open
+  .sub-menu
+  .mat-mdc-list-item.selected
+  a {
     color: map-get($md-primary, 500) !important;
   }
 
@@ -60,9 +52,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .sidebar-panel.mat-sidenav
-    .sidebar-list-item.open
-    > .mat-mdc-list-item-unscoped-content
-    > .sub-menu {
+  .sidebar-list-item.open
+  > .mat-mdc-list-item-unscoped-content
+  > .sub-menu {
     @include variable(border-left, --primary, $primary, !important);
   }
 
@@ -130,9 +122,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mini-fab.mat-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
   .mat-step-header
-    .mat-step-icon:not(.mat-step-icon-state-error):not(
-      .mat-step-icon-state-number
-    ):not(.mat-step-icon-state-edit) {
+  .mat-step-icon:not(.mat-step-icon-state-error):not(
+    .mat-step-icon-state-number
+  ):not(.mat-step-icon-state-edit) {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
   }
@@ -194,8 +186,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-mdc-form-field
-    .mat-mdc-select.mat-mdc-select-disabled
-    .mat-mdc-select-arrow,
+  .mat-mdc-select.mat-mdc-select-disabled
+  .mat-mdc-select-arrow,
   .mat-mdc-select-disabled .mat-mdc-select-value {
     @include variable(color, --fg2, $fg2);
     cursor: not-allowed;
@@ -288,8 +280,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-calendar-body-today:not(.mat-calendar-body-selected):not(
-      .mat-calendar-body-comparison-identical
-    ) {
+  .mat-calendar-body-comparison-identical
+) {
     border-color: var(--focus-brd);
   }
 
@@ -333,7 +325,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mdc-select-panel .mat-mdc-option:focus-visible,
   .mat-mdc-select-panel .mat-mdc-option:focus-visible,
   .mat-mdc-select-panel
-    .mat-mdc-option.mat-mdc-selected:not(.mat-mdc-option-multiple),
+  .mat-mdc-option.mat-mdc-selected:not(.mat-mdc-option-multiple),
   .mat-mdc-select-panel .mat-mdc-option.mat-mdc-option-active {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
@@ -357,12 +349,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   mat-option.mat-mdc-option-active,
   .mat-mdc-menu-content button.mat-mdc-menu-item:hover,
   .mat-mdc-menu-content
-    button.mat-mdc-menu-item:hover
-    .mat-icon:not(.theme-picker-swatch-icon),
+  button.mat-mdc-menu-item:hover
+  .mat-icon:not(.theme-picker-swatch-icon),
   .mat-mdc-menu-content button.mat-mdc-menu-item:focus,
   .mat-mdc-menu-content
-    button.mat-mdc-menu-item:focus
-    .mat-icon:not(.theme-picker-swatch-icon) {
+  button.mat-mdc-menu-item:focus
+  .mat-icon:not(.theme-picker-swatch-icon) {
     background-color: var(--hover-bg) !important;
   }
 
@@ -499,7 +491,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .fn-theme-tooltip {
-    @import "ngx-popperjs/scss/theme";
+    @import 'ngx-popperjs/scss/theme';
     @include ngx-popperjs-theme(
       var(--primary),
       var(--primary-txt),
@@ -613,7 +605,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  .mat-mdc-button[color="default"] {
+  .mat-mdc-button[color='default'] {
     @include variable(color, --fg2, $fg2, !important);
   }
 
@@ -701,11 +693,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     color: var(--accent);
   }
 
-  input[type="number"] {
+  input[type='number'] {
     appearance: textfield !important;
   }
 
-  input[type="number"]::-webkit-inner-spin-button {
+  input[type='number']::-webkit-inner-spin-button {
     appearance: none;
   }
 
@@ -714,7 +706,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-autocomplete-panel
-    .mat-mdc-option.mat-mdc-selected:not(.mat-active):not(:hover),
+  .mat-mdc-option.mat-mdc-selected:not(.mat-active):not(:hover),
   .mat-autocomplete-panel .mat-mdc-option:hover {
     background-color: var(--primary) !important;
   }
@@ -852,8 +844,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // End slide-in menu ////////////////
 
-  a[href*='//']
-  {
+  a[href*='//'] {
     color: var(--primary);
 
     &:focus-visible {
@@ -885,10 +876,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // Disabled form fields
   .form-element .mat-mdc-text-field-wrapper[disabled],
-  .form-element input[type="email"][disabled],
-  .form-element input[type="number"][disabled],
-  .form-element input[type="password"][disabled],
-  .form-element input[type="text"][disabled],
+  .form-element input[type='email'][disabled],
+  .form-element input[type='number'][disabled],
+  .form-element input[type='password'][disabled],
+  .form-element input[type='text'][disabled],
   .form-element select[disabled],
   .form-element textarea[disabled] {
     opacity: var(--disabled-opacity);
@@ -916,8 +907,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 }
 
-ix-tree-node[aria-level="2"],
-ix-nested-tree-node[aria-level="2"] {
+ix-tree-node[aria-level='2'],
+ix-nested-tree-node[aria-level='2'] {
   ix-bootenv-node-item {
     padding-left: 33px;
   }

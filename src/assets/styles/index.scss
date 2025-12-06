@@ -1,18 +1,18 @@
-@use "tailwindcss";
+@use 'tailwindcss';
 
 // Parts
-@import "other/root-variables";
-@import "fonts/index";
-@import "components/charts";
-@import "components/mat-card";
-@import "components/mat-button-group";
-@import "components/dynamic-markdown";
+@import 'other/root-variables';
+@import 'fonts/index';
+@import 'components/charts';
+@import 'components/mat-card';
+@import 'components/mat-button-group';
+@import 'components/dynamic-markdown';
 
 // Older scss files
-@import "other/tn-styles";
-@import "other/fn-styles";
-@import "other/egret_overrides";
-@import "other/material-reduction";
+@import 'other/tn-styles';
+@import 'other/fn-styles';
+@import 'other/egret_overrides';
+@import 'other/material-reduction';
 
 @custom-variant dark (&:is(.dark *));
 @theme inline {

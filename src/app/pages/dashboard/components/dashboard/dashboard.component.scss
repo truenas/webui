@@ -1,6 +1,6 @@
-@import "scss-imports/cssvars";
-@import "mixins/text";
-@import "../../dashboard-variables";
+@import 'scss-imports/cssvars';
+@import 'mixins/text';
+@import '../../dashboard-variables';
 
 :host ::ng-deep {
   ix-breadcrumb {
@@ -15,9 +15,9 @@
 }
 
 .edit-mode-buttons {
+  align-items: center;
   background: var(--bg1);
   display: flex;
-  align-items: center;
   gap: 10px;
   height: 56px;
   margin: 0;
