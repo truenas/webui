@@ -160,8 +160,10 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
     this.cdr.markForCheck();
 
     this.comboboxProviderHandler()?.fetch(filterValue).pipe(
-      catchError(() => {
+      catchError((error: unknown) => {
         this.hasErrorInOptions.set(true);
+        // Log error for debugging
+        this.errorHandler.handleError(error);
         // Return empty array to show "Add New" option even on error
         return of<Option[]>([]);
       }),
@@ -242,17 +244,28 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
                * previously, we want to remove that option if we managed to find the correct option on the
                * page we just fetched
                */
-              const valueIndex = this.options().findIndex(
+              const currentOptions = this.options();
+              const valueIndex = currentOptions.findIndex(
                 (option) => option.label === (this.value as string) && option.value === this.value,
               );
 
+              // Use immutable update to avoid mutating signal state
+              let updatedOptions: Option[];
               if (
                 options.some((option) => option.value === this.value)
                 && valueIndex >= 0
               ) {
-                this.options().splice(valueIndex, 1);
+                // Remove the fake option and add new options
+                updatedOptions = [
+                  ...currentOptions.slice(0, valueIndex),
+                  ...currentOptions.slice(valueIndex + 1),
+                  ...options,
+                ];
+              } else {
+                // Just append new options
+                updatedOptions = [...currentOptions, ...options];
               }
-              this.options().push(...options);
+              this.options.set(updatedOptions);
               this.cdr.markForCheck();
             });
         });
@@ -321,12 +334,14 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
 
   /**
    * Type guard to check if provider has a valueField property
+   * Validates both existence and correct value type
    */
   private hasValueField(provider: unknown): provider is { valueField: keyof Pick<User, 'username' | 'uid' | 'id'> } {
-    return provider !== null
-      && typeof provider === 'object'
-      && 'valueField' in provider
-      && (provider.valueField === 'username' || provider.valueField === 'uid' || provider.valueField === 'id');
+    if (provider === null || typeof provider !== 'object' || !('valueField' in provider)) {
+      return false;
+    }
+    const field = (provider as { valueField: unknown }).valueField;
+    return typeof field === 'string' && ['username', 'uid', 'id'].includes(field);
   }
 
   getValueFromSlideInResponse(result: SlideInResponse<User>): string | number {

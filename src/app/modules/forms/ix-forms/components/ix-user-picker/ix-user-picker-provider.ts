@@ -26,9 +26,9 @@ export class UserPickerProvider implements IxComboboxProvider {
   constructor(
     options?: UserPickerOptions,
   ) {
-    this.valueField = options.valueField ?? 'username';
-    this.queryType = options.queryType ?? ComboboxQueryType.Default;
-    this.queryParams = options.queryParams ?? [];
+    this.valueField = options?.valueField ?? 'username';
+    this.queryType = options?.queryType ?? ComboboxQueryType.Default;
+    this.queryParams = options?.queryParams ?? [];
   }
 
   fetch(filterValue: string): Observable<Option[]> {
