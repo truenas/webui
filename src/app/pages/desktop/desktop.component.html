@@ -1,6 +1,10 @@
 <div
   class="flex content-start flex-col flex-wrap justify-start items-start h-full grid-flow-col gap-x-6 gap-y-8 p-8 bg-background/50"
 >
+  <img
+    src="assets/images/desktop-logo.svg"
+    class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+  />
   @for (item of menuItems; track item) {
     <button (click)="open(item)">
       <div
