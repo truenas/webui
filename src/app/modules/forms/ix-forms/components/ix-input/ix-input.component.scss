@@ -28,12 +28,13 @@
 .input-container {
   background: var(--bg1);
   border: solid 1.5px var(--lines);
-  border-radius: 2px;
+  border-radius: 12px;
   display: flex;
   flex-direction: row;
   font-size: 12px;
   position: relative;
   align-items: center;
+  overflow: hidden;
 
   &:focus-within {
     border-color: var(--primary);
@@ -97,6 +98,8 @@
     height: 18px;
     position: relative;
     width: 18px;
+    top: -2px;
+    right: 4px;
   }
 }
 
