@@ -1,4 +1,4 @@
-@import "scss-imports/cssvars";
+@import 'scss-imports/cssvars';
 
 .search-box-wrapper {
   &.sidenav-collapsed {
@@ -23,13 +23,13 @@
 .search-box {
   background: var(--bg1);
   border: solid 1px var(--lines);
+  border-radius: 12px;
   display: flex;
   flex-direction: row;
   font-size: 12px;
   max-width: 70vw;
   min-width: 35vw;
   position: relative;
-  border-radius: 12px;
 
   @media (max-width: $breakpoint-md) {
     width: 250px;

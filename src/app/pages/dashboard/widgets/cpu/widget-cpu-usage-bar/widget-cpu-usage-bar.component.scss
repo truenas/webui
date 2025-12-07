@@ -1,12 +1,12 @@
 .wrapper {
   background-color: var(--bg2);
   border: 1px solid var(--lines);
+  border-radius: 12px;
   color: var(--fg2);
   height: 100%;
   padding-left: 15px;
   padding-right: 15px;
   width: 100%;
-  border-radius: 12px;
 
   .bar {
     display: flex;

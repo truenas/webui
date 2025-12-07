@@ -1,14 +1,14 @@
-@import "scss-imports/cssvars";
-@import "text-security/text-security.css";
+@import 'scss-imports/cssvars';
+@import 'text-security/text-security.css';
 
 :host {
+  border-radius: 12px;
   color: var(--fg1);
   display: block;
   margin-bottom: 12px;
   margin-top: 12px;
-  padding: 8px 0;
-  border-radius: 12px;
   overflow: hidden;
+  padding: 8px 0;
 
   :host-context(ix-editable) & {
     margin-bottom: 0;
@@ -26,15 +26,15 @@
 }
 
 .input-container {
+  align-items: center;
   background: var(--bg1);
   border: solid 1.5px var(--lines);
   border-radius: 12px;
   display: flex;
   flex-direction: row;
   font-size: 12px;
-  position: relative;
-  align-items: center;
   overflow: hidden;
+  position: relative;
 
   &:focus-within {
     border-color: var(--primary);
@@ -89,17 +89,18 @@
 
 .input-container {
   height: 40px;
+
   .toggle_pw {
-    @include variable(display, --toggle_pw_display_prop, "inline");
+    @include variable(display, --toggle_pw_display_prop, 'inline');
     opacity: var(--disabled-opacity);
   }
 
   .toggle_pw ix-icon {
     height: 18px;
     position: relative;
-    width: 18px;
-    top: -2px;
     right: 4px;
+    top: -2px;
+    width: 18px;
   }
 }
 

@@ -1,6 +1,6 @@
-@import "scss-imports/cssvars";
-@import "mixins/text";
-@import "mixins/animations";
+@import 'scss-imports/cssvars';
+@import 'mixins/text';
+@import 'mixins/animations';
 
 /* TYPOGRAPHY */
 
@@ -160,10 +160,10 @@ textarea.mat-input-element::placeholder {
 }
 
 .form-element .mat-mdc-text-field-wrapper,
-.form-element input[type="password"],
-.form-element input[type="email"],
-.form-element input[type="text"],
-.form-element input[type="number"],
+.form-element input[type='password'],
+.form-element input[type='email'],
+.form-element input[type='text'],
+.form-element input[type='number'],
 .form-element textarea,
 .form-element select {
   background-color: var(--bg1);
@@ -183,11 +183,11 @@ textarea.mat-input-element::placeholder {
 .mat-mdc-form-field-flex .mat-mdc-form-field-infix .mat-mdc-chip-grid,
 .mat-mdc-form-field-flex .mat-mdc-form-field-infix .mat-mdc-chip-grid input,
 .form-element .form-button,
-.form-element input[type="password"],
-.form-element input[type="email"],
-.form-element input[type="text"],
-.form-element input[type="number"],
-.form-element input[type="search"],
+.form-element input[type='password'],
+.form-element input[type='email'],
+.form-element input[type='text'],
+.form-element input[type='number'],
+.form-element input[type='search'],
 .form-element textarea,
 .form-element select {
   border-radius: 0;
@@ -292,14 +292,14 @@ button.mat-mdc-button.mat-default,
 .mat-mdc-card-actions button.mat-default,
 button.mat-default,
 button.mat-mdc-button.mat-accent.btn-default,
-button.mat-mdc-button[type="button"]:not(button.mat-primary) {
+button.mat-mdc-button[type='button']:not(button.mat-primary) {
   background: var(--btn-default-bg);
   background-color: var(--btn-default-bg);
   color: var(--fg2) !important;
 }
 
-button.mat-mdc-button[type="button"]:hover,
-button.mat-mdc-button.mat-accent[type="button"]:hover {
+button.mat-mdc-button[type='button']:hover,
+button.mat-mdc-button.mat-accent[type='button']:hover {
   background-color: var(--alt-bg1) !important;
   color: var(--fg2) !important;
 }
@@ -518,7 +518,7 @@ td.mat-cell.mat-mdc-table-sticky {
 }
 
 td.mat-cell.mat-mdc-table-sticky::before {
-  content: "";
+  content: '';
   display: block;
   height: 1000px;
   left: 0;
@@ -598,19 +598,19 @@ ix-tooltip {
 .ngxp__container {
   border-radius: 6px !important;
 
-  &[aria-hidden="false"] {
+  &[aria-hidden='false'] {
     display: block !important;
   }
 
-  &[data-popper-placement="right"] {
+  &[data-popper-placement='right'] {
     margin-left: 13px !important;
   }
 
-  &[data-popper-placement="top"] {
+  &[data-popper-placement='top'] {
     margin-left: 11px !important;
   }
 
-  &[data-popper-placement="bottom"] {
+  &[data-popper-placement='bottom'] {
     margin-left: 11px !important;
   }
 }
@@ -930,9 +930,7 @@ mat-tab-nav-panel {
 body:has(ix-websocket-debug-panel .websocket-debug-panel.open) {
   .custom-slide-in-backdrop,
   .custom-slide-in-nobackdrop {
-    right: var(
-      --debug-panel-width,
-      550px
-    ) !important; // Use dynamic debug panel width
+    right: var(--debug-panel-width,
+    550px) !important; // Use dynamic debug panel width
   }
 }

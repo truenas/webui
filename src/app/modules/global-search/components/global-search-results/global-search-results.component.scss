@@ -1,16 +1,16 @@
-@import "scss-imports/cssvars";
-@import "mixins/text";
+@import 'scss-imports/cssvars';
+@import 'mixins/text';
 
 :host {
   background-color: var(--bg2);
   border-radius: 2px;
+  border-radius: 12px;
   display: block;
   max-width: 70vw;
   min-width: 35vw;
   position: absolute;
   top: 41px;
   width: max-content;
-  border-radius: 12px;
 
   @media (max-width: $breakpoint-sm) {
     left: 0;

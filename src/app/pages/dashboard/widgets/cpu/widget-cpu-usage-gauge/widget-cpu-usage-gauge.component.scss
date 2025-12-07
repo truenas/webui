@@ -1,11 +1,11 @@
 .wrapper {
   background-color: var(--bg2);
   border: 1px solid var(--lines);
+  border-radius: 12px;
   color: var(--fg2);
   height: 100%;
   padding: 0 15px;
   width: 100%;
-  border-radius: 12px;
 
   ix-cpu-chart-gauge {
     display: flex;
