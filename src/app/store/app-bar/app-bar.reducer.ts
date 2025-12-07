@@ -15,6 +15,7 @@ export const initialState: AppBarItem[] = [
     status: 'open',
     name: 'Desktop',
     icon: iconMarker('mdi-monitor'),
+    iconActive: iconMarker('mdi-monitor'),
     state: 'desktop',
   },
   // more items can be added dynamically

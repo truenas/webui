@@ -21,6 +21,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Dashboard'),
       icon: iconMarker('ix-desktop-dashboard'),
+      iconActive: iconMarker('ix-desktop-dashboard-active'),
       state: 'dashboard',
     },
     {
@@ -28,6 +29,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Storage'),
       icon: iconMarker('ix-desktop-storage'),
+      iconActive: iconMarker('ix-desktop-storage-active'),
       state: 'storage',
     },
     {
@@ -35,6 +37,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Datasets'),
       icon: iconMarker('ix-desktop-datasets'),
+      iconActive: iconMarker('ix-desktop-datasets-active'),
       state: 'datasets',
     },
     {
@@ -42,6 +45,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Shares'),
       icon: iconMarker('ix-desktop-shares'),
+      iconActive: iconMarker('ix-desktop-shares-active'),
       state: 'sharing',
     },
     {
@@ -49,6 +53,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Data Protection'),
       icon: iconMarker('ix-desktop-data-protection'),
+      iconActive: iconMarker('ix-desktop-data-protection-active'),
       state: 'data-protection',
     },
     {
@@ -56,6 +61,7 @@ export class NavigationService {
       type: MenuItemType.SlideOut,
       tooltip: T('Credentials'),
       icon: iconMarker('ix-desktop-credentials'),
+      iconActive: iconMarker('ix-desktop-credentials-active'),
       state: 'credentials',
       sub: [
         { name: T('Users'), state: 'users' },
@@ -83,6 +89,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Virtual Machines'),
       icon: iconMarker('ix-desktop-virtual-machines'),
+      iconActive: iconMarker('ix-desktop-virtual-machines-active'),
       state: 'vm',
       isVisible$: this.license.hasVms$,
     },
@@ -91,6 +98,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Apps'),
       icon: iconMarker('ix-desktop-apps'),
+      iconActive: iconMarker('ix-desktop-apps-active'),
       state: 'apps',
       isVisible$: this.license.hasApps$,
     },
@@ -99,6 +107,7 @@ export class NavigationService {
       type: MenuItemType.Link,
       tooltip: T('Reports'),
       icon: iconMarker('ix-desktop-reporting'),
+      iconActive: iconMarker('ix-desktop-reporting-active'),
       state: 'reportsdashboard/cpu',
     },
     {
@@ -106,6 +115,7 @@ export class NavigationService {
       type: MenuItemType.SlideOut,
       tooltip: T('System'),
       icon: iconMarker('ix-desktop-system'),
+      iconActive: iconMarker('ix-desktop-system-active'),
       state: 'system',
       sub: [
         { name: T('Update'), state: 'update' },

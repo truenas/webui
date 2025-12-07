@@ -28,6 +28,7 @@ export class AppBarComponent {
       item: {
         name: item.name,
         icon: item.icon,
+        iconActive: item.iconActive,
         state: item.state,
         status: 'open',
       },

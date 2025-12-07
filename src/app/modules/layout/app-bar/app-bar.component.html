@@ -12,11 +12,11 @@
           (click)="onItemClick(item)"
         >
           <ix-icon
-            [name]="item.icon"
+            [name]="item.status === 'open' ? item.iconActive : item.icon"
             [ngClass]="
               item.status === 'open' ? 'text-background' : 'text-foreground'
             "
-          ></ix-icon>
+          />
         </button>
       }
     </div>
