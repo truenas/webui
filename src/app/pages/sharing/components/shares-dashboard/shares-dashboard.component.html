@@ -1,16 +1,16 @@
-<ix-page-header [pageTitle]="'Shares' | translate" [loading]="pools() === null"></ix-page-header>
+<ix-page-header
+  [pageTitle]="'Shares' | translate"
+  [loading]="pools() === null"
+></ix-page-header>
 
 @if (pools() === 0) {
-  <ix-empty
-    [conf]="emptyConfig"
-    [requiredRoles]="requiredRoles"
-  ></ix-empty>
+  <ix-empty [conf]="emptyConfig" [requiredRoles]="requiredRoles"></ix-empty>
 } @else {
   <div class="cards" [ixUiSearch]="searchableElements.elements.sharing">
     <ix-smb-card></ix-smb-card>
     <ix-nfs-card></ix-nfs-card>
     <ix-iscsi-card></ix-iscsi-card>
     <ix-nvme-of-card></ix-nvme-of-card>
-    <ix-webshare-card></ix-webshare-card>
+    <!-- <ix-webshare-card></ix-webshare-card> -->
   </div>
 }
