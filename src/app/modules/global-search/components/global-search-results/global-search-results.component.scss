@@ -1,5 +1,5 @@
-@import 'scss-imports/cssvars';
-@import 'mixins/text';
+@import "scss-imports/cssvars";
+@import "mixins/text";
 
 :host {
   background-color: var(--bg2);
@@ -10,8 +10,9 @@
   position: absolute;
   top: 41px;
   width: max-content;
+  border-radius: 12px;
 
-  @media(max-width: $breakpoint-sm) {
+  @media (max-width: $breakpoint-sm) {
     left: 0;
     max-width: 100%;
     position: fixed;
@@ -39,7 +40,6 @@
 
 .search-results-card {
   border: 0;
-  border-radius: 2px;
   box-shadow: none;
   margin: 0;
   max-height: 60vh;
