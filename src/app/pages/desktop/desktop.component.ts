@@ -22,7 +22,6 @@ export class DesktopComponent {
 
   readonly MenuItemType = MenuItemType;
 
-  // 新增 store 注入
   private store = inject(Store);
 
   getItemName(item: MenuItem): string {
@@ -34,7 +33,6 @@ export class DesktopComponent {
   }
 
   open(item: MenuItem): void {
-    // 打开应用时同步到 appBar store
     this.store.dispatch(appBarOpened({
       item: {
         name: item.name,

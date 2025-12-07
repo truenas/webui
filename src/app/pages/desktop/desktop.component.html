@@ -1,15 +1,20 @@
 <div
-  class="flex content-start flex-col flex-wrap justify-start items-start h-full grid-flow-col gap-6 p-8"
+  class="flex content-start flex-col flex-wrap justify-start items-start h-full grid-flow-col gap-x-6 gap-y-8 p-8 bg-background/50"
 >
+  <img
+    src="assets/images/desktop-logo.svg"
+    class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+  />
   @for (item of menuItems; track item) {
-    <button
-      class="size-24 gap-1 shadow rounded-md bg-background/10 backdrop-blur-md text-foreground overflow-hidden flex flex-col items-center justify-center"
-      (click)="open(item)"
-    >
-      <div class="size-12 mx-auto flex-shrink-0">
-        <ix-icon [name]="item.icon" [fullSize]="true"></ix-icon>
+    <button (click)="open(item)">
+      <div
+        class="size-[108px] flex items-center justify-center rounded-[24px] border border-black/10 flex-shrink-0 bg-background/20 shadow-inner backdrop-blur-xl"
+      >
+        <div class="mx-auto size-15">
+          <ix-icon [name]="item.icon" [fullSize]="true"></ix-icon>
+        </div>
       </div>
-      <div class="text-center leading-[1] text-sm">
+      <div class="text-center leading-[1] text-sm mt-3">
         {{ item.name | translate }}
       </div>
     </button>

@@ -45,7 +45,7 @@ export class PageHeaderComponent implements OnInit, OnDestroy {
   readonly customBadgeTitle = input<string>();
   readonly tooltip = input<string>();
   readonly loading = input(false);
-  // 是否是子菜单
+  // Indicates if this is a sub-page header (with smaller font size)
   readonly isSub = input(false);
 
   readonly default = input(false);
