@@ -1,4 +1,10 @@
-<form novalidate role="form" aria-label="Sign In Form" [formGroup]="form" (submit)="hasTwoFactor ? loginWithOtp() : login()">
+<form
+  novalidate
+  role="form"
+  aria-label="Sign In Form"
+  [formGroup]="form"
+  (submit)="hasTwoFactor ? loginWithOtp() : login()"
+>
   @if (!hasTwoFactor) {
     <ix-input
       formControlName="username"
@@ -23,14 +29,19 @@
     }
 
     <button
-      class="submit-button"
+      class="submit-button flex items-center gap-2"
       mat-button
       type="submit"
       color="primary"
       ixTest="log-in"
       [disabled]="isFormDisabled()"
     >
-      {{ 'Log In' | translate }}
+      <span class="flex items-center gap-2 h-full">
+        @if (isLoading()) {
+          <ix-icon name="mdi-loading" class="animate-spin" />
+        }
+        {{ "Log In" | translate }}
+      </span>
     </button>
     @if (isLastLoginAttemptFailed) {
       <div class="error">
@@ -40,7 +51,10 @@
   }
   @if (hasTwoFactor) {
     <p>
-      {{ '2FA has been configured for this account. Enter the OTP to continue.' | translate }}
+      {{
+        "2FA has been configured for this account. Enter the OTP to continue."
+          | translate
+      }}
     </p>
 
     <ix-input
@@ -64,7 +78,12 @@
         ixTest="log-in"
         [disabled]="isFormDisabled()"
       >
-        {{ 'Proceed' | translate }}
+        <span class="flex items-center gap-2 h-full">
+          @if (isLoading()) {
+            <ix-icon name="mdi-loading" class="animate-spin" />
+          }
+          {{ "Proceed" | translate }}
+        </span>
       </button>
       <button
         class="submit-button"
@@ -73,7 +92,9 @@
         ixTest="otp-log-in"
         [disabled]="isFormDisabled()"
         (click)="cancelOtpLogin()"
-      >{{ 'Cancel' | translate }}</button>
+      >
+        {{ "Cancel" | translate }}
+      </button>
     </div>
 
     @if (isLastOtpAttemptFailed) {

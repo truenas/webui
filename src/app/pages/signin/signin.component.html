@@ -1,6 +1,6 @@
 <div class="page-wrap login-form">
   <div class="session-form-hold">
-    @if (
+    <!-- @if (
       (isConnected$ | async) ||
       (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null)
     ) {
@@ -11,7 +11,7 @@
           (hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'
         "
       ></mat-progress-bar>
-    }
+    } -->
 
     @if (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) {
       <mat-card>

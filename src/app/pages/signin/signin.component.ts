@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { combineLatest, Observable, of } from 'rxjs';
@@ -30,7 +29,6 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
   styleUrls: ['./signin.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatProgressBar,
     MatCard,
     MatCardContent,
     IxIconComponent,

@@ -82,31 +82,33 @@
     </span>
   }
 
-  @if (type() === 'password') {
+  @if (type() === "password") {
     <button
       mat-icon-button
       type="button"
-      class="toggle_pw"
+      class="toggle_pw p-0! size-8! flex items-center!"
       [ixTest]="['toggle-password', controlDirective.name]"
-      [attr.aria-label]="showPassword ? ('Hide Password' | translate) : ('Show Password' | translate)"
+      [attr.aria-label]="
+        showPassword
+          ? ('Hide Password' | translate)
+          : ('Show Password' | translate)
+      "
       (click)="onPasswordToggled()"
       (keydown.enter)="$event.stopPropagation()"
     >
       @if (showPassword) {
-        <ix-icon
-          name="visibility"
-          [matTooltip]="'Hide' | translate"
-        ></ix-icon>
+        <ix-icon name="visibility" [matTooltip]="'Hide' | translate"></ix-icon>
       } @else {
-        <ix-icon
-          name="visibility_off"
-          [matTooltip]="'Show' | translate">
+        <ix-icon name="visibility_off" [matTooltip]="'Show' | translate">
         </ix-icon>
       }
     </button>
   }
 
-  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option.value)">
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    (optionSelected)="optionSelected($event.option.value)"
+  >
     @if (filteredOptions?.length) {
       @for (option of filteredOptions; track trackByIdentity(option)) {
         <mat-option

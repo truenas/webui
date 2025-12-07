@@ -13,97 +13,99 @@
   }
 </ix-page-header>
 
-@if (isEditing()) {
-  <div class="edit-mode-buttons border-b border-border">
-    @if (customLayout()) {
+<div class="py-8">
+  @if (isEditing()) {
+    <div class="edit-mode-buttons border-b border-border">
+      @if (customLayout()) {
+        <button
+          mat-button
+          type="button"
+          ixTest="reset"
+          [disabled]="isLoading()"
+          [matTooltip]="'Restore default set of widgets' | translate"
+          (click)="onReset()"
+        >
+          {{ "Reset" | translate }}
+        </button>
+      }
+
       <button
         mat-button
-        type="button"
-        ixTest="reset"
+        class="add-button"
+        ixTest="add-group"
         [disabled]="isLoading()"
-        [matTooltip]="'Restore default set of widgets' | translate"
-        (click)="onReset()"
+        (click)="onAddGroup()"
       >
-        {{ "Reset" | translate }}
+        {{ "Add" | translate }}
       </button>
-    }
+      <button
+        mat-button
+        color="primary"
+        ixTest="save"
+        [disabled]="isLoading()"
+        (click)="onSave()"
+      >
+        {{ "Save" | translate }}
+      </button>
+      <button
+        mat-button
+        ixTest="cancel"
+        [disabled]="isLoading()"
+        (click)="onCancelConfigure()"
+      >
+        {{ "Cancel" | translate }}
+      </button>
+    </div>
+  }
 
-    <button
-      mat-button
-      class="add-button"
-      ixTest="add-group"
-      [disabled]="isLoading()"
-      (click)="onAddGroup()"
+  @if (isLoadingFirstTime()) {
+    <ngx-skeleton-loader
+      class="groups loading"
+      [count]="6"
+      [theme]="{ background: 'var(--alt-bg2)', opacity: 0.25, margin: 0 }"
+    ></ngx-skeleton-loader>
+  } @else {
+    <div
+      class="groups"
+      cdkDropList
+      cdkDropListOrientation="mixed"
+      [ixUiSearch]="searchableElements.elements.dashboard"
+      (cdkDropListDropped)="onGroupsReordered($event)"
     >
-      {{ "Add" | translate }}
-    </button>
-    <button
-      mat-button
-      color="primary"
-      ixTest="save"
-      [disabled]="isLoading()"
-      (click)="onSave()"
-    >
-      {{ "Save" | translate }}
-    </button>
-    <button
-      mat-button
-      ixTest="cancel"
-      [disabled]="isLoading()"
-      (click)="onCancelConfigure()"
-    >
-      {{ "Cancel" | translate }}
-    </button>
-  </div>
-}
+      @if (renderedGroups().length > 0) {
+        @for (group of renderedGroups(); track group; let i = $index) {
+          <div
+            class="group-slot"
+            cdkDrag
+            cdkDragPreviewContainer="parent"
+            animateOutClass="group-remove"
+            [animateOut]="isGroupRemoving(group)"
+            [animateOutDuration]="300"
+            (animateOutComplete)="onGroupRemovalComplete(group)"
+          >
+            <div class="group-container" [class.editing]="isEditing()">
+              <ix-widget-group-controls
+                class="controls"
+                [index]="i"
+                [totalGroups]="renderedGroups().length"
+                [disableFocusableElements]="!isEditing()"
+                (moveUp)="onMoveGroup(i, -1)"
+                (moveDown)="onMoveGroup(i, 1)"
+                (edit)="onEditGroup(i)"
+                (delete)="onDeleteGroup(group)"
+              ></ix-widget-group-controls>
 
-@if (isLoadingFirstTime()) {
-  <ngx-skeleton-loader
-    class="groups loading"
-    [count]="6"
-    [theme]="{ background: 'var(--alt-bg2)', opacity: 0.25, margin: 0 }"
-  ></ngx-skeleton-loader>
-} @else {
-  <div
-    class="groups"
-    cdkDropList
-    cdkDropListOrientation="mixed"
-    [ixUiSearch]="searchableElements.elements.dashboard"
-    (cdkDropListDropped)="onGroupsReordered($event)"
-  >
-    @if (renderedGroups().length > 0) {
-      @for (group of renderedGroups(); track group; let i = $index) {
-        <div
-          class="group-slot"
-          cdkDrag
-          cdkDragPreviewContainer="parent"
-          animateOutClass="group-remove"
-          [animateOut]="isGroupRemoving(group)"
-          [animateOutDuration]="300"
-          (animateOutComplete)="onGroupRemovalComplete(group)"
-        >
-          <div class="group-container" [class.editing]="isEditing()">
-            <ix-widget-group-controls
-              class="controls"
-              [index]="i"
-              [totalGroups]="renderedGroups().length"
-              [disableFocusableElements]="!isEditing()"
-              (moveUp)="onMoveGroup(i, -1)"
-              (moveDown)="onMoveGroup(i, 1)"
-              (edit)="onEditGroup(i)"
-              (delete)="onDeleteGroup(group)"
-            ></ix-widget-group-controls>
-
-            <ix-widget-group
-              class="group"
-              [disableFocusableElements]="isEditing()"
-              [group]="group"
-            ></ix-widget-group>
+              <ix-widget-group
+                class="group"
+                [disableFocusableElements]="isEditing()"
+                [group]="group"
+              ></ix-widget-group>
+            </div>
           </div>
-        </div>
+        }
+      } @else {
+        <ix-empty [conf]="emptyDashboardConf"></ix-empty>
       }
-    } @else {
-      <ix-empty [conf]="emptyDashboardConf"></ix-empty>
-    }
-  </div>
-}
+    </div>
+  }
+</div>

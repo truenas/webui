@@ -11,6 +11,7 @@ export interface MenuItem {
   name: string; // Used as display text for item and title for separator type
   state: string;
   icon?: MarkedIcon;
+  iconActive?: MarkedIcon;
   tooltip?: string;
   sub?: SubMenuItem[];
   isVisible$?: Observable<boolean>;

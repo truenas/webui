@@ -5,12 +5,6 @@
   align-items: center;
   display: flex;
 
-  > button {
-    border-radius: 4px !important;
-    padding: 4px !important;
-    width: inherit !important;
-  }
-
   .username {
     @include line-clamp(2);
     cursor: pointer;
@@ -24,7 +18,7 @@
     vertical-align: middle;
     white-space: nowrap;
 
-    @media(max-width: $breakpoint-md) {
+    @media (max-width: $breakpoint-md) {
       display: none;
     }
   }

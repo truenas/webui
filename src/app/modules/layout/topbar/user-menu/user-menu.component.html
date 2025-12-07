@@ -2,8 +2,7 @@
   <div class="user-menu-wrapper">
     <button
       name="Settings"
-      mat-icon-button
-      class="topbar-button-right"
+      class="topbar-button-right bg-background! h-[50px]! rounded-full! px-4 flex items-center"
       ixTest="user-menu"
       [matTooltip]="tooltips.settings | translate"
       [ixUiSearch]="searchableElements.elements.userMenu"
@@ -18,7 +17,10 @@
           {{ user.pw_name }}
         </span>
       }
-      <ix-icon name="account_circle" class="!text-foreground"></ix-icon>
+      <ix-icon
+        name="account_circle"
+        class="!text-foreground size-[32px]"
+      ></ix-icon>
     </button>
 
     <mat-menu #userMenu="matMenu">

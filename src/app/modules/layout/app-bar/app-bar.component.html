@@ -1,20 +1,22 @@
 <aside
-  class="h-[calc(100vh-84px)] z-10 flex fixed w-16 left-1 bottom-8 flex-col backdrop-blur-md bg-background/10 rounded overflow-hidden border border-border/10 py-4"
+  class="h-[calc(100vh-134px)] z-10 flex fixed w-[110px] left-0 top-[104px] flex-col overflow-hidden"
 >
-  <div class="flex-1 flex flex-col gap-4">
+  <div class="flex-1 flex flex-col gap-4 justify-center">
     <div class="grid gap-4 text-center mx-auto">
       @for (item of appBarState$ | async; track item) {
         <button
           matMiniFab
-          class="cursor-pointer size-10 relative flex items-center justify-center"
+          class="cursor-pointer size-[50px] rounded-full relative flex items-center justify-center"
+          [ngClass]="item.status === 'open' ? 'bg-primary' : 'bg-background'"
           [routerLink]="getRouterLink(item.state)"
+          (click)="onItemClick(item)"
         >
-          <ix-icon [name]="item.icon"></ix-icon>
-          @if (item.status === "minimized") {
-            <div
-              class="size-2 absolute rounded-full bg-background -bottom-1 left-1/2 transform -translate-x-1/2"
-            ></div>
-          }
+          <ix-icon
+            [name]="item.status === 'open' ? item.iconActive : item.icon"
+            [ngClass]="
+              item.status === 'open' ? 'text-background' : 'text-foreground'
+            "
+          />
         </button>
       }
     </div>

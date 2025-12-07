@@ -4,6 +4,7 @@
 :host {
   background-color: var(--bg2);
   border-radius: 2px;
+  border-radius: 12px;
   display: block;
   max-width: 70vw;
   min-width: 35vw;
@@ -11,7 +12,7 @@
   top: 41px;
   width: max-content;
 
-  @media(max-width: $breakpoint-sm) {
+  @media (max-width: $breakpoint-sm) {
     left: 0;
     max-width: 100%;
     position: fixed;
@@ -39,7 +40,6 @@
 
 .search-results-card {
   border: 0;
-  border-radius: 2px;
   box-shadow: none;
   margin: 0;
   max-height: 60vh;
