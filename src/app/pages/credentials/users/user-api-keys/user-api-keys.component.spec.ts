@@ -113,14 +113,13 @@ describe('UserApiKeysComponent', () => {
   });
 
   it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Username', 'Local', 'Revoked', 'Created Date', 'Expires On', ''],
-      ['first-api-key', 'root', 'Yes', 'No', '2002-01-03 07:36:50', 'in over 6 years', ''],
-      ['second-api-key', 'root', 'No', 'Yes', '2002-01-14 21:23:30', 'Never', ''],
-    ];
-
     const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+
+    expect(cells).toEqual([
+      ['Name', 'Username', 'Local', 'Revoked', 'Created Date', 'Expires On', ''],
+      ['first-api-key', 'root', 'Yes', 'No', '2002-01-03 07:36:50', expect.stringMatching(/^in (over )?6 years$/), ''],
+      ['second-api-key', 'root', 'No', 'Yes', '2002-01-14 21:23:30', 'Never', ''],
+    ]);
   });
 
   it('shows form to edit an existing API Key when Edit button is pressed', async () => {

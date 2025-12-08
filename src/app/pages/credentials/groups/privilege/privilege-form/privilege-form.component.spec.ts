@@ -51,10 +51,29 @@ describe('PrivilegeFormComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('group.query', [
-          { group: 'Group A', gid: 111 },
-          { group: 'Group B', gid: 222 },
-        ] as Group[]),
+        mockCall('group.query', (params) => {
+          // Handle chips provider queries with limit 50
+          if (params[1]?.limit === 50) {
+            return [
+              { group: 'Group A', gid: 111 },
+              { group: 'Group B', gid: 222 },
+            ] as Group[];
+          }
+          // Handle batch query for UID resolution with 'in' filter
+          const filters = params[0] as unknown[][];
+          const hasInFilter = filters?.some((filter) => filter[1] === 'in');
+          if (hasInFilter) {
+            return [
+              { group: 'Group A', gid: 111 },
+              { group: 'Group B', gid: 222 },
+            ] as Group[];
+          }
+          // Default response for other queries
+          return [
+            { group: 'Group A', gid: 111 },
+            { group: 'Group B', gid: 222 },
+          ] as Group[];
+        }),
         mockCall('privilege.create'),
         mockCall('privilege.update'),
         mockCall('privilege.roles', [
