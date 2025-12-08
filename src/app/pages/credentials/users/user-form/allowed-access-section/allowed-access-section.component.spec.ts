@@ -57,6 +57,7 @@ describe('AllowedAccessSectionComponent', () => {
       spectator.setInput('editingUser', {
         username: 'test',
         smb: true,
+        webshare: false,
         shell: '/usr/bin/bash',
         sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC...',
         roles: [Role.FullAdmin],
@@ -71,6 +72,9 @@ describe('AllowedAccessSectionComponent', () => {
       const smbAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
       expect(await smbAccessCheckbox.isChecked()).toBe(true);
 
+      const webshareAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'WebShare Access' }));
+      expect(await webshareAccessCheckbox.isChecked()).toBe(false);
+
       const shellAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Shell Access' }));
       expect(await shellAccessCheckbox.isChecked()).toBe(true);
 
@@ -83,7 +87,7 @@ describe('AllowedAccessSectionComponent', () => {
 
       expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenCalledWith({
         smbAccess: true,
-        webshareAccess: undefined,
+        webshareAccess: false,
         truenasAccess: true,
         sshAccess: true,
         shellAccess: true,

@@ -436,6 +436,9 @@ describe('WebShareListComponent - No WebShare users configured', () => {
         getWebShareTableRows: jest.fn(() => of([])),
         transformToTableRows: jest.fn().mockReturnValue([]),
         hasWebshareUsers$: of(false),
+        hostnameMapping$: of({ ipsWithHostnames: {}, localIp: '', hostname: undefined }),
+        isTruenasDirectDomain: true,
+        canOpenWebShare$: of(true),
       }),
       provideMockStore({
         initialState: {

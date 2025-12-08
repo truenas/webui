@@ -33,6 +33,7 @@ const mockUser = {
   ssh_password_enabled: true,
   sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA...',
   smb: true,
+  webshare: false,
   shell: '/bin/bash',
   sudo_commands: ['command1', 'command2'],
   sudo_commands_nopasswd: ['command3'],
