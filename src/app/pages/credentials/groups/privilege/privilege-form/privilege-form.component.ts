@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, combineLatest, finalize, map, of, switchMap,
+  Observable, combineLatest, finalize, map, of, switchMap, throwError,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
@@ -111,9 +111,23 @@ export class PrivilegeFormComponent implements OnInit {
   );
 
   readonly localGroupsProvider: ChipsProvider = (query: string) => {
+    const trimmedQuery = query?.trim().toLowerCase() || '';
+
+    // Try cache-first for performance
+    const cachedResults = Array.from(this.localGroupsCache.values())
+      .map((group) => group.group)
+      .filter((name) => !trimmedQuery || name.toLowerCase().includes(trimmedQuery))
+      .slice(0, 50);
+
+    // If we have enough cached results, return them without API call
+    if (cachedResults.length >= 10 && trimmedQuery) {
+      return of(cachedResults);
+    }
+
+    // Otherwise fetch from API
     const filters: (['local', '=', true] | ['group', '^', string])[] = [['local', '=', true]];
-    if (query?.trim()) {
-      filters.push(['group', '^', query.trim()]);
+    if (trimmedQuery) {
+      filters.push(['group', '^', trimmedQuery]);
     }
 
     return this.api.call('group.query', [filters, { limit: 50, order_by: ['group'] }]).pipe(
@@ -122,15 +136,36 @@ export class PrivilegeFormComponent implements OnInit {
         groups.forEach((group) => {
           this.localGroupsCache.set(group.group, group);
         });
-        return groups.map((group) => group.group);
+
+        // Client-side filtering for contains match (better UX)
+        const groupNames = groups.map((group) => group.group);
+        if (!trimmedQuery) {
+          return groupNames;
+        }
+
+        return groupNames.filter((name) => name.toLowerCase().includes(trimmedQuery));
       }),
     );
   };
 
   readonly dsGroupsProvider: ChipsProvider = (query: string) => {
+    const trimmedQuery = query?.trim().toLowerCase() || '';
+
+    // Try cache-first for performance
+    const cachedResults = Array.from(this.dsGroupsCache.values())
+      .map((group) => group.group)
+      .filter((name) => !trimmedQuery || name.toLowerCase().includes(trimmedQuery))
+      .slice(0, 50);
+
+    // If we have enough cached results, return them without API call
+    if (cachedResults.length >= 10 && trimmedQuery) {
+      return of(cachedResults);
+    }
+
+    // Otherwise fetch from API
     const filters: (['local', '=', false] | ['group', '^', string])[] = [['local', '=', false]];
-    if (query?.trim()) {
-      filters.push(['group', '^', query.trim()]);
+    if (trimmedQuery) {
+      filters.push(['group', '^', trimmedQuery]);
     }
 
     return this.api.call('group.query', [filters, { limit: 50, order_by: ['group'] }]).pipe(
@@ -139,7 +174,14 @@ export class PrivilegeFormComponent implements OnInit {
         groups.forEach((group) => {
           this.dsGroupsCache.set(group.group, group);
         });
-        return groups.map((group) => group.group);
+
+        // Client-side filtering for contains match (better UX)
+        const groupNames = groups.map((group) => group.group);
+        if (!trimmedQuery) {
+          return groupNames;
+        }
+
+        return groupNames.filter((name) => name.toLowerCase().includes(trimmedQuery));
       }),
     );
   };
@@ -174,8 +216,19 @@ export class PrivilegeFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading.set(true);
 
+    // Ensure all group names can be resolved to UIDs before submitting
     combineLatest([this.localGroupsUids$, this.dsGroupsUids$]).pipe(
       switchMap(([localGroups, dsGroups]) => {
+        // Validate that all selected groups were found
+        const expectedLocalCount = this.form.value.local_groups.length;
+        const expectedDsCount = this.form.value.ds_groups.length;
+
+        if (localGroups.length !== expectedLocalCount || dsGroups.length !== expectedDsCount) {
+          return throwError(() => new Error(
+            this.translate.instant('Some selected groups could not be found. Please refresh and try again.'),
+          ));
+        }
+
         const values: PrivilegeUpdate = {
           ...this.form.value,
           local_groups: localGroups,
