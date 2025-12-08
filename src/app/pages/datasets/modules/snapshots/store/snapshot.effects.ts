@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY, of } from 'rxjs';
 import {
-  catchError, filter, map, switchMap,
+  catchError, filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
@@ -28,7 +28,7 @@ export class SnapshotEffects {
 
   loadSnapshots$ = createEffect(() => this.actions$.pipe(
     ofType(snapshotPageEntered),
-    switchMap(() => this.store$.pipe(waitForPreferences)),
+    switchMap(() => this.store$.pipe(waitForPreferences, take(1))),
     switchMap((preferences) => {
       const extraColumns = preferences.showSnapshotExtraColumns ? ['properties' as keyof ZfsSnapshot] : [];
       return this.api.call('pool.snapshot.query', [
