@@ -26,9 +26,9 @@ export class UserPickerProvider implements IxComboboxProvider {
   constructor(
     options?: UserPickerOptions,
   ) {
-    this.valueField = options.valueField ?? 'username';
-    this.queryType = options.queryType ?? ComboboxQueryType.Default;
-    this.queryParams = options.queryParams ?? [];
+    this.valueField = options?.valueField ?? 'username';
+    this.queryType = options?.queryType ?? ComboboxQueryType.Default;
+    this.queryParams = options?.queryParams ?? [];
   }
 
   fetch(filterValue: string): Observable<Option[]> {
@@ -42,14 +42,13 @@ export class UserPickerProvider implements IxComboboxProvider {
   }
 
   private queryUsers(search: string): Observable<Option[]> {
-    // Create a deep copy to avoid mutating read-only objects
+    // Create a shallow copy of query params to avoid mutating the original arrays/objects.
+    // ParamsBuilder may freeze or reuse query param objects, so we need to create new copies
+    // before adding dynamic filters (smb, username search) and pagination (offset, limit).
+    // Note: This is a shallow copy - nested objects in filters are not deep cloned.
     const queryArgs: QueryParams<User> = [
-      [...(this.queryParams[0] || [])],
-      {
-        ...(this.queryParams[1] || {}),
-        offset: this.page * this.pageSize,
-        limit: this.pageSize,
-      },
+      [...this.queryParams[0]],
+      { ...this.queryParams[1], offset: this.page * this.pageSize, limit: this.pageSize },
     ];
 
     search = search?.trim();

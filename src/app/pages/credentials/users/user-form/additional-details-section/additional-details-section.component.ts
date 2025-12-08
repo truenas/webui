@@ -24,9 +24,11 @@ import { User } from 'app/interfaces/user.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
+import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
@@ -43,6 +45,7 @@ import { SudoCommandsValidatorService } from 'app/pages/credentials/users/user-f
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
+import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
@@ -56,6 +59,7 @@ import { StorageService } from 'app/services/storage.service';
     IxCheckboxComponent,
     TranslateModule,
     IxChipsComponent,
+    IxComboboxComponent,
     IxExplorerComponent,
     IxPermissionsComponent,
     DetailsTableComponent,
@@ -80,6 +84,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private sudoCommandsValidator = inject(SudoCommandsValidatorService);
+  private userService = inject(UserService);
 
   editingUser = input<User>();
   protected username = computed(() => this.userFormStore?.userConfig().username ?? '');
@@ -116,6 +121,11 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     ['immutable', '=', false],
   ]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
+  );
+
+  groupComboboxProvider: GroupComboboxProvider = new GroupComboboxProvider(
+    this.userService,
+    { valueField: 'id' },
   );
 
   protected readonly roleGroupMap = new Map<Role, string>([
