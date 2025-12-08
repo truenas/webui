@@ -112,21 +112,33 @@ export class PrivilegeFormComponent implements OnInit {
   );
 
   readonly localGroupsProvider: ChipsProvider = (query: string) => {
-    return this.api.call('group.query', [[['local', '=', true]]]).pipe(
+    const filters: (['local', '=', true] | ['group', '^', string])[] = [['local', '=', true]];
+    if (query?.trim()) {
+      filters.push(['group', '^', query.trim()]);
+    }
+
+    return this.api.call('group.query', [filters, { limit: 50, order_by: ['group'] }]).pipe(
       map((groups) => {
-        this.localGroups = groups;
-        const chips = groups.map((group) => group.group);
-        return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
+        // Store groups that match the query for later UID resolution
+        groups.forEach((group) => {
+          const existing = this.localGroups.find((existingGroup) => existingGroup.gid === group.gid);
+          if (!existing) {
+            this.localGroups.push(group);
+          }
+        });
+        return groups.map((group) => group.group);
       }),
     );
   };
 
   readonly dsGroupsProvider: ChipsProvider = (query: string) => {
-    return this.api.call('group.query', [[['local', '=', false]]]).pipe(
-      map((groups) => {
-        const chips = groups.map((group) => group.group);
-        return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
-      }),
+    const filters: (['local', '=', false] | ['group', '^', string])[] = [['local', '=', false]];
+    if (query?.trim()) {
+      filters.push(['group', '^', query.trim()]);
+    }
+
+    return this.api.call('group.query', [filters, { limit: 50, order_by: ['group'] }]).pipe(
+      map((groups) => groups.map((group) => group.group)),
     );
   };
 

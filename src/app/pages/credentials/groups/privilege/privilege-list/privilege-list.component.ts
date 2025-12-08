@@ -132,7 +132,10 @@ export class PrivilegeListComponent implements OnInit {
     pageNumber: 1,
   };
 
-  private groupsSuggestions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
+  private groupsSuggestions$ = this.api.call('group.query', [
+    [['local', '=', true]],
+    { limit: 100, order_by: ['group'] },
+  ]).pipe(
     map((groups) => groups.map((group) => ({
       label: group.group,
       value: `"${group.group}"`,
