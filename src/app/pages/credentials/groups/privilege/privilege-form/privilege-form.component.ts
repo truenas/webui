@@ -262,7 +262,10 @@ export class PrivilegeFormComponent implements OnInit {
    * Uses a single batch query with 'group in' filter to avoid N+1 queries.
    * This is more efficient than querying each group individually.
    *
+   * Throws an error if any requested groups are not found, preventing silent data loss.
+   *
    * @returns Observable of group IDs (gids)
+   * @throws Error if any requested groups don't exist
    */
   private get localGroupsUids$(): Observable<number[]> {
     const groupNames = this.form.value.local_groups;
@@ -275,7 +278,20 @@ export class PrivilegeFormComponent implements OnInit {
       ['local', '=', true],
       ['group', 'in', groupNames],
     ]]).pipe(
-      map((groups) => groups.map((group) => group.gid)),
+      map((groups) => {
+        // Validate that all requested groups were found
+        const foundNames = new Set(groups.map((group) => group.group));
+        const missingGroups = groupNames.filter((name) => !foundNames.has(name));
+
+        if (missingGroups.length > 0) {
+          throw new Error(this.translate.instant(
+            'The following local groups were not found: {groups}. They may have been deleted.',
+            { groups: missingGroups.join(', ') },
+          ));
+        }
+
+        return groups.map((group) => group.gid);
+      }),
     );
   }
 
@@ -285,7 +301,10 @@ export class PrivilegeFormComponent implements OnInit {
    * Uses a single batch query with 'group in' filter to avoid N+1 queries.
    * This is more efficient than querying each group individually.
    *
+   * Throws an error if any requested groups are not found, preventing silent data loss.
+   *
    * @returns Observable of group IDs (gids)
+   * @throws Error if any requested groups don't exist
    */
   private get dsGroupsUids$(): Observable<number[]> {
     const groupNames = this.form.value.ds_groups;
@@ -298,7 +317,20 @@ export class PrivilegeFormComponent implements OnInit {
       ['local', '=', false],
       ['group', 'in', groupNames],
     ]]).pipe(
-      map((groups) => groups.map((group) => group.gid)),
+      map((groups) => {
+        // Validate that all requested groups were found
+        const foundNames = new Set(groups.map((group) => group.group));
+        const missingGroups = groupNames.filter((name) => !foundNames.has(name));
+
+        if (missingGroups.length > 0) {
+          throw new Error(this.translate.instant(
+            'The following directory service groups were not found: {groups}. They may have been deleted.',
+            { groups: missingGroups.join(', ') },
+          ));
+        }
+
+        return groups.map((group) => group.gid);
+      }),
     );
   }
 }

@@ -132,16 +132,7 @@ export class PrivilegeListComponent implements OnInit {
     pageNumber: 1,
   };
 
-  /**
-   * Maximum number of group suggestions to show in filters.
-   * Higher than form autocomplete limit since this is a one-time load for filtering.
-   */
-  private readonly GROUP_SUGGESTIONS_LIMIT = 100;
-
-  private groupsSuggestions$ = this.api.call('group.query', [
-    [['local', '=', true]],
-    { limit: this.GROUP_SUGGESTIONS_LIMIT, order_by: ['group'] },
-  ]).pipe(
+  private groupsSuggestions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({
       label: group.group,
       value: `"${group.group}"`,

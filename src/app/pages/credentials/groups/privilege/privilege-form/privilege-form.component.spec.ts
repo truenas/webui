@@ -258,4 +258,52 @@ describe('PrivilegeFormComponent', () => {
       }]);
     }));
   });
+
+  describe('group validation', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
+    });
+
+    it('prevents saving when local group does not exist and shows error', fakeAsync(() => {
+      // Manually set form value to bypass chips validation
+      const form = (spectator.component as unknown as { form: typeof spectator.component['form'] }).form;
+      form.patchValue({
+        name: 'test privilege',
+        local_groups: ['Group A', 'NonExistentGroup'],
+        roles: [Role.FullAdmin],
+      });
+
+      spectator.component.onSubmit();
+
+      flush();
+
+      // Validation error should prevent privilege.create from being called
+      const privilegeCreateCalls = (api.call as jest.Mock).mock.calls.filter(
+        (call) => call[0] === 'privilege.create',
+      );
+      expect(privilegeCreateCalls).toHaveLength(0);
+    }));
+
+    it('prevents saving when DS group does not exist and shows error', fakeAsync(() => {
+      // Manually set form value to bypass chips validation
+      const form = (spectator.component as unknown as { form: typeof spectator.component['form'] }).form;
+      form.patchValue({
+        name: 'test privilege',
+        ds_groups: ['NonExistentDSGroup'],
+        roles: [Role.FullAdmin],
+      });
+
+      spectator.component.onSubmit();
+
+      flush();
+
+      // Validation error should prevent privilege.create from being called
+      const privilegeCreateCalls = (api.call as jest.Mock).mock.calls.filter(
+        (call) => call[0] === 'privilege.create',
+      );
+      expect(privilegeCreateCalls).toHaveLength(0);
+    }));
+  });
 });
