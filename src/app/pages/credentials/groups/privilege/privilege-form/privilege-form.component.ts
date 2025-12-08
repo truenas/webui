@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, combineLatest, finalize, map, of, switchMap, throwError,
+  Observable, combineLatest, finalize, map, of, shareReplay, switchMap, throwError,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
@@ -66,6 +66,9 @@ export class PrivilegeFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
 
+  // Minimum cached results to skip API call - balances freshness with performance
+  private readonly MIN_CACHED_RESULTS_FOR_QUERY = 10;
+
   protected isLoading = signal(false);
   private localGroupsCache = new Map<string, Group>();
   private dsGroupsCache = new Map<string, Group>();
@@ -120,7 +123,7 @@ export class PrivilegeFormComponent implements OnInit {
       .slice(0, 50);
 
     // If we have enough cached results, return them without API call
-    if (cachedResults.length >= 10 && trimmedQuery) {
+    if (cachedResults.length >= this.MIN_CACHED_RESULTS_FOR_QUERY && trimmedQuery) {
       return of(cachedResults);
     }
 
@@ -145,6 +148,7 @@ export class PrivilegeFormComponent implements OnInit {
 
         return groupNames.filter((name) => name.toLowerCase().includes(trimmedQuery));
       }),
+      shareReplay({ bufferSize: 1, refCount: true }),
     );
   };
 
@@ -158,7 +162,7 @@ export class PrivilegeFormComponent implements OnInit {
       .slice(0, 50);
 
     // If we have enough cached results, return them without API call
-    if (cachedResults.length >= 10 && trimmedQuery) {
+    if (cachedResults.length >= this.MIN_CACHED_RESULTS_FOR_QUERY && trimmedQuery) {
       return of(cachedResults);
     }
 
@@ -183,6 +187,7 @@ export class PrivilegeFormComponent implements OnInit {
 
         return groupNames.filter((name) => name.toLowerCase().includes(trimmedQuery));
       }),
+      shareReplay({ bufferSize: 1, refCount: true }),
     );
   };
 
@@ -194,6 +199,10 @@ export class PrivilegeFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Clear caches to ensure fresh data on form open
+    this.localGroupsCache.clear();
+    this.dsGroupsCache.clear();
+
     if (this.existingPrivilege) {
       this.setPrivilegeForEdit(this.existingPrivilege);
       if (this.existingPrivilege.builtin_name) {
@@ -219,13 +228,18 @@ export class PrivilegeFormComponent implements OnInit {
     // Ensure all group names can be resolved to UIDs before submitting
     combineLatest([this.localGroupsUids$, this.dsGroupsUids$]).pipe(
       switchMap(([localGroups, dsGroups]) => {
-        // Validate that all selected groups were found
-        const expectedLocalCount = this.form.value.local_groups.length;
-        const expectedDsCount = this.form.value.ds_groups.length;
+        // Validate that all selected groups were found and identify missing ones
+        const missingLocal = this.form.value.local_groups.filter(
+          (name) => !this.localGroupsCache.has(name),
+        );
+        const missingDs = this.form.value.ds_groups.filter(
+          (name) => !this.dsGroupsCache.has(name),
+        );
 
-        if (localGroups.length !== expectedLocalCount || dsGroups.length !== expectedDsCount) {
+        if (missingLocal.length > 0 || missingDs.length > 0) {
+          const missing = [...missingLocal, ...missingDs].join(', ');
           return throwError(() => new Error(
-            this.translate.instant('Some selected groups could not be found. Please refresh and try again.'),
+            this.translate.instant('Groups not found: {groups}. Please refresh and try again.', { groups: missing }),
           ));
         }
 

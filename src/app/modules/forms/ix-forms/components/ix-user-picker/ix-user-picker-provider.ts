@@ -42,9 +42,15 @@ export class UserPickerProvider implements IxComboboxProvider {
   }
 
   private queryUsers(search: string): Observable<Option[]> {
-    const queryArgs: QueryParams<User> = [...this.queryParams];
-    queryArgs[1].offset = this.page * this.pageSize;
-    queryArgs[1].limit = this.pageSize;
+    // Create a deep copy to avoid mutating read-only objects
+    const queryArgs: QueryParams<User> = [
+      [...(this.queryParams[0] || [])],
+      {
+        ...(this.queryParams[1] || {}),
+        offset: this.page * this.pageSize,
+        limit: this.pageSize,
+      },
+    ];
 
     search = search?.trim();
     if (this.queryType === ComboboxQueryType.Smb) {
