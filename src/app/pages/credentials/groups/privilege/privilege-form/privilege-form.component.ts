@@ -63,7 +63,8 @@ export class PrivilegeFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.PrivilegeWrite];
 
   protected isLoading = false;
-  protected localGroups: Group[] = [];
+  private localGroupsCache = new Map<string, Group>();
+  private dsGroupsCache = new Map<string, Group>();
 
   protected form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -106,20 +107,37 @@ export class PrivilegeFormComponent implements OnInit {
   );
 
   readonly localGroupsProvider: ChipsProvider = (query: string) => {
-    return this.api.call('group.query', [[['local', '=', true]]]).pipe(
+    const filters: (['local', '=', true] | ['group', '^', string])[] = [['local', '=', true]];
+    if (query?.trim()) {
+      filters.push(['group', '^', query.trim()]);
+    }
+
+    // Limit to 50 groups per query to prevent performance issues in large AD environments
+    return this.api.call('group.query', [filters, { limit: 50, order_by: ['group'] }]).pipe(
       map((groups) => {
-        this.localGroups = groups;
-        const chips = groups.map((group) => group.group);
-        return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
+        // Cache groups for later UID resolution using Map for O(1) lookups
+        groups.forEach((group) => {
+          this.localGroupsCache.set(group.group, group);
+        });
+        return groups.map((group) => group.group);
       }),
     );
   };
 
   readonly dsGroupsProvider: ChipsProvider = (query: string) => {
-    return this.api.call('group.query', [[['local', '=', false]]]).pipe(
+    const filters: (['local', '=', false] | ['group', '^', string])[] = [['local', '=', false]];
+    if (query?.trim()) {
+      filters.push(['group', '^', query.trim()]);
+    }
+
+    // Limit to 50 groups per query to prevent performance issues in large AD environments
+    return this.api.call('group.query', [filters, { limit: 50, order_by: ['group'] }]).pipe(
       map((groups) => {
-        const chips = groups.map((group) => group.group);
-        return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
+        // Cache groups for later UID resolution using Map for O(1) lookups
+        groups.forEach((group) => {
+          this.dsGroupsCache.set(group.group, group);
+        });
+        return groups.map((group) => group.group);
       }),
     );
   };
@@ -152,12 +170,34 @@ export class PrivilegeFormComponent implements OnInit {
   }
 
   setPrivilegeForEdit(existingPrivilege: Privilege): void {
+    // Pre-populate cache with existing groups to avoid unnecessary API calls on submit
+    const localGroupsWithNames: string[] = [];
+    const dsGroupsWithNames: string[] = [];
+
+    existingPrivilege.local_groups.forEach((group) => {
+      if (group.group) {
+        this.localGroupsCache.set(group.group, group);
+        localGroupsWithNames.push(group.group);
+      } else {
+        // For missing groups, store the placeholder with the GID for later resolution
+        const placeholder = this.translate.instant('Missing group - {gid}', { gid: group.gid });
+        localGroupsWithNames.push(placeholder);
+        // Cache the placeholder so it resolves to the GID
+        this.localGroupsCache.set(placeholder, group);
+      }
+    });
+
+    existingPrivilege.ds_groups.forEach((group) => {
+      if (group.group) {
+        this.dsGroupsCache.set(group.group, group);
+        dsGroupsWithNames.push(group.group);
+      }
+    });
+
     this.form.patchValue({
       ...existingPrivilege,
-      local_groups: existingPrivilege.local_groups.map(
-        (group) => group.group || this.translate.instant('Missing group - {gid}', { gid: group.gid }),
-      ),
-      ds_groups: existingPrivilege.ds_groups.map((group) => group.group),
+      local_groups: localGroupsWithNames,
+      ds_groups: dsGroupsWithNames,
     });
     this.cdr.markForCheck();
   }
@@ -165,11 +205,11 @@ export class PrivilegeFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    this.dsGroupsUids$.pipe(
-      switchMap((dsGroups) => {
+    combineLatest([this.localGroupsUids$, this.dsGroupsUids$]).pipe(
+      switchMap(([localGroups, dsGroups]) => {
         const values: PrivilegeUpdate = {
           ...this.form.value,
-          local_groups: this.localGroupsUids,
+          local_groups: localGroups,
           ds_groups: dsGroups,
         };
 
@@ -215,17 +255,87 @@ export class PrivilegeFormComponent implements OnInit {
     );
   }
 
-  private get localGroupsUids(): number[] {
-    return this.localGroups
-      .filter((group) => this.form.value.local_groups.includes(group.group))
-      .map((group) => group.gid);
+  private get localGroupsUids$(): Observable<number[]> {
+    const groupNames = this.form.value.local_groups;
+    if (!groupNames.length) {
+      return of([]);
+    }
+
+    // Check cache first, fetch missing groups in a single batch query
+    const cachedUids: number[] = [];
+    const missingNames: string[] = [];
+
+    groupNames.forEach((name) => {
+      const cached = this.localGroupsCache.get(name);
+      if (cached) {
+        // Exclude placeholder groups for deleted/missing groups (they have null group name)
+        if (cached.group !== null) {
+          cachedUids.push(cached.gid);
+        }
+      } else {
+        missingNames.push(name);
+      }
+    });
+
+    if (!missingNames.length) {
+      return of(cachedUids);
+    }
+
+    // Fetch missing groups in a single batch query (not N+1)
+    return this.api.call('group.query', [[
+      ['local', '=', true],
+      ['group', 'in', missingNames],
+    ]]).pipe(
+      map((groups) => {
+        // Cache the fetched groups
+        groups.forEach((group) => {
+          this.localGroupsCache.set(group.group, group);
+        });
+        // Return all UIDs (cached + newly fetched)
+        return [...cachedUids, ...groups.map((group) => group.gid)];
+      }),
+    );
   }
 
   private get dsGroupsUids$(): Observable<number[]> {
-    return this.form.value.ds_groups.length
-      ? combineLatest(
-        this.form.value.ds_groups.map((groupName) => this.userService.getGroupByName(groupName)),
-      ).pipe(map((groups) => groups.map((group) => group.gr_gid)))
-      : of([]);
+    const groupNames = this.form.value.ds_groups;
+    if (!groupNames.length) {
+      return of([]);
+    }
+
+    // Check cache first, fetch missing groups in a single batch query
+    const cachedUids: number[] = [];
+    const missingNames: string[] = [];
+
+    groupNames.forEach((name) => {
+      const cached = this.dsGroupsCache.get(name);
+      if (cached) {
+        // Exclude placeholder groups for deleted/missing groups (they have null group name)
+        if (cached.group !== null) {
+          cachedUids.push(cached.gid);
+        }
+      } else {
+        missingNames.push(name);
+      }
+    });
+
+    if (!missingNames.length) {
+      return of(cachedUids);
+    }
+
+    // Fetch missing groups in a single batch query (not N+1)
+    return this.api.call('group.query', [[
+      ['local', '=', false],
+      ['group', 'in', missingNames],
+    ]]).pipe(
+      map((groups) => {
+        // Cache the fetched groups
+        groups.forEach((group) => {
+          this.dsGroupsCache.set(group.group, group);
+        });
+        // Return all UIDs (cached + newly fetched)
+        return [...cachedUids, ...groups.map((group) => group.gid)];
+      }),
+    );
   }
 }

@@ -12,12 +12,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { filter, map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
-import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
+import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
@@ -34,6 +32,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KeyCreatedDialogComponent,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
+import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
@@ -92,17 +91,7 @@ export class ApiKeyFormComponent implements OnInit {
     reset: [false],
   });
 
-  protected readonly userQueryParams = new ParamsBuilder<User>()
-    .filter('local', '=', false)
-    .orFilter('roles', '!=', [])
-    .setOptions({ select: ['username'], order_by: ['username'] })
-    .getParams();
-
-  protected readonly usernames$ = this.api.call('user.query', this.userQueryParams).pipe(
-    map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
-  );
-
-  protected readonly userProvider = new SimpleAsyncComboboxProvider(this.usernames$);
+  protected readonly userProvider: UserComboboxProvider;
 
   protected readonly forbiddenNames$ = this.api.call('api_key.query', [
     [], { select: ['name'], order_by: ['name'] },
@@ -115,8 +104,10 @@ export class ApiKeyFormComponent implements OnInit {
     private loader: AppLoaderService,
     private errorHandler: FormErrorHandlerService,
     private authService: AuthService,
+    private userService: UserService,
     public slideInRef: SlideInRef<ApiKey | undefined, boolean>,
   ) {
+    this.userProvider = new UserComboboxProvider(this.userService);
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
