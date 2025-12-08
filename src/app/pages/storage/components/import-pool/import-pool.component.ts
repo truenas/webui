@@ -6,11 +6,11 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, forkJoin, map, of, switchMap,
+  Observable, forkJoin, last, map, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -130,19 +130,16 @@ export class ImportPoolComponent implements OnInit {
 
   private loadImportablePools(): void {
     this.isLoading.set(true);
-    this.currentStep.set('loading');
 
     this.api.job('pool.import_find').pipe(
+      observeJob(),
+      last(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (importablePoolFindJob) => {
         this.isLoading.set(false);
 
-        if (importablePoolFindJob.state !== JobState.Success) {
-          return;
-        }
-
-        const result: PoolFindResult[] = importablePoolFindJob.result;
+        const result: PoolFindResult[] = importablePoolFindJob.result || [];
         this.importablePools = result.map((pool) => ({
           name: pool.name,
           guid: pool.guid,

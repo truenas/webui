@@ -89,8 +89,8 @@ describe('ImportPoolComponent', () => {
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        jobDialog: jest.fn(() => ({
-          afterClosed: () => of(undefined),
+        jobDialog: jest.fn((job$) => ({
+          afterClosed: () => job$,
         })),
       }),
       mockAuth(),
@@ -164,8 +164,8 @@ describe('ImportPoolComponent', () => {
         mockProvider(SlideInRef, slideInRef),
         mockProvider(DialogService, {
           confirm: jest.fn(() => of(true)),
-          jobDialog: jest.fn(() => ({
-            afterClosed: () => of(undefined),
+          jobDialog: jest.fn((job$) => ({
+            afterClosed: () => job$,
           })),
         }),
         mockAuth(),
