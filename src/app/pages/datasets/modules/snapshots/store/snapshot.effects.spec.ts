@@ -72,12 +72,10 @@ describe('SnapshotEffects', () => {
       store$.overrideSelector(selectPreferences, { showSnapshotExtraColumns: true } as Preferences);
       store$.refreshState();
 
+      // snapshotExtraColumnsToggled doesn't trigger the effect, so no new call
       actions$.next(snapshotExtraColumnsToggled());
 
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, 100);
-      });
-
+      // Verify no additional calls were made (still 1)
       expect(api.call).toHaveBeenCalledTimes(1);
     });
 
