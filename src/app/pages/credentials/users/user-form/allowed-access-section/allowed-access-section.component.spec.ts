@@ -95,6 +95,20 @@ describe('AllowedAccessSectionComponent', () => {
     });
   });
 
+  describe('when existing user with webshare enabled', () => {
+    it('shows WebShare Access checkbox as checked when user has webshare enabled', async () => {
+      spectator.setInput('editingUser', {
+        username: 'test',
+        smb: true,
+        webshare: true,
+        roles: [],
+      });
+
+      const webshareAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'WebShare Access' }));
+      expect(await webshareAccessCheckbox.isChecked()).toBe(true);
+    });
+  });
+
   it('updates store when allowed access checkboxes are changed', async () => {
     const smbCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
     const shellCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Shell Access' }));
