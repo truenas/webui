@@ -200,7 +200,6 @@ export class SnapshotListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store$.dispatch(snapshotPageEntered());
     this.getPreferences();
     this.getSnapshots();
     this.setDefaultSort();
@@ -243,6 +242,7 @@ export class SnapshotListComponent implements OnInit {
     this.store$.pipe(
       waitForPreferences,
       map((preferences) => preferences.showSnapshotExtraColumns),
+      take(1),
       untilDestroyed(this),
     ).subscribe((showExtraColumns) => {
       this.showExtraColumnsControl.setValue(showExtraColumns, { emitEvent: false });
@@ -278,6 +278,8 @@ export class SnapshotListComponent implements OnInit {
           this.loadingExtraColumns$.next(true);
           this.updateColumnVisibility();
           this.store$.dispatch(snapshotExtraColumnsToggled());
+          this.store$.dispatch(snapshotPageEntered());
+          this.loadingExtraColumns$.next(false);
         } else {
           this.showExtraColumnsControl.setValue(!this.showExtraColumnsControl.value, { emitEvent: false });
         }
