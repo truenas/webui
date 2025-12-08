@@ -52,3 +52,19 @@ export function idNameArrayToOptions<T = number>(): OperatorFunction<{ id: T; na
     return options.map((option) => ({ label: ignoreTranslation(option.name), value: option.id }));
   });
 }
+
+/**
+ * Convert grouped NIC choices to flat options array
+ * Transforms `{ "BRIDGE": ["br0", "br1"], "MACVLAN": ["eth0"] }` to `[{ label: "br0", value: "br0" }, ...]`
+ * @returns Option[]
+ */
+export function nicChoicesToOptions(): OperatorFunction<Record<string, string[]>, Option[]> {
+  return map((groupedChoices) => {
+    const allInterfaces = Object.values(groupedChoices).flat();
+    return allInterfaces.map((interfaceName) => ({
+      // Empty string represents "Automatic" bridge selection
+      label: ignoreTranslation(interfaceName === '' ? 'Automatic' : interfaceName),
+      value: interfaceName,
+    }));
+  });
+}

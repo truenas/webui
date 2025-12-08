@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef } from
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDivider } from '@angular/material/divider';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -31,6 +32,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
+    MatDivider,
     MatMenu,
     MatMenuItem,
     TestDirective,
@@ -53,30 +55,81 @@ export class AddNicMenuComponent {
   private containersStore = inject(ContainersStore);
   private matDialog = inject(MatDialog);
 
-  private readonly nicChoices = toSignal(this.getNicChoices(), { initialValue: {} });
+  private readonly nicChoices = toSignal(
+    this.getNicChoices(),
+    { initialValue: {} as Record<string, string | string[]> },
+  );
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
-  protected readonly availableNics = computed(() => {
+  protected readonly availableNicGroups = computed(() => {
     const choices = this.nicChoices();
     const existingNics = this.devicesStore.devices()
       .filter((device) => device.dtype === ContainerDeviceType.Nic) as ContainerNicDevice[];
 
-    return Object.entries(choices)
-      .filter(([key]) => !existingNics.find((device) => device.nic_attach === key))
-      .map(([key, label]) => ({ key, label }));
+    // Check if we're dealing with the new grouped format (arrays) or old flat format (strings)
+    const isNewFormat = Object.values(choices).some((value) => Array.isArray(value));
+
+    let groups;
+    if (isNewFormat) {
+      // New format: { "BRIDGE": ["ens1"], "MACVLAN": ["truenasbr0"] }
+      groups = Object.entries(choices)
+        .map(([groupType, nics]) => ({
+          type: groupType,
+          label: this.getNicGroupLabel(groupType),
+          nics: (nics as string[])
+            .filter((nic) => !existingNics.find((device) => device.nic_attach === nic))
+            .map((nic) => ({ key: nic, label: nic })),
+        }))
+        .filter((group) => group.nics.length > 0);
+    } else {
+      // Old format: { "ens1": "ens1", "truenasbr0": "truenasbr0" }
+      // Display all NICs under generic group headers
+      const allNics = Object.keys(choices)
+        .filter((nic) => !existingNics.find((device) => device.nic_attach === nic));
+
+      // Try to categorize NICs by common naming patterns
+      const bridgeNics = allNics.filter((nic) => nic.toLowerCase().includes('br') || nic.toLowerCase().includes('bridge'));
+      const macvlanNics = allNics.filter((nic) => !nic.toLowerCase().includes('br') && !nic.toLowerCase().includes('bridge'));
+
+      groups = [];
+      if (bridgeNics.length > 0) {
+        groups.push({
+          type: 'BRIDGE',
+          label: this.getNicGroupLabel('BRIDGE'),
+          nics: bridgeNics.map((nic) => ({ key: nic, label: nic })),
+        });
+      }
+      if (macvlanNics.length > 0) {
+        groups.push({
+          type: 'MACVLAN',
+          label: this.getNicGroupLabel('MACVLAN'),
+          nics: macvlanNics.map((nic) => ({ key: nic, label: nic })),
+        });
+      }
+    }
+
+    return groups;
   });
 
+  private getNicGroupLabel(groupType: string): string {
+    const labels: Record<string, string> = {
+      BRIDGE: this.translate.instant('Bridged Devices'),
+      MACVLAN: this.translate.instant('MACVLAN Devices'),
+    };
+    return labels[groupType] || groupType;
+  }
+
   protected readonly hasNicsToAdd = computed(() => {
-    return this.availableNics().length > 0;
+    return this.availableNicGroups().some((group) => group.nics.length > 0);
   });
 
   protected addNic(nicKey: string): void {
     this.addDevice(nicKey);
   }
 
-  private getNicChoices(): Observable<Record<string, string>> {
-    return this.api.call('container.device.nic_attach_choices', []) as Observable<Record<string, string>>;
+  private getNicChoices(): Observable<Record<string, string | string[]>> {
+    return this.api.call('container.device.nic_attach_choices', []);
   }
 
   private addDevice(nicKey: string): void {

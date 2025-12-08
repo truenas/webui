@@ -24,8 +24,8 @@ describe('AddNicMenuComponent', () => {
       mockAuth(),
       mockApi([
         mockCall('container.device.nic_attach_choices', {
-          truenasbr0: 'TrueNAS Bridge',
-          ens1: 'Intel E1000',
+          BRIDGE: ['truenasbr0'],
+          MACVLAN: ['ens1'],
         }),
         mockCall('container.device.create'),
       ]),
@@ -45,6 +45,7 @@ describe('AddNicMenuComponent', () => {
           },
         ] as ContainerDevice[],
         loadDevices: jest.fn(),
+        reload: jest.fn(),
         isLoading: () => false,
       }),
       mockProvider(SnackbarService),
@@ -56,14 +57,19 @@ describe('AddNicMenuComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows available NIC devices in a single list', async () => {
+  it('shows available NIC devices grouped by type', async () => {
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
     await menu.open();
 
     const menuItems = await menu.getItems();
-    expect(menuItems).toHaveLength(2);
-    expect(await menuItems[0].getText()).toContain('TrueNAS Bridge');
-    expect(await menuItems[1].getText()).toContain('Intel E1000');
+    // Expects: "Bridged Devices" header (disabled), truenasbr0, "MACVLAN Devices" header (disabled), ens1
+    expect(menuItems.length).toBeGreaterThanOrEqual(4);
+
+    const itemTexts = await Promise.all(menuItems.map((item) => item.getText()));
+    expect(itemTexts).toContain('Bridged Devices');
+    expect(itemTexts).toContain('truenasbr0');
+    expect(itemTexts).toContain('MACVLAN Devices');
+    expect(itemTexts).toContain('ens1');
   });
 
   it('adds a NIC device with selected type when it is selected', async () => {
@@ -78,7 +84,7 @@ describe('AddNicMenuComponent', () => {
       })),
     }));
 
-    await menu.clickItem({ text: 'TrueNAS Bridge' });
+    await menu.clickItem({ text: 'truenasbr0' });
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ContainerNicFormDialog, {
       data: { nic: 'truenasbr0' },
@@ -110,7 +116,7 @@ describe('AddNicMenuComponent', () => {
       })),
     }));
 
-    await menu.clickItem({ text: 'TrueNAS Bridge' });
+    await menu.clickItem({ text: 'truenasbr0' });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
       container: 123,

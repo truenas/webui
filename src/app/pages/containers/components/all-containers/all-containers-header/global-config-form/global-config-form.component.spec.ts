@@ -27,8 +27,7 @@ describe('GlobalConfigFormComponent', () => {
           preferred_pool: 'tank',
         }),
         mockCall('lxc.bridge_choices', {
-          bridge1: 'bridge1',
-          '': 'Automatic',
+          BRIDGE: ['bridge1', ''],
         }),
         mockCall('container.pool_choices', {
           tank: 'tank',

@@ -916,7 +916,7 @@ export interface ApiCallDirectory {
   'container.device.update': { params: [id: number, update: ContainerDevicePayload]; response: ContainerDeviceEntry };
   'container.device.disk_choices': { params: []; response: Record<string, string> };
   'container.device.gpu_choices': { params: []; response: Record<string, ContainerGpuType> };
-  'container.device.nic_attach_choices': { params: []; response: Record<string, string> };
+  'container.device.nic_attach_choices': { params: []; response: Record<string, string[]> };
   'container.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
 
   // Container (actual available endpoints only)
@@ -929,7 +929,7 @@ export interface ApiCallDirectory {
   'container.update': { params: [containerId: number, update: UpdateContainer]; response: Container };
 
   // LXC (actual available endpoints only)
-  'lxc.bridge_choices': { params: []; response: Choices };
+  'lxc.bridge_choices': { params: []; response: Record<string, string[]> };
   'lxc.config': { params: []; response: ContainerGlobalConfig };
   'lxc.update': { params: [ContainerGlobalConfig]; response: ContainerGlobalConfig };
 
@@ -945,7 +945,7 @@ export interface ApiCallDirectory {
   'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };
   'system.advanced.get_gpu_pci_choices': { params: void; response: GpuPciChoices };
-  'vm.device.nic_attach_choices': { params: void; response: Choices };
+  'vm.device.nic_attach_choices': { params: void; response: Record<string, string[]> };
   'vm.device.passthrough_device_choices': { params: void; response: Record<string, VmPassthroughDeviceChoice> };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
   'vm.device.update': { params: [id: number, update: VmDeviceUpdate]; response: VmDevice };

@@ -9,7 +9,7 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { choicesToOptions, nicChoicesToOptions } from 'app/helpers/operators/options.operators';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -67,7 +67,7 @@ export class GlobalConfigFormComponent implements OnInit {
 
 
   protected bridgeOptions$ = this.api.call('lxc.bridge_choices').pipe(
-    choicesToOptions(),
+    nicChoicesToOptions(),
   );
 
   protected poolOptions$ = this.api.call('container.pool_choices').pipe(
