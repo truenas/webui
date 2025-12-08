@@ -1,5 +1,11 @@
 import { PercentPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  inject,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -8,6 +14,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { withLatestFrom, map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -22,10 +29,16 @@ import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/widget-stale-data-notice/widget-stale-data-notice.component';
-import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
+import {
+  WidgetResourcesService,
+  PoolUsage,
+} from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import {
-  ItemInfo, PoolInfo, statusIcons, StatusLevel,
+  ItemInfo,
+  PoolInfo,
+  statusIcons,
+  StatusLevel,
 } from 'app/pages/dashboard/widgets/storage/interfaces/pool-info.interface';
 
 @Component({
@@ -58,14 +71,57 @@ export class WidgetStorageComponent {
 
   size = input.required<SlotSize>();
 
+  protected poolUpdates$ = this.resources
+    .poolUpdatesWithStaleDetection()
+    .pipe(takeUntilDestroyed());
+
+  protected poolQueryUpdates$
+    = this.resources.pools$.pipe(takeUntilDestroyed());
+
+  // what we do here is take a `Pool[]` and turn it into a `Record<string, PoolUsage>` so we can fill in missing
+  // data from the API's `reporting.realtime` response. basically, we're combining the
+  // pool data from `pool.query` and `reporting.realtime`.
   protected poolDataState = toSignal(
-    this.resources.poolUpdatesWithStaleDetection().pipe(takeUntilDestroyed()),
+    this.poolUpdates$.pipe(
+      withLatestFrom(this.poolQueryUpdates$),
+      map(([poolUpdate, queryUpdate]) => {
+        // that product type annotation is due to the fact that the `free` property *is actually guaranteed* to exist
+        // in this case, but the `Pool` interface doesn't include it for whatever reason.
+        // regardless, we can safely assume it exists and annotate that reducer as such.
+        const recordFromPoolQuery: Record<string, PoolUsage>
+          = queryUpdate.reduce((acc, cur: Pool & { free: number }) => {
+            const total = cur.size;
+            const available = cur.free;
+            const used = total - available;
+            return {
+              ...acc,
+              [cur.name]: { total, available, used },
+            };
+          }, {});
+
+        // since the `poolUpdate` is the more important source of truth, we prioritize its properties.
+        // the only reason we use the data from `queryUpdate` is to fill in missing data from the API, since it doesn't
+        // always send *all* pools in its response.
+        return {
+          isStale: poolUpdate.isStale,
+          value: {
+            ...recordFromPoolQuery,
+            ...poolUpdate.value,
+          },
+        };
+      }),
+    ),
   );
 
-  protected scanState = toSignal(this.resources.scanUpdatesWithStaleDetection().pipe(takeUntilDestroyed()));
+  protected scanState = toSignal(
+    this.resources.scanUpdatesWithStaleDetection().pipe(takeUntilDestroyed()),
+  );
 
   protected isStale = computed(() => this.poolDataState()?.isStale ?? false);
-  protected isLoading = computed(() => (!this.pools() || !this.poolStats()) && !this.isStale());
+  protected isLoading = computed(
+    () => (!this.pools() || !this.poolStats()) && !this.isStale(),
+  );
+
   poolsInfo = computed(() => {
     const pools = this.pools();
 
@@ -106,8 +162,10 @@ export class WidgetStorageComponent {
   }
 
   get showCreatePool(): boolean {
-    return Number(this.pools()?.length) < 6
-      && (Number(this.pools()?.length) % 2 === 1 || this.pools()?.length === 0);
+    return (
+      Number(this.pools()?.length) < 6
+      && (Number(this.pools()?.length) % 2 === 1 || this.pools()?.length === 0)
+    );
   }
 
   getColumnsInTile(poolName: string): number {
@@ -116,12 +174,14 @@ export class WidgetStorageComponent {
     }
 
     const existingPool = this.pools()?.find((pool) => pool.name === poolName);
-    const badStatus = existingPool && [
-      PoolStatus.Locked,
-      PoolStatus.Unknown,
-      PoolStatus.Offline,
-      PoolStatus.Degraded,
-    ].includes(existingPool.status);
+    const badStatus
+      = existingPool
+      && [
+        PoolStatus.Locked,
+        PoolStatus.Unknown,
+        PoolStatus.Offline,
+        PoolStatus.Degraded,
+      ].includes(existingPool.status);
 
     if (badStatus || !existingPool?.topology) {
       return 2;
@@ -222,14 +282,20 @@ export class WidgetStorageComponent {
       const unhealthy: string[] = []; // Disks with errors
       pool.topology.data.forEach((item) => {
         if (isTopologyDisk(item)) {
-          const diskErrors = item.stats.read_errors + item.stats.write_errors + item.stats.checksum_errors;
+          const diskErrors
+            = item.stats.read_errors
+            + item.stats.write_errors
+            + item.stats.checksum_errors;
 
           if (diskErrors > 0) {
             unhealthy.push(item.disk);
           }
         } else {
           item.children.forEach((device) => {
-            const diskErrors = device.stats.read_errors + device.stats.write_errors + device.stats.checksum_errors;
+            const diskErrors
+              = device.stats.read_errors
+              + device.stats.write_errors
+              + device.stats.checksum_errors;
 
             if (diskErrors > 0) {
               unhealthy.push(device.disk);
