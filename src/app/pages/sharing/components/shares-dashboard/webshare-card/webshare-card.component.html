@@ -19,8 +19,8 @@
         mat-button
         [ixTest]="['webshare', 'open']"
         [attr.aria-label]="'Open WebShare' | translate"
-        [disabled]="!isTruenasDirectDomain"
-        [matTooltip]="isTruenasDirectDomain
+        [disabled]="!canOpenWebShare()"
+        [matTooltip]="canOpenWebShare()
           ? ('Open WebShare' | translate)
           : ('WebShare can only be opened when accessed via a .truenas.direct domain' | translate)"
         (click)="openWebShare()"

@@ -86,6 +86,8 @@ describe('WebShareCardComponent', () => {
       mockApi([
         mockCall('sharing.webshare.query', mockWebShares),
         mockCall('tn_connect.config', mockTnConnectConfig),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       provideMockStore({
         selectors: [
@@ -142,7 +144,7 @@ describe('WebShareCardComponent', () => {
     );
     await openButton.click();
 
-    expect(mockWindow.open).toHaveBeenCalledWith('http://test.truenas.direct:755/webshare/', '_blank');
+    expect(mockWindow.open).toHaveBeenCalledWith('https://test.truenas.direct:755/webshare/', '_blank');
 
     consoleError.mockRestore();
   });
