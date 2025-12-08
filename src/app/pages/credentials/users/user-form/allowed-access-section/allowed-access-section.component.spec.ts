@@ -38,6 +38,9 @@ describe('AllowedAccessSectionComponent', () => {
       const smbAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
       expect(await smbAccessCheckbox.isChecked()).toBe(true);
 
+      const webshareAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'WebShare Access' }));
+      expect(await webshareAccessCheckbox.isChecked()).toBe(false);
+
       const truenasAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'TrueNAS Access' }));
       expect(await truenasAccessCheckbox.isChecked()).toBe(false);
 
