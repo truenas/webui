@@ -25,7 +25,7 @@ import { helptextUsers } from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
+import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
@@ -200,7 +200,7 @@ export class UserFormComponent implements OnInit {
 
   shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
-  readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
+  readonly groupProvider = new GroupComboboxProvider(this.userService, 'id');
 
   autocompleteProvider: ChipsProvider = (query: string) => {
     return this.api.call('group.query', [[['name', '^', query], ['local', '=', true]]]).pipe(
