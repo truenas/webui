@@ -314,7 +314,7 @@ describe('UpdateComponent', () => {
       expect(paragraph?.textContent).toContain('See the manual image installation guide');
 
       const link = spectator.query('.manual-update a');
-      expect(link.getAttribute('href')).toContain('https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/#performing-a-manual-update');
+      expect(link.getAttribute('href')).toContain('https://www.truenas.com/docs/scale/25.10/scaletutorials/systemsettings/updatescale/');
     });
 
     it('offers to save configuration and redirects user when Install manual update is pressed', async () => {

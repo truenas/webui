@@ -81,7 +81,7 @@ export class UpdateComponent implements OnInit {
 
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
-  protected readonly manualUpdateUrl = 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/#performing-a-manual-update';
+  protected readonly manualUpdateUrl = 'https://www.truenas.com/docs/scale/25.10/scaletutorials/systemsettings/updatescale/';
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
