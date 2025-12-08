@@ -80,6 +80,7 @@ describe('AllowedAccessSectionComponent', () => {
 
       expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenCalledWith({
         smbAccess: true,
+        webshareAccess: undefined,
         truenasAccess: true,
         sshAccess: true,
         shellAccess: true,
@@ -96,6 +97,7 @@ describe('AllowedAccessSectionComponent', () => {
 
     expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenCalledWith({
       smbAccess: true,
+      webshareAccess: false,
       truenasAccess: false,
       sshAccess: false,
       shellAccess: true,
@@ -127,6 +129,7 @@ describe('AllowedAccessSectionComponent', () => {
 
     expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenCalledWith({
       smbAccess: true,
+      webshareAccess: false,
       truenasAccess: true,
       sshAccess: false,
       shellAccess: false,

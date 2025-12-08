@@ -38,6 +38,7 @@ describe('UserFormStore', () => {
         allowedAccess: {
           shellAccess: false,
           smbAccess: true,
+          webshareAccess: false,
           sshAccess: false,
           truenasAccess: false,
         },
@@ -96,6 +97,7 @@ describe('UserFormStore', () => {
     spectator.service.updateSetupDetails({
       allowedAccess: {
         smbAccess: true,
+        webshareAccess: false,
         truenasAccess: false,
         sshAccess: false,
         shellAccess: false,
@@ -124,6 +126,7 @@ describe('UserFormStore', () => {
     it('should return correct smbAccess value', () => {
       spectator.service.setAllowedAccessConfig({
         smbAccess: true,
+        webshareAccess: false,
         truenasAccess: false,
         sshAccess: false,
         shellAccess: false,
@@ -132,9 +135,22 @@ describe('UserFormStore', () => {
       expect(spectator.service.smbAccess()).toBe(true);
     });
 
+    it('should return correct webshareAccess value', () => {
+      spectator.service.setAllowedAccessConfig({
+        smbAccess: false,
+        webshareAccess: true,
+        truenasAccess: false,
+        sshAccess: false,
+        shellAccess: false,
+      });
+
+      expect(spectator.service.webshareAccess()).toBe(true);
+    });
+
     it('should return correct sshAccess value', () => {
       spectator.service.setAllowedAccessConfig({
         smbAccess: false,
+        webshareAccess: false,
         truenasAccess: false,
         sshAccess: true,
         shellAccess: false,
@@ -146,6 +162,7 @@ describe('UserFormStore', () => {
     it('should return correct shellAccess value', () => {
       spectator.service.setAllowedAccessConfig({
         smbAccess: false,
+        webshareAccess: false,
         truenasAccess: false,
         sshAccess: false,
         shellAccess: true,
@@ -157,6 +174,7 @@ describe('UserFormStore', () => {
     it('should return correct truenasAccess value', () => {
       spectator.service.setAllowedAccessConfig({
         smbAccess: false,
+        webshareAccess: false,
         truenasAccess: true,
         sshAccess: false,
         shellAccess: false,
@@ -175,6 +193,7 @@ describe('UserFormStore', () => {
     it('should update allowed access configuration', () => {
       const newConfig = {
         smbAccess: false,
+        webshareAccess: true,
         truenasAccess: true,
         sshAccess: true,
         shellAccess: true,

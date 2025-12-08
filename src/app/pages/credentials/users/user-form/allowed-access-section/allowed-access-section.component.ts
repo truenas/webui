@@ -50,6 +50,7 @@ export class AllowedAccessSectionComponent {
 
   form = this.formBuilder.group({
     smb: [true],
+    webshare: [false],
     truenas_access: [false],
     ssh_access: [false],
     shell_access: [false],
@@ -138,6 +139,7 @@ export class AllowedAccessSectionComponent {
       next: (values) => {
         this.userFormStore.setAllowedAccessConfig({
           smbAccess: values.smb,
+          webshareAccess: values.webshare,
           truenasAccess: values.truenas_access,
           sshAccess: values.ssh_access,
           shellAccess: values.shell_access,
@@ -145,6 +147,7 @@ export class AllowedAccessSectionComponent {
 
         this.userFormStore.updateUserConfig({
           smb: values.smb,
+          webshare: values.webshare,
         });
 
         this.userFormStore.updateSetupDetails({
@@ -158,6 +161,7 @@ export class AllowedAccessSectionComponent {
         const roleValue = this.editingUser().roles.length > 0 ? this.editingUser().roles[0] : defaultRole;
         this.form.patchValue({
           smb: this.editingUser().smb,
+          webshare: this.editingUser().webshare,
           truenas_access: !!this.editingUser().roles.length,
           shell_access: hasShellAccess(this.editingUser()),
           ssh_access: hasSshAccess(this.editingUser()),

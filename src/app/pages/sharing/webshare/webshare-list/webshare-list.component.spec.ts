@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
@@ -23,6 +24,7 @@ import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
+import { WebShareService } from 'app/pages/sharing/webshare/webshare.service';
 import { selectService } from 'app/store/services/services.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { WebShareListComponent } from './webshare-list.component';
@@ -386,5 +388,96 @@ describe('WebShareListComponent - TrueNAS Connect not configured', () => {
     expect(config).toBeDefined();
     expect(config.title).toBe('');
     expect(config.message).toContain('WebShare service provides web-based file access');
+  });
+});
+
+describe('WebShareListComponent - No WebShare users configured', () => {
+  let spectator: Spectator<WebShareListComponent>;
+
+  const mockTruenasConnectConfig = {
+    id: 1,
+    enabled: true,
+    status: TruenasConnectStatus.Configured,
+    client_id: 'test-client-id',
+  } as unknown as TruenasConnectConfig;
+
+  const mockService: Service = {
+    id: 1,
+    service: ServiceName.WebShare,
+    state: ServiceStatus.Running,
+    enable: true,
+  } as Service;
+
+  const createComponent = createComponentFactory({
+    component: WebShareListComponent,
+    imports: [],
+    providers: [
+      mockAuth(),
+      mockApi([
+        mockCall('sharing.webshare.query', []),
+        mockCall('tn_connect.config', mockTruenasConnectConfig),
+        mockCall('user.query', []),
+      ]),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of({ response: true, error: null })),
+      }),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+        error: jest.fn(),
+      }),
+      mockProvider(SnackbarService),
+      mockProvider(EmptyService),
+      mockProvider(MatDialog),
+      mockProvider(TruenasConnectService, {
+        config$: of(mockTruenasConnectConfig),
+        openStatusModal: jest.fn(),
+      }),
+      mockProvider(WebShareService, {
+        getWebShareTableRows: jest.fn(() => of([])),
+        transformToTableRows: jest.fn().mockReturnValue([]),
+        hasWebshareUsers$: of(false),
+      }),
+      provideMockStore({
+        initialState: {
+          services: {
+            ids: [],
+            entities: {},
+          },
+          preferences: {
+            preferences: {},
+          },
+        },
+        selectors: [
+          {
+            selector: selectService(ServiceName.WebShare),
+            value: mockService,
+          },
+          {
+            selector: selectSystemInfo,
+            value: { license: { features: ['WEBSHARE'] } },
+          },
+        ],
+      }),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    spectator.detectChanges();
+  });
+
+  it('should show info message when no users have WebShare access configured', () => {
+    const infoMessages = spectator.queryAll('.info-message');
+    expect(infoMessages).toHaveLength(1);
+    expect(infoMessages[0].textContent).toContain('It appears you have no users configured to access WebShare.');
+  });
+
+  it('should navigate to users page when info message is clicked', () => {
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
+
+    spectator.click('.info-message');
+
+    expect(router.navigate).toHaveBeenCalledWith(['/credentials', 'users']);
   });
 });

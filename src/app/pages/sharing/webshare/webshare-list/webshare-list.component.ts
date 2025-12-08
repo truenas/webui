@@ -6,11 +6,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, switchMap, map,
 } from 'rxjs';
+import { combineLatestWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -96,6 +98,7 @@ export class WebShareListComponent implements OnInit {
   private webShareService = inject(WebShareService);
   private truenasConnectService = inject(TruenasConnectService);
   private loader = inject(LoaderService);
+  private router = inject(Router);
 
   service$ = this.store$.select(selectService(ServiceName.WebShare));
   searchQuery = '';
@@ -103,6 +106,11 @@ export class WebShareListComponent implements OnInit {
 
   hasTruenasConnect$ = this.truenasConnectService.config$.pipe(
     map((config) => config?.status === TruenasConnectStatus.Configured),
+  );
+
+  showNoWebshareUsersNotice$ = this.hasTruenasConnect$.pipe(
+    combineLatestWith(this.webShareService.hasWebshareUsers$),
+    map(([hasTruenasConnect, hasWebshareUsers]) => hasTruenasConnect && !hasWebshareUsers),
   );
 
   protected readonly helptext = helptextSharingWebshare;
@@ -273,6 +281,10 @@ export class WebShareListComponent implements OnInit {
 
   openTruenasConnectDialog(): void {
     this.truenasConnectService.openStatusModal();
+  }
+
+  navigateToUsers(): void {
+    this.router.navigate(['/credentials', 'users']);
   }
 
   openWebShare(row: WebShareTableRow): void {

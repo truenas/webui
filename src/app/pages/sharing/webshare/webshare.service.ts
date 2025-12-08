@@ -2,10 +2,10 @@ import { Injectable, inject, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, of, forkJoin, catchError,
+  Observable, of, forkJoin,
 } from 'rxjs';
 import {
-  switchMap, take, map, shareReplay,
+  switchMap, take, map, catchError, shareReplay,
 } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -74,6 +74,16 @@ export class WebShareService {
       console.error('Failed to fetch hostname mapping for WebShare:', error);
       return of({ ipsWithHostnames: {} as Record<string, string>, localIp: '', hostname: undefined });
     }),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  /**
+   * Observable that checks if there are any local users configured with WebShare access.
+   * Returns true if at least one local user has webshare=true, false otherwise.
+   */
+  readonly hasWebshareUsers$ = this.api.call('user.query', [[['webshare', '=', true], ['local', '=', true]]]).pipe(
+    map((users) => users.length > 0),
+    catchError(() => of(false)),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

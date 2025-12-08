@@ -38,6 +38,12 @@
         <span>{{ 'WebShare service requires TrueNAS Connect to be configured and active.' | translate }}</span>
       </div>
     }
+    @if (showNoWebshareUsersNotice$ | async) {
+      <div class="info-message clickable" (click)="navigateToUsers()">
+        <ix-icon name="info"></ix-icon>
+        <span>{{ 'It appears you have no users configured to access WebShare.' | translate }}</span>
+      </div>
+    }
     @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {
       <ix-empty [conf]="emptyConfig" [requiredRoles]="requiredRoles"></ix-empty>
     } @else {

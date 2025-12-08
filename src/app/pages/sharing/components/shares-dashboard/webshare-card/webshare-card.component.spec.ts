@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { provideRouter, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
@@ -13,6 +14,7 @@ import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Service } from 'app/interfaces/service.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { User } from 'app/interfaces/user.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
@@ -88,6 +90,7 @@ describe('WebShareCardComponent', () => {
         mockCall('tn_connect.config', mockTnConnectConfig),
         mockCall('tn_connect.ips_with_hostnames', {}),
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
+        mockCall('user.query', [{ id: 1, username: 'testuser', webshare: true } as User]),
       ]),
       provideMockStore({
         selectors: [
@@ -107,6 +110,7 @@ describe('WebShareCardComponent', () => {
         config$: of(mockTnConnectConfig),
         openStatusModal: jest.fn(),
       }),
+      provideRouter([]),
       {
         provide: WINDOW,
         useValue: mockWindow,
@@ -269,6 +273,7 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
       mockProvider(SnackbarService),
       mockApi([
         mockCall('sharing.webshare.query', []),
+        mockCall('user.query', []),
         mockCall('tn_connect.ips_with_hostnames', {}),
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
@@ -290,6 +295,7 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
         config$: of(mockTnConnectConfigDisabled),
         openStatusModal: jest.fn(),
       }),
+      provideRouter([]),
       {
         provide: WINDOW,
         useValue: {
@@ -320,5 +326,96 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
     spectator.click('.info-message');
 
     expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
+  });
+});
+
+describe('WebShareCardComponent - No WebShare users configured', () => {
+  let spectator: Spectator<WebShareCardComponent>;
+  const mockWindow = {
+    location: {
+      origin: 'http://test.truenas.direct:4200',
+      hostname: 'test.truenas.direct',
+      protocol: 'http:',
+    } as Location,
+    open: jest.fn(),
+  } as unknown as Window;
+
+  const mockTnConnectConfig: TruenasConnectConfig = {
+    enabled: true,
+    status: TruenasConnectStatus.Configured,
+  } as TruenasConnectConfig;
+
+  const mockService: Service = {
+    id: 10,
+    service: ServiceName.WebShare,
+    enable: true,
+    state: ServiceStatus.Running,
+  } as Service;
+
+  const createComponent = createComponentFactory({
+    component: WebShareCardComponent,
+    imports: [
+      IxTablePagerShowMoreComponent,
+    ],
+    declarations: [
+      MockComponents(
+        ServiceStateButtonComponent,
+        ServiceExtraActionsComponent,
+      ),
+    ],
+    providers: [
+      mockAuth(),
+      mockProvider(SlideIn),
+      mockProvider(DialogService),
+      mockProvider(SnackbarService),
+      mockApi([
+        mockCall('sharing.webshare.query', []),
+        mockCall('user.query', []),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      ]),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemInfo,
+            value: {
+              license: { features: ['TRUENAS_CONNECT'] },
+            },
+          },
+          {
+            selector: selectServices,
+            value: [mockService],
+          },
+        ],
+      }),
+      mockProvider(TruenasConnectService, {
+        config$: of(mockTnConnectConfig),
+        openStatusModal: jest.fn(),
+      }),
+      provideRouter([]),
+      {
+        provide: WINDOW,
+        useValue: mockWindow,
+      },
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+  });
+
+  it('shows info message when no users have WebShare access configured', () => {
+    const infoMessages = spectator.queryAll('.info-message');
+    expect(infoMessages).toHaveLength(1);
+    expect(infoMessages[0]).toHaveText('It appears you have no users configured to access WebShare.');
+  });
+
+  it('navigates to users page when info message is clicked', () => {
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate').mockReturnValue(Promise.resolve(true));
+
+    spectator.click('.info-message');
+
+    expect(router.navigate).toHaveBeenCalledWith(['/credentials', 'users']);
   });
 });

@@ -132,23 +132,28 @@ describe('UserAccessCardComponent', () => {
     expect(passwordSection).toHaveText('Has SMB Access');
   });
 
+  it('should display WebShare access status', () => {
+    const webshareSection = spectator.query('.content-wrapper:nth-of-type(6)');
+    expect(webshareSection).toHaveText('No WebShare Access');
+  });
+
   it('should display roles', () => {
-    const rolesSection = spectator.query('.content-wrapper:nth-of-type(6)');
+    const rolesSection = spectator.query('.content-wrapper:nth-of-type(7)');
     expect(rolesSection).toHaveText('TrueNAS Access: Full Admin');
   });
 
   it('should display API keys count', () => {
-    const apiKeysSection = spectator.query('.content-wrapper:nth-of-type(7)');
+    const apiKeysSection = spectator.query('.content-wrapper:nth-of-type(8)');
     expect(apiKeysSection).toHaveText('API Keys: 2 keys');
   });
 
   it('should display SSH access status', () => {
-    const sshSection = spectator.query('.content-wrapper:nth-of-type(8)');
+    const sshSection = spectator.query('.content-wrapper:nth-of-type(9)');
     expect(sshSection).toHaveText('SSH Key Set & Password Login Enabled');
   });
 
   it('should display Shell Access status', () => {
-    const shellAccessSection = spectator.query('.content-wrapper:nth-of-type(9)');
+    const shellAccessSection = spectator.query('.content-wrapper:nth-of-type(10)');
     expect(shellAccessSection).toHaveText('Shell Access: /bin/bash');
 
     const additionalShellAccessInfo = spectator.query('.additional-info');
@@ -202,7 +207,7 @@ describe('UserAccessCardComponent', () => {
 
   describe('API Keys', () => {
     it('shows API keys count', () => {
-      const apiKeysSection = spectator.query('.content-wrapper:nth-of-type(7) .flex-container');
+      const apiKeysSection = spectator.query('.content-wrapper:nth-of-type(8) .flex-container');
       expect(apiKeysSection).toHaveText('API Keys: 2 keys');
     });
 
