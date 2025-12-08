@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, flush } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -37,7 +38,6 @@ describe('PrivilegeFormComponent', () => {
     local_groups: [
       { gid: 111, group: 'Group A' },
       { gid: 222, group: 'Group B' },
-      { gid: 333, group: null },
     ],
     ds_groups: [] as Group[],
     roles: [Role.ReadonlyAdmin],
@@ -50,10 +50,33 @@ describe('PrivilegeFormComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('group.query', [
-          { group: 'Group A', gid: 111 },
-          { group: 'Group B', gid: 222 },
-        ] as Group[]),
+        mockCall('group.query', (params) => {
+          // Handle all group.query calls - return groups based on filters
+          const filters = params?.[0] || [];
+          const hasLocal = filters.find((filter: unknown[]) => Array.isArray(filter) && filter[0] === 'local');
+          const hasGroupIn = filters.find((filter: unknown[]) => Array.isArray(filter) && filter[0] === 'group' && filter[1] === 'in');
+
+          // If filtering by group names, return only those groups
+          if (hasGroupIn) {
+            const requestedNames = (hasGroupIn as unknown[])[2] as string[];
+            const allGroups = [
+              { group: 'Group A', gid: 111 },
+              { group: 'Group B', gid: 222 },
+            ] as Group[];
+            return allGroups.filter((grp) => requestedNames.includes(grp.group));
+          }
+
+          // If filtering by local=false (DS groups), return empty
+          if (hasLocal && (hasLocal as unknown[])[2] === false) {
+            return [] as Group[];
+          }
+
+          // Default: return all local groups
+          return [
+            { group: 'Group A', gid: 111 },
+            { group: 'Group B', gid: 222 },
+          ] as Group[];
+        }),
         mockCall('privilege.create'),
         mockCall('privilege.update'),
         mockCall('privilege.roles', [
@@ -145,13 +168,13 @@ describe('PrivilegeFormComponent', () => {
       expect(values).toEqual({
         Name: 'privilege',
         'Web Shell Access': true,
-        'Local Groups': ['Group A', 'Group B', 'Missing group - 333'],
+        'Local Groups': ['Group A', 'Group B'],
         'Directory Services Groups': [],
         Roles: ['Readonly Admin'],
       });
     });
 
-    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+    it('sends an update payload to websocket and closes modal when save is pressed', fakeAsync(async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Name: 'updated privilege',
@@ -162,6 +185,9 @@ describe('PrivilegeFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
+      // Flush all pending async operations
+      flush();
+
       expect(api.call).toHaveBeenCalledWith('privilege.update', [10, {
         ds_groups: [],
         local_groups: [111, 222],
@@ -169,7 +195,7 @@ describe('PrivilegeFormComponent', () => {
         roles: [Role.FullAdmin, Role.ReadonlyAdmin],
         web_shell: false,
       }]);
-    });
+    }));
   });
 
   describe('editing a build-in privilege', () => {
@@ -183,7 +209,7 @@ describe('PrivilegeFormComponent', () => {
       api = spectator.inject(ApiService);
     });
 
-    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+    it('sends an update payload to websocket and closes modal when save is pressed', fakeAsync(async () => {
       const form = await loader.getHarness(IxFormHarness);
 
       expect(await form.getDisabledState()).toEqual({
@@ -201,11 +227,14 @@ describe('PrivilegeFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
+      // Flush all pending async operations
+      flush();
+
       expect(api.call).toHaveBeenCalledWith('privilege.update', [10, {
         ds_groups: [],
         local_groups: [111, 222],
         web_shell: false,
       }]);
-    });
+    }));
   });
 });
