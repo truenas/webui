@@ -20,6 +20,28 @@ import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/p
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
+/**
+ * Type guard to check if a filter is a 'group in' filter.
+ */
+function isGroupInFilter(filter: unknown): filter is ['group', 'in', string[]] {
+  return Array.isArray(filter)
+    && filter.length === 3
+    && filter[0] === 'group'
+    && filter[1] === 'in'
+    && Array.isArray(filter[2]);
+}
+
+/**
+ * Type guard to check if a filter is a 'local' filter.
+ */
+function isLocalFilter(filter: unknown): filter is ['local', '=', boolean] {
+  return Array.isArray(filter)
+    && filter.length === 3
+    && filter[0] === 'local'
+    && filter[1] === '='
+    && typeof filter[2] === 'boolean';
+}
+
 describe('PrivilegeFormComponent', () => {
   let spectator: Spectator<PrivilegeFormComponent>;
   let loader: HarnessLoader;
@@ -30,6 +52,12 @@ describe('PrivilegeFormComponent', () => {
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn((): undefined => undefined),
   };
+
+  // Test data - all available groups
+  const testGroups: Group[] = [
+    { group: 'Group A', gid: 111 } as Group,
+    { group: 'Group B', gid: 222 } as Group,
+  ];
 
   const fakeDataPrivilege = {
     id: 10,
@@ -53,29 +81,22 @@ describe('PrivilegeFormComponent', () => {
         mockCall('group.query', (params) => {
           // Handle all group.query calls - return groups based on filters
           const filters = params?.[0] || [];
-          const hasLocal = filters.find((filter: unknown[]) => Array.isArray(filter) && filter[0] === 'local');
-          const hasGroupIn = filters.find((filter: unknown[]) => Array.isArray(filter) && filter[0] === 'group' && filter[1] === 'in');
+          const groupInFilter = filters.find(isGroupInFilter);
+          const localFilter = filters.find(isLocalFilter);
 
           // If filtering by group names, return only those groups
-          if (hasGroupIn) {
-            const requestedNames = (hasGroupIn as unknown[])[2] as string[];
-            const allGroups = [
-              { group: 'Group A', gid: 111 },
-              { group: 'Group B', gid: 222 },
-            ] as Group[];
-            return allGroups.filter((grp) => requestedNames.includes(grp.group));
+          if (groupInFilter) {
+            const requestedNames = groupInFilter[2];
+            return testGroups.filter((group) => requestedNames.includes(group.group));
           }
 
           // If filtering by local=false (DS groups), return empty
-          if (hasLocal && (hasLocal as unknown[])[2] === false) {
+          if (localFilter?.[2] === false) {
             return [] as Group[];
           }
 
           // Default: return all local groups
-          return [
-            { group: 'Group A', gid: 111 },
-            { group: 'Group B', gid: 222 },
-          ] as Group[];
+          return testGroups;
         }),
         mockCall('privilege.create'),
         mockCall('privilege.update'),

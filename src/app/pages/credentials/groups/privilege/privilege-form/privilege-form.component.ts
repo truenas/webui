@@ -8,12 +8,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, combineLatest, finalize, map, of, shareReplay, switchMap, throwError,
+  Observable, combineLatest, finalize, map, of, shareReplay, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
-import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -66,12 +65,13 @@ export class PrivilegeFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
 
-  // Minimum cached results to skip API call - balances freshness with performance
-  private readonly MIN_CACHED_RESULTS_FOR_QUERY = 10;
+  /**
+   * Maximum number of groups to return in autocomplete queries.
+   * Limits API response size for better performance.
+   */
+  private readonly GROUP_QUERY_LIMIT = 50;
 
   protected isLoading = signal(false);
-  private localGroupsCache = new Map<string, Group>();
-  private dsGroupsCache = new Map<string, Group>();
 
   protected form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -113,35 +113,28 @@ export class PrivilegeFormComponent implements OnInit {
     }),
   );
 
+  /**
+   * Provider for local groups autocomplete.
+   *
+   * Fetches local groups from API with search filtering:
+   * - Uses '^' prefix filter for server-side search
+   * - Falls back to client-side includes() for better UX (contains match)
+   * - Limited to 50 results for performance
+   *
+   * Note: No caching to keep implementation simple and avoid stale data issues.
+   */
   readonly localGroupsProvider: ChipsProvider = (query: string) => {
     const trimmedQuery = query?.trim().toLowerCase() || '';
 
-    // Try cache-first for performance
-    const cachedResults = Array.from(this.localGroupsCache.values())
-      .map((group) => group.group)
-      .filter((name) => !trimmedQuery || name.toLowerCase().includes(trimmedQuery))
-      .slice(0, 50);
-
-    // If we have enough cached results, return them without API call
-    if (cachedResults.length >= this.MIN_CACHED_RESULTS_FOR_QUERY && trimmedQuery) {
-      return of(cachedResults);
-    }
-
-    // Otherwise fetch from API
     const filters: (['local', '=', true] | ['group', '^', string])[] = [['local', '=', true]];
     if (trimmedQuery) {
       filters.push(['group', '^', trimmedQuery]);
     }
 
-    return this.api.call('group.query', [filters, { limit: 50, order_by: ['group'] }]).pipe(
+    return this.api.call('group.query', [filters, { limit: this.GROUP_QUERY_LIMIT, order_by: ['group'] }]).pipe(
       map((groups) => {
-        // Cache groups for later UID resolution using Map for O(1) lookups
-        groups.forEach((group) => {
-          this.localGroupsCache.set(group.group, group);
-        });
-
-        // Client-side filtering for contains match (better UX)
         const groupNames = groups.map((group) => group.group);
+        // Client-side filtering for contains match (better UX)
         if (!trimmedQuery) {
           return groupNames;
         }
@@ -152,35 +145,28 @@ export class PrivilegeFormComponent implements OnInit {
     );
   };
 
+  /**
+   * Provider for directory service groups autocomplete.
+   *
+   * Fetches DS groups from API with search filtering:
+   * - Uses '^' prefix filter for server-side search
+   * - Falls back to client-side includes() for better UX (contains match)
+   * - Limited to 50 results for performance
+   *
+   * Note: No caching to keep implementation simple and avoid stale data issues.
+   */
   readonly dsGroupsProvider: ChipsProvider = (query: string) => {
     const trimmedQuery = query?.trim().toLowerCase() || '';
 
-    // Try cache-first for performance
-    const cachedResults = Array.from(this.dsGroupsCache.values())
-      .map((group) => group.group)
-      .filter((name) => !trimmedQuery || name.toLowerCase().includes(trimmedQuery))
-      .slice(0, 50);
-
-    // If we have enough cached results, return them without API call
-    if (cachedResults.length >= this.MIN_CACHED_RESULTS_FOR_QUERY && trimmedQuery) {
-      return of(cachedResults);
-    }
-
-    // Otherwise fetch from API
     const filters: (['local', '=', false] | ['group', '^', string])[] = [['local', '=', false]];
     if (trimmedQuery) {
       filters.push(['group', '^', trimmedQuery]);
     }
 
-    return this.api.call('group.query', [filters, { limit: 50, order_by: ['group'] }]).pipe(
+    return this.api.call('group.query', [filters, { limit: this.GROUP_QUERY_LIMIT, order_by: ['group'] }]).pipe(
       map((groups) => {
-        // Cache groups for later UID resolution using Map for O(1) lookups
-        groups.forEach((group) => {
-          this.dsGroupsCache.set(group.group, group);
-        });
-
-        // Client-side filtering for contains match (better UX)
         const groupNames = groups.map((group) => group.group);
+        // Client-side filtering for contains match (better UX)
         if (!trimmedQuery) {
           return groupNames;
         }
@@ -199,10 +185,6 @@ export class PrivilegeFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Clear caches to ensure fresh data on form open
-    this.localGroupsCache.clear();
-    this.dsGroupsCache.clear();
-
     if (this.existingPrivilege) {
       this.setPrivilegeForEdit(this.existingPrivilege);
       if (this.existingPrivilege.builtin_name) {
@@ -225,24 +207,9 @@ export class PrivilegeFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading.set(true);
 
-    // Ensure all group names can be resolved to UIDs before submitting
+    // Resolve all group names to UIDs before submitting
     combineLatest([this.localGroupsUids$, this.dsGroupsUids$]).pipe(
       switchMap(([localGroups, dsGroups]) => {
-        // Validate that all selected groups were found and identify missing ones
-        const missingLocal = this.form.value.local_groups.filter(
-          (name) => !this.localGroupsCache.has(name),
-        );
-        const missingDs = this.form.value.ds_groups.filter(
-          (name) => !this.dsGroupsCache.has(name),
-        );
-
-        if (missingLocal.length > 0 || missingDs.length > 0) {
-          const missing = [...missingLocal, ...missingDs].join(', ');
-          return throwError(() => new Error(
-            this.translate.instant('Groups not found: {groups}. Please refresh and try again.', { groups: missing }),
-          ));
-        }
-
         const values: PrivilegeUpdate = {
           ...this.form.value,
           local_groups: localGroups,
@@ -289,81 +256,49 @@ export class PrivilegeFormComponent implements OnInit {
     );
   }
 
+  /**
+   * Resolves local group names to GIDs.
+   *
+   * Uses a single batch query with 'group in' filter to avoid N+1 queries.
+   * This is more efficient than querying each group individually.
+   *
+   * @returns Observable of group IDs (gids)
+   */
   private get localGroupsUids$(): Observable<number[]> {
     const groupNames = this.form.value.local_groups;
     if (!groupNames.length) {
       return of([]);
     }
 
-    // Check cache first, fetch missing groups in batch
-    const cachedUids: number[] = [];
-    const missingNames: string[] = [];
-
-    groupNames.forEach((name) => {
-      const cached = this.localGroupsCache.get(name);
-      if (cached) {
-        cachedUids.push(cached.gid);
-      } else {
-        missingNames.push(name);
-      }
-    });
-
-    if (!missingNames.length) {
-      return of(cachedUids);
-    }
-
-    // Fetch missing groups in a single batch query
+    // Fetch all groups in a single batch query
     return this.api.call('group.query', [[
       ['local', '=', true],
-      ['group', 'in', missingNames],
+      ['group', 'in', groupNames],
     ]]).pipe(
-      map((groups) => {
-        // Cache the fetched groups
-        groups.forEach((group) => {
-          this.localGroupsCache.set(group.group, group);
-        });
-        // Return all UIDs (cached + newly fetched)
-        return [...cachedUids, ...groups.map((group) => group.gid)];
-      }),
+      map((groups) => groups.map((group) => group.gid)),
     );
   }
 
+  /**
+   * Resolves directory service group names to GIDs.
+   *
+   * Uses a single batch query with 'group in' filter to avoid N+1 queries.
+   * This is more efficient than querying each group individually.
+   *
+   * @returns Observable of group IDs (gids)
+   */
   private get dsGroupsUids$(): Observable<number[]> {
     const groupNames = this.form.value.ds_groups;
     if (!groupNames.length) {
       return of([]);
     }
 
-    // Check cache first, fetch missing groups in batch
-    const cachedUids: number[] = [];
-    const missingNames: string[] = [];
-
-    groupNames.forEach((name) => {
-      const cached = this.dsGroupsCache.get(name);
-      if (cached) {
-        cachedUids.push(cached.gid);
-      } else {
-        missingNames.push(name);
-      }
-    });
-
-    if (!missingNames.length) {
-      return of(cachedUids);
-    }
-
-    // Fetch missing groups in a single batch query
+    // Fetch all groups in a single batch query
     return this.api.call('group.query', [[
       ['local', '=', false],
-      ['group', 'in', missingNames],
+      ['group', 'in', groupNames],
     ]]).pipe(
-      map((groups) => {
-        // Cache the fetched groups
-        groups.forEach((group) => {
-          this.dsGroupsCache.set(group.group, group);
-        });
-        // Return all UIDs (cached + newly fetched)
-        return [...cachedUids, ...groups.map((group) => group.gid)];
-      }),
+      map((groups) => groups.map((group) => group.gid)),
     );
   }
 }
