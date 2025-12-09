@@ -172,7 +172,7 @@ export class WidgetResourcesService {
       map((update) => update.fields.cpu),
       catchError(() => NEVER),
       detectStaleData(5000),
-      shareReplay({ bufferSize: 1, refCount: true }),
+      shareReplay({ bufferSize: 1, refCount: false }),
     );
   }
 
@@ -186,7 +186,7 @@ export class WidgetResourcesService {
       map((update) => update.fields.memory),
       catchError(() => NEVER),
       detectStaleData(5000),
-      shareReplay({ bufferSize: 1, refCount: true }),
+      shareReplay({ bufferSize: 1, refCount: false }),
     );
   }
 
@@ -200,7 +200,7 @@ export class WidgetResourcesService {
       map((update) => update.fields.interfaces),
       catchError(() => NEVER),
       detectStaleData(5000),
-      shareReplay({ bufferSize: 1, refCount: true }),
+      shareReplay({ bufferSize: 1, refCount: false }),
     );
   }
 
@@ -214,7 +214,7 @@ export class WidgetResourcesService {
       map((update) => update.fields.pools),
       catchError(() => NEVER),
       detectStaleData(5000),
-      shareReplay({ bufferSize: 1, refCount: true }),
+      shareReplay({ bufferSize: 1, refCount: false }),
     );
   }
 }
