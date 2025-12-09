@@ -66,7 +66,7 @@ describe('idNameArrayToOptions', () => {
 });
 
 describe('nicChoicesToOptions', () => {
-  it('converts new grouped format to flat options array', async () => {
+  it('converts grouped format to flat options array', async () => {
     const groupedChoices = {
       BRIDGE: ['br0', 'br1'],
       MACVLAN: ['eth0', 'eth1'],
@@ -82,20 +82,6 @@ describe('nicChoicesToOptions', () => {
     ]);
   });
 
-  it('converts old flat format to options array', async () => {
-    const flatChoices = {
-      br0: 'br0',
-      eth0: 'eth0',
-    };
-
-    const options = await lastValueFrom(of(flatChoices).pipe(nicChoicesToOptions()));
-
-    expect(options).toEqual([
-      { label: 'br0', value: 'br0' },
-      { label: 'eth0', value: 'eth0' },
-    ]);
-  });
-
   it('converts empty string to "Automatic" label', async () => {
     const choicesWithEmpty = {
       BRIDGE: ['', 'br0'],
@@ -106,20 +92,6 @@ describe('nicChoicesToOptions', () => {
     expect(options).toEqual([
       { label: 'Automatic', value: '' },
       { label: 'br0', value: 'br0' },
-    ]);
-  });
-
-  it('handles mixed format with both arrays and strings', async () => {
-    const mixedChoices = {
-      BRIDGE: ['br0'],
-      eth0: 'eth0',
-    };
-
-    const options = await lastValueFrom(of(mixedChoices).pipe(nicChoicesToOptions()));
-
-    expect(options).toEqual([
-      { label: 'br0', value: 'br0' },
-      { label: 'eth0', value: 'eth0' },
     ]);
   });
 });

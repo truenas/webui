@@ -59,7 +59,7 @@ export class AddNicMenuComponent {
     this.getNicChoices().pipe(
       this.errorHandler.withErrorHandler(),
     ),
-    { initialValue: {} as Record<string, string | string[]> },
+    { initialValue: {} as Record<string, string[]> },
   );
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
@@ -70,11 +70,12 @@ export class AddNicMenuComponent {
       .filter((device) => device.dtype === ContainerDeviceType.Nic) as ContainerNicDevice[];
 
     // Process grouped format: { "BRIDGE": ["ens1"], "MACVLAN": ["truenasbr0"] }
-    return Object.entries(choices)
+    return Object.entries(choices || {})
+      .filter(([, nics]) => nics != null)
       .map(([groupType, nics]) => ({
         type: groupType,
         label: this.getNicGroupLabel(groupType),
-        nics: (nics as string[])
+        nics: nics
           .filter((nic) => !existingNics.find((device) => device.nic_attach === nic))
           .map((nic) => ({ key: nic, label: nic })),
       }))
@@ -97,7 +98,7 @@ export class AddNicMenuComponent {
     this.addDevice(nicKey);
   }
 
-  private getNicChoices(): Observable<Record<string, string | string[]>> {
+  private getNicChoices(): Observable<Record<string, string[]>> {
     return this.api.call('container.device.nic_attach_choices', []);
   }
 

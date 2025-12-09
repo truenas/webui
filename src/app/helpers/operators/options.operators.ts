@@ -56,11 +56,12 @@ export function idNameArrayToOptions<T = number>(): OperatorFunction<{ id: T; na
 
 /**
  * Convert grouped NIC choices to flat options array
- * Handles both formats:
- * - New grouped format: `{ "BRIDGE": ["br0", "br1"], "MACVLAN": ["eth0"] }`
- * - Old flat format: `{ "br0": "br0", "eth0": "eth0" }`
+ * Expects grouped format: `{ "BRIDGE": ["br0", "br1"], "MACVLAN": ["eth0"] }`
  * Transforms to: `[{ label: "br0", value: "br0" }, ...]`
- * Special handling: Empty string values are converted to "Automatic" label for bridge selection
+ *
+ * **Empty string handling**: Empty string values are converted to "Automatic" label.
+ * This is specifically for container bridge selection where empty string means automatic
+ * bridge configuration. VMs should not return empty strings in their NIC choices.
  *
  * Note: This operator intentionally flattens grouped choices for use in simple dropdowns
  * (e.g., VM device forms) where a plain list is sufficient.
@@ -79,11 +80,9 @@ export function idNameArrayToOptions<T = number>(): OperatorFunction<{ id: T; na
  *
  * @returns Option[]
  */
-export function nicChoicesToOptions(): OperatorFunction<Record<string, string | string[]>, Option[]> {
+export function nicChoicesToOptions(): OperatorFunction<Record<string, string[]>, Option[]> {
   return map((groupedChoices) => {
-    const allInterfaces = Object.values(groupedChoices).flatMap((value) => {
-      return Array.isArray(value) ? value : [value];
-    });
+    const allInterfaces = Object.values(groupedChoices).flat();
     return allInterfaces.map((interfaceName) => ({
       label: interfaceName !== '' ? ignoreTranslation(interfaceName) : T('Automatic'),
       value: interfaceName,
