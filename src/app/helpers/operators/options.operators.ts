@@ -61,6 +61,22 @@ export function idNameArrayToOptions<T = number>(): OperatorFunction<{ id: T; na
  * - Old flat format: `{ "br0": "br0", "eth0": "eth0" }`
  * Transforms to: `[{ label: "br0", value: "br0" }, ...]`
  * Special handling: Empty string values are converted to "Automatic" label for bridge selection
+ *
+ * Note: This operator intentionally flattens grouped choices for use in simple dropdowns
+ * (e.g., VM device forms) where a plain list is sufficient.
+ * Components that need to preserve grouping (e.g., AddNicMenuComponent) should
+ * implement custom grouping logic instead of using this operator.
+ *
+ * @example
+ * // ✅ DO use for simple flat dropdowns:
+ * readonly nicOptions$ = this.api.call('vm.device.nic_attach_choices').pipe(
+ *   nicChoicesToOptions()
+ * );
+ *
+ * @example
+ * // ❌ DON'T use for grouped dropdowns - implement custom grouping:
+ * // See AddNicMenuComponent for an example of preserving group structure
+ *
  * @returns Option[]
  */
 export function nicChoicesToOptions(): OperatorFunction<Record<string, string | string[]>, Option[]> {

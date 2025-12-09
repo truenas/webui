@@ -56,7 +56,9 @@ export class AddNicMenuComponent {
   private matDialog = inject(MatDialog);
 
   private readonly nicChoices = toSignal(
-    this.getNicChoices(),
+    this.getNicChoices().pipe(
+      this.errorHandler.withErrorHandler(),
+    ),
     { initialValue: {} as Record<string, string | string[]> },
   );
 
@@ -67,53 +69,16 @@ export class AddNicMenuComponent {
     const existingNics = this.devicesStore.devices()
       .filter((device) => device.dtype === ContainerDeviceType.Nic) as ContainerNicDevice[];
 
-    // Check if we're dealing with the new grouped format (arrays) or old flat format (strings)
-    const isNewFormat = Object.values(choices).some((value) => Array.isArray(value));
-
-    let groups;
-    if (isNewFormat) {
-      // New format: { "BRIDGE": ["ens1"], "MACVLAN": ["truenasbr0"] }
-      groups = Object.entries(choices)
-        .map(([groupType, nics]) => ({
-          type: groupType,
-          label: this.getNicGroupLabel(groupType),
-          nics: (nics as string[])
-            .filter((nic) => !existingNics.find((device) => device.nic_attach === nic))
-            .map((nic) => ({ key: nic, label: nic })),
-        }))
-        .filter((group) => group.nics.length > 0);
-    } else {
-      // Old format: { "ens1": "ens1", "truenasbr0": "truenasbr0" }
-      // Display all NICs under generic group headers
-      const allNics = Object.keys(choices)
-        .filter((nic) => !existingNics.find((device) => device.nic_attach === nic));
-
-      // Try to categorize NICs by common naming patterns (best-effort guesses for backward compatibility)
-      // Note: This heuristic may not be 100% accurate but provides reasonable categorization:
-      // - NICs with 'br' or 'bridge' in the name are assumed to be bridge devices (e.g., truenasbr0, vmbr0)
-      // - All other NICs are assumed to be MACVLAN devices (e.g., ens1, eth0)
-      // This is a temporary compatibility measure - the new grouped format from the API is preferred
-      const bridgeNics = allNics.filter((nic) => nic.toLowerCase().includes('br') || nic.toLowerCase().includes('bridge'));
-      const macvlanNics = allNics.filter((nic) => !nic.toLowerCase().includes('br') && !nic.toLowerCase().includes('bridge'));
-
-      groups = [];
-      if (bridgeNics.length > 0) {
-        groups.push({
-          type: 'BRIDGE',
-          label: this.getNicGroupLabel('BRIDGE'),
-          nics: bridgeNics.map((nic) => ({ key: nic, label: nic })),
-        });
-      }
-      if (macvlanNics.length > 0) {
-        groups.push({
-          type: 'MACVLAN',
-          label: this.getNicGroupLabel('MACVLAN'),
-          nics: macvlanNics.map((nic) => ({ key: nic, label: nic })),
-        });
-      }
-    }
-
-    return groups;
+    // Process grouped format: { "BRIDGE": ["ens1"], "MACVLAN": ["truenasbr0"] }
+    return Object.entries(choices)
+      .map(([groupType, nics]) => ({
+        type: groupType,
+        label: this.getNicGroupLabel(groupType),
+        nics: (nics as string[])
+          .filter((nic) => !existingNics.find((device) => device.nic_attach === nic))
+          .map((nic) => ({ key: nic, label: nic })),
+      }))
+      .filter((group) => group.nics.length > 0);
   });
 
   private getNicGroupLabel(groupType: string): string {
