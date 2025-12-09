@@ -75,8 +75,6 @@ export class IpmiFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.IpmiWrite];
 
-  remoteControllerData: Ipmi;
-  defaultControllerData: Ipmi;
   isManageButtonDisabled = false;
   remoteControllerOptions: Observable<RadioOption[]>;
   managementIp: string;
@@ -213,35 +211,23 @@ export class IpmiFormComponent implements OnInit {
   }
 
   private loadDataOnRemoteControllerChange(): void {
-    let isUsingRemote: boolean;
-
     this.form.controls.apply_remote.valueChanges
       .pipe(
-        switchMap((controlState) => {
+        switchMap((isUsingRemote) => {
           this.isLoading.set(true);
-          isUsingRemote = !!controlState;
 
           let queryParams = this.queryParams;
-          if (queryParams?.length && controlState) {
+          if (queryParams?.length && isUsingRemote) {
             queryParams = [{
               ...queryParams[0],
-              'ipmi-options': { 'query-remote': controlState },
+              'ipmi-options': { 'query-remote': isUsingRemote },
             }];
-          }
-
-          let lanQuery$: Observable<Ipmi[]>;
-          if (isUsingRemote && this.remoteControllerData) {
-            lanQuery$ = of([this.remoteControllerData]);
-          } else if (!isUsingRemote && this.defaultControllerData) {
-            lanQuery$ = of([this.defaultControllerData]);
-          } else {
-            lanQuery$ = this.api.call('ipmi.lan.query', queryParams);
           }
 
           const chassisInfoParams = isUsingRemote ? { 'query-remote': true } : {};
 
           return forkJoin([
-            lanQuery$,
+            this.api.call('ipmi.lan.query', queryParams),
             this.api.call('ipmi.chassis.info', [chassisInfoParams]),
           ]);
         }),
@@ -249,12 +235,6 @@ export class IpmiFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(([dataIpmi, chassisInfo]) => {
-        if (isUsingRemote) {
-          this.remoteControllerData = dataIpmi[0];
-        } else {
-          this.defaultControllerData = dataIpmi[0];
-        }
-
         this.setFormValues(dataIpmi[0]);
         this.isFlashing.set(chassisInfo.chassis_identify_state !== IpmiChassisIdentifyState.Off);
         this.isLoading.set(false);
@@ -337,7 +317,7 @@ export class IpmiFormComponent implements OnInit {
   }
 
   private loadFlashingStatus(): Observable<unknown> {
-    return this.api.call('ipmi.chassis.info', [{}]).pipe(
+    return this.api.call('ipmi.chassis.info').pipe(
       tap((ipmiStatus) => {
         this.isFlashing.set(ipmiStatus.chassis_identify_state !== IpmiChassisIdentifyState.Off);
       }),
