@@ -2,6 +2,7 @@ import { lastValueFrom, of } from 'rxjs';
 import {
   arrayToOptions,
   choicesToOptions,
+  containerBridgeChoicesToOptions,
   idNameArrayToOptions,
   nicChoicesToOptions,
   singleArrayToOptions,
@@ -82,7 +83,7 @@ describe('nicChoicesToOptions', () => {
     ]);
   });
 
-  it('converts empty string to "Automatic" label', async () => {
+  it('preserves empty string values as-is', async () => {
     const choicesWithEmpty = {
       BRIDGE: ['', 'br0'],
     };
@@ -90,8 +91,63 @@ describe('nicChoicesToOptions', () => {
     const options = await lastValueFrom(of(choicesWithEmpty).pipe(nicChoicesToOptions()));
 
     expect(options).toEqual([
+      { label: '', value: '' },
+      { label: 'br0', value: 'br0' },
+    ]);
+  });
+});
+
+describe('containerBridgeChoicesToOptions', () => {
+  it('converts grouped format to flat options array', async () => {
+    const groupedChoices = {
+      BRIDGE: ['br0', 'br1'],
+    };
+
+    const options = await lastValueFrom(of(groupedChoices).pipe(containerBridgeChoicesToOptions()));
+
+    expect(options).toEqual([
+      { label: 'br0', value: 'br0' },
+      { label: 'br1', value: 'br1' },
+    ]);
+  });
+
+  it('converts empty string to "Automatic" label', async () => {
+    const choicesWithEmpty = {
+      BRIDGE: ['', 'br0'],
+    };
+
+    const options = await lastValueFrom(of(choicesWithEmpty).pipe(containerBridgeChoicesToOptions()));
+
+    expect(options).toEqual([
       { label: 'Automatic', value: '' },
       { label: 'br0', value: 'br0' },
+    ]);
+  });
+
+  it('deduplicates duplicate empty strings', async () => {
+    const choicesWithDuplicates = {
+      BRIDGE: ['', 'br0', '', 'br1'],
+    };
+
+    const options = await lastValueFrom(of(choicesWithDuplicates).pipe(containerBridgeChoicesToOptions()));
+
+    expect(options).toEqual([
+      { label: 'Automatic', value: '' },
+      { label: 'br0', value: 'br0' },
+      { label: 'br1', value: 'br1' },
+    ]);
+  });
+
+  it('deduplicates duplicate bridge names', async () => {
+    const choicesWithDuplicates = {
+      BRIDGE: ['br0', 'br0', 'br1'],
+    };
+
+    const options = await lastValueFrom(of(choicesWithDuplicates).pipe(containerBridgeChoicesToOptions()));
+
+    expect(options).toEqual([
+      { label: 'br0', value: 'br0' },
+      { label: 'br1', value: 'br1' },
     ]);
   });
 });
