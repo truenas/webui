@@ -184,40 +184,72 @@ describe('UserService', () => {
     });
 
     it('queries users with search term', async () => {
-      const mockUsers = [{ id: 1, username: 'admin', builtin: true } as User];
+      const mockUser = { id: 1, username: 'admin', builtin: true } as User;
+      const mockUsers = [{ id: 2, username: 'administrator', builtin: false } as User];
 
-      jest.spyOn(apiService, 'call').mockReturnValue(of(mockUsers));
+      jest.spyOn(apiService, 'call')
+        .mockReturnValueOnce(of([mockUser])) // Exact name match
+        .mockReturnValueOnce(of(mockUsers)); // Regex search
 
-      await firstValueFrom(spectator.service.userQueryDsCache('admin', 0));
+      const users = await firstValueFrom(spectator.service.userQueryDsCache('admin', 0));
 
+      // Should call exact name match first
       expect(apiService.call).toHaveBeenCalledWith('user.query', [
-        [['username', '^', 'admin']],
+        [['username', '=', 'admin']],
+        { limit: 50 },
+      ]);
+
+      // Then regex search
+      expect(apiService.call).toHaveBeenCalledWith('user.query', [
+        [['username', '~', '(?i).*admin']],
         { limit: 50, offset: 0, order_by: ['builtin'] },
       ]);
+
+      // Should return deduplicated results with exact match prioritized
+      expect(users).toEqual([mockUsers[0], mockUser]);
     });
 
     it('trims search input', async () => {
-      const mockUsers = [{ id: 1, username: 'admin', builtin: true } as User];
+      const mockUser = { id: 1, username: 'admin', builtin: true } as User;
 
-      jest.spyOn(apiService, 'call').mockReturnValue(of(mockUsers));
+      jest.spyOn(apiService, 'call')
+        .mockReturnValueOnce(of([mockUser])) // Exact name match
+        .mockReturnValueOnce(of([])); // Regex search
 
       await firstValueFrom(spectator.service.userQueryDsCache('  admin  ', 0));
 
+      // Should trim and call exact name match
       expect(apiService.call).toHaveBeenCalledWith('user.query', [
-        [['username', '^', 'admin']],
+        [['username', '=', 'admin']],
+        { limit: 50 },
+      ]);
+
+      // Then regex search with trimmed value
+      expect(apiService.call).toHaveBeenCalledWith('user.query', [
+        [['username', '~', '(?i).*admin']],
         { limit: 50, offset: 0, order_by: ['builtin'] },
       ]);
     });
 
     it('handles offset parameter', async () => {
-      const mockUsers = [{ id: 1, username: 'user1', builtin: false } as User];
+      const mockUser = { id: 1, username: 'user', builtin: false } as User;
+      const mockUsers = [{ id: 2, username: 'user1', builtin: false } as User];
 
-      jest.spyOn(apiService, 'call').mockReturnValue(of(mockUsers));
+      jest.spyOn(apiService, 'call')
+        .mockReturnValueOnce(of([mockUser])) // Exact name match
+        .mockReturnValueOnce(of(mockUsers)); // Regex search with offset
 
       await firstValueFrom(spectator.service.userQueryDsCache('user', 50));
 
+      // Should call exact name match
       expect(apiService.call).toHaveBeenCalledWith('user.query', [
-        [['username', '^', 'user']],
+        [['username', '=', 'user']],
+        { limit: 50 },
+      ]);
+
+      // Then regex search with offset
+      expect(apiService.call).toHaveBeenCalledWith('user.query', [
+        [['username', '~', '(?i).*user']],
         { limit: 50, offset: 50, order_by: ['builtin'] },
       ]);
     });

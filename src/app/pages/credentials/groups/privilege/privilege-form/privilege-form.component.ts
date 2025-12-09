@@ -27,6 +27,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -61,6 +62,7 @@ export class PrivilegeFormComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
   private dialog = inject(DialogService);
+  private userService = inject(UserService);
   slideInRef = inject<SlideInRef<Privilege | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
@@ -156,31 +158,18 @@ export class PrivilegeFormComponent implements OnInit {
    * Uses ChipsProvider instead of GroupComboboxProvider for consistency with localGroupsProvider.
    * See localGroupsProvider documentation for rationale.
    *
-   * Fetches DS groups from API with search filtering:
-   * - Uses '^' prefix filter for server-side search
-   * - Falls back to client-side includes() for better UX (contains match)
-   * - Limited to 50 results for performance
+   * Uses UserService.groupQueryDsCache for proper handling of:
+   * - Domain-prefixed group names (e.g., "ACME\admin")
+   * - Case-insensitive regex search
+   * - Exact name match fallback
+   * - Proper backslash escaping
    *
-   * Note: No caching to keep implementation simple and avoid stale data issues.
+   * Limited to 50 results for performance.
    */
   readonly dsGroupsProvider: ChipsProvider = (query: string) => {
-    const trimmedQuery = query?.trim().toLowerCase() || '';
-
-    const filters: (['local', '=', false] | ['group', '^', string])[] = [['local', '=', false]];
-    if (trimmedQuery) {
-      filters.push(['group', '^', trimmedQuery]);
-    }
-
-    return this.api.call('group.query', [filters, { limit: this.GROUP_QUERY_LIMIT, order_by: ['group'] }]).pipe(
-      map((groups) => {
-        const groupNames = groups.map((group) => group.group);
-        // Client-side filtering for contains match (better UX)
-        if (!trimmedQuery) {
-          return groupNames;
-        }
-
-        return groupNames.filter((name) => name.toLowerCase().includes(trimmedQuery));
-      }),
+    return this.userService.groupQueryDsCache(query || '', false, 0).pipe(
+      map((groups) => groups.slice(0, this.GROUP_QUERY_LIMIT)),
+      map((groups) => groups.map((group) => group.group)),
     );
   };
 
