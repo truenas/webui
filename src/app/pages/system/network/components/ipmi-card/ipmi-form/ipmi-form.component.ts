@@ -130,7 +130,12 @@ export class IpmiFormComponent implements OnInit {
   }
 
   toggleFlashing(): void {
-    this.api.call('ipmi.chassis.identify', [this.isFlashing() ? OnOff.Off : OnOff.On])
+    const applyRemote = this.form.controls.apply_remote.value;
+
+    this.api.call('ipmi.chassis.identify', [{
+      verb: this.isFlashing() ? OnOff.Off : OnOff.On,
+      ...(applyRemote && { apply_remote: true }),
+    }])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(
@@ -215,30 +220,43 @@ export class IpmiFormComponent implements OnInit {
         switchMap((controlState) => {
           this.isLoading.set(true);
           isUsingRemote = !!controlState;
-          if (this.queryParams?.length && controlState) {
-            this.queryParams[0]['ipmi-options'] = { 'query-remote': controlState };
+
+          let queryParams = this.queryParams;
+          if (queryParams?.length && controlState) {
+            queryParams = [{
+              ...queryParams[0],
+              'ipmi-options': { 'query-remote': controlState },
+            }];
           }
 
-          if (isUsingRemote) {
-            return this.remoteControllerData
-              ? of([this.remoteControllerData])
-              : this.api.call('ipmi.lan.query', this.queryParams);
+          let lanQuery$: Observable<Ipmi[]>;
+          if (isUsingRemote && this.remoteControllerData) {
+            lanQuery$ = of([this.remoteControllerData]);
+          } else if (!isUsingRemote && this.defaultControllerData) {
+            lanQuery$ = of([this.defaultControllerData]);
+          } else {
+            lanQuery$ = this.api.call('ipmi.lan.query', queryParams);
           }
-          return this.defaultControllerData
-            ? of([this.defaultControllerData])
-            : this.api.call('ipmi.lan.query', this.queryParams);
+
+          const chassisInfoParams = isUsingRemote ? { 'query-remote': true } : {};
+
+          return forkJoin([
+            lanQuery$,
+            this.api.call('ipmi.chassis.info', [chassisInfoParams]),
+          ]);
         }),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe((dataIpma) => {
+      .subscribe(([dataIpmi, chassisInfo]) => {
         if (isUsingRemote) {
-          this.remoteControllerData = dataIpma[0];
+          this.remoteControllerData = dataIpmi[0];
         } else {
-          this.defaultControllerData = dataIpma[0];
+          this.defaultControllerData = dataIpmi[0];
         }
 
-        this.setFormValues(dataIpma[0]);
+        this.setFormValues(dataIpmi[0]);
+        this.isFlashing.set(chassisInfo.chassis_identify_state !== IpmiChassisIdentifyState.Off);
         this.isLoading.set(false);
       });
   }
@@ -319,7 +337,7 @@ export class IpmiFormComponent implements OnInit {
   }
 
   private loadFlashingStatus(): Observable<unknown> {
-    return this.api.call('ipmi.chassis.info').pipe(
+    return this.api.call('ipmi.chassis.info', [{}]).pipe(
       tap((ipmiStatus) => {
         this.isFlashing.set(ipmiStatus.chassis_identify_state !== IpmiChassisIdentifyState.Off);
       }),

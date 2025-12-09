@@ -1,4 +1,5 @@
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
 
 export interface Ipmi {
@@ -58,4 +59,13 @@ export interface IpmiChassis {
   drive_fault: unknown;
   'cooling/fan_fault': unknown;
   chassis_identify_state: IpmiChassisIdentifyState;
+}
+
+export interface IpmiChassisIdentifyParams {
+  verb: OnOff;
+  apply_remote?: boolean;
+}
+
+export interface IpmiChassisInfoParams {
+  'query-remote'?: boolean;
 }
