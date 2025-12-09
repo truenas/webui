@@ -56,4 +56,25 @@ describe('NetworkChartComponent', () => {
       labels: [],
     });
   });
+
+  it('defaults to bits unit (b) for network traffic', () => {
+    spectator.detectChanges();
+
+    const chart = spectator.query(ViewChartAreaMockComponent)!;
+    expect(chart).toBeTruthy();
+
+    // Verify component uses default 'b' unit
+    expect(spectator.component.unit()).toBe('b');
+  });
+
+  it('uses bytes unit (B) when specified for disk I/O', () => {
+    spectator.setInput('unit', 'B');
+    spectator.detectChanges();
+
+    const chart = spectator.query(ViewChartAreaMockComponent)!;
+    expect(chart).toBeTruthy();
+
+    // Verify component uses 'B' unit
+    expect(spectator.component.unit()).toBe('B');
+  });
 });
