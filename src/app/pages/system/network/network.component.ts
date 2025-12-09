@@ -22,6 +22,7 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -62,6 +63,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     StaticRoutesCardComponent,
     IpmiCardComponent,
     TranslateModule,
+    PageHeaderComponent,
   ],
   providers: [
     InterfacesStore,

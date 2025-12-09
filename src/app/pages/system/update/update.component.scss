@@ -1,4 +1,4 @@
-@import 'scss-imports/variables';
+@import "scss-imports/variables";
 
 .update-container {
   color: var(--fg2);
@@ -6,12 +6,13 @@
   gap: 5%;
   grid-template-columns: 1fr 1fr;
   margin-bottom: 100px;
+  padding: 16px;
 
   ::ng-deep > * {
     display: block;
   }
 
-  @media(max-width: $breakpoint-sm) {
+  @media (max-width: $breakpoint-sm) {
     gap: 32px;
     grid-template-columns: 1fr;
   }
@@ -107,7 +108,6 @@
       margin-top: 3px;
     }
   }
-
 
   .other-options {
     margin-top: 40px;

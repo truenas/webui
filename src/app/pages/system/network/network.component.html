@@ -1,7 +1,6 @@
-<div
-  class="dashboard"
-  [ixUiSearch]="searchableElements.elements.network"
->
+<ix-page-header [title]="'Network'" [isSub]="true"></ix-page-header>
+
+<div class="dashboard" [ixUiSearch]="searchableElements.elements.network">
   <div class="content">
     <div class="left-column">
       @if (hasPendingChanges) {
@@ -28,10 +27,18 @@
                   {{ helptext.checkinText2 | translate }}
                 </p>
 
-                @if (!checkinTimeout || checkinTimeoutField.errors?.min || checkinTimeoutField.errors?.pattern) {
+                @if (
+                  !checkinTimeout ||
+                  checkinTimeoutField.errors?.min ||
+                  checkinTimeoutField.errors?.pattern
+                ) {
                   <mat-error>
                     <span>
-                      {{ 'Invalid value. Must be greater than or equal to ' | translate }} {{ checkinTimeoutMinValue }}
+                      {{
+                        "Invalid value. Must be greater than or equal to "
+                          | translate
+                      }}
+                      {{ checkinTimeoutMinValue }}
                     </span>
                   </mat-error>
                 }
@@ -39,7 +46,10 @@
             } @else {
               <div>
                 <p>
-                  {{ helptext.pendingCheckinText | translate: { x: checkinRemaining } }}
+                  {{
+                    helptext.pendingCheckinText
+                      | translate: { x: checkinRemaining }
+                  }}
                 </p>
               </div>
             }
@@ -82,10 +92,7 @@
             <div class="disabled-notice">
               {{ helptext.haEnabledText | translate }}
               (
-              <span
-                class="pseudolink"
-                (click)="goToHa()"
-              >
+              <span class="pseudolink" (click)="goToHa()">
                 {{ helptext.goToHa | translate }}
               </span>
               ).

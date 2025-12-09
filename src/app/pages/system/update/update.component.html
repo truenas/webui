@@ -1,40 +1,43 @@
-<ix-page-header [loading]="isLoading()"></ix-page-header>
+<ix-page-header [loading]="isLoading()" [isSub]="true"></ix-page-header>
 
 <div class="update-container">
   <div>
     <h2>
       @if (isUpdateAvailable()) {
-        {{ 'Update Available' | translate }}
+        {{ "Update Available" | translate }}
       } @else {
-        {{ 'Installed Version' | translate }}
+        {{ "Installed Version" | translate }}
       }
     </h2>
 
     <div class="update-available">
       <div class="versions">
         <h4 class="current-version">
-          <div class="label">
-            {{ 'Current version' | translate }}:
-          </div>
+          <div class="label">{{ "Current version" | translate }}:</div>
           <div class="value">
             <div class="current-version-number">
               @if (systemVersion(); as systemVersion) {
                 <span>{{ systemVersion }}</span>
               } @else {
-                <ngx-skeleton-loader class="inline-loader"></ngx-skeleton-loader>
+                <ngx-skeleton-loader
+                  class="inline-loader"
+                ></ngx-skeleton-loader>
               }
             </div>
             @if (doesNotMatchProfile() && currentVersionProfile()) {
               <div class="profile-mismatch">
-                {{ '(from {profile} profile)' | translate: { profile: currentVersionProfile() } }}
+                {{
+                  "(from {profile} profile)"
+                    | translate: { profile: currentVersionProfile() }
+                }}
               </div>
-              }
+            }
           </div>
         </h4>
 
         @if (standbySystemVersion(); as standbySystemVersion) {
           <h4>
-            {{ 'Current version (standby node)' | translate }}:
+            {{ "Current version (standby node)" | translate }}:
             <span>{{ standbySystemVersion }}</span>
           </h4>
         }
@@ -47,7 +50,7 @@
 
         @if (newVersion()) {
           <h4>
-            {{ 'Update version' | translate }}:
+            {{ "Update version" | translate }}:
             <span>{{ newVersion().version }}</span>
           </h4>
         }
@@ -63,37 +66,52 @@
           (click)="onInstallUpdatePressed()"
         >
           @if (isUpdateInProgress$ | async) {
-            {{ 'Installing Update...' | translate }}
+            {{ "Installing Update..." | translate }}
           } @else {
-            {{ 'Install Update' | translate }}
+            {{ "Install Update" | translate }}
           }
         </button>
       }
 
       @if (isSystemUpToDate()) {
         <h4>
-          <b>{{ 'System is up to date!' | translate }}</b>
+          <b>{{ "System is up to date!" | translate }}</b>
           <ix-icon name="check_circle" class="up-to-date-icon"></ix-icon>
         </h4>
       }
     </div>
 
     @if (isRebootRequired()) {
-      <h4 class="hint">{{ 'An update is already applied. Please restart the system.' | translate }}</h4>
+      <h4 class="hint">
+        {{
+          "An update is already applied. Please restart the system." | translate
+        }}
+      </h4>
     }
 
     @if (isNetworkActivityDisabled()) {
-      <h4 class="hint">{{ 'Network activity has been administratively disabled for update operation. Please use Manual Update.' | translate }}</h4>
+      <h4 class="hint">
+        {{
+          "Network activity has been administratively disabled for update operation. Please use Manual Update."
+            | translate
+        }}
+      </h4>
     }
 
-    @if ((changelog() || newVersion()?.release_notes_url) && !newVersion()?.release_notes) {
+    @if (
+      (changelog() || newVersion()?.release_notes_url) &&
+      !newVersion()?.release_notes
+    ) {
       <div class="update-summary">
         <h3>
-          {{ 'Update Summary for {version}' | translate: { version: newVersion().version } }}
+          {{
+            "Update Summary for {version}"
+              | translate: { version: newVersion().version }
+          }}
         </h3>
 
         @if (changelog()) {
-          <h4>{{ 'Summary' | translate }}:</h4>
+          <h4>{{ "Summary" | translate }}:</h4>
 
           <div class="changelog" [innerHTML]="changelog()"></div>
         }
@@ -106,7 +124,7 @@
             [href]="newVersion()?.release_notes_url"
             [ixUiSearch]="searchableElements.elements.releaseNotes"
           >
-            {{ 'View Release Notes' | translate }}
+            {{ "View Release Notes" | translate }}
           </a>
         }
       </div>
@@ -114,7 +132,12 @@
 
     @if (newVersion()?.release_notes) {
       <div class="release-notes-section">
-        <h3>{{ 'Release Notes for {version}' | translate: { version: newVersion().version } }}</h3>
+        <h3>
+          {{
+            "Release Notes for {version}"
+              | translate: { version: newVersion().version }
+          }}
+        </h3>
         <div class="release-notes-content">
           <ix-dynamic-markdown
             [content]="newVersion().release_notes"
@@ -125,17 +148,17 @@
     }
 
     <div class="other-options">
-      <h3>{{ 'Other Options' | translate }}</h3>
+      <h3>{{ "Other Options" | translate }}</h3>
 
       <div class="manual-update">
         <div>
-          <h4>{{ 'Manual Update' | translate }}</h4>
+          <h4>{{ "Manual Update" | translate }}</h4>
           <a
             ixTest="download-truenas"
             target="_blank"
             [attr.href]="manualUpdateUrl"
           >
-            {{ 'See the manual image installation guide' | translate }}
+            {{ "See the manual image installation guide" | translate }}
           </a>
         </div>
 
@@ -145,7 +168,7 @@
           ixTest="install-manual-update"
           (click)="manualUpdate()"
         >
-          {{ 'Install' | translate }}
+          {{ "Install" | translate }}
         </button>
       </div>
     </div>

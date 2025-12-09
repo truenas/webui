@@ -1,8 +1,7 @@
-@import 'scss-imports/cssvars';
+@import "scss-imports/cssvars";
 
 .cards {
   display: grid;
-  gap: 8px;
   grid-template-columns: 50% 50%;
 
   @media #{$media-lt-md} {

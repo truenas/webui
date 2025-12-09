@@ -1,5 +1,5 @@
-@import 'scss-imports/cssvars';
-@import 'mixins/cards';
+@import "scss-imports/cssvars";
+@import "mixins/cards";
 
 :host {
   display: block;
@@ -34,7 +34,6 @@
 
 .cards {
   display: grid;
-  gap: 8px;
   grid-template-columns: calc(50% - 4px) calc(50% - 4px);
 
   @media #{$media-lt-md} {
@@ -42,7 +41,9 @@
   }
 
   @media #{$media-gt-lg} {
-    grid-template-columns: calc(25% - 6px) calc(25% - 6px) calc(25% - 6px) calc(25% - 6px);
+    grid-template-columns: calc(25% - 6px) calc(25% - 6px) calc(25% - 6px) calc(
+        25% - 6px
+      );
   }
 }
 
