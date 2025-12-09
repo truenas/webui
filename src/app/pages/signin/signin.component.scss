@@ -1,4 +1,4 @@
-@import 'scss-imports/cssvars';
+@import "scss-imports/cssvars";
 
 .session-form-hold {
   margin: 0 auto;
@@ -11,7 +11,6 @@
   }
 
   > .mat-mdc-card {
-    border: 0;
     margin: 0;
   }
 }
@@ -60,10 +59,12 @@
   background-color: var(--bg2);
 
   // Fallback for browsers that don't support image-set
-  background-image: url('assets/images/signin/stars-sky-800w.jpg');
-  background-image: image-set(url('assets/images/signin/stars-sky-400w.avif') 1x,
-  url('assets/images/signin/stars-sky-800w.avif') 2x,
-  url('assets/images/signin/stars-sky-1200w.avif') 3x);
+  background-image: url("assets/images/signin/stars-sky-800w.jpg");
+  background-image: image-set(
+    url("assets/images/signin/stars-sky-400w.avif") 1x,
+    url("assets/images/signin/stars-sky-800w.avif") 2x,
+    url("assets/images/signin/stars-sky-1200w.avif") 3x
+  );
   background-size: cover;
   border-bottom: solid 1px var(--lines);
   display: flex;

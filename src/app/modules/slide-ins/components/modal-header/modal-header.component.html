@@ -8,14 +8,19 @@
       id="ix-close-icon"
       [ixTest]="['close-slide-in']"
       [matTooltip]="tooltip()"
-      [attr.aria-label]="'Close {formType} Form' | translate: { formType: title() }"
+      [attr.aria-label]="
+        'Close {formType} Form' | translate: { formType: title() }
+      "
       (click)="close()"
     >
-      <ix-icon name="mdi-chevron-left" ></ix-icon>
+      <ix-icon name="mdi-chevron-left"></ix-icon>
     </button>
   }
-  <h3 class="ix-form-title" [class.title-left-margin]="(componentsSize$ | async) === 1">
-    {{ title() ? (title() | translate) : '' }}
+  <h3
+    class="ix-form-title"
+    [class.title-left-margin]="(componentsSize$ | async) === 1"
+  >
+    {{ title() ? (title() | translate) : "" }}
     @if (requiredRoles().length && !(hasRequiredRoles | async)) {
       <ix-readonly-badge></ix-readonly-badge>
     }
@@ -27,14 +32,23 @@
       id="ix-close-icon"
       [ixTest]="['close-slide-in']"
       [matTooltip]="tooltip()"
-      [attr.aria-label]="'Close {formType} Form' | translate: { formType: title() }"
+      [attr.aria-label]="
+        'Close {formType} Form' | translate: { formType: title() }
+      "
       (click)="close()"
     >
-      <ix-icon name="cancel" (keydown.enter)="close()"></ix-icon>
+      <ix-icon
+        class="relative -top-1"
+        name="cancel"
+        (keydown.enter)="close()"
+      ></ix-icon>
     </button>
   }
 </div>
 
 @if (loading()) {
-  <mat-progress-bar mode="indeterminate" class="progress-bar"></mat-progress-bar>
+  <mat-progress-bar
+    mode="indeterminate"
+    class="progress-bar"
+  ></mat-progress-bar>
 }
