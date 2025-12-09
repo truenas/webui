@@ -20,28 +20,27 @@
       <div class="exceptions-list" formArrayName="exceptions" role="list" [attr.aria-label]="'Disk password exceptions' | translate">
         @for (exception of form.controls.exceptions.controls; track $index) {
           <div class="exception-item" role="listitem" [formGroupName]="$index">
-            <div class="exception-row">
-              <ix-select
-                class="disk-select"
-                formControlName="diskName"
-                [label]="'Disk' | translate"
-                [options]="getOptionsForException($index)"
-              ></ix-select>
-              <button
-                mat-icon-button
-                type="button"
-                class="remove-button"
-                ixTest="remove-exception"
-                [attr.aria-label]="'Remove disk exception' | translate"
-                (click)="removeException($index)"
-              >
-                <ix-icon name="mdi-close"></ix-icon>
-              </button>
-            </div>
+            <button
+              mat-icon-button
+              type="button"
+              class="remove-button"
+              ixTest="remove-exception"
+              [attr.aria-label]="'Remove disk exception' | translate"
+              (click)="removeException($index)"
+            >
+              <ix-icon name="mdi-close"></ix-icon>
+            </button>
+            <ix-select
+              formControlName="diskName"
+              [label]="'Disk' | translate"
+              [options]="getOptionsForException($index)"
+              [required]="true"
+            ></ix-select>
             <ix-input
               formControlName="password"
               type="password"
               [label]="'Password' | translate"
+              [required]="true"
             ></ix-input>
           </div>
         }

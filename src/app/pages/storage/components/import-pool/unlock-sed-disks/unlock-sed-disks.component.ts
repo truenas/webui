@@ -119,8 +119,8 @@ export class UnlockSedDisksComponent {
 
     this.form.controls.exceptions.push(
       this.formBuilder.group({
-        diskName: [''],
-        password: [''],
+        diskName: ['', Validators.required],
+        password: ['', Validators.required],
       }),
     );
     this.exceptionsVersion.update((version) => version + 1);
