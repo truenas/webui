@@ -18,10 +18,18 @@ export class NetworkChartComponent {
   data = input<ChartData<'line'>>();
   aspectRatio = input<number>(fullSizeNetworkWidgetAspectRatio);
   showLegend = input<boolean>(true);
+  /**
+   * Unit for displaying data rates.
+   * - 'b' for bits (network throughput: Mb/s, Gb/s)
+   * - 'B' for bytes (disk I/O: MiB/s, GiB/s)
+   */
+  unit = input<'b' | 'B'>('b');
 
   protected options = computed<ChartOptions<'line'>>(() => {
     const aspectRatio = this.aspectRatio();
     const showLegend = this.showLegend();
+    const unit = this.unit();
+    const base = unit === 'B' ? 2 : 10; // Use binary (base 2) for bytes, decimal (base 10) for bits
 
     return {
       aspectRatio,
@@ -52,7 +60,7 @@ export class NetworkChartComponent {
               if (tooltipItem.parsed.y === 0) {
                 label += '0';
               } else {
-                label = buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), 'b', 10);
+                label += buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), unit, base);
               }
               return label + '/s';
             },
@@ -82,7 +90,7 @@ export class NetworkChartComponent {
               if (value === 0) {
                 return 0;
               }
-              return buildNormalizedFileSize(Math.abs(Number(value)), 'b', 10) + '/s';
+              return buildNormalizedFileSize(Math.abs(Number(value)), unit, base) + '/s';
             },
           },
         },
