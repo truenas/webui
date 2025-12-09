@@ -60,7 +60,9 @@ export class NetworkChartComponent {
               if (tooltipItem.parsed.y === 0) {
                 label += '0';
               } else {
-                label = buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), unit, base);
+                // Use += to append to existing label (e.g., "Upload: " + "1 Mb" = "Upload: 1 Mb")
+                // Do NOT use = as it would discard the dataset label prefix
+                label += buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), unit, base);
               }
               return label + '/s';
             },
@@ -88,7 +90,7 @@ export class NetworkChartComponent {
             maxTicksLimit: 8,
             callback: (value) => {
               if (value === 0) {
-                return 0;
+                return '0/s';
               }
               return buildNormalizedFileSize(Math.abs(Number(value)), unit, base) + '/s';
             },

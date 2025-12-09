@@ -130,7 +130,7 @@ describe('NetworkChartComponent', () => {
     const options = chart.options() as ChartOptions<'line'>;
 
     const yAxisCallback = options.scales!.y!.ticks!.callback as (value: number) => string | number;
-    expect(yAxisCallback.call({}, 0)).toBe(0);
+    expect(yAxisCallback.call({}, 0)).toBe('0/s');
 
     const tooltipCallback = options.plugins!.tooltip!.callbacks!.label as (item: TooltipItem<'line'>) => string;
     const mockTooltipItem = {
