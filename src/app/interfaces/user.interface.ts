@@ -14,6 +14,7 @@ export interface User {
   builtin: boolean;
   immutable: boolean;
   smb: boolean;
+  webshare: boolean;
   ssh_password_enabled: boolean;
   password_disabled: boolean;
   locked: boolean;
@@ -65,6 +66,7 @@ export interface UserUpdate {
   password_disabled?: boolean;
   locked?: boolean;
   smb?: boolean;
+  webshare?: boolean;
   ssh_password_enabled?: boolean;
   sudo_commands_nopasswd?: string[];
   sudo_commands?: string[];

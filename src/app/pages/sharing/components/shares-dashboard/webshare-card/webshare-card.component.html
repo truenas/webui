@@ -64,6 +64,21 @@
     </div>
   }
 
+  @if (showNoWebshareUsersNotice$ | async) {
+    <div
+      class="info-message clickable"
+      role="button"
+      tabindex="0"
+      aria-live="polite"
+      (click)="navigateToUsers()"
+      (keydown.enter)="navigateToUsers()"
+      (keydown.space)="navigateToUsers(); $event.preventDefault()"
+    >
+      <ix-icon name="info"></ix-icon>
+      <span>{{ 'It appears you have no users configured to access WebShare.' | translate }}</span>
+    </div>
+  }
+
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <ix-empty [conf]="emptyConfig"></ix-empty>
   } @else {

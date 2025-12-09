@@ -33,9 +33,31 @@
   </mat-toolbar-row>
   <mat-card-content>
     @if (!(hasTruenasConnect$ | async)) {
-      <div class="info-message clickable" (click)="openTruenasConnectDialog()">
+      <div
+        class="info-message clickable"
+        role="button"
+        tabindex="0"
+        aria-live="polite"
+        (click)="openTruenasConnectDialog()"
+        (keydown.enter)="openTruenasConnectDialog()"
+        (keydown.space)="openTruenasConnectDialog(); $event.preventDefault()"
+      >
         <ix-icon name="info"></ix-icon>
         <span>{{ 'WebShare service requires TrueNAS Connect to be configured and active.' | translate }}</span>
+      </div>
+    }
+    @if (showNoWebshareUsersNotice$ | async) {
+      <div
+        class="info-message clickable"
+        role="button"
+        tabindex="0"
+        aria-live="polite"
+        (click)="navigateToUsers()"
+        (keydown.enter)="navigateToUsers()"
+        (keydown.space)="navigateToUsers(); $event.preventDefault()"
+      >
+        <ix-icon name="info"></ix-icon>
+        <span>{{ 'It appears you have no users configured to access WebShare.' | translate }}</span>
       </div>
     }
     @if ((dataProvider.emptyType$ | async) === EmptyType.NoPageData && !(dataProvider.currentPageCount$ | async)) {

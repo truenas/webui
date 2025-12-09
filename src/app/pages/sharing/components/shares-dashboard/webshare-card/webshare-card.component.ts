@@ -13,6 +13,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   filter, switchMap, map, of, catchError, shareReplay, Subject, startWith,
 } from 'rxjs';
+import { combineLatestWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -116,6 +117,11 @@ export class WebShareCardComponent implements OnInit {
     map((config) => config?.status === TruenasConnectStatus.Configured),
   );
 
+  showNoWebshareUsersNotice$ = this.hasTruenasConnect$.pipe(
+    combineLatestWith(this.webShareService.hasWebshareUsers$),
+    map(([hasTruenasConnect, hasWebshareUsers]) => hasTruenasConnect && !hasWebshareUsers),
+  );
+
   protected readonly helptext = helptextSharingWebshare;
 
   emptyConfig: EmptyConfig = {
@@ -207,6 +213,10 @@ export class WebShareCardComponent implements OnInit {
 
   openTruenasConnectDialog(): void {
     this.truenasConnectService.openStatusModal();
+  }
+
+  navigateToUsers(): void {
+    this.router.navigate(['/credentials', 'users']);
   }
 
   openWebShareByName(row: WebShareTableRow): void {

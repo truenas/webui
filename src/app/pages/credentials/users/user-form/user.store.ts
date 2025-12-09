@@ -29,6 +29,7 @@ export interface UserFormSetupDetails {
 
 export interface AllowedAccessConfig {
   smbAccess: boolean;
+  webshareAccess: boolean;
   truenasAccess: boolean;
   sshAccess: boolean;
   shellAccess: boolean;
@@ -46,6 +47,7 @@ const initialState: UserFormState = {
   setupDetails: {
     allowedAccess: {
       smbAccess: true,
+      webshareAccess: false,
       truenasAccess: false,
       sshAccess: false,
       shellAccess: false,
@@ -66,6 +68,7 @@ export class UserFormStore extends ComponentStore<UserFormState> {
   readonly homeModeOldValue = computed(() => this.state().setupDetails.homeModeOldValue);
 
   readonly smbAccess = computed(() => this.state().setupDetails.allowedAccess.smbAccess);
+  readonly webshareAccess = computed(() => this.state().setupDetails.allowedAccess.webshareAccess);
   readonly shellAccess = computed(() => this.state().setupDetails.allowedAccess.shellAccess);
   readonly truenasAccess = computed(() => this.state().setupDetails.allowedAccess.truenasAccess);
   readonly sshAccess = computed(() => this.state().setupDetails.allowedAccess.sshAccess);

@@ -38,6 +38,9 @@ describe('AllowedAccessSectionComponent', () => {
       const smbAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
       expect(await smbAccessCheckbox.isChecked()).toBe(true);
 
+      const webshareAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'WebShare Access' }));
+      expect(await webshareAccessCheckbox.isChecked()).toBe(false);
+
       const truenasAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'TrueNAS Access' }));
       expect(await truenasAccessCheckbox.isChecked()).toBe(false);
 
@@ -54,6 +57,7 @@ describe('AllowedAccessSectionComponent', () => {
       spectator.setInput('editingUser', {
         username: 'test',
         smb: true,
+        webshare: false,
         shell: '/usr/bin/bash',
         sshpubkey: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC...',
         roles: [Role.FullAdmin],
@@ -68,6 +72,9 @@ describe('AllowedAccessSectionComponent', () => {
       const smbAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
       expect(await smbAccessCheckbox.isChecked()).toBe(true);
 
+      const webshareAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'WebShare Access' }));
+      expect(await webshareAccessCheckbox.isChecked()).toBe(false);
+
       const shellAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Shell Access' }));
       expect(await shellAccessCheckbox.isChecked()).toBe(true);
 
@@ -80,10 +87,25 @@ describe('AllowedAccessSectionComponent', () => {
 
       expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenCalledWith({
         smbAccess: true,
+        webshareAccess: false,
         truenasAccess: true,
         sshAccess: true,
         shellAccess: true,
       });
+    });
+  });
+
+  describe('when existing user with webshare enabled', () => {
+    it('shows WebShare Access checkbox as checked when user has webshare enabled', async () => {
+      spectator.setInput('editingUser', {
+        username: 'test',
+        smb: true,
+        webshare: true,
+        roles: [],
+      });
+
+      const webshareAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'WebShare Access' }));
+      expect(await webshareAccessCheckbox.isChecked()).toBe(true);
     });
   });
 
@@ -96,6 +118,7 @@ describe('AllowedAccessSectionComponent', () => {
 
     expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenCalledWith({
       smbAccess: true,
+      webshareAccess: false,
       truenasAccess: false,
       sshAccess: false,
       shellAccess: true,
@@ -127,6 +150,7 @@ describe('AllowedAccessSectionComponent', () => {
 
     expect(spectator.inject(UserFormStore).setAllowedAccessConfig).toHaveBeenCalledWith({
       smbAccess: true,
+      webshareAccess: false,
       truenasAccess: true,
       sshAccess: false,
       shellAccess: false,

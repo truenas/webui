@@ -190,6 +190,7 @@ export class UserFormComponent implements OnInit {
       email: user.email,
       full_name: user.full_name,
       smb: user.smb,
+      webshare: user.webshare,
       home: user.home,
       uid: user.uid,
       group: user.group.id,
@@ -205,6 +206,7 @@ export class UserFormComponent implements OnInit {
 
     this.userFormStore.setAllowedAccessConfig({
       smbAccess: user.smb,
+      webshareAccess: user.webshare,
       truenasAccess: hasTrueNasAccess(user),
       shellAccess: hasShellAccess(user),
       sshAccess: hasSshAccess(user),
@@ -254,6 +256,7 @@ export class UserFormComponent implements OnInit {
       distinctUntilChanged((prev, curr) => prev?.shellAccess === curr?.shellAccess
         && prev?.sshAccess === curr?.sshAccess
         && prev?.smbAccess === curr?.smbAccess
+        && prev?.webshareAccess === curr?.webshareAccess
         && prev?.truenasAccess === curr?.truenasAccess),
       untilDestroyed(this),
     ).subscribe(() => {
