@@ -1,6 +1,6 @@
-@import 'scss-imports/cssvars';
-@import 'mixins/text';
-@import '../../dashboard-variables';
+@import "scss-imports/cssvars";
+@import "mixins/text";
+@import "../../dashboard-variables";
 
 :host ::ng-deep {
   ix-breadcrumb {
@@ -45,7 +45,15 @@
   grid-template-columns: repeat(auto-fit, $widget-group-width);
   justify-content: center;
 
-  @media (max-width: $widget-group-width) {
+  @media (min-width: 1560px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (min-width: 768px) and (max-width: 1559px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 767px) {
     grid-template-columns: 1fr;
     padding: 0 5px;
   }
