@@ -267,9 +267,10 @@ describe('PrivilegeFormComponent', () => {
     });
 
     it('prevents saving when local group does not exist and shows error', fakeAsync(() => {
-      // Manually set form value to bypass chips validation
-      const form = (spectator.component as unknown as { form: typeof spectator.component['form'] }).form;
-      form.patchValue({
+      // Note: Cannot use IxFormHarness here because this tests an edge case where
+      // a group was valid when entered but got deleted before submission.
+      // The chips provider would prevent entering invalid groups in normal UI flow.
+      spectator.component.form.patchValue({
         name: 'test privilege',
         local_groups: ['Group A', 'NonExistentGroup'],
         roles: [Role.FullAdmin],
@@ -287,9 +288,10 @@ describe('PrivilegeFormComponent', () => {
     }));
 
     it('prevents saving when DS group does not exist and shows error', fakeAsync(() => {
-      // Manually set form value to bypass chips validation
-      const form = (spectator.component as unknown as { form: typeof spectator.component['form'] }).form;
-      form.patchValue({
+      // Note: Cannot use IxFormHarness here because this tests an edge case where
+      // a group was valid when entered but got deleted before submission.
+      // The chips provider would prevent entering invalid groups in normal UI flow.
+      spectator.component.form.patchValue({
         name: 'test privilege',
         ds_groups: ['NonExistentDSGroup'],
         roles: [Role.FullAdmin],

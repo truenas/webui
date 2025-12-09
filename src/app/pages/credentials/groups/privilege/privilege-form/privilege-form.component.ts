@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, combineLatest, finalize, map, of, shareReplay, switchMap,
+  Observable, combineLatest, finalize, map, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
@@ -73,7 +73,7 @@ export class PrivilegeFormComponent implements OnInit {
 
   protected isLoading = signal(false);
 
-  protected form = this.formBuilder.group({
+  form = this.formBuilder.group({
     name: ['', [Validators.required]],
     local_groups: [[] as string[]],
     ds_groups: [[] as string[]],
@@ -141,7 +141,6 @@ export class PrivilegeFormComponent implements OnInit {
 
         return groupNames.filter((name) => name.toLowerCase().includes(trimmedQuery));
       }),
-      shareReplay({ bufferSize: 1, refCount: true }),
     );
   };
 
@@ -173,7 +172,6 @@ export class PrivilegeFormComponent implements OnInit {
 
         return groupNames.filter((name) => name.toLowerCase().includes(trimmedQuery));
       }),
-      shareReplay({ bufferSize: 1, refCount: true }),
     );
   };
 
