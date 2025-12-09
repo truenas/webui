@@ -1,4 +1,4 @@
-@import 'scss-imports/cssvars';
+@import "scss-imports/cssvars";
 
 .card {
   box-sizing: border-box;
@@ -9,6 +9,9 @@
   button {
     min-height: var(--mdc-text-button-container-height);
     white-space: normal;
+    &:hover {
+      background-color: transparent;
+    }
   }
 }
 
@@ -106,7 +109,6 @@
   }
 }
 
-
 .card-content {
   display: flex;
   flex-direction: row;
@@ -142,7 +144,6 @@
   align-items: center;
   display: flex;
   flex: 1;
-  margin-right: -29px;
   min-width: 0;
 
   .copy-version-text {
