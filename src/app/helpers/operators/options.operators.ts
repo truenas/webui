@@ -62,8 +62,7 @@ export function nicChoicesToOptions(): OperatorFunction<Record<string, string[]>
   return map((groupedChoices) => {
     const allInterfaces = Object.values(groupedChoices).flat();
     return allInterfaces.map((interfaceName) => ({
-      // Empty string represents "Automatic" bridge selection
-      label: ignoreTranslation(interfaceName === '' ? 'Automatic' : interfaceName),
+      label: ignoreTranslation(interfaceName),
       value: interfaceName,
     }));
   });
