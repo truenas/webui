@@ -276,7 +276,7 @@ describe('IpmiFormComponent', () => {
       const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
       await flashButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.On]);
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [{ verb: OnOff.On }]);
     });
 
     it('stops flashing IPMI light when Flash Identify Light is pressed again', async () => {
@@ -285,7 +285,35 @@ describe('IpmiFormComponent', () => {
       const stopFlashing = await loader.getHarness(MatButtonHarness.with({ text: 'Stop Flashing' }));
       await stopFlashing.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.Off]);
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [{ verb: OnOff.Off }]);
+    });
+
+    it('flashes IPMI light on remote controller when remote controller is selected', async () => {
+      const remoteController = await loader.getHarness(IxRadioGroupHarness);
+      await remoteController.setValue('Standby: TrueNAS Controller 2');
+
+      const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      await flashButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
+        'ipmi.chassis.identify',
+        [{ verb: OnOff.On, apply_remote: true }],
+      );
+    });
+
+    it('stops flashing IPMI light on remote controller when remote controller is selected', async () => {
+      const remoteController = await loader.getHarness(IxRadioGroupHarness);
+      await remoteController.setValue('Standby: TrueNAS Controller 2');
+
+      const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      await flashButton.click();
+      const stopFlashing = await loader.getHarness(MatButtonHarness.with({ text: 'Stop Flashing' }));
+      await stopFlashing.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
+        'ipmi.chassis.identify',
+        [{ verb: OnOff.Off, apply_remote: true }],
+      );
     });
   });
 
