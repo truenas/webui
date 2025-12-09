@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { StoreModule } from '@ngrx/store';
+import { throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
@@ -20,6 +21,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IpmiFormComponent } from 'app/pages/system/network/components/ipmi-card/ipmi-form/ipmi-form.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
@@ -515,6 +517,28 @@ describe('IpmiFormComponent', () => {
       const manageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Manage' }));
       expect(await manageButton.isDisabled()).toBe(false);
       expect(spectator.component.managementIp).toBe('192.168.1.100');
+    });
+  });
+
+  describe('error handling', () => {
+    it('does not change flashing state when identify light request fails', async () => {
+      await setupTest(ProductType.Enterprise);
+      const errorHandler = spectator.inject(ErrorHandlerService);
+      jest.spyOn(errorHandler, 'showErrorModal').mockReturnValue(undefined);
+
+      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+        if (method === 'ipmi.chassis.identify') {
+          return throwError(() => new Error('IPMI identify failed'));
+        }
+        throw new Error(`Unexpected method: ${method}`);
+      });
+
+      const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      await flashButton.click();
+
+      // Button text should remain "Flash Identify Light" since the request failed
+      const buttonAfterClick = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      expect(buttonAfterClick).toBeTruthy();
     });
   });
 });
