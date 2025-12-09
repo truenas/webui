@@ -86,7 +86,8 @@ describe('NetworkChartComponent', () => {
     const chart = spectator.query(ViewChartAreaMockComponent)!;
     const options = chart.options() as ChartOptions<'line'>;
 
-    // Test Y-axis callback with 1,000,000 bits = 1 Mb
+    // Test Y-axis callback
+    // 1,000,000 bits = 1 Mb (decimal, base 10)
     const yAxisCallback = options.scales!.y!.ticks!.callback as (value: number) => string | number;
     expect(yAxisCallback.call({}, 1000000)).toBe('1 Mb/s');
 
@@ -107,7 +108,8 @@ describe('NetworkChartComponent', () => {
     const chart = spectator.query(ViewChartAreaMockComponent)!;
     const options = chart.options() as ChartOptions<'line'>;
 
-    // Test Y-axis callback with 1,048,576 bytes = 1 MiB
+    // Test Y-axis callback
+    // 1,048,576 bytes = 1 MiB (binary, base 2)
     const yAxisCallback = options.scales!.y!.ticks!.callback as (value: number) => string | number;
     expect(yAxisCallback.call({}, 1048576)).toBe('1 MiB/s');
 
