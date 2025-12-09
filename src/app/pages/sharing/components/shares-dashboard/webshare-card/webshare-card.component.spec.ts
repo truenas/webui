@@ -20,6 +20,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
@@ -85,6 +86,8 @@ describe('WebShareCardComponent', () => {
       mockApi([
         mockCall('sharing.webshare.query', mockWebShares),
         mockCall('tn_connect.config', mockTnConnectConfig),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       provideMockStore({
         selectors: [
@@ -99,6 +102,10 @@ describe('WebShareCardComponent', () => {
             value: [mockService],
           },
         ],
+      }),
+      mockProvider(TruenasConnectService, {
+        config$: of(mockTnConnectConfig),
+        openStatusModal: jest.fn(),
       }),
       {
         provide: WINDOW,
@@ -137,7 +144,7 @@ describe('WebShareCardComponent', () => {
     );
     await openButton.click();
 
-    expect(mockWindow.open).toHaveBeenCalledWith('http://test.truenas.direct:755/webshare/', '_blank');
+    expect(mockWindow.open).toHaveBeenCalledWith('https://test.truenas.direct:755/webshare/', '_blank');
 
     consoleError.mockRestore();
   });
@@ -221,5 +228,97 @@ describe('WebShareCardComponent', () => {
 
     // API should not be called if confirmation is cancelled
     expect(api.call).not.toHaveBeenCalledWith('sharing.webshare.delete', expect.anything());
+  });
+
+  it('does not show info message when TrueNAS Connect is configured', () => {
+    const infoMessage = spectator.query('.info-message');
+    expect(infoMessage).not.toExist();
+  });
+});
+
+describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
+  let spectator: Spectator<WebShareCardComponent>;
+
+  const mockTnConnectConfigDisabled: TruenasConnectConfig = {
+    enabled: false,
+    status: TruenasConnectStatus.Disabled,
+  } as TruenasConnectConfig;
+
+  const mockService: Service = {
+    id: 10,
+    service: ServiceName.WebShare,
+    enable: false,
+    state: ServiceStatus.Stopped,
+  } as Service;
+
+  const createComponent = createComponentFactory({
+    component: WebShareCardComponent,
+    imports: [
+      IxTablePagerShowMoreComponent,
+    ],
+    declarations: [
+      MockComponents(
+        ServiceStateButtonComponent,
+        ServiceExtraActionsComponent,
+      ),
+    ],
+    providers: [
+      mockAuth(),
+      mockProvider(SlideIn),
+      mockProvider(DialogService),
+      mockProvider(SnackbarService),
+      mockApi([
+        mockCall('sharing.webshare.query', []),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+      ]),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemInfo,
+            value: {
+              license: { features: [] },
+            },
+          },
+          {
+            selector: selectServices,
+            value: [mockService],
+          },
+        ],
+      }),
+      mockProvider(TruenasConnectService, {
+        config$: of(mockTnConnectConfigDisabled),
+        openStatusModal: jest.fn(),
+      }),
+      {
+        provide: WINDOW,
+        useValue: {
+          location: {
+            origin: 'http://test.truenas.direct:4200',
+            hostname: 'test.truenas.direct',
+            protocol: 'http:',
+          } as Location,
+          open: jest.fn(),
+        } as unknown as Window,
+      },
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+  });
+
+  it('shows info message when TrueNAS Connect is not configured', () => {
+    const infoMessage = spectator.query('.info-message');
+    expect(infoMessage).toExist();
+    expect(infoMessage).toHaveText('WebShare service requires TrueNAS Connect to be configured and active.');
+  });
+
+  it('opens TrueNAS Connect dialog when info message is clicked', () => {
+    const truenasConnectService = spectator.inject(TruenasConnectService);
+
+    spectator.click('.info-message');
+
+    expect(truenasConnectService.openStatusModal).toHaveBeenCalled();
   });
 });

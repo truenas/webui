@@ -2,17 +2,21 @@ import {
   ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
+import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { WebSharePasskey, webSharePasskeyLabels } from 'app/enums/webshare-passkey.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceWebshare } from 'app/helptext/services/components/service-webshare';
 import { WebShareConfig } from 'app/interfaces/webshare-config.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -32,6 +36,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxCheckboxComponent,
+    IxSelectComponent,
     FormActionsComponent,
     MatButton,
     TestDirective,
@@ -54,9 +59,11 @@ export class ServiceWebshareComponent implements OnInit {
 
   form = this.fb.group({
     search: [false],
+    passkey: [WebSharePasskey.Disabled, Validators.required],
   });
 
   readonly helptext = helptextServiceWebshare;
+  readonly passkeyOptions$ = of(mapToOptions(webSharePasskeyLabels, this.translate));
 
 
   ngOnInit(): void {
@@ -65,6 +72,7 @@ export class ServiceWebshareComponent implements OnInit {
       next: (config: WebShareConfig) => {
         this.form.patchValue({
           search: config.search,
+          passkey: config.passkey,
         });
         this.isFormLoading.set(false);
       },
@@ -76,7 +84,7 @@ export class ServiceWebshareComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
     this.isFormLoading.set(true);
     this.api.call('webshare.update', [values]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({

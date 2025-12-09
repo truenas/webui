@@ -560,6 +560,7 @@ export interface ApiCallDirectory {
   'interface.services_restarted_on_sync': { params: void; response: ServiceRestartedOnNetworkSync[] };
   'interface.update': { params: [id: string, update: NetworkInterfaceUpdate]; response: NetworkInterface };
   'interface.vlan_parent_interface_choices': { params: void; response: Choices };
+  'interface.websocket_local_ip': { params: void; response: string };
   'interface.xmit_hash_policy_choices': { params: void; response: Choices };
 
   // IPMI
@@ -870,6 +871,7 @@ export interface ApiCallDirectory {
   'tn_connect.update': { params: [TruenasConnectUpdate]; response: TruenasConnectConfig };
   'tn_connect.generate_claim_token': { params: void; response: string };
   'tn_connect.get_registration_uri': { params: void; response: string };
+  'tn_connect.ips_with_hostnames': { params: void; response: Record<string, string> };
 
   // TrueNAS
   'truenas.accept_eula': { params: void; response: void };
