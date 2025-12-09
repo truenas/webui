@@ -60,7 +60,7 @@ export class NetworkChartComponent {
               if (tooltipItem.parsed.y === 0) {
                 label += '0';
               } else {
-                label += buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), unit, base);
+                label = buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), unit, base);
               }
               return label + '/s';
             },
