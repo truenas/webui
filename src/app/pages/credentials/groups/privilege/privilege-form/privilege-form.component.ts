@@ -73,7 +73,7 @@ export class PrivilegeFormComponent implements OnInit {
 
   protected isLoading = signal(false);
 
-  form = this.formBuilder.group({
+  protected form = this.formBuilder.group({
     name: ['', [Validators.required]],
     local_groups: [[] as string[]],
     ds_groups: [[] as string[]],
@@ -234,14 +234,13 @@ export class PrivilegeFormComponent implements OnInit {
         }
         return of(null);
       }),
+      finalize(() => this.isLoading.set(false)),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.isLoading.set(false);
         this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
-        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
       },
     });

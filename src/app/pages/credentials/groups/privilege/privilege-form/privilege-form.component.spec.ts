@@ -270,7 +270,9 @@ describe('PrivilegeFormComponent', () => {
       // Note: Cannot use IxFormHarness here because this tests an edge case where
       // a group was valid when entered but got deleted before submission.
       // The chips provider would prevent entering invalid groups in normal UI flow.
-      spectator.component.form.patchValue({
+      // Accessing protected form property via bracket notation for testing
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({
         name: 'test privilege',
         local_groups: ['Group A', 'NonExistentGroup'],
         roles: [Role.FullAdmin],
@@ -291,7 +293,9 @@ describe('PrivilegeFormComponent', () => {
       // Note: Cannot use IxFormHarness here because this tests an edge case where
       // a group was valid when entered but got deleted before submission.
       // The chips provider would prevent entering invalid groups in normal UI flow.
-      spectator.component.form.patchValue({
+      // Accessing protected form property via bracket notation for testing
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({
         name: 'test privilege',
         ds_groups: ['NonExistentDSGroup'],
         roles: [Role.FullAdmin],
