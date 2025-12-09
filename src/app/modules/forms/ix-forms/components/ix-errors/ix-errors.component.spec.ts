@@ -66,19 +66,31 @@ describe('IxErrorsComponent', () => {
   });
 
   it('clears errors when control becomes valid', () => {
-    const dynamicControl = new FormControl('', [Validators.required]);
+    const dynamicControl = new FormControl('invalid', [Validators.minLength(10)]);
 
     spectator.setHostInput('control', dynamicControl);
     spectator.detectComponentChanges();
 
-    expect(spectator.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Errors in Name: Name is required');
+    expect(spectator.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Errors in Name: The length of Name should be at least 10');
 
     jest.clearAllMocks();
 
-    dynamicControl.setValue('valid value');
+    dynamicControl.setValue('valid value with length');
     spectator.detectComponentChanges();
 
     expect(spectator.component.messages).toEqual([]);
+  });
+
+  it('does not display errors for empty required fields on init (new form scenario)', () => {
+    jest.clearAllMocks();
+
+    const emptyRequiredControl = new FormControl('', [Validators.required]);
+
+    spectator.setHostInput('control', emptyRequiredControl);
+    spectator.detectComponentChanges();
+
+    expect(spectator.query('.form-error')).not.toExist();
+    expect(spectator.inject(LiveAnnouncer).announce).not.toHaveBeenCalled();
   });
 
   it('does not mark control as touched when displaying initial errors', () => {

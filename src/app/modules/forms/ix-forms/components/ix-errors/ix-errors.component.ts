@@ -125,12 +125,16 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
     // Skip marking as touched on initial display to avoid triggering
     // side effects like auto-opening editable components.
     if (shouldHandleImmediately) {
-      // If control has errors on init, show them even if control is untouched.
-      // This handles the case where form is populated with invalid data from API.
-      if (this.control().errors) {
+      // Only show errors for untouched controls if the control has a value.
+      // This handles edit forms with invalid data from API, while not showing
+      // errors for empty required fields in new forms.
+      const controlValue = this.control().value;
+      const hasValue = controlValue !== null && controlValue !== undefined && controlValue !== '';
+
+      if (this.control().errors && hasValue) {
         this.showErrorsForUntouched = true;
+        this.handleErrors({ skipMarkAsTouched: true });
       }
-      this.handleErrors({ skipMarkAsTouched: true });
     }
   }
 
