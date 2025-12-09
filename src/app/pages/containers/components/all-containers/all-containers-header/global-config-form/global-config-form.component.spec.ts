@@ -27,7 +27,7 @@ describe('GlobalConfigFormComponent', () => {
           preferred_pool: 'tank',
         }),
         mockCall('lxc.bridge_choices', {
-          BRIDGE: ['[AUTO]', 'bridge1'],
+          BRIDGE: ['', 'bridge1'],
         }),
         mockCall('container.pool_choices', {
           tank: 'tank',
@@ -217,7 +217,7 @@ describe('GlobalConfigFormComponent - automatic bridge', () => {
           preferred_pool: 'tank',
         }),
         mockCall('lxc.bridge_choices', {
-          BRIDGE: ['[AUTO]', 'bridge1'],
+          BRIDGE: ['', 'bridge1'],
         }),
         mockCall('container.pool_choices', {
           tank: 'tank',
@@ -250,7 +250,7 @@ describe('GlobalConfigFormComponent - automatic bridge', () => {
     // Form should show Automatic as selected
     expect(await form.getValues()).toEqual({
       'Preferred Pool': 'tank',
-      Bridge: 'Automatic',
+      Bridge: '[AUTO]',
       'IPv4 Network': '10.0.0.0/24',
       'IPv6 Network': 'fd00::/64',
     });

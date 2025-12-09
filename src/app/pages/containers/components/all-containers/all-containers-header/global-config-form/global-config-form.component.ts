@@ -5,7 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, of,
+  finalize, map, of,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -83,6 +83,11 @@ export class GlobalConfigFormComponent implements OnInit {
 
   protected bridgeOptions$ = this.api.call('lxc.bridge_choices').pipe(
     nicChoicesToOptions(),
+    // Transform empty string value to [AUTO] to match form's internal representation
+    map((options) => options.map((option) => ({
+      ...option,
+      value: option.value === '' ? this.autoBridge : option.value,
+    }))),
   );
 
   protected poolOptions$ = this.api.call('container.pool_choices').pipe(
