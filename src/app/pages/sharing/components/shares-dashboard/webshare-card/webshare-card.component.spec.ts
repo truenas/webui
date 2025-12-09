@@ -269,6 +269,8 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
       mockProvider(SnackbarService),
       mockApi([
         mockCall('sharing.webshare.query', []),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       provideMockStore({
         selectors: [
