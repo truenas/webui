@@ -73,7 +73,7 @@ export class PrivilegeFormComponent implements OnInit {
 
   protected isLoading = signal(false);
 
-  form = this.formBuilder.group({
+  protected form = this.formBuilder.group({
     name: ['', [Validators.required]],
     local_groups: [[] as string[]],
     ds_groups: [[] as string[]],
