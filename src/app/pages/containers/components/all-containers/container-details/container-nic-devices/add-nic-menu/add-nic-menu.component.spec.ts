@@ -129,3 +129,56 @@ describe('AddNicMenuComponent', () => {
     }]);
   });
 });
+
+describe('AddNicMenuComponent - backward compatibility', () => {
+  let spectator: Spectator<AddNicMenuComponent>;
+  let loader: HarnessLoader;
+
+  const createComponent = createComponentFactory({
+    component: AddNicMenuComponent,
+    providers: [
+      mockAuth(),
+      mockApi([
+        mockCall('container.device.nic_attach_choices', {
+          truenasbr0: 'truenasbr0',
+          ens1: 'ens1',
+        }),
+        mockCall('container.device.create'),
+      ]),
+      mockProvider(ContainersStore, {
+        selectedContainer: () => ({ id: 123 }),
+      }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: jest.fn(() => of({ useDefault: true, trust_guest_rx_filters: false })),
+        })),
+      }),
+      mockProvider(ContainerDevicesStore, {
+        devices: (): ContainerDevice[] => [],
+        loadDevices: jest.fn(),
+        reload: jest.fn(),
+        isLoading: () => false,
+      }),
+      mockProvider(SnackbarService),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('handles backward compatibility with old flat format', async () => {
+    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
+    await menu.open();
+
+    const menuItems = await menu.getItems();
+    const itemTexts = await Promise.all(menuItems.map((item) => item.getText()));
+
+    // Should still categorize NICs by naming patterns (best-effort guesses)
+    expect(itemTexts).toContain('Bridged Devices');
+    expect(itemTexts).toContain('truenasbr0');
+    expect(itemTexts).toContain('MACVLAN Devices');
+    expect(itemTexts).toContain('ens1');
+  });
+});

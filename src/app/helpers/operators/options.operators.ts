@@ -1,3 +1,4 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { uniq } from 'lodash-es';
 import { OperatorFunction } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -55,14 +56,20 @@ export function idNameArrayToOptions<T = number>(): OperatorFunction<{ id: T; na
 
 /**
  * Convert grouped NIC choices to flat options array
- * Transforms `{ "BRIDGE": ["br0", "br1"], "MACVLAN": ["eth0"] }` to `[{ label: "br0", value: "br0" }, ...]`
+ * Handles both formats:
+ * - New grouped format: `{ "BRIDGE": ["br0", "br1"], "MACVLAN": ["eth0"] }`
+ * - Old flat format: `{ "br0": "br0", "eth0": "eth0" }`
+ * Transforms to: `[{ label: "br0", value: "br0" }, ...]`
+ * Special handling: Empty string values are converted to "Automatic" label for bridge selection
  * @returns Option[]
  */
-export function nicChoicesToOptions(): OperatorFunction<Record<string, string[]>, Option[]> {
+export function nicChoicesToOptions(): OperatorFunction<Record<string, string | string[]>, Option[]> {
   return map((groupedChoices) => {
-    const allInterfaces = Object.values(groupedChoices).flat();
+    const allInterfaces = Object.values(groupedChoices).flatMap((value) => {
+      return Array.isArray(value) ? value : [value];
+    });
     return allInterfaces.map((interfaceName) => ({
-      label: ignoreTranslation(interfaceName),
+      label: interfaceName !== '' ? ignoreTranslation(interfaceName) : T('Automatic'),
       value: interfaceName,
     }));
   });

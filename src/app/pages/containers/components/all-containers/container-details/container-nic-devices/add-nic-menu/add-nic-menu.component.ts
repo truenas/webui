@@ -88,7 +88,11 @@ export class AddNicMenuComponent {
       const allNics = Object.keys(choices)
         .filter((nic) => !existingNics.find((device) => device.nic_attach === nic));
 
-      // Try to categorize NICs by common naming patterns
+      // Try to categorize NICs by common naming patterns (best-effort guesses for backward compatibility)
+      // Note: This heuristic may not be 100% accurate but provides reasonable categorization:
+      // - NICs with 'br' or 'bridge' in the name are assumed to be bridge devices (e.g., truenasbr0, vmbr0)
+      // - All other NICs are assumed to be MACVLAN devices (e.g., ens1, eth0)
+      // This is a temporary compatibility measure - the new grouped format from the API is preferred
       const bridgeNics = allNics.filter((nic) => nic.toLowerCase().includes('br') || nic.toLowerCase().includes('bridge'));
       const macvlanNics = allNics.filter((nic) => !nic.toLowerCase().includes('br') && !nic.toLowerCase().includes('bridge'));
 
