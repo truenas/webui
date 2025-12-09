@@ -116,12 +116,18 @@ export class PrivilegeFormComponent implements OnInit {
   /**
    * Provider for local groups autocomplete.
    *
+   * Uses ChipsProvider instead of GroupComboboxProvider because:
+   * - Chips UI is simpler and more appropriate for multi-select privileges
+   * - No pagination needed - 50-item limit is sufficient for most privilege scenarios
+   * - Avoids complexity of managing paginated state across multiple chips fields
+   *
    * Fetches local groups from API with search filtering:
    * - Uses '^' prefix filter for server-side search
    * - Falls back to client-side includes() for better UX (contains match)
    * - Limited to 50 results for performance
    *
    * Note: No caching to keep implementation simple and avoid stale data issues.
+   * For SMB shares with larger group lists requiring pagination, see GroupComboboxProvider.
    */
   readonly localGroupsProvider: ChipsProvider = (query: string) => {
     const trimmedQuery = query?.trim().toLowerCase() || '';
@@ -146,6 +152,9 @@ export class PrivilegeFormComponent implements OnInit {
 
   /**
    * Provider for directory service groups autocomplete.
+   *
+   * Uses ChipsProvider instead of GroupComboboxProvider for consistency with localGroupsProvider.
+   * See localGroupsProvider documentation for rationale.
    *
    * Fetches DS groups from API with search filtering:
    * - Uses '^' prefix filter for server-side search

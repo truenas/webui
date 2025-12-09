@@ -13,7 +13,7 @@ interface GroupComboboxOptions {
 }
 
 export class GroupComboboxProvider implements IxComboboxProvider {
-  protected page = 1;
+  protected page = 0;
   readonly pageSize = 50;
   private valueField: keyof Pick<Group, 'group' | 'gid' | 'id'>;
   private initialOptions: Option[];

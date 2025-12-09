@@ -12,7 +12,7 @@ interface UserComboboxOptions {
 }
 
 export class UserComboboxProvider implements IxComboboxProvider {
-  protected page = 1;
+  protected page = 0;
   readonly pageSize = 50;
   protected valueField: keyof Pick<User, 'username' | 'uid' | 'id'>;
   protected queryType: ComboboxQueryType;

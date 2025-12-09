@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
@@ -307,5 +307,121 @@ describe('PrivilegeFormComponent', () => {
       );
       expect(privilegeCreateCalls).toHaveLength(0);
     }));
+  });
+
+  describe('group providers', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      api = spectator.inject(ApiService);
+    });
+
+    it('should call API with server-side prefix filter for local groups', async () => {
+      const provider = spectator.component.localGroupsProvider;
+
+      await lastValueFrom(provider('test'));
+
+      expect(api.call).toHaveBeenCalledWith('group.query', [
+        [['local', '=', true], ['group', '^', 'test']],
+        { limit: 50, order_by: ['group'] },
+      ]);
+    });
+
+    it('should apply client-side contains filtering for local groups', async () => {
+      const provider = spectator.component.localGroupsProvider;
+
+      // Mock API returns groups that start with 'gr' (server-side filter)
+      (api.call as jest.Mock).mockReturnValue(of([
+        { group: 'group-test' } as Group,
+        { group: 'grtest' } as Group,
+        { group: 'other-group' } as Group,
+      ]));
+
+      const result = await lastValueFrom(provider('test'));
+
+      // Client-side filter keeps only groups that contain 'test'
+      expect(result).toEqual(['group-test', 'grtest']);
+    });
+
+    it('should limit local group results to 50', async () => {
+      const provider = spectator.component.localGroupsProvider;
+
+      await lastValueFrom(provider(''));
+
+      expect(api.call).toHaveBeenCalledWith('group.query', [
+        [['local', '=', true]],
+        { limit: 50, order_by: ['group'] },
+      ]);
+    });
+
+    it('should order local groups by name', async () => {
+      const provider = spectator.component.localGroupsProvider;
+
+      await lastValueFrom(provider('test'));
+
+      const callArgs = (api.call as jest.Mock).mock.calls.find(
+        (call) => call[0] === 'group.query',
+      );
+      expect(callArgs[1][1]).toEqual({ limit: 50, order_by: ['group'] });
+    });
+
+    it('should call API with server-side prefix filter for DS groups', async () => {
+      const provider = spectator.component.dsGroupsProvider;
+
+      await lastValueFrom(provider('test'));
+
+      expect(api.call).toHaveBeenCalledWith('group.query', [
+        [['local', '=', false], ['group', '^', 'test']],
+        { limit: 50, order_by: ['group'] },
+      ]);
+    });
+
+    it('should apply client-side contains filtering for DS groups', async () => {
+      const provider = spectator.component.dsGroupsProvider;
+
+      (api.call as jest.Mock).mockReturnValue(of([
+        { group: 'domain-test' } as Group,
+        { group: 'test-domain' } as Group,
+        { group: 'other' } as Group,
+      ]));
+
+      const result = await lastValueFrom(provider('test'));
+
+      expect(result).toEqual(['domain-test', 'test-domain']);
+    });
+
+    it('should handle empty query for local groups', async () => {
+      const provider = spectator.component.localGroupsProvider;
+
+      (api.call as jest.Mock).mockReturnValue(of([
+        { group: 'group1' } as Group,
+        { group: 'group2' } as Group,
+      ]));
+
+      const result = await lastValueFrom(provider(''));
+
+      // Empty query returns all groups up to limit
+      expect(result).toEqual(['group1', 'group2']);
+      expect(api.call).toHaveBeenCalledWith('group.query', [
+        [['local', '=', true]],
+        { limit: 50, order_by: ['group'] },
+      ]);
+    });
+
+    it('should handle whitespace-only query', async () => {
+      const provider = spectator.component.localGroupsProvider;
+
+      (api.call as jest.Mock).mockReturnValue(of([
+        { group: 'group1' } as Group,
+      ]));
+
+      const result = await lastValueFrom(provider('   '));
+
+      // Whitespace-only query is treated as empty
+      expect(result).toEqual(['group1']);
+      expect(api.call).toHaveBeenCalledWith('group.query', [
+        [['local', '=', true]],
+        { limit: 50, order_by: ['group'] },
+      ]);
+    });
   });
 });
