@@ -541,7 +541,6 @@
     "./src/app/pages/datasets/modules/permissions/utils/new-ace.utils.ts",
     "./src/app/pages/datasets/modules/permissions/utils/permissions-to-description.utils.spec.ts",
     "./src/app/pages/datasets/modules/permissions/utils/permissions-to-description.utils.ts",
-    "./src/app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant.ts",
     "./src/app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface.ts",
     "./src/app/pages/datasets/modules/snapshots/store/snapshot.actions.ts",
     "./src/app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource.ts",
