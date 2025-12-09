@@ -5,11 +5,11 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, map, of,
+  finalize, of,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { choicesToOptions, nicChoicesToOptions } from 'app/helpers/operators/options.operators';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -77,17 +77,11 @@ export class GlobalConfigFormComponent implements OnInit {
       : { atLeastOneNetworkRequired: true };
   };
 
-  // Store validator array as single reference for proper add/remove operations
+  // Group validators together for cleaner add/remove calls
   private readonly networkValidators = [this.ipCidrValidator, this.atLeastOneNetworkValidator];
 
-
   protected bridgeOptions$ = this.api.call('lxc.bridge_choices').pipe(
-    nicChoicesToOptions(),
-    // Transform empty string value to [AUTO] to match form's internal representation
-    map((options) => options.map((option) => ({
-      ...option,
-      value: option.value === '' ? this.autoBridge : option.value,
-    }))),
+    choicesToOptions(),
   );
 
   protected poolOptions$ = this.api.call('container.pool_choices').pipe(
@@ -107,7 +101,7 @@ export class GlobalConfigFormComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading.set(true);
 
-    // Update v4_network validators when bridge changes
+    // Update network field validators when bridge changes
     this.form.controls.bridge.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {

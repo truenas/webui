@@ -82,7 +82,7 @@ describe('nicChoicesToOptions', () => {
     ]);
   });
 
-  it('converts empty string to "Automatic" label', async () => {
+  it('preserves empty string values as-is', async () => {
     const choicesWithEmpty = {
       BRIDGE: ['', 'br0'],
     };
@@ -90,8 +90,9 @@ describe('nicChoicesToOptions', () => {
     const options = await lastValueFrom(of(choicesWithEmpty).pipe(nicChoicesToOptions()));
 
     expect(options).toEqual([
-      { label: 'Automatic', value: '' },
+      { label: '', value: '' },
       { label: 'br0', value: 'br0' },
     ]);
   });
 });
+

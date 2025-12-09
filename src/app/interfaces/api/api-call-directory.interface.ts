@@ -931,7 +931,7 @@ export interface ApiCallDirectory {
   'container.update': { params: [containerId: number, update: UpdateContainer]; response: Container };
 
   // LXC (actual available endpoints only)
-  'lxc.bridge_choices': { params: []; response: Record<string, string[]> };
+  'lxc.bridge_choices': { params: []; response: Choices };
   'lxc.config': { params: []; response: ContainerGlobalConfig };
   'lxc.update': { params: [ContainerGlobalConfig]; response: ContainerGlobalConfig };
 

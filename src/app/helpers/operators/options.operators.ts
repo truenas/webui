@@ -1,4 +1,3 @@
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { uniq } from 'lodash-es';
 import { OperatorFunction } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -55,37 +54,18 @@ export function idNameArrayToOptions<T = number>(): OperatorFunction<{ id: T; na
 }
 
 /**
- * Convert grouped NIC choices to flat options array
- * Expects grouped format: `{ "BRIDGE": ["br0", "br1"], "MACVLAN": ["eth0"] }`
- * Transforms to: `[{ label: "br0", value: "br0" }, ...]`
+ * Converts grouped NIC choices to a flat options array.
  *
- * **Empty string handling**: Empty string values are converted to "Automatic" label.
- * This is specifically for container bridge selection where empty string means automatic
- * bridge configuration. VMs should not return empty strings in their NIC choices.
- *
- * Note: This operator intentionally flattens grouped choices for use in simple dropdowns
- * (e.g., VM device forms) where a plain list is sufficient.
- * Components that need to preserve grouping (e.g., AddNicMenuComponent) should
- * implement custom grouping logic instead of using this operator.
- *
- * @example
- * // ✅ DO use for simple flat dropdowns:
- * readonly nicOptions$ = this.api.call('vm.device.nic_attach_choices').pipe(
- *   nicChoicesToOptions()
- * );
- *
- * @example
- * // ❌ DON'T use for grouped dropdowns - implement custom grouping:
- * // See AddNicMenuComponent for an example of preserving group structure
- *
- * @returns Option[]
+ * Input: `{ "BRIDGE": ["br0", "br1"], "MACVLAN": ["eth0"] }`
+ * Output: `[{ label: "br0", value: "br0" }, { label: "br1", value: "br1" }, ...]`
  */
 export function nicChoicesToOptions(): OperatorFunction<Record<string, string[]>, Option[]> {
   return map((groupedChoices) => {
     const allInterfaces = Object.values(groupedChoices).flat();
     return allInterfaces.map((interfaceName) => ({
-      label: interfaceName !== '' ? ignoreTranslation(interfaceName) : T('Automatic'),
+      label: ignoreTranslation(interfaceName),
       value: interfaceName,
     }));
   });
 }
+
