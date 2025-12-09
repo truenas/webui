@@ -250,7 +250,7 @@ describe('GlobalConfigFormComponent - automatic bridge', () => {
     // Form should show Automatic as selected
     expect(await form.getValues()).toEqual({
       'Preferred Pool': 'tank',
-      Bridge: '[AUTO]',
+      Bridge: 'Automatic',
       'IPv4 Network': '10.0.0.0/24',
       'IPv6 Network': 'fd00::/64',
     });
