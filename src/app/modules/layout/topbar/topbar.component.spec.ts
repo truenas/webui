@@ -13,7 +13,7 @@ import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { HarborosConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
@@ -53,7 +53,7 @@ interface ComponentOptions {
 
 function createTopbarComponent(options: ComponentOptions = {}): {
   factory: () => Spectator<TopbarComponent>;
-  mockConfigSignal: ReturnType<typeof signal<HarborosConnectConfig | null>>;
+  mockConfigSignal: ReturnType<typeof signal<TruenasConnectConfig | null>>;
 } {
   const {
     updateJob = [
@@ -73,7 +73,7 @@ function createTopbarComponent(options: ComponentOptions = {}): {
     },
   } = options;
 
-  const mockConfigSignal = signal<HarborosConnectConfig | null>(null);
+  const mockConfigSignal = signal<TruenasConnectConfig | null>(null);
 
   const factory = createComponentFactory({
     component: TopbarComponent,
@@ -137,7 +137,7 @@ function createTopbarComponent(options: ComponentOptions = {}): {
 describe('TopbarComponent', () => {
   let spectator: Spectator<TopbarComponent>;
   let loader: HarnessLoader;
-  let mockConfigSignal: ReturnType<typeof signal<HarborosConnectConfig | null>>;
+  let mockConfigSignal: ReturnType<typeof signal<TruenasConnectConfig | null>>;
   const updateRunningStatus$ = new EventEmitter<'true' | 'false'>();
 
   const { factory: createComponent, mockConfigSignal: configSignal } = createTopbarComponent({
@@ -184,7 +184,7 @@ describe('TopbarComponent', () => {
   });
 
   describe('hasTncConfig', () => {
-    const baseTncConfig: Partial<HarborosConnectConfig> = {
+    const baseTncConfig: Partial<TruenasConnectConfig> = {
       tnc_base_url: 'https://tnc.example.com',
       account_service_base_url: 'https://account.example.com',
       leca_service_base_url: 'https://leca.example.com',
@@ -200,7 +200,7 @@ describe('TopbarComponent', () => {
         ...baseTncConfig,
         ips: [],
         interfaces_ips: [],
-      } as HarborosConnectConfig);
+      } as TruenasConnectConfig);
       expect(spectator.component.hasTncConfig()).toBeTruthy();
     });
 
@@ -211,7 +211,7 @@ describe('TopbarComponent', () => {
         tnc_base_url: '',
         account_service_base_url: '',
         leca_service_base_url: '',
-      } as HarborosConnectConfig);
+      } as TruenasConnectConfig);
       expect(spectator.component.hasTncConfig()).toBeFalsy();
     });
 
@@ -221,7 +221,7 @@ describe('TopbarComponent', () => {
         leca_service_base_url: 'https://leca.example.com',
         ips: [],
         interfaces_ips: [],
-      } as HarborosConnectConfig);
+      } as TruenasConnectConfig);
       expect(spectator.component.hasTncConfig()).toBeFalsy();
     });
 
@@ -231,7 +231,7 @@ describe('TopbarComponent', () => {
         leca_service_base_url: 'https://leca.example.com',
         ips: [],
         interfaces_ips: [],
-      } as HarborosConnectConfig);
+      } as TruenasConnectConfig);
       expect(spectator.component.hasTncConfig()).toBeFalsy();
     });
 
@@ -241,7 +241,7 @@ describe('TopbarComponent', () => {
         account_service_base_url: 'https://account.example.com',
         ips: [],
         interfaces_ips: [],
-      } as HarborosConnectConfig);
+      } as TruenasConnectConfig);
       expect(spectator.component.hasTncConfig()).toBeFalsy();
     });
   });
