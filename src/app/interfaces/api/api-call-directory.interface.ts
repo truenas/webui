@@ -6,7 +6,6 @@ import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
@@ -143,7 +142,7 @@ import {
   UpdateInitShutdownScriptParams,
 } from 'app/interfaces/init-shutdown-script.interface';
 import {
-  Ipmi, IpmiChassis, IpmiQueryParams, IpmiUpdate,
+  Ipmi, IpmiChassis, IpmiChassisIdentifyParams, IpmiChassisInfoParams, IpmiQueryParams, IpmiUpdate,
 } from 'app/interfaces/ipmi.interface';
 import {
   IscsiGlobalConfig,
@@ -564,8 +563,8 @@ export interface ApiCallDirectory {
   'interface.xmit_hash_policy_choices': { params: void; response: Choices };
 
   // IPMI
-  'ipmi.chassis.identify': { params: [OnOff]; response: void };
-  'ipmi.chassis.info': { params: void; response: IpmiChassis };
+  'ipmi.chassis.identify': { params: [IpmiChassisIdentifyParams]; response: void };
+  'ipmi.chassis.info': { params: [IpmiChassisInfoParams?]; response: IpmiChassis };
   'ipmi.is_loaded': { params: void; response: boolean };
   'ipmi.lan.query': { params: IpmiQueryParams; response: Ipmi[] };
   'ipmi.lan.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
