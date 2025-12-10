@@ -82,6 +82,8 @@
                   id="proactiveSupport"
                   mat-menu-item
                   ixTest="proactive-support"
+                  [disabled]="!isProactiveSupportAvailable()"
+                  [matTooltip]="!isProactiveSupportAvailable() ? ('Proactive support requires Silver or Gold tier support contract' | translate) : ''"
                   (click)="openProactive()"
                 >
                   <span>{{ proactiveText | translate }}</span>
@@ -104,6 +106,8 @@
                     mat-button
                     color="default"
                     ixTest="proactive-support"
+                    [disabled]="!isProactiveSupportAvailable()"
+                    [matTooltip]="!isProactiveSupportAvailable() ? ('Proactive support requires Silver or Gold tier support contract' | translate) : ''"
                     (click)="openProactive()"
                   >
                     {{ proactiveText | translate }}
