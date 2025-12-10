@@ -52,7 +52,7 @@ export class ContainerLogsComponent implements OnInit {
 
   protected fontSize = signal(14);
   protected isLoading = signal(false);
-  protected autoScrollControl = new FormControl(true);
+  protected autoScrollControl = new FormControl<boolean>(true);
 
   protected train: string;
   protected appName: string;

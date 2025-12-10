@@ -7,7 +7,7 @@ import {
   Spectator, SpectatorFactory, createComponentFactory, mockProvider,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
@@ -53,15 +53,58 @@ describe('ContainerLogsComponent', () => {
       const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Auto Scroll' }));
       expect(await checkbox.getValue()).toBe(true);
     });
+  });
 
-    it('does not scroll to bottom when auto-scroll is disabled', async () => {
+  describe('auto-scroll behavior', () => {
+    let logSubject$: Subject<{ fields: { timestamp: string; data: string } }>;
+
+    const createComponent = createComponentFactory({
+      component: ContainerLogsComponent,
+      imports: [
+        MockComponent(PageHeaderComponent),
+      ],
+      declarations: [
+        MockComponent(ToolbarSliderComponent),
+      ],
+      providers: [
+        mockProvider(Router),
+        mockProvider(MatDialog, {
+          open: jest.fn(() => ({
+            afterClosed: jest.fn(() => of({ tail_lines: 500 } as LogsDetailsDialog['form']['value'])),
+          }) as unknown as MatDialogRef<LogsDetailsDialog>),
+        }),
+        mockProvider(ApiService, {
+          subscribe: jest.fn(() => {
+            logSubject$ = new Subject();
+            return logSubject$.asObservable();
+          }),
+        }),
+        mockAuth(),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            parent: { params: of({ appId: 'ix-test-app' }) },
+            params: of({ containerId: 'ix-test-container' }),
+          },
+        },
+      ],
+    });
+
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('does not scroll when auto-scroll is disabled and new logs arrive', async () => {
       const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Auto Scroll' }));
       await checkbox.setValue(false);
 
       const logContainer = spectator.query('.logs') as HTMLElement;
+      jest.spyOn(logContainer, 'scrollHeight', 'get').mockReturnValue(1000);
       logContainer.scrollTop = 0;
 
-      spectator.component.scrollToBottom();
+      logSubject$.next({ fields: { timestamp: '[12:35]', data: 'New log entry' } });
+      spectator.detectChanges();
 
       expect(logContainer.scrollTop).toBe(0);
     });
