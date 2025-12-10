@@ -10,6 +10,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-services.enum';
+import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
+import { helptextIdmap } from 'app/helptext/directory-service/idmap';
+import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import {
   ActiveDirectoryIdmap, DomainIdmap, domainIdmapTypeOptions, LdapIdmap, Rfc2307Idmap, RidIdmap,
 } from 'app/interfaces/active-directory-config.interface';
@@ -67,6 +70,10 @@ interface AllTrustedDomainsIdmapFieldsInterface {
 })
 export class TrustedDomainsConfigComponent implements OnInit {
   private fb = inject(FormBuilder);
+
+  protected readonly helptextAd = helptextActiveDirectory;
+  protected readonly helptext = helptextIdmap.idmap;
+  protected readonly helptextLdap = helptextLdap;
 
   readonly enableTrustedDomains = input.required<boolean>();
   trustedDomainsChanged = output<[enableTrustedDomains: boolean, trustedDomains: DomainIdmap[]]>();
