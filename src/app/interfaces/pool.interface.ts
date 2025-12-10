@@ -37,6 +37,7 @@ export interface Pool {
   path: string;
   scan: PoolScanUpdate;
   status: PoolStatus;
+  status_code?: string;
   status_detail: string;
   topology: PoolTopology;
 
