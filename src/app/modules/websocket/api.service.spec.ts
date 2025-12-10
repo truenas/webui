@@ -63,6 +63,10 @@ describe('ApiService', () => {
     jest.clearAllMocks();
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   describe('call', () => {
     it('should make a WS call and get a response', async () => {
       const uuid = 'fakeUUID';

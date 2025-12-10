@@ -106,6 +106,7 @@ export class ApiService {
     params?: ApiJobParams<M>,
   ): Observable<Job<ApiJobResponse<M>>> {
     const uuid = uuidv4();
+    // Cast needed: ApiJobParams<M> is a tuple type that doesn't directly match unknown[]
     this.duplicateTracker.trackCall(method, params as unknown[]);
     this.wsHandler.scheduleCall({
       id: uuid,

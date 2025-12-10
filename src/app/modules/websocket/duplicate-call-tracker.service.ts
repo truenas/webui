@@ -1,20 +1,25 @@
 import { Injectable } from '@angular/core';
+import { environment } from 'environments/environment';
 
 interface TrackedCall {
   method: string;
   paramsHash: string;
   timestamp: number;
+  stack: string;
 }
 
 /**
  * Service to detect and log duplicate API calls made within a short time window.
  * This helps identify potential bugs where the same API call is issued multiple times
  * in rapid succession.
+ *
+ * Only active in development mode to avoid performance overhead in production.
  */
 @Injectable({
   providedIn: 'root',
 })
 export class DuplicateCallTrackerService {
+  private readonly enabled = !environment.production;
   private readonly windowMs = 20;
   private recentCalls: TrackedCall[] = [];
 
@@ -23,8 +28,13 @@ export class DuplicateCallTrackerService {
    * was made within the configured time window.
    */
   trackCall(method: string, params?: unknown[]): void {
+    if (!this.enabled) {
+      return;
+    }
+
     const now = Date.now();
     const paramsHash = this.hashParams(params);
+    const currentStack = new Error().stack ?? '';
 
     // Clean up old calls outside the time window
     this.recentCalls = this.recentCalls.filter(
@@ -41,7 +51,10 @@ export class DuplicateCallTrackerService {
       console.warn(
         `[DuplicateApiCall] "${method}" called again within ${timeSince}ms with same params:`,
         params,
-        new Error().stack,
+        '\nOriginal call:',
+        duplicate.stack,
+        '\nDuplicate call:',
+        currentStack,
       );
     }
 
@@ -50,6 +63,7 @@ export class DuplicateCallTrackerService {
       method,
       paramsHash,
       timestamp: now,
+      stack: currentStack,
     });
   }
 

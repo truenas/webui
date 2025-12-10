@@ -31,6 +31,9 @@ describe('DuplicateCallTrackerService', () => {
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('[DuplicateApiCall] "system.info"'),
       [{ foo: 'bar' }],
+      '\nOriginal call:',
+      expect.any(String),
+      '\nDuplicate call:',
       expect.any(String),
     );
   });
@@ -66,6 +69,9 @@ describe('DuplicateCallTrackerService', () => {
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('[DuplicateApiCall] "system.info"'),
       undefined,
+      '\nOriginal call:',
+      expect.any(String),
+      '\nDuplicate call:',
       expect.any(String),
     );
   });
@@ -77,6 +83,9 @@ describe('DuplicateCallTrackerService', () => {
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining('[DuplicateApiCall] "system.info"'),
       [],
+      '\nOriginal call:',
+      expect.any(String),
+      '\nDuplicate call:',
       expect.any(String),
     );
   });
