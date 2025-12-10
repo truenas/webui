@@ -3,8 +3,12 @@ import { IdmapName } from 'app/enums/idmap.enum';
 
 export const helptextIdmap = {
   idmap: {
+    useDefaultIdmapTooltip: T('Use TrueNAS default IDMAP configuration. Defaults are suitable for new deployments without \
+existing support for unix-like operating systems. The default configuration uses the RID backend with predefined \
+UID/GID ranges (builtin: 90000001-100000000, domain: 100000001-200000000).'),
     name: {
-      tooltip: T('Enter the pre-Windows 2000 domain name.'),
+      tooltip: T('Short name for the domain. This should match the NetBIOS domain name for Active Directory domains. \
+It may be null if the domain is configured as the base idmap for Active Directory.'),
       options: [
         { label: T('Active Directory - Primary Domain'), value: IdmapName.DsTypeActiveDirectory },
         { label: T('SMB - Primary Domain'), value: IdmapName.DsTypeDefaultDomain },
@@ -12,64 +16,28 @@ export const helptextIdmap = {
         { label: T('Custom Value'), value: 'custom' },
       ],
     },
-    customNameTooltip: T('Enter the pre-Windows 2000 domain name.'),
-    rangeTooltip: T('Range Low and Range High set the range of UID/GID numbers which this \
- IDMap backend translates. If an external credential like a Windows SID maps to a UID or GID \
- number outside this range, the external credential is ignored.'),
-    idmapBackendTooltip: T('Provides a plugin interface for Winbind to use varying backends to store \
- SID/uid/gid mapping tables. The correct setting depends on the environment in which the NAS is deployed.'),
-    certificateIdTooltip: T('Select the certificate of the Active Directory server\
- if SSL connections are used. When no certificates are available, move to the Active Directory server and\
- create a Certificate Authority and Certificate. Import the certificate to this system using the\
- System/Certificates menu.'),
-    schemaModeTooltip: T('Choose the schema to use with LDAP authentication for\
- SMB shares. The LDAP server must be configured with Samba attributes to use a Samba Schema. \
- Options include <i>RFC2307</i> (included in Windows 2003 R2) and <i>Service for Unix (SFU)</i>. \
- For SFU 3.0 or 3.5, choose "SFU". For SFU 2.0, choose "SFU20".'),
-    unixPrimaryGroupTooltip: T('When checked, the primary group membership is fetched from the LDAP \
- attributes (gidNumber). When not checked, the primary group membership is calculated via \
- the "primaryGroupID" LDAP attribute.'),
-    unixNssTooltip: T('When checked, winbind will retrieve the login shell and home directory \
- from the LDAP attributes. When not checked or when the AD LDAP entry lacks the SFU attributes \
- the smb4.conf parameters <code>template shell</code> and <code>template homedir</code> are used.'),
-    rangesizeTooltip: T('Define the number of UIDS/GIDS available per domain \
- range. The minimum is <i>2000</i> and the recommended default is <i>100000</i>.'),
-    readonlyTooltip: T('Set to make the module <i>read-only</i>. No new ranges \
- are allocated or new mappings created in the idmap pool.'),
-    ignoreBuiltinTooltip: T('Set to ignore mapping requests for the <i>BUILTIN</i> \
- domain.'),
-    ldapBasednTooltip: T('The directory base suffix to use for SID/uid/gid\
- mapping entries. Example: dc=test,dc=org. When undefined, idmap_ldap defaults to using the ldap idmap\
- suffix option from <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html"\
- target="_blank">smb.conf</a>.'),
-    ldapUserdnTooltip: T('User Distinguished Name (DN) to use for authentication.'),
-    ldapUrlTooltip: T('LDAP server to use for SID/uid/gid map entries. When\
- undefined, idmap_ldap uses *ldap://localhost/*.\
- Example: <i>ldap://ldap.netscape.com/o=Airius.com</i>.'),
-    linkedServiceTooltip: T('Specifies the auxiliary directory service ID provider.'),
-    ldapUserDnPasswordTooltip: T('Password associated with the LDAP User DN.'),
-    ldapServerTooltip: T('Select the type of LDAP server to use. This can be the\
-        LDAP server provided by the Active Directory server or a stand-alone LDAP server.'),
-    ldapRealmTooltip: T('Performs authentication from an LDAP server.'),
-    bindPathUserTooltip: T('The search base where user objects can be found in the LDAP server.'),
-    bindPathGroupTooltip: T('The search base where group objects can be found in the LDAP server.'),
-    userCnTooltip: T('Set to query the cn instead of uid attribute for the user name in LDAP.'),
-    cnRealmTooltip: T('Append <i>@realm</i> to <i>cn</i> in LDAP queries for\
- both groups and users when User CN is set).'),
-    ldapDomainTooltip: T('The domain to access the Active Directory server when\
- using the LDAP server inside the Active Directory server.'),
-    sssdCompatTooltip: T('Generate idmap low range based on same algorithm that SSSD uses by default.'),
-    enableAdDialog: {
-      title: T('Enable Active Directory'),
-      message: T('Active Directory must be enabled before adding new domains.'),
-      button: T('Go to Active Directory Form'),
-    },
-    clearCacheDialog: {
-      title: T('Clear the Idmap Cache'),
-      message: T('The Idmap cache should be cleared after finalizing idmap changes. \
- Click "Continue" to clear the cache.'),
-      jobTitle: T('Clearing Cache...'),
-      successMessage: T('The cache has been cleared.'),
-    },
+    rangeTooltip: T('The lowest and highest UID or GID that the idmap backend can assign.'),
+    idmapBackendTooltip: T('This configuration defines how domain accounts joined to TrueNAS are mapped to Unix UIDs and GIDs on the \
+TrueNAS server. Most TrueNAS deployments use the RID backend, which algorithmically assigns UIDs and GIDs based on \
+the Active Directory account SID. Another common option is the AD backend, which reads predefined Active Directory \
+LDAP schema attributes that assign explicit UID and GID numbers to accounts.'),
+    schemaModeTooltip: T('The schema mode the idmap backend uses to query Active Directory for user and group information. The RFC2307 \
+schema applies to Windows Server 2003 R2 and newer. The Services for Unix (SFU) schema applies to versions before \
+Windows Server 2003 R2.'),
+    unixPrimaryGroupTooltip: T('Defines if the user\'s primary group is fetched from SFU attributes or the Active Directory primary group. \
+If True, the TrueNAS server uses the gidNumber LDAP attribute. If False, it uses the primaryGroupID LDAP attribute.'),
+    unixNssTooltip: T('If True, the login shell and home directory are retrieved from LDAP attributes. If False, or if the Active \
+Directory LDAP entry lacks SFU attributes, the home directory defaults to /var/empty.'),
+    readonlyTooltip: T('If readonly is set to True then TrueNAS will not attempt to write new idmap entries.'),
+    ldapBasednTooltip: T('Directory base suffix to use for mapping UIDs and GIDs to SIDs.'),
+    ldapUserdnTooltip: T('Defines the user DN to be used for authentication to the LDAP server.'),
+    ldapUrlTooltip: T('LDAP server to use for the idmap entries.'),
+    ldapUserDnPasswordTooltip: T('Secret to use for authenticating the user specified by ldap_user_dn.'),
+    ldapRealmTooltip: T('Append @realm to the CN for groups. Also append it to users if user_cn is specified.'),
+    bindPathUserTooltip: T('The search base that contains user objects in the LDAP server.'),
+    bindPathGroupTooltip: T('The search base that contains group objects in the LDAP server.'),
+    userCnTooltip: T('If set, query the CN attribute instead of the UID attribute for the user name in LDAP.'),
+    sssdCompatTooltip: T('Generate an idmap low range using the algorithm from SSSD. This works if the domain uses only a single SSSD \
+idmap slice, and is sufficient if the domain uses only a single SSSD idmap slice.'),
   },
 };

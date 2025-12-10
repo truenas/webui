@@ -4,22 +4,26 @@
       formControlName="server_urls"
       [label]="'Server URLs' | translate"
       [required]="true"
+      [tooltip]="helptext.hostnameTooltip | translate"
     ></ix-chips>
 
-    <ix-input 
+    <ix-input
       formControlName="basedn"
       [label]="'Base DN' | translate"
       [required]="true"
+      [tooltip]="helptext.basednTooltip | translate"
     ></ix-input>
 
     <ix-checkbox
       formControlName="starttls"
       [label]="'Start TLS' | translate"
+      [tooltip]="helptext.sslTooltip | translate"
     ></ix-checkbox>
 
     <ix-checkbox
       formControlName="validate_certificates"
       [label]="'Validate Certificates' | translate"
+      [tooltip]="helptext.validateCertificatesTooltip | translate"
     ></ix-checkbox>
 
     <ix-select
@@ -27,6 +31,7 @@
       [label]="'Schema' | translate"
       [options]="ldapSchemaOptions$"
       [required]="true"
+      [tooltip]="helptext.schemaTooltip | translate"
     ></ix-select>
 
     <ix-fieldset
@@ -35,85 +40,99 @@
       <ix-checkbox
         formControlName="use_standard_auxiliary_parameters"
         [label]="'Use Standard Auxiliary Parameters' | translate"
+        [tooltip]="helptext.useStandardAuxiliaryParametersTooltip | translate"
       ></ix-checkbox>
       @if (!(form.controls.use_standard_auxiliary_parameters.value)) {
         <ix-textarea
           formControlName="auxiliary_parameters"
           [label]="'Auxiliary Parameters' | translate"
+          [tooltip]="helptext.auxiliaryParametersTooltip | translate"
         ></ix-textarea>
       }
     </ix-fieldset>
-    
+
 
     <ix-fieldset [title]="'Search Bases' | translate">
       <ix-checkbox
         formControlName="use_standard_search_bases"
         [label]="'Use Standard Search Bases' | translate"
+        [tooltip]="helptext.useStandardSearchBasesTooltip | translate"
       ></ix-checkbox>
       @if (!(form.controls.use_standard_search_bases.value)) {
         <div [formGroup]="form.controls.search_bases">
           <ix-input
             formControlName="base_user"
             [label]="'User Base DN' | translate"
+            [tooltip]="helptext.baseUserTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="base_group"
             [label]="'Group Base DN' | translate"
+            [tooltip]="helptext.baseGroupTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="base_netgroup"
             [label]="'Netgroup Base DN' | translate"
+            [tooltip]="helptext.baseNetgroupTooltip | translate"
           ></ix-input>
         </div>
       }
-      
+
     </ix-fieldset>
 
     <ix-fieldset [title]="'Attribute Maps' | translate">
       <ix-checkbox
         formControlName="use_standard_attribute_maps"
         [label]="'Use Standard Attribute Maps'"
+        [tooltip]="helptext.useStandardAttributeMapsTooltip | translate"
       ></ix-checkbox>
       @if (!(form.controls.use_standard_attribute_maps.value)) {
-        <ix-fieldset 
-          [title]="'LDAP Password Attributes' | translate" 
+        <ix-fieldset
+          [title]="'LDAP Password Attributes' | translate"
           [formGroup]="form.controls.attribute_maps.controls.passwd"
         >
           <ix-input
             formControlName="user_object_class"
             [label]="'User Object Class' | translate"
+            [tooltip]="helptext.userObjectClassTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="user_name"
             [label]="'Username Attribute' | translate"
+            [tooltip]="helptext.userNameTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="user_uid"
             [label]="'UID Attribute' | translate"
+            [tooltip]="helptext.userUidTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="user_gid"
             [label]="'GID Attribute' | translate"
+            [tooltip]="helptext.userGidTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="user_gecos"
             [label]="'GECOS Attribute' | translate"
+            [tooltip]="helptext.userGecosTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="user_home_directory"
             [label]="'Home Directory Attribute' | translate"
+            [tooltip]="helptext.userHomeDirectoryTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="user_shell"
             [label]="'Shell Attribute' | translate"
+            [tooltip]="helptext.userShellTooltip | translate"
           ></ix-input>
         </ix-fieldset>
         <ix-fieldset
@@ -123,37 +142,37 @@
           <ix-input
             formControlName="shadow_last_change"
             [label]="'Last Change Attribute' | translate"
-            [tooltip]="'LDAP attribute for password last change' | translate"
+            [tooltip]="helptext.shadowLastChangeTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="shadow_min"
             [label]="'Min Days Attribute' | translate"
-            [tooltip]="'LDAP attribute for minimum password age' | translate"
+            [tooltip]="helptext.shadowMinTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="shadow_max"
             [label]="'Max Days Attribute' | translate"
-            [tooltip]="'LDAP attribute for maximum password age' | translate"
+            [tooltip]="helptext.shadowMaxTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="shadow_warning"
             [label]="'Warning Attribute' | translate"
-            [tooltip]="'LDAP attribute for password warning period' | translate"
+            [tooltip]="helptext.shadowWarningTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="shadow_inactive"
             [label]="'Inactive Attribute' | translate"
-            [tooltip]="'LDAP attribute for account inactive period' | translate"
+            [tooltip]="helptext.shadowInactiveTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="shadow_expire"
             [label]="'Expire Attribute' | translate"
-            [tooltip]="'LDAP attribute for account expiration' | translate"
+            [tooltip]="helptext.shadowExpireTooltip | translate"
           ></ix-input>
         </ix-fieldset>
         <ix-fieldset 
@@ -163,19 +182,19 @@
           <ix-input
             formControlName="group_object_class"
             [label]="'Group Object Class' | translate"
-            [tooltip]="'LDAP object class for groups' | translate"
+            [tooltip]="helptext.groupObjectClassTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="group_gid"
             [label]="'Group GID Attribute' | translate"
-            [tooltip]="'LDAP attribute for group ID' | translate"
+            [tooltip]="helptext.groupGidTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="group_member"
             [label]="'Group Member Attribute' | translate"
-            [tooltip]="'LDAP attribute for group members' | translate"
+            [tooltip]="helptext.groupMemberTooltip | translate"
           ></ix-input>
         </ix-fieldset>
         <ix-fieldset
@@ -185,19 +204,19 @@
           <ix-input
             formControlName="netgroup_object_class"
             [label]="'Netgroup Object Class' | translate"
-            [tooltip]="'LDAP object class for netgroups' | translate"
+            [tooltip]="helptext.netgroupObjectClassTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="netgroup_member"
             [label]="'Netgroup Member Attribute' | translate"
-            [tooltip]="'LDAP attribute for netgroup members' | translate"
+            [tooltip]="helptext.netgroupMemberTooltip | translate"
           ></ix-input>
 
           <ix-input
             formControlName="netgroup_triple"
             [label]="'Netgroup Triple Attribute' | translate"
-            [tooltip]="'LDAP attribute for netgroup triples' | translate"
+            [tooltip]="helptext.netgroupTripleTooltip | translate"
           ></ix-input>
         </ix-fieldset>
       }

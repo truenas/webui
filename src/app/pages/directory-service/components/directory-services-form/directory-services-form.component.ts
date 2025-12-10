@@ -16,6 +16,7 @@ import {
   DirectoryServiceType,
 } from 'app/enums/directory-services.enum';
 import { Role } from 'app/enums/role.enum';
+import { helptextDirectoryServices } from 'app/helptext/directory-service/directory-services';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { DirectoryServiceCredential } from 'app/interfaces/directoryservice-credentials.interface';
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
@@ -82,6 +83,7 @@ export class DirectoryServicesFormComponent implements OnInit {
   protected readonly previousConfig = signal<DirectoryServicesConfig | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly helptext = helptextDirectoryServices;
 
   // Validation states are now managed by the validation service
   protected credentialData: DirectoryServiceCredential | null = null;
