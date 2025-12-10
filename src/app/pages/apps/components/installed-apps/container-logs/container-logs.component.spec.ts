@@ -53,6 +53,18 @@ describe('ContainerLogsComponent', () => {
       const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Auto Scroll' }));
       expect(await checkbox.getValue()).toBe(true);
     });
+
+    it('does not scroll to bottom when auto-scroll is disabled', async () => {
+      const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Auto Scroll' }));
+      await checkbox.setValue(false);
+
+      const logContainer = spectator.query('.logs') as HTMLElement;
+      logContainer.scrollTop = 0;
+
+      spectator.component.scrollToBottom();
+
+      expect(logContainer.scrollTop).toBe(0);
+    });
   });
 
   describe('When cancel is clicked', () => {
