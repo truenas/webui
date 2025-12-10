@@ -4,13 +4,11 @@
       <mat-toolbar-row>
         <!-- Sidenav toggle button -->
         <div class="flex justify-start gap-4 items-center w-full">
-          <button
-            matIconButton
-            class="mat-icon-button"
+          <ix-icon
+            name="ix-topbar-logo"
+            class="ix-topbar-logo ml-4"
             [matMenuTriggerFor]="menu"
-          >
-            <ix-icon name="ix-topbar-logo" />
-          </button>
+          />
           <mat-menu #menu="matMenu">
             <button mat-menu-item (click)="showAboutNasDialog()">
               {{ "About HarborOS" | translate }}

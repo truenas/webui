@@ -1,4 +1,4 @@
-@import 'scss-imports/variables';
+@import "scss-imports/variables";
 
 :host {
   position: fixed;
@@ -94,6 +94,16 @@ ix-harbor-logo {
   .mat-icon-button,
   .mat-icon-button .ix-icon.logo {
     color: var(--topbar-txt) !important;
+  }
+
+  .ix-topbar-logo {
+    width: 50px;
+    height: 50px;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
   }
 
   .mat-mdc-select-value {

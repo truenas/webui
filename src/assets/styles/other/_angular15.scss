@@ -16,6 +16,14 @@ body .mat-mdc-icon-button {
   padding: 0 !important;
   width: $button-size !important;
 
+  &:hover {
+    background-color: transparent !important;
+  }
+
+  &:active {
+    background-color: transparent !important;
+  }
+
   *[role="img"] {
     font-size: $icon-size;
     height: $icon-size;

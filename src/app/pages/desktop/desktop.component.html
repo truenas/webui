@@ -1,5 +1,5 @@
 <div
-  class="flex content-start flex-col flex-wrap justify-start items-start h-full grid-flow-col gap-x-6 gap-y-8 p-8 bg-background/50"
+  class="flex content-start flex-col flex-wrap justify-start items-start h-full grid-flow-col gap-x-10 gap-y-8 p-8 bg-background/50"
 >
   <img
     src="assets/images/desktop-logo.svg"
@@ -8,7 +8,7 @@
   @for (item of menuItems; track item) {
     <button (click)="open(item)">
       <div
-        class="size-[108px] flex items-center justify-center rounded-[24px] border border-black/10 flex-shrink-0 bg-background/20 shadow-inner backdrop-blur-xl"
+        class="size-[108px] flex items-center justify-center rounded-[24px] border border-black/10 flex-shrink-0 bg-muted/5 shadow-inner backdrop-blur-xl"
       >
         <div class="mx-auto size-15">
           <ix-icon [name]="item.icon" [fullSize]="true"></ix-icon>
