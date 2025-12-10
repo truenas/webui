@@ -531,5 +531,24 @@ describe('IpmiFormComponent', () => {
       const buttonAfterClick = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
       expect(buttonAfterClick).toBeTruthy();
     });
+
+    it('resets loading state when identify light request fails', async () => {
+      await setupTest(ProductType.Enterprise);
+      const errorHandler = spectator.inject(ErrorHandlerService);
+      jest.spyOn(errorHandler, 'showErrorModal').mockReturnValue(undefined);
+
+      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+        if (method === 'ipmi.chassis.identify') {
+          return throwError(() => new Error('IPMI identify failed'));
+        }
+        throw new Error(`Unexpected method: ${method}`);
+      });
+
+      const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
+      await flashButton.click();
+
+      // Loading state should be reset after error
+      expect(await flashButton.isDisabled()).toBe(false);
+    });
   });
 });
