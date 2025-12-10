@@ -1,4 +1,4 @@
-@if (control().touched || control().dirty) {
+@if (control().touched || control().dirty || showErrorsForUntouched) {
   <div class="form-error" role="alert" aria-live="polite">
     @for (message of messages; track trackMessage(message)) {
       <mat-error>
