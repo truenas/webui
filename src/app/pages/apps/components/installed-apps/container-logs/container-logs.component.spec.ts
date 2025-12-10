@@ -95,6 +95,20 @@ describe('ContainerLogsComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
+    it('scrolls to bottom when auto-scroll is enabled and new logs arrive', async () => {
+      const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Auto Scroll' }));
+      expect(await checkbox.getValue()).toBe(true);
+
+      const logContainer = spectator.query('.logs') as HTMLElement;
+      jest.spyOn(logContainer, 'scrollHeight', 'get').mockReturnValue(1000);
+      logContainer.scrollTop = 0;
+
+      logSubject$.next({ fields: { timestamp: '[12:35]', data: 'New log entry' } });
+      spectator.detectChanges();
+
+      expect(logContainer.scrollTop).toBe(1000);
+    });
+
     it('does not scroll when auto-scroll is disabled and new logs arrive', async () => {
       const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Auto Scroll' }));
       await checkbox.setValue(false);
@@ -107,6 +121,32 @@ describe('ContainerLogsComponent', () => {
       spectator.detectChanges();
 
       expect(logContainer.scrollTop).toBe(0);
+    });
+
+    it('responds to toggling auto-scroll checkbox', async () => {
+      const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Auto Scroll' }));
+      const logContainer = spectator.query('.logs') as HTMLElement;
+      jest.spyOn(logContainer, 'scrollHeight', 'get').mockReturnValue(1000);
+
+      // Initially enabled - should scroll
+      logContainer.scrollTop = 0;
+      logSubject$.next({ fields: { timestamp: '[12:35]', data: 'Log 1' } });
+      spectator.detectChanges();
+      expect(logContainer.scrollTop).toBe(1000);
+
+      // Disable auto-scroll
+      await checkbox.setValue(false);
+      logContainer.scrollTop = 0;
+      logSubject$.next({ fields: { timestamp: '[12:36]', data: 'Log 2' } });
+      spectator.detectChanges();
+      expect(logContainer.scrollTop).toBe(0);
+
+      // Re-enable auto-scroll
+      await checkbox.setValue(true);
+      logContainer.scrollTop = 0;
+      logSubject$.next({ fields: { timestamp: '[12:37]', data: 'Log 3' } });
+      spectator.detectChanges();
+      expect(logContainer.scrollTop).toBe(1000);
     });
   });
 
