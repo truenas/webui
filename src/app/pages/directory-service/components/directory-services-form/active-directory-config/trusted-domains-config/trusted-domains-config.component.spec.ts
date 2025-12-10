@@ -78,7 +78,7 @@ describe('TrustedDomainsConfigComponent', () => {
         Name: 'trusted-domain-1',
         'Range Low': '100000001',
         'Range High': '200000000',
-        'IDMAP Backend': 'Active Directory',
+        'IDMAP Backend': 'AD (Active Directory)',
         'Schema Mode': ActiveDirectorySchemaMode.Rfc2307,
         'Unix Primary Group': true,
         'Unix NSS Info': false,
@@ -87,7 +87,7 @@ describe('TrustedDomainsConfigComponent', () => {
         Name: 'trusted-domain-2',
         'Range Low': '200000001',
         'Range High': '300000000',
-        'IDMAP Backend': IdmapBackend.Rid,
+        'IDMAP Backend': 'RID (Relative Identifier)',
         'SSSD Compat': true,
       },
     ]);
