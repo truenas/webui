@@ -110,6 +110,10 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
+  get isFormDirty(): boolean {
+    return this.form.dirty;
+  }
+
   constructor() {
     this.clearPathOnTypeChanges();
   }

@@ -95,6 +95,12 @@ export class AddSubsystemComponent {
   protected isLoading = signal(false);
   requiredRoles = [Role.SharingNvmeTargetWrite];
 
+  constructor() {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
+
   protected form = this.formBuilder.group({
     name: ['', Validators.required],
     subnqn: [''],

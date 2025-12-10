@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, viewChild } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -31,12 +32,16 @@ export class NamespaceFormComponent {
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
   private translate = inject(TranslateService);
+  private baseForm = viewChild(BaseNamespaceFormComponent);
 
   protected existingNamespace = signal<NvmeOfNamespace>(undefined);
   protected error = signal<unknown>(null);
 
   constructor() {
     this.existingNamespace.set(this.slideInRef.getData().namespace);
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.baseForm()?.isFormDirty || false);
+    });
   }
 
   protected get subsystemId(): number {

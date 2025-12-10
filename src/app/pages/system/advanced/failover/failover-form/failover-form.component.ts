@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { startWith } from 'rxjs';
+import { of, startWith } from 'rxjs';
 import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
@@ -88,6 +88,10 @@ export class FailoverFormComponent {
       enabled: !config.disabled,
       master: config.master,
       timeout: config.timeout,
+    });
+
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
     });
 
     this.setFormRelations();

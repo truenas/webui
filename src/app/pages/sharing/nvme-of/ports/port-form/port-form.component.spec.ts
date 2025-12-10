@@ -40,6 +40,7 @@ describe('PortFormComponent', () => {
       mockProvider(SlideInRef, {
         getData: slideInGetData,
         close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
       }),
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),

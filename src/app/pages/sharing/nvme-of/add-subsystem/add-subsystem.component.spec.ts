@@ -56,6 +56,7 @@ describe('AddSubsystemComponent', () => {
       ]),
       mockProvider(SlideInRef, {
         close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
       }),
     ],
   });

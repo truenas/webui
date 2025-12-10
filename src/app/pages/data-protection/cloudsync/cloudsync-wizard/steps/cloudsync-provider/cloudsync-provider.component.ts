@@ -69,6 +69,10 @@ export class CloudSyncProviderComponent implements OnInit {
     return this.isLoading || this.form.invalid || !this.form.controls.exist_credential.value;
   }
 
+  isDirty(): boolean {
+    return this.form.dirty;
+  }
+
   ngOnInit(): void {
     this.setFormEvents();
     this.subToLoading();
@@ -174,9 +178,5 @@ export class CloudSyncProviderComponent implements OnInit {
     this.existingCredential = this.credentials.find((credential) => credential.id === credsId);
     this.save.emit(this.existingCredential);
     this.cdr.markForCheck();
-  }
-
-  isDirty(): boolean {
-    return this.form.dirty;
   }
 }

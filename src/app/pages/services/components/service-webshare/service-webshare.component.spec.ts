@@ -39,6 +39,7 @@ describe('ServiceWebshareComponent', () => {
       ]),
       mockProvider(SlideInRef, {
         close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
       }),
       mockProvider(SnackbarService),
       mockProvider(FormErrorHandlerService),

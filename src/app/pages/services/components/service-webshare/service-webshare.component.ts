@@ -65,6 +65,11 @@ export class ServiceWebshareComponent implements OnInit {
   readonly helptext = helptextServiceWebshare;
   readonly passkeyOptions$ = of(mapToOptions(webSharePasskeyLabels, this.translate));
 
+  constructor() {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.isFormLoading.set(true);
