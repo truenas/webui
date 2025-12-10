@@ -62,13 +62,13 @@ describe('AddNicMenuComponent', () => {
     await menu.open();
 
     const menuItems = await menu.getItems();
-    // Expects: "Bridged Devices" header (disabled), truenasbr0, "MACVLAN Devices" header (disabled), ens1
+    // Expects: "Bridged NICs" header (disabled), truenasbr0, "Macvlan NICs" header (disabled), ens1
     expect(menuItems.length).toBeGreaterThanOrEqual(4);
 
     const itemTexts = await Promise.all(menuItems.map((item) => item.getText()));
-    expect(itemTexts).toContain('Bridged Devices');
+    expect(itemTexts).toContain('Bridged NICs');
     expect(itemTexts).toContain('truenasbr0');
-    expect(itemTexts).toContain('MACVLAN Devices');
+    expect(itemTexts).toContain('Macvlan NICs');
     expect(itemTexts).toContain('ens1');
   });
 
@@ -174,8 +174,8 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
     expect(eth0Count).toBe(1);
 
     // Verify eth0 appears in BRIDGE group (first group processed)
-    const bridgeIndex = itemTexts.indexOf('Bridged Devices');
-    const macvlanIndex = itemTexts.indexOf('MACVLAN Devices');
+    const bridgeIndex = itemTexts.indexOf('Bridged NICs');
+    const macvlanIndex = itemTexts.indexOf('Macvlan NICs');
     const eth0Index = itemTexts.indexOf('eth0');
 
     expect(eth0Index).toBeGreaterThan(bridgeIndex);

@@ -13,6 +13,7 @@ import {
   ContainerNicDeviceType,
 } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   ContainerNicDevice,
 } from 'app/interfaces/container.interface';
@@ -55,6 +56,8 @@ export class AddNicMenuComponent {
   private containersStore = inject(ContainersStore);
   private matDialog = inject(MatDialog);
 
+  protected readonly helptext = containersHelptext;
+
   private readonly nicChoices = toSignal(
     this.getNicChoices().pipe(
       this.errorHandler.withErrorHandler(),
@@ -91,8 +94,8 @@ export class AddNicMenuComponent {
 
   private getNicGroupLabel(groupType: string): string {
     const labels: Record<string, string> = {
-      BRIDGE: this.translate.instant('Bridged Devices'),
-      MACVLAN: this.translate.instant('MACVLAN Devices'),
+      BRIDGE: containersHelptext.networkBridgedNicsLabel,
+      MACVLAN: containersHelptext.networkMacVlanNicsLabel,
     };
     return labels[groupType] || groupType;
   }
