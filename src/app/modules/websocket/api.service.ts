@@ -51,7 +51,7 @@ export class ApiService {
   protected wsStatus = inject(WebSocketStatusService);
   protected subscriptionManager = inject(SubscriptionManagerService);
   protected translate = inject(TranslateService);
-  private duplicateTracker = inject(DuplicateCallTrackerService);
+  protected duplicateTracker = inject(DuplicateCallTrackerService);
 
   readonly clearSubscriptions$ = new Subject<void>();
 

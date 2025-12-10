@@ -79,7 +79,7 @@ export class DuplicateCallTrackerService {
       return '';
     }
     try {
-      const seen = new WeakSet();
+      const seen = new WeakSet<object>();
       return JSON.stringify(params, (_key, value: unknown) => {
         if (typeof value === 'object' && value !== null) {
           if (seen.has(value)) {
