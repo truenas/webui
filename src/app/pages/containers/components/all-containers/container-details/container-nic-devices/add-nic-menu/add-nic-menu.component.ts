@@ -69,15 +69,22 @@ export class AddNicMenuComponent {
     const existingNics = this.devicesStore.devices()
       .filter((device) => device.dtype === ContainerDeviceType.Nic) as ContainerNicDevice[];
 
+    const existingNicNames = new Set(existingNics.map((device) => device.nic_attach));
+    const seenNics = new Set<string>();
+
     // Process grouped format: { "BRIDGE": ["ens1"], "MACVLAN": ["truenasbr0"] }
+    // Deduplicate NICs across groups to prevent the same NIC appearing in multiple groups
     return Object.entries(choices || {})
       .filter(([, nics]) => nics != null)
       .map(([groupType, nics]) => ({
         type: groupType,
         label: this.getNicGroupLabel(groupType),
         nics: nics
-          .filter((nic) => !existingNics.find((device) => device.nic_attach === nic))
-          .map((nic) => ({ key: nic, label: nic })),
+          .filter((nic) => !existingNicNames.has(nic) && !seenNics.has(nic))
+          .map((nic) => {
+            seenNics.add(nic);
+            return { key: nic, label: nic };
+          }),
       }))
       .filter((group) => group.nics.length > 0);
   });

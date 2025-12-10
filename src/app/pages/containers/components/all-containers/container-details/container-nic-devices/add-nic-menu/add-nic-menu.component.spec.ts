@@ -130,3 +130,56 @@ describe('AddNicMenuComponent', () => {
   });
 });
 
+describe('AddNicMenuComponent - NIC Deduplication', () => {
+  let spectator: Spectator<AddNicMenuComponent>;
+  let loader: HarnessLoader;
+
+  const createComponent = createComponentFactory({
+    component: AddNicMenuComponent,
+    providers: [
+      mockAuth(),
+      mockApi([
+        // Mock API to return eth0 in both BRIDGE and MACVLAN groups
+        mockCall('container.device.nic_attach_choices', {
+          BRIDGE: ['eth0', 'truenasbr0'],
+          MACVLAN: ['eth0', 'ens1'],
+        }),
+      ]),
+      mockProvider(ContainersStore, {
+        selectedContainer: () => ({ id: 123 }),
+      }),
+      mockProvider(ContainerDevicesStore, {
+        devices: () => [] as ContainerDevice[],
+        isLoading: () => false,
+      }),
+      mockProvider(MatDialog),
+      mockProvider(SnackbarService),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('deduplicates NICs that appear in multiple groups', async () => {
+    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
+    await menu.open();
+
+    const menuItems = await menu.getItems();
+    const itemTexts = await Promise.all(menuItems.map((item) => item.getText()));
+
+    // eth0 should only appear once (in the first group where it's encountered)
+    const eth0Count = itemTexts.filter((text) => text === 'eth0').length;
+    expect(eth0Count).toBe(1);
+
+    // Verify eth0 appears in BRIDGE group (first group processed)
+    const bridgeIndex = itemTexts.indexOf('Bridged Devices');
+    const macvlanIndex = itemTexts.indexOf('MACVLAN Devices');
+    const eth0Index = itemTexts.indexOf('eth0');
+
+    expect(eth0Index).toBeGreaterThan(bridgeIndex);
+    expect(eth0Index).toBeLessThan(macvlanIndex);
+  });
+});
+
