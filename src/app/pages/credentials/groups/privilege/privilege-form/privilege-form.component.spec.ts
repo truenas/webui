@@ -17,6 +17,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
+import { UserService } from 'app/services/user.service';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -112,6 +113,9 @@ describe('PrivilegeFormComponent', () => {
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(UserService, {
+        groupQueryDsCache: jest.fn(() => of([])),
       }),
       provideMockStore({
         selectors: [
@@ -368,29 +372,41 @@ describe('PrivilegeFormComponent', () => {
       expect(callArgs[1][1]).toEqual({ limit: 50, order_by: ['group'] });
     });
 
-    it('should call API with server-side prefix filter for DS groups', async () => {
+    it('should use UserService.groupQueryDsCache for DS groups', async () => {
       const provider = spectator.component.dsGroupsProvider;
+      const userService = spectator.inject(UserService);
 
-      await lastValueFrom(provider('test'));
-
-      expect(api.call).toHaveBeenCalledWith('group.query', [
-        [['local', '=', false], ['group', '^', 'test']],
-        { limit: 50, order_by: ['group'] },
-      ]);
-    });
-
-    it('should apply client-side contains filtering for DS groups', async () => {
-      const provider = spectator.component.dsGroupsProvider;
-
-      (api.call as jest.Mock).mockReturnValue(of([
-        { group: 'domain-test' } as Group,
-        { group: 'test-domain' } as Group,
-        { group: 'other' } as Group,
+      jest.spyOn(userService, 'groupQueryDsCache').mockReturnValue(of([
+        { id: 1, group: 'domain-test', gid: 1001 } as Group,
+        { id: 2, group: 'test-domain', gid: 1002 } as Group,
       ]));
 
       const result = await lastValueFrom(provider('test'));
 
+      // Should call UserService.groupQueryDsCache with the query
+      expect(userService.groupQueryDsCache).toHaveBeenCalledWith('test', false, 0);
+
+      // Should return group names
       expect(result).toEqual(['domain-test', 'test-domain']);
+    });
+
+    it('should limit DS groups results to 50', async () => {
+      const provider = spectator.component.dsGroupsProvider;
+      const userService = spectator.inject(UserService);
+
+      // Mock more than 50 groups
+      const manyGroups = Array.from({ length: 100 }, (_, i) => ({
+        id: i,
+        group: `group${i}`,
+        gid: 1000 + i,
+      } as Group));
+
+      jest.spyOn(userService, 'groupQueryDsCache').mockReturnValue(of(manyGroups));
+
+      const result = await lastValueFrom(provider('test'));
+
+      // Should limit to 50 results
+      expect(result).toHaveLength(50);
     });
 
     it('should handle empty query for local groups', async () => {
