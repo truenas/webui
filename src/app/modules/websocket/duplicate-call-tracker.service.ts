@@ -19,9 +19,16 @@ interface TrackedCall {
   providedIn: 'root',
 })
 export class DuplicateCallTrackerService {
-  private readonly enabled = !environment.production;
-  private readonly windowMs = 20;
+  private enabled = !environment.production;
+  private readonly windowMs = 50;
   private recentCalls: TrackedCall[] = [];
+
+  /**
+   * Allows disabling tracking at runtime (useful for testing).
+   */
+  setEnabled(enabled: boolean): void {
+    this.enabled = enabled;
+  }
 
   /**
    * Tracks an API call and logs a warning if a duplicate call (same method and params)
@@ -72,9 +79,19 @@ export class DuplicateCallTrackerService {
       return '';
     }
     try {
-      return JSON.stringify(params);
+      const seen = new WeakSet();
+      return JSON.stringify(params, (_key, value: unknown) => {
+        if (typeof value === 'object' && value !== null) {
+          if (seen.has(value)) {
+            return '[Circular]';
+          }
+          seen.add(value);
+        }
+        return value;
+      });
     } catch {
-      return String(params);
+      // Fallback for non-serializable values
+      return `[NonSerializable:${params.length}]`;
     }
   }
 }

@@ -24,7 +24,7 @@ describe('DuplicateCallTrackerService', () => {
     expect(console.warn).not.toHaveBeenCalled();
   });
 
-  it('warns when same method with same params is called within 20ms', () => {
+  it('warns when same method with same params is called within time window', () => {
     spectator.service.trackCall('system.info', [{ foo: 'bar' }]);
     spectator.service.trackCall('system.info', [{ foo: 'bar' }]);
 
@@ -52,10 +52,10 @@ describe('DuplicateCallTrackerService', () => {
     expect(console.warn).not.toHaveBeenCalled();
   });
 
-  it('does not warn when same call is made after 20ms window', fakeAsync(() => {
+  it('does not warn when same call is made after time window expires', fakeAsync(() => {
     spectator.service.trackCall('system.info', []);
 
-    tick(21);
+    tick(51);
 
     spectator.service.trackCall('system.info', []);
 
@@ -93,7 +93,7 @@ describe('DuplicateCallTrackerService', () => {
   it('cleans up old calls from tracking', fakeAsync(() => {
     spectator.service.trackCall('system.info', []);
 
-    tick(25);
+    tick(55);
 
     // Call a different method to trigger cleanup
     spectator.service.trackCall('pool.query', []);
@@ -103,4 +103,30 @@ describe('DuplicateCallTrackerService', () => {
 
     expect(console.warn).not.toHaveBeenCalled();
   }));
+
+  it('does not track calls when disabled', () => {
+    spectator.service.setEnabled(false);
+
+    spectator.service.trackCall('system.info', []);
+    spectator.service.trackCall('system.info', []);
+
+    expect(console.warn).not.toHaveBeenCalled();
+  });
+
+  it('handles circular references in params', () => {
+    const obj: Record<string, unknown> = { foo: 'bar' };
+    obj.self = obj;
+
+    spectator.service.trackCall('system.info', [obj]);
+    spectator.service.trackCall('system.info', [obj]);
+
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('[DuplicateApiCall] "system.info"'),
+      expect.any(Array),
+      '\nOriginal call:',
+      expect.any(String),
+      '\nDuplicate call:',
+      expect.any(String),
+    );
+  });
 });
