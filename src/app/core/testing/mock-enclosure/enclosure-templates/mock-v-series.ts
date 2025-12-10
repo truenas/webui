@@ -5,6 +5,9 @@ import {
   makeEnclosureElements,
 } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-enclosure-elements.utils';
 import { makeEnclosure } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-enclosure.utils';
+import {
+  makeSasConnectors,
+} from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-sas-connectors.utils';
 import { makeSasExpanders } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-sas-expanders.utils';
 import {
   makeTemperatureSensors,
@@ -33,6 +36,7 @@ const vSeriesConfig = {
     Enclosure: makeEnclosureElements(31, 32),
     'Temperature Sensors': makeTemperatureSensors(33, 35),
     'Voltage Sensor': makeVoltageSensors(36, 37),
+    'SAS Connector': makeSasConnectors(38, 49),
   },
 };
 
