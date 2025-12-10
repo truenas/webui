@@ -92,25 +92,14 @@ export class DirectoryServicesFormComponent implements OnInit {
   protected readonly DirectoryServiceType = DirectoryServiceType;
 
   protected readonly isFormValid = computed(() => {
-    const mainFormValid = this.mainFormValid();
-    const validationState = this.validationService.validationState();
-    const serviceType = this.form.controls.service_type.value;
-
-    let configValid = false;
-    if (serviceType === DirectoryServiceType.ActiveDirectory) {
-      configValid = validationState.isActiveDirectoryValid;
-    } else if (serviceType === DirectoryServiceType.Ldap) {
-      configValid = validationState.isLdapValid;
-    } else if (serviceType === DirectoryServiceType.Ipa) {
-      configValid = validationState.isIpaValid;
-    }
-
-    return configValid && validationState.isCredentialValid && mainFormValid;
+    return this.validationService.calculateFormValidity(
+      this.mainFormValid(),
+      this.form.controls.service_type.value,
+    );
   });
 
   private updateFormValidity(): void {
     this.mainFormValid.set(this.form.valid);
-    this.cdr.markForCheck();
   }
 
   protected readonly form = this.fb.group({
@@ -313,8 +302,8 @@ export class DirectoryServicesFormComponent implements OnInit {
   }
 
   private setupFormWatchers(): void {
-    // Watch for main form changes
-    this.form.valueChanges.pipe(
+    // Watch for main form status changes (validity)
+    this.form.statusChanges.pipe(
       untilDestroyed(this),
     ).subscribe(() => {
       this.updateFormValidity();
