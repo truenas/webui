@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { EventEmitter } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -118,6 +119,9 @@ describe('UpdateComponent', () => {
       mockProvider(ErrorHandlerService, {
         showErrorModal: jest.fn(() => of(true)),
         withErrorHandler: jest.fn(() => (source$: unknown) => source$),
+      }),
+      mockProvider(HttpClient, {
+        head: jest.fn().mockReturnValue(of({ status: 200 } as HttpResponse<void>)),
       }),
     ],
   });
@@ -314,7 +318,7 @@ describe('UpdateComponent', () => {
       expect(paragraph?.textContent).toContain('See the manual image installation guide');
 
       const link = spectator.query('.manual-update a');
-      expect(link.getAttribute('href')).toContain('https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/#performing-a-manual-update');
+      expect(link.getAttribute('href')).toContain('https://www.truenas.com/docs/scale/22.12/scaletutorials/systemsettings/updatescale/');
     });
 
     it('offers to save configuration and redirects user when Install manual update is pressed', async () => {
@@ -331,6 +335,48 @@ describe('UpdateComponent', () => {
       });
 
       expect(router.navigate).toHaveBeenCalledWith(['/system/update/manualupdate']);
+    });
+  });
+
+  describe('dynamic documentation URL', () => {
+    let localSpectator: Spectator<UpdateComponent>;
+    let httpClientSpy: jest.SpyInstance;
+
+    it('uses versioned documentation URL when version is available and the URL exists', async () => {
+      const httpSuccess$ = of({ status: 200 } as HttpResponse<void>);
+
+      localSpectator = createComponent({ detectChanges: false });
+      httpClientSpy = jest.spyOn(localSpectator.inject(HttpClient), 'head').mockReturnValue(httpSuccess$);
+
+      localSpectator.component.ngOnInit();
+      await localSpectator.fixture.whenStable();
+      localSpectator.detectChanges();
+
+      const link = localSpectator.query('a[ixTest="download-truenas"]');
+      expect(link.getAttribute('href')).toBe(
+        'https://www.truenas.com/docs/scale/22.12/scaletutorials/systemsettings/updatescale/',
+      );
+
+      httpClientSpy.mockRestore();
+    });
+
+    it('falls back to generic URL when versioned URL does not exist (404)', async () => {
+      const httpFailure$ = throwError(() => ({ status: 404 } as HttpErrorResponse));
+
+      localSpectator = createComponent({ detectChanges: false });
+      httpClientSpy = jest.spyOn(localSpectator.inject(HttpClient), 'head').mockReturnValue(httpFailure$);
+
+      localSpectator.component.ngOnInit();
+      await localSpectator.fixture.whenStable();
+      localSpectator.detectChanges();
+
+      // should fallback to generic URL
+      const link = localSpectator.query('a[ixTest="download-truenas"]');
+      expect(link.getAttribute('href')).toBe(
+        'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/',
+      );
+
+      httpClientSpy.mockRestore();
     });
   });
 

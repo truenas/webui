@@ -1,4 +1,5 @@
 import { AsyncPipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -78,10 +79,10 @@ export class UpdateComponent implements OnInit {
   private sysGenService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
   private window = inject<Window>(WINDOW);
+  private http = inject(HttpClient);
 
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
-  protected readonly manualUpdateUrl = 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/#performing-a-manual-update';
 
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
@@ -90,6 +91,7 @@ export class UpdateComponent implements OnInit {
   protected profileChoices = signal<UpdateProfileChoices | null>(null);
   protected status = signal<UpdateStatus | null>(null);
   protected config = signal<UpdateConfig | null>(null);
+  protected manualUpdateUrl = signal<string>('https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/');
 
   protected statusDetails = computed(() => this.status()?.status);
 
@@ -176,6 +178,7 @@ export class UpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUpdateInfo();
+    this.loadManualUpdateUrl();
   }
 
   private loadUpdateInfo(): void {
@@ -215,6 +218,47 @@ export class UpdateComponent implements OnInit {
     }
     this.errorHandler.showErrorModal(error);
     return of(null);
+  }
+
+  /**
+   * using the system version, compute the documentation URL for manual updates and set `manualUpdateUrl`.
+   *
+   * if the URL we compute doesn't exist or 404s, then
+   * we assume that the user is on a pre-release version and they'll need to be linked to the current in-progress
+   * documentation at `https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/`.
+   */
+  private loadManualUpdateUrl(): void {
+    this.systemInfo$
+      .pipe(
+        switchMap((info) => {
+          // if no version, link to the default documentation.
+          const version = info.version;
+          if (!version) {
+            return of(null);
+          }
+
+          const matcher = RegExp(/^(\d+\.\d+)/);
+          const versionMatch = matcher.exec(version);
+          if (!versionMatch) {
+            return of(null);
+          }
+
+          // compute the URL and check it
+          const majorMinor = versionMatch[1];
+          const versionedUrl = `https://www.truenas.com/docs/scale/${majorMinor}/scaletutorials/systemsettings/updatescale/`;
+
+          return this.http.head(versionedUrl, { observe: 'response' }).pipe(
+            map(() => versionedUrl),
+            catchError(() => of(null)),
+          );
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe((url) => {
+        if (url) {
+          this.manualUpdateUrl.set(url);
+        }
+      });
   }
 
   protected manualUpdate(): void {
