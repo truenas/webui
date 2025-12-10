@@ -1,3 +1,5 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,6 +9,7 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -15,12 +18,14 @@ import { LogsDetailsDialog } from 'app/pages/apps/components/logs-details-dialog
 
 describe('ContainerLogsComponent', () => {
   let spectator: Spectator<ContainerLogsComponent>;
+  let loader: HarnessLoader;
 
   describe('When dialog is set a value', () => {
     const createComponent = createComponentFactoryWithDialogResponse(false);
 
     beforeEach(() => {
       spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('subscribes to logs updates', () => {
@@ -42,6 +47,11 @@ describe('ContainerLogsComponent', () => {
       expect(spectator.queryAll('.log-row').map((name) => name.textContent!.trim())).toEqual([
         '[12:34]Some logs.',
       ]);
+    });
+
+    it('has auto-scroll checkbox enabled by default', async () => {
+      const checkbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Auto Scroll' }));
+      expect(await checkbox.getValue()).toBe(true);
     });
   });
 
