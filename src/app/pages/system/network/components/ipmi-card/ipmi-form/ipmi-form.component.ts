@@ -4,6 +4,7 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -58,6 +59,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     TestDirective,
     IxIconComponent,
     TranslateModule,
+    MatProgressSpinner,
   ],
 })
 export class IpmiFormComponent implements OnInit {
@@ -75,14 +77,13 @@ export class IpmiFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.IpmiWrite];
 
-  remoteControllerData: Ipmi;
-  defaultControllerData: Ipmi;
   isManageButtonDisabled = false;
   remoteControllerOptions: Observable<RadioOption[]>;
   managementIp: string;
 
   protected isLoading = signal(false);
   protected isFlashing = signal(false);
+  protected isFlashingLoading = signal(false);
 
   queryParams: IpmiQueryParams;
   protected ipmiId: number;
@@ -130,15 +131,27 @@ export class IpmiFormComponent implements OnInit {
   }
 
   toggleFlashing(): void {
-    this.api.call('ipmi.chassis.identify', [this.isFlashing() ? OnOff.Off : OnOff.On])
+    const applyRemote = this.form.controls.apply_remote.value;
+
+    this.isFlashingLoading.set(true);
+    this.api.call('ipmi.chassis.identify', [{
+      verb: this.isFlashing() ? OnOff.Off : OnOff.On,
+      ...(applyRemote && { apply_remote: true }),
+    }])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
-      .subscribe(() => {
-        this.snackbar.success(
-          this.isFlashing()
-            ? this.translate.instant('Identify light is now off.')
-            : this.translate.instant('Identify light is now flashing.'),
-        );
-        this.isFlashing.set(!this.isFlashing());
+      .subscribe({
+        next: () => {
+          this.snackbar.success(
+            this.isFlashing()
+              ? this.translate.instant('Identify light is now off.')
+              : this.translate.instant('Identify light is now flashing.'),
+          );
+          this.isFlashing.set(!this.isFlashing());
+          this.isFlashingLoading.set(false);
+        },
+        error: () => {
+          this.isFlashingLoading.set(false);
+        },
       });
   }
 
@@ -208,37 +221,32 @@ export class IpmiFormComponent implements OnInit {
   }
 
   private loadDataOnRemoteControllerChange(): void {
-    let isUsingRemote: boolean;
-
     this.form.controls.apply_remote.valueChanges
       .pipe(
-        switchMap((controlState) => {
+        switchMap((isUsingRemote) => {
           this.isLoading.set(true);
-          isUsingRemote = !!controlState;
-          if (this.queryParams?.length && controlState) {
-            this.queryParams[0]['ipmi-options'] = { 'query-remote': controlState };
+
+          let queryParams = this.queryParams;
+          if (queryParams?.length && isUsingRemote) {
+            queryParams = [{
+              ...queryParams[0],
+              'ipmi-options': { 'query-remote': isUsingRemote },
+            }];
           }
 
-          if (isUsingRemote) {
-            return this.remoteControllerData
-              ? of([this.remoteControllerData])
-              : this.api.call('ipmi.lan.query', this.queryParams);
-          }
-          return this.defaultControllerData
-            ? of([this.defaultControllerData])
-            : this.api.call('ipmi.lan.query', this.queryParams);
+          const chassisInfoParams = isUsingRemote ? { 'query-remote': true } : {};
+
+          return forkJoin([
+            this.api.call('ipmi.lan.query', queryParams),
+            this.api.call('ipmi.chassis.info', [chassisInfoParams]),
+          ]);
         }),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe((dataIpma) => {
-        if (isUsingRemote) {
-          this.remoteControllerData = dataIpma[0];
-        } else {
-          this.defaultControllerData = dataIpma[0];
-        }
-
-        this.setFormValues(dataIpma[0]);
+      .subscribe(([dataIpmi, chassisInfo]) => {
+        this.setFormValues(dataIpmi[0]);
+        this.isFlashing.set(chassisInfo.chassis_identify_state !== IpmiChassisIdentifyState.Off);
         this.isLoading.set(false);
       });
   }
