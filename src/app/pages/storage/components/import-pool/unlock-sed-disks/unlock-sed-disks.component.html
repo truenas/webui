@@ -1,0 +1,83 @@
+<div class="unlock-sed-disks">
+  <form class="form-container" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <ix-input
+      formControlName="globalPassword"
+      type="password"
+      [label]="'Global SED Password' | translate"
+      [hint]="'This password will be used to unlock all selected disks.' | translate"
+      [required]="true"
+    ></ix-input>
+
+    <mat-checkbox formControlName="updateGlobalSettings" ixTest="update-global-settings" aria-describedby="update-global-hint">
+      <span class="checkbox-label">{{ 'Update global settings (applies to all disks/pools)' | translate }}</span>
+      <span id="update-global-hint" class="checkbox-hint">{{ 'Save this password to the system configuration for future use with these disks.' | translate }}</span>
+    </mat-checkbox>
+
+    <div class="exceptions-section">
+      <h3 class="section-title">{{ 'Individual Disk Passwords (Optional)' | translate }}</h3>
+      <p class="section-hint">{{ 'Override the global password for specific disks that use a different password.' | translate }}</p>
+
+      <div class="exceptions-list" formArrayName="exceptions" role="list" [attr.aria-label]="'Disk password exceptions' | translate">
+        @for (exception of form.controls.exceptions.controls; track $index) {
+          <div class="exception-item" role="listitem" [formGroupName]="$index">
+            <button
+              mat-icon-button
+              type="button"
+              class="remove-button"
+              ixTest="remove-exception"
+              [attr.aria-label]="'Remove disk exception' | translate"
+              (click)="removeException($index)"
+            >
+              <ix-icon name="mdi-close"></ix-icon>
+            </button>
+            <ix-select
+              formControlName="diskName"
+              [label]="'Disk' | translate"
+              [options]="getOptionsForException($index)"
+              [required]="true"
+            ></ix-select>
+            <ix-input
+              formControlName="password"
+              type="password"
+              [label]="'Password' | translate"
+              [required]="true"
+            ></ix-input>
+          </div>
+        }
+      </div>
+
+      <button
+        mat-button
+        type="button"
+        class="add-exception-button"
+        ixTest="add-exception"
+        [disabled]="availableDisksForException().length === 0"
+        (click)="addException()"
+      >
+        <ix-icon name="mdi-plus"></ix-icon>
+        {{ 'Add Disk Exception' | translate }}
+      </button>
+    </div>
+
+    <ix-form-actions>
+      <button
+        mat-button
+        type="button"
+        ixTest="skip"
+        (click)="onSkip()"
+      >
+        {{ 'Skip' | translate }}
+      </button>
+      <button
+        *ixRequiresRoles="[Role.DiskWrite]"
+        mat-button
+        type="submit"
+        color="primary"
+        ixTest="unlock-disks"
+        [disabled]="form.invalid || isUnlocking()"
+      >
+        {{ 'Unlock Disks' | translate }}
+      </button>
+    </ix-form-actions>
+  </form>
+</div>

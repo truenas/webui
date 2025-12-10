@@ -9,7 +9,9 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { SedStatus } from 'app/enums/sed-status.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
@@ -29,6 +31,44 @@ describe('ImportPoolComponent', () => {
     getData: jest.fn((): undefined => undefined),
   };
 
+  const mockPools: PoolFindResult[] = [{
+    name: 'pool_name_1',
+    guid: 'pool_guid_1',
+    hostname: 'pool_hostname_1',
+    status: PoolStatus.Online,
+  }, {
+    name: 'pool_name_2',
+    guid: 'pool_guid_2',
+    hostname: 'pool_hostname_2',
+    status: PoolStatus.Online,
+  }, {
+    name: 'pool_name_3',
+    guid: 'pool_guid_3',
+    hostname: 'pool_hostname_3',
+    status: PoolStatus.Online,
+  }];
+
+  const mockDiskDetailsNoLocked: DiskDetailsResponse = {
+    used: [],
+    unused: [
+      {
+        name: 'ada0', model: 'Samsung', serial: 'S123', size: 1000, sed_status: SedStatus.Unlocked,
+      } as DetailsDisk,
+    ],
+  };
+
+  const mockDiskDetailsWithLocked: DiskDetailsResponse = {
+    used: [],
+    unused: [
+      {
+        name: 'ada0', model: 'Samsung 870 EVO 2TB', serial: 'S5XYNS0T123456A', size: 2000000000000, sed_status: SedStatus.Locked,
+      } as DetailsDisk,
+      {
+        name: 'ada1', model: 'Samsung 870 EVO 2TB', serial: 'S5XYNS0T123456B', size: 2000000000000, sed_status: SedStatus.Locked,
+      } as DetailsDisk,
+    ],
+  };
+
   const createComponent = createComponentFactory({
     component: ImportPoolComponent,
     imports: [
@@ -37,25 +77,9 @@ describe('ImportPoolComponent', () => {
     providers: [
       mockApi([
         mockJob('pool.import_pool', fakeSuccessfulJob()),
-        mockJob(
-          'pool.import_find',
-          fakeSuccessfulJob([{
-            name: 'pool_name_1',
-            guid: 'pool_guid_1',
-            hostname: 'pool_hostname_1',
-            status: PoolStatus.Online,
-          }, {
-            name: 'pool_name_2',
-            guid: 'pool_guid_2',
-            hostname: 'pool_hostname_2',
-            status: PoolStatus.Online,
-          }, {
-            name: 'pool_name_3',
-            guid: 'pool_guid_3',
-            hostname: 'pool_hostname_3',
-            status: PoolStatus.Online,
-          }] as PoolFindResult[]),
-        ),
+        mockJob('pool.import_find', fakeSuccessfulJob(mockPools)),
+        mockCall('disk.details', mockDiskDetailsNoLocked),
+        mockCall('system.advanced.sed_global_password', 'existingpassword'),
         mockCall('pool.dataset.query', [{
           id: '/mnt/pewl',
           locked: true,
@@ -65,8 +89,8 @@ describe('ImportPoolComponent', () => {
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        jobDialog: jest.fn(() => ({
-          afterClosed: () => of(undefined),
+        jobDialog: jest.fn((job$) => ({
+          afterClosed: () => job$,
         })),
       }),
       mockAuth(),
@@ -86,6 +110,7 @@ describe('ImportPoolComponent', () => {
     const optionLabels = await (controls['Pool'] as IxSelectHarness).getOptionLabels();
 
     expect(api.job).toHaveBeenCalledWith('pool.import_find');
+    expect(api.call).toHaveBeenCalledWith('disk.details');
     expect(optionLabels).toEqual([
       'pool_name_1 | pool_guid_1',
       'pool_name_2 | pool_guid_2',
@@ -121,5 +146,64 @@ describe('ImportPoolComponent', () => {
     }));
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', '/mnt/pewl', 'unlock']);
+  });
+
+  describe('with locked SED disks', () => {
+    const createComponentWithLockedDisks = createComponentFactory({
+      component: ImportPoolComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockApi([
+          mockJob('pool.import_pool', fakeSuccessfulJob()),
+          mockJob('pool.import_find', fakeSuccessfulJob(mockPools)),
+          mockCall('disk.details', mockDiskDetailsWithLocked),
+          mockCall('system.advanced.sed_global_password', 'existingpassword'),
+          mockCall('disk.unlock_sed'),
+          mockCall('pool.dataset.query', [{ id: '/mnt/pewl', locked: false } as Dataset]),
+        ]),
+        mockProvider(SlideInRef, slideInRef),
+        mockProvider(DialogService, {
+          confirm: jest.fn(() => of(true)),
+          jobDialog: jest.fn((job$) => ({
+            afterClosed: () => job$,
+          })),
+        }),
+        mockAuth(),
+        mockProvider(Router),
+      ],
+    });
+
+    it('shows locked SED disks screen when locked disks are detected and does not call pool.import_find yet', () => {
+      const lockedSpectator = createComponentWithLockedDisks();
+      const lockedApi = lockedSpectator.inject(ApiService);
+
+      expect(lockedSpectator.fixture.nativeElement.textContent).toContain('Locked SED Disks Detected');
+      expect(lockedSpectator.fixture.nativeElement.textContent).not.toContain('Pool');
+      expect(lockedApi.job).not.toHaveBeenCalledWith('pool.import_find');
+    });
+
+    it('calls pool.import_find and shows pool import form after skip is clicked', async () => {
+      const lockedSpectator = createComponentWithLockedDisks();
+      const lockedLoader = TestbedHarnessEnvironment.loader(lockedSpectator.fixture);
+      const lockedApi = lockedSpectator.inject(ApiService);
+
+      const skipButton = await lockedLoader.getHarness(MatButtonHarness.with({ text: 'Skip' }));
+      await skipButton.click();
+
+      expect(lockedApi.job).toHaveBeenCalledWith('pool.import_find');
+      expect(lockedSpectator.fixture.nativeElement.textContent).not.toContain('Locked SED Disks Detected');
+      expect(lockedSpectator.fixture.nativeElement.textContent).toContain('Pool');
+    });
+
+    it('shows unlock step when unlock is clicked', async () => {
+      const lockedSpectator = createComponentWithLockedDisks();
+      const lockedLoader = TestbedHarnessEnvironment.loader(lockedSpectator.fixture);
+
+      const unlockButton = await lockedLoader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
+      await unlockButton.click();
+
+      expect(lockedSpectator.fixture.nativeElement.textContent).not.toContain('Locked SED Disks Detected');
+      expect(lockedSpectator.fixture.nativeElement.textContent).toContain('Global SED Password');
+    });
   });
 });
