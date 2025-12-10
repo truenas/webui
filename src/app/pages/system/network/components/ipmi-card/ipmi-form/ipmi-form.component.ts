@@ -4,6 +4,7 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -58,6 +59,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TestDirective,
     IxIconComponent,
     TranslateModule,
+    MatProgressSpinner,
   ],
 })
 export class IpmiFormComponent implements OnInit {
@@ -81,6 +83,7 @@ export class IpmiFormComponent implements OnInit {
 
   protected isLoading = signal(false);
   protected isFlashing = signal(false);
+  protected isFlashingLoading = signal(false);
 
   queryParams: IpmiQueryParams;
   protected ipmiId: number;
@@ -130,18 +133,25 @@ export class IpmiFormComponent implements OnInit {
   toggleFlashing(): void {
     const applyRemote = this.form.controls.apply_remote.value;
 
+    this.isFlashingLoading.set(true);
     this.api.call('ipmi.chassis.identify', [{
       verb: this.isFlashing() ? OnOff.Off : OnOff.On,
       ...(applyRemote && { apply_remote: true }),
     }])
       .pipe(this.errorHandler.withErrorHandler(), untilDestroyed(this))
-      .subscribe(() => {
-        this.snackbar.success(
-          this.isFlashing()
-            ? this.translate.instant('Identify light is now off.')
-            : this.translate.instant('Identify light is now flashing.'),
-        );
-        this.isFlashing.set(!this.isFlashing());
+      .subscribe({
+        next: () => {
+          this.snackbar.success(
+            this.isFlashing()
+              ? this.translate.instant('Identify light is now off.')
+              : this.translate.instant('Identify light is now flashing.'),
+          );
+          this.isFlashing.set(!this.isFlashing());
+          this.isFlashingLoading.set(false);
+        },
+        error: () => {
+          this.isFlashingLoading.set(false);
+        },
       });
   }
 
