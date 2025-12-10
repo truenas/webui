@@ -1,0 +1,97 @@
+import { fakeAsync, tick } from '@angular/core/testing';
+import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { DuplicateCallTrackerService } from 'app/modules/websocket/duplicate-call-tracker.service';
+
+describe('DuplicateCallTrackerService', () => {
+  let spectator: SpectatorService<DuplicateCallTrackerService>;
+
+  const createService = createServiceFactory({
+    service: DuplicateCallTrackerService,
+  });
+
+  beforeEach(() => {
+    spectator = createService();
+    jest.spyOn(console, 'warn').mockImplementation();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('does not warn on first call', () => {
+    spectator.service.trackCall('system.info', []);
+
+    expect(console.warn).not.toHaveBeenCalled();
+  });
+
+  it('warns when same method with same params is called within 20ms', () => {
+    spectator.service.trackCall('system.info', [{ foo: 'bar' }]);
+    spectator.service.trackCall('system.info', [{ foo: 'bar' }]);
+
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('[DuplicateApiCall] "system.info"'),
+      [{ foo: 'bar' }],
+      expect.any(String),
+    );
+  });
+
+  it('does not warn when same method is called with different params', () => {
+    spectator.service.trackCall('system.info', [{ foo: 'bar' }]);
+    spectator.service.trackCall('system.info', [{ foo: 'baz' }]);
+
+    expect(console.warn).not.toHaveBeenCalled();
+  });
+
+  it('does not warn when different methods are called with same params', () => {
+    spectator.service.trackCall('system.info', [{ foo: 'bar' }]);
+    spectator.service.trackCall('pool.query', [{ foo: 'bar' }]);
+
+    expect(console.warn).not.toHaveBeenCalled();
+  });
+
+  it('does not warn when same call is made after 20ms window', fakeAsync(() => {
+    spectator.service.trackCall('system.info', []);
+
+    tick(21);
+
+    spectator.service.trackCall('system.info', []);
+
+    expect(console.warn).not.toHaveBeenCalled();
+  }));
+
+  it('handles calls with no params', () => {
+    spectator.service.trackCall('system.info');
+    spectator.service.trackCall('system.info');
+
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('[DuplicateApiCall] "system.info"'),
+      undefined,
+      expect.any(String),
+    );
+  });
+
+  it('handles calls with empty params array', () => {
+    spectator.service.trackCall('system.info', []);
+    spectator.service.trackCall('system.info', []);
+
+    expect(console.warn).toHaveBeenCalledWith(
+      expect.stringContaining('[DuplicateApiCall] "system.info"'),
+      [],
+      expect.any(String),
+    );
+  });
+
+  it('cleans up old calls from tracking', fakeAsync(() => {
+    spectator.service.trackCall('system.info', []);
+
+    tick(25);
+
+    // Call a different method to trigger cleanup
+    spectator.service.trackCall('pool.query', []);
+
+    // Now call the original method again - should not warn since old call was cleaned up
+    spectator.service.trackCall('system.info', []);
+
+    expect(console.warn).not.toHaveBeenCalled();
+  }));
+});
