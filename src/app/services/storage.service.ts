@@ -26,7 +26,7 @@ export class StorageService {
   getDatasetNameOptions(): Observable<Option[]> {
     return this.api
       .call('pool.filesystem_choices')
-      .pipe(map((response) => response.map((value) => ({ label: value, value }))));
+      .pipe(map((filesystems) => filesystems.map((name) => ({ label: name, value: name }))));
   }
 
   /**

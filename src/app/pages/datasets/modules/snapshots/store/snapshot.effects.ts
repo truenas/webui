@@ -7,10 +7,8 @@ import {
   catchError, filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
-import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import {
   snapshotAdded, snapshotChanged,
   snapshotPageEntered,
@@ -32,7 +30,7 @@ export class SnapshotEffects {
     switchMap((preferences) => {
       const extraColumns = preferences.showSnapshotExtraColumns ? ['properties' as keyof ZfsSnapshot] : [];
       return this.api.call('pool.snapshot.query', [
-        snapshotExcludeBootQueryFilter as QueryFilters<ZfsSnapshot>,
+        [],
         {
           select: ['snapshot_name', 'dataset', 'name', ...extraColumns],
           order_by: ['name'],
