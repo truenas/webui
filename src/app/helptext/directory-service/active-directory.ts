@@ -12,6 +12,6 @@ created during the domain join. Use it to set a custom location for TrueNAS comp
   defaultDomainsTooltip: T('Controls if the system removes the domain prefix from Active Directory user and group names. If enabled, users \
 appear as "administrator" instead of "EXAMPLE\\administrator". In most cases, disable this (default) to avoid name \
 conflicts between Active Directory and local accounts.'),
-  enableTrustedDomainsTooltip: T('Enable support for trusted domains. If True, then separate trusted domain configuration must be set for all \
+  enableTrustedDomainsTooltip: T('Enable support for trusted domains. If enabled, then separate trusted domain configuration must be set for all \
 trusted domains.'),
 };

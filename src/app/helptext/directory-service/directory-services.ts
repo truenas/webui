@@ -12,7 +12,7 @@ server when necessary.'),
   enableDnsUpdatesTooltip: T('Enable automatic DNS updates for the TrueNAS server in the domain via nsupdate and gssapi / TSIG.'),
   timeoutTooltip: T('The timeout value for DNS queries that are performed as part of the join process and NETWORK_TIMEOUT for LDAP \
 requests. (5-60 seconds)'),
-  kerberosRealmTooltip: T('Name of kerberos realm used for authentication to the directory service. If set to null, then Kerberos \
+  kerberosRealmTooltip: T('Name of Kerberos realm used for authentication to the directory service. If left empty, Kerberos \
 is not used for binding to the directory service. When joining an Active Directory or IPA domain for the first \
 time, the realm is detected and configured automatically if not specified.'),
 };

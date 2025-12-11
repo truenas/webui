@@ -2,21 +2,16 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextLdap = {
   hostnameTooltip: T('The hostname or IP address of the LDAP server. \
- Separate entries by pressing <code>Enter</code>.'),
-  basednTooltip: T('Top level of the LDAP directory tree to be used when\
- searching for resources. Example: <i>dc=test,dc=org</i>.'),
+Separate entries by pressing Enter.'),
+  basednTooltip: T('Top level of the LDAP directory tree to be used when \
+searching for resources. Example: dc=test,dc=org.'),
   sslTooltip: T('Options for encrypting the LDAP connection: \
- <ul> \
- <li><i>OFF:</i> do not encrypt the LDAP connection.</li> \
- <li><i>ON:</i> encrypt the LDAP connection with <i>SSL</i> on port \
- <i>636</i>.</li> \
- <li><i>START_TLS:</i> encrypt the LDAP connection with <i>STARTTLS</i> \
- on the default LDAP port <i>389</i>.</li> \
- </ul>'),
+OFF - Do not encrypt the LDAP connection. \
+ON - Encrypt the LDAP connection with SSL on port 636. \
+START_TLS - Encrypt the LDAP connection with STARTTLS on the default LDAP port 389.'),
   validateCertificatesTooltip: T('Verify certificate authenticity.'),
-  auxiliaryParametersTooltip: T('Additional options for <a\
- href="https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5"\
- target="_blank">nslcd.conf</a>.'),
+  auxiliaryParametersTooltip: T('Additional options for nslcd.conf. \
+See https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5 for details.'),
   schemaTooltip: T('Select a schema when LDAP NSS schema is set.'),
   shadowLastChangeTooltip: T('LDAP attribute for password last change.'),
   shadowMinTooltip: T('LDAP attribute for minimum password age.'),
