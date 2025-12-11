@@ -17,14 +17,14 @@
           [label]="'Range Low' | translate"
           [required]="true"
           [type]="'number'"
-          [tooltip]="helptext.rangeTooltip | translate"
+          [tooltip]="helptext.rangeLowTooltip | translate"
         ></ix-input>
         <ix-input
           formControlName="range_high"
           [label]="'Range High' | translate"
           [required]="true"
           [type]="'number'"
-          [tooltip]="helptext.rangeTooltip | translate"
+          [tooltip]="helptext.rangeHighTooltip | translate"
         ></ix-input>
       </ix-fieldset>
       <ix-fieldset [title]="'IDMAP Domain' | translate" [formGroup]="form.controls.idmap_domain">
@@ -47,14 +47,14 @@
           [label]="'Range Low' | translate"
           [required]="true"
           [type]="'number'"
-          [tooltip]="helptext.rangeTooltip | translate"
+          [tooltip]="helptext.rangeLowTooltip | translate"
         ></ix-input>
         <ix-input
           formControlName="range_high"
           [label]="'Range High' | translate"
           [required]="true"
           [type]="'number'"
-          [tooltip]="helptext.rangeTooltip | translate"
+          [tooltip]="helptext.rangeHighTooltip | translate"
         ></ix-input>
         @if (idmapType() === IdmapBackend.Ad) {
           <ix-select

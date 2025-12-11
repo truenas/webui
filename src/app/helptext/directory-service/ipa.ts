@@ -11,9 +11,9 @@ valid certificates or import them into the TrueNAS server\'s trusted certificate
   useDefaultSmbDomainTooltip: T('Use default SMB domain settings detected during IPA join. Settings for the IPA SMB domain are \
 automatically detected by TrueNAS during the domain join process. Some IPA domains may not include SMB schema configuration.'),
   smbDomainNameTooltip: T('Short name for the domain. This should match the NetBIOS domain name for Active Directory domains. \
-It may be null if the domain is configured as the base idmap for Active Directory.'),
+It may be null if the domain is configured as the base IDMAP for Active Directory.'),
   smbDomainDomainNameTooltip: T('Name of the SMB domain as defined in the IPA configuration for the IPA domain to which TrueNAS is joined.'),
-  smbDomainRangeLowTooltip: T('The lowest UID or GID that the idmap backend can assign.'),
-  smbDomainRangeHighTooltip: T('The highest UID or GID that the idmap backend can assign.'),
+  smbDomainRangeLowTooltip: T('The lowest UID or GID that the IDMAP backend can assign.'),
+  smbDomainRangeHighTooltip: T('The highest UID or GID that the IDMAP backend can assign.'),
   smbDomainDomainSidTooltip: T('The domain SID for the IPA domain to which TrueNAS is joined.'),
 };
