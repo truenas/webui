@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, input, computed, signal, effect, inject } from '@angular/core';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -7,7 +8,7 @@ import { AppStats } from 'app/interfaces/app.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
+import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/rate-chart/rate-chart.component';
 
 @Component({
   selector: 'ix-app-network-info',
@@ -15,9 +16,10 @@ import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/commo
   styleUrls: ['./app-network-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    MatTooltip,
     WithLoadingStateDirective,
     NgxSkeletonLoaderModule,
-    NetworkChartComponent,
+    RateChartComponent,
     TranslateModule,
     NetworkSpeedPipe,
   ],

@@ -1,19 +1,25 @@
 import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
-import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { ViewChartAreaComponent } from 'app/modules/charts/view-chart-area/view-chart-area.component';
 import { LocaleService } from 'app/modules/language/locale.service';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { fullSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.const';
 
 @Component({
-  selector: 'ix-network-chart',
-  templateUrl: './network-chart.component.html',
-  styleUrls: ['./network-chart.component.scss'],
+  selector: 'ix-rate-chart',
+  templateUrl: './rate-chart.component.html',
+  styleUrls: ['./rate-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ViewChartAreaComponent],
+  providers: [NetworkSpeedPipe, FileSizePipe],
 })
-export class NetworkChartComponent {
+export class RateChartComponent {
   private localeService = inject(LocaleService);
+  private translate = inject(TranslateService);
+  private networkSpeedPipe = inject(NetworkSpeedPipe);
+  private fileSizePipe = inject(FileSizePipe);
 
   data = input<ChartData<'line'>>();
   aspectRatio = input<number>(fullSizeNetworkWidgetAspectRatio);
@@ -25,11 +31,46 @@ export class NetworkChartComponent {
    */
   unit = input<'b' | 'B'>('b');
 
+  /**
+   * Whether to display values as rates (with /s suffix).
+   * - true: Shows rates like "1 Mb/s" or "2 MiB/s" (for time-series charts)
+   * - false: Shows absolute values like "1 Mb" or "2 MiB"
+   */
+  showRate = input<boolean>(true);
+
+  /**
+   * Formats a value based on unit type and rate display setting.
+   * - For bits with rate: Uses NetworkSpeedPipe ("{bits}/s" translation)
+   * - For bits without rate: Uses FileSizePipe with base 10
+   * - For bytes with rate: Uses FileSizePipe with "{size}/s" translation
+   * - For bytes without rate: Uses FileSizePipe
+   */
+  private formatValue(value: number, unit: 'b' | 'B', asRate: boolean): string {
+    if (value === 0) {
+      return asRate ? '0/s' : '0';
+    }
+    const absValue = Math.abs(value);
+
+    if (unit === 'b' && asRate) {
+      // Network speed: uses NetworkSpeedPipe which has built-in translation
+      return this.networkSpeedPipe.transform(absValue);
+    }
+
+    const formatted = this.fileSizePipe.transform(absValue);
+
+    if (asRate) {
+      // Use translation pattern like NetworkSpeedPipe does
+      return this.translate.instant('{size}/s', { size: formatted });
+    }
+
+    return formatted;
+  }
+
   protected options = computed<ChartOptions<'line'>>(() => {
     const aspectRatio = this.aspectRatio();
     const showLegend = this.showLegend();
     const unit = this.unit();
-    const base = unit === 'B' ? 2 : 10; // Use binary (base 2) for bytes, decimal (base 10) for bits
+    const asRate = this.showRate();
 
     return {
       aspectRatio,
@@ -57,13 +98,7 @@ export class NetworkChartComponent {
               if (label) {
                 label += ': ';
               }
-              if (tooltipItem.parsed.y === 0) {
-                label += '0/s';
-              } else {
-                // Use += to append to existing label (e.g., "Upload: " + "1 Mb" = "Upload: 1 Mb")
-                // Do NOT use = as it would discard the dataset label prefix
-                label += buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), unit, base) + '/s';
-              }
+              label += this.formatValue(Number(tooltipItem.parsed.y), unit, asRate);
               return label;
             },
           },
@@ -89,10 +124,7 @@ export class NetworkChartComponent {
           ticks: {
             maxTicksLimit: 8,
             callback: (value) => {
-              if (value === 0) {
-                return '0/s';
-              }
-              return buildNormalizedFileSize(Math.abs(Number(value)), unit, base) + '/s';
+              return this.formatValue(Number(value), unit, asRate);
             },
           },
         },

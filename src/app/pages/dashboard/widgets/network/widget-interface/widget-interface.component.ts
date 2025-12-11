@@ -29,7 +29,7 @@ import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/w
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
+import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/rate-chart/rate-chart.component';
 import { fullSizeNetworkWidgetAspectRatio, halfSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.const';
 import { DashboardNetworkInterface, getNetworkInterface } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
@@ -51,7 +51,7 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
     WithLoadingStateDirective,
     NgxSkeletonLoaderModule,
     InterfaceStatusIconComponent,
-    NetworkChartComponent,
+    RateChartComponent,
     TranslateModule,
     NetworkSpeedPipe,
     WidgetStaleDataNoticeComponent,

@@ -1,20 +1,30 @@
 <div class="chart-info">
   <h4>{{ 'Network I/O' | translate }}</h4>
   <div class="in-out">
-    <div class="in-out-row">
+    <div
+      class="in-out-row"
+      [matTooltip]="'Incoming network traffic in bits per second (received bytes/s)' | translate"
+    >
       <span>{{ 'In' | translate }}:</span>
       <span *ixWithLoadingState="stats() as stats">
         {{ incomingTrafficBits() | ixNetworkSpeed }}
       </span>
     </div>
-    <div class="in-out-row">
+    <div
+      class="in-out-row"
+      [matTooltip]="'Outgoing network traffic in bits per second (transmitted bytes/s)' | translate"
+    >
       <span>{{ 'Out' | translate }}:</span>
       <span *ixWithLoadingState="stats() as stats">
         {{ outgoingTrafficBits() | ixNetworkSpeed }}
       </span>
     </div>
   </div>
-  <small>{{ '1m Average' | translate }}</small>
+  <small
+    [matTooltip]="'Average network traffic rate calculated over the last minute' | translate"
+  >
+    {{ '1m Average' | translate }}
+  </small>
 </div>
 <div class="chart-graph">
   @if (isLoading()) {
@@ -29,10 +39,10 @@
       }"
     ></ngx-skeleton-loader>
   } @else {
-    <ix-network-chart
+    <ix-rate-chart
       [showLegend]="false"
       [data]="networkChartData()"
       [aspectRatio]="aspectRatio()"
-    ></ix-network-chart>
+    ></ix-rate-chart>
   }
 </div>

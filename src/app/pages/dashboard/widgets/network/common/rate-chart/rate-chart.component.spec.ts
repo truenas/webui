@@ -4,7 +4,9 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { ChartOptions, TooltipItem } from 'chart.js';
 import { ViewChartAreaComponent } from 'app/modules/charts/view-chart-area/view-chart-area.component';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
+import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/rate-chart/rate-chart.component';
 
 // TODO: Update when fix is ready
 // See https://github.com/help-me-mom/ng-mocks/issues/8634
@@ -18,12 +20,12 @@ class ViewChartAreaMockComponent {
   options = input();
 }
 
-describe('NetworkChartComponent', () => {
-  let spectator: Spectator<NetworkChartComponent>;
+describe('RateChartComponent', () => {
+  let spectator: Spectator<RateChartComponent>;
   const createComponent = createComponentFactory({
-    component: NetworkChartComponent,
+    component: RateChartComponent,
     overrideComponents: [
-      [NetworkChartComponent, {
+      [RateChartComponent, {
         add: {
           imports: [ViewChartAreaMockComponent],
           template: '<ix-view-chart-area-mock [data]="data()" [options]="options()"></ix-view-chart-area-mock>',
@@ -36,6 +38,8 @@ describe('NetworkChartComponent', () => {
         timeFormat: 'HH:mm',
         dateFormat: 'MM-DD',
       }),
+      NetworkSpeedPipe,
+      FileSizePipe,
     ],
     detectChanges: false,
   });
