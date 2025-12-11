@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject, computed,
+} from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import {
-  Observable, combineLatest, of,
-} from 'rxjs';
+import { Observable, combineLatest, of, shareReplay } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -31,7 +31,6 @@ import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/credentials/groups/store/group.selectors';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
@@ -59,7 +58,6 @@ export class GroupFormComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
-  private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<GroupSlice>>(Store);
@@ -77,9 +75,6 @@ export class GroupFormComponent implements OnInit {
   }
 
   protected isFormLoading = signal(false);
-
-  privilegesList: Privilege[];
-  initialGroupRelatedPrivilegesList: Privilege[] = [];
   protected editingGroup: Group | undefined;
 
   form = this.fb.group({
@@ -101,9 +96,34 @@ export class GroupFormComponent implements OnInit {
     smb: helptextGroups.smbTooltip,
   };
 
-  readonly privilegeOptions$ = this.api.call('privilege.query').pipe(
-    map((privileges) => privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }))),
+  private readonly privileges = signal<Privilege[]>([]);
+
+  protected readonly privilegeOptions$ = this.api.call('privilege.query').pipe(
+    map((privileges) => {
+      this.privileges.set(privileges);
+
+      const initialPrivileges = privileges.filter((privilege) => {
+        return this.editingGroup?.gid
+          && privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
+      });
+
+      if (initialPrivileges.length > 0) {
+        this.form.controls.privileges.patchValue(
+          initialPrivileges.map((privilege) => privilege.id),
+        );
+      }
+
+      return privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }));
+    }),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
+
+  private readonly initialGroupRelatedPrivileges = computed(() => {
+    return this.privileges().filter((privilege) => {
+      return this.editingGroup?.gid
+        && privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
+    });
+  });
 
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -114,14 +134,14 @@ export class GroupFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupForm();
-    this.getPrivilegesList();
   }
 
   protected readonly privilegesProvider: ChipsProvider = (query: string) => {
-    return this.api.call('privilege.query', []).pipe(
-      map((privileges) => {
-        const chips = privileges.map((privilege) => privilege.name);
-        return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
+    return this.privilegeOptions$.pipe(
+      map((options) => {
+        return options
+          .map((option) => option.label)
+          .filter((label) => label.trim().toLowerCase().includes(query.trim().toLowerCase()));
       }),
     );
   };
@@ -184,7 +204,7 @@ export class GroupFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (group) => {
-        const roles = this.privilegesList
+        const roles = this.privileges()
           .filter((privilege) => this.form.getRawValue().privileges.some((id) => id === privilege.id))
           .map((role) => role.builtin_name) as Role[];
 
@@ -211,7 +231,7 @@ export class GroupFormComponent implements OnInit {
 
     const priviliges = this.form.value.privileges;
     if (priviliges) {
-      const privileges = this.privilegesList
+      const privileges = this.privileges()
         .filter((privilege) => priviliges.some((privilegeId) => privilege.id === privilegeId));
 
       privileges.forEach((privilege) => {
@@ -227,8 +247,8 @@ export class GroupFormComponent implements OnInit {
       });
     }
 
-    if (this.existingPrivilegesRemoved) {
-      const privileges = this.privilegesList
+    if (this.existingPrivilegesRemoved.length > 0) {
+      const privileges = this.privileges()
         .filter((privilege) => this.existingPrivilegesRemoved.some((privilegeId) => privilege.id === privilegeId));
 
       privileges.forEach((privilege) => {
@@ -245,26 +265,6 @@ export class GroupFormComponent implements OnInit {
     }
 
     return requests$.length ? combineLatest(requests$) : of([]);
-  }
-
-  private getPrivilegesList(): void {
-    this.api.call('privilege.query', [])
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
-      )
-      .subscribe((privileges) => {
-        this.initialGroupRelatedPrivilegesList = privileges.filter((privilege) => {
-          return this.editingGroup?.gid
-            && privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
-        });
-
-        this.privilegesList = privileges;
-
-        this.form.controls.privileges.patchValue(
-          this.initialGroupRelatedPrivilegesList.map((privilege) => privilege.id),
-        );
-      });
   }
 
   private setNamesInUseValidator(currentName?: string): void {
@@ -307,9 +307,9 @@ export class GroupFormComponent implements OnInit {
 
   private get existingPrivilegesRemoved(): number[] {
     return Array.from(new Set(
-      this.initialGroupRelatedPrivilegesList
+      this.initialGroupRelatedPrivileges()
         .filter((privilege) => !this.form.getRawValue().privileges.includes(privilege.id as never))
-        .map((privileges) => privileges.id),
+        .map((privilege) => privilege.id),
     ));
   }
 
