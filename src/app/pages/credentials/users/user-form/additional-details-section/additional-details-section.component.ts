@@ -7,6 +7,7 @@ import {
   debounceTime, distinctUntilChanged, filter, map,
   Observable,
   of,
+  shareReplay,
   tap,
   take,
   withLatestFrom,
@@ -121,6 +122,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     ['immutable', '=', false],
   ]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   groupComboboxProvider: GroupComboboxProvider = new GroupComboboxProvider(
@@ -246,12 +248,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupShellUpdate();
-    if (!this.editingUser()) {
-      if (this.shellAccess()) {
-        this.setFirstShellOption();
-      } else {
-        this.setNoLoginShell();
-      }
+    if (!this.editingUser() && !this.shellAccess()) {
+      this.setNoLoginShell();
     }
     this.detectHomeDirectoryChanges();
     this.setHomeSharePath();
