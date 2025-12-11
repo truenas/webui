@@ -55,6 +55,10 @@ export const mockM50 = makeEnclosure({
         is_rear: true,
       }),
     },
+    'SAS Expander': makeSasExpanders(30, 31),
+    Enclosure: makeEnclosureElements(32, 33),
+    'Temperature Sensors': makeTemperatureSensors(34, 36),
+    'Voltage Sensor': makeVoltageSensors(37, 38),
   },
 });
 
