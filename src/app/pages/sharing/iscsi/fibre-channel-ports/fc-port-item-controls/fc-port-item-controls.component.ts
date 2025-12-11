@@ -4,7 +4,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -24,6 +24,7 @@ export class FcPortItemControlsComponent implements OnInit {
   private api = inject(ApiService);
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   // Inputs from parent
   readonly form = input.required<FormGroup<{
@@ -39,8 +40,8 @@ export class FcPortItemControlsComponent implements OnInit {
 
   // Mode options for dropdown
   readonly modeOptions$ = of([
-    { label: 'Use existing port', value: 'existing' },
-    { label: 'Create new virtual port', value: 'new' },
+    { label: this.translate.instant('Use existing port'), value: 'existing' },
+    { label: this.translate.instant('Create new virtual port'), value: 'new' },
   ] as Option[]);
 
   // Data sources (observables for ix-select compatibility)
