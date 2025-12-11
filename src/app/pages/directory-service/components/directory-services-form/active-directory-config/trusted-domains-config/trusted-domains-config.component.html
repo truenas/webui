@@ -70,7 +70,7 @@
                       formControlName="unix_nss_info"
                       [label]="'Unix NSS Info' | translate"
                       [required]="true"
-                      [tooltip]="helptext.unixNssInfoTooltip | translate"
+                      [tooltip]="helptext.unixNssTooltip | translate"
                     ></ix-checkbox>
                   }
                   @if (idmapBackend === IdmapBackend.Rfc2307 || idmapBackend === IdmapBackend.Ldap) {
@@ -87,14 +87,14 @@
                         formControlName="ldap_base_dn"
                         [label]="'LDAP Base DN' | translate"
                         [required]="true"
-                        [tooltip]="helptext.ldapBaseDnTooltip | translate"
+                        [tooltip]="helptext.ldapBasednTooltip | translate"
                       ></ix-input>
                     }
                     <ix-input
                       formControlName="ldap_user_dn"
                       [required]="true"
                       [label]="'LDAP User DN' | translate"
-                      [tooltip]="helptext.ldapUserDnTooltip | translate"
+                      [tooltip]="helptext.ldapUserdnTooltip | translate"
                     ></ix-input>
                     <ix-input
                       formControlName="ldap_user_dn_password"
