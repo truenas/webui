@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatError } from '@angular/material/form-field';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -34,8 +35,8 @@ import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/tr
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  FcPortsControlsComponent,
-} from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-ports-controls/fc-ports-controls.component';
+  FcPortItemControlsComponent,
+} from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-port-item-controls/fc-port-item-controls.component';
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -51,6 +52,7 @@ import { LicenseService } from 'app/services/license.service';
     ModalHeaderComponent,
     MatCard,
     MatCardContent,
+    MatError,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
@@ -59,7 +61,7 @@ import { LicenseService } from 'app/services/license.service';
     IxIpInputWithNetmaskComponent,
     IxSelectComponent,
     FormActionsComponent,
-    FcPortsControlsComponent,
+    FcPortItemControlsComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -148,7 +150,7 @@ export class TargetFormComponent implements OnInit {
 
   protected isLoading = signal(false);
   protected editingTarget: IscsiTarget | undefined = undefined;
-  protected editingTargetPort: string | undefined = undefined;
+  protected editingTargetPorts: string[] = [];
 
   form = this.formBuilder.group({
     name: [
@@ -159,11 +161,10 @@ export class TargetFormComponent implements OnInit {
     mode: [IscsiTargetMode.Iscsi],
     groups: this.formBuilder.array<IscsiTargetGroup>([]),
     auth_networks: this.formBuilder.array<string>([]),
-  });
-
-  fcForm = this.formBuilder.group({
-    port: new FormControl(null as string | null),
-    host_id: new FormControl(null as number | null, [Validators.required]),
+    fcPorts: this.formBuilder.array<{
+      port: FormControl<string | null>;
+      host_id: FormControl<number | null>;
+    }>([]),
   });
 
   constructor() {
@@ -185,7 +186,7 @@ export class TargetFormComponent implements OnInit {
       this.setTargetForEdit(this.editingTarget);
 
       if ([IscsiTargetMode.Fc, IscsiTargetMode.Both].includes(this.editingTarget.mode)) {
-        this.loadFibreChannelPort();
+        this.loadFibreChannelPorts();
       }
     }
   }
@@ -200,7 +201,7 @@ export class TargetFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    const values = this.form.getRawValue();
+    const { fcPorts, ...values } = this.form.getRawValue();
 
     this.isLoading.set(true);
     let request$: Observable<IscsiTarget>;
@@ -216,10 +217,10 @@ export class TargetFormComponent implements OnInit {
           return of(target);
         }
 
-        return this.fcService.linkFiberChannelToTarget(
+        const fcPortValues = this.form.controls.fcPorts.getRawValue();
+        return this.fcService.linkFiberChannelPortsToTarget(
           target.id,
-          this.fcForm.value.port,
-          this.fcForm.value.host_id || undefined,
+          fcPortValues,
         ).pipe(map(() => target));
       }),
       untilDestroyed(this),
@@ -260,14 +261,57 @@ export class TargetFormComponent implements OnInit {
     this.form.controls.auth_networks.removeAt(index);
   }
 
-  private loadFibreChannelPort(): void {
-    this.fcService.loadTargetPort(this.editingTarget.id).pipe(
+  protected addFcPort(): void {
+    this.form.controls.fcPorts.push(
+      this.formBuilder.group({
+        port: new FormControl(null as string | null),
+        host_id: new FormControl(null as number | null),
+      }),
+    );
+  }
+
+  protected deleteFcPort(index: number): void {
+    this.form.controls.fcPorts.removeAt(index);
+    this.editingTargetPorts.splice(index, 1);
+  }
+
+  protected validateFcPorts(): string[] {
+    const ports = this.form.controls.fcPorts.getRawValue();
+    const validation = this.fcService.validatePhysicalHbaUniqueness(ports);
+
+    if (!validation.valid) {
+      return validation.duplicates.map((hba) => this.translate.instant(
+        'Physical HBA {hba} is used multiple times. Each port must be on a different physical HBA.',
+        { hba },
+      ));
+    }
+
+    return [];
+  }
+
+  protected areFcPortsValid(): boolean {
+    return this.form.controls.fcPorts.valid && this.validateFcPorts().length === 0;
+  }
+
+  protected fcPortValidationErrors = (): string[] => {
+    return this.validateFcPorts();
+  };
+
+  private loadFibreChannelPorts(): void {
+    this.fcService.loadTargetPorts(this.editingTarget.id).pipe(
       untilDestroyed(this),
-    ).subscribe((port) => {
-      if (port) {
-        this.editingTargetPort = port.port;
-        this.cdr.markForCheck();
-      }
+    ).subscribe((ports) => {
+      this.form.controls.fcPorts.clear();
+      this.editingTargetPorts = [];
+
+      ports.forEach((port) => {
+        this.addFcPort();
+        const index = this.form.controls.fcPorts.length - 1;
+        this.form.controls.fcPorts.at(index).patchValue({ port: port.port, host_id: null });
+        this.editingTargetPorts.push(port.port);
+      });
+
+      this.cdr.markForCheck();
     });
   }
 }

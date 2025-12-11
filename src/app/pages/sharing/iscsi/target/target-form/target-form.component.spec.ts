@@ -82,8 +82,9 @@ describe('TargetFormComponent', () => {
       mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(FibreChannelService, {
-        loadTargetPort: jest.fn(() => of(null)),
-        linkFiberChannelToTarget: jest.fn(() => of(null)),
+        loadTargetPorts: jest.fn(() => of([])),
+        linkFiberChannelPortsToTarget: jest.fn(() => of(null)),
+        validatePhysicalHbaUniqueness: jest.fn(() => ({ valid: true, duplicates: [] as string[] })),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockApi([
@@ -244,10 +245,9 @@ describe('TargetFormComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(FibreChannelService).linkFiberChannelToTarget).toHaveBeenCalledWith(
+      expect(spectator.inject(FibreChannelService).linkFiberChannelPortsToTarget).toHaveBeenCalledWith(
         123,
-        null,
-        undefined,
+        [],
       );
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
