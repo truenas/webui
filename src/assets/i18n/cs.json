@@ -10,7 +10,7 @@
   "{count, plural, one {# Rsync Task} other {# Rsync Tasks}}": "",
   "{count} of {total} disks unlocked successfully": "",
   "{count} services and processes depend on this pool": "",
-  "{label} Error: {error}": "{label} Chyba: {error}"",
+  "{label} Error: {error}": "{label} Chyba: {error}",
   "{n, plural, =0 {Less than a day} one {# day} other {# days} }": "",
   "{n, plural, =0 {No History} one {# entry} other {# entries}}": "",
   "{n, plural, one {# character} other {# characters} }": "",
