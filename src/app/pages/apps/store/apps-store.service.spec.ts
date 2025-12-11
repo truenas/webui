@@ -128,30 +128,6 @@ describe('AppsStore', () => {
     });
   });
 
-  it('sets isLoading to false after initial data load completes', async () => {
-    // Create a new instance to track loading state changes
-    const newSpectator = createService();
-
-    // Track isLoading state changes
-    const loadingStates: boolean[] = [];
-    newSpectator.service.isLoading$.subscribe((isLoading) => {
-      loadingStates.push(isLoading);
-    });
-
-    // Initialize should trigger data load
-    newSpectator.service.initialize();
-
-    // Wait for async operations to complete
-    await new Promise<void>((resolve) => {
-      setTimeout(() => resolve(), 100);
-    });
-
-    // Verify isLoading was set to false after data load
-    // Should be: [initial false, true during load, false after load]
-    expect(loadingStates).toContain(false);
-    expect(loadingStates[loadingStates.length - 1]).toBe(false);
-  });
-
   it('does not trigger catalog sync when data is available', async () => {
     // This test verifies that when catalog has data, sync is not triggered
     // and loading is cleared immediately after data load

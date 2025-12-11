@@ -70,6 +70,7 @@ export class AppsStore extends ComponentStore<AppsState> {
       return {
         ...state,
         isLoading: false,
+        isSyncingCatalog: false,
       };
     });
   }
@@ -89,11 +90,14 @@ export class AppsStore extends ComponentStore<AppsState> {
         });
       }),
       switchMap(() => this.loadCatalogData()),
-      tap(() => {
-        // Always set loading to false after initial data load completes
-        this.setLoadingState(false);
-      }),
       switchMap(() => this.syncCatalogIfEmpty()),
+      tap(() => {
+        // Clear loading only if sync didn't start (catalog wasn't empty)
+        // If sync is running, it will clear loading when it completes
+        if (!this.get().isSyncingCatalog) {
+          this.setLoadingState(false);
+        }
+      }),
       catchError((error: unknown) => {
         this.handleError(error);
         return EMPTY;
