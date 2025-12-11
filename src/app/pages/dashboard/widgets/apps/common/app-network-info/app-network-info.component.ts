@@ -31,14 +31,16 @@ export class AppNetworkInfoComponent {
   stats = input.required<LoadingState<AppStats>>();
   aspectRatio = input<number>(3);
 
+  private numberOfPoints = 60;
+
   isLoading = computed(() => this.stats().isLoading);
 
-  protected readonly initialNetworkStats = Array.from({ length: 60 }, () => [0, 0]);
-  cachedNetworkStats = signal<number[][]>([]);
+  protected readonly initialNetworkStats = Array.from({ length: this.numberOfPoints }, () => [0, 0]);
+  protected readonly cachedNetworkStats = signal<number[][]>([]);
 
   networkStats = computed(() => {
     const cachedStats = this.cachedNetworkStats();
-    return [...this.initialNetworkStats, ...cachedStats].slice(-60);
+    return [...this.initialNetworkStats, ...cachedStats].slice(-this.numberOfPoints);
   });
 
   readonly incomingTrafficBits = computed(() => {
@@ -52,7 +54,7 @@ export class AppNetworkInfoComponent {
   protected networkChartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
     const data = this.networkStats();
-    const labels: number[] = data.map((_, index) => Date.now() - (59 - index) * 1000);
+    const labels: number[] = data.map((_, index) => Date.now() - (this.numberOfPoints - 1 - index) * 1000);
 
     return {
       datasets: [
@@ -87,7 +89,7 @@ export class AppNetworkInfoComponent {
       const outgoingTraffic = networkStats?.reduce((sum, stats) => sum + this.bytesToBits(stats.tx_bytes), 0);
       if (networkStats && incomingTraffic && outgoingTraffic) {
         this.cachedNetworkStats.update((cachedStats) => {
-          return [...cachedStats, [incomingTraffic, outgoingTraffic]].slice(-60);
+          return [...cachedStats, [incomingTraffic, outgoingTraffic]].slice(-this.numberOfPoints);
         });
       }
     });
