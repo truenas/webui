@@ -3,7 +3,7 @@
   <div class="in-out">
     <div
       class="in-out-row"
-      [matTooltip]="'Total bytes read from disk by the application' | translate"
+      [matTooltip]="'Total bytes read from disk. Chart shows read rate over time.' | translate"
     >
       <span>{{ 'Read' | translate }}:</span>
       <span *ixWithLoadingState="stats() as stats">
@@ -12,7 +12,7 @@
     </div>
     <div
       class="in-out-row"
-      [matTooltip]="'Total bytes written to disk by the application' | translate"
+      [matTooltip]="'Total bytes written to disk. Chart shows write rate over time.' | translate"
     >
       <span>{{ 'Write' | translate }}:</span>
       <span *ixWithLoadingState="stats() as stats">

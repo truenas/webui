@@ -36,7 +36,7 @@ export class RateChartComponent {
    * - For bits ('b'): Uses NetworkSpeedPipe for network speed (e.g., "1 Mb/s")
    * - For bytes ('B'): Uses FileSizePipe for disk I/O (e.g., "1 MiB")
    */
-  private formatValue(value: number, unit: 'b' | 'B'): string {
+  protected formatValue(value: number, unit: 'b' | 'B'): string {
     if (value === 0) {
       return unit === 'b' ? '0/s' : '0';
     }
