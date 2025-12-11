@@ -2,19 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import {
   forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
-import { FcPortFormValue, FibreChannelPort, FibreChannelPortUpdate } from 'app/interfaces/fibre-channel.interface';
+import { FcPortFormValue, FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class FibreChannelService {
   private api = inject(ApiService);
 
-
-  loadTargetPort(targetId: number): Observable<FibreChannelPort | undefined> {
-    return this.api.call('fcport.query', [[['target.id', '=', targetId]]]).pipe(
-      map((ports) => ports[0]),
-    );
-  }
 
   /**
    * Load all FC ports associated with a target.
@@ -55,40 +49,6 @@ export class FibreChannelService {
       valid: duplicates.size === 0,
       duplicates: Array.from(duplicates),
     };
-  }
-
-  /**
-   * Specifies the association between target and fiber channel.
-   * @param targetId Target ID.
-   * @param port Fiber channel port. May not be specified when hostId is present.
-   * @param hostId Host ID. Must be specified to create a new virtual port when port is not specified.
-   */
-  linkFiberChannelToTarget(
-    targetId: number,
-    port: string | null,
-    hostId?: number,
-  ): Observable<FibreChannelPort | null | true> {
-    const fcPort$ = hostId ? this.createNewPort(hostId) : of(port);
-
-    return forkJoin([
-      fcPort$,
-      this.loadTargetPort(targetId),
-    ]).pipe(
-      switchMap(([desiredPort, existingPort]) => {
-        const existingPortId = existingPort?.id || null;
-        if (port === (existingPort?.port || null)) {
-          return of(null);
-        }
-        if (port === null && existingPortId) {
-          return this.api.call('fcport.delete', [existingPortId]);
-        }
-
-        const payload = { port: desiredPort, target_id: targetId } as FibreChannelPortUpdate;
-        return existingPortId
-          ? this.api.call('fcport.update', [existingPortId, payload])
-          : this.api.call('fcport.create', [payload]);
-      }),
-    );
   }
 
   /**

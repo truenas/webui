@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
+import { MatError } from '@angular/material/form-field';
 import {
   MatStepper, MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious,
 } from '@angular/material/stepper';
@@ -71,6 +72,7 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   imports: [
     ModalHeaderComponent,
     MatCard,
+    MatError,
     ReactiveFormsModule,
     MatStepper,
     MatStep,

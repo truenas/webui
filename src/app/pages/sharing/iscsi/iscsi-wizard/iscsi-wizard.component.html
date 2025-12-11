@@ -65,6 +65,13 @@
             [addFcPort]="addFcPort.bind(this)"
             [deleteFcPort]="deleteFcPort.bind(this)"
           ></ix-protocol-options-wizard-step>
+
+          @if (isFibreChannelMode && validateFcPorts().length > 0) {
+            <mat-error>
+              {{ validateFcPorts().join(', ') }}
+            </mat-error>
+          }
+
           <div class="step-buttons">
             <button
               mat-button
@@ -79,7 +86,7 @@
               color="primary"
               type="submit"
               ixTest="save"
-              [disabled]="form.invalid || isLoading()"
+              [disabled]="form.invalid || (isFibreChannelMode && !areFcPortsValid()) || isLoading()"
             >{{ 'Save' | translate }}</button>
           </div>
         </mat-step>
