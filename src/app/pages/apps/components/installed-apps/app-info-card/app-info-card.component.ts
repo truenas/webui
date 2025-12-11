@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal, WritableSignal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, output, signal, WritableSignal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
@@ -7,7 +8,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -37,10 +37,10 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppUpdateDialog } from 'app/pages/apps/components/installed-apps/app-update-dialog/app-update-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { isExternalApp } from 'app/pages/apps/utils/app-type.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-app-info-card',
   templateUrl: './app-info-card.component.html',
@@ -81,6 +81,7 @@ export class AppInfoCardComponent {
   private installedAppsStore = inject(InstalledAppsStore);
   private slideIn = inject(SlideIn);
   private window = inject<Window>(WINDOW);
+  private destroyRef = inject(DestroyRef);
 
   readonly app = input.required<App>();
   readonly startApp = output();
@@ -88,6 +89,7 @@ export class AppInfoCardComponent {
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly isAppStopped = computed<boolean>(() => this.app()?.state === AppState.Stopped);
   protected readonly inProgress = computed<boolean>(() => [AppState.Deploying].includes(this.app()?.state));
+  protected readonly isExternalApp = computed<boolean>(() => isExternalApp(this.app()));
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly isRollbackPossible: WritableSignal<boolean> = signal(false);
   protected rollbackUpdateButtonSetEffect = effect(() => {
@@ -161,7 +163,7 @@ export class AppInfoCardComponent {
         ).afterClosed(),
       ),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -190,7 +192,7 @@ export class AppInfoCardComponent {
       }),
       filter(Boolean),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     )
       .subscribe((options) => this.executeDelete(name, options));
   }
@@ -208,7 +210,7 @@ export class AppInfoCardComponent {
       .pipe(
         filter(Boolean),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.router.navigate(['/apps', 'installed']);
@@ -219,14 +221,14 @@ export class AppInfoCardComponent {
     this.matDialog
       .open(AppRollbackModalComponent, { data: this.app() })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
   }
 
   private updateRollbackSetup(appName: string): void {
     this.api.call('app.rollback_versions', [appName]).pipe(
       tap((versions) => this.isRollbackPossible.set(versions.length > 0)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -246,7 +248,7 @@ export class AppInfoCardComponent {
         { title: this.translate.instant('Convert to custom app') },
       ).afterClosed()),
       this.errorHandler.withErrorHandler(),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 }

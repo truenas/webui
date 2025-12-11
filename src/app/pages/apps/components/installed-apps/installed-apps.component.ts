@@ -2,6 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   viewChild,
+  computed,
 } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
@@ -9,7 +10,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { App } from 'app/interfaces/app.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -42,31 +42,35 @@ import { InstalledAppsListComponent } from 'app/pages/apps/components/installed-
   ],
 })
 export class InstalledAppsComponent {
-  readonly installedAppsList = viewChild.required(InstalledAppsListComponent);
+  readonly installedAppsList = viewChild(InstalledAppsListComponent);
 
-  protected get selectedApp(): App | undefined {
-    return this.installedAppsList().selectedApp;
-  }
+  protected readonly selectedApp = computed(() => {
+    return this.installedAppsList()?.selectedApp();
+  });
 
-  protected get appsUpdateAvailable(): number {
-    return this.installedAppsList().appsUpdateAvailable;
-  }
+  protected readonly appsUpdateAvailable = computed(() => {
+    return this.installedAppsList()?.appsUpdateAvailable() ?? 0;
+  });
 
-  protected get hasUpdates(): boolean {
-    return this.installedAppsList().hasUpdates;
-  }
+  protected readonly hasUpdates = computed(() => {
+    return this.installedAppsList()?.hasUpdates() ?? false;
+  });
+
+  protected readonly isSelectedAppVisible = computed(() => {
+    return this.installedAppsList()?.isSelectedAppVisible() ?? false;
+  });
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
   start(name: string): void {
-    this.installedAppsList().start(name);
+    this.installedAppsList()?.start(name);
   }
 
   stop(name: string): void {
-    this.installedAppsList().stop(name);
+    this.installedAppsList()?.stop(name);
   }
 
   protected onBulkUpdate(updateAll = false): void {
-    this.installedAppsList().onBulkUpdate(updateAll);
+    this.installedAppsList()?.onBulkUpdate(updateAll);
   }
 }
