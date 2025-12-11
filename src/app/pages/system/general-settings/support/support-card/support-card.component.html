@@ -83,7 +83,8 @@
                   mat-menu-item
                   ixTest="proactive-support"
                   [disabled]="!isProactiveSupportAvailable()"
-                  [matTooltip]="!isProactiveSupportAvailable() ? ('Proactive support requires Silver or Gold tier support contract' | translate) : ''"
+                  [matTooltip]="!isProactiveSupportAvailable() ? proactiveSupportTooltip : ''"
+                  [attr.aria-label]="!isProactiveSupportAvailable() ? proactiveSupportTooltip : ''"
                   (click)="openProactive()"
                 >
                   <span>{{ proactiveText | translate }}</span>
@@ -99,21 +100,6 @@
               >
                 {{ ticketText | translate }}
               </button>
-              <ng-container *ixRequiresRoles="[Role.SupportWrite]">
-                @if (hasLicense) {
-                  <button
-                    id="proactive-btn"
-                    mat-button
-                    color="default"
-                    ixTest="proactive-support"
-                    [disabled]="!isProactiveSupportAvailable()"
-                    [matTooltip]="!isProactiveSupportAvailable() ? ('Proactive support requires Silver or Gold tier support contract' | translate) : ''"
-                    (click)="openProactive()"
-                  >
-                    {{ proactiveText | translate }}
-                  </button>
-                }
-              </ng-container>
             }
 
             <ix-save-debug-button></ix-save-debug-button>
