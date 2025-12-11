@@ -1,4 +1,10 @@
 <ix-page-header>
+  <ix-checkbox
+    [formControl]="autoScrollControl"
+    [label]="'Auto Scroll' | translate"
+    [tooltip]="'Automatically scroll to the latest log entry' | translate"
+  ></ix-checkbox>
+
   <ix-toolbar-slider
     [label]="'Set font size' | translate"
     [min]="10"
