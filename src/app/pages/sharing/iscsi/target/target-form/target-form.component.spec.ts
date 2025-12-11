@@ -143,12 +143,16 @@ describe('TargetFormComponent', () => {
     });
 
     it('add new target when form is submitted', async () => {
+      // Click Add buttons to create FormArray items:
+      // addButtons[0] = Add button for groups (click twice for 2 groups)
+      // addButtons[1] = Add button for auth_networks (click twice for 2 networks)
       const addButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Add' }));
       await addButtons[0].click();
       await addButtons[0].click();
       await addButtons[1].click();
       await addButtons[1].click();
 
+      // Use patchValue to set nested FormArray values (simpler than harness for complex nested structures)
       spectator.component.form.patchValue({
         name: 'name_new',
         alias: 'alias_new',
@@ -287,12 +291,6 @@ describe('TargetFormComponent', () => {
   });
 
   describe('validation error handling', () => {
-    beforeEach(async () => {
-      spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
-    });
-
     beforeEach(async () => {
       spectator = createComponent();
       api = spectator.inject(ApiService);

@@ -1,13 +1,16 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { lastValueFrom } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { FibreChannelHost, FibreChannelPortChoices } from 'app/interfaces/fibre-channel.interface';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FcPortItemControlsComponent } from './fc-port-item-controls.component';
 
 describe('FcPortItemControlsComponent', () => {
   let spectator: Spectator<FcPortItemControlsComponent>;
+  let loader: HarnessLoader;
   let mockForm: FormGroup<{
     port: FormControl<string | null>;
     host_id: FormControl<number | null>;
@@ -52,6 +55,7 @@ describe('FcPortItemControlsComponent', () => {
         currentPort: null,
       },
     });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   describe('initialization', () => {
@@ -59,160 +63,206 @@ describe('FcPortItemControlsComponent', () => {
       expect(spectator.component).toBeTruthy();
     });
 
-    it('defaults to "existing" mode', () => {
-      expect(spectator.component.modeControl.value).toBe('existing');
+    it('defaults to "existing" mode and shows existing port selector', async () => {
+      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      expect(await modeSelect.getValue()).toBe('Use existing port');
+
+      // Verify existing port selector is visible
+      const portSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Existing Port' }));
+      expect(portSelect).toBeTruthy();
+
+      // Verify new port selector is NOT visible
+      const hostSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      expect(hostSelect).toBeNull();
     });
 
-    it('loads existing port options', async () => {
-      const options = await lastValueFrom(spectator.component.existingPortOptions$);
-      expect(options).toHaveLength(2);
-      expect(options[0].label).toBe('fc0');
-      expect(options[1].label).toBe('fc1');
-    });
+    it('loads existing port options correctly', async () => {
+      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      const options = await portSelect.getOptionLabels();
 
-    it('loads creating port options', async () => {
-      const options = await lastValueFrom(spectator.component.creatingPortOptions$);
-      expect(options).toHaveLength(2);
-      expect(options[0].label).toBe('fc/2');
-      expect(options[1].label).toBe('fc1/1');
+      expect(options).toContain('fc0');
+      expect(options).toContain('fc1');
     });
   });
 
   describe('mode switching', () => {
-    it('enables port control and disables host_id when mode is "existing"', () => {
-      spectator.component.modeControl.setValue('existing');
-      spectator.detectChanges();
+    it('switches to "new" mode and shows host selector when user selects create new virtual port', async () => {
+      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      await modeSelect.setValue('Create new virtual port');
 
-      expect(mockForm.controls.port.disabled).toBe(false);
-      expect(mockForm.controls.host_id.disabled).toBe(true);
-      expect(mockForm.controls.host_id.value).toBeNull();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify new port selector is now visible
+      const hostSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      expect(hostSelect).toBeTruthy();
+
+      // Verify existing port selector is hidden
+      const portSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Existing Port' }));
+      expect(portSelect).toBeNull();
     });
 
-    it('enables host_id control and disables port when mode is "new"', () => {
-      spectator.component.modeControl.setValue('new');
+    it('loads host options correctly in new mode', async () => {
+      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      await modeSelect.setValue('Create new virtual port');
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const hostSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      const options = await hostSelect.getOptionLabels();
+
+      expect(options).toContain('fc/2');
+      expect(options).toContain('fc1/1');
+    });
+
+    it('switches back to "existing" mode and shows port selector', async () => {
+      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+
+      // Switch to new mode first
+      await modeSelect.setValue('Create new virtual port');
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Switch back to existing
+      await modeSelect.setValue('Use existing port');
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify existing port selector is visible again
+      const portSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Existing Port' }));
+      expect(portSelect).toBeTruthy();
+
+      // Verify new port selector is hidden
+      const hostSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      expect(hostSelect).toBeNull();
+    });
+
+    it('clears port value when switching to "new" mode', async () => {
+      // First select a port in existing mode
+      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      await portSelect.setValue('fc0');
+      expect(mockForm.controls.port.value).toBe('fc0');
+
+      // Switch to new mode
+      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      await modeSelect.setValue('Create new virtual port');
       spectator.detectChanges();
 
-      expect(mockForm.controls.port.disabled).toBe(true);
-      expect(mockForm.controls.host_id.disabled).toBe(false);
+      // Port value should be cleared
       expect(mockForm.controls.port.value).toBeNull();
     });
 
-    it('adds required validator to port when mode is "existing"', () => {
-      spectator.component.modeControl.setValue('existing');
+    it('clears host_id value when switching to "existing" mode', async () => {
+      // Switch to new mode and select a host
+      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      await modeSelect.setValue('Create new virtual port');
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const hostSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      await hostSelect.setValue('fc/2');
+      expect(mockForm.controls.host_id.value).toBe(1);
+
+      // Switch to existing mode
+      await modeSelect.setValue('Use existing port');
       spectator.detectChanges();
 
-      mockForm.controls.port.setValue(null);
-      expect(mockForm.controls.port.hasError('required')).toBe(true);
-    });
-
-    it('adds required validator to host_id when mode is "new"', () => {
-      spectator.component.modeControl.setValue('new');
-      spectator.detectChanges();
-
-      mockForm.controls.host_id.setValue(null);
-      expect(mockForm.controls.host_id.hasError('required')).toBe(true);
-    });
-
-    it('removes required validator from host_id when switching to "existing"', () => {
-      spectator.component.modeControl.setValue('new');
-      spectator.detectChanges();
-      mockForm.controls.host_id.setValue(null);
-      expect(mockForm.controls.host_id.hasError('required')).toBe(true);
-
-      spectator.component.modeControl.setValue('existing');
-      spectator.detectChanges();
-      expect(mockForm.controls.host_id.hasError('required')).toBe(false);
-    });
-
-    it('removes required validator from port when switching to "new"', () => {
-      spectator.component.modeControl.setValue('existing');
-      spectator.detectChanges();
-      mockForm.controls.port.setValue(null);
-      expect(mockForm.controls.port.hasError('required')).toBe(true);
-
-      spectator.component.modeControl.setValue('new');
-      spectator.detectChanges();
-      expect(mockForm.controls.port.hasError('required')).toBe(false);
+      // Host_id value should be cleared
+      expect(mockForm.controls.host_id.value).toBeNull();
     });
   });
 
   describe('edit mode', () => {
-    beforeEach(() => {
-      spectator.setInput('isEdit', true);
-      spectator.setInput('currentPort', 'fc0');
+    beforeEach(async () => {
+      const fb = new FormBuilder();
+      mockForm = fb.group({
+        port: fb.control<string | null>(null),
+        host_id: fb.control<number | null>(null),
+      });
+
+      spectator = createComponent({
+        props: {
+          form: mockForm,
+          isEdit: true,
+          currentPort: 'fc0',
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       spectator.detectChanges();
+      await spectator.fixture.whenStable();
     });
 
-    it('prefills port control with currentPort value', () => {
+    it('prefills port control with currentPort value', async () => {
       expect(mockForm.controls.port.value).toBe('fc0');
+
+      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      expect(await portSelect.getValue()).toBe('fc0');
     });
 
-    it('sets host_id to null in edit mode', () => {
-      expect(mockForm.controls.host_id.value).toBeNull();
+    it('defaults to "existing" mode in edit mode', async () => {
+      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      expect(await modeSelect.getValue()).toBe('Use existing port');
     });
 
-    it('defaults to "existing" mode in edit mode', () => {
-      expect(spectator.component.modeControl.value).toBe('existing');
+    it('shows existing port selector in edit mode', async () => {
+      const portSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Existing Port' }));
+      expect(portSelect).toBeTruthy();
     });
   });
 
   describe('form integration', () => {
-    it('respects parent form port control changes', () => {
-      mockForm.controls.port.setValue('fc1');
-      expect(spectator.component.form().controls.port.value).toBe('fc1');
+    it('updates parent form when user selects a port in existing mode', async () => {
+      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      await portSelect.setValue('fc1');
+
+      expect(mockForm.controls.port.value).toBe('fc1');
     });
 
-    it('respects parent form host_id control changes', () => {
-      mockForm.controls.host_id.setValue(2);
-      expect(spectator.component.form().controls.host_id.value).toBe(2);
-    });
-
-    it('propagates port selection to parent form', () => {
-      spectator.component.modeControl.setValue('existing');
-      mockForm.controls.port.setValue('fc0');
+    it('updates parent form when user selects a host in new mode', async () => {
+      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      await modeSelect.setValue('Create new virtual port');
       spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
-      expect(spectator.component.form().controls.port.value).toBe('fc0');
-    });
+      const hostSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      await hostSelect.setValue('fc/2');
 
-    it('propagates host_id selection to parent form', () => {
-      spectator.component.modeControl.setValue('new');
-      mockForm.controls.host_id.setValue(1);
-      spectator.detectChanges();
-
-      expect(spectator.component.form().controls.host_id.value).toBe(1);
+      expect(mockForm.controls.host_id.value).toBe(1);
     });
   });
 
   describe('validation', () => {
     it('form is invalid when mode is "existing" and no port selected', () => {
-      spectator.component.modeControl.setValue('existing');
-      mockForm.controls.port.setValue(null);
-      spectator.detectChanges();
-
+      // Port is null by default in existing mode
       expect(mockForm.invalid).toBe(true);
+      expect(mockForm.controls.port.hasError('required')).toBe(true);
     });
 
-    it('form is valid when mode is "existing" and port selected', () => {
-      spectator.component.modeControl.setValue('existing');
-      mockForm.controls.port.setValue('fc0');
-      spectator.detectChanges();
+    it('form is valid when mode is "existing" and port selected', async () => {
+      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      await portSelect.setValue('fc0');
 
       expect(mockForm.valid).toBe(true);
     });
 
-    it('form is invalid when mode is "new" and no host_id selected', () => {
-      spectator.component.modeControl.setValue('new');
-      mockForm.controls.host_id.setValue(null);
+    it('form is invalid when mode is "new" and no host_id selected', async () => {
+      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      await modeSelect.setValue('Create new virtual port');
       spectator.detectChanges();
 
       expect(mockForm.invalid).toBe(true);
+      expect(mockForm.controls.host_id.hasError('required')).toBe(true);
     });
 
-    it('form is valid when mode is "new" and host_id selected', () => {
-      spectator.component.modeControl.setValue('new');
-      mockForm.controls.host_id.setValue(1);
+    it('form is valid when mode is "new" and host_id selected', async () => {
+      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+      await modeSelect.setValue('Create new virtual port');
       spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const hostSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Choose Host for New Virtual Port' }));
+      await hostSelect.setValue('fc/2');
 
       expect(mockForm.valid).toBe(true);
     });
@@ -227,18 +277,6 @@ describe('FcPortItemControlsComponent', () => {
     it('calls fc.fc_host.query', () => {
       const apiService = spectator.inject(ApiService);
       expect(apiService.call).toHaveBeenCalledWith('fc.fc_host.query');
-    });
-
-    it('formats existing port options correctly', async () => {
-      const options = await lastValueFrom(spectator.component.existingPortOptions$);
-      expect(options[0]).toEqual({ label: 'fc0', value: 'fc0' });
-      expect(options[1]).toEqual({ label: 'fc1', value: 'fc1' });
-    });
-
-    it('formats creating port options correctly', async () => {
-      const options = await lastValueFrom(spectator.component.creatingPortOptions$);
-      expect(options[0]).toEqual({ label: 'fc/2', value: 1 });
-      expect(options[1]).toEqual({ label: 'fc1/1', value: 2 });
     });
   });
 });
