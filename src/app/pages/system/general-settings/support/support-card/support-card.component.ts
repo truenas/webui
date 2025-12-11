@@ -97,7 +97,6 @@ export class SupportCardComponent implements OnInit {
   links = [helptext.docHub, helptext.forums, helptext.licensing];
   ticketText = helptext.ticket;
   proactiveText = helptext.proactive.title;
-  proactiveSupportTooltip = this.translate.instant('Requires Silver or Gold support contract');
   isProactiveSupportAvailable = signal(false);
 
   protected readonly isProductionControl = new FormControl(false, { nonNullable: true });

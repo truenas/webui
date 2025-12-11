@@ -83,8 +83,9 @@
                   mat-menu-item
                   ixTest="proactive-support"
                   [disabled]="!isProactiveSupportAvailable()"
-                  [matTooltip]="!isProactiveSupportAvailable() ? proactiveSupportTooltip : ''"
-                  [attr.aria-label]="!isProactiveSupportAvailable() ? proactiveSupportTooltip : ''"
+                  [attr.aria-disabled]="!isProactiveSupportAvailable()"
+                  [matTooltip]="!isProactiveSupportAvailable() ? ('Requires Silver or Gold support contract' | translate) : ''"
+                  [attr.aria-label]="!isProactiveSupportAvailable() ? ('Requires Silver or Gold support contract' | translate) : ''"
                   (click)="openProactive()"
                 >
                   <span>{{ proactiveText | translate }}</span>
