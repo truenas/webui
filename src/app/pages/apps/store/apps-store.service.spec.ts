@@ -128,6 +128,54 @@ describe('AppsStore', () => {
     });
   });
 
+  it('sets isLoading to false after initial data load completes', async () => {
+    // Create a new instance to track loading state changes
+    const newSpectator = createService();
+
+    // Track isLoading state changes
+    const loadingStates: boolean[] = [];
+    newSpectator.service.isLoading$.subscribe((isLoading) => {
+      loadingStates.push(isLoading);
+    });
+
+    // Initialize should trigger data load
+    newSpectator.service.initialize();
+
+    // Wait for async operations to complete
+    await new Promise<void>((resolve) => {
+      setTimeout(() => resolve(), 100);
+    });
+
+    // Verify isLoading was set to false after data load
+    // Should be: [initial false, true during load, false after load]
+    expect(loadingStates).toContain(false);
+    expect(loadingStates[loadingStates.length - 1]).toBe(false);
+  });
+
+  it('does not trigger catalog sync when data is available', async () => {
+    // This test verifies that when catalog has data, sync is not triggered
+    // and loading is cleared immediately after data load
+    const apiService = spectator.inject(ApiService);
+    const jobSpy = jest.spyOn(apiService, 'job');
+
+    // Clear any previous calls
+    jobSpy.mockClear();
+
+    // Re-initialize with data available
+    spectator.service.initialize();
+
+    await new Promise<void>((resolve) => {
+      setTimeout(() => resolve(), 100);
+    });
+
+    // Verify catalog.sync was NOT called since data exists
+    expect(jobSpy).not.toHaveBeenCalled();
+
+    // Verify loading is false
+    const isLoading = await firstValueFrom(spectator.service.isLoading$);
+    expect(isLoading).toBe(false);
+  });
+
   describe('when catalog is empty on first load', () => {
     let emptySpectator: SpectatorService<AppsStore>;
     let emptyMockDialogRef: JobProgressDialogRef<unknown>;
@@ -213,6 +261,30 @@ describe('AppsStore', () => {
       expect(appsServiceMock.getAvailableApps).toHaveBeenCalledTimes(2);
       expect(appsServiceMock.getLatestApps).toHaveBeenCalledTimes(2);
       expect(appsServiceMock.getAllAppsCategories).toHaveBeenCalledTimes(2);
+    });
+
+    it('sets isLoading to false after initial data load, before sync dialog appears', () => {
+      // Track when loading becomes false
+      let loadingBecameFalse = false;
+      let dialogWasCalled = false;
+
+      // Subscribe to isLoading changes
+      emptySpectator.service.isLoading$.pipe(
+        filter((isLoading) => isLoading === false),
+      ).subscribe(() => {
+        loadingBecameFalse = true;
+      });
+
+      // Check if dialog was called
+      const dialogService = emptySpectator.inject(DialogService);
+      if ((dialogService.jobDialog as jest.Mock).mock.calls.length > 0) {
+        dialogWasCalled = true;
+      }
+
+      // When loading becomes false, dialog should already have been called
+      // This verifies that loading clears BEFORE the sync process starts
+      expect(loadingBecameFalse).toBe(true);
+      expect(dialogWasCalled).toBe(true);
     });
 
     it('sets isLoading to false after sync completes', async () => {

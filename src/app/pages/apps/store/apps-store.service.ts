@@ -89,6 +89,10 @@ export class AppsStore extends ComponentStore<AppsState> {
         });
       }),
       switchMap(() => this.loadCatalogData()),
+      tap(() => {
+        // Always set loading to false after initial data load completes
+        this.setLoadingState(false);
+      }),
       switchMap(() => this.syncCatalogIfEmpty()),
       catchError((error: unknown) => {
         this.handleError(error);
@@ -106,19 +110,17 @@ export class AppsStore extends ComponentStore<AppsState> {
 
     // Check if already syncing to prevent race condition
     if (state.isSyncingCatalog) {
-      this.setLoadingState(false);
       return of(null);
     }
 
     const catalogIsEmpty = state.availableApps.length === 0 && state.categories.length === 0;
 
     if (!catalogIsEmpty) {
-      this.setLoadingState(false);
       return of(null);
     }
 
-    // Set flag in state to prevent concurrent sync operations
-    this.patchState({ isSyncingCatalog: true });
+    // Set flag in state to prevent concurrent sync operations and turn on loading indicator
+    this.patchState({ isSyncingCatalog: true, isLoading: true });
 
     return this.dialogService.jobDialog(
       this.api.job('catalog.sync'),
@@ -128,8 +130,16 @@ export class AppsStore extends ComponentStore<AppsState> {
         canMinimize: true,
       },
     ).afterClosed().pipe(
-      switchMap(() => this.reloadCatalogAfterSync()),
+      switchMap((job) => {
+        // If job completed successfully, reload catalog data
+        if (job) {
+          return this.reloadCatalogAfterSync();
+        }
+        // If job was cancelled, just return
+        return of(null);
+      }),
       tap(() => {
+        // Always clear loading and sync flags after everything completes
         this.setLoadingState(false);
         this.patchState({ isSyncingCatalog: false });
       }),
@@ -141,16 +151,7 @@ export class AppsStore extends ComponentStore<AppsState> {
    * Reloads catalog data after a successful sync operation.
    */
   private reloadCatalogAfterSync(): Observable<unknown> {
-    return this.loadCatalogData().pipe(
-      catchError(() => {
-        this.setLoadingState(false);
-        this.patchState({ isSyncingCatalog: false });
-        this.errorHandler.showErrorModal(
-          new Error(this.translate.instant('Catalog sync completed, but failed to load catalog data. Please refresh the page.')),
-        );
-        return EMPTY;
-      }),
-    );
+    return this.loadCatalogData();
   }
 
   /**

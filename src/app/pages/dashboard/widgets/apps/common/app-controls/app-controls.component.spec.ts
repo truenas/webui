@@ -4,14 +4,16 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of, Observable } from 'rxjs';
+import { mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { AppControlsComponent } from './app-controls.component';
 
@@ -43,13 +45,18 @@ describe('AppControlsComponent', () => {
         openWindow: jest.fn(),
       }),
       mockProvider(ApplicationsService, {
-        restartApplication: jest.fn(() => of(true)),
+        restartApplication: jest.fn(() => mockJob('app.redeploy')),
         getInstalledAppsStatusUpdates: jest.fn(() => {
           return of() as Observable<ApiEvent<Job<void, AppStartQueryParams>>>;
         }),
       }),
-      mockProvider(SnackbarService, {
-        success: jest.fn(),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
+      }),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$),
       }),
     ],
   });
@@ -103,13 +110,19 @@ describe('AppControlsComponent', () => {
 
   it('checks restart app', async () => {
     const restartSpy = jest.spyOn(spectator.inject(ApplicationsService), 'restartApplication');
-    const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');
+    const dialogSpy = jest.spyOn(spectator.inject(DialogService), 'jobDialog');
 
     const restartButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-restart' }));
     await restartButton.click();
 
-    expect(snackbarSpy).toHaveBeenCalledWith('App is restarting');
     expect(restartSpy).toHaveBeenCalledWith(app.name);
+    expect(dialogSpy).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        title: 'Restarting App',
+        canMinimize: true,
+      }),
+    );
   });
 
   it('checks redirect to installed apps page', async () => {
