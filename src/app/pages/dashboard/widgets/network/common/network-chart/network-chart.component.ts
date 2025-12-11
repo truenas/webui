@@ -58,13 +58,13 @@ export class NetworkChartComponent {
                 label += ': ';
               }
               if (tooltipItem.parsed.y === 0) {
-                label += '0';
+                label += '0/s';
               } else {
                 // Use += to append to existing label (e.g., "Upload: " + "1 Mb" = "Upload: 1 Mb")
                 // Do NOT use = as it would discard the dataset label prefix
-                label += buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), unit, base);
+                label += buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), unit, base) + '/s';
               }
-              return label + '/s';
+              return label;
             },
           },
         },
