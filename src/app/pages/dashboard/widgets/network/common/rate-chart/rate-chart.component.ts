@@ -25,52 +25,36 @@ export class RateChartComponent {
   aspectRatio = input<number>(fullSizeNetworkWidgetAspectRatio);
   showLegend = input<boolean>(true);
   /**
-   * Unit for displaying data rates.
-   * - 'b' for bits (network throughput: Mb/s, Gb/s)
-   * - 'B' for bytes (disk I/O: MiB/s, GiB/s)
+   * Unit for displaying data.
+   * - 'b' for bits: Shows as rates (Mb/s, Gb/s) for network throughput
+   * - 'B' for bytes: Shows as absolute values (MiB, GiB) for disk I/O
    */
   unit = input<'b' | 'B'>('b');
 
   /**
-   * Whether to display values as rates (with /s suffix).
-   * - true: Shows rates like "1 Mb/s" or "2 MiB/s" (for time-series charts)
-   * - false: Shows absolute values like "1 Mb" or "2 MiB"
+   * Formats a value based on unit type.
+   * - For bits ('b'): Uses NetworkSpeedPipe for network speed (e.g., "1 Mb/s")
+   * - For bytes ('B'): Uses FileSizePipe for disk I/O (e.g., "1 MiB")
    */
-  showRate = input<boolean>(true);
-
-  /**
-   * Formats a value based on unit type and rate display setting.
-   * - For bits with rate: Uses NetworkSpeedPipe ("{bits}/s" translation)
-   * - For bits without rate: Uses FileSizePipe with base 10
-   * - For bytes with rate: Uses FileSizePipe with "{size}/s" translation
-   * - For bytes without rate: Uses FileSizePipe
-   */
-  private formatValue(value: number, unit: 'b' | 'B', asRate: boolean): string {
+  private formatValue(value: number, unit: 'b' | 'B'): string {
     if (value === 0) {
-      return asRate ? '0/s' : '0';
+      return unit === 'b' ? '0/s' : '0';
     }
     const absValue = Math.abs(value);
 
-    if (unit === 'b' && asRate) {
-      // Network speed: uses NetworkSpeedPipe which has built-in translation
+    if (unit === 'b') {
+      // Network speed in bits per second
       return this.networkSpeedPipe.transform(absValue);
     }
 
-    const formatted = this.fileSizePipe.transform(absValue);
-
-    if (asRate) {
-      // Use translation pattern like NetworkSpeedPipe does
-      return this.translate.instant('{size}/s', { size: formatted });
-    }
-
-    return formatted;
+    // Disk I/O in bytes
+    return this.fileSizePipe.transform(absValue);
   }
 
   protected options = computed<ChartOptions<'line'>>(() => {
     const aspectRatio = this.aspectRatio();
     const showLegend = this.showLegend();
     const unit = this.unit();
-    const asRate = this.showRate();
 
     return {
       aspectRatio,
@@ -98,7 +82,7 @@ export class RateChartComponent {
               if (label) {
                 label += ': ';
               }
-              label += this.formatValue(Number(tooltipItem.parsed.y), unit, asRate);
+              label += this.formatValue(Number(tooltipItem.parsed.y), unit);
               return label;
             },
           },
@@ -124,7 +108,7 @@ export class RateChartComponent {
           ticks: {
             maxTicksLimit: 8,
             callback: (value) => {
-              return this.formatValue(Number(value), unit, asRate);
+              return this.formatValue(Number(value), unit);
             },
           },
         },

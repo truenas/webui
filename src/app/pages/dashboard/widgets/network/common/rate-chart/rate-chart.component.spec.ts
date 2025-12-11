@@ -104,7 +104,7 @@ describe('RateChartComponent', () => {
     expect(tooltipCallback(mockTooltipItem)).toBe('Upload: 1 Mb/s');
   });
 
-  it('formats disk I/O with binary base (base 2) for bytes', () => {
+  it('formats disk I/O with binary base (base 2) for bytes without rate suffix', () => {
     spectator.setInput('data', { datasets: [], labels: [] });
     spectator.setInput('unit', 'B');
     spectator.detectChanges();
@@ -113,9 +113,9 @@ describe('RateChartComponent', () => {
     const options = chart.options() as ChartOptions<'line'>;
 
     // Test Y-axis callback
-    // 1,048,576 bytes = 1 MiB (binary, base 2)
+    // 1,048,576 bytes = 1 MiB (binary, base 2) without /s suffix
     const yAxisCallback = options.scales!.y!.ticks!.callback as (value: number) => string | number;
-    expect(yAxisCallback.call({}, 1048576)).toBe('1 MiB/s');
+    expect(yAxisCallback.call({}, 1048576)).toBe('1 MiB');
 
     // Test tooltip callback
     const tooltipCallback = options.plugins!.tooltip!.callbacks!.label as (item: TooltipItem<'line'>) => string;
@@ -123,10 +123,10 @@ describe('RateChartComponent', () => {
       parsed: { y: 1048576 },
       dataset: { label: 'Read' },
     } as TooltipItem<'line'>;
-    expect(tooltipCallback(mockTooltipItem)).toBe('Read: 1 MiB/s');
+    expect(tooltipCallback(mockTooltipItem)).toBe('Read: 1 MiB');
   });
 
-  it('handles zero values correctly in both units', () => {
+  it('handles zero values correctly with rate suffix for bits', () => {
     spectator.setInput('data', { datasets: [], labels: [] });
     spectator.detectChanges();
 
@@ -142,5 +142,24 @@ describe('RateChartComponent', () => {
       dataset: { label: 'Test' },
     } as TooltipItem<'line'>;
     expect(tooltipCallback(mockTooltipItem)).toBe('Test: 0/s');
+  });
+
+  it('handles zero values correctly without rate suffix for bytes', () => {
+    spectator.setInput('data', { datasets: [], labels: [] });
+    spectator.setInput('unit', 'B');
+    spectator.detectChanges();
+
+    const chart = spectator.query(ViewChartAreaMockComponent)!;
+    const options = chart.options() as ChartOptions<'line'>;
+
+    const yAxisCallback = options.scales!.y!.ticks!.callback as (value: number) => string | number;
+    expect(yAxisCallback.call({}, 0)).toBe('0');
+
+    const tooltipCallback = options.plugins!.tooltip!.callbacks!.label as (item: TooltipItem<'line'>) => string;
+    const mockTooltipItem = {
+      parsed: { y: 0 },
+      dataset: { label: 'Test' },
+    } as TooltipItem<'line'>;
+    expect(tooltipCallback(mockTooltipItem)).toBe('Test: 0');
   });
 });
