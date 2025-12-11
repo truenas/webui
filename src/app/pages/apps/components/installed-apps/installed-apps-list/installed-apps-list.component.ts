@@ -288,7 +288,8 @@ export class InstalledAppsListComponent implements OnInit {
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe((job: Job<void, AppStartQueryParams>) => {
+      .subscribe((job: Job<void, AppStartQueryParams> | undefined) => {
+        // Job will be undefined if the user minimizes the dialog before completion
         if (job) {
           this.appJobs.set(name, job);
           this.setDatasourceWithSort(this.sortingInfo);
@@ -307,7 +308,8 @@ export class InstalledAppsListComponent implements OnInit {
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe((job: Job<void, AppStartQueryParams>) => {
+      .subscribe((job: Job<void, AppStartQueryParams> | undefined) => {
+        // Job will be undefined if the user minimizes the dialog before completion
         if (job) {
           this.appJobs.set(name, job);
           this.setDatasourceWithSort(this.sortingInfo);
@@ -326,7 +328,8 @@ export class InstalledAppsListComponent implements OnInit {
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe((job: Job<void, AppStartQueryParams>) => {
+      .subscribe((job: Job<void, AppStartQueryParams> | undefined) => {
+        // Job will be undefined if the user minimizes the dialog before completion
         if (job) {
           this.appJobs.set(name, job);
           this.setDatasourceWithSort(this.sortingInfo);
