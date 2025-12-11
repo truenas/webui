@@ -289,7 +289,10 @@ export class InstalledAppsListComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe((job: Job<void, AppStartQueryParams> | undefined) => {
-        // Job will be undefined if the user minimizes the dialog before completion
+        // Job will be undefined if the user minimizes the dialog before completion.
+        // When minimized, we intentionally don't track the job here because
+        // listenForStatusUpdates() will pick it up via WebSocket events and add it to appJobs.
+        // This ensures the UI stays in sync even for minimized jobs.
         if (job) {
           this.appJobs.set(name, job);
           this.setDatasourceWithSort(this.sortingInfo);
@@ -309,7 +312,10 @@ export class InstalledAppsListComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe((job: Job<void, AppStartQueryParams> | undefined) => {
-        // Job will be undefined if the user minimizes the dialog before completion
+        // Job will be undefined if the user minimizes the dialog before completion.
+        // When minimized, we intentionally don't track the job here because
+        // listenForStatusUpdates() will pick it up via WebSocket events and add it to appJobs.
+        // This ensures the UI stays in sync even for minimized jobs.
         if (job) {
           this.appJobs.set(name, job);
           this.setDatasourceWithSort(this.sortingInfo);
@@ -329,7 +335,10 @@ export class InstalledAppsListComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe((job: Job<void, AppStartQueryParams> | undefined) => {
-        // Job will be undefined if the user minimizes the dialog before completion
+        // Job will be undefined if the user minimizes the dialog before completion.
+        // When minimized, we intentionally don't track the job here because
+        // listenForStatusUpdates() will pick it up via WebSocket events and add it to appJobs.
+        // This ensures the UI stays in sync even for minimized jobs.
         if (job) {
           this.appJobs.set(name, job);
           this.setDatasourceWithSort(this.sortingInfo);

@@ -140,6 +140,9 @@ describe('AppsStore', () => {
     // Re-initialize with data available
     spectator.service.initialize();
 
+    // Wait for the async observable chain to complete.
+    // We use setTimeout instead of TestScheduler because the service uses real observables
+    // from ApplicationsService, not marble testing observables.
     await new Promise<void>((resolve) => {
       setTimeout(() => resolve(), 100);
     });
@@ -328,6 +331,92 @@ describe('AppsStore', () => {
       // Verify error modal was shown (individual service error is caught and handled)
       expect(emptySpectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(
         new Error('Reload failed'),
+      );
+
+      // Verify loading state is set to false
+      const isLoading = await firstValueFrom(
+        emptySpectator.service.isLoading$.pipe(
+          filter((loading) => loading === false),
+        ),
+      );
+      expect(isLoading).toBe(false);
+    });
+
+    it('handles getLatestApps failure during reload after sync', async () => {
+      // Reset mocks and setup for this test
+      jest.clearAllMocks();
+
+      // First load returns empty (triggers sync)
+      jest.spyOn(appsServiceMock, 'getAvailableApps')
+        .mockReturnValueOnce(of([]) as Observable<AvailableApp[]>)
+        .mockReturnValueOnce(of(availableApps) as Observable<AvailableApp[]>);
+      jest.spyOn(appsServiceMock, 'getLatestApps')
+        .mockReturnValueOnce(of([]) as Observable<AvailableApp[]>)
+        .mockReturnValueOnce(throwError(() => new Error('getLatestApps failed')));
+      jest.spyOn(appsServiceMock, 'getAllAppsCategories')
+        .mockReturnValueOnce(of([]) as Observable<string[]>)
+        .mockReturnValueOnce(of(['storage', 'media']) as Observable<string[]>);
+
+      // Setup successful sync dialog
+      const successMockDialogRef = {
+        afterClosed: jest.fn(() => of(true)),
+        getSubscriptionLimiterInstance: jest.fn(),
+      } as unknown as JobProgressDialogRef<unknown>;
+      jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(successMockDialogRef);
+
+      emptySpectator.service.initialize();
+
+      // Wait for error handling to complete
+      await new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), 100);
+      });
+
+      // Verify error modal was shown (individual service error is caught and handled)
+      expect(emptySpectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(
+        new Error('getLatestApps failed'),
+      );
+
+      // Verify loading state is set to false
+      const isLoading = await firstValueFrom(
+        emptySpectator.service.isLoading$.pipe(
+          filter((loading) => loading === false),
+        ),
+      );
+      expect(isLoading).toBe(false);
+    });
+
+    it('handles getAllAppsCategories failure during reload after sync', async () => {
+      // Reset mocks and setup for this test
+      jest.clearAllMocks();
+
+      // First load returns empty (triggers sync)
+      jest.spyOn(appsServiceMock, 'getAvailableApps')
+        .mockReturnValueOnce(of([]) as Observable<AvailableApp[]>)
+        .mockReturnValueOnce(of(availableApps) as Observable<AvailableApp[]>);
+      jest.spyOn(appsServiceMock, 'getLatestApps')
+        .mockReturnValueOnce(of([]) as Observable<AvailableApp[]>)
+        .mockReturnValueOnce(of([installedAndRecommendedApp]) as Observable<AvailableApp[]>);
+      jest.spyOn(appsServiceMock, 'getAllAppsCategories')
+        .mockReturnValueOnce(of([]) as Observable<string[]>)
+        .mockReturnValueOnce(throwError(() => new Error('getAllAppsCategories failed')));
+
+      // Setup successful sync dialog
+      const successMockDialogRef = {
+        afterClosed: jest.fn(() => of(true)),
+        getSubscriptionLimiterInstance: jest.fn(),
+      } as unknown as JobProgressDialogRef<unknown>;
+      jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(successMockDialogRef);
+
+      emptySpectator.service.initialize();
+
+      // Wait for error handling to complete
+      await new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), 100);
+      });
+
+      // Verify error modal was shown (individual service error is caught and handled)
+      expect(emptySpectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(
+        new Error('getAllAppsCategories failed'),
       );
 
       // Verify loading state is set to false
