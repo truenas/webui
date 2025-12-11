@@ -26,11 +26,11 @@ LDAP schema attributes that assign explicit UID and GID numbers to accounts.'),
     schemaModeTooltip: T('The schema mode the IDMAP backend uses to query Active Directory for user and group information. The RFC2307 \
 schema applies to Windows Server 2003 R2 and newer. The Services for Unix (SFU) schema applies to versions before \
 Windows Server 2003 R2.'),
-    unixPrimaryGroupTooltip: T('Defines if the user\'s primary group is fetched from SFU attributes or the Active Directory primary group. \
-If True, the TrueNAS server uses the gidNumber LDAP attribute. If False, it uses the primaryGroupID LDAP attribute.'),
-    unixNssTooltip: T('If True, the login shell and home directory are retrieved from LDAP attributes. If False, or if the Active \
-Directory LDAP entry lacks SFU attributes, the home directory defaults to /var/empty.'),
-    readonlyTooltip: T('If readonly is set to True then TrueNAS will not attempt to write new IDMAP entries.'),
+    unixPrimaryGroupTooltip: T('Defines if the user\'s primary group is fetched from Unix attributes (Services for Unix) or the Active Directory primary group. \
+If enabled, the TrueNAS server uses the gidNumber LDAP attribute. If disabled, it uses the primaryGroupID LDAP attribute.'),
+    unixNssTooltip: T('If enabled, the login shell and home directory are retrieved from LDAP attributes (Unix attributes in Active Directory). \
+If disabled, or if the Active Directory LDAP entry lacks Unix attributes, the home directory defaults to /var/empty.'),
+    readonlyTooltip: T('If enabled, TrueNAS will not attempt to write new IDMAP entries.'),
     ldapBasednTooltip: T('Directory base suffix to use for mapping UIDs and GIDs to SIDs.'),
     ldapUserdnTooltip: T('Defines the user DN to be used for authentication to the LDAP server.'),
     ldapUrlTooltip: T('LDAP server to use for the IDMAP entries.'),
@@ -39,7 +39,7 @@ Directory LDAP entry lacks SFU attributes, the home directory defaults to /var/e
     bindPathUserTooltip: T('The search base that contains user objects in the LDAP server.'),
     bindPathGroupTooltip: T('The search base that contains group objects in the LDAP server.'),
     userCnTooltip: T('If set, query the CN attribute instead of the UID attribute for the user name in LDAP.'),
-    sssdCompatTooltip: T('Generate an IDMAP low range using the algorithm from SSSD. This works if the domain uses only a single SSSD \
-idmap slice, and is sufficient if the domain uses only a single SSSD IDMAP slice.'),
+    sssdCompatTooltip: T('Generate an IDMAP low range using the algorithm from SSSD. Use this option if the domain uses only a single SSSD \
+IDMAP slice.'),
   },
 };

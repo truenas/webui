@@ -85,7 +85,7 @@
     <ix-fieldset [title]="'Attribute Maps' | translate">
       <ix-checkbox
         formControlName="use_standard_attribute_maps"
-        [label]="'Use Standard Attribute Maps'"
+        [label]="'Use Standard Attribute Maps' | translate"
         [tooltip]="helptext.useStandardAttributeMapsTooltip | translate"
       ></ix-checkbox>
       @if (!(form.controls.use_standard_attribute_maps.value)) {
@@ -175,7 +175,7 @@
             [tooltip]="helptext.shadowExpireTooltip | translate"
           ></ix-input>
         </ix-fieldset>
-        <ix-fieldset 
+        <ix-fieldset
           [title]="'LDAP Group Attributes' | translate"
           [formGroup]="form.controls.attribute_maps.controls.group"
         >
