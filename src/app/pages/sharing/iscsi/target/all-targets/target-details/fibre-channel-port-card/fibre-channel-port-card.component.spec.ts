@@ -26,18 +26,19 @@ describe('FibreChannelPortCardComponent', () => {
     spectator = createComponent({
       props: {
         isLoading: false,
-        port: {
+        ports: [{
+          id: 1,
           port: 'fc1/5',
           wwpn: '10:00:00:00:c9:20:00:00',
           wwpn_b: '10:00:00:00:c9:20:00:01',
-        } as unknown as FibreChannelPort,
+        } as FibreChannelPort],
       },
     });
   });
 
-  it('renders Fibre Channel Port title', () => {
+  it('renders Fibre Channel Ports title', () => {
     const title = spectator.query('h3[mat-card-title]');
-    expect(title).toHaveText('Fibre Channel Port');
+    expect(title).toHaveText('Fibre Channel Ports');
   });
 
   it('displays port details correctly', () => {
@@ -48,11 +49,35 @@ describe('FibreChannelPortCardComponent', () => {
     expect(content[2]).toHaveText('Controller B WWPN: 10:00:00:00:c9:20:00:01');
   });
 
-  it('displays "No associated Fibre Channel port" message', () => {
-    spectator.setInput('port', null);
+  it('displays "No associated Fibre Channel ports" message', () => {
+    spectator.setInput('ports', []);
     spectator.setInput('isLoading', false);
     const content = spectator.query('mat-card-content');
-    expect(content).toHaveText('No associated Fibre Channel port');
+    expect(content).toHaveText('No associated Fibre Channel ports');
+  });
+
+  it('displays multiple ports correctly', () => {
+    spectator.setInput('ports', [
+      {
+        id: 1,
+        port: 'fc0',
+        wwpn: '10:00:00:00:c9:20:00:00',
+        wwpn_b: '10:00:00:00:c9:20:00:01',
+      } as FibreChannelPort,
+      {
+        id: 2,
+        port: 'fc1',
+        wwpn: '10:00:00:00:c9:30:00:00',
+        wwpn_b: '10:00:00:00:c9:30:00:01',
+      } as FibreChannelPort,
+    ]);
+
+    const portGroups = spectator.queryAll('.port-group');
+    expect(portGroups).toHaveLength(2);
+
+    const allParagraphs = spectator.queryAll('mat-card-content p');
+    expect(allParagraphs[0]).toHaveText('Port: fc0');
+    expect(allParagraphs[3]).toHaveText('Port: fc1');
   });
 });
 
@@ -77,10 +102,11 @@ describe('FibreChannelPortCardComponent not HA', () => {
     spectator = createComponent({
       props: {
         isLoading: false,
-        port: {
+        ports: [{
+          id: 1,
           port: 'fc1/5',
           wwpn: '10:00:00:00:c9:20:00:00',
-        } as unknown as FibreChannelPort,
+        } as FibreChannelPort],
       },
     });
   });
