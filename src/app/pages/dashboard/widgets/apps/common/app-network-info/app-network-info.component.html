@@ -3,7 +3,7 @@
   <div class="in-out">
     <div
       class="in-out-row"
-      [matTooltip]="'Incoming network traffic in bits per second (received bytes/s)' | translate"
+      [matTooltip]="'Incoming network traffic rate in bits per second' | translate"
     >
       <span>{{ 'In' | translate }}:</span>
       <span *ixWithLoadingState="stats() as stats">
@@ -12,7 +12,7 @@
     </div>
     <div
       class="in-out-row"
-      [matTooltip]="'Outgoing network traffic in bits per second (transmitted bytes/s)' | translate"
+      [matTooltip]="'Outgoing network traffic rate in bits per second' | translate"
     >
       <span>{{ 'Out' | translate }}:</span>
       <span *ixWithLoadingState="stats() as stats">
@@ -43,6 +43,7 @@
       [showLegend]="false"
       [data]="networkChartData()"
       [aspectRatio]="aspectRatio()"
+      [unit]="'b'"
     ></ix-rate-chart>
   }
 </div>
