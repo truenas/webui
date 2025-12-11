@@ -279,4 +279,35 @@ describe('FcPortItemControlsComponent', () => {
       expect(apiService.call).toHaveBeenCalledWith('fc.fc_host.query');
     });
   });
+
+  describe('validator management', () => {
+    it('does not accumulate validators on repeated mode switches', async () => {
+      const modeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Port Mode' }));
+
+      // Switch modes multiple times
+      await modeSelect.setValue('Create new virtual port');
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      await modeSelect.setValue('Use existing port');
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      await modeSelect.setValue('Create new virtual port');
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      await modeSelect.setValue('Use existing port');
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify form validity works correctly after multiple switches
+      expect(mockForm.invalid).toBe(true); // port is required but null
+
+      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      await portSelect.setValue('fc0');
+
+      expect(mockForm.valid).toBe(true); // Should be valid with one port selected
+    });
+  });
 });

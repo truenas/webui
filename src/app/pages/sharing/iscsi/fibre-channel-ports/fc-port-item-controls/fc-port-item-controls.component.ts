@@ -74,17 +74,20 @@ export class FcPortItemControlsComponent implements OnInit {
     ).subscribe((mode) => {
       if (mode === 'new') {
         // Creating new virtual port
+        this.form().controls.port.clearValidators();
         this.form().controls.port.disable();
         this.form().controls.port.setValue(null);
+
         this.form().controls.host_id.enable();
-        this.form().controls.host_id.addValidators(Validators.required);
+        this.form().controls.host_id.setValidators([Validators.required]);
       } else {
         // Using existing port
+        this.form().controls.host_id.clearValidators();
         this.form().controls.host_id.disable();
         this.form().controls.host_id.setValue(null);
-        this.form().controls.host_id.removeValidators(Validators.required);
+
         this.form().controls.port.enable();
-        this.form().controls.port.addValidators(Validators.required);
+        this.form().controls.port.setValidators([Validators.required]);
       }
       this.form().controls.port.updateValueAndValidity();
       this.form().controls.host_id.updateValueAndValidity();
