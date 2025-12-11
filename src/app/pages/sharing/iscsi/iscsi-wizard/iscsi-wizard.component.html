@@ -62,6 +62,8 @@
           <ix-protocol-options-wizard-step
             [form]="form.controls.options"
             [isFibreChannelMode]="isFibreChannelMode"
+            [addFcPort]="addFcPort.bind(this)"
+            [deleteFcPort]="deleteFcPort.bind(this)"
           ></ix-protocol-options-wizard-step>
           <div class="step-buttons">
             <button

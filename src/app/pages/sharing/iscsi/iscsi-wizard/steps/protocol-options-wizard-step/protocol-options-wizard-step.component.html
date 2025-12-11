@@ -1,6 +1,22 @@
 <ng-container [formGroup]="form()">
   @if(isFibreChannelMode()) {
-    <ix-fc-ports-controls [form]="form().controls.fcport"></ix-fc-ports-controls>
+    <ix-list
+      formArrayName="fcPorts"
+      [empty]="form().controls.fcPorts.controls.length === 0"
+      [label]="'Fibre Channel Ports' | translate"
+      [formArray]="form().get('fcPorts')"
+      (add)="addFcPort()()"
+    >
+      @for (entry of form().controls.fcPorts.controls; track entry; let i = $index) {
+        <ix-list-item [label]="'Port' | translate" (delete)="deleteFcPort()(i)">
+          <ix-fc-port-item-controls
+            [form]="form().controls.fcPorts.at(i)"
+            [isEdit]="false"
+            [currentPort]="null"
+          ></ix-fc-port-item-controls>
+        </ix-list-item>
+      }
+    </ix-list>
   } @else {
     <ix-select
       formControlName="portal"
