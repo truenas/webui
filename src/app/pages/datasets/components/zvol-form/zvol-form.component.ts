@@ -17,7 +17,7 @@ import {
 } from 'app/enums/dataset.enum';
 import { deduplicationSettingLabels } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { onOffLabels } from 'app/enums/on-off.enum';
+import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -119,6 +119,8 @@ export class ZvolFormComponent implements OnInit {
   protected inheritEncryption = true;
   protected generateKey = true;
   protected minimumRecommendedBlockSize: DatasetRecordSize;
+  private originalReadonlyValue: string;
+  protected volsizeReadonlyWarning: string | null = null;
 
   form = this.formBuilder.group({
     name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
@@ -597,6 +599,12 @@ export class ZvolFormComponent implements OnInit {
       next: (datasets) => {
         const data: ZvolFormData = this.getPayload(this.form.getRawValue());
 
+        const isReadonlyOn = this.form.controls.readonly.value === OnOff.On as string;
+        const hasReadonlyChanged = this.form.controls.readonly.value !== this.originalReadonlyValue;
+        if (isReadonlyOn || hasReadonlyChanged) {
+          delete data.volsize;
+        }
+
         if (data.inherit_encryption) {
           delete data.encryption;
         } else if (data.encryption) {
@@ -623,25 +631,32 @@ export class ZvolFormComponent implements OnInit {
         delete data.encryption_type;
         delete data.algorithm;
 
-        let volblocksizeIntegerValue: number | string = datasets[0].volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
-        volblocksizeIntegerValue = parseInt(volblocksizeIntegerValue, 10);
-        if (volblocksizeIntegerValue === 512) {
-          volblocksizeIntegerValue = 512;
-        } else {
-          volblocksizeIntegerValue = volblocksizeIntegerValue * 1024;
-        }
-        data.volsize = Number(data.volsize);
-        if (data.volsize && data.volsize % volblocksizeIntegerValue !== 0) {
-          data.volsize = data.volsize + (volblocksizeIntegerValue - data.volsize % volblocksizeIntegerValue);
-        }
-        let roundedVolSize = datasets[0].volsize.parsed;
+        let canSubmit = true;
+        if (data.volsize !== undefined) {
+          let volblocksizeIntegerValue: number | string = datasets[0].volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
+          volblocksizeIntegerValue = parseInt(volblocksizeIntegerValue, 10);
+          if (volblocksizeIntegerValue === 512) {
+            volblocksizeIntegerValue = 512;
+          } else {
+            volblocksizeIntegerValue = volblocksizeIntegerValue * 1024;
+          }
+          data.volsize = Number(data.volsize);
+          if (data.volsize && data.volsize % volblocksizeIntegerValue !== 0) {
+            data.volsize = data.volsize + (volblocksizeIntegerValue - data.volsize % volblocksizeIntegerValue);
+          }
+          let roundedVolSize = datasets[0].volsize.parsed;
 
-        if (datasets[0].volsize.parsed % volblocksizeIntegerValue !== 0) {
-          roundedVolSize = datasets[0].volsize.parsed
-          + (volblocksizeIntegerValue - datasets[0].volsize.parsed % volblocksizeIntegerValue);
+          if (datasets[0].volsize.parsed % volblocksizeIntegerValue !== 0) {
+            roundedVolSize = datasets[0].volsize.parsed
+              + (volblocksizeIntegerValue - datasets[0].volsize.parsed % volblocksizeIntegerValue);
+          }
+
+          if (data.volsize && data.volsize < roundedVolSize) {
+            canSubmit = false;
+          }
         }
 
-        if (!data.volsize || data.volsize >= roundedVolSize) {
+        if (canSubmit) {
           this.api.call('pool.dataset.update', [this.parentOrZvolId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
             next: (dataset) => this.handleZvolCreateUpdate(dataset),
             error: (error: unknown) => {
@@ -724,6 +739,30 @@ export class ZvolFormComponent implements OnInit {
       }
     }
     this.form.controls.readonly.setValue(readonlyValue);
+
+    if (!this.isNew) {
+      this.originalReadonlyValue = readonlyValue;
+      this.updateVolsizeStateBasedOnReadonly(readonlyValue);
+
+      this.form.controls.readonly.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+        this.updateVolsizeStateBasedOnReadonly(value);
+      });
+    }
+  }
+
+  private updateVolsizeStateBasedOnReadonly(readonlyValue: string): void {
+    const isReadonlyOn = readonlyValue === OnOff.On as string;
+    const hasReadonlyChanged = readonlyValue !== this.originalReadonlyValue;
+
+    if (isReadonlyOn || hasReadonlyChanged) {
+      this.form.controls.volsize.disable();
+    } else {
+      this.form.controls.volsize.enable();
+    }
+
+    this.volsizeReadonlyWarning = hasReadonlyChanged
+      ? this.translate.instant('Size cannot be changed when readonly is toggled.')
+      : null;
   }
 
   private handleZvolCreateUpdate(dataset: Dataset): void {

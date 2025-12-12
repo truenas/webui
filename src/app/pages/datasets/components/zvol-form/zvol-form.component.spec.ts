@@ -344,4 +344,105 @@ describe('ZvolFormComponent', () => {
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
+
+  describe('readonly and volsize interaction', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: jest.fn(() => ({ isNew: false, parentOrZvolId: 'zvolId' })),
+          }),
+        ],
+      });
+
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+    });
+
+    it('disables volsize field when readonly is ON and not changed', () => {
+      // Simulate component state after loading a zvol with readonly ON
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.On;
+      spectator.component.form.controls.readonly.setValue(OnOff.On);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(true);
+    });
+
+    it('does not show warning when readonly is ON but not toggled', () => {
+      // Simulate component state after loading a zvol with readonly ON
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.On;
+      spectator.component.form.controls.readonly.setValue(OnOff.On);
+      spectator.detectChanges();
+
+      const warning = spectator.query('.volsize-warning');
+      expect(warning).toBeNull();
+    });
+
+    it('enables volsize field when readonly is OFF and not changed', () => {
+      // Simulate component state after loading a zvol with readonly OFF
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.Off;
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(false);
+    });
+
+    it('disables volsize and shows warning when readonly is toggled from OFF to ON', () => {
+      // Simulate component state after loading a zvol with readonly OFF
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.Off;
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      // Toggle readonly to ON
+      spectator.component.form.controls.readonly.setValue(OnOff.On);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(true);
+      const warning = spectator.query('.volsize-warning');
+      expect(warning).toBeTruthy();
+      expect(warning.textContent).toContain('Size cannot be changed when readonly is toggled.');
+    });
+
+    it('re-enables volsize and hides warning when readonly is toggled back to original value', () => {
+      // Simulate component state after loading a zvol with readonly OFF
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.Off;
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      // Toggle readonly to ON
+      spectator.component.form.controls.readonly.setValue(OnOff.On);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(true);
+      expect(spectator.query('.volsize-warning')).toBeTruthy();
+
+      // Toggle back to OFF (original)
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(false);
+      expect(spectator.query('.volsize-warning')).toBeNull();
+    });
+
+    it('does not send volsize in payload when readonly is toggled', async () => {
+      // Simulate component state after loading a zvol with readonly OFF
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.Off;
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      // Toggle readonly to ON
+      spectator.component.form.controls.readonly.setValue(OnOff.On);
+      spectator.detectChanges();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.update');
+
+      expect(updateCall).toBeDefined();
+      expect(updateCall[1][1].volsize).toBeUndefined();
+    });
+  });
 });
