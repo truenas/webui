@@ -64,6 +64,7 @@
             [exportFormat]="exportFormat()"
             [displayFormat]="exportFormatDisplayLabel()"
             [ariaLabel]="'Export audit logs as {format}' | translate:{ format: exportFormatDisplayLabel() }"
+            [customExportParams]="{ services: [serviceControl.value] }"
           ></ix-export-button>
         </div>
       }
