@@ -1,20 +1,30 @@
 <div class="chart-info">
   <h4>{{ 'Block I/O' | translate }}</h4>
   <div class="in-out">
-    <div class="in-out-row">
+    <div
+      class="in-out-row"
+      [matTooltip]="'Total bytes read from disk. Chart shows read rate over time.' | translate"
+    >
       <span>{{ 'Read' | translate }}:</span>
       <span *ixWithLoadingState="stats() as stats">
         {{ stats.blkio.read | ixFileSize }}
       </span>
     </div>
-    <div class="in-out-row">
+    <div
+      class="in-out-row"
+      [matTooltip]="'Total bytes written to disk. Chart shows write rate over time.' | translate"
+    >
       <span>{{ 'Write' | translate }}:</span>
       <span *ixWithLoadingState="stats() as stats">
         {{ stats.blkio.write | ixFileSize }}
       </span>
     </div>
   </div>
-  <small>{{ '1m Average' | translate }}</small>
+  <small
+    [matTooltip]="'Average disk I/O rate calculated over the last minute' | translate"
+  >
+    {{ '1m Average' | translate }}
+  </small>
 </div>
 <div class="chart-graph">
   @if (isLoading()) {
@@ -29,11 +39,11 @@
       }"
     ></ngx-skeleton-loader>
   } @else {
-    <ix-network-chart
+    <ix-rate-chart
       [showLegend]="false"
       [data]="diskChartData()"
       [aspectRatio]="aspectRatio()"
       [unit]="'B'"
-    ></ix-network-chart>
+    ></ix-rate-chart>
   }
 </div>
