@@ -97,7 +97,7 @@ describe('VmWizardComponent', () => {
         }),
         mockCall('vm.random_mac', '00:00:00:00:00:01'),
         mockCall('vm.device.nic_attach_choices', {
-          eno2: 'eno2',
+          BRIDGE: ['eno2'],
         }),
         mockCall('system.advanced.update_gpu_pci_ids'),
         mockCall('system.advanced.get_gpu_pci_choices', {
