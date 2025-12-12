@@ -279,43 +279,71 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   start(name: string): void {
-    this.appService.startApplication(name)
+    this.dialogService.jobDialog(
+      this.appService.startApplication(name),
+      { title: this.translate.instant('Starting App'), description: ignoreTranslation(name), canMinimize: true },
+    )
+      .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe((job: Job<void, AppStartQueryParams>) => {
-        this.appJobs.set(name, job);
-        this.setDatasourceWithSort(this.sortingInfo);
-        this.cdr.markForCheck();
+      .subscribe((job: Job<void, AppStartQueryParams> | undefined) => {
+        // Job will be undefined if the user minimizes the dialog before completion.
+        // When minimized, we intentionally don't track the job here because
+        // listenForStatusUpdates() will pick it up via WebSocket events and add it to appJobs.
+        // This ensures the UI stays in sync even for minimized jobs.
+        if (job) {
+          this.appJobs.set(name, job);
+          this.setDatasourceWithSort(this.sortingInfo);
+          this.cdr.markForCheck();
+        }
       });
   }
 
   stop(name: string): void {
-    this.appService.stopApplication(name)
+    this.dialogService.jobDialog(
+      this.appService.stopApplication(name),
+      { title: this.translate.instant('Stopping App'), description: ignoreTranslation(name), canMinimize: true },
+    )
+      .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe({
-        next: (job: Job<void, AppStartQueryParams>) => {
+      .subscribe((job: Job<void, AppStartQueryParams> | undefined) => {
+        // Job will be undefined if the user minimizes the dialog before completion.
+        // When minimized, we intentionally don't track the job here because
+        // listenForStatusUpdates() will pick it up via WebSocket events and add it to appJobs.
+        // This ensures the UI stays in sync even for minimized jobs.
+        if (job) {
           this.appJobs.set(name, job);
           this.setDatasourceWithSort(this.sortingInfo);
           this.cdr.markForCheck();
-        },
+        }
       });
   }
 
   restart(name: string): void {
-    this.appService.restartApplication(name)
+    this.dialogService.jobDialog(
+      this.appService.restartApplication(name),
+      { title: this.translate.instant('Restarting App'), description: ignoreTranslation(name), canMinimize: true },
+    )
+      .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe((job: Job<void, AppStartQueryParams>) => {
-        this.appJobs.set(name, job);
-        this.setDatasourceWithSort(this.sortingInfo);
-        this.cdr.markForCheck();
+      .subscribe((job: Job<void, AppStartQueryParams> | undefined) => {
+        // Job will be undefined if the user minimizes the dialog before completion.
+        // When minimized, we intentionally don't track the job here because
+        // listenForStatusUpdates() will pick it up via WebSocket events and add it to appJobs.
+        // This ensures the UI stays in sync even for minimized jobs.
+        if (job) {
+          this.appJobs.set(name, job);
+          this.setDatasourceWithSort(this.sortingInfo);
+          this.cdr.markForCheck();
+        }
       });
   }
 
