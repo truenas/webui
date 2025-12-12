@@ -84,13 +84,29 @@ export class AppNetworkInfoComponent {
 
   constructor() {
     effect(() => {
-      const networkStats = this.stats()?.value?.networks;
-      const incomingTraffic = networkStats?.reduce((sum, stats) => sum + this.bytesToBits(stats.rx_bytes), 0);
-      const outgoingTraffic = networkStats?.reduce((sum, stats) => sum + this.bytesToBits(stats.tx_bytes), 0);
-      if (networkStats && incomingTraffic && outgoingTraffic) {
-        this.cachedNetworkStats.update((cachedStats) => {
-          return [...cachedStats, [incomingTraffic, outgoingTraffic]].slice(-this.numberOfPoints);
-        });
+      const statsValue = this.stats();
+      // Silently ignore errors or loading states
+      if (!statsValue || statsValue.isLoading || statsValue.error) {
+        return;
+      }
+
+      const networkStats = statsValue.value?.networks;
+      if (!networkStats || !Array.isArray(networkStats)) {
+        return;
+      }
+
+      try {
+        const incomingTraffic = networkStats.reduce((sum, stats) => sum + this.bytesToBits(stats.rx_bytes), 0);
+        const outgoingTraffic = networkStats.reduce((sum, stats) => sum + this.bytesToBits(stats.tx_bytes), 0);
+
+        // Only update if values are valid finite numbers
+        if (Number.isFinite(incomingTraffic) && Number.isFinite(outgoingTraffic)) {
+          this.cachedNetworkStats.update((cachedStats) => {
+            return [...cachedStats, [incomingTraffic, outgoingTraffic]].slice(-this.numberOfPoints);
+          });
+        }
+      } catch {
+        // Silently ignore calculation errors
       }
     });
   }

@@ -76,19 +76,33 @@ export class AppDiskInfoComponent {
 
   constructor() {
     effect(() => {
-      const diskStats = this.stats()?.value?.blkio;
-      if (diskStats) {
-        const deltaRead = this.previousStats
-          ? Math.max(diskStats.read - this.previousStats.read, 0)
-          : 0;
-        const deltaWrite = this.previousStats
-          ? Math.max(diskStats.write - this.previousStats.write, 0)
-          : 0;
-        this.cachedDiskStats.update((cachedStats) => {
-          return [...cachedStats, [deltaRead, deltaWrite]].slice(-this.numberOfPoints);
-        });
-        this.previousStats = { read: diskStats.read, write: diskStats.write };
+      const statsValue = this.stats();
+      // Silently ignore errors or loading states
+      if (!statsValue || statsValue.isLoading || statsValue.error) {
+        return;
       }
+
+      const diskStats = statsValue.value?.blkio;
+      if (!diskStats) {
+        return;
+      }
+
+      // Validate values are numbers
+      const currentRead = typeof diskStats.read === 'number' && !Number.isNaN(diskStats.read) ? diskStats.read : 0;
+      const currentWrite = typeof diskStats.write === 'number' && !Number.isNaN(diskStats.write) ? diskStats.write : 0;
+
+      if (this.previousStats) {
+        const deltaRead = Math.max(currentRead - this.previousStats.read, 0);
+        const deltaWrite = Math.max(currentWrite - this.previousStats.write, 0);
+
+        // Only update if deltas are valid numbers
+        if (Number.isFinite(deltaRead) && Number.isFinite(deltaWrite)) {
+          this.cachedDiskStats.update((cachedStats) => {
+            return [...cachedStats, [deltaRead, deltaWrite]].slice(-this.numberOfPoints);
+          });
+        }
+      }
+      this.previousStats = { read: currentRead, write: currentWrite };
     });
   }
 }
