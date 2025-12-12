@@ -761,7 +761,7 @@ export class ZvolFormComponent implements OnInit {
     }
 
     this.volsizeReadonlyWarning = hasReadonlyChanged
-      ? this.translate.instant('Size cannot be changed when readonly is toggled.')
+      ? this.translate.instant(helptextZvol.readonlyVolsizeWarning)
       : null;
   }
 
