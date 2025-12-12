@@ -639,5 +639,51 @@ describe('ZvolFormComponent', () => {
       const warning = spectator.query('.volsize-warning');
       expect(warning).toBeNull();
     });
+
+    it('does not disable volsize when changing from OFF to Inherit (OFF)', () => {
+      // Original value was OFF, inherited value is also OFF
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.Off;
+      (spectator.component as unknown as { inheritedReadonlyValue: string }).inheritedReadonlyValue = OnOff.Off;
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      // Change to inherit - effective value is still OFF
+      spectator.component.form.controls.readonly.setValue(inherit);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(false);
+      expect(spectator.query('.volsize-warning')).toBeNull();
+    });
+
+    it('does not disable volsize when changing from ON to Inherit (ON)', () => {
+      // Original value was ON, inherited value is also ON
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.On;
+      (spectator.component as unknown as { inheritedReadonlyValue: string }).inheritedReadonlyValue = OnOff.On;
+      spectator.component.form.controls.readonly.setValue(OnOff.On);
+      spectator.detectChanges();
+
+      // Change to inherit - effective value is still ON (should remain disabled, no warning)
+      spectator.component.form.controls.readonly.setValue(inherit);
+      spectator.detectChanges();
+
+      // Disabled because effective value is ON, but no warning since it didn't change
+      expect(spectator.component.form.controls.volsize.disabled).toBe(true);
+      expect(spectator.query('.volsize-warning')).toBeNull();
+    });
+
+    it('disables volsize when changing from OFF to Inherit (ON)', () => {
+      // Original value was OFF, but inherited value is ON
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.Off;
+      (spectator.component as unknown as { inheritedReadonlyValue: string }).inheritedReadonlyValue = OnOff.On;
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      // Change to inherit - effective value changes from OFF to ON
+      spectator.component.form.controls.readonly.setValue(inherit);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(true);
+      expect(spectator.query('.volsize-warning')).toBeTruthy();
+    });
   });
 });
