@@ -129,6 +129,66 @@ describe('FibreChannelService', () => {
       expect(result.duplicates).toContain('fc0');
       expect(result.duplicates).toContain('fc1');
     });
+
+    it('returns invalid when mixing host_id and port on same HBA', () => {
+      const hosts = [
+        { id: 1, alias: 'fc0' },
+        { id: 2, alias: 'fc1' },
+      ];
+      const ports: FcPortFormValue[] = [
+        { port: null, host_id: 1 }, // New virtual port on fc0
+        { port: 'fc0/1', host_id: null }, // Existing port on fc0
+      ];
+
+      const result = spectator.service.validatePhysicalHbaUniqueness(ports, hosts);
+
+      expect(result).toEqual({ valid: false, duplicates: ['fc0'] });
+    });
+
+    it('returns invalid when using multiple host_ids for same HBA', () => {
+      const hosts = [
+        { id: 1, alias: 'fc0' },
+        { id: 2, alias: 'fc1' },
+      ];
+      const ports: FcPortFormValue[] = [
+        { port: null, host_id: 1 }, // New virtual port on fc0
+        { port: null, host_id: 1 }, // Another new virtual port on fc0
+      ];
+
+      const result = spectator.service.validatePhysicalHbaUniqueness(ports, hosts);
+
+      expect(result).toEqual({ valid: false, duplicates: ['fc0'] });
+    });
+
+    it('returns valid when mixing host_id and port on different HBAs', () => {
+      const hosts = [
+        { id: 1, alias: 'fc0' },
+        { id: 2, alias: 'fc1' },
+      ];
+      const ports: FcPortFormValue[] = [
+        { port: null, host_id: 1 }, // New virtual port on fc0
+        { port: 'fc1/1', host_id: null }, // Existing port on fc1
+      ];
+
+      const result = spectator.service.validatePhysicalHbaUniqueness(ports, hosts);
+
+      expect(result).toEqual({ valid: true, duplicates: [] });
+    });
+
+    it('handles missing host_id gracefully', () => {
+      const hosts = [
+        { id: 1, alias: 'fc0' },
+      ];
+      const ports: FcPortFormValue[] = [
+        { port: null, host_id: 999 }, // host_id not in hosts array
+        { port: 'fc1', host_id: null },
+      ];
+
+      const result = spectator.service.validatePhysicalHbaUniqueness(ports, hosts);
+
+      // Should skip the entry with unknown host_id and only count fc1
+      expect(result).toEqual({ valid: true, duplicates: [] });
+    });
   });
 
   describe('linkFiberChannelPortsToTarget', () => {

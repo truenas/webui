@@ -104,6 +104,7 @@ export class IscsiWizardComponent implements OnInit {
   isLoading = signal<boolean>(false);
   toStop = signal<boolean>(false);
   namesInUse = signal<string[]>([]);
+  fcHosts = signal<{ id: number; alias: string }[]>([]);
 
   createdZvol: Dataset | undefined;
   createdExtent: IscsiExtent | undefined;
@@ -286,7 +287,7 @@ export class IscsiWizardComponent implements OnInit {
 
   protected validateFcPorts(): string[] {
     const ports = this.form.controls.options.controls.fcPorts.getRawValue();
-    const validation = this.fcService.validatePhysicalHbaUniqueness(ports);
+    const validation = this.fcService.validatePhysicalHbaUniqueness(ports, this.fcHosts());
 
     if (!validation.valid) {
       return validation.duplicates.map((hba) => this.translate.instant(
@@ -332,6 +333,13 @@ export class IscsiWizardComponent implements OnInit {
         this.form.controls.options.controls.portal.disable();
         this.form.controls.options.controls.initiators.disable();
         this.form.controls.options.controls.fcPorts.enable();
+
+        // Load FC hosts for validation
+        this.api.call('fc.fc_host.query').pipe(
+          takeUntilDestroyed(this.destroyRef),
+        ).subscribe((hosts) => {
+          this.fcHosts.set(hosts.map((host) => ({ id: host.id, alias: host.alias })));
+        });
 
         // Auto-add first port when switching to FC mode (UX improvement)
         if (this.form.controls.options.controls.fcPorts.length === 0) {

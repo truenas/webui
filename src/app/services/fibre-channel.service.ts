@@ -22,21 +22,34 @@ export class FibreChannelService {
   /**
    * Validates that all ports in the array use different physical HBAs.
    * @param ports Array of port form values to validate.
+   * @param hosts Array of FC hosts (required for validating host_id entries).
    * @returns Validation result with list of duplicate HBAs if any.
    */
-  validatePhysicalHbaUniqueness(ports: FcPortFormValue[]): { valid: boolean; duplicates: string[] } {
+  validatePhysicalHbaUniqueness(
+    ports: FcPortFormValue[],
+    hosts: { id: number; alias: string }[] = [],
+  ): { valid: boolean; duplicates: string[] } {
     const physicalHbas = new Set<string>();
     const duplicates = new Set<string>();
 
+    // Build a map of host_id to alias for quick lookup
+    const hostMap = new Map(hosts.map((host) => [host.id, host.alias]));
+
     ports.forEach((portForm) => {
-      const portString = portForm.port;
-      if (!portString) {
-        return;
+      let physicalHba: string | null = null;
+
+      if (portForm.port) {
+        // Existing port: extract physical HBA from port string
+        // Example: "fc0/1" → "fc0", "fc1" → "fc1"
+        physicalHba = portForm.port.split('/')[0];
+      } else if (portForm.host_id) {
+        // New virtual port: look up physical HBA from host_id
+        physicalHba = hostMap.get(portForm.host_id) || null;
       }
 
-      // Extract physical HBA: split on '/' and take first part
-      // Example: "fc0/1" → "fc0", "fc1" → "fc1"
-      const physicalHba = portString.split('/')[0];
+      if (!physicalHba) {
+        return; // Skip if we couldn't determine the physical HBA
+      }
 
       if (physicalHbas.has(physicalHba)) {
         duplicates.add(physicalHba);

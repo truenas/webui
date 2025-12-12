@@ -484,5 +484,38 @@ describe('IscsiWizardComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
     });
+
+    it('blocks mixing new virtual port and existing port on same physical HBA (bug scenario)', async () => {
+      // This tests the bug where mixing host_id (new virtual port) and port (existing port)
+      // on the same HBA was not detected
+      const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
+
+      // Add new virtual port on fc0 (using host_id)
+      // fc0 has npiv=1, so next port is fc0/2
+      await fcPortsList.pressAddButton();
+      await form.fillForm({
+        'Port Mode': 'Create new virtual port',
+        'Choose Host for New Virtual Port': 'fc0/2', // This will set host_id for fc0
+      });
+
+      // Add existing virtual port on fc0 (using port string)
+      await fcPortsList.pressAddButton();
+      await form.fillForm({
+        'Port Mode': 'Use existing port',
+        'Existing Port': 'fc0/1', // This sets port string for fc0
+      });
+
+      spectator.detectChanges();
+
+      // Should show validation error because both ports are on fc0
+      const errorElement = spectator.query('mat-error');
+      expect(errorElement).toBeTruthy();
+      expect(errorElement.textContent).toContain('fc0');
+      expect(errorElement.textContent).toContain('multiple times');
+
+      // Submit button should be disabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    });
   });
 });

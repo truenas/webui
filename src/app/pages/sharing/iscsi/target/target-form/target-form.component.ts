@@ -151,6 +151,7 @@ export class TargetFormComponent implements OnInit {
   protected isLoading = signal(false);
   protected editingTarget: IscsiTarget | undefined = undefined;
   protected editingTargetPorts: string[] = [];
+  protected fcHosts = signal<{ id: number; alias: string }[]>([]);
 
   form = this.formBuilder.group({
     name: [
@@ -182,6 +183,13 @@ export class TargetFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Load FC hosts for validation
+    this.api.call('fc.fc_host.query').pipe(
+      untilDestroyed(this),
+    ).subscribe((hosts) => {
+      this.fcHosts.set(hosts.map((host) => ({ id: host.id, alias: host.alias })));
+    });
+
     if (this.editingTarget) {
       this.setTargetForEdit(this.editingTarget);
 
@@ -277,7 +285,7 @@ export class TargetFormComponent implements OnInit {
 
   protected validateFcPorts(): string[] {
     const ports = this.form.controls.fcPorts.getRawValue();
-    const validation = this.fcService.validatePhysicalHbaUniqueness(ports);
+    const validation = this.fcService.validatePhysicalHbaUniqueness(ports, this.fcHosts());
 
     if (!validation.valid) {
       return validation.duplicates.map((hba) => this.translate.instant(
