@@ -283,9 +283,8 @@ export class ZvolFormComponent implements OnInit {
 
           this.addMinimumBlocksizeWarning();
 
-          this.setReadonlyField(parentOrZvol);
-
           if (parentOrZvol?.type === DatasetType.Filesystem) {
+            this.setReadonlyField(parentOrZvol, parentOrZvol);
             this.inheritFileSystemProperties(parentOrZvol);
           } else {
             let parentDatasetId: string | string[] = parentOrZvol.name.split('/');
@@ -300,6 +299,7 @@ export class ZvolFormComponent implements OnInit {
                 this.form.controls.sparse.disable();
                 this.form.controls.volblocksize.disable();
 
+                this.setReadonlyField(parentOrZvol, parentDataset[0]);
                 this.copyParentProperties(parentOrZvol);
                 this.inheritSyncSource(parentOrZvol, parentDataset);
                 this.inheritCompression(parentOrZvol, parentDataset);
@@ -839,12 +839,12 @@ export class ZvolFormComponent implements OnInit {
       });
   }
 
-  private setReadonlyField(parent: Dataset): void {
-    // Store the effective readonly value when inherit is selected
-    this.inheritedReadonlyValue = parent.readonly.value;
+  private setReadonlyField(zvol: Dataset, parentDataset: Dataset): void {
+    // Store the effective readonly value when inherit is selected (from parent)
+    this.inheritedReadonlyValue = parentDataset.readonly.value;
 
     this.readonlyOptions.unshift({
-      label: `${this.translate.instant('Inherit')} (${parent.readonly.rawvalue})`,
+      label: `${this.translate.instant('Inherit')} (${parentDataset.readonly.rawvalue})`,
       value: inherit,
     });
 
@@ -852,10 +852,10 @@ export class ZvolFormComponent implements OnInit {
     if (this.isNew) {
       readonlyValue = inherit;
     } else {
-      readonlyValue = parent.readonly.value;
+      readonlyValue = zvol.readonly.value;
       if (
-        parent.readonly.source === ZfsPropertySource.Default
-        || parent.readonly.source === ZfsPropertySource.Inherited
+        zvol.readonly.source === ZfsPropertySource.Default
+        || zvol.readonly.source === ZfsPropertySource.Inherited
       ) {
         readonlyValue = inherit;
       }
