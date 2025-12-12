@@ -80,10 +80,10 @@ export class AppDiskInfoComponent {
       if (diskStats) {
         const deltaRead = this.previousStats
           ? Math.max(diskStats.read - this.previousStats.read, 0)
-          : diskStats.read;
+          : 0;
         const deltaWrite = this.previousStats
           ? Math.max(diskStats.write - this.previousStats.write, 0)
-          : diskStats.write;
+          : 0;
         this.cachedDiskStats.update((cachedStats) => {
           return [...cachedStats, [deltaRead, deltaWrite]].slice(-this.numberOfPoints);
         });

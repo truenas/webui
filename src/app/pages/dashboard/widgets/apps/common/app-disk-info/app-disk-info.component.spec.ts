@@ -76,7 +76,7 @@ describe('AppDiskInfoComponent', () => {
           label: 'Read',
           data: [
             ...makeEmptyPoints(),
-            { x: expect.closeTo(Date.now(), -2) as number, y: 1234567 },
+            { x: expect.closeTo(Date.now(), -2) as number, y: 0 },
           ],
           borderColor: '#0000FF',
           backgroundColor: '#0000FF',
@@ -89,7 +89,7 @@ describe('AppDiskInfoComponent', () => {
           label: 'Write',
           data: [
             ...makeEmptyPoints(-0),
-            { x: expect.closeTo(Date.now(), -2) as number, y: -2345678 },
+            { x: expect.closeTo(Date.now(), -2) as number, y: -0 },
           ],
           borderColor: '#FFA500',
           backgroundColor: '#FFA500',

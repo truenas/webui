@@ -96,9 +96,6 @@ export class AppNetworkInfoComponent {
   }
 
   private bytesToBits(bytes: number): number {
-    if (bytes == null) {
-      return 0;
-    }
-    return bytes * 8;
+    return (bytes ?? 0) * 8;
   }
 }
