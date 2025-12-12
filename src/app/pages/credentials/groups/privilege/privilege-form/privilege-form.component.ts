@@ -13,7 +13,6 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
-import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -68,8 +67,13 @@ export class PrivilegeFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
 
+  /**
+   * Maximum number of groups to return in autocomplete queries.
+   * Limits API response size for better performance.
+   */
+  private readonly GROUP_QUERY_LIMIT = 50;
+
   protected isLoading = signal(false);
-  protected localGroups: Group[] = [];
 
   protected form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -111,22 +115,61 @@ export class PrivilegeFormComponent implements OnInit {
     }),
   );
 
+  /**
+   * Provider for local groups autocomplete.
+   *
+   * Uses ChipsProvider instead of GroupComboboxProvider because:
+   * - Chips UI is simpler and more appropriate for multi-select privileges
+   * - No pagination needed - 50-item limit is sufficient for most privilege scenarios
+   * - Avoids complexity of managing paginated state across multiple chips fields
+   *
+   * Fetches local groups from API with search filtering:
+   * - Uses '^' prefix filter for server-side search
+   * - Falls back to client-side includes() for better UX (contains match)
+   * - Limited to 50 results for performance
+   *
+   * Note: No caching to keep implementation simple and avoid stale data issues.
+   * For SMB shares with larger group lists requiring pagination, see GroupComboboxProvider.
+   */
   readonly localGroupsProvider: ChipsProvider = (query: string) => {
-    return this.api.call('group.query', [[['local', '=', true]]]).pipe(
+    const trimmedQuery = query?.trim().toLowerCase() || '';
+
+    const filters: (['local', '=', true] | ['group', '^', string])[] = [['local', '=', true]];
+    if (trimmedQuery) {
+      filters.push(['group', '^', trimmedQuery]);
+    }
+
+    return this.api.call('group.query', [filters, { limit: this.GROUP_QUERY_LIMIT, order_by: ['group'] }]).pipe(
       map((groups) => {
-        this.localGroups = groups;
-        const chips = groups.map((group) => group.group);
-        return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
+        const groupNames = groups.map((group) => group.group);
+        // Client-side filtering for contains match (better UX)
+        if (!trimmedQuery) {
+          return groupNames;
+        }
+
+        return groupNames.filter((name) => name.toLowerCase().includes(trimmedQuery));
       }),
     );
   };
 
+  /**
+   * Provider for directory service groups autocomplete.
+   *
+   * Uses ChipsProvider instead of GroupComboboxProvider for consistency with localGroupsProvider.
+   * See localGroupsProvider documentation for rationale.
+   *
+   * Uses UserService.groupQueryDsCache for proper handling of:
+   * - Domain-prefixed group names (e.g., "ACME\admin")
+   * - Case-insensitive regex search
+   * - Exact name match fallback
+   * - Proper backslash escaping
+   *
+   * Limited to 50 results for performance.
+   */
   readonly dsGroupsProvider: ChipsProvider = (query: string) => {
-    return this.api.call('group.query', [[['local', '=', false]]]).pipe(
-      map((groups) => {
-        const chips = groups.map((group) => group.group);
-        return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
-      }),
+    return this.userService.groupQueryDsCache(query || '', false, 0).pipe(
+      map((groups) => groups.slice(0, this.GROUP_QUERY_LIMIT)),
+      map((groups) => groups.map((group) => group.group)),
     );
   };
 
@@ -160,11 +203,12 @@ export class PrivilegeFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading.set(true);
 
-    this.dsGroupsUids$.pipe(
-      switchMap((dsGroups) => {
+    // Resolve all group names to UIDs before submitting
+    combineLatest([this.localGroupsUids$, this.dsGroupsUids$]).pipe(
+      switchMap(([localGroups, dsGroups]) => {
         const values: PrivilegeUpdate = {
           ...this.form.value,
-          local_groups: this.localGroupsUids,
+          local_groups: localGroups,
           ds_groups: dsGroups,
         };
 
@@ -179,14 +223,13 @@ export class PrivilegeFormComponent implements OnInit {
         }
         return of(null);
       }),
+      finalize(() => this.isLoading.set(false)),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.isLoading.set(false);
         this.slideInRef.close({ response: true });
       },
       error: (error: unknown) => {
-        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
       },
     });
@@ -208,17 +251,81 @@ export class PrivilegeFormComponent implements OnInit {
     );
   }
 
-  private get localGroupsUids(): number[] {
-    return this.localGroups
-      .filter((group) => this.form.value.local_groups.includes(group.group))
-      .map((group) => group.gid);
+  /**
+   * Resolves local group names to GIDs.
+   *
+   * Uses a single batch query with 'group in' filter to avoid N+1 queries.
+   * This is more efficient than querying each group individually.
+   *
+   * Throws an error if any requested groups are not found, preventing silent data loss.
+   *
+   * @returns Observable of group IDs (gids)
+   * @throws Error if any requested groups don't exist
+   */
+  private get localGroupsUids$(): Observable<number[]> {
+    const groupNames = this.form.value.local_groups;
+    if (!groupNames.length) {
+      return of([]);
+    }
+
+    // Fetch all groups in a single batch query
+    return this.api.call('group.query', [[
+      ['local', '=', true],
+      ['group', 'in', groupNames],
+    ]]).pipe(
+      map((groups) => {
+        // Validate that all requested groups were found
+        const foundNames = new Set(groups.map((group) => group.group));
+        const missingGroups = groupNames.filter((name) => !foundNames.has(name));
+
+        if (missingGroups.length > 0) {
+          throw new Error(this.translate.instant(
+            'The following local groups were not found: {groups}. They may have been deleted.',
+            { groups: missingGroups.join(', ') },
+          ));
+        }
+
+        return groups.map((group) => group.gid);
+      }),
+    );
   }
 
+  /**
+   * Resolves directory service group names to GIDs.
+   *
+   * Uses a single batch query with 'group in' filter to avoid N+1 queries.
+   * This is more efficient than querying each group individually.
+   *
+   * Throws an error if any requested groups are not found, preventing silent data loss.
+   *
+   * @returns Observable of group IDs (gids)
+   * @throws Error if any requested groups don't exist
+   */
   private get dsGroupsUids$(): Observable<number[]> {
-    return this.form.value.ds_groups.length
-      ? combineLatest(
-        this.form.value.ds_groups.map((groupName) => this.userService.getGroupByName(groupName)),
-      ).pipe(map((groups) => groups.map((group) => group.gr_gid)))
-      : of([]);
+    const groupNames = this.form.value.ds_groups;
+    if (!groupNames.length) {
+      return of([]);
+    }
+
+    // Fetch all groups in a single batch query
+    return this.api.call('group.query', [[
+      ['local', '=', false],
+      ['group', 'in', groupNames],
+    ]]).pipe(
+      map((groups) => {
+        // Validate that all requested groups were found
+        const foundNames = new Set(groups.map((group) => group.group));
+        const missingGroups = groupNames.filter((name) => !foundNames.has(name));
+
+        if (missingGroups.length > 0) {
+          throw new Error(this.translate.instant(
+            'The following directory service groups were not found: {groups}. They may have been deleted.',
+            { groups: missingGroups.join(', ') },
+          ));
+        }
+
+        return groups.map((group) => group.gid);
+      }),
+    );
   }
 }
