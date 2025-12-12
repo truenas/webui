@@ -13,6 +13,7 @@ import {
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { OnOff } from 'app/enums/on-off.enum';
+import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -606,6 +607,37 @@ describe('ZvolFormComponent', () => {
 
       expect(updateCall).toBeDefined();
       expect(updateCall[1][1].volsize).toBeUndefined();
+    });
+
+    it('disables volsize when inherit is selected and inherited readonly is ON', () => {
+      // Simulate component state where inherited readonly value is ON
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = inherit;
+      (spectator.component as unknown as { inheritedReadonlyValue: string }).inheritedReadonlyValue = OnOff.On;
+      spectator.component.form.controls.readonly.setValue(inherit);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(true);
+    });
+
+    it('enables volsize when inherit is selected and inherited readonly is OFF', () => {
+      // Simulate component state where inherited readonly value is OFF
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = inherit;
+      (spectator.component as unknown as { inheritedReadonlyValue: string }).inheritedReadonlyValue = OnOff.Off;
+      spectator.component.form.controls.readonly.setValue(inherit);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(false);
+    });
+
+    it('does not show warning when inherit is selected with readonly ON (not toggled)', () => {
+      // Simulate component state where inherited readonly value is ON and original was inherit
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = inherit;
+      (spectator.component as unknown as { inheritedReadonlyValue: string }).inheritedReadonlyValue = OnOff.On;
+      spectator.component.form.controls.readonly.setValue(inherit);
+      spectator.detectChanges();
+
+      const warning = spectator.query('.volsize-warning');
+      expect(warning).toBeNull();
     });
   });
 });

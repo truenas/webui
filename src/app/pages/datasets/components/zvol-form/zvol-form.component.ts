@@ -130,6 +130,7 @@ export class ZvolFormComponent implements OnInit {
   protected minimumRecommendedBlockSize: DatasetRecordSize;
   showCustomizeSpecialSmallBlockSize = false;
   private originalReadonlyValue: string;
+  private inheritedReadonlyValue: string;
   protected volsizeReadonlyWarning: string | null = null;
 
   form = this.formBuilder.group({
@@ -699,9 +700,12 @@ export class ZvolFormComponent implements OnInit {
       next: (datasets) => {
         const data: ZvolFormData = this.getPayload(this.form.getRawValue());
 
-        const isReadonlyOn = this.form.controls.readonly.value === OnOff.On as string;
-        const hasReadonlyChanged = this.form.controls.readonly.value !== this.originalReadonlyValue;
-        if (isReadonlyOn || hasReadonlyChanged) {
+        const readonlyValue = this.form.controls.readonly.value;
+        const isReadonlyOn = readonlyValue === OnOff.On as string;
+        const isInheritWithReadonlyOn = readonlyValue === inherit
+          && this.inheritedReadonlyValue === OnOff.On as string;
+        const hasReadonlyChanged = readonlyValue !== this.originalReadonlyValue;
+        if (isReadonlyOn || isInheritWithReadonlyOn || hasReadonlyChanged) {
           delete data.volsize;
         }
 
@@ -836,6 +840,9 @@ export class ZvolFormComponent implements OnInit {
   }
 
   private setReadonlyField(parent: Dataset): void {
+    // Store the effective readonly value when inherit is selected
+    this.inheritedReadonlyValue = parent.readonly.value;
+
     this.readonlyOptions.unshift({
       label: `${this.translate.instant('Inherit')} (${parent.readonly.rawvalue})`,
       value: inherit,
@@ -867,9 +874,11 @@ export class ZvolFormComponent implements OnInit {
 
   private updateVolsizeStateBasedOnReadonly(readonlyValue: string): void {
     const isReadonlyOn = readonlyValue === OnOff.On as string;
+    const isInheritWithReadonlyOn = readonlyValue === inherit
+      && this.inheritedReadonlyValue === OnOff.On as string;
     const hasReadonlyChanged = readonlyValue !== this.originalReadonlyValue;
 
-    if (isReadonlyOn || hasReadonlyChanged) {
+    if (isReadonlyOn || isInheritWithReadonlyOn || hasReadonlyChanged) {
       this.form.controls.volsize.disable();
     } else {
       this.form.controls.volsize.enable();
