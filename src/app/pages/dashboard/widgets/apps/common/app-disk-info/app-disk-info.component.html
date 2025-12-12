@@ -39,11 +39,11 @@
       }"
     ></ngx-skeleton-loader>
   } @else {
-    <ix-rate-chart
+    <ix-byte-chart
       [showLegend]="false"
       [data]="diskChartData()"
       [aspectRatio]="aspectRatio()"
-      [unit]="'B'"
-    ></ix-rate-chart>
+      [showAsRate]="false"
+    ></ix-byte-chart>
   }
 </div>

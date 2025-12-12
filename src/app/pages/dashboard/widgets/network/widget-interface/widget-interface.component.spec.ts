@@ -4,7 +4,6 @@ import { ChartData } from 'chart.js';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
-import { oneHourMillis, oneMinuteMillis } from 'app/constants/time.constant';
 import { NetworkInterfaceType, NetworkInterfaceAliasType, LinkState } from 'app/enums/network-interface.enum';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
@@ -12,12 +11,11 @@ import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/rate-chart/rate-chart.component';
+import { ByteChartComponent } from 'app/pages/dashboard/widgets/network/common/byte-chart/byte-chart.component';
 import { WidgetInterfaceComponent } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.component';
 
 describe('WidgetInterfaceComponent', () => {
   let spectator: Spectator<WidgetInterfaceComponent>;
-  let startDate: number;
 
   const createComponent = createComponentFactory({
     component: WidgetInterfaceComponent,
@@ -27,7 +25,7 @@ describe('WidgetInterfaceComponent', () => {
       WithLoadingStateDirective,
     ],
     declarations: [
-      MockComponent(RateChartComponent),
+      MockComponent(ByteChartComponent),
       MockComponent(InterfaceStatusIconComponent),
     ],
     providers: [
@@ -120,48 +118,27 @@ describe('WidgetInterfaceComponent', () => {
 
     it('shows interface traffic', fakeAsync(() => {
       spectator.tick(1);
-      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
-      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
+      expect(spectator.query('.info-list-item.in')).toHaveText('In:2 KiB/s');
+      expect(spectator.query('.info-list-item.out')).toHaveText('Out:4 KiB/s');
     }));
 
     it('shows a chart with network traffic', () => {
-      startDate = Date.now() - oneHourMillis - oneMinuteMillis;
-      const chart = spectator.query(RateChartComponent)!;
+      const chart = spectator.query(ByteChartComponent)!;
       expect(chart).not.toBeNull();
 
       const data = (chart as unknown as Element & { data: ChartData<'line'> }).data;
-      expect(data).toMatchObject({
-        datasets: [
-          {
-            pointBackgroundColor: 'blue',
-            backgroundColor: 'blue',
-            borderColor: 'blue',
-            fill: true,
-            label: 'Incoming [ens1]',
-            pointRadius: 0,
-            tension: 0.2,
-            data: [
-              { x: startDate, y: 7728161.791999999 },
-              { x: startDate + 1000, y: 8728161.792000001 },
-              { x: startDate + 2000, y: 16384 },
-            ],
-          },
-          {
-            pointBackgroundColor: 'orange',
-            backgroundColor: 'orange',
-            borderColor: 'orange',
-            fill: true,
-            label: 'Outgoing [ens1]',
-            pointRadius: 0,
-            tension: 0.2,
-            data: [
-              { x: startDate, y: -992327.3728 },
-              { x: startDate + 1000, y: -1992327.3728 },
-              { x: startDate + 2000, y: -32768 },
-            ],
-          },
-        ],
-      });
+      expect(data.datasets).toHaveLength(2);
+      expect(data.datasets[0].label).toBe('Incoming [ens1]');
+      expect(data.datasets[0].data).toHaveLength(3);
+      expect((data.datasets[0].data[0] as { x: number; y: number }).y).toBeCloseTo(966020.224, 1);
+      expect((data.datasets[0].data[1] as { x: number; y: number }).y).toBeCloseTo(1091020.224, 1);
+      expect((data.datasets[0].data[2] as { x: number; y: number }).y).toBe(2048);
+
+      expect(data.datasets[1].label).toBe('Outgoing [ens1]');
+      expect(data.datasets[1].data).toHaveLength(3);
+      expect((data.datasets[1].data[0] as { x: number; y: number }).y).toBeCloseTo(-124040.9216, 1);
+      expect((data.datasets[1].data[1] as { x: number; y: number }).y).toBeCloseTo(-249040.9216, 1);
+      expect((data.datasets[1].data[2] as { x: number; y: number }).y).toBe(-4096);
     });
 
     it('checks first entry selection when settings are null', () => {
@@ -170,8 +147,8 @@ describe('WidgetInterfaceComponent', () => {
 
       expect(spectator.query('.info-header-title')).toHaveText('ens1');
       expect(spectator.query('.info-list-item.state')).toHaveText('LINK STATE UP');
-      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
-      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
+      expect(spectator.query('.info-list-item.in')).toHaveText('In:2 KiB/s');
+      expect(spectator.query('.info-list-item.out')).toHaveText('Out:4 KiB/s');
     });
   });
 
@@ -204,48 +181,27 @@ describe('WidgetInterfaceComponent', () => {
 
     it('shows interface traffic', fakeAsync(() => {
       spectator.tick(1);
-      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
-      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
+      expect(spectator.query('.info-list-item.in')).toHaveText('In:2 KiB/s');
+      expect(spectator.query('.info-list-item.out')).toHaveText('Out:4 KiB/s');
     }));
 
     it('shows a chart with network traffic', () => {
-      startDate = Date.now() - oneHourMillis - oneMinuteMillis;
-      const chart = spectator.query(RateChartComponent)!;
+      const chart = spectator.query(ByteChartComponent)!;
       expect(chart).not.toBeNull();
 
       const data = (chart as unknown as Element & { data: ChartData<'line'> }).data;
-      expect(data).toMatchObject({
-        datasets: [
-          {
-            pointBackgroundColor: 'blue',
-            backgroundColor: 'blue',
-            borderColor: 'blue',
-            fill: true,
-            label: 'Incoming [ens1]',
-            pointRadius: 0,
-            tension: 0.2,
-            data: [
-              { x: startDate, y: 7728161.791999999 },
-              { x: startDate + 1000, y: 8728161.792000001 },
-              { x: startDate + 2000, y: 16384 },
-            ],
-          },
-          {
-            pointBackgroundColor: 'orange',
-            backgroundColor: 'orange',
-            borderColor: 'orange',
-            fill: true,
-            label: 'Outgoing [ens1]',
-            pointRadius: 0,
-            tension: 0.2,
-            data: [
-              { x: startDate, y: -992327.3728 },
-              { x: startDate + 1000, y: -1992327.3728 },
-              { x: startDate + 2000, y: -32768 },
-            ],
-          },
-        ],
-      });
+      expect(data.datasets).toHaveLength(2);
+      expect(data.datasets[0].label).toBe('Incoming [ens1]');
+      expect(data.datasets[0].data).toHaveLength(3);
+      expect((data.datasets[0].data[0] as { x: number; y: number }).y).toBeCloseTo(966020.224, 1);
+      expect((data.datasets[0].data[1] as { x: number; y: number }).y).toBeCloseTo(1091020.224, 1);
+      expect((data.datasets[0].data[2] as { x: number; y: number }).y).toBe(2048);
+
+      expect(data.datasets[1].label).toBe('Outgoing [ens1]');
+      expect(data.datasets[1].data).toHaveLength(3);
+      expect((data.datasets[1].data[0] as { x: number; y: number }).y).toBeCloseTo(-124040.9216, 1);
+      expect((data.datasets[1].data[1] as { x: number; y: number }).y).toBeCloseTo(-249040.9216, 1);
+      expect((data.datasets[1].data[2] as { x: number; y: number }).y).toBe(-4096);
     });
   });
 
@@ -277,13 +233,13 @@ describe('WidgetInterfaceComponent', () => {
 
     it('shows interface traffic', fakeAsync(() => {
       spectator.tick(1);
-      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
-      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
+      expect(spectator.query('.info-list-item.in')).toHaveText('In:2 KiB/s');
+      expect(spectator.query('.info-list-item.out')).toHaveText('Out:4 KiB/s');
     }));
 
     it('ensures chart is not rendered', fakeAsync(() => {
       spectator.tick(1);
-      const chart = spectator.query(RateChartComponent);
+      const chart = spectator.query(ByteChartComponent);
       expect(chart).toBeNull();
     }));
   });

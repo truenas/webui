@@ -7,7 +7,7 @@ import { AppStats } from 'app/interfaces/app.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { AppDiskInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-disk-info/app-disk-info.component';
-import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/rate-chart/rate-chart.component';
+import { ByteChartComponent } from 'app/pages/dashboard/widgets/network/common/byte-chart/byte-chart.component';
 
 describe('AppDiskInfoComponent', () => {
   let spectator: Spectator<AppDiskInfoComponent>;
@@ -15,7 +15,7 @@ describe('AppDiskInfoComponent', () => {
     component: AppDiskInfoComponent,
     imports: [FileSizePipe],
     declarations: [
-      MockComponent(RateChartComponent),
+      MockComponent(ByteChartComponent),
     ],
     providers: [
       mockProvider(ThemeService, {
@@ -52,13 +52,13 @@ describe('AppDiskInfoComponent', () => {
     expect(readWriteRows[1]).toHaveText('Write: 2.24 MiB');
   });
 
-  it('passes bytes unit to rate chart for disk I/O', () => {
-    const chartComponent = spectator.query(RateChartComponent)!;
-    expect(chartComponent.unit).toBe('B');
+  it('renders byte chart for disk I/O', () => {
+    const chartElement = spectator.query('ix-byte-chart')!;
+    expect(chartElement).toBeTruthy();
   });
 
   it('updates chart with delta of disk stats', fakeAsync(() => {
-    const chartComponent = spectator.query(RateChartComponent)!;
+    const chartComponent = spectator.query(ByteChartComponent)!;
     expect(chartComponent).toBeTruthy();
 
     spectator.tick(1);
