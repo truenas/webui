@@ -8,7 +8,7 @@ import { AppStats } from 'app/interfaces/app.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/rate-chart/rate-chart.component';
+import { ByteChartComponent } from 'app/pages/dashboard/widgets/network/common/byte-chart/byte-chart.component';
 
 @Component({
   selector: 'ix-app-disk-info',
@@ -19,7 +19,7 @@ import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/r
     MatTooltip,
     WithLoadingStateDirective,
     NgxSkeletonLoaderModule,
-    RateChartComponent,
+    ByteChartComponent,
     TranslateModule,
     FileSizePipe,
   ],
@@ -41,6 +41,8 @@ export class AppDiskInfoComponent {
     return [...this.initialDiskStats, ...cachedStats].slice(-this.numberOfPoints);
   });
 
+  // Block I/O: API returns blkio.read and blkio.write as cumulative bytes (not rates)
+  // We calculate deltas to show how many bytes were read/written in each interval
   private previousStats: { read: number; write: number } | null = null;
 
   protected diskChartData = computed<ChartData<'line'>>(() => {
@@ -87,11 +89,12 @@ export class AppDiskInfoComponent {
         return;
       }
 
-      // Validate values are numbers
+      // API returns cumulative bytes - validate values are numbers
       const currentRead = typeof diskStats.read === 'number' && !Number.isNaN(diskStats.read) ? diskStats.read : 0;
       const currentWrite = typeof diskStats.write === 'number' && !Number.isNaN(diskStats.write) ? diskStats.write : 0;
 
       if (this.previousStats) {
+        // Calculate deltas (bytes changed since last measurement) to show in chart
         const deltaRead = Math.max(currentRead - this.previousStats.read, 0);
         const deltaWrite = Math.max(currentWrite - this.previousStats.write, 0);
 

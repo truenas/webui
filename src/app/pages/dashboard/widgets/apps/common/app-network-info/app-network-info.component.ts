@@ -8,7 +8,7 @@ import { AppStats } from 'app/interfaces/app.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/rate-chart/rate-chart.component';
+import { ByteChartComponent } from 'app/pages/dashboard/widgets/network/common/byte-chart/byte-chart.component';
 
 @Component({
   selector: 'ix-app-network-info',
@@ -19,7 +19,7 @@ import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/r
     MatTooltip,
     WithLoadingStateDirective,
     NgxSkeletonLoaderModule,
-    RateChartComponent,
+    ByteChartComponent,
     TranslateModule,
     NetworkSpeedPipe,
   ],
@@ -43,12 +43,19 @@ export class AppNetworkInfoComponent {
     return [...this.initialNetworkStats, ...cachedStats].slice(-this.numberOfPoints);
   });
 
-  readonly incomingTrafficBits = computed(() => {
-    return (this.stats()?.value?.networks?.reduce((sum, stats) => sum + this.bytesToBits(stats.rx_bytes), 0) || 0);
+  // Network traffic: API returns rx_bytes and tx_bytes as rates (bytes per second)
+  readonly incomingTrafficBytes = computed(() => {
+    const stats = this.cachedNetworkStats();
+    // Return the most recent rate in bytes/s if available
+    const [rx = 0] = stats.at(-1) || [];
+    return rx;
   });
 
-  readonly outgoingTrafficBits = computed(() => {
-    return (this.stats()?.value?.networks?.reduce((sum, stats) => sum + this.bytesToBits(stats.tx_bytes), 0) || 0);
+  readonly outgoingTrafficBytes = computed(() => {
+    const stats = this.cachedNetworkStats();
+    // Return the most recent rate in bytes/s if available
+    const [, tx = 0] = stats.at(-1) || [];
+    return tx;
   });
 
   protected networkChartData = computed<ChartData<'line'>>(() => {
@@ -96,22 +103,24 @@ export class AppNetworkInfoComponent {
       }
 
       try {
-        const incomingTraffic = networkStats.reduce((sum, stats) => sum + this.bytesToBits(stats.rx_bytes), 0);
-        const outgoingTraffic = networkStats.reduce((sum, stats) => sum + this.bytesToBits(stats.tx_bytes), 0);
+        // API provides rx_bytes and tx_bytes as rates (bytes per second) - sum all network interfaces
+        const currentRx = networkStats.reduce((sum, stats) => sum + (stats.rx_bytes ?? 0), 0);
+        const currentTx = networkStats.reduce((sum, stats) => sum + (stats.tx_bytes ?? 0), 0);
 
-        // Only update if values are valid finite numbers
-        if (Number.isFinite(incomingTraffic) && Number.isFinite(outgoingTraffic)) {
+        // Validate values are numbers
+        if (typeof currentRx !== 'number' || typeof currentTx !== 'number' || Number.isNaN(currentRx) || Number.isNaN(currentTx)) {
+          return;
+        }
+
+        // Use values directly as rates (bytes/s) - no delta calculation needed
+        if (Number.isFinite(currentRx) && Number.isFinite(currentTx)) {
           this.cachedNetworkStats.update((cachedStats) => {
-            return [...cachedStats, [incomingTraffic, outgoingTraffic]].slice(-this.numberOfPoints);
+            return [...cachedStats, [currentRx, currentTx]].slice(-this.numberOfPoints);
           });
         }
       } catch {
         // Silently ignore calculation errors
       }
     });
-  }
-
-  private bytesToBits(bytes: number): number {
-    return (bytes ?? 0) * 8;
   }
 }

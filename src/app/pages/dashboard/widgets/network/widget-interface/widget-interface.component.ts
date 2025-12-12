@@ -29,7 +29,7 @@ import { WidgetStaleDataNoticeComponent } from 'app/pages/dashboard/components/w
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/rate-chart/rate-chart.component';
+import { ByteChartComponent } from 'app/pages/dashboard/widgets/network/common/byte-chart/byte-chart.component';
 import { fullSizeNetworkWidgetAspectRatio, halfSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.const';
 import { DashboardNetworkInterface, getNetworkInterface } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
@@ -51,7 +51,7 @@ import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/w
     WithLoadingStateDirective,
     NgxSkeletonLoaderModule,
     InterfaceStatusIconComponent,
-    RateChartComponent,
+    ByteChartComponent,
     TranslateModule,
     NetworkSpeedPipe,
     WidgetStaleDataNoticeComponent,
@@ -95,8 +95,8 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
           return [
             ...cachedStats,
             [
-              realtimeUpdate.received_bytes_rate * 8,
-              realtimeUpdate.sent_bytes_rate * 8,
+              realtimeUpdate.received_bytes_rate,
+              realtimeUpdate.sent_bytes_rate,
             ],
           ].slice(-3600);
         });
@@ -113,8 +113,10 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
 
   protected isLinkStateUp = computed(() => this.linkState() === LinkState.Up);
   protected linkStateLabel = computed(() => linkStateLabelMap.get(this.linkState()));
-  protected bitsIn = computed(() => Number(this.interfaceUsage()?.received_bytes_rate) * 8);
-  protected bitsOut = computed(() => Number(this.interfaceUsage()?.sent_bytes_rate) * 8);
+
+  // Network traffic: API returns received_bytes_rate and sent_bytes_rate as rates (bytes per second)
+  protected bytesIn = computed(() => Number(this.interfaceUsage()?.received_bytes_rate));
+  protected bytesOut = computed(() => Number(this.interfaceUsage()?.sent_bytes_rate));
 
   protected showChart = computed(() => [SlotSize.Full, SlotSize.Half].includes(this.size()));
   protected isFullSize = computed(() => this.size() === SlotSize.Full);
@@ -136,7 +138,8 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
     filter((response) => !!response.length),
     map((response) => {
       const [update] = response;
-      return (update.data as number[][]).map((row) => row.slice(1).map((value) => value * kb));
+      // API returns data in kilobits/s, convert to bytes/s: kb/s * 1000 / 8 = bytes/s
+      return (update.data as number[][]).map((row) => row.slice(1).map((value) => value * kb / 8));
     }),
   ), { initialValue: [] });
 

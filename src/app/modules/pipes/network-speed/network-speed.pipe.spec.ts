@@ -5,27 +5,27 @@ describe('NetworkSpeedPipe', () => {
   let spectator: SpectatorPipe<NetworkSpeedPipe>;
   const createPipe = createPipeFactory(NetworkSpeedPipe);
 
-  it('converts values to bits per second', () => {
+  it('converts values to bytes per second', () => {
     spectator = createPipe('{{ 1000 | ixNetworkSpeed }}');
 
-    expect(spectator.element).toHaveText('1 kb/s');
+    expect(spectator.element).toHaveText('1000 B/s');
   });
 
   it('converts large values correctly', () => {
     spectator = createPipe('{{ 100000000 | ixNetworkSpeed }}');
 
-    expect(spectator.element).toHaveText('100 Mb/s');
+    expect(spectator.element).toHaveText('95.37 MiB/s');
   });
 
-  it('converts gigabit speeds correctly', () => {
+  it('converts gigabyte speeds correctly', () => {
     spectator = createPipe('{{ 1000000000 | ixNetworkSpeed }}');
 
-    expect(spectator.element).toHaveText('1 Gb/s');
+    expect(spectator.element).toHaveText('953.67 MiB/s');
   });
 
-  it('handles small bit values', () => {
+  it('handles small byte values', () => {
     spectator = createPipe('{{ 500 | ixNetworkSpeed }}');
 
-    expect(spectator.element).toHaveText('500 b/s');
+    expect(spectator.element).toHaveText('500 B/s');
   });
 });

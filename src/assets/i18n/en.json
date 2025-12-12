@@ -26,6 +26,7 @@
   "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "",
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{bits}/s": "",
+  "{bytes}/s": "",
   "{checked} exporter: {name}": "",
   "{comparator} (Contains)": "",
   "{comparator} (Ends With)": "",

@@ -57,7 +57,7 @@
                 @if (!isLoading()) {
                   <div class="info-list-item in">
                     <span>{{ 'In' | translate }}:</span>
-                    <span>{{ bitsIn() | ixNetworkSpeed }}</span>
+                    <span>{{ bytesIn() | ixNetworkSpeed }}</span>
                   </div>
                 } @else {
                   <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
@@ -65,7 +65,7 @@
                 @if (!isLoading()) {
                   <div class="info-list-item out">
                     <span>{{ 'Out' | translate }}:</span>
-                    <span>{{ bitsOut() | ixNetworkSpeed }}</span>
+                    <span>{{ bytesOut() | ixNetworkSpeed }}</span>
                   </div>
                 } @else {
                   <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
@@ -117,11 +117,10 @@
               }"
             ></ngx-skeleton-loader>
           } @else {
-            <ix-rate-chart
+            <ix-byte-chart
               [data]="chartData()"
               [aspectRatio]="aspectRatio()"
-              [unit]="'b'"
-            ></ix-rate-chart>
+            ></ix-byte-chart>
           }
         </div>
       }

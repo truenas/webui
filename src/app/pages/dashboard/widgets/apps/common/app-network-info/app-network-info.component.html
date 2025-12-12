@@ -3,20 +3,20 @@
   <div class="in-out">
     <div
       class="in-out-row"
-      [matTooltip]="'Incoming network traffic rate in bits per second' | translate"
+      [matTooltip]="'Incoming network traffic rate in bytes per second' | translate"
     >
       <span>{{ 'In' | translate }}:</span>
       <span *ixWithLoadingState="stats() as stats">
-        {{ incomingTrafficBits() | ixNetworkSpeed }}
+        {{ incomingTrafficBytes() | ixNetworkSpeed }}
       </span>
     </div>
     <div
       class="in-out-row"
-      [matTooltip]="'Outgoing network traffic rate in bits per second' | translate"
+      [matTooltip]="'Outgoing network traffic rate in bytes per second' | translate"
     >
       <span>{{ 'Out' | translate }}:</span>
       <span *ixWithLoadingState="stats() as stats">
-        {{ outgoingTrafficBits() | ixNetworkSpeed }}
+        {{ outgoingTrafficBytes() | ixNetworkSpeed }}
       </span>
     </div>
   </div>
@@ -39,11 +39,10 @@
       }"
     ></ngx-skeleton-loader>
   } @else {
-    <ix-rate-chart
+    <ix-byte-chart
       [showLegend]="false"
       [data]="networkChartData()"
       [aspectRatio]="aspectRatio()"
-      [unit]="'b'"
-    ></ix-rate-chart>
+    ></ix-byte-chart>
   }
 </div>

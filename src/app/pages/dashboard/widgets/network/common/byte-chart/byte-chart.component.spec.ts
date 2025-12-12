@@ -6,7 +6,7 @@ import { ViewChartAreaComponent } from 'app/modules/charts/view-chart-area/view-
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
-import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/rate-chart/rate-chart.component';
+import { ByteChartComponent } from 'app/pages/dashboard/widgets/network/common/byte-chart/byte-chart.component';
 
 // TODO: Update when fix is ready
 // See https://github.com/help-me-mom/ng-mocks/issues/8634
@@ -20,12 +20,12 @@ class ViewChartAreaMockComponent {
   options = input();
 }
 
-describe('RateChartComponent', () => {
-  let spectator: Spectator<RateChartComponent>;
+describe('ByteChartComponent', () => {
+  let spectator: Spectator<ByteChartComponent>;
   const createComponent = createComponentFactory({
-    component: RateChartComponent,
+    component: ByteChartComponent,
     overrideComponents: [
-      [RateChartComponent, {
+      [ByteChartComponent, {
         add: {
           imports: [ViewChartAreaMockComponent],
           template: '<ix-view-chart-area-mock [data]="data()" [options]="options()"></ix-view-chart-area-mock>',
@@ -62,51 +62,52 @@ describe('RateChartComponent', () => {
     });
   });
 
-  it('defaults to bits unit (b) for network traffic', () => {
+  it('defaults to showAsRate=true for network traffic', () => {
     spectator.detectChanges();
 
     const chart = spectator.query(ViewChartAreaMockComponent)!;
     expect(chart).toBeTruthy();
 
-    // Verify component uses default 'b' unit
-    expect(spectator.component.unit()).toBe('b');
+    // Verify component uses default showAsRate=true
+    expect(spectator.component.showAsRate()).toBe(true);
   });
 
-  it('uses bytes unit (B) when specified for disk I/O', () => {
-    spectator.setInput('unit', 'B');
+  it('can be configured with showAsRate=false for disk I/O', () => {
+    spectator.setInput('showAsRate', false);
     spectator.detectChanges();
 
     const chart = spectator.query(ViewChartAreaMockComponent)!;
     expect(chart).toBeTruthy();
 
-    // Verify component uses 'B' unit
-    expect(spectator.component.unit()).toBe('B');
+    // Verify component uses showAsRate=false
+    expect(spectator.component.showAsRate()).toBe(false);
   });
 
-  it('formats network traffic with decimal base (base 10) for bits', () => {
+  it('formats bytes with rate suffix when showAsRate=true (default)', () => {
     spectator.setInput('data', { datasets: [], labels: [] });
+    spectator.setInput('showAsRate', true);
     spectator.detectChanges();
 
     const chart = spectator.query(ViewChartAreaMockComponent)!;
     const options = chart.options() as ChartOptions<'line'>;
 
     // Test Y-axis callback
-    // 1,000,000 bits = 1 Mb (decimal, base 10)
+    // 1,048,576 bytes = 1 MiB (binary, base 2) with /s suffix
     const yAxisCallback = options.scales!.y!.ticks!.callback as (value: number) => string | number;
-    expect(yAxisCallback.call({}, 1000000)).toBe('1 Mb/s');
+    expect(yAxisCallback.call({}, 1048576)).toBe('1 MiB/s');
 
     // Test tooltip callback
     const tooltipCallback = options.plugins!.tooltip!.callbacks!.label as (item: TooltipItem<'line'>) => string;
     const mockTooltipItem = {
-      parsed: { y: 1000000 },
-      dataset: { label: 'Upload' },
+      parsed: { y: 1048576 },
+      dataset: { label: 'Read' },
     } as TooltipItem<'line'>;
-    expect(tooltipCallback(mockTooltipItem)).toBe('Upload: 1 Mb/s');
+    expect(tooltipCallback(mockTooltipItem)).toBe('Read: 1 MiB/s');
   });
 
-  it('formats disk I/O with binary base (base 2) for bytes without rate suffix', () => {
+  it('formats bytes without rate suffix when showAsRate=false', () => {
     spectator.setInput('data', { datasets: [], labels: [] });
-    spectator.setInput('unit', 'B');
+    spectator.setInput('showAsRate', false);
     spectator.detectChanges();
 
     const chart = spectator.query(ViewChartAreaMockComponent)!;
@@ -126,7 +127,7 @@ describe('RateChartComponent', () => {
     expect(tooltipCallback(mockTooltipItem)).toBe('Read: 1 MiB');
   });
 
-  it('handles zero values correctly with rate suffix for bits', () => {
+  it('handles zero values correctly with rate suffix', () => {
     spectator.setInput('data', { datasets: [], labels: [] });
     spectator.detectChanges();
 
@@ -144,9 +145,28 @@ describe('RateChartComponent', () => {
     expect(tooltipCallback(mockTooltipItem)).toBe('Test: 0/s');
   });
 
-  it('handles zero values correctly without rate suffix for bytes', () => {
+  it('handles zero values with rate suffix when showAsRate=true', () => {
     spectator.setInput('data', { datasets: [], labels: [] });
-    spectator.setInput('unit', 'B');
+    spectator.setInput('showAsRate', true);
+    spectator.detectChanges();
+
+    const chart = spectator.query(ViewChartAreaMockComponent)!;
+    const options = chart.options() as ChartOptions<'line'>;
+
+    const yAxisCallback = options.scales!.y!.ticks!.callback as (value: number) => string | number;
+    expect(yAxisCallback.call({}, 0)).toBe('0/s');
+
+    const tooltipCallback = options.plugins!.tooltip!.callbacks!.label as (item: TooltipItem<'line'>) => string;
+    const mockTooltipItem = {
+      parsed: { y: 0 },
+      dataset: { label: 'Test' },
+    } as TooltipItem<'line'>;
+    expect(tooltipCallback(mockTooltipItem)).toBe('Test: 0/s');
+  });
+
+  it('handles zero values without rate suffix when showAsRate=false', () => {
+    spectator.setInput('data', { datasets: [], labels: [] });
+    spectator.setInput('showAsRate', false);
     spectator.detectChanges();
 
     const chart = spectator.query(ViewChartAreaMockComponent)!;
