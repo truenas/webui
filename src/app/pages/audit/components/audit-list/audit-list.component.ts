@@ -1,10 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, output, computed, inject } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { toSvg } from 'jdenticon';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { auditServiceLabels, auditEventLabels } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -22,9 +19,9 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { auditElements } from 'app/pages/audit/audit.elements';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
-import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-data.utils';
+import { GetLogImportantDataPipe } from 'app/pages/audit/utils/get-log-important-data.pipe';
+import { UserAvatarPipe } from 'app/pages/audit/utils/user-avatar.pipe';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-audit-list',
   templateUrl: './audit-list.component.html',
@@ -43,10 +40,11 @@ import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-dat
     AuditSearchComponent,
     TranslateModule,
     IxIconComponent,
+    GetLogImportantDataPipe,
+    UserAvatarPipe,
   ],
 })
 export class AuditListComponent {
-  private sanitizer = inject(DomSanitizer);
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
 
@@ -90,15 +88,6 @@ export class AuditListComponent {
     uniqueRowTag: (row) => `audit-${row.service}-${row.username}-${row.event}-${row.audit_id}`,
     ariaLabels: (row) => [row.service, row.username, row.event, this.translate.instant('Audit Entry')],
   });
-
-  getEventDataForLog(row: AuditEntry): string {
-    return getLogImportantData(row, this.translate);
-  }
-
-  getUserAvatarForLog(row: AuditEntry): SafeHtml {
-    // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization
-    return this.sanitizer.bypassSecurityTrustHtml(toSvg(row.username, 25));
-  }
 
   expanded(row: AuditEntry): void {
     if (!row) return;
