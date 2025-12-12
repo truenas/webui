@@ -116,7 +116,7 @@
       <div class="release-notes-section">
         <h3>{{ 'Release Notes for {version}' | translate: { version: newVersion().version } }}</h3>
         <div class="release-notes-content">
-          <ix-dynamic-markdown 
+          <ix-dynamic-markdown
             [content]="newVersion().release_notes"
             [context]="releaseNotesContext()"
           ></ix-dynamic-markdown>
@@ -133,7 +133,7 @@
           <a
             ixTest="download-truenas"
             target="_blank"
-            [attr.href]="manualUpdateUrl"
+            [attr.href]="manualUpdateUrl()"
           >
             {{ 'See the manual image installation guide' | translate }}
           </a>
