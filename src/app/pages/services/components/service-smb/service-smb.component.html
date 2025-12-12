@@ -121,12 +121,12 @@
             [provider]="adminGroupProvider"
           ></ix-combobox>
 
-          <ix-select
+          <ix-combobox
             formControlName="guest"
             [label]="'Guest Account' | translate"
             [tooltip]="tooltips.guest | translate"
-            [options]="guestAccountOptions$"
-          ></ix-select>
+            [provider]="guestAccountProvider"
+          ></ix-combobox>
 
           <ix-input
             formControlName="filemask"

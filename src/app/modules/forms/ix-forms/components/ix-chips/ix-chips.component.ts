@@ -13,7 +13,7 @@ import {
   fromEvent, merge, Observable, Subject,
 } from 'rxjs';
 import {
-  debounceTime, distinctUntilChanged, startWith, switchMap,
+  debounceTime, distinctUntilChanged, startWith, switchMap, take,
 } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
@@ -89,6 +89,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   private resolvedOptions: Option[] | null = [];
 
   private readonly chipInput: Signal<ElementRef<HTMLInputElement>> = viewChild.required('chipInput', { read: ElementRef });
+  private readonly autocompleteTrigger = viewChild(MatAutocompleteTrigger);
 
   suggestions$: Observable<string[]> | null;
   values: string[] = [];
@@ -149,7 +150,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
     this.updateValues(updatedValues);
   }
 
-  onAdd(value: string): void {
+  onAdd(value: string, fromAutocomplete = false): void {
     let newValue = (value || '')?.trim();
     if (!newValue || this.values.includes(newValue)) {
       return;
@@ -167,14 +168,36 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
     this.clearInput();
     this.updateValues([...this.values, newValue]);
+
+    // When selecting from autocomplete, wait for panel to close then ensure input is clear
+    if (fromAutocomplete) {
+      const trigger = this.autocompleteTrigger();
+      if (trigger) {
+        trigger.panelClosingActions.pipe(take(1)).subscribe(() => {
+          this.chipInput().nativeElement.value = '';
+        });
+      }
+    }
   }
 
   onInputBlur(): void {
+    const trigger = this.autocompleteTrigger();
+
+    // If autocomplete panel is open, an option selection is in progress
+    // Skip blur processing to avoid adding search text as a chip
+    if (trigger?.panelOpen) {
+      return;
+    }
+
     if (!this.allowNewEntries() || this.resolveValue()) {
       this.chipInput().nativeElement.value = '';
       return;
     }
-    this.onAdd(this.chipInput().nativeElement.value);
+
+    const inputValue = this.chipInput().nativeElement.value;
+    if (inputValue.trim()) {
+      this.onAdd(inputValue);
+    }
   }
 
   // TODO: Workaround for https://github.com/angular/angular/issues/56471
