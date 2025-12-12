@@ -601,11 +601,11 @@ export class ZvolFormComponent implements OnInit {
         const data: ZvolFormData = this.getPayload(this.form.getRawValue());
 
         const readonlyValue = this.form.controls.readonly.value;
-        const isReadonlyOn = readonlyValue === OnOff.On as string;
-        const isInheritWithReadonlyOn = readonlyValue === inherit
-          && this.inheritedReadonlyValue === OnOff.On as string;
-        const hasReadonlyChanged = readonlyValue !== this.originalReadonlyValue;
-        if (isReadonlyOn || isInheritWithReadonlyOn || hasReadonlyChanged) {
+        const effectiveCurrentValue = this.getEffectiveReadonlyValue(readonlyValue);
+        const effectiveOriginalValue = this.getEffectiveReadonlyValue(this.originalReadonlyValue);
+        const isEffectivelyReadonlyOn = effectiveCurrentValue === OnOff.On as string;
+        const hasEffectivelyChanged = effectiveCurrentValue !== effectiveOriginalValue;
+        if (isEffectivelyReadonlyOn || hasEffectivelyChanged) {
           delete data.volsize;
         }
 
@@ -758,20 +758,25 @@ export class ZvolFormComponent implements OnInit {
   }
 
   private updateVolsizeStateBasedOnReadonly(readonlyValue: string): void {
-    const isReadonlyOn = readonlyValue === OnOff.On as string;
-    const isInheritWithReadonlyOn = readonlyValue === inherit
-      && this.inheritedReadonlyValue === OnOff.On as string;
-    const hasReadonlyChanged = readonlyValue !== this.originalReadonlyValue;
+    const effectiveCurrentValue = this.getEffectiveReadonlyValue(readonlyValue);
+    const effectiveOriginalValue = this.getEffectiveReadonlyValue(this.originalReadonlyValue);
 
-    if (isReadonlyOn || isInheritWithReadonlyOn || hasReadonlyChanged) {
+    const isEffectivelyReadonlyOn = effectiveCurrentValue === OnOff.On as string;
+    const hasEffectivelyChanged = effectiveCurrentValue !== effectiveOriginalValue;
+
+    if (isEffectivelyReadonlyOn || hasEffectivelyChanged) {
       this.form.controls.volsize.disable();
     } else {
       this.form.controls.volsize.enable();
     }
 
-    this.volsizeReadonlyWarning = hasReadonlyChanged
+    this.volsizeReadonlyWarning = hasEffectivelyChanged
       ? this.translate.instant(helptextZvol.readonlyVolsizeWarning)
       : null;
+  }
+
+  private getEffectiveReadonlyValue(readonlyValue: string): string {
+    return readonlyValue === inherit ? this.inheritedReadonlyValue : readonlyValue;
   }
 
   private handleZvolCreateUpdate(dataset: Dataset): void {
