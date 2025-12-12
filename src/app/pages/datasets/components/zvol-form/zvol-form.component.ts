@@ -17,7 +17,7 @@ import {
 } from 'app/enums/dataset.enum';
 import { deduplicationSettingLabels } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { onOffLabels } from 'app/enums/on-off.enum';
+import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -119,6 +119,9 @@ export class ZvolFormComponent implements OnInit {
   protected inheritEncryption = true;
   protected generateKey = true;
   protected minimumRecommendedBlockSize: DatasetRecordSize;
+  private originalReadonlyValue: string;
+  private inheritedReadonlyValue: string;
+  protected volsizeReadonlyWarning: string | null = null;
 
   form = this.formBuilder.group({
     name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
@@ -249,9 +252,8 @@ export class ZvolFormComponent implements OnInit {
 
           this.addMinimumBlocksizeWarning();
 
-          this.setReadonlyField(parentOrZvol);
-
           if (parentOrZvol?.type === DatasetType.Filesystem) {
+            this.setReadonlyField(parentOrZvol, parentOrZvol);
             this.inheritFileSystemProperties(parentOrZvol);
           } else {
             let parentDatasetId: string | string[] = parentOrZvol.name.split('/');
@@ -266,6 +268,7 @@ export class ZvolFormComponent implements OnInit {
                 this.form.controls.sparse.disable();
                 this.form.controls.volblocksize.disable();
 
+                this.setReadonlyField(parentOrZvol, parentDataset[0]);
                 this.copyParentProperties(parentOrZvol);
                 this.inheritSyncSource(parentOrZvol, parentDataset);
                 this.inheritCompression(parentOrZvol, parentDataset);
@@ -597,6 +600,15 @@ export class ZvolFormComponent implements OnInit {
       next: (datasets) => {
         const data: ZvolFormData = this.getPayload(this.form.getRawValue());
 
+        const readonlyValue = this.form.controls.readonly.value;
+        const effectiveCurrentValue = this.getEffectiveReadonlyValue(readonlyValue);
+        const effectiveOriginalValue = this.getEffectiveReadonlyValue(this.originalReadonlyValue);
+        const isEffectivelyReadonlyOn = effectiveCurrentValue === OnOff.On as string;
+        const hasEffectivelyChanged = effectiveCurrentValue !== effectiveOriginalValue;
+        if (isEffectivelyReadonlyOn || hasEffectivelyChanged) {
+          delete data.volsize;
+        }
+
         if (data.inherit_encryption) {
           delete data.encryption;
         } else if (data.encryption) {
@@ -623,25 +635,32 @@ export class ZvolFormComponent implements OnInit {
         delete data.encryption_type;
         delete data.algorithm;
 
-        let volblocksizeIntegerValue: number | string = datasets[0].volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
-        volblocksizeIntegerValue = parseInt(volblocksizeIntegerValue, 10);
-        if (volblocksizeIntegerValue === 512) {
-          volblocksizeIntegerValue = 512;
-        } else {
-          volblocksizeIntegerValue = volblocksizeIntegerValue * 1024;
-        }
-        data.volsize = Number(data.volsize);
-        if (data.volsize && data.volsize % volblocksizeIntegerValue !== 0) {
-          data.volsize = data.volsize + (volblocksizeIntegerValue - data.volsize % volblocksizeIntegerValue);
-        }
-        let roundedVolSize = datasets[0].volsize.parsed;
+        let canSubmit = true;
+        if (data.volsize !== undefined) {
+          let volblocksizeIntegerValue: number | string = datasets[0].volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
+          volblocksizeIntegerValue = parseInt(volblocksizeIntegerValue, 10);
+          if (volblocksizeIntegerValue === 512) {
+            volblocksizeIntegerValue = 512;
+          } else {
+            volblocksizeIntegerValue = volblocksizeIntegerValue * 1024;
+          }
+          data.volsize = Number(data.volsize);
+          if (data.volsize && data.volsize % volblocksizeIntegerValue !== 0) {
+            data.volsize = data.volsize + (volblocksizeIntegerValue - data.volsize % volblocksizeIntegerValue);
+          }
+          let roundedVolSize = datasets[0].volsize.parsed;
 
-        if (datasets[0].volsize.parsed % volblocksizeIntegerValue !== 0) {
-          roundedVolSize = datasets[0].volsize.parsed
-          + (volblocksizeIntegerValue - datasets[0].volsize.parsed % volblocksizeIntegerValue);
+          if (datasets[0].volsize.parsed % volblocksizeIntegerValue !== 0) {
+            roundedVolSize = datasets[0].volsize.parsed
+            + (volblocksizeIntegerValue - datasets[0].volsize.parsed % volblocksizeIntegerValue);
+          }
+
+          if (data.volsize && data.volsize < roundedVolSize) {
+            canSubmit = false;
+          }
         }
 
-        if (!data.volsize || data.volsize >= roundedVolSize) {
+        if (canSubmit) {
           this.api.call('pool.dataset.update', [this.parentOrZvolId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
             next: (dataset) => this.handleZvolCreateUpdate(dataset),
             error: (error: unknown) => {
@@ -705,9 +724,12 @@ export class ZvolFormComponent implements OnInit {
       });
   }
 
-  private setReadonlyField(parent: Dataset): void {
+  private setReadonlyField(zvol: Dataset, parentDataset: Dataset): void {
+    // Store the effective readonly value when inherit is selected (from parent)
+    this.inheritedReadonlyValue = parentDataset.readonly.value;
+
     this.readonlyOptions.unshift({
-      label: `${this.translate.instant('Inherit')} (${parent.readonly.rawvalue})`,
+      label: `${this.translate.instant('Inherit')} (${parentDataset.readonly.rawvalue})`,
       value: inherit,
     });
 
@@ -715,15 +737,46 @@ export class ZvolFormComponent implements OnInit {
     if (this.isNew) {
       readonlyValue = inherit;
     } else {
-      readonlyValue = parent.readonly.value;
+      readonlyValue = zvol.readonly.value;
       if (
-        parent.readonly.source === ZfsPropertySource.Default
-        || parent.readonly.source === ZfsPropertySource.Inherited
+        zvol.readonly.source === ZfsPropertySource.Default
+        || zvol.readonly.source === ZfsPropertySource.Inherited
       ) {
         readonlyValue = inherit;
       }
     }
     this.form.controls.readonly.setValue(readonlyValue);
+
+    if (!this.isNew) {
+      this.originalReadonlyValue = readonlyValue;
+      this.updateVolsizeStateBasedOnReadonly(readonlyValue);
+
+      this.form.controls.readonly.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+        this.updateVolsizeStateBasedOnReadonly(value);
+      });
+    }
+  }
+
+  private updateVolsizeStateBasedOnReadonly(readonlyValue: string): void {
+    const effectiveCurrentValue = this.getEffectiveReadonlyValue(readonlyValue);
+    const effectiveOriginalValue = this.getEffectiveReadonlyValue(this.originalReadonlyValue);
+
+    const isEffectivelyReadonlyOn = effectiveCurrentValue === OnOff.On as string;
+    const hasEffectivelyChanged = effectiveCurrentValue !== effectiveOriginalValue;
+
+    if (isEffectivelyReadonlyOn || hasEffectivelyChanged) {
+      this.form.controls.volsize.disable();
+    } else {
+      this.form.controls.volsize.enable();
+    }
+
+    this.volsizeReadonlyWarning = hasEffectivelyChanged
+      ? this.translate.instant(helptextZvol.readonlyVolsizeWarning)
+      : null;
+  }
+
+  private getEffectiveReadonlyValue(readonlyValue: string): string {
+    return readonlyValue === inherit ? this.inheritedReadonlyValue : readonlyValue;
   }
 
   private handleZvolCreateUpdate(dataset: Dataset): void {

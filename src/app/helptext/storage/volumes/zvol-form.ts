@@ -43,6 +43,7 @@ export const helptextZvol = {
 
   readonlyLabel: T('Read-only'),
   readonlyTooltip: T('Set to prevent the zvol from being modified.'),
+  readonlyVolsizeWarning: T('Size cannot be changed when readonly is toggled.'),
 
   sparseLabel: T('Sparse'),
   sparseTooltip: T('Enable to use thin provisioning\

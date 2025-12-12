@@ -11,6 +11,7 @@ import {
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { OnOff } from 'app/enums/on-off.enum';
+import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -342,6 +343,184 @@ describe('ZvolFormComponent', () => {
       }]);
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+  });
+
+  describe('readonly and volsize interaction', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: jest.fn(() => ({ isNew: false, parentOrZvolId: 'zvolId' })),
+          }),
+        ],
+      });
+
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+    });
+
+    it('disables volsize field when readonly is ON and not changed', () => {
+      // Simulate component state after loading a zvol with readonly ON
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.On;
+      spectator.component.form.controls.readonly.setValue(OnOff.On);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(true);
+    });
+
+    it('does not show warning when readonly is ON but not toggled', () => {
+      // Simulate component state after loading a zvol with readonly ON
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.On;
+      spectator.component.form.controls.readonly.setValue(OnOff.On);
+      spectator.detectChanges();
+
+      const warning = spectator.query('.volsize-warning');
+      expect(warning).toBeNull();
+    });
+
+    it('enables volsize field when readonly is OFF and not changed', () => {
+      // Simulate component state after loading a zvol with readonly OFF
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.Off;
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(false);
+    });
+
+    it('disables volsize and shows warning when readonly is toggled from OFF to ON', () => {
+      // Simulate component state after loading a zvol with readonly OFF
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.Off;
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      // Toggle readonly to ON
+      spectator.component.form.controls.readonly.setValue(OnOff.On);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(true);
+      const warning = spectator.query('.volsize-warning');
+      expect(warning).toBeTruthy();
+      expect(warning.textContent).toContain('Size cannot be changed when readonly is toggled.');
+    });
+
+    it('re-enables volsize and hides warning when readonly is toggled back to original value', () => {
+      // Simulate component state after loading a zvol with readonly OFF
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.Off;
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      // Toggle readonly to ON
+      spectator.component.form.controls.readonly.setValue(OnOff.On);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(true);
+      expect(spectator.query('.volsize-warning')).toBeTruthy();
+
+      // Toggle back to OFF (original)
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(false);
+      expect(spectator.query('.volsize-warning')).toBeNull();
+    });
+
+    it('does not send volsize in payload when readonly is toggled', async () => {
+      // Simulate component state after loading a zvol with readonly OFF
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.Off;
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      // Toggle readonly to ON
+      spectator.component.form.controls.readonly.setValue(OnOff.On);
+      spectator.detectChanges();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.update');
+
+      expect(updateCall).toBeDefined();
+      expect(updateCall[1][1].volsize).toBeUndefined();
+    });
+
+    it('disables volsize when inherit is selected and inherited readonly is ON', () => {
+      // Simulate component state where inherited readonly value is ON
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = inherit;
+      (spectator.component as unknown as { inheritedReadonlyValue: string }).inheritedReadonlyValue = OnOff.On;
+      spectator.component.form.controls.readonly.setValue(inherit);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(true);
+    });
+
+    it('enables volsize when inherit is selected and inherited readonly is OFF', () => {
+      // Simulate component state where inherited readonly value is OFF
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = inherit;
+      (spectator.component as unknown as { inheritedReadonlyValue: string }).inheritedReadonlyValue = OnOff.Off;
+      spectator.component.form.controls.readonly.setValue(inherit);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(false);
+    });
+
+    it('does not show warning when inherit is selected with readonly ON (not toggled)', () => {
+      // Simulate component state where inherited readonly value is ON and original was inherit
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = inherit;
+      (spectator.component as unknown as { inheritedReadonlyValue: string }).inheritedReadonlyValue = OnOff.On;
+      spectator.component.form.controls.readonly.setValue(inherit);
+      spectator.detectChanges();
+
+      const warning = spectator.query('.volsize-warning');
+      expect(warning).toBeNull();
+    });
+
+    it('does not disable volsize when changing from OFF to Inherit (OFF)', () => {
+      // Original value was OFF, inherited value is also OFF
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.Off;
+      (spectator.component as unknown as { inheritedReadonlyValue: string }).inheritedReadonlyValue = OnOff.Off;
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      // Change to inherit - effective value is still OFF
+      spectator.component.form.controls.readonly.setValue(inherit);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(false);
+      expect(spectator.query('.volsize-warning')).toBeNull();
+    });
+
+    it('does not disable volsize when changing from ON to Inherit (ON)', () => {
+      // Original value was ON, inherited value is also ON
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.On;
+      (spectator.component as unknown as { inheritedReadonlyValue: string }).inheritedReadonlyValue = OnOff.On;
+      spectator.component.form.controls.readonly.setValue(OnOff.On);
+      spectator.detectChanges();
+
+      // Change to inherit - effective value is still ON (should remain disabled, no warning)
+      spectator.component.form.controls.readonly.setValue(inherit);
+      spectator.detectChanges();
+
+      // Disabled because effective value is ON, but no warning since it didn't change
+      expect(spectator.component.form.controls.volsize.disabled).toBe(true);
+      expect(spectator.query('.volsize-warning')).toBeNull();
+    });
+
+    it('disables volsize when changing from OFF to Inherit (ON)', () => {
+      // Original value was OFF, but inherited value is ON
+      (spectator.component as unknown as { originalReadonlyValue: string }).originalReadonlyValue = OnOff.Off;
+      (spectator.component as unknown as { inheritedReadonlyValue: string }).inheritedReadonlyValue = OnOff.On;
+      spectator.component.form.controls.readonly.setValue(OnOff.Off);
+      spectator.detectChanges();
+
+      // Change to inherit - effective value changes from OFF to ON
+      spectator.component.form.controls.readonly.setValue(inherit);
+      spectator.detectChanges();
+
+      expect(spectator.component.form.controls.volsize.disabled).toBe(true);
+      expect(spectator.query('.volsize-warning')).toBeTruthy();
     });
   });
 });
