@@ -1,0 +1,24 @@
+<ix-select
+  [formControl]="modeControl"
+  [label]="'Port Mode' | translate"
+  [tooltip]="'Choose whether to use an existing FC port or create a new virtual port' | translate"
+  [options]="modeOptions$"
+></ix-select>
+
+@if (modeControl.value === 'new') {
+  <ix-select
+    [formControl]="form().controls.host_id"
+    [label]="'Choose Host for New Virtual Port' | translate"
+    [tooltip]="'Select which physical HBA will host the new NPIV virtual port' | translate"
+    [options]="creatingPortOptions$"
+    [required]="true"
+  ></ix-select>
+} @else if (modeControl.value === 'existing') {
+  <ix-select
+    [formControl]="form().controls.port"
+    [label]="'Existing Port' | translate"
+    [tooltip]="'Select an existing FC port to use for this target' | translate"
+    [options]="existingPortOptions$"
+    [required]="true"
+  ></ix-select>
+}

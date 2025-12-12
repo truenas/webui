@@ -110,3 +110,4 @@ src/assets/scripts/ie-support/ie-polyfills.min.js
 
 # Sentry Config File
 .sentryclirc
+src/app/testing-configs/*

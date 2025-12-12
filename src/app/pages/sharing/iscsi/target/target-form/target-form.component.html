@@ -55,11 +55,32 @@
             </ix-list>
 
             @if (showPortControls) {
-              <ix-fc-ports-controls
-                [form]="fcForm"
-                [isEdit]="!isNew"
-                [currentPort]="editingTargetPort"
-              ></ix-fc-ports-controls>
+              <ix-list
+                formArrayName="fcPorts"
+                [empty]="form.controls.fcPorts.length === 0"
+                [label]="'Fibre Channel Ports' | translate"
+                [formArray]="form.get('fcPorts')"
+                (add)="addFcPort()"
+              >
+                @for (entry of form.controls.fcPorts.controls; track entry; let i = $index) {
+                  <ix-list-item
+                    [label]="'Port' | translate"
+                    (delete)="deleteFcPort(i)"
+                  >
+                    <ix-fc-port-item-controls
+                      [form]="form.controls.fcPorts.at(i)"
+                      [isEdit]="!isNew"
+                      [currentPort]="editingTargetPorts[i]"
+                    ></ix-fc-port-item-controls>
+                  </ix-list-item>
+                }
+              </ix-list>
+
+              @if (fcPortValidationErrors().length > 0) {
+                <mat-error>
+                  {{ fcPortValidationErrors().join(', ') }}
+                </mat-error>
+              }
             }
           </ix-fieldset>
         </div>
@@ -121,7 +142,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || (showPortControls && fcForm.invalid) || isLoading() || isAsyncValidatorPending"
+          [disabled]="form.invalid || (showPortControls && !areFcPortsValid()) || isLoading() || isAsyncValidatorPending"
         >
           {{ 'Save' | translate }}
         </button>

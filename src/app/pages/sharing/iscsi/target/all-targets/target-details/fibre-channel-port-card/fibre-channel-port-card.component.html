@@ -1,26 +1,30 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>
-      {{ 'Fibre Channel Port' | translate }}
+      {{ 'Fibre Channel Ports' | translate }}
     </h3>
   </mat-card-header>
   <mat-card-content>
     @if (isLoading()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      @if (port(); as port) {
-        <p>{{ 'Port' | translate }}: {{ port.port }}</p>
+      @if (ports().length > 0) {
+        @for (port of ports(); track port.id) {
+          <div class="port-group">
+            <p>{{ 'Port' | translate }}: {{ port.port }}</p>
 
-        <ng-container *isHa="true">
-          <p>{{ 'Controller A WWPN' | translate }}: {{ port.wwpn }}</p>
-          <p>{{ 'Controller B WWPN' | translate }}: {{ port.wwpn_b }}</p>
-        </ng-container>
+            <ng-container *isHa="true">
+              <p>{{ 'Controller A WWPN' | translate }}: {{ port.wwpn }}</p>
+              <p>{{ 'Controller B WWPN' | translate }}: {{ port.wwpn_b }}</p>
+            </ng-container>
 
-        <ng-container *isHa="false">
-          <p>{{ 'WWPN' | translate }}: {{ port.wwpn }}</p>
-        </ng-container>
+            <ng-container *isHa="false">
+              <p>{{ 'WWPN' | translate }}: {{ port.wwpn }}</p>
+            </ng-container>
+          </div>
+        }
       } @else {
-        <p>{{ 'No associated Fibre Channel port.' | translate }}</p>
+        <p>{{ 'No associated Fibre Channel ports.' | translate }}</p>
       }
     }
   </mat-card-content>
