@@ -14,7 +14,8 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
 import { SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
-import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
+import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
+import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -130,15 +131,8 @@ export class ServiceSmbComponent implements OnInit {
   };
 
   readonly unixCharsetOptions$ = this.api.call('smb.unixcharset_choices').pipe(choicesToOptions());
-  readonly guestAccountOptions$ = this.api.call('user.query').pipe(
-    map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
-  );
-
-  readonly adminGroupProvider = new SimpleAsyncComboboxProvider(
-    this.userService.groupQueryDsCache('', true).pipe(
-      map((groups) => groups.map((group) => ({ label: group.group, value: group.group }))),
-    ),
-  );
+  readonly guestAccountProvider = new UserComboboxProvider(this.userService);
+  readonly adminGroupProvider = new GroupComboboxProvider(this.userService);
 
   readonly bindIpAddressOptions$ = combineLatest([
     this.api.call('smb.bindip_choices').pipe(choicesToOptions()),

@@ -132,7 +132,7 @@ describe('ServiceSmbComponent', () => {
       'Enable Apple SMB2/3 Protocol Extensions': false,
       'Enable SMB1 support': false,
       'File Mask': '',
-      'Guest Account': '',
+      'Guest Account': 'nobody',
       'Local Master': true,
       'NTLMv1 Auth': false,
       'NetBIOS Alias': [],
