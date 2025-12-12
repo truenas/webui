@@ -13,7 +13,7 @@ export const helptextSystemSupport = {
 
     dialogMessage: T('Successfully saved proactive support settings.'),
     dialogUnavailableTitle: T('Warning'),
-    dialogUnavailableWarning: T('Proactive support settings is not available.'),
+    dialogUnavailableWarning: T('Proactive support settings are not available.'),
   },
 
   bug: {

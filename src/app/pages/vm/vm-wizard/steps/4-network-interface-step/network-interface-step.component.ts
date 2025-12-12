@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { VmNicType, vmNicTypeLabels } from 'app/enums/vm.enum';
-import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { nicChoicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -53,7 +53,7 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
 
   readonly helptext = helptextVmWizard;
   readonly nicTypeOptions$ = of(mapToOptions(vmNicTypeLabels, this.translate));
-  readonly nicAttachOptions$ = this.api.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
+  readonly nicAttachOptions$ = this.api.call('vm.device.nic_attach_choices').pipe(nicChoicesToOptions());
 
   get isVirtio(): boolean {
     return this.form.value.nic_type === VmNicType.Virtio;
