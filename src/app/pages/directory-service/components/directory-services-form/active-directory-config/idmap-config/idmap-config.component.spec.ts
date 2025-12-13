@@ -55,7 +55,7 @@ describe('IdmapConfigComponent', () => {
     const values = await form.getValues();
     expect(values).toEqual(expect.objectContaining({
       'Use TrueNAS Server IDMAP Defaults': false,
-      'IDMAP Backend': 'Active Directory',
+      'IDMAP Backend': 'AD (Active Directory)',
       Name: 'test_domain',
       'Range Low': '100000001',
       'Range High': '200000000',
@@ -80,7 +80,7 @@ describe('IdmapConfigComponent', () => {
 
     await form.fillForm({
       'Use TrueNAS Server IDMAP Defaults': false,
-      'IDMAP Backend': IdmapBackend.Rid,
+      'IDMAP Backend': 'RID (Relative Identifier)',
       Name: 'new-domain',
       'Range Low': 150000001,
       'Range High': 250000000,
@@ -113,7 +113,7 @@ describe('IdmapConfigComponent', () => {
 
     const idmapFieldset = await loader.getHarness(IxFieldsetHarness.with({ title: 'IDMAP Domain' }));
     await idmapFieldset.fillForm({
-      'IDMAP Backend': 'Active Directory',
+      'IDMAP Backend': 'AD (Active Directory)',
     });
     await idmapFieldset.fillForm({
       Name: 'idmap_domain',
@@ -131,7 +131,7 @@ describe('IdmapConfigComponent', () => {
     it('should show AD specific fields when AD backend is selected', async () => {
       await form.fillForm({
         'Use TrueNAS Server IDMAP Defaults': false,
-        'IDMAP Backend': 'Active Directory',
+        'IDMAP Backend': 'AD (Active Directory)',
       });
 
       const values = await form.getValues();
@@ -145,7 +145,7 @@ describe('IdmapConfigComponent', () => {
     it('should show LDAP specific fields when LDAP backend is selected', async () => {
       await form.fillForm({
         'Use TrueNAS Server IDMAP Defaults': false,
-        'IDMAP Backend': IdmapBackend.Ldap,
+        'IDMAP Backend': 'LDAP',
       });
 
       const values = await form.getValues();
@@ -166,7 +166,7 @@ describe('IdmapConfigComponent', () => {
     it('should show RID specific fields when RID backend is selected', async () => {
       await form.fillForm({
         'Use TrueNAS Server IDMAP Defaults': false,
-        'IDMAP Backend': IdmapBackend.Rid,
+        'IDMAP Backend': 'RID (Relative Identifier)',
       });
 
       const values = await form.getValues();
@@ -184,14 +184,14 @@ describe('IdmapConfigComponent', () => {
     it('should add and remove controls based on idmap backend type', async () => {
       await form.fillForm({
         'Use TrueNAS Server IDMAP Defaults': false,
-        'IDMAP Backend': 'Active Directory',
+        'IDMAP Backend': 'AD (Active Directory)',
       });
 
       let values = await form.getValues();
       expect(values).toHaveProperty('Schema Mode');
 
       await form.fillForm({
-        'IDMAP Backend': IdmapBackend.Rid,
+        'IDMAP Backend': 'RID (Relative Identifier)',
       });
 
       values = await form.getValues();
@@ -202,14 +202,14 @@ describe('IdmapConfigComponent', () => {
     it('should preserve core controls when switching backends', async () => {
       await form.fillForm({
         'Use TrueNAS Server IDMAP Defaults': false,
-        'IDMAP Backend': 'Active Directory',
+        'IDMAP Backend': 'AD (Active Directory)',
         Name: 'test-domain',
         'Range Low': 100000001,
         'Range High': 200000000,
       });
 
       await form.fillForm({
-        'IDMAP Backend': IdmapBackend.Rid,
+        'IDMAP Backend': 'RID (Relative Identifier)',
       });
 
       const values = await form.getValues();
