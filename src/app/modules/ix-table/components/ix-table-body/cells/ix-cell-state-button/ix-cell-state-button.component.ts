@@ -1,4 +1,4 @@
-import { NgClass, TitleCasePipe } from '@angular/common';
+import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, effect, inject, OnInit, signal,
 } from '@angular/core';
@@ -21,6 +21,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
 import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
+import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -46,7 +47,7 @@ interface RowState {
     IxIconComponent,
     TranslateModule,
     TestDirective,
-    TitleCasePipe,
+    JobStateDisplayPipe,
   ],
 })
 export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements OnInit {
