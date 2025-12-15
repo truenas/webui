@@ -1382,4 +1382,97 @@ describe('SmbFormComponent', () => {
       ]);
     });
   });
+
+  describe('Submit button behavior with Apple SMB2/3 extensions', () => {
+    it('should disable submit button when extensions warning is shown', async () => {
+      spectator = createComponent();
+      api = spectator.inject(ApiService);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      mockStore$ = spectator.inject(MockStore);
+
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'smb.config') {
+          return of({ aapl_extensions: false } as SmbConfig);
+        }
+        return of(null);
+      });
+
+      // Select Time Machine Share (requires Apple SMB2/3 extensions)
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/timemachine',
+        Name: 'timemachine',
+      });
+
+      // Manually set the smbConfig signal to trigger the warning
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify warning is shown
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(true);
+
+      // Verify submit button is disabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Verify warning message is shown in form actions
+      const warnings = await loader.getAllHarnesses(WarningHarness);
+      expect(warnings.length).toBeGreaterThan(0);
+      const warningMessages = await Promise.all(warnings.map((warning) => warning.getText()));
+      expect(warningMessages.some((msg: string) => msg.includes('Apple SMB2/3 protocol extension support'))).toBe(true);
+    });
+
+    it('should enable submit button after extensions are enabled', async () => {
+      spectator = createComponent();
+      api = spectator.inject(ApiService);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      mockStore$ = spectator.inject(MockStore);
+
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'smb.config') {
+          return of({ aapl_extensions: false } as SmbConfig);
+        }
+        return of(null);
+      });
+
+      // Select Time Machine Share (requires Apple SMB2/3 extensions)
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/timemachine',
+        Name: 'timemachine',
+      });
+
+      // Set config to show warning
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify button is disabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Enable extensions
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['extensionsEnabled']();
+      spectator.detectChanges();
+
+      // Verify warning is gone and button is enabled
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(false);
+      expect(await saveButton.isDisabled()).toBe(false);
+
+      // Verify warning message is no longer shown in form actions
+      const warnings = await loader.getAllHarnesses(WarningHarness);
+      const warningMessages = await Promise.all(warnings.map((warning) => warning.getText()));
+      expect(warningMessages.some((msg: string) => msg.includes('Apple SMB2/3 protocol extension support'))).toBe(false);
+    });
+  });
 });

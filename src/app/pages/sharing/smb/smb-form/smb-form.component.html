@@ -312,13 +312,19 @@
       }
 
       <ix-form-actions>
+        @if (showExtensionsWarning()) {
+          <ix-warning
+            [message]="'Please enable Apple SMB2/3 protocol extension support above before saving.' | translate"
+          ></ix-warning>
+        }
+
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading() || isAsyncValidatorPending"
+          [disabled]="form.invalid || isLoading() || isAsyncValidatorPending || showExtensionsWarning()"
         >
           {{ 'Save' | translate }}
         </button>
