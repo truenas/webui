@@ -9,6 +9,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AuditConfig } from 'app/interfaces/audit/audit.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -91,5 +92,16 @@ describe('AuditFormComponent', () => {
         quota_fill_critical: 94,
       },
     ]);
+  });
+
+  it('shows validation error when quota fill critical is not greater than quota fill warning', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Quota Fill Warning (in %)': 70,
+      'Quota Fill Critical (in %)': 60,
+    });
+
+    const criticalControl = await form.getControl('Quota Fill Critical (in %)') as IxInputHarness;
+    expect(await criticalControl.getErrorText()).toBe('Quota Fill Critical must be greater than Quota Fill Warning.');
   });
 });
