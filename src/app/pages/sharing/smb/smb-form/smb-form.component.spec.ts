@@ -113,6 +113,7 @@ describe('SmbFormComponent', () => {
       mockAuth(),
       mockApi([
         mockCall('group.query', [{ id: 1, group: 'test', builtin: false }] as Group[]),
+        mockCall('group.get_group_obj', { gr_gid: 1000, gr_name: 'test', gr_mem: [] }),
         mockCall('sharing.smb.create', { ...existingShare }),
         mockCall('sharing.smb.update', { ...existingShare }),
         mockCall('sharing.smb.share_precheck', null),

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
+  AsyncValidatorFn, FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -14,10 +14,10 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
-  endWith, Observable, of,
+  endWith, forkJoin, Observable, of,
 } from 'rxjs';
 import {
-  debounceTime, filter, map, switchMap, take, tap,
+  catchError, debounceTime, filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
@@ -275,6 +275,44 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     };
   }
 
+  private groupsExistValidator(): AsyncValidatorFn {
+    return (control): Observable<ValidationErrors | null> => {
+      const groups = control.value as string[];
+
+      if (!groups || groups.length === 0) {
+        return of(null);
+      }
+
+      const groupChecks = groups.map((groupName: string) => {
+        return this.userService.getGroupByName(groupName).pipe(
+          map(() => ({ groupName, exists: true })),
+          catchError(() => of({ groupName, exists: false })),
+        );
+      });
+
+      return forkJoin(groupChecks).pipe(
+        map((results) => {
+          const nonExistentGroups = results
+            .filter((result) => !result.exists)
+            .map((result) => result.groupName);
+
+          if (nonExistentGroups.length > 0) {
+            return {
+              groupsDoNotExist: {
+                message: this.translate.instant(
+                  'The following groups do not exist: {groups}',
+                  { groups: nonExistentGroups.join(', ') },
+                ),
+              },
+            };
+          }
+
+          return null;
+        }),
+      );
+    };
+  }
+
   protected form = this.formBuilder.group({
     // Common for all share purposes
     purpose: [SmbSharePurpose.DefaultShare as SmbSharePurpose | null],
@@ -287,8 +325,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     access_based_share_enumeration: [false],
     audit: this.formBuilder.group({
       enable: [false],
-      watch_list: [[] as string[]],
-      ignore_list: [[] as string[]],
+      watch_list: [[] as string[], [], [this.groupsExistValidator()]],
+      ignore_list: [[] as string[], [], [this.groupsExistValidator()]],
     }, { validators: this.auditValidator() }),
 
     // Only relevant to legacy shares
