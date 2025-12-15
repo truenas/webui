@@ -161,7 +161,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.xterm.loadAddon(this.attachAddon);
   }
 
-  private resizeTerm(): boolean {
+  private resizeTerm(): void {
     this.xterm.options.fontSize = this.fontSize;
     this.fitAddon.fit();
     const size = this.fitAddon.proposeDimensions();
@@ -170,7 +170,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
         this.xterm.focus();
       });
     }
-    return true;
   }
 
   protected onFontSizeChanged(newSize: number): void {
@@ -192,7 +191,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
           this.isReconnecting.set(false);
           this.hasAttemptedAutoReconnect = false;
           this.updateTerminal();
-          this.resizeTerm();
+          // Note: resizeTerm() is not called here because ix-terminal-font-size
+          // component handles the initial resize when it emits fontSizeChanged on init.
         } else {
           // Connection lost or failed
           this.isReconnecting.set(false);
