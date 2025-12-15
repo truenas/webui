@@ -1,6 +1,4 @@
-import {
-  afterNextRender, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
@@ -68,10 +66,8 @@ export class CloudSyncProviderComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor() {
-    afterNextRender(() => {
-      this.slideInRef.requireConfirmationWhen(() => {
-        return of(this.form.dirty);
-      });
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
     });
   }
 
