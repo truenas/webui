@@ -106,8 +106,7 @@ export class ApiKeyFormComponent implements OnInit {
   });
 
   protected readonly userQueryParams = new ParamsBuilder<User>()
-    .filter('local', '=', false)
-    .orFilter('roles', '!=', [])
+    .filter('roles', '!=', [])
     .setOptions({ select: ['username', 'id', 'uid'], order_by: ['username'] })
     .getParams();
 
