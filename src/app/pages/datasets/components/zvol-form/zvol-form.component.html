@@ -23,6 +23,9 @@
           [parse]="formatter.memorySizeParsing"
           [required]="true"
         ></ix-input>
+        @if (volsizeReadonlyWarning) {
+          <p class="volsize-warning">{{ volsizeReadonlyWarning }}</p>
+        }
       </ix-fieldset>
 
       <ix-fieldset [title]="'Additional Options' | translate">
