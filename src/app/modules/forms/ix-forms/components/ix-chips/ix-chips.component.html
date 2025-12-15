@@ -43,7 +43,7 @@
     />
   </mat-chip-grid>
 
-  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onAdd($event.option.value)">
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onAdd($event.option.value, true)">
     @if (suggestions$) {
       @for (suggestion of suggestions$ | async; track trackByIdentity(suggestion)) {
         <mat-option

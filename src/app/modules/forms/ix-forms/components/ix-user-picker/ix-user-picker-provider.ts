@@ -42,6 +42,8 @@ export class UserPickerProvider implements IxComboboxProvider {
   }
 
   private queryUsers(search: string): Observable<Option[]> {
+    const trimmedSearch = search?.trim() || '';
+
     // Create a shallow copy of query params to avoid mutating the original arrays/objects.
     // ParamsBuilder may freeze or reuse query param objects, so we need to create new copies
     // before adding dynamic filters (smb, username search) and pagination (offset, limit).
@@ -51,13 +53,14 @@ export class UserPickerProvider implements IxComboboxProvider {
       { ...this.queryParams[1], offset: this.page * this.pageSize, limit: this.pageSize },
     ];
 
-    search = search?.trim();
     if (this.queryType === ComboboxQueryType.Smb) {
       queryArgs[0] = [['smb', '=', true], ...queryArgs[0]];
     }
 
-    if (search?.length > 0) {
-      queryArgs[0] = [['username', '~', search], ...queryArgs[0]];
+    // Use regex search with case-insensitive flag and proper backslash escaping
+    // to handle domain-prefixed usernames (e.g., "ACME\admin")
+    if (trimmedSearch) {
+      queryArgs[0] = [['username', '~', `(?i).*${trimmedSearch.replaceAll('\\', '\\\\')}`], ...queryArgs[0]];
     }
 
     return this.api.call('user.query', queryArgs).pipe(
