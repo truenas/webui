@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
+import {
+  afterNextRender, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  catchError, EMPTY, pairwise, startWith,
+  catchError, EMPTY, of, pairwise, startWith,
 } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
@@ -64,6 +66,14 @@ export class CloudSyncProviderComponent implements OnInit {
   private existingCredential: CloudSyncCredential;
 
   readonly helptext = helptext;
+
+  constructor() {
+    afterNextRender(() => {
+      this.slideInRef.requireConfirmationWhen(() => {
+        return of(this.form.dirty);
+      });
+    });
+  }
 
   get areActionsDisabled(): boolean {
     return this.isLoading || this.form.invalid || !this.form.controls.exist_credential.value;
