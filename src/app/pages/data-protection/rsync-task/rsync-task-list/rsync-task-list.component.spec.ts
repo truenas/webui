@@ -178,7 +178,7 @@ describe('RsyncTaskListComponent', () => {
         'Disabled',
         'Second task',
         'peter',
-        'Finished',
+        'Completed',
         'No',
         '',
       ],
