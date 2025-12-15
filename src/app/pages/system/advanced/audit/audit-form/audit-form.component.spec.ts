@@ -94,11 +94,22 @@ describe('AuditFormComponent', () => {
     ]);
   });
 
-  it('shows validation error when quota fill critical is not greater than quota fill warning', async () => {
+  it('shows validation error when quota fill critical is less than quota fill warning', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Quota Fill Warning (in %)': 70,
       'Quota Fill Critical (in %)': 60,
+    });
+
+    const criticalControl = await form.getControl('Quota Fill Critical (in %)') as IxInputHarness;
+    expect(await criticalControl.getErrorText()).toBe('Quota Fill Critical must be greater than Quota Fill Warning.');
+  });
+
+  it('shows validation error when quota fill critical equals quota fill warning', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Quota Fill Warning (in %)': 70,
+      'Quota Fill Critical (in %)': 70,
     });
 
     const criticalControl = await form.getControl('Quota Fill Critical (in %)') as IxInputHarness;
