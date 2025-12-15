@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnInit, signal, Signal, viewChild, inject } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -9,6 +10,7 @@ import {
   combineLatest, map, Subscription, switchMap, tap,
 } from 'rxjs';
 import { AppContainerLog } from 'app/interfaces/app.interface';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -30,6 +32,8 @@ import { ShellService } from 'app/services/shell.service';
     PageHeaderComponent,
     ToolbarSliderComponent,
     MatButton,
+    ReactiveFormsModule,
+    IxCheckboxComponent,
     TestDirective,
     TranslateModule,
     MatProgressSpinner,
@@ -48,6 +52,7 @@ export class ContainerLogsComponent implements OnInit {
 
   protected fontSize = signal(14);
   protected isLoading = signal(false);
+  protected autoScrollControl = new FormControl<boolean>(true);
 
   protected train: string;
   protected appName: string;
@@ -115,6 +120,10 @@ export class ContainerLogsComponent implements OnInit {
   }
 
   scrollToBottom(): void {
+    if (!this.autoScrollControl.value) {
+      return;
+    }
+
     try {
       this.logContainer().nativeElement.scrollTop = this.logContainer().nativeElement.scrollHeight;
     } catch {

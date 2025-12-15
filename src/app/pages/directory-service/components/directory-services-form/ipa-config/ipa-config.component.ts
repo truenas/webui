@@ -8,6 +8,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { IdmapBackend } from 'app/enums/directory-services.enum';
+import { helptextIpa } from 'app/helptext/directory-service/ipa';
 import { IpaConfig, IpaSmbDomain } from 'app/interfaces/ipa-config.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -32,6 +33,8 @@ import { hasDeepNonNullValue } from 'app/pages/directory-service/components/dire
 export class IpaConfigComponent implements OnInit {
   private fb = inject(FormBuilder);
   private validationService = inject(DirectoryServiceValidationService);
+
+  protected readonly helptext = helptextIpa;
 
   private readonly SMB_RANGE_MIN = 1000;
   private readonly SMB_RANGE_MAX = 2147000000;

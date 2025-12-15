@@ -3,6 +3,7 @@ import {
   arrayToOptions,
   choicesToOptions,
   idNameArrayToOptions,
+  nicChoicesToOptions,
   singleArrayToOptions,
 } from 'app/helpers/operators/options.operators';
 
@@ -63,3 +64,35 @@ describe('idNameArrayToOptions', () => {
     ]);
   });
 });
+
+describe('nicChoicesToOptions', () => {
+  it('converts grouped format to flat options array', async () => {
+    const groupedChoices = {
+      BRIDGE: ['br0', 'br1'],
+      MACVLAN: ['eth0', 'eth1'],
+    };
+
+    const options = await lastValueFrom(of(groupedChoices).pipe(nicChoicesToOptions()));
+
+    expect(options).toEqual([
+      { label: 'br0', value: 'br0' },
+      { label: 'br1', value: 'br1' },
+      { label: 'eth0', value: 'eth0' },
+      { label: 'eth1', value: 'eth1' },
+    ]);
+  });
+
+  it('preserves empty string values as-is', async () => {
+    const choicesWithEmpty = {
+      BRIDGE: ['', 'br0'],
+    };
+
+    const options = await lastValueFrom(of(choicesWithEmpty).pipe(nicChoicesToOptions()));
+
+    expect(options).toEqual([
+      { label: '', value: '' },
+      { label: 'br0', value: 'br0' },
+    ]);
+  });
+});
+
