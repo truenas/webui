@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, viewChild } from '@angular/core';
+import {
+  afterNextRender, ChangeDetectionStrategy, Component, inject, viewChild,
+} from '@angular/core';
 import { of } from 'rxjs';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
@@ -19,8 +21,10 @@ export class AddSubsystemNamespaceComponent {
   private baseForm = viewChild(BaseNamespaceFormComponent);
 
   constructor() {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.baseForm()?.isFormDirty || false);
+    afterNextRender(() => {
+      this.slideInRef.requireConfirmationWhen(() => {
+        return of(this.baseForm()?.isFormDirty || false);
+      });
     });
   }
 

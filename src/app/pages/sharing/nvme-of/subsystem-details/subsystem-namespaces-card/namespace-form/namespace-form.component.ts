@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, signal, inject, viewChild } from '@angular/core';
+import {
+  afterNextRender, ChangeDetectionStrategy, Component, signal, inject, viewChild,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -39,8 +41,10 @@ export class NamespaceFormComponent {
 
   constructor() {
     this.existingNamespace.set(this.slideInRef.getData().namespace);
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.baseForm()?.isFormDirty || false);
+    afterNextRender(() => {
+      this.slideInRef.requireConfirmationWhen(() => {
+        return of(this.baseForm()?.isFormDirty || false);
+      });
     });
   }
 
