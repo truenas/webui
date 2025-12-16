@@ -3,7 +3,7 @@ import { MatIconButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, take } from 'rxjs';
+import { take } from 'rxjs';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
@@ -36,12 +36,12 @@ export class TerminalFontSizeComponent implements OnInit {
   ngOnInit(): void {
     this.store$.pipe(
       waitForPreferences,
-      filter((preferences) => preferences.terminalFontSize !== undefined),
       take(1),
       untilDestroyed(this),
     ).subscribe((preferences) => {
-      this.fontSize.set(preferences.terminalFontSize);
-      this.fontSizeChanged.emit(preferences.terminalFontSize);
+      const size = preferences.terminalFontSize ?? this.fontSize();
+      this.fontSize.set(size);
+      this.fontSizeChanged.emit(size);
     });
   }
 

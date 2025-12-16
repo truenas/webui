@@ -202,7 +202,7 @@ describe('ZvolFormComponent', () => {
         encryption_options: {
           algorithm: 'AES-128-CCM',
           passphrase: '12345678',
-          pbkdf2iters: '500000',
+          pbkdf2iters: 500000,
         },
         type: DatasetType.Volume,
       }]);
