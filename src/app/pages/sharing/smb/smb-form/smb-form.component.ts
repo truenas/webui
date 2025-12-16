@@ -290,15 +290,18 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         return of(null);
       }
 
-      const groupChecks = groups.map((groupName: string) => {
-        return this.userService.getGroupByName(groupName).pipe(
-          map(() => ({ groupName, exists: true })),
-          catchError(() => of({ groupName, exists: false })),
-        );
-      });
-
-      return forkJoin(groupChecks).pipe(
-        debounceTime(500), // Wait 500ms after last change before validating
+      // Move debounce BEFORE the API calls to prevent firing them on every keystroke
+      return of(groups).pipe(
+        debounceTime(500),
+        switchMap((debouncedGroups) => {
+          const groupChecks = debouncedGroups.map((groupName: string) => {
+            return this.userService.getGroupByName(groupName).pipe(
+              map(() => ({ groupName, exists: true })),
+              catchError(() => of({ groupName, exists: false })),
+            );
+          });
+          return forkJoin(groupChecks);
+        }),
         map((results) => {
           const nonExistentGroups = results
             .filter((result) => !result.exists)
@@ -333,8 +336,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     access_based_share_enumeration: [false],
     audit: this.formBuilder.group({
       enable: [false],
-      watch_list: [[] as string[], [], [this.groupsExistValidator()]],
-      ignore_list: [[] as string[], [], [this.groupsExistValidator()]],
+      watch_list: [[] as string[]],
+      ignore_list: [[] as string[]],
     }, { validators: this.auditValidator() }),
 
     // Only relevant to legacy shares
@@ -434,6 +437,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.form.controls.name.addAsyncValidators([
       this.smbValidationService.validate(this.existingSmbShare?.name),
+    ]);
+    this.form.controls.audit.controls.watch_list.addAsyncValidators([
+      this.groupsExistValidator(),
+    ]);
+    this.form.controls.audit.controls.ignore_list.addAsyncValidators([
+      this.groupsExistValidator(),
     ]);
   }
 
