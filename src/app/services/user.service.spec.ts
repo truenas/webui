@@ -152,6 +152,21 @@ describe('UserService', () => {
         { limit: 50, offset: 0, order_by: ['builtin'] },
       ]);
     });
+
+    it('escapes backslashes in search term for domain-prefixed group names', async () => {
+      jest.spyOn(apiService, 'call').mockReturnValue(of([]));
+
+      await firstValueFrom(spectator.service.smbGroupQueryDsCache('ACME\\Domain Admins', false, 0));
+
+      expect(apiService.call).toHaveBeenCalledWith('group.query', [
+        [['name', '=', 'ACME\\Domain Admins']],
+        { limit: 50 },
+      ]);
+      expect(apiService.call).toHaveBeenCalledWith('group.query', [
+        [['smb', '=', true], ['group', '^', 'ACME\\\\Domain Admins']],
+        { limit: 50, offset: 0, order_by: ['builtin'] },
+      ]);
+    });
   });
 
   describe('getGroupByName', () => {
@@ -184,40 +199,72 @@ describe('UserService', () => {
     });
 
     it('queries users with search term', async () => {
-      const mockUsers = [{ id: 1, username: 'admin', builtin: true } as User];
+      const mockUser = { id: 1, username: 'admin', builtin: true } as User;
+      const mockUsers = [{ id: 2, username: 'administrator', builtin: false } as User];
 
-      jest.spyOn(apiService, 'call').mockReturnValue(of(mockUsers));
+      jest.spyOn(apiService, 'call')
+        .mockReturnValueOnce(of([mockUser])) // Exact name match
+        .mockReturnValueOnce(of(mockUsers)); // Regex search
 
-      await firstValueFrom(spectator.service.userQueryDsCache('admin', 0));
+      const users = await firstValueFrom(spectator.service.userQueryDsCache('admin', 0));
 
+      // Should call exact name match first
       expect(apiService.call).toHaveBeenCalledWith('user.query', [
-        [['username', '^', 'admin']],
+        [['username', '=', 'admin']],
+        { limit: 50 },
+      ]);
+
+      // Then regex search
+      expect(apiService.call).toHaveBeenCalledWith('user.query', [
+        [['username', '~', '(?i).*admin']],
         { limit: 50, offset: 0, order_by: ['builtin'] },
       ]);
+
+      // Should return deduplicated results with exact match prioritized
+      expect(users).toEqual([mockUsers[0], mockUser]);
     });
 
     it('trims search input', async () => {
-      const mockUsers = [{ id: 1, username: 'admin', builtin: true } as User];
+      const mockUser = { id: 1, username: 'admin', builtin: true } as User;
 
-      jest.spyOn(apiService, 'call').mockReturnValue(of(mockUsers));
+      jest.spyOn(apiService, 'call')
+        .mockReturnValueOnce(of([mockUser])) // Exact name match
+        .mockReturnValueOnce(of([])); // Regex search
 
       await firstValueFrom(spectator.service.userQueryDsCache('  admin  ', 0));
 
+      // Should trim and call exact name match
       expect(apiService.call).toHaveBeenCalledWith('user.query', [
-        [['username', '^', 'admin']],
+        [['username', '=', 'admin']],
+        { limit: 50 },
+      ]);
+
+      // Then regex search with trimmed value
+      expect(apiService.call).toHaveBeenCalledWith('user.query', [
+        [['username', '~', '(?i).*admin']],
         { limit: 50, offset: 0, order_by: ['builtin'] },
       ]);
     });
 
     it('handles offset parameter', async () => {
-      const mockUsers = [{ id: 1, username: 'user1', builtin: false } as User];
+      const mockUser = { id: 1, username: 'user', builtin: false } as User;
+      const mockUsers = [{ id: 2, username: 'user1', builtin: false } as User];
 
-      jest.spyOn(apiService, 'call').mockReturnValue(of(mockUsers));
+      jest.spyOn(apiService, 'call')
+        .mockReturnValueOnce(of([mockUser])) // Exact name match
+        .mockReturnValueOnce(of(mockUsers)); // Regex search with offset
 
       await firstValueFrom(spectator.service.userQueryDsCache('user', 50));
 
+      // Should call exact name match
       expect(apiService.call).toHaveBeenCalledWith('user.query', [
-        [['username', '^', 'user']],
+        [['username', '=', 'user']],
+        { limit: 50 },
+      ]);
+
+      // Then regex search with offset
+      expect(apiService.call).toHaveBeenCalledWith('user.query', [
+        [['username', '~', '(?i).*user']],
         { limit: 50, offset: 50, order_by: ['builtin'] },
       ]);
     });
@@ -236,39 +283,107 @@ describe('UserService', () => {
   });
 
   describe('smbUserQueryDsCache', () => {
-    it('queries SMB users only', async () => {
-      const mockUsers = [{ id: 1, username: 'smbuser', smb: true } as User];
+    it('queries SMB users with empty search', async () => {
+      const prefixMatchUsers = [
+        { id: 1, username: 'smbuser', smb: true } as User,
+        { id: 2, username: 'smbadmin', smb: true } as User,
+      ];
 
-      jest.spyOn(apiService, 'call').mockReturnValue(of(mockUsers));
+      jest.spyOn(apiService, 'call').mockReturnValue(of(prefixMatchUsers));
 
-      await firstValueFrom(spectator.service.smbUserQueryDsCache('', 0));
+      const result = await firstValueFrom(spectator.service.smbUserQueryDsCache('', 0));
 
+      expect(result).toEqual(prefixMatchUsers);
+      // Empty search: userQueryDsCacheByName returns of([]) without API call
+      // Only the SMB query is made
+      expect(apiService.call).toHaveBeenCalledTimes(1);
       expect(apiService.call).toHaveBeenCalledWith('user.query', [
         [['smb', '=', true]],
         { limit: 50, offset: 0, order_by: ['builtin'] },
       ]);
     });
 
-    it('queries SMB users with search term', async () => {
-      const mockUsers = [{ id: 1, username: 'smbadmin', smb: true } as User];
+    it('queries SMB users with search term using dual-search', async () => {
+      const exactMatchUser = { id: 1, username: 'smbadmin', smb: true } as User;
+      const prefixMatchUsers = [
+        { id: 2, username: 'smbtest', smb: true } as User,
+        { id: 3, username: 'smbother', smb: true } as User,
+      ];
 
-      jest.spyOn(apiService, 'call').mockReturnValue(of(mockUsers));
+      jest.spyOn(apiService, 'call').mockImplementation((_method, params) => {
+        const filters = (params as unknown[])?.[0] as [string, string, unknown][];
+        // Exact match query: [['username', '=', 'smb']]
+        if (filters?.[0]?.[0] === 'username' && filters?.[0]?.[1] === '=') {
+          return of([exactMatchUser]);
+        }
+        // Prefix match query: [['smb', '=', true], ['username', '^', 'smb']]
+        return of(prefixMatchUsers);
+      });
 
-      await firstValueFrom(spectator.service.smbUserQueryDsCache('smb', 0));
+      const result = await firstValueFrom(spectator.service.smbUserQueryDsCache('smb', 0));
 
+      // Exact match comes last
+      expect(result).toEqual([...prefixMatchUsers, exactMatchUser]);
+      expect(apiService.call).toHaveBeenCalledWith('user.query', [
+        [['username', '=', 'smb']],
+        { limit: 50 },
+      ]);
       expect(apiService.call).toHaveBeenCalledWith('user.query', [
         [['smb', '=', true], ['username', '^', 'smb']],
         { limit: 50, offset: 0, order_by: ['builtin'] },
       ]);
     });
 
-    it('trims search input', async () => {
-      const mockUsers = [{ id: 1, username: 'smbuser', smb: true } as User];
+    it('deduplicates users when exact match is also in prefix results', async () => {
+      const smbadminUser = { id: 1, username: 'smbadmin', smb: true } as User;
+      const prefixMatchUsers = [
+        smbadminUser, // Duplicate!
+        { id: 2, username: 'smbtest', smb: true } as User,
+      ];
 
-      jest.spyOn(apiService, 'call').mockReturnValue(of(mockUsers));
+      jest.spyOn(apiService, 'call').mockImplementation((_method, params) => {
+        const filters = (params as unknown[])?.[0] as [string, string, unknown][];
+        // Exact match query
+        if (filters?.[0]?.[0] === 'username' && filters?.[0]?.[1] === '=') {
+          return of([smbadminUser]);
+        }
+        // Prefix match query
+        return of(prefixMatchUsers);
+      });
+
+      const result = await firstValueFrom(spectator.service.smbUserQueryDsCache('smbadmin', 0));
+
+      // Should only appear once (exact match comes last after deduplication)
+      expect(result).toEqual([
+        { id: 2, username: 'smbtest', smb: true },
+        smbadminUser,
+      ]);
+    });
+
+    it('escapes backslashes in search term for domain-prefixed usernames', async () => {
+      jest.spyOn(apiService, 'call').mockReturnValue(of([]));
+
+      await firstValueFrom(spectator.service.smbUserQueryDsCache('ACME\\admin', 0));
+
+      expect(apiService.call).toHaveBeenCalledWith('user.query', [
+        [['username', '=', 'ACME\\admin']],
+        { limit: 50 },
+      ]);
+      expect(apiService.call).toHaveBeenCalledWith('user.query', [
+        [['smb', '=', true], ['username', '^', 'ACME\\\\admin']],
+        { limit: 50, offset: 0, order_by: ['builtin'] },
+      ]);
+    });
+
+    it('trims search input', async () => {
+      jest.spyOn(apiService, 'call').mockReturnValue(of([]));
 
       await firstValueFrom(spectator.service.smbUserQueryDsCache('  smbuser  ', 0));
 
+      expect(apiService.call).toHaveBeenCalledWith('user.query', [
+        [['username', '=', 'smbuser']],
+        { limit: 50 },
+      ]);
       expect(apiService.call).toHaveBeenCalledWith('user.query', [
         [['smb', '=', true], ['username', '^', 'smbuser']],
         { limit: 50, offset: 0, order_by: ['builtin'] },

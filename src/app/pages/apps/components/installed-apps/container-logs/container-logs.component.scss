@@ -1,4 +1,9 @@
 :host ::ng-deep {
+  ix-checkbox {
+    font-size: 13px;
+    padding-bottom: 3px;
+  }
+
   .logs-wrapper {
     height: calc(100% - 121px);
     margin-left: 8px;

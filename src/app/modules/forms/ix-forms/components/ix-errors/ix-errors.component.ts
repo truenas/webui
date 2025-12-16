@@ -41,6 +41,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
 
   private statusChangeSubscription: Subscription;
   messages: string[] = [];
+  protected showErrorsForUntouched = false;
 
   readonly defaultErrMessages = {
     min: (min: number) => this.translate.instant('Minimum value is {min}', { min }),
@@ -95,18 +96,49 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
     this.statusChangeSubscription?.unsubscribe();
   }
 
+  /**
+   * Subscribes to control status changes to update error messages.
+   *
+   * This manually works around Angular issue where statusChanges doesn't emit
+   * on initial control setup: https://github.com/angular/angular/issues/10816
+   *
+   * We also handle errors immediately on subscription if the control is not
+   * in PENDING state, ensuring validation errors present at initialization
+   * (e.g., when a form is populated with invalid data from the backend)
+   * are displayed right away without requiring user interaction.
+   */
   private subscribeToControlStatusChanges(): void {
-    // This manually works around: https://github.com/angular/angular/issues/10816
     this.statusChangeSubscription?.unsubscribe();
+
+    // Check status before subscription to avoid race condition where status
+    // might change between subscription setup and the check.
+    const shouldHandleImmediately = this.control().status !== 'PENDING';
+
     this.statusChangeSubscription = this.control().statusChanges.pipe(
       filter((status) => status !== 'PENDING'),
       untilDestroyed(this),
     ).subscribe(() => {
       this.handleErrors();
     });
+
+    // Handle errors immediately if control is not in PENDING state.
+    // Skip marking as touched on initial display to avoid triggering
+    // side effects like auto-opening editable components.
+    if (shouldHandleImmediately) {
+      // Only show errors for untouched controls if the control has a value.
+      // This handles edit forms with invalid data from API, while not showing
+      // errors for empty required fields in new forms.
+      const controlValue = this.control().value;
+      const hasValue = controlValue !== null && controlValue !== undefined && controlValue !== '';
+
+      if (this.control().errors && hasValue) {
+        this.showErrorsForUntouched = true;
+        this.handleErrors({ skipMarkAsTouched: true });
+      }
+    }
   }
 
-  private handleErrors(): void {
+  private handleErrors(options: { skipMarkAsTouched?: boolean } = {}): void {
     const newErrors: (string | null)[] = Object.keys(this.control().errors || []).map((error) => {
       if (error === ixManualValidateError) {
         return null;
@@ -121,7 +153,7 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
 
     this.messages = newErrors.filter((message) => !!message) as string[];
 
-    if (this.control().errors) {
+    if (this.control().errors && !options.skipMarkAsTouched) {
       this.control().markAllAsTouched();
     }
 

@@ -8,6 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { LdapSchema } from 'app/enums/directory-services.enum';
+import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import {
   PrimaryDomainIdmap,
 } from 'app/interfaces/active-directory-config.interface';
@@ -44,6 +45,7 @@ export class LdapConfigComponent implements OnInit {
   readonly ldapConfig = input.required<LdapConfig | null>();
   readonly configurationChanged = output<LdapConfig>();
   readonly isValid = output<boolean>();
+  protected readonly helptext = helptextLdap;
 
   protected readonly form = this.fb.group({
     server_urls: [[] as string[], [Validators.required]],

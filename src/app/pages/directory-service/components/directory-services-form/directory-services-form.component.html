@@ -14,25 +14,25 @@
           [label]="'Configuration Type' | translate"
           [required]="true"
           [options]="configurationTypeOptions$"
-          [tooltip]="'Select the type of directory service configuration to set up' | translate"
+          [tooltip]="helptext.serviceTypeTooltip | translate"
         ></ix-select>
 
         <ix-checkbox
           formControlName="enable"
           [label]="'Enable Service' | translate"
-          [tooltip]="'Enable this directory service configuration' | translate"
+          [tooltip]="helptext.enableTooltip | translate"
         ></ix-checkbox>
 
         <ix-checkbox
           formControlName="enable_account_cache"
           [label]="'Enable Account Cache' | translate"
-          [tooltip]="'Cache user and group information for improved performance' | translate"
+          [tooltip]="helptext.enableAccountCacheTooltip | translate"
         ></ix-checkbox>
 
         <ix-checkbox
           formControlName="enable_dns_updates"
           [label]="'Enable DNS Updates' | translate"
-          [tooltip]="'Allow the directory service to update DNS records' | translate"
+          [tooltip]="helptext.enableDnsUpdatesTooltip | translate"
         ></ix-checkbox>
 
         <ix-input
@@ -40,13 +40,13 @@
           type="number"
           [label]="'Timeout (seconds)' | translate"
           [required]="true"
-          [tooltip]="'Connection timeout for directory service operations (1-40 seconds)' | translate"
+          [tooltip]="helptext.timeoutTooltip | translate"
         ></ix-input>
 
         <ix-input
           formControlName="kerberos_realm"
           [label]="'Kerberos Realm' | translate"
-          [tooltip]="'Kerberos realm for authentication (usually the uppercase version of the domain name, e.g., EXAMPLE.COM). Auto-populated when selecting Active Directory domain.' | translate"
+          [tooltip]="helptext.kerberosRealmTooltip | translate"
         ></ix-input>
       </ix-fieldset>
 

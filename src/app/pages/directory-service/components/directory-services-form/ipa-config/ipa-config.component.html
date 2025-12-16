@@ -4,29 +4,34 @@
       formControlName="target_server"
       [label]="'Target Server' | translate"
       [required]="true"
+      [tooltip]="helptext.targetServerTooltip | translate"
     ></ix-input>
 
     <ix-input
       formControlName="hostname"
       [label]="'TrueNAS Hostname' | translate"
       [required]="true"
+      [tooltip]="helptext.hostnameTooltip | translate"
     ></ix-input>
 
     <ix-input
       formControlName="domain"
       [label]="'Domain' | translate"
       [required]="true"
+      [tooltip]="helptext.domainTooltip | translate"
     ></ix-input>
 
     <ix-input
       formControlName="basedn"
       [label]="'Base DN' | translate"
       [required]="true"
+      [tooltip]="helptext.basednTooltip | translate"
     ></ix-input>
 
     <ix-checkbox
       formControlName="validate_certificates"
       [label]="'Validate Certificates' | translate"
+      [tooltip]="helptext.validateCertificatesTooltip | translate"
     ></ix-checkbox>
   </ix-fieldset>
 
@@ -34,24 +39,28 @@
     <ix-checkbox
       formControlName="use_default_smb_domain"
       [label]="'Use Default SMB Domain Configuration' | translate"
+      [tooltip]="helptext.useDefaultSmbDomainTooltip | translate"
     ></ix-checkbox>
 
     @if (!useDefaultSmbDomain()) {
       <ix-input
         formControlName="smb_domain_name"
         [label]="'Name' | translate"
+        [tooltip]="helptext.smbDomainNameTooltip | translate"
       ></ix-input>
-      
+
       <ix-input
         formControlName="smb_domain_domain_name"
         [label]="'Domain Name' | translate"
+        [tooltip]="helptext.smbDomainDomainNameTooltip | translate"
       ></ix-input>
-      
+
       <ix-input
         formControlName="smb_domain_range_low"
         [type]="'number'"
         [label]="'Range Low' | translate"
         [required]="true"
+        [tooltip]="helptext.smbDomainRangeLowTooltip | translate"
       ></ix-input>
 
       <ix-input
@@ -59,11 +68,13 @@
         [type]="'number'"
         [label]="'Range High' | translate"
         [required]="true"
+        [tooltip]="helptext.smbDomainRangeHighTooltip | translate"
       ></ix-input>
 
       <ix-input
         formControlName="smb_domain_domain_sid"
         [label]="'Domain SID' | translate"
+        [tooltip]="helptext.smbDomainDomainSidTooltip | translate"
       ></ix-input>
     }
   </ix-fieldset>

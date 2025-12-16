@@ -63,6 +63,10 @@ describe('ApiService', () => {
     jest.clearAllMocks();
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   describe('call', () => {
     it('should make a WS call and get a response', async () => {
       const uuid = 'fakeUUID';
@@ -178,6 +182,7 @@ describe('ApiService', () => {
     });
 
     it('should throw on a failed job', async () => {
+      jest.spyOn(console, 'warn').mockImplementation();
       const mockJobId4 = 1237;
       const fakeUuid6 = 'fakeUUID6';
       // eslint-disable-next-line @typescript-eslint/no-require-imports

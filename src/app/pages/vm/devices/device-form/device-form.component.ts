@@ -19,7 +19,7 @@ import {
 } from 'app/enums/vm.enum';
 import { isApiCallError, transformApiCallErrorMessage } from 'app/helpers/api.helper';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
-import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { choicesToOptions, nicChoicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDevice } from 'app/helptext/vm/devices/device-add-edit';
 import {
@@ -241,7 +241,7 @@ export class DeviceFormComponent implements OnInit {
 
   readonly bindOptions$ = this.api.call('vm.device.bind_choices').pipe(choicesToOptions());
   readonly resolutions$ = this.api.call('vm.resolution_choices').pipe(choicesToOptions());
-  readonly nicOptions$ = this.api.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
+  readonly nicOptions$ = this.api.call('vm.device.nic_attach_choices').pipe(nicChoicesToOptions());
   readonly nicTypes$ = of(mapToOptions(vmNicTypeLabels, this.translate));
   readonly displayTypes$ = new BehaviorSubject<{ label: string; value: VmDisplayType }[]>([]);
 

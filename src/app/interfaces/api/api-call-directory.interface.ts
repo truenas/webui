@@ -6,7 +6,6 @@ import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
@@ -143,7 +142,7 @@ import {
   UpdateInitShutdownScriptParams,
 } from 'app/interfaces/init-shutdown-script.interface';
 import {
-  Ipmi, IpmiChassis, IpmiQueryParams, IpmiUpdate,
+  Ipmi, IpmiChassis, IpmiChassisIdentifyParams, IpmiChassisInfoParams, IpmiQueryParams, IpmiUpdate,
 } from 'app/interfaces/ipmi.interface';
 import {
   IscsiGlobalConfig,
@@ -564,8 +563,8 @@ export interface ApiCallDirectory {
   'interface.xmit_hash_policy_choices': { params: void; response: Choices };
 
   // IPMI
-  'ipmi.chassis.identify': { params: [OnOff]; response: void };
-  'ipmi.chassis.info': { params: void; response: IpmiChassis };
+  'ipmi.chassis.identify': { params: [IpmiChassisIdentifyParams]; response: void };
+  'ipmi.chassis.info': { params: [IpmiChassisInfoParams?]; response: IpmiChassis };
   'ipmi.is_loaded': { params: void; response: boolean };
   'ipmi.lan.query': { params: IpmiQueryParams; response: Ipmi[] };
   'ipmi.lan.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
@@ -918,7 +917,7 @@ export interface ApiCallDirectory {
   'container.device.update': { params: [id: number, update: ContainerDevicePayload]; response: ContainerDeviceEntry };
   'container.device.disk_choices': { params: []; response: Record<string, string> };
   'container.device.gpu_choices': { params: []; response: Record<string, ContainerGpuType> };
-  'container.device.nic_attach_choices': { params: []; response: Record<string, string> };
+  'container.device.nic_attach_choices': { params: []; response: Record<string, string[]> };
   'container.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
 
   // Container (actual available endpoints only)
@@ -947,7 +946,7 @@ export interface ApiCallDirectory {
   'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };
   'system.advanced.get_gpu_pci_choices': { params: void; response: GpuPciChoices };
-  'vm.device.nic_attach_choices': { params: void; response: Choices };
+  'vm.device.nic_attach_choices': { params: void; response: Record<string, string[]> };
   'vm.device.passthrough_device_choices': { params: void; response: Record<string, VmPassthroughDeviceChoice> };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
   'vm.device.update': { params: [id: number, update: VmDeviceUpdate]; response: VmDevice };

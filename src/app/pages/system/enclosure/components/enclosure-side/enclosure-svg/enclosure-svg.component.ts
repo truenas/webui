@@ -94,22 +94,28 @@ export class EnclosureSvgComponent implements OnDestroy {
         this.addTint(slot);
       }
     });
+
+    this.applySelectedSlotStyles();
   });
 
   private highlightSelectedSlot = effect(() => {
     const selectedSlot = this.selectedSlot();
-    const slots = this.slots();
-    const svg = this.svg();
+    this.slots();
+    this.svg();
 
+    this.applySelectedSlotStyles(selectedSlot);
+  });
+
+  private applySelectedSlotStyles(selectedSlot: DashboardEnclosureSlot | null = this.selectedSlot()): void {
     this.clearSelectionStylesFromAllSlots();
 
-    if (!selectedSlot || !svg) {
+    if (!selectedSlot) {
       return;
     }
 
     this.addSelectedStyles(selectedSlot);
-    this.addSelectedVdevDisksStyles(selectedSlot, slots);
-  });
+    this.addSelectedVdevDisksStyles(selectedSlot, this.slots());
+  }
 
   private clearSelectionStylesFromAllSlots(): void {
     this.resetDimValues();
@@ -122,6 +128,9 @@ export class EnclosureSvgComponent implements OnDestroy {
 
   private addSelectedStyles(selectedSlot: DashboardEnclosureSlot): void {
     const slotOverlay = this.overlayRects[selectedSlot.drive_bay_number];
+    if (!slotOverlay) {
+      return;
+    }
     this.renderer.addClass(slotOverlay, 'selected');
   }
 
@@ -140,8 +149,13 @@ export class EnclosureSvgComponent implements OnDestroy {
     }
 
     for (const slot of allSlots) {
+      const overlay = this.overlayRects[slot.drive_bay_number];
+      if (!overlay) {
+        continue;
+      }
+
       if (slot.dev && selectedVdevDisks.includes(slot.dev)) {
-        this.renderer.addClass(this.overlayRects[slot.drive_bay_number], 'selected-vdev-disk');
+        this.renderer.addClass(overlay, 'selected-vdev-disk');
         if (slot.type) {
           this.dimSlot(slot.drive_bay_number, 1);
         }
@@ -257,7 +271,11 @@ export class EnclosureSvgComponent implements OnDestroy {
   }
 
   private dimSlot(slotNumber: number, opacity: number): void {
-    this.renderer.setStyle(this.slotElements[slotNumber], 'opacity', opacity.toString());
+    const slotElement = this.slotElements[slotNumber];
+    if (!slotElement) {
+      return;
+    }
+    this.renderer.setStyle(slotElement, 'opacity', opacity.toString());
   }
 
   private resetDimValues(): void {
