@@ -1422,11 +1422,9 @@ describe('SmbFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
 
-      // Verify warning message is shown in form actions
-      const warnings = await loader.getAllHarnesses(WarningHarness);
-      expect(warnings.length).toBeGreaterThan(0);
-      const warningMessages = await Promise.all(warnings.map((warning) => warning.getText()));
-      expect(warningMessages.some((msg: string) => msg.includes('Apple SMB2/3 protocol extension support'))).toBe(true);
+      // Verify warning component is shown with correct id
+      const warningElement = spectator.query('#apple-extensions-warning');
+      expect(warningElement).toBeTruthy();
     });
 
     it('should enable submit button after extensions are enabled', async () => {
@@ -1458,10 +1456,82 @@ describe('SmbFormComponent', () => {
       expect(spectator.component['showExtensionsWarning']()).toBe(false);
       expect(await saveButton.isDisabled()).toBe(false);
 
-      // Verify warning message is no longer shown in form actions
-      const warnings = await loader.getAllHarnesses(WarningHarness);
-      const warningMessages = await Promise.all(warnings.map((warning) => warning.getText()));
-      expect(warningMessages.some((msg: string) => msg.includes('Apple SMB2/3 protocol extension support'))).toBe(false);
+      // Verify warning component is no longer shown
+      const warningElement = spectator.query('#apple-extensions-warning');
+      expect(warningElement).toBeFalsy();
+    });
+
+    it('should show warning reactively when switching between purposes requiring extensions', async () => {
+      // Start with Default Share (no warning)
+      await form.fillForm({
+        Purpose: 'Default Share',
+        Path: '/mnt/pool/default',
+        Name: 'default',
+      });
+
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify no warning for Default Share
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(false);
+      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+
+      // Switch to Time Machine Share (warning should appear)
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+      });
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify warning is shown and button is disabled
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(true);
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Enable extensions
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['extensionsEnabled']();
+      spectator.detectChanges();
+
+      // Verify button is enabled
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(false);
+      expect(await saveButton.isDisabled()).toBe(false);
+
+      // Switch to FCP Share (another purpose requiring extensions with extensions disabled)
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      await form.fillForm({
+        Purpose: 'MacOS Media Share',
+      });
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify warning appears again for FCP share
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(true);
+      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Switch back to Default Share (warning should disappear)
+      await form.fillForm({
+        Purpose: 'Default Share',
+      });
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify warning is gone
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(false);
+      expect(await saveButton.isDisabled()).toBe(false);
     });
   });
 });

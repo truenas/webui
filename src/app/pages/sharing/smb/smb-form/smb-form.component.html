@@ -25,6 +25,7 @@
 
         @if (showExtensionsWarning()) {
           <ix-smb-extensions-warning
+            id="apple-extensions-warning"
             (extensionsEnabled)="extensionsEnabled()"
           ></ix-smb-extensions-warning>
         }
@@ -312,13 +313,6 @@
       }
 
       <ix-form-actions>
-        @if (showExtensionsWarning()) {
-          <ix-warning
-            id="apple-extensions-warning"
-            [message]="helptextSharingSmb.extensionsWarning | translate"
-          ></ix-warning>
-        }
-
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
