@@ -169,7 +169,14 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   get isAsyncValidatorPending(): boolean {
-    return this.form.controls.name.status === 'PENDING' && this.form.controls.name.touched;
+    const nameControl = this.form.controls.name;
+    const auditGroup = this.form.controls.audit;
+    const watchListControl = auditGroup.controls.watch_list;
+    const ignoreListControl = auditGroup.controls.ignore_list;
+
+    return (nameControl.status === 'PENDING' && nameControl.touched)
+      || (watchListControl.status === 'PENDING' && watchListControl.touched)
+      || (ignoreListControl.status === 'PENDING' && ignoreListControl.touched);
   }
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({
@@ -291,6 +298,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       });
 
       return forkJoin(groupChecks).pipe(
+        debounceTime(500), // Wait 500ms after last change before validating
         map((results) => {
           const nonExistentGroups = results
             .filter((result) => !result.exists)
