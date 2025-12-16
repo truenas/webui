@@ -1,11 +1,16 @@
 import { Pipe, PipeTransform, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { JobState } from 'app/enums/job-state.enum';
+import { DisplayableState, JobState } from 'app/enums/job-state.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 
 /**
- * Transforms JobState enum values to normalized display text.
- * Normalizes SUCCESS and FINISHED to 'Completed' for consistent UI.
- * Normalizes ERROR and FAILED to 'Failed' for consistent UI.
+ * Transforms job and task state enum values to normalized display text.
+ * Accepts both JobState and TaskState values (DisplayableState union type).
+ *
+ * Normalizations:
+ * - JobState.Success + TaskState.Finished → 'Completed'
+ * - JobState.Failed + TaskState.Error → 'Failed'
+ * - All other states → Titlecased via translation
  */
 @Pipe({
   name: 'jobStateDisplay',
@@ -14,18 +19,18 @@ import { JobState } from 'app/enums/job-state.enum';
 export class JobStateDisplayPipe implements PipeTransform {
   private translate = inject(TranslateService);
 
-  transform(state: JobState | null | undefined): string {
+  transform(state: DisplayableState | null | undefined): string {
     if (!state) {
       return '';
     }
 
     // Normalize SUCCESS and FINISHED to 'Completed'
-    if (state === JobState.Success || state === JobState.Finished) {
+    if (state === JobState.Success || state === TaskState.Finished) {
       return this.translate.instant('Completed');
     }
 
     // Normalize ERROR and FAILED to 'Failed'
-    if (state === JobState.Error || state === JobState.Failed) {
+    if (state === TaskState.Error || state === JobState.Failed) {
       return this.translate.instant('Failed');
     }
 

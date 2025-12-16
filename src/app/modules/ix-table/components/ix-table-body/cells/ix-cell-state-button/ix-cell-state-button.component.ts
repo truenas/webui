@@ -11,7 +11,8 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   catchError, EMPTY, filter, Observable, tap,
 } from 'rxjs';
-import { JobState } from 'app/enums/job-state.enum';
+import { DisplayableState, JobState } from 'app/enums/job-state.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
@@ -27,7 +28,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface RowState {
   state: {
-    state: JobState;
+    state: DisplayableState;
     error: string;
     warnings: string[];
     reason: string;
@@ -64,7 +65,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
   job = signal<Job | null>(null);
   jobUpdates$: Observable<Job<ApiJobResponse<ApiJobMethod>>>;
-  state = signal<JobState | null>(null);
+  state = signal<DisplayableState | null>(null);
 
   ngOnInit(): void {
     this.setupRow();
@@ -79,7 +80,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
       }
     }
     if (!this.job()) {
-      this.state.set(this.value as JobState);
+      this.state.set(this.value as DisplayableState);
       return;
     }
     const jobId = this.getJob(this.row())?.id;
@@ -126,7 +127,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
       return;
     }
 
-    if (state.state === JobState.Hold) {
+    if (state.state === TaskState.Hold) {
       this.dialogService.info(this.translate.instant('Task is on hold'), state.reason);
       return;
     }
@@ -176,18 +177,19 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     }
 
     switch (this.state()) {
-      case JobState.Pending:
+      case TaskState.Pending:
       case JobState.Aborted:
         return 'fn-theme-orange';
       case JobState.Running:
-      case JobState.Finished:
+      case TaskState.Running:
+      case TaskState.Finished:
       case JobState.Success:
         return 'fn-theme-green';
-      case JobState.Error:
+      case TaskState.Error:
       case JobState.Failed:
         return 'fn-theme-red';
-      case JobState.Locked:
-      case JobState.Hold:
+      case TaskState.Locked:
+      case TaskState.Hold:
         return 'fn-theme-yellow';
       default:
         return 'fn-theme-primary';

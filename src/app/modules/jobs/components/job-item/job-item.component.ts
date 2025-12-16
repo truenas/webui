@@ -7,6 +7,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { getCredentialsCreationSource } from 'app/helpers/get-credentials-creation-source.utils';
 import { credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -42,6 +43,7 @@ export class JobItemComponent {
   readonly opened = output();
 
   readonly JobState = JobState;
+  readonly TaskState = TaskState;
   readonly credentialTypeLabels = credentialTypeLabels;
   readonly getCredentialsCreationSource = getCredentialsCreationSource;
 

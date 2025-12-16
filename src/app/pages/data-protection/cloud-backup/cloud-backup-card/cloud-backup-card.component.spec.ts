@@ -44,12 +44,12 @@ describe('CloudBackupCardComponent', () => {
       snapshot: false,
       enabled: false,
       job: {
-        state: JobState.Finished,
+        state: JobState.Success,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
       },
-    } as CloudBackup,
+    },
     {
       id: 2,
       description: 'test two',
@@ -58,13 +58,13 @@ describe('CloudBackupCardComponent', () => {
       snapshot: false,
       enabled: false,
       job: {
-        state: JobState.Finished,
+        state: JobState.Success,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
       },
-    } as CloudBackup,
-  ];
+    },
+  ] as CloudBackup[];
 
   const createComponent = createComponentFactory({
     component: CloudBackupCardComponent,
@@ -100,7 +100,7 @@ describe('CloudBackupCardComponent', () => {
           {
             selector: selectJobs,
             value: [{
-              state: JobState.Finished,
+              state: JobState.Success,
               time_finished: {
                 $date: new Date().getTime() - 50000,
               },
@@ -190,7 +190,7 @@ describe('CloudBackupCardComponent', () => {
   it('shows success message when job finishes successfully', async () => {
     jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of({
       id: 1,
-      state: JobState.Finished,
+      state: JobState.Success,
     } as Job<void>));
 
     const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');

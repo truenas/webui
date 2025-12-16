@@ -67,23 +67,6 @@
             </strong>
           </div>
         }
-        @case (JobState.Error) {
-          <div class="job-time">
-            {{ job().state | jobStateDisplay }}:
-            <strong>
-              @let timeFinished = job().time_finished?.$date;
-              {{ timeFinished ? (timeFinished | formatDateTime) : '–' }}
-            </strong>
-          </div>
-        }
-        @case (JobState.Finished) {
-          <div class="job-time">
-            {{ job().state | jobStateDisplay }}:
-            <strong>
-              {{ job().time_finished?.$date ? (job().time_finished.$date | formatDateTime) : '–' }}
-            </strong>
-          </div>
-        }
         @case (JobState.Aborted) {
           <div class="job-time">
             {{ job().state | jobStateDisplay }}:

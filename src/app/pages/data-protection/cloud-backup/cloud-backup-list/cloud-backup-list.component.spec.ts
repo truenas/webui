@@ -40,7 +40,7 @@ describe('CloudBackupListComponent', () => {
       snapshot: false,
       enabled: false,
       job: {
-        state: JobState.Finished,
+        state: JobState.Success,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
@@ -54,7 +54,7 @@ describe('CloudBackupListComponent', () => {
       snapshot: false,
       enabled: true,
       job: {
-        state: JobState.Finished,
+        state: JobState.Success,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
@@ -180,7 +180,7 @@ describe('CloudBackupListComponent', () => {
   it('shows success message when job finishes successfully', async () => {
     jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of({
       id: 1,
-      state: JobState.Finished,
+      state: JobState.Success,
     } as Job<void>));
 
     const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');

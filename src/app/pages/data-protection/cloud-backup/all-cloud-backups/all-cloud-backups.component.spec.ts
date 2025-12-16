@@ -37,31 +37,29 @@ describe('AllCloudBackupsComponent', () => {
       id: 1,
       description: 'UA',
       path: '/mnt/nmnmn',
-      pre_script: 'your_pre_script',
       snapshot: false,
       enabled: false,
       job: {
-        state: JobState.Finished,
+        state: JobState.Success,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
       },
-    },
+    } as unknown as CloudBackup,
     {
       id: 2,
       description: 'UAH',
       path: '/mnt/hahah',
-      pre_script: 'your_pre_script',
       snapshot: false,
       enabled: true,
       job: {
-        state: JobState.Finished,
+        state: JobState.Success,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
       },
-    },
-  ] as CloudBackup[];
+    } as unknown as CloudBackup,
+  ];
 
   const createComponent = createComponentFactory({
     component: AllCloudBackupsComponent,
@@ -101,7 +99,7 @@ describe('AllCloudBackupsComponent', () => {
           {
             selector: selectJobs,
             value: [{
-              state: JobState.Finished,
+              state: JobState.Success,
               time_finished: {
                 $date: new Date().getTime() - 50000,
               },

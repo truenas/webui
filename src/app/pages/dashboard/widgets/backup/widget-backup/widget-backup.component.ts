@@ -10,7 +10,8 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { differenceInDays } from 'date-fns';
 import { filter } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
-import { JobState } from 'app/enums/job-state.enum';
+import { DisplayableState, JobState } from 'app/enums/job-state.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { BackupTile } from 'app/interfaces/cloud-backup.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -35,7 +36,7 @@ enum BackupType {
 interface BackupRow {
   type: BackupType;
   timestamp: ApiTimestamp;
-  state: JobState;
+  state: DisplayableState;
   direction: Direction;
 }
 
@@ -77,8 +78,8 @@ export class WidgetBackupComponent implements OnInit {
   backups: BackupRow[] = [];
   isLoading = false;
 
-  successStates = [JobState.Success, JobState.Finished];
-  failedStates = [JobState.Failed, JobState.Error, JobState.Aborted];
+  successStates: DisplayableState[] = [JobState.Success, TaskState.Finished];
+  failedStates: DisplayableState[] = [JobState.Failed, TaskState.Error, JobState.Aborted];
 
   trackByTile: TrackByFunction<BackupTile> = (_, tile) => tile.title;
 
@@ -142,13 +143,13 @@ export class WidgetBackupComponent implements OnInit {
           ...rsyncTasks.map((task) => ({
             type: BackupType.Rsync,
             direction: task.direction,
-            state: task.job?.state || (task.locked ? JobState.Locked : JobState.Pending),
+            state: task.job?.state || (task.locked ? TaskState.Locked : TaskState.Pending),
             timestamp: task.job?.time_finished,
           })),
           ...cloudSyncTasks.map((task) => ({
             type: BackupType.CloudSync,
             direction: task.direction,
-            state: task.job?.state || (task.locked ? JobState.Locked : JobState.Pending),
+            state: task.job?.state || (task.locked ? TaskState.Locked : TaskState.Pending),
             timestamp: task.job?.time_finished,
           })),
         ];
