@@ -71,6 +71,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   private fitAddon: FitAddon;
   private attachAddon: XtermAttachAddon;
   private token: string;
+  private resizeTimeout: ReturnType<typeof setTimeout>;
 
   ngOnInit(): void {
     if (this.conf().preInit) {
@@ -94,9 +95,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe(() => {
       if (this.shellConnected()) {
-        setTimeout(() => {
-          this.resizeTerm();
-        }, this.waitParentChanges);
+        this.scheduleResize();
       }
     });
   }
@@ -104,9 +103,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onWindowResized(): void {
     if (this.shellConnected()) {
-      setTimeout(() => {
-        this.resizeTerm();
-      }, this.waitParentChanges);
+      this.scheduleResize();
     }
   }
 
@@ -120,10 +117,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
       }),
       untilDestroyed(this),
     ).subscribe();
-  }
-
-  onResize(): void {
-    this.resizeTerm();
   }
 
   private initializeTerminal(): void {
@@ -175,7 +168,14 @@ export class TerminalComponent implements OnInit, OnDestroy {
   protected onFontSizeChanged(newSize: number): void {
     this.fontSize = newSize;
     this.terminalSettings.fontSize = newSize;
-    this.resizeTerm();
+    this.scheduleResize();
+  }
+
+  private scheduleResize(): void {
+    clearTimeout(this.resizeTimeout);
+    this.resizeTimeout = setTimeout(() => {
+      this.resizeTerm();
+    }, this.waitParentChanges);
   }
 
   private initializeWebShell(): void {
