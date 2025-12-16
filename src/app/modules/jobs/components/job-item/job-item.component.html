@@ -52,7 +52,7 @@
         }
         @case (JobState.Success) {
            <div class="job-time">
-              {{ 'Finished' | translate }}:
+              {{ job().state | jobStateDisplay }}:
               <strong>
                 {{ job().time_finished?.$date ? (job().time_finished.$date | formatDateTime) : '–' }}
               </strong>
