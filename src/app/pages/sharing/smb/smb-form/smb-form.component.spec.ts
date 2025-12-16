@@ -9,7 +9,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -18,6 +18,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
+import { DsUncachedGroup } from 'app/interfaces/ds-cache.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -47,6 +48,7 @@ import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dia
 import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -1185,6 +1187,164 @@ describe('SmbFormComponent', () => {
       expect(errorElement).toBeTruthy();
       expect(errorElement?.textContent).toContain('At least one group must be specified');
     });
+
+    it('should show error when non-existent group is entered in watch list', fakeAsync(async () => {
+      // Mock API to return error for non-existent group
+      const userService = spectator.inject(UserService);
+      jest.spyOn(userService, 'getGroupByName').mockReturnValue(throwError(() => new Error('Group not found')));
+
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Manually add a non-existent group using the form control
+      const auditGroup = (spectator.component as unknown as { form: FormGroup }).form.controls.audit as FormGroup;
+      auditGroup.controls.watch_list.setValue(['nonexistent']);
+      auditGroup.controls.watch_list.markAsTouched();
+      auditGroup.controls.watch_list.updateValueAndValidity();
+
+      // Wait for async validation and debounce
+      spectator.tick(600);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error message is displayed
+      const errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement?.textContent).toContain('The following groups do not exist: nonexistent');
+
+      // Verify save button is disabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    }));
+
+    it('should show error when non-existent group is entered in ignore list', fakeAsync(async () => {
+      // Mock API to return error for non-existent group
+      const userService = spectator.inject(UserService);
+      jest.spyOn(userService, 'getGroupByName').mockReturnValue(throwError(() => new Error('Group not found')));
+
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Manually add a non-existent group using the form control
+      const auditGroup = (spectator.component as unknown as { form: FormGroup }).form.controls.audit as FormGroup;
+      auditGroup.controls.ignore_list.setValue(['nonexistent']);
+      auditGroup.controls.ignore_list.markAsTouched();
+      auditGroup.controls.ignore_list.updateValueAndValidity();
+
+      // Wait for async validation and debounce
+      spectator.tick(600);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error message is displayed
+      const errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement?.textContent).toContain('The following groups do not exist: nonexistent');
+
+      // Verify save button is disabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    }));
+
+    it('should pass validation when all entered groups exist', fakeAsync(async () => {
+      // Mock API to return success for existing groups
+      const userService = spectator.inject(UserService);
+      jest.spyOn(userService, 'getGroupByName').mockReturnValue(of({
+        gr_gid: 1000,
+        gr_name: 'test',
+        gr_mem: [],
+      } as DsUncachedGroup));
+
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Add an existing group
+      const auditGroup = (spectator.component as unknown as { form: FormGroup }).form.controls.audit as FormGroup;
+      auditGroup.controls.watch_list.setValue(['test']);
+      auditGroup.controls.watch_list.markAsTouched();
+      auditGroup.controls.watch_list.updateValueAndValidity();
+
+      // Wait for async validation and debounce
+      spectator.tick(600);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify no error message is displayed
+      const errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeFalsy();
+
+      // Verify save button is enabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    }));
+
+    it('should disable save button during async validation', fakeAsync(async () => {
+      // Mock API with a delayed response to catch the PENDING state
+      const userService = spectator.inject(UserService);
+      const delayedObservable$ = new Subject<DsUncachedGroup>();
+      jest.spyOn(userService, 'getGroupByName').mockReturnValue(delayedObservable$.asObservable());
+
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Add a group to trigger async validation
+      const auditGroup = (spectator.component as unknown as { form: FormGroup }).form.controls.audit as FormGroup;
+      auditGroup.controls.watch_list.setValue(['test']);
+      auditGroup.controls.watch_list.markAsTouched();
+      auditGroup.controls.watch_list.updateValueAndValidity();
+
+      // Wait for debounce
+      spectator.tick(600);
+      spectator.detectChanges();
+
+      // Verify save button is disabled while validation is pending
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Complete the async validation
+      delayedObservable$.next({
+        gr_gid: 1000,
+        gr_name: 'test',
+        gr_mem: [],
+      } as DsUncachedGroup);
+      delayedObservable$.complete();
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify save button is now enabled
+      expect(await saveButton.isDisabled()).toBe(false);
+    }));
   });
 
   describe('Dataset Naming Schema null value', () => {
