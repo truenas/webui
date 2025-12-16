@@ -1384,7 +1384,7 @@ describe('SmbFormComponent', () => {
   });
 
   describe('Submit button behavior with Apple SMB2/3 extensions', () => {
-    it('should disable submit button when extensions warning is shown', async () => {
+    beforeEach(async () => {
       spectator = createComponent();
       api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -1397,7 +1397,9 @@ describe('SmbFormComponent', () => {
         }
         return of(null);
       });
+    });
 
+    it('should disable submit button when extensions warning is shown', async () => {
       // Select Time Machine Share (requires Apple SMB2/3 extensions)
       await form.fillForm({
         Purpose: 'Time Machine Share',
@@ -1428,19 +1430,6 @@ describe('SmbFormComponent', () => {
     });
 
     it('should enable submit button after extensions are enabled', async () => {
-      spectator = createComponent();
-      api = spectator.inject(ApiService);
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
-      mockStore$ = spectator.inject(MockStore);
-
-      jest.spyOn(api, 'call').mockImplementation((method) => {
-        if (method === 'smb.config') {
-          return of({ aapl_extensions: false } as SmbConfig);
-        }
-        return of(null);
-      });
-
       // Select Time Machine Share (requires Apple SMB2/3 extensions)
       await form.fillForm({
         Purpose: 'Time Machine Share',
