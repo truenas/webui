@@ -75,6 +75,17 @@ export class AllTargetsComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider(targets$);
   }
 
+  onMobileDetailsClosed(): void {
+    // we only want to clear the current `expandedRow` if we're *actually* in mobile view.
+    //
+    // this statement was previously running when the `ix-master-detail-view` in the template
+    // manually nullified the `expandedRow`, even on desktop.
+    // for this component we need to check and make sure that we're actually in mobile view before clearing anything.
+    if (this.masterDetailView().isMobileView()) {
+      this.dataProvider.expandedRow = null;
+    }
+  }
+
   deleteTarget(target: IscsiTarget): void {
     this.matDialog
       .open(DeleteTargetDialog, { data: target, width: '600px' })
