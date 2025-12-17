@@ -427,10 +427,10 @@ describe('SmbFormComponent', () => {
       ]);
     });
 
-    it('creates FCP (MacOS Media Share) share', async () => {
+    it('creates FCP (Final Cut Pro Storage Share) share', async () => {
       await submitForm({
         ...commonValues,
-        Purpose: 'MacOS Media Share',
+        Purpose: 'Final Cut Pro Storage Share',
       });
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
@@ -539,7 +539,7 @@ describe('SmbFormComponent', () => {
       } as SmbConfig);
 
       await form.fillForm({
-        Purpose: 'MacOS Media Share',
+        Purpose: 'Final Cut Pro Storage Share',
       });
 
       spectator.detectChanges();
@@ -574,7 +574,7 @@ describe('SmbFormComponent', () => {
       expect(await checkbox.isDisabled()).toBe(false);
 
       // Switch to FCP - checkbox should be checked and disabled
-      await form.fillForm({ Purpose: 'MacOS Media Share' });
+      await form.fillForm({ Purpose: 'Final Cut Pro Storage Share' });
       spectator.detectChanges();
       checkbox = await loader.getHarness(
         IxCheckboxHarness.with({ label: formLabels.aapl_name_mangling }),
@@ -641,7 +641,7 @@ describe('SmbFormComponent', () => {
         'Private Datasets Share',
         'External Share',
         'Veeam Repository Share',
-        'MacOS Media Share',
+        'Final Cut Pro Storage Share',
       ]);
     });
 
