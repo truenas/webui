@@ -51,7 +51,7 @@ export class AllUsersComponent implements OnInit, OnDestroy {
   private store$ = inject<Store<AppState>>(Store);
 
   private readonly defaultParams = [
-    [['OR', [['builtin', '=', false], ['username', '=', 'root']]]],
+    [['local', '=', true], ['OR', [['builtin', '=', false], ['username', '=', 'root']]]],
   ] as QueryParams<User>;
 
   protected readonly dataProvider = new UsersDataProvider(this.api, this.defaultParams);
