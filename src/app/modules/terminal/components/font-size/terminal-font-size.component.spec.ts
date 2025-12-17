@@ -66,3 +66,29 @@ describe('TerminalFontSizeComponent', () => {
     expect(spectator.inject(Store).dispatch).toHaveBeenLastCalledWith(terminalFontSizeUpdated({ fontSize: 10 }));
   });
 });
+
+describe('TerminalFontSizeComponent - no saved preference', () => {
+  let spectator: Spectator<TerminalFontSizeComponent>;
+
+  const createComponent = createComponentFactory({
+    component: TerminalFontSizeComponent,
+    providers: [
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectPreferences,
+            value: { ...defaultPreferences, terminalFontSize: undefined },
+          },
+        ],
+      }),
+    ],
+  });
+
+  it('emits default font size when no preference is saved', () => {
+    spectator = createComponent();
+    jest.spyOn(spectator.component.fontSizeChanged, 'emit');
+
+    spectator.component.ngOnInit();
+    expect(spectator.component.fontSizeChanged.emit).toHaveBeenCalledWith(14);
+  });
+});

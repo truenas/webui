@@ -236,6 +236,11 @@ export const helptextSharingSmb = {
     action: T('I Understand'),
   },
 
+  gracePeriodLabel: T('Grace Period'),
+  gracePeriodTooltip: T('Time in seconds after creation in which write access is allowed. \
+After the grace period is up, the share will become read-only. \
+Must be between 60 seconds (1 minute) and 15552000 seconds (180 days).'),
+
   restartPt1: T(
     'The following changes to this SMB Share require the SMB Service to be restarted before they can take effect.',
   ),

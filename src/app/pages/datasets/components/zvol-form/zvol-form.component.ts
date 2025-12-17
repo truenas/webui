@@ -671,7 +671,7 @@ export class ZvolFormComponent implements OnInit {
         }
       } else if (data.encryption_type === 'passphrase') {
         data.encryption_options.passphrase = data.passphrase;
-        data.encryption_options.pbkdf2iters = data.pbkdf2iters;
+        data.encryption_options.pbkdf2iters = Number(data.pbkdf2iters);
       }
       data.encryption_options.algorithm = data.algorithm;
     }
@@ -735,7 +735,7 @@ export class ZvolFormComponent implements OnInit {
             }
           } else if (data.encryption_type === 'passphrase') {
             data.encryption_options.passphrase = data.passphrase;
-            data.encryption_options.pbkdf2iters = data.pbkdf2iters;
+            data.encryption_options.pbkdf2iters = Number(data.pbkdf2iters);
           }
           data.encryption_options.algorithm = data.algorithm;
         }
