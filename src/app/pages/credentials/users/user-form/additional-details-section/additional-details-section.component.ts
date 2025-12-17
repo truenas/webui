@@ -4,9 +4,12 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
+  combineLatest,
   debounceTime, distinctUntilChanged, filter, map,
   Observable,
   of,
+  shareReplay,
+  startWith,
   tap,
   take,
   withLatestFrom,
@@ -121,6 +124,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     ['immutable', '=', false],
   ]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
+    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   groupComboboxProvider: GroupComboboxProvider = new GroupComboboxProvider(
@@ -246,12 +250,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupShellUpdate();
-    if (!this.editingUser()) {
-      if (this.shellAccess()) {
-        this.setFirstShellOption();
-      } else {
-        this.setNoLoginShell();
-      }
+    if (!this.editingUser() && !this.shellAccess()) {
+      this.setNoLoginShell();
     }
     this.detectHomeDirectoryChanges();
     this.setHomeSharePath();
@@ -456,22 +456,29 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   }
 
   private setupShellUpdate(): void {
-    this.form.controls.group.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((group) => {
-      this.updateShellOptions(group, this.form.value.groups);
+    combineLatest([
+      this.form.controls.group.valueChanges.pipe(startWith(this.form.controls.group.value)),
+      this.form.controls.groups.valueChanges.pipe(startWith(this.form.controls.groups.value)),
+    ]).pipe(
+      debounceTime(300),
+      untilDestroyed(this),
+    ).subscribe(([group, groups]) => {
+      this.updateShellOptions(group, groups);
     });
 
-    this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
-      this.updateShellOptions(this.form.value.group, groups);
-    });
-
+    // Handle setting nologin shell when shell access is disabled for new users.
+    // Note: setFirstShellOption() is handled by the effect in the constructor
+    // to avoid duplicate API calls.
     this.userFormStore.state$.pipe(
       map((state) => state.setupDetails.allowedAccess.shellAccess),
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((shellAccess) => {
-      if (shellAccess) {
-        this.setFirstShellOption();
-      } else {
+      if (this.editingUser()) {
+        // When editing, don't auto-set shell - keep user's current shell
+        return;
+      }
+      if (!shellAccess) {
         this.setNoLoginShell();
       }
     });

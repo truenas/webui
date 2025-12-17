@@ -10,7 +10,7 @@ export const helptextDashboard = {
     accountCache: T('Account Cache'),
   },
   idmap: {
-    title: T('Idmap'),
+    title: T('IDMAP'),
   },
   ldap: {
     title: T('LDAP'),

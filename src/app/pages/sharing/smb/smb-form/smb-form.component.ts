@@ -319,7 +319,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     auto_snapshot: [false],
     auto_dataset_creation: [false],
     dataset_naming_schema: [null as string | null],
-    grace_period: [900 as number],
+    grace_period: [900 as number, [Validators.min(60), Validators.max(15552000)]],
     auto_quota: [null as number | null],
     remote_path: [[] as string[], [
       Validators.required,

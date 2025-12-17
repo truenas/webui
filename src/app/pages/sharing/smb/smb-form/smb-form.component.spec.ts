@@ -360,7 +360,7 @@ describe('SmbFormComponent', () => {
       await submitForm({
         ...commonValues,
         Purpose: 'Time Locked Share',
-        'Grace Period': 5,
+        'Grace Period': 900,
         'Use Apple-style Character Encoding': true,
       });
 
@@ -368,7 +368,7 @@ describe('SmbFormComponent', () => {
         expect.objectContaining({
           purpose: SmbSharePurpose.TimeLockedShare,
           options: {
-            grace_period: 5,
+            grace_period: 900,
             aapl_name_mangling: true,
           },
         }),
@@ -1380,6 +1380,36 @@ describe('SmbFormComponent', () => {
           }),
         }),
       ]);
+    });
+  });
+
+  describe('grace_period validation', () => {
+    beforeEach(async () => {
+      await setupTest();
+    });
+
+    it('should disable save button when grace_period is below minimum (60)', async () => {
+      await form.fillForm({
+        Purpose: 'Time Locked Share',
+        Path: '/mnt/pool123/locked',
+        Name: 'locked-share',
+        'Grace Period': 59,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    });
+
+    it('should disable save button when grace_period is above maximum (15552000)', async () => {
+      await form.fillForm({
+        Purpose: 'Time Locked Share',
+        Path: '/mnt/pool123/locked',
+        Name: 'locked-share',
+        'Grace Period': 15552001,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
     });
   });
 });

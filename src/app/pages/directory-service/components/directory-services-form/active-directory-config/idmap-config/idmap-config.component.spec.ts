@@ -51,7 +51,7 @@ describe('IdmapConfigComponent', () => {
     expect(spectator.component).toBeTruthy();
   });
 
-  it('should initialize form with existing idmap config', async () => {
+  it('should initialize form with existing IDMAP config', async () => {
     const values = await form.getValues();
     expect(values).toEqual(expect.objectContaining({
       'Use TrueNAS Server IDMAP Defaults': false,
@@ -62,7 +62,7 @@ describe('IdmapConfigComponent', () => {
     }));
   });
 
-  it('should initialize with default idmap when null is passed', async () => {
+  it('should initialize with default IDMAP when null is passed', async () => {
     spectator.setInput('idmap', null);
     spectator.component.ngOnInit();
 

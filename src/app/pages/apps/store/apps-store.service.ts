@@ -70,6 +70,7 @@ export class AppsStore extends ComponentStore<AppsState> {
       return {
         ...state,
         isLoading: false,
+        isSyncingCatalog: false,
       };
     });
   }
@@ -90,6 +91,13 @@ export class AppsStore extends ComponentStore<AppsState> {
       }),
       switchMap(() => this.loadCatalogData()),
       switchMap(() => this.syncCatalogIfEmpty()),
+      tap(() => {
+        // Clear loading only if sync didn't start (catalog wasn't empty)
+        // If sync is running, it will clear loading when it completes
+        if (!this.get().isSyncingCatalog) {
+          this.setLoadingState(false);
+        }
+      }),
       catchError((error: unknown) => {
         this.handleError(error);
         return EMPTY;
@@ -104,21 +112,23 @@ export class AppsStore extends ComponentStore<AppsState> {
   private syncCatalogIfEmpty(): Observable<unknown> {
     const state = this.get();
 
-    // Check if already syncing to prevent race condition
+    // Defensive check: Prevent concurrent sync operations.
+    // While the RxJS pipeline itself is sequential, this guard is necessary because:
+    // 1. Multiple components could call loadCatalog() simultaneously on first load
+    // 2. User could manually trigger refresh while auto-sync is running
+    // 3. It provides explicit state validation for future maintainability
     if (state.isSyncingCatalog) {
-      this.setLoadingState(false);
       return of(null);
     }
 
     const catalogIsEmpty = state.availableApps.length === 0 && state.categories.length === 0;
 
     if (!catalogIsEmpty) {
-      this.setLoadingState(false);
       return of(null);
     }
 
-    // Set flag in state to prevent concurrent sync operations
-    this.patchState({ isSyncingCatalog: true });
+    // Set flag in state to prevent concurrent sync operations and turn on loading indicator
+    this.patchState({ isSyncingCatalog: true, isLoading: true });
 
     return this.dialogService.jobDialog(
       this.api.job('catalog.sync'),
@@ -128,8 +138,18 @@ export class AppsStore extends ComponentStore<AppsState> {
         canMinimize: true,
       },
     ).afterClosed().pipe(
-      switchMap(() => this.reloadCatalogAfterSync()),
+      switchMap((job) => {
+        // If job completed successfully, reload catalog data
+        if (job) {
+          return this.reloadCatalogAfterSync();
+        }
+        // When dialog is minimized, afterClosed() returns undefined.
+        // The sync job continues running in background, but we skip the reload here.
+        // The catalog will remain empty until user manually refreshes or restarts the app.
+        return of(null);
+      }),
       tap(() => {
+        // Always clear loading and sync flags after everything completes
         this.setLoadingState(false);
         this.patchState({ isSyncingCatalog: false });
       }),
@@ -139,18 +159,14 @@ export class AppsStore extends ComponentStore<AppsState> {
 
   /**
    * Reloads catalog data after a successful sync operation.
+   *
+   * Error handling: Individual service errors within loadCatalogData() are caught
+   * by their respective catchError operators and handled via handleError().
+   * If all services fail, the combined observable still completes successfully
+   * (with empty arrays), so this method doesn't need its own error handling.
    */
   private reloadCatalogAfterSync(): Observable<unknown> {
-    return this.loadCatalogData().pipe(
-      catchError(() => {
-        this.setLoadingState(false);
-        this.patchState({ isSyncingCatalog: false });
-        this.errorHandler.showErrorModal(
-          new Error(this.translate.instant('Catalog sync completed, but failed to load catalog data. Please refresh the page.')),
-        );
-        return EMPTY;
-      }),
-    );
+    return this.loadCatalogData();
   }
 
   /**

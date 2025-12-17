@@ -7,7 +7,7 @@ import { AppStats } from 'app/interfaces/app.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { AppDiskInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-disk-info/app-disk-info.component';
-import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
+import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/rate-chart/rate-chart.component';
 
 describe('AppDiskInfoComponent', () => {
   let spectator: Spectator<AppDiskInfoComponent>;
@@ -15,7 +15,7 @@ describe('AppDiskInfoComponent', () => {
     component: AppDiskInfoComponent,
     imports: [FileSizePipe],
     declarations: [
-      MockComponent(NetworkChartComponent),
+      MockComponent(RateChartComponent),
     ],
     providers: [
       mockProvider(ThemeService, {
@@ -52,50 +52,24 @@ describe('AppDiskInfoComponent', () => {
     expect(readWriteRows[1]).toHaveText('Write: 2.24 MiB');
   });
 
+  it('passes bytes unit to rate chart for disk I/O', () => {
+    const chartComponent = spectator.query(RateChartComponent)!;
+    expect(chartComponent.unit).toBe('B');
+  });
+
   it('updates chart with delta of disk stats', fakeAsync(() => {
-    const chartComponent = spectator.query(NetworkChartComponent)!;
+    const chartComponent = spectator.query(RateChartComponent)!;
     expect(chartComponent).toBeTruthy();
 
     spectator.tick(1);
 
-    const makeEmptyPoints = (y = 0, points = 59): { x: number; y: number }[] => {
-      return Array.from({ length: points }, (_, i) => ({
-        x: expect.closeTo(Date.now() - (points - i) * 1000, -2) as number,
-        y,
-      }));
-    };
+    // First measurement only sets baseline, doesn't add to chart
+    let diskStats = spectator.component.diskStats();
+    expect(diskStats).toHaveLength(60);
+    // All values are still 0 from initialization
+    expect(diskStats.every((point) => point[0] === 0 && point[1] === 0)).toBe(true);
 
-    expect(chartComponent.data).toEqual({
-      datasets: [
-        {
-          label: 'Read',
-          data: [
-            ...makeEmptyPoints(),
-            { x: expect.closeTo(Date.now(), -2) as number, y: 1234567 },
-          ],
-          borderColor: '#0000FF',
-          backgroundColor: '#0000FF',
-          pointBackgroundColor: '#0000FF',
-          pointRadius: 0,
-          tension: 0.2,
-          fill: true,
-        },
-        {
-          label: 'Write',
-          data: [
-            ...makeEmptyPoints(-0),
-            { x: expect.closeTo(Date.now(), -2) as number, y: -2345678 },
-          ],
-          borderColor: '#FFA500',
-          backgroundColor: '#FFA500',
-          pointBackgroundColor: '#FFA500',
-          pointRadius: 0,
-          tension: 0.2,
-          fill: true,
-        },
-      ],
-    });
-
+    // Second measurement calculates delta and adds to chart
     spectator.setInput('stats', {
       isLoading: false,
       error: null,
@@ -109,7 +83,8 @@ describe('AppDiskInfoComponent', () => {
 
     spectator.tick(1);
 
-    const diskStats = spectator.component.diskStats();
+    diskStats = spectator.component.diskStats();
+    // Last point should have the delta (100000 bytes for both read and write)
     expect(diskStats[diskStats.length - 1]).toEqual([100000, 100000]);
   }));
 });

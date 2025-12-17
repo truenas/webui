@@ -4,26 +4,31 @@
       formControlName="hostname"
       [label]="'TrueNAS Hostname' | translate"
       [required]="true"
+      [tooltip]="helptext.hostnameTooltip | translate"
     ></ix-input>
 
     <ix-input
       formControlName="domain"
       [label]="'Domain Name' | translate"
       [required]="true"
+      [tooltip]="helptext.domainNameTooltip | translate"
     ></ix-input>
 
     <ix-input
       formControlName="site"
       [label]="'Site Name' | translate"
+      [tooltip]="helptext.siteTooltip | translate"
     ></ix-input>
 
     <ix-input
       formControlName="computer_account_ou"
       [label]="'Computer Account OU' | translate"
+      [tooltip]="helptext.computerAccountOuTooltip | translate"
     ></ix-input>
     <ix-checkbox
       formControlName="use_default_domain"
       [label]="'Use Default Domain' | translate"
+      [tooltip]="helptext.defaultDomainsTooltip | translate"
     ></ix-checkbox>
   </ix-fieldset>
   

@@ -117,7 +117,11 @@
               }"
             ></ngx-skeleton-loader>
           } @else {
-            <ix-network-chart [data]="chartData()" [aspectRatio]="aspectRatio()"></ix-network-chart>
+            <ix-rate-chart
+              [data]="chartData()"
+              [aspectRatio]="aspectRatio()"
+              [unit]="'b'"
+            ></ix-rate-chart>
           }
         </div>
       }
