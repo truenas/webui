@@ -66,7 +66,7 @@ export const smbSharePurposeTooltips = new Map<SmbSharePurpose, string>([
   [SmbSharePurpose.PrivateDatasetsShare, T('The server uses the specified dataset_naming_schema in options to make a new ZFS dataset when the client connects. The server uses this dataset as the share path during the SMB session.')],
   [SmbSharePurpose.ExternalShare, T('The SMB share is a DFS proxy to a share hosted on an external SMB server.')],
   [SmbSharePurpose.VeeamRepositoryShare, T('The SMB share is a repository for Veeam Backup & Replication and supports Fast Clone.')],
-  [SmbSharePurpose.FcpShare, T('Configures the SMB share for Final Cut Pro storage according to Apple support guidelines. WARNING: This forcibly enables Apple-style character encoding which changes how filenames are converted. Do not enable on shares with existing files as it may break file access.')],
+  [SmbSharePurpose.FcpShare, T('The share is configured for Final Cut Pro storage according to Apple support guidelines. WARNING: This forcibly enables Apple-style character encoding which changes how filenames are converted. Do not enable on shares with existing files as it may break file access.')],
 ]);
 
 export interface DefaultSmbShare extends BaseShare {
