@@ -82,10 +82,9 @@ export class ContainerGeneralInfoComponent {
       buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
-      switchMap(() => {
-        this.loader.open();
-        return this.api.call('container.delete', [this.container().id]);
-      }),
+      switchMap(() => this.api.call('container.delete', [this.container().id]).pipe(
+        this.loader.withLoader(),
+      )),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
