@@ -20,41 +20,41 @@ export class FibreChannelService {
   }
 
   /**
-   * Validates that all ports in the array use different physical HBAs.
+   * Validates that all ports in the array use different physical ports.
    * @param ports Array of port form values to validate.
    * @param hosts Array of FC hosts (required for validating host_id entries).
-   * @returns Validation result with list of duplicate HBAs if any.
+   * @returns Validation result with list of duplicate ports if any.
    */
-  validatePhysicalHbaUniqueness(
+  validatePhysicalPortUniqueness(
     ports: FcPortFormValue[],
     hosts: { id: number; alias: string }[] = [],
   ): { valid: boolean; duplicates: string[] } {
-    const physicalHbas = new Set<string>();
+    const physicalPorts = new Set<string>();
     const duplicates = new Set<string>();
 
     // Build a map of host_id to alias for quick lookup
     const hostMap = new Map(hosts.map((host) => [host.id, host.alias]));
 
     ports.forEach((portForm) => {
-      let physicalHba: string | null = null;
+      let physicalPort: string | null = null;
 
       if (portForm.port) {
-        // Existing port: extract physical HBA from port string
+        // Existing port: extract physical port from port string
         // Example: "fc0/1" → "fc0", "fc1" → "fc1"
-        physicalHba = portForm.port.split('/')[0];
+        physicalPort = portForm.port.split('/')[0];
       } else if (portForm.host_id) {
-        // New virtual port: look up physical HBA from host_id
-        physicalHba = hostMap.get(portForm.host_id) || null;
+        // New virtual port: look up physical port from host_id
+        physicalPort = hostMap.get(portForm.host_id) || null;
       }
 
-      if (!physicalHba) {
-        return; // Skip if we couldn't determine the physical HBA
+      if (!physicalPort) {
+        return; // Skip if we couldn't determine the physical port
       }
 
-      if (physicalHbas.has(physicalHba)) {
-        duplicates.add(physicalHba);
+      if (physicalPorts.has(physicalPort)) {
+        duplicates.add(physicalPort);
       } else {
-        physicalHbas.add(physicalHba);
+        physicalPorts.add(physicalPort);
       }
     });
 

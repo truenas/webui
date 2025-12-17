@@ -285,12 +285,12 @@ export class TargetFormComponent implements OnInit {
 
   protected validateFcPorts(): string[] {
     const ports = this.form.controls.fcPorts.getRawValue();
-    const validation = this.fcService.validatePhysicalHbaUniqueness(ports, this.fcHosts());
+    const validation = this.fcService.validatePhysicalPortUniqueness(ports, this.fcHosts());
 
     if (!validation.valid) {
-      return validation.duplicates.map((hba) => this.translate.instant(
-        'Physical HBA {hba} is used multiple times. Each port must be on a different physical HBA.',
-        { hba },
+      return validation.duplicates.map((port) => this.translate.instant(
+        'Physical port {port} is used multiple times. Each target port must use a different physical FC port.',
+        { port },
       ));
     }
 

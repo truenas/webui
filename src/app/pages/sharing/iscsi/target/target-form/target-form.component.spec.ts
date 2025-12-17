@@ -84,7 +84,7 @@ describe('TargetFormComponent', () => {
       mockProvider(FibreChannelService, {
         loadTargetPorts: jest.fn(() => of([])),
         linkFiberChannelPortsToTarget: jest.fn(() => of(null)),
-        validatePhysicalHbaUniqueness: jest.fn(() => ({ valid: true, duplicates: [] as string[] })),
+        validatePhysicalPortUniqueness: jest.fn(() => ({ valid: true, duplicates: [] as string[] })),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockApi([

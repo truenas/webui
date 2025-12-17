@@ -301,7 +301,7 @@ describe('IscsiWizardComponent', () => {
       spectator.detectChanges();
     });
 
-    it('allows valid MPIO configuration with ports on different physical HBAs', async () => {
+    it('allows valid MPIO configuration with ports on different physical ports', async () => {
       // Add first port on fc0
       const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
       await fcPortsList.pressAddButton();
@@ -311,7 +311,7 @@ describe('IscsiWizardComponent', () => {
         'Existing Port': 'fc0',
       });
 
-      // Add second port on fc1 (different physical HBA)
+      // Add second port on fc1 (different physical port)
       await fcPortsList.pressAddButton();
 
       await form.fillForm({
@@ -329,7 +329,7 @@ describe('IscsiWizardComponent', () => {
       // but FC port validation specifically should pass
     });
 
-    it('blocks invalid MPIO configuration with multiple ports on same physical HBA', async () => {
+    it('blocks invalid MPIO configuration with multiple ports on same physical port', async () => {
       // Add first port - fc0 (physical)
       const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
       await fcPortsList.pressAddButton();
@@ -339,7 +339,7 @@ describe('IscsiWizardComponent', () => {
         'Existing Port': 'fc0',
       });
 
-      // Add second port - fc0/1 (NPIV on fc0 - same physical HBA)
+      // Add second port - fc0/1 (NPIV on fc0 - same physical port)
       await fcPortsList.pressAddButton();
 
       await form.fillForm({
@@ -360,8 +360,8 @@ describe('IscsiWizardComponent', () => {
       expect(await saveButton.isDisabled()).toBe(true);
     });
 
-    it('blocks when two NPIV virtual ports share the same physical HBA', async () => {
-      // Add two virtual ports on the same physical HBA
+    it('blocks when two NPIV virtual ports share the same physical port', async () => {
+      // Add two virtual ports on the same physical port
       const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
 
       // First NPIV port on fc0
@@ -388,7 +388,7 @@ describe('IscsiWizardComponent', () => {
       // of host_id to port string, so validation happens at a different level
     });
 
-    it('allows valid MPIO with mix of physical and NPIV ports on different HBAs', async () => {
+    it('allows valid MPIO with mix of physical and NPIV ports on different ports', async () => {
       // Add physical port on fc0
       const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
       await fcPortsList.pressAddButton();
@@ -398,7 +398,7 @@ describe('IscsiWizardComponent', () => {
         'Existing Port': 'fc0',
       });
 
-      // Add NPIV port on fc1 (different physical HBA)
+      // Add NPIV port on fc1 (different physical port)
       await fcPortsList.pressAddButton();
 
       await form.fillForm({
@@ -412,10 +412,10 @@ describe('IscsiWizardComponent', () => {
       const errorElement = spectator.query('mat-error');
       expect(errorElement).toBeFalsy();
 
-      // Note: Mixed mode (physical + NPIV) should be valid as long as they're on different HBAs
+      // Note: Mixed mode (physical + NPIV) should be valid as long as they're on different physical ports
     });
 
-    it('shows validation error message in FC mode with duplicate HBAs', async () => {
+    it('shows validation error message in FC mode with duplicate ports', async () => {
       // Verify error is shown in FC mode with invalid config
       const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
       await fcPortsList.pressAddButton();
@@ -450,7 +450,7 @@ describe('IscsiWizardComponent', () => {
       // but FC port validation specifically should pass
     });
 
-    it('validates immediately when user adds duplicate HBA without requiring form submission', async () => {
+    it('validates immediately when user adds duplicate port without requiring form submission', async () => {
       const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
 
       // Add first port
@@ -466,7 +466,7 @@ describe('IscsiWizardComponent', () => {
       let errorElement = spectator.query('mat-error');
       expect(errorElement).toBeFalsy();
 
-      // Add duplicate HBA
+      // Add duplicate port
       await fcPortsList.pressAddButton();
       await form.fillForm({
         'Port Mode': 'Use existing port',
@@ -485,9 +485,9 @@ describe('IscsiWizardComponent', () => {
       expect(await saveButton.isDisabled()).toBe(true);
     });
 
-    it('blocks mixing new virtual port and existing port on same physical HBA (bug scenario)', async () => {
+    it('blocks mixing new virtual port and existing port on same physical port (bug scenario)', async () => {
       // This tests the bug where mixing host_id (new virtual port) and port (existing port)
-      // on the same HBA was not detected
+      // on the same physical port was not detected
       const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
 
       // Add new virtual port on fc0 (using host_id)

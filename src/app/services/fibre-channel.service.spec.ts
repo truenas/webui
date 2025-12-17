@@ -63,9 +63,9 @@ describe('FibreChannelService', () => {
     });
   });
 
-  describe('validatePhysicalHbaUniqueness', () => {
+  describe('validatePhysicalPortUniqueness', () => {
     it('returns valid when no ports provided', () => {
-      const result = spectator.service.validatePhysicalHbaUniqueness([]);
+      const result = spectator.service.validatePhysicalPortUniqueness([]);
 
       expect(result).toEqual({ valid: true, duplicates: [] });
     });
@@ -76,46 +76,46 @@ describe('FibreChannelService', () => {
         { port: null, host_id: 2 },
       ];
 
-      const result = spectator.service.validatePhysicalHbaUniqueness(ports);
+      const result = spectator.service.validatePhysicalPortUniqueness(ports);
 
       expect(result).toEqual({ valid: true, duplicates: [] });
     });
 
-    it('returns valid when ports use different physical HBAs', () => {
+    it('returns valid when ports use different physical ports', () => {
       const ports: FcPortFormValue[] = [
         { port: 'fc0', host_id: null },
         { port: 'fc1', host_id: null },
         { port: 'fc2/1', host_id: null },
       ];
 
-      const result = spectator.service.validatePhysicalHbaUniqueness(ports);
+      const result = spectator.service.validatePhysicalPortUniqueness(ports);
 
       expect(result).toEqual({ valid: true, duplicates: [] });
     });
 
-    it('returns invalid when same physical HBA used twice (basic)', () => {
+    it('returns invalid when same physical port used twice (basic)', () => {
       const ports: FcPortFormValue[] = [
         { port: 'fc0', host_id: null },
         { port: 'fc0/1', host_id: null },
       ];
 
-      const result = spectator.service.validatePhysicalHbaUniqueness(ports);
+      const result = spectator.service.validatePhysicalPortUniqueness(ports);
 
       expect(result).toEqual({ valid: false, duplicates: ['fc0'] });
     });
 
-    it('returns invalid when same physical HBA used twice (NPIV ports)', () => {
+    it('returns invalid when same physical port used twice (NPIV ports)', () => {
       const ports: FcPortFormValue[] = [
         { port: 'fc1/2', host_id: null },
         { port: 'fc1/3', host_id: null },
       ];
 
-      const result = spectator.service.validatePhysicalHbaUniqueness(ports);
+      const result = spectator.service.validatePhysicalPortUniqueness(ports);
 
       expect(result).toEqual({ valid: false, duplicates: ['fc1'] });
     });
 
-    it('returns invalid with multiple duplicate HBAs', () => {
+    it('returns invalid with multiple duplicate ports', () => {
       const ports: FcPortFormValue[] = [
         { port: 'fc0', host_id: null },
         { port: 'fc0/1', host_id: null },
@@ -123,14 +123,14 @@ describe('FibreChannelService', () => {
         { port: 'fc1/3', host_id: null },
       ];
 
-      const result = spectator.service.validatePhysicalHbaUniqueness(ports);
+      const result = spectator.service.validatePhysicalPortUniqueness(ports);
 
       expect(result.valid).toBe(false);
       expect(result.duplicates).toContain('fc0');
       expect(result.duplicates).toContain('fc1');
     });
 
-    it('returns invalid when mixing host_id and port on same HBA', () => {
+    it('returns invalid when mixing host_id and port on same physical port', () => {
       const hosts = [
         { id: 1, alias: 'fc0' },
         { id: 2, alias: 'fc1' },
@@ -140,12 +140,12 @@ describe('FibreChannelService', () => {
         { port: 'fc0/1', host_id: null }, // Existing port on fc0
       ];
 
-      const result = spectator.service.validatePhysicalHbaUniqueness(ports, hosts);
+      const result = spectator.service.validatePhysicalPortUniqueness(ports, hosts);
 
       expect(result).toEqual({ valid: false, duplicates: ['fc0'] });
     });
 
-    it('returns invalid when using multiple host_ids for same HBA', () => {
+    it('returns invalid when using multiple host_ids for same physical port', () => {
       const hosts = [
         { id: 1, alias: 'fc0' },
         { id: 2, alias: 'fc1' },
@@ -155,12 +155,12 @@ describe('FibreChannelService', () => {
         { port: null, host_id: 1 }, // Another new virtual port on fc0
       ];
 
-      const result = spectator.service.validatePhysicalHbaUniqueness(ports, hosts);
+      const result = spectator.service.validatePhysicalPortUniqueness(ports, hosts);
 
       expect(result).toEqual({ valid: false, duplicates: ['fc0'] });
     });
 
-    it('returns valid when mixing host_id and port on different HBAs', () => {
+    it('returns valid when mixing host_id and port on different physical ports', () => {
       const hosts = [
         { id: 1, alias: 'fc0' },
         { id: 2, alias: 'fc1' },
@@ -170,7 +170,7 @@ describe('FibreChannelService', () => {
         { port: 'fc1/1', host_id: null }, // Existing port on fc1
       ];
 
-      const result = spectator.service.validatePhysicalHbaUniqueness(ports, hosts);
+      const result = spectator.service.validatePhysicalPortUniqueness(ports, hosts);
 
       expect(result).toEqual({ valid: true, duplicates: [] });
     });
@@ -184,7 +184,7 @@ describe('FibreChannelService', () => {
         { port: 'fc1', host_id: null },
       ];
 
-      const result = spectator.service.validatePhysicalHbaUniqueness(ports, hosts);
+      const result = spectator.service.validatePhysicalPortUniqueness(ports, hosts);
 
       // Should skip the entry with unknown host_id and only count fc1
       expect(result).toEqual({ valid: true, duplicates: [] });
