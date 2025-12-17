@@ -5079,7 +5079,7 @@
   "The secret used to generate OTPs. The secret is produced by the system when Two-Factor   Authentication is first activated.": "",
   "The server uses the specified dataset_naming_schema in options to make a new ZFS dataset when the client connects. The server uses this dataset as the share path during the SMB session.": "",
   "The sharing configuration will be removed.    Data in the share dataset will not be affected.": "",
-  "The SMB service and share uses Apple SMB2/3 Protocol Extensions and Apple-style Character Encoding for MacOS-based media workflows. This option is for MacOS clients only; other client types can experience unexpected behaviors when using files managed by this share.": "",
+  "The share is configured for Final Cut Pro storage according to Apple support guidelines. WARNING: This forcibly enables Apple-style character encoding which changes how filenames are converted. Do not enable on shares with existing files as it may break file access.": "",
   "The SMB service has been restarted.": "",
   "The SMB share ACL defines access rights for users of this SMB share up to, but not beyond, the access granted by filesystem ACLs.": "",
   "The SMB share is a DFS proxy to a share hosted on an external SMB server.": "",
