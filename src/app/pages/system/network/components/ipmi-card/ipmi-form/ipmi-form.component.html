@@ -97,13 +97,17 @@
           mat-button
           type="button"
           ixTest="toggle-identify-light"
+          [disabled]="isFlashingLoading()"
           (click)="toggleFlashing()"
         >
-          @if (isFlashing()) {
-            <ix-icon name="highlight"></ix-icon>
-            {{ 'Stop Flashing' | translate }}
+          @if (isFlashingLoading()) {
+            <mat-spinner [diameter]="20"></mat-spinner>
           } @else {
             <ix-icon name="highlight"></ix-icon>
+          }
+          @if (isFlashing()) {
+            {{ 'Stop Flashing' | translate }}
+          } @else {
             {{ 'Flash Identify Light' | translate }}
           }
         </button>

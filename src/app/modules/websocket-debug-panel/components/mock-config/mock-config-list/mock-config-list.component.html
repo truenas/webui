@@ -42,6 +42,7 @@
     @if (showForm) {
       <ix-mock-config-form
         [config]="editingConfig"
+        [prefilledData]="prefilledMockData"
         (submitted)="onFormSubmit($event)"
         (cancelled)="onFormCancel()"
       />

@@ -10,14 +10,12 @@ import { format } from 'date-fns';
 import {
   combineLatest, merge, Observable, of,
 } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -33,10 +31,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import {
-  snapshotExcludeBootQueryFilter,
-} from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { StorageService } from 'app/services/storage.service';
 
 @UntilDestroy()
 @Component({
@@ -67,6 +63,7 @@ export class SnapshotAddFormComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private validatorsService = inject(IxValidatorsService);
   private datasetStore = inject(DatasetTreeStore);
+  private storageService = inject(StorageService);
   slideInRef = inject<SlideInRef<string | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.SnapshotWrite];
@@ -174,12 +171,7 @@ export class SnapshotAddFormComponent implements OnInit {
   }
 
   private getDatasetOptions(): Observable<Option[]> {
-    return this.api.call('pool.dataset.query', [
-      snapshotExcludeBootQueryFilter as QueryFilters<Dataset>,
-      { extra: { flat: true } },
-    ]).pipe(
-      map((datasets) => datasets.map((dataset) => ({ label: dataset.name, value: dataset.name }))),
-    );
+    return this.storageService.getDatasetNameOptions();
   }
 
   private getNamingSchemaOptions(): Observable<Option[]> {

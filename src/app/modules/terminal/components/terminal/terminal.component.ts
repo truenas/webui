@@ -71,6 +71,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   private fitAddon: FitAddon;
   private attachAddon: XtermAttachAddon;
   private token: string;
+  private resizeTimeout: ReturnType<typeof setTimeout>;
 
   ngOnInit(): void {
     if (this.conf().preInit) {
@@ -94,9 +95,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe(() => {
       if (this.shellConnected()) {
-        setTimeout(() => {
-          this.resizeTerm();
-        }, this.waitParentChanges);
+        this.scheduleResize();
       }
     });
   }
@@ -104,9 +103,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onWindowResized(): void {
     if (this.shellConnected()) {
-      setTimeout(() => {
-        this.resizeTerm();
-      }, this.waitParentChanges);
+      this.scheduleResize();
     }
   }
 
@@ -120,10 +117,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
       }),
       untilDestroyed(this),
     ).subscribe();
-  }
-
-  onResize(): void {
-    this.resizeTerm();
   }
 
   private initializeTerminal(): void {
@@ -161,7 +154,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.xterm.loadAddon(this.attachAddon);
   }
 
-  private resizeTerm(): boolean {
+  private resizeTerm(): void {
     this.xterm.options.fontSize = this.fontSize;
     this.fitAddon.fit();
     const size = this.fitAddon.proposeDimensions();
@@ -170,13 +163,19 @@ export class TerminalComponent implements OnInit, OnDestroy {
         this.xterm.focus();
       });
     }
-    return true;
   }
 
   protected onFontSizeChanged(newSize: number): void {
     this.fontSize = newSize;
     this.terminalSettings.fontSize = newSize;
-    this.resizeTerm();
+    this.scheduleResize();
+  }
+
+  private scheduleResize(): void {
+    clearTimeout(this.resizeTimeout);
+    this.resizeTimeout = setTimeout(() => {
+      this.resizeTerm();
+    }, this.waitParentChanges);
   }
 
   private initializeWebShell(): void {
@@ -192,7 +191,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
           this.isReconnecting.set(false);
           this.hasAttemptedAutoReconnect = false;
           this.updateTerminal();
-          this.resizeTerm();
+          // Note: resizeTerm() is not called here because ix-terminal-font-size
+          // component handles the initial resize when it emits fontSizeChanged on init.
         } else {
           // Connection lost or failed
           this.isReconnecting.set(false);

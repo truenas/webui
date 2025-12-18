@@ -3,22 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { format } from 'date-fns';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
-
-const mockDatasets = [
-  { name: 'APPS' },
-  { name: 'POOL' },
-] as Dataset[];
 
 const slideInRef: SlideInRef<string | undefined, unknown> = {
   close: jest.fn(),
@@ -42,15 +35,13 @@ describe('SnapshotAddFormComponent', () => {
       mockAuth(),
       mockApi([
         mockCall('pool.snapshot.create'),
-        mockCall('pool.dataset.query', mockDatasets),
+        mockCall('pool.filesystem_choices', ['APPS', 'POOL']),
         mockCall('replication.list_naming_schemas', mockNamingSchema),
-        mockCall('pool.dataset.details'),
         mockCall('vmware.dataset_has_vms', true),
       ]),
       mockProvider(SlideIn),
       mockProvider(FormErrorHandlerService),
       mockProvider(SlideInRef, slideInRef),
-      mockAuth(),
     ],
   });
 
@@ -63,9 +54,9 @@ describe('SnapshotAddFormComponent', () => {
   it('presets name with current date and time', async () => {
     const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
     const defaultName = await nameInput.getValue();
-    const datetime = format(new Date(), 'yyyy-MM-dd_HH-mm');
 
-    expect(defaultName).toBe(`manual-${datetime}`);
+    // Use regex to avoid flaky test when minute boundary is crossed during test execution
+    expect(defaultName).toMatch(/^manual-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}$/);
   });
 
   it('sends an update payload to websocket and closes modal when save is pressed', async () => {

@@ -1,23 +1,34 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { WidgetInterfaceIpComponent } from './widget-interface-ip.component';
 
 describe('WidgetInterfaceIpComponent', () => {
   let spectator: Spectator<WidgetInterfaceIpComponent>;
+
   const createComponent = createComponentFactory({
     component: WidgetInterfaceIpComponent,
     providers: [
+      provideMockStore({
+        selectors: [
+          { selector: selectIsHaLicensed, value: false },
+        ],
+      }),
       mockProvider(WidgetResourcesService, {
         networkInterfaces$: of({
           isLoading: false,
           value: [
             {
               name: 'eth0',
+              aliases: [],
+              failover_aliases: [],
+              failover_virtual_aliases: [],
               state: {
                 aliases: [
                   { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.1' },
@@ -27,6 +38,9 @@ describe('WidgetInterfaceIpComponent', () => {
             },
             {
               name: 'eth1',
+              aliases: [],
+              failover_aliases: [],
+              failover_virtual_aliases: [],
               state: {
                 aliases: [
                   { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::1' },
@@ -36,6 +50,8 @@ describe('WidgetInterfaceIpComponent', () => {
             {
               name: 'eth2',
               aliases: [],
+              failover_aliases: [],
+              failover_virtual_aliases: [],
               state: {
                 aliases: [
                   { type: NetworkInterfaceAliasType.Inet, address: '192.168.1.10' },
@@ -119,6 +135,251 @@ describe('WidgetInterfaceIpComponent', () => {
       expect(widget).toBeTruthy();
       expect(widget.label()).toBe('eth0 Address');
       expect(widget.text()).toBe('192.168.1.1\n192.168.1.2');
+    });
+  });
+
+  describe('HA mode', () => {
+    let haSpectator: Spectator<WidgetInterfaceIpComponent>;
+
+    const createHaComponent = createComponentFactory({
+      component: WidgetInterfaceIpComponent,
+      providers: [
+        provideMockStore({
+          selectors: [
+            { selector: selectIsHaLicensed, value: true },
+          ],
+        }),
+        mockProvider(WidgetResourcesService, {
+          networkInterfaces$: of({
+            isLoading: false,
+            value: [
+              {
+                name: 'eth0',
+                aliases: [],
+                failover_aliases: [
+                  { type: NetworkInterfaceAliasType.Inet, address: '10.220.16.58' },
+                ],
+                failover_virtual_aliases: [
+                  { type: NetworkInterfaceAliasType.Inet, address: '10.220.16.60' },
+                ],
+                state: {
+                  aliases: [
+                    { type: NetworkInterfaceAliasType.Inet, address: '10.220.16.58' },
+                    { type: NetworkInterfaceAliasType.Inet, address: '10.220.16.60' },
+                  ],
+                },
+              },
+            ],
+          }),
+        }),
+      ],
+    });
+
+    beforeEach(() => {
+      haSpectator = createHaComponent({
+        props: {
+          settings: {
+            interface: 'eth0',
+          },
+          size: SlotSize.Quarter,
+        },
+      });
+    });
+
+    it('renders IP addresses with HA labels', () => {
+      haSpectator.detectChanges();
+      const ipLines = haSpectator.queryAll('.ip-line');
+      expect(ipLines).toHaveLength(2);
+
+      expect(ipLines[0].querySelector('.ip-address')).toHaveText('10.220.16.60');
+      expect(ipLines[0].querySelector('.ip-label')).toHaveText('(Virtual IP)');
+
+      expect(ipLines[1].querySelector('.ip-address')).toHaveText('10.220.16.58');
+      expect(ipLines[1].querySelector('.ip-label')).toHaveText('(This Controller)');
+    });
+
+    it('has proper accessibility attributes', () => {
+      haSpectator.detectChanges();
+      const ipAddressesList = haSpectator.query('.ip-addresses');
+      expect(ipAddressesList).toHaveAttribute('role', 'list');
+      expect(ipAddressesList).toHaveAttribute('aria-label', 'Network addresses');
+
+      const ipLines = haSpectator.queryAll('.ip-line');
+      ipLines.forEach((line) => {
+        expect(line).toHaveAttribute('role', 'listitem');
+      });
+
+      // Verify content is present without redundant aria-labels
+      expect(haSpectator.queryAll('.ip-address')).not.toHaveLength(0);
+      expect(haSpectator.queryAll('.ip-label')).not.toHaveLength(0);
+    });
+
+    it('renders empty list when interface is not found', () => {
+      haSpectator.setInput('settings', { interface: 'eth404' });
+      haSpectator.detectChanges();
+
+      const ipLines = haSpectator.queryAll('.ip-line');
+      expect(ipLines).toHaveLength(0);
+    });
+
+    it('renders empty list when interface has no IPv6 addresses', () => {
+      haSpectator.setInput('settings', {
+        interface: 'eth0',
+        widgetName: 'IPv6 Address',
+      });
+      haSpectator.detectChanges();
+
+      const ipLines = haSpectator.queryAll('.ip-line');
+      expect(ipLines).toHaveLength(0);
+    });
+  });
+
+  describe('HA mode with other controller IPs', () => {
+    let haSpectatorWithOtherIp: Spectator<WidgetInterfaceIpComponent>;
+
+    const createHaComponentWithOtherIp = createComponentFactory({
+      component: WidgetInterfaceIpComponent,
+      providers: [
+        provideMockStore({
+          selectors: [
+            { selector: selectIsHaLicensed, value: true },
+          ],
+        }),
+        mockProvider(WidgetResourcesService, {
+          networkInterfaces$: of({
+            isLoading: false,
+            value: [
+              {
+                name: 'eth0',
+                aliases: [],
+                failover_aliases: [
+                  { type: NetworkInterfaceAliasType.Inet, address: '10.220.39.129' },
+                ],
+                failover_virtual_aliases: [
+                  { type: NetworkInterfaceAliasType.Inet, address: '10.220.36.74' },
+                ],
+                state: {
+                  aliases: [
+                    { type: NetworkInterfaceAliasType.Inet, address: '10.220.36.74' },
+                    { type: NetworkInterfaceAliasType.Inet, address: '10.220.39.129' },
+                    { type: NetworkInterfaceAliasType.Inet, address: '10.220.39.128' },
+                  ],
+                },
+              },
+            ],
+          }),
+        }),
+      ],
+    });
+
+    beforeEach(() => {
+      haSpectatorWithOtherIp = createHaComponentWithOtherIp({
+        props: {
+          settings: {
+            interface: 'eth0',
+          },
+          size: SlotSize.Quarter,
+        },
+      });
+    });
+
+    it('labels all IPs including those from other controller', () => {
+      haSpectatorWithOtherIp.detectChanges();
+      const ipLines = haSpectatorWithOtherIp.queryAll('.ip-line');
+      expect(ipLines).toHaveLength(3);
+
+      expect(ipLines[0].querySelector('.ip-address')).toHaveText('10.220.36.74');
+      expect(ipLines[0].querySelector('.ip-label')).toHaveText('(Virtual IP)');
+
+      expect(ipLines[1].querySelector('.ip-address')).toHaveText('10.220.39.129');
+      expect(ipLines[1].querySelector('.ip-label')).toHaveText('(This Controller)');
+
+      expect(ipLines[2].querySelector('.ip-address')).toHaveText('10.220.39.128');
+      expect(ipLines[2].querySelector('.ip-label')).toHaveText('(Other Controller)');
+    });
+
+    it('has proper container accessibility label', () => {
+      haSpectatorWithOtherIp.detectChanges();
+      const container = haSpectatorWithOtherIp.query('.ip-addresses');
+      expect(container).toHaveAttribute('role', 'list');
+      expect(container).toHaveAttribute('aria-label', 'Network addresses');
+    });
+  });
+
+  describe('HA mode with IPv6', () => {
+    let haIpv6Spectator: Spectator<WidgetInterfaceIpComponent>;
+
+    const createHaIpv6Component = createComponentFactory({
+      component: WidgetInterfaceIpComponent,
+      providers: [
+        provideMockStore({
+          selectors: [
+            { selector: selectIsHaLicensed, value: true },
+          ],
+        }),
+        mockProvider(WidgetResourcesService, {
+          networkInterfaces$: of({
+            isLoading: false,
+            value: [
+              {
+                name: 'eth0',
+                aliases: [],
+                failover_aliases: [
+                  { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::1' },
+                ],
+                failover_virtual_aliases: [
+                  { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::10' },
+                ],
+                state: {
+                  aliases: [
+                    { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::1' },
+                    { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::10' },
+                    { type: NetworkInterfaceAliasType.Inet6, address: 'fe80::2' },
+                  ],
+                },
+              },
+            ],
+          }),
+        }),
+      ],
+    });
+
+    beforeEach(() => {
+      haIpv6Spectator = createHaIpv6Component({
+        props: {
+          settings: {
+            interface: 'eth0',
+            widgetName: 'IPv6 Address',
+          },
+          size: SlotSize.Quarter,
+        },
+      });
+    });
+
+    it('renders IPv6 addresses with HA labels correctly', () => {
+      haIpv6Spectator.detectChanges();
+      const ipLines = haIpv6Spectator.queryAll('.ip-line');
+      expect(ipLines).toHaveLength(3);
+
+      expect(ipLines[0].querySelector('.ip-address')).toHaveText('fe80::10');
+      expect(ipLines[0].querySelector('.ip-label')).toHaveText('(Virtual IP)');
+
+      expect(ipLines[1].querySelector('.ip-address')).toHaveText('fe80::1');
+      expect(ipLines[1].querySelector('.ip-label')).toHaveText('(This Controller)');
+
+      expect(ipLines[2].querySelector('.ip-address')).toHaveText('fe80::2');
+      expect(ipLines[2].querySelector('.ip-label')).toHaveText('(Other Controller)');
+    });
+
+    it('filters IPv6 addresses correctly using interfaceType', () => {
+      haIpv6Spectator.detectChanges();
+      const ipLines = haIpv6Spectator.queryAll('.ip-line');
+
+      // All displayed addresses should be IPv6
+      ipLines.forEach((line) => {
+        const ipAddress = line.querySelector('.ip-address')?.textContent?.trim();
+        expect(ipAddress).toMatch(/^fe80::/);
+      });
     });
   });
 });

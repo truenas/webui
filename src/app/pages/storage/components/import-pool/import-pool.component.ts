@@ -1,18 +1,16 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
-import {
-  UntilDestroy, untilDestroyed,
-} from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, map, of, switchMap,
+  Observable, forkJoin, last, map, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -28,8 +26,12 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { LockedSedDisksComponent } from './locked-sed-disks/locked-sed-disks.component';
+import { UnlockSedDisksComponent } from './unlock-sed-disks/unlock-sed-disks.component';
+import { filterLockedSedDisks, LockedSedDisk } from './utils/sed-disk.utils';
 
-@UntilDestroy()
+type ImportStep = 'loading' | 'locked-sed' | 'unlock-sed' | 'import';
+
 @Component({
   selector: 'ix-import-pool',
   templateUrl: './import-pool.component.html',
@@ -46,6 +48,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    LockedSedDisksComponent,
+    UnlockSedDisksComponent,
   ],
 })
 export class ImportPoolComponent implements OnInit {
@@ -57,12 +61,17 @@ export class ImportPoolComponent implements OnInit {
   private router = inject(Router);
   private snackbar = inject(SnackbarService);
   private loader = inject(LoaderService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.PoolWrite];
 
   readonly helptext = helptextImport;
   protected isLoading = signal(false);
+  protected currentStep = signal<ImportStep>('loading');
+  protected lockedSedDisks = signal<LockedSedDisk[]>([]);
+  protected globalSedPassword = signal('');
+
   importablePools: {
     name: string;
     guid: string;
@@ -85,31 +94,86 @@ export class ImportPoolComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isLoading.set(true);
-    this.api.job('pool.import_find').pipe(untilDestroyed(this)).subscribe({
-      next: (importablePoolFindJob) => {
-        if (importablePoolFindJob.state !== JobState.Success) {
-          return;
-        }
+    this.checkForLockedDisks();
+  }
 
+  private checkForLockedDisks(): void {
+    this.isLoading.set(true);
+    this.currentStep.set('loading');
+
+    forkJoin([
+      this.api.call('disk.details'),
+      this.api.call('system.advanced.sed_global_password'),
+    ]).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: ([diskDetails, sedGlobalPassword]) => {
         this.isLoading.set(false);
-        const result: PoolFindResult[] = importablePoolFindJob.result;
+        this.globalSedPassword.set(sedGlobalPassword || '');
+
+        const allDisks = [...diskDetails.used, ...diskDetails.unused];
+        const lockedDisks = filterLockedSedDisks(allDisks);
+        this.lockedSedDisks.set(lockedDisks);
+
+        if (lockedDisks.length > 0) {
+          this.currentStep.set('locked-sed');
+        } else {
+          this.loadImportablePools();
+        }
+      },
+      error: (error: unknown) => {
+        this.isLoading.set(false);
+        this.errorHandler.showErrorModal(error);
+      },
+    });
+  }
+
+  private loadImportablePools(): void {
+    this.isLoading.set(true);
+
+    this.api.job('pool.import_find').pipe(
+      observeJob(),
+      last(),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (importablePoolFindJob) => {
+        this.isLoading.set(false);
+
+        const result: PoolFindResult[] = importablePoolFindJob.result || [];
         this.importablePools = result.map((pool) => ({
           name: pool.name,
           guid: pool.guid,
         }));
+
         const opts = result.map((pool) => ({
           label: `${pool.name} | ${pool.guid}`,
           value: pool.guid,
         } as Option));
         this.pool.options = of(opts);
+
+        this.currentStep.set('import');
       },
       error: (error: unknown) => {
         this.isLoading.set(false);
-
         this.errorHandler.showErrorModal(error);
       },
     });
+  }
+
+  protected onLockedSedSkip(): void {
+    this.loadImportablePools();
+  }
+
+  protected onLockedSedUnlock(): void {
+    this.currentStep.set('unlock-sed');
+  }
+
+  protected onUnlockSkip(): void {
+    this.loadImportablePools();
+  }
+
+  protected onUnlockSuccess(): void {
+    this.checkForLockedDisks();
   }
 
   protected onSubmit(): void {
@@ -121,21 +185,30 @@ export class ImportPoolComponent implements OnInit {
       .pipe(
         switchMap(() => this.checkIfUnlockNeeded()),
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(([datasets, shouldTryUnlocking]) => {
-        this.slideInRef.close({ response: true });
-        this.snackbar.success(this.translate.instant('Pool imported successfully.'));
-        if (shouldTryUnlocking) {
-          this.router.navigate(['/datasets', datasets[0].id, 'unlock']);
-        }
+      .subscribe({
+        next: ([datasets, shouldTryUnlocking]) => {
+          this.slideInRef.close({ response: true });
+          this.snackbar.success(this.translate.instant('Pool imported successfully.'));
+          if (shouldTryUnlocking) {
+            this.router.navigate(['/datasets', datasets[0].id, 'unlock']);
+          }
+        },
+        error: () => {
+          this.isLoading.set(false);
+        },
       });
   }
 
   private checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
+    const selectedPool = this.importablePools.find((pool) => pool.guid === this.formGroup.value.guid);
+    if (!selectedPool) {
+      return of([[], false]);
+    }
     return this.api.call(
       'pool.dataset.query',
-      [[['name', '=', this.importablePools.find((importablePool) => importablePool.guid === this.formGroup.value.guid).name]]],
+      [[['name', '=', selectedPool.name]]],
     )
       .pipe(
         this.loader.withLoader(),

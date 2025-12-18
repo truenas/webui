@@ -1,3 +1,9 @@
+// Design tokens for IP address display
+// Using SCSS variables for potential future reuse or theming adjustments
+$ip-address-font-size: 20px;
+$ip-label-font-size: 11px;
+$ip-label-opacity: 0.6;
+
 .wrapper {
   align-items: center;
   background-color: var(--bg2);
@@ -5,4 +11,61 @@
   height: 100%;
   justify-content: center;
   width: 100%;
+
+  // Required to display multiple IP addresses with line breaks in non-HA mode
+  // Using :host ::ng-deep provides better scoping than bare ::ng-deep
+  // TODO: Remove this workaround once WidgetDatapointComponent provides a whiteSpace input
+  // or similar API for controlling text wrapping behavior
+  // stylelint-disable-next-line selector-pseudo-element-no-unknown
+  :host ::ng-deep ix-widget-datapoint .container > div {
+    white-space: pre-line;
+  }
+}
+
+.card {
+  height: 100%;
+  width: 100%;
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.header {
+  padding-bottom: 0;
+  padding-right: 12px;
+}
+
+.ip-addresses {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 8px;
+  justify-content: center;
+  padding: 0 12px;
+}
+
+.ip-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  text-align: center;
+}
+
+.ip-address {
+  font-size: $ip-address-font-size;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.ip-label {
+  font-size: $ip-label-font-size;
+  font-weight: 400;
+  line-height: 1;
+  opacity: $ip-label-opacity;
 }

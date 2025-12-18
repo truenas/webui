@@ -157,6 +157,8 @@ export const helptextSharingSmb = {
  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.',
   ),
 
+  extensionsWarning: T('Please enable Apple SMB2/3 protocol extension support above before saving.'),
+
   streamsLabel: T('Enable Alternate Data Streams'),
   streamsTooltip: T(
     'Allows multiple \
@@ -233,6 +235,11 @@ export const helptextSharingSmb = {
     ),
     action: T('I Understand'),
   },
+
+  gracePeriodLabel: T('Grace Period'),
+  gracePeriodTooltip: T('Time in seconds after creation in which write access is allowed. \
+After the grace period is up, the share will become read-only. \
+Must be between 60 seconds (1 minute) and 15552000 seconds (180 days).'),
 
   restartPt1: T(
     'The following changes to this SMB Share require the SMB Service to be restarted before they can take effect.',

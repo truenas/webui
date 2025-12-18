@@ -26,9 +26,9 @@ export class UserPickerProvider implements IxComboboxProvider {
   constructor(
     options?: UserPickerOptions,
   ) {
-    this.valueField = options.valueField ?? 'username';
-    this.queryType = options.queryType ?? ComboboxQueryType.Default;
-    this.queryParams = options.queryParams ?? [];
+    this.valueField = options?.valueField ?? 'username';
+    this.queryType = options?.queryType ?? ComboboxQueryType.Default;
+    this.queryParams = options?.queryParams ?? [];
   }
 
   fetch(filterValue: string): Observable<Option[]> {
@@ -42,17 +42,25 @@ export class UserPickerProvider implements IxComboboxProvider {
   }
 
   private queryUsers(search: string): Observable<Option[]> {
-    const queryArgs: QueryParams<User> = [...this.queryParams];
-    queryArgs[1].offset = this.page * this.pageSize;
-    queryArgs[1].limit = this.pageSize;
+    const trimmedSearch = search?.trim() || '';
 
-    search = search?.trim();
+    // Create a shallow copy of query params to avoid mutating the original arrays/objects.
+    // ParamsBuilder may freeze or reuse query param objects, so we need to create new copies
+    // before adding dynamic filters (smb, username search) and pagination (offset, limit).
+    // Note: This is a shallow copy - nested objects in filters are not deep cloned.
+    const queryArgs: QueryParams<User> = [
+      [...this.queryParams[0]],
+      { ...this.queryParams[1], offset: this.page * this.pageSize, limit: this.pageSize },
+    ];
+
     if (this.queryType === ComboboxQueryType.Smb) {
       queryArgs[0] = [['smb', '=', true], ...queryArgs[0]];
     }
 
-    if (search?.length > 0) {
-      queryArgs[0] = [['username', '~', search], ...queryArgs[0]];
+    // Use regex search with case-insensitive flag and proper backslash escaping
+    // to handle domain-prefixed usernames (e.g., "ACME\admin")
+    if (trimmedSearch) {
+      queryArgs[0] = [['username', '~', `(?i).*${trimmedSearch.replaceAll('\\', '\\\\')}`], ...queryArgs[0]];
     }
 
     return this.api.call('user.query', queryArgs).pipe(

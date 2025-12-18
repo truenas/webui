@@ -7,6 +7,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -47,7 +48,7 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
 import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { snapshotListElements } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.elements';
-import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
+import { snapshotPageEntered, snapshotsLoaded } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
@@ -89,6 +90,7 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
 })
 export class SnapshotListComponent implements OnInit {
   protected emptyService = inject(EmptyService);
+  private actions$ = inject(Actions);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
@@ -200,7 +202,6 @@ export class SnapshotListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store$.dispatch(snapshotPageEntered());
     this.getPreferences();
     this.getSnapshots();
     this.setDefaultSort();
@@ -243,7 +244,7 @@ export class SnapshotListComponent implements OnInit {
     this.store$.pipe(
       waitForPreferences,
       map((preferences) => preferences.showSnapshotExtraColumns),
-      untilDestroyed(this),
+      take(1),
     ).subscribe((showExtraColumns) => {
       this.showExtraColumnsControl.setValue(showExtraColumns, { emitEvent: false });
       this.updateColumnVisibility();
@@ -278,6 +279,15 @@ export class SnapshotListComponent implements OnInit {
           this.loadingExtraColumns$.next(true);
           this.updateColumnVisibility();
           this.store$.dispatch(snapshotExtraColumnsToggled());
+          this.store$.dispatch(snapshotPageEntered());
+
+          this.actions$.pipe(
+            ofType(snapshotsLoaded),
+            take(1),
+            untilDestroyed(this),
+          ).subscribe(() => {
+            this.loadingExtraColumns$.next(false);
+          });
         } else {
           this.showExtraColumnsControl.setValue(!this.showExtraColumnsControl.value, { emitEvent: false });
         }

@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, input, computed, effect, signal, inject } from '@angular/core';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -7,7 +8,7 @@ import { AppStats } from 'app/interfaces/app.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
+import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/rate-chart/rate-chart.component';
 
 @Component({
   selector: 'ix-app-disk-info',
@@ -15,9 +16,10 @@ import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/commo
   styleUrls: ['./app-disk-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    MatTooltip,
     WithLoadingStateDirective,
     NgxSkeletonLoaderModule,
-    NetworkChartComponent,
+    RateChartComponent,
     TranslateModule,
     FileSizePipe,
   ],
@@ -74,19 +76,33 @@ export class AppDiskInfoComponent {
 
   constructor() {
     effect(() => {
-      const diskStats = this.stats()?.value?.blkio;
-      if (diskStats) {
-        const deltaRead = this.previousStats
-          ? Math.max(diskStats.read - this.previousStats.read, 0)
-          : diskStats.read;
-        const deltaWrite = this.previousStats
-          ? Math.max(diskStats.write - this.previousStats.write, 0)
-          : diskStats.write;
-        this.cachedDiskStats.update((cachedStats) => {
-          return [...cachedStats, [deltaRead, deltaWrite]].slice(-this.numberOfPoints);
-        });
-        this.previousStats = { read: diskStats.read, write: diskStats.write };
+      const statsValue = this.stats();
+      // Silently ignore errors or loading states
+      if (!statsValue || statsValue.isLoading || statsValue.error) {
+        return;
       }
+
+      const diskStats = statsValue.value?.blkio;
+      if (!diskStats) {
+        return;
+      }
+
+      // Validate values are numbers
+      const currentRead = typeof diskStats.read === 'number' && !Number.isNaN(diskStats.read) ? diskStats.read : 0;
+      const currentWrite = typeof diskStats.write === 'number' && !Number.isNaN(diskStats.write) ? diskStats.write : 0;
+
+      if (this.previousStats) {
+        const deltaRead = Math.max(currentRead - this.previousStats.read, 0);
+        const deltaWrite = Math.max(currentWrite - this.previousStats.write, 0);
+
+        // Only update if deltas are valid numbers
+        if (Number.isFinite(deltaRead) && Number.isFinite(deltaWrite)) {
+          this.cachedDiskStats.update((cachedStats) => {
+            return [...cachedStats, [deltaRead, deltaWrite]].slice(-this.numberOfPoints);
+          });
+        }
+      }
+      this.previousStats = { read: currentRead, write: currentWrite };
     });
   }
 }

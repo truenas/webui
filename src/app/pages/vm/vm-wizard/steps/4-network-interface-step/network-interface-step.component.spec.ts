@@ -26,8 +26,8 @@ describe('NetworkInterfaceStepComponent', () => {
       mockApi([
         mockCall('vm.random_mac', '00:00:00:00:00:01'),
         mockCall('vm.device.nic_attach_choices', {
-          eno1: 'eno1',
-          eno2: 'eno2',
+          BRIDGE: ['eno1'],
+          MACVLAN: ['eno2'],
         }),
       ]),
     ],

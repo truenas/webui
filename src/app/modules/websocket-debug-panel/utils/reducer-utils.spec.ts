@@ -21,6 +21,7 @@ describe('reducer-utils', () => {
       isPanelOpen: false,
       activeTab: 'websocket',
       messageLimit,
+      prefilledMockConfig: null,
       enclosureMock: {
         enabled: false,
         controllerModel: null,

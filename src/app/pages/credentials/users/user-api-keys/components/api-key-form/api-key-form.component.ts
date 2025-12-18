@@ -106,14 +106,9 @@ export class ApiKeyFormComponent implements OnInit {
   });
 
   protected readonly userQueryParams = new ParamsBuilder<User>()
-    .filter('local', '=', false)
-    .orFilter('roles', '!=', [])
-    .setOptions({ select: ['username'], order_by: ['username'] })
+    .filter('roles', '!=', [])
+    .setOptions({ select: ['username', 'id', 'uid'], order_by: ['username'] })
     .getParams();
-
-  protected readonly usernames$ = this.api.call('user.query', this.userQueryParams).pipe(
-    map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
-  );
 
   protected readonly userPickerProvider = new UserPickerProvider({
     queryParams: this.userQueryParams,

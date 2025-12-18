@@ -13,7 +13,7 @@ interface GroupComboboxOptions {
 }
 
 export class GroupComboboxProvider implements IxComboboxProvider {
-  protected page = 1;
+  protected page = 0;
   readonly pageSize = 50;
   private valueField: keyof Pick<Group, 'group' | 'gid' | 'id'>;
   private initialOptions: Option[];
@@ -41,10 +41,10 @@ export class GroupComboboxProvider implements IxComboboxProvider {
   private queryGroups(filterValue: string): Observable<Option[]> {
     const offset = this.page * this.pageSize;
     const queryMethod = this.queryType === ComboboxQueryType.Smb
-      ? this.userService.smbGroupQueryDsCache
-      : this.userService.groupQueryDsCache;
+      ? this.userService.smbGroupQueryDsCache.bind(this.userService)
+      : this.userService.groupQueryDsCache.bind(this.userService);
 
-    return queryMethod.call(this.userService, filterValue, false, offset).pipe(
+    return queryMethod(filterValue, false, offset).pipe(
       map((groups) => this.groupQueryResToOptions(groups)),
       map((options) => [...this.initialOptions, ...this.excludeInitialOptions(options)]),
     );

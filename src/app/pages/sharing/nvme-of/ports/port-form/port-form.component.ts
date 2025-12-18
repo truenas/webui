@@ -76,6 +76,12 @@ export class PortFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
+  constructor() {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
+
   protected form = this.formBuilder.group({
     addr_trtype: [NvmeOfTransportType.Tcp],
     addr_trsvcid: [null as number | string],

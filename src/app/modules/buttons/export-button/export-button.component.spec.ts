@@ -162,4 +162,19 @@ describe('ExportButtonComponent', () => {
     const button = spectator.query('button');
     expect(button.getAttribute('aria-label')).toBe('Export');
   });
+
+  it('should include customExportParams in the job call', async () => {
+    spectator.setInput('customExportParams', { services: ['MIDDLEWARE'] });
+    spectator.detectChanges();
+
+    const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export As CSV' }));
+    await exportButton.click();
+
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(jobMethod, [{
+      export_format: 'CSV',
+      'query-filters': [],
+      'query-options': {},
+      services: ['MIDDLEWARE'],
+    }]);
+  });
 });

@@ -8,8 +8,10 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { AuditService } from 'app/enums/audit.enum';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -283,6 +285,19 @@ describe('AuditSearchComponent', () => {
       expect(exportButton.defaultFilters()).toEqual([
         ['OR', [['event', '~', '(?i)authentication'], ['username', '~', '(?i)authentication']]],
       ]);
+    });
+
+    it('should pass selected service to ExportButtonComponent via customExportParams', () => {
+      const exportButton = spectator.query(ExportButtonComponent);
+      expect(exportButton.customExportParams()).toEqual({ services: [AuditService.Middleware] });
+    });
+
+    it('should update customExportParams when service selection changes', async () => {
+      const serviceSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Service' }));
+      await serviceSelect.setValue('SMB');
+
+      const exportButton = spectator.query(ExportButtonComponent);
+      expect(exportButton.customExportParams()).toEqual({ services: [AuditService.Smb] });
     });
   });
 

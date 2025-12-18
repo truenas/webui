@@ -37,6 +37,7 @@ import {
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { JobSlice, selectJobWithCallId } from 'app/modules/jobs/store/job.selectors';
+import { DuplicateCallTrackerService } from 'app/modules/websocket/duplicate-call-tracker.service';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
@@ -50,6 +51,7 @@ export class ApiService {
   protected wsStatus = inject(WebSocketStatusService);
   protected subscriptionManager = inject(SubscriptionManagerService);
   protected translate = inject(TranslateService);
+  protected duplicateTracker = inject(DuplicateCallTrackerService);
 
   readonly clearSubscriptions$ = new Subject<void>();
 
@@ -104,6 +106,8 @@ export class ApiService {
     params?: ApiJobParams<M>,
   ): Observable<Job<ApiJobResponse<M>>> {
     const uuid = uuidv4();
+    // Cast needed: ApiJobParams<M> is a tuple type that doesn't directly match unknown[]
+    this.duplicateTracker.trackCall(method, params as unknown[]);
     this.wsHandler.scheduleCall({
       id: uuid,
       method,
@@ -155,6 +159,7 @@ export class ApiService {
     params?: unknown[],
   ): Observable<unknown> {
     const uuid = uuidv4();
+    this.duplicateTracker.trackCall(method, params);
     return of(uuid).pipe(
       switchMap(() => {
         if (typeof performance !== 'undefined' && typeof performance.mark === 'function') {

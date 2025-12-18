@@ -172,13 +172,16 @@
     white-space: nowrap;
   }
 
-  .copy-button {
+  .copy-button,
+  .mock-button {
     height: 24px;
-    opacity: 0;
+    opacity: 0.3;
     transition: opacity 0.2s;
     width: 24px;
 
-    .message-item:hover & {
+    .message-item:hover &,
+    .message-item:focus-within &,
+    &:focus {
       opacity: 1;
     }
   }

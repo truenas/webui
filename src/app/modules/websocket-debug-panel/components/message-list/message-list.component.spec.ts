@@ -356,5 +356,173 @@ describe('MessageListComponent', () => {
     });
   });
 
-  // trackBy function was removed from the component
+  describe('create mock functionality', () => {
+    it('should dispatch createMockFromResponse action with method name and result', () => {
+      const message = {
+        id: '1',
+        timestamp: new Date().toISOString(),
+        direction: 'in' as const,
+        message: {
+          jsonrpc: '2.0' as const,
+          id: '1',
+          result: { data: 'test' },
+        },
+        methodName: 'test.method',
+        formattedTime: 'just now',
+        messagePreview: '{"data":"test"}',
+        isExpanded: false,
+      };
+
+      spectator.component['createMockFromMessage'](message);
+
+      expect(store$.dispatch).toHaveBeenCalledWith(
+        WebSocketDebugActions.createMockFromResponse({
+          methodName: 'test.method',
+          responseResult: { data: 'test' },
+        }),
+      );
+    });
+
+    it('should dispatch with null result when message has no result property', () => {
+      const message = {
+        id: '1',
+        timestamp: new Date().toISOString(),
+        direction: 'in' as const,
+        message: {
+          jsonrpc: '2.0' as const,
+          id: '1',
+          error: { code: -32600, message: 'Invalid Request' },
+        } as never,
+        methodName: 'test.method',
+        formattedTime: 'just now',
+        messagePreview: '{}',
+        isExpanded: false,
+      };
+
+      spectator.component['createMockFromMessage'](message);
+
+      expect(store$.dispatch).toHaveBeenCalledWith(
+        WebSocketDebugActions.createMockFromResponse({
+          methodName: 'test.method',
+          responseResult: null,
+        }),
+      );
+    });
+  });
+
+  describe('canCreateMock', () => {
+    it('should return true for incoming response with result and valid method name', () => {
+      const message = {
+        id: '1',
+        timestamp: new Date().toISOString(),
+        direction: 'in' as const,
+        message: {
+          jsonrpc: '2.0' as const,
+          id: '1',
+          result: { data: 'test' },
+        },
+        methodName: 'test.method',
+        formattedTime: 'just now',
+        messagePreview: '{"data":"test"}',
+        isExpanded: false,
+      };
+
+      expect(spectator.component['canCreateMock'](message)).toBe(true);
+    });
+
+    it('should return false for outgoing messages', () => {
+      const message = {
+        id: '1',
+        timestamp: new Date().toISOString(),
+        direction: 'out' as const,
+        message: {
+          jsonrpc: '2.0' as const,
+          id: '1',
+          method: 'test.method' as never,
+        },
+        methodName: 'test.method',
+        formattedTime: 'just now',
+        messagePreview: '[]',
+        isExpanded: false,
+      };
+
+      expect(spectator.component['canCreateMock'](message)).toBe(false);
+    });
+
+    it('should return false for incoming messages without result', () => {
+      const message = {
+        id: '1',
+        timestamp: new Date().toISOString(),
+        direction: 'in' as const,
+        message: {
+          jsonrpc: '2.0' as const,
+          id: '1',
+          error: { code: -32600, message: 'Invalid Request' },
+        } as never,
+        methodName: 'test.method',
+        formattedTime: 'just now',
+        messagePreview: '{}',
+        isExpanded: false,
+      };
+
+      expect(spectator.component['canCreateMock'](message)).toBe(false);
+    });
+
+    it('should return false for messages with Unknown method name', () => {
+      const message = {
+        id: '1',
+        timestamp: new Date().toISOString(),
+        direction: 'in' as const,
+        message: {
+          jsonrpc: '2.0' as const,
+          id: '1',
+          result: {},
+        },
+        methodName: 'Unknown',
+        formattedTime: 'just now',
+        messagePreview: '{}',
+        isExpanded: false,
+      };
+
+      expect(spectator.component['canCreateMock'](message)).toBe(false);
+    });
+
+    it('should return false for messages with Response method name', () => {
+      const message = {
+        id: '1',
+        timestamp: new Date().toISOString(),
+        direction: 'in' as const,
+        message: {
+          jsonrpc: '2.0' as const,
+          id: '1',
+          result: {},
+        },
+        methodName: 'Response',
+        formattedTime: 'just now',
+        messagePreview: '{}',
+        isExpanded: false,
+      };
+
+      expect(spectator.component['canCreateMock'](message)).toBe(false);
+    });
+
+    it('should return false for messages with empty method name', () => {
+      const message = {
+        id: '1',
+        timestamp: new Date().toISOString(),
+        direction: 'in' as const,
+        message: {
+          jsonrpc: '2.0' as const,
+          id: '1',
+          result: {},
+        },
+        methodName: '',
+        formattedTime: 'just now',
+        messagePreview: '{}',
+        isExpanded: false,
+      };
+
+      expect(spectator.component['canCreateMock'](message)).toBe(false);
+    });
+  });
 });

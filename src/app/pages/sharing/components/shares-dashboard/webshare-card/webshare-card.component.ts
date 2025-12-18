@@ -13,6 +13,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   filter, switchMap, map, of, catchError, shareReplay, Subject, startWith,
 } from 'rxjs';
+import { combineLatestWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -110,12 +111,15 @@ export class WebShareCardComponent implements OnInit {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  // Check if current domain is *.truenas.direct (static check, hostname doesn't change at runtime)
-  // WebShare service is only accessible on *.truenas.direct domains for security reasons
-  readonly isTruenasDirectDomain = this.webShareService.isTruenasDirectDomain;
+  protected readonly canOpenWebShare = this.webShareService.canOpenWebShare;
 
   hasTruenasConnect$ = this.truenasConnectService.config$.pipe(
     map((config) => config?.status === TruenasConnectStatus.Configured),
+  );
+
+  showNoWebshareUsersNotice$ = this.hasTruenasConnect$.pipe(
+    combineLatestWith(this.webShareService.hasWebshareUsers$),
+    map(([hasTruenasConnect, hasWebshareUsers]) => hasTruenasConnect && !hasWebshareUsers),
   );
 
   protected readonly helptext = helptextSharingWebshare;
@@ -145,11 +149,11 @@ export class WebShareCardComponent implements OnInit {
           iconName: iconMarker('mdi-open-in-new'),
           tooltip: this.translate.instant('Open'),
           onClick: (row) => this.openWebShareByName(row),
-          disabled: () => of(!this.isTruenasDirectDomain),
-          dynamicTooltip: () => of(
-            this.isTruenasDirectDomain
+          disabled: () => this.webShareService.canOpenWebShare$.pipe(map((canOpen) => !canOpen)),
+          dynamicTooltip: () => this.webShareService.canOpenWebShare$.pipe(
+            map((canOpen) => (canOpen
               ? this.translate.instant('Open')
-              : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'),
+              : this.translate.instant('WebShare can only be opened when accessed via a .truenas.direct domain'))),
           ),
         },
         {
@@ -179,6 +183,15 @@ export class WebShareCardComponent implements OnInit {
 
     this.dataProvider = new AsyncDataProvider<WebShareTableRow>(webshares$);
     this.dataProvider.load();
+
+    // Trigger hostname lookup to enable WebShare opening when not on truenas.direct domain
+    this.webShareService.hostnameMapping$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      error: () => {
+        // Error already handled by catchError in hostnameMapping$
+      },
+    });
   }
 
   onAddClicked(): void {
@@ -196,6 +209,14 @@ export class WebShareCardComponent implements OnInit {
 
   openWebShare(): void {
     this.webShareService.openWebShare();
+  }
+
+  openTruenasConnectDialog(): void {
+    this.truenasConnectService.openStatusModal();
+  }
+
+  navigateToUsers(): void {
+    this.router.navigate(['/credentials', 'users']);
   }
 
   openWebShareByName(row: WebShareTableRow): void {

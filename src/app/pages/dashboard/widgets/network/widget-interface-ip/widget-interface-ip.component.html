@@ -1,8 +1,28 @@
 <div class="wrapper">
-  <ix-widget-datapoint
-    *ixWithLoadingState="ips() as ips"
-    [size]="size()"
-    [label]="widgetName() | translate"
-    [text]="ips"
-  ></ix-widget-datapoint>
+  @if (isHaLicensed()) {
+    <mat-card *ixWithLoadingState="ipAddressList() as ipList" class="card">
+      <mat-card-content class="card-content">
+        <div class="header">
+          <h3>{{ widgetName() }}</h3>
+        </div>
+        <div class="ip-addresses" role="list" [attr.aria-label]="'Network addresses' | translate">
+          @for (ipData of ipList; track ipData.address) {
+            <div class="ip-line" role="listitem">
+              <span class="ip-address">{{ ipData.address }}</span>
+              @if (ipData.label) {
+                <span class="ip-label">{{ ipData.label }}</span>
+              }
+            </div>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    <ix-widget-datapoint
+      *ixWithLoadingState="ips() as ips"
+      [size]="size()"
+      [label]="widgetName()"
+      [text]="ips"
+    ></ix-widget-datapoint>
+  }
 </div>

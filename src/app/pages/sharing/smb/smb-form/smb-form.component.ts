@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
+  AsyncValidatorFn, FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -14,10 +14,10 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
-  endWith, Observable, of,
+  endWith, forkJoin, Observable, of,
 } from 'rxjs';
 import {
-  debounceTime, filter, map, switchMap, take, tap,
+  catchError, debounceTime, filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
@@ -169,7 +169,14 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   get isAsyncValidatorPending(): boolean {
-    return this.form.controls.name.status === 'PENDING' && this.form.controls.name.touched;
+    const nameControl = this.form.controls.name;
+    const auditGroup = this.form.controls.audit;
+    const watchListControl = auditGroup.controls.watch_list;
+    const ignoreListControl = auditGroup.controls.ignore_list;
+
+    return (nameControl.status === 'PENDING' && nameControl.touched)
+      || (watchListControl.status === 'PENDING' && watchListControl.touched)
+      || (ignoreListControl.status === 'PENDING' && ignoreListControl.touched);
   }
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({
@@ -275,6 +282,48 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     };
   }
 
+  private groupsExistValidator(): AsyncValidatorFn {
+    return (control): Observable<ValidationErrors | null> => {
+      const groups = control.value as string[];
+
+      if (!groups || groups.length === 0) {
+        return of(null);
+      }
+
+      // Move debounce BEFORE the API calls to prevent firing them on every keystroke
+      return of(groups).pipe(
+        debounceTime(500),
+        switchMap((debouncedGroups) => {
+          const groupChecks = debouncedGroups.map((groupName: string) => {
+            return this.userService.getGroupByName(groupName).pipe(
+              map(() => ({ groupName, exists: true })),
+              catchError(() => of({ groupName, exists: false })),
+            );
+          });
+          return forkJoin(groupChecks);
+        }),
+        map((results) => {
+          const nonExistentGroups = results
+            .filter((result) => !result.exists)
+            .map((result) => result.groupName);
+
+          if (nonExistentGroups.length > 0) {
+            return {
+              groupsDoNotExist: {
+                message: this.translate.instant(
+                  'The following groups do not exist: {groups}',
+                  { groups: nonExistentGroups.join(', ') },
+                ),
+              },
+            };
+          }
+
+          return null;
+        }),
+      );
+    };
+  }
+
   protected form = this.formBuilder.group({
     // Common for all share purposes
     purpose: [SmbSharePurpose.DefaultShare as SmbSharePurpose | null],
@@ -319,7 +368,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     auto_snapshot: [false],
     auto_dataset_creation: [false],
     dataset_naming_schema: [null as string | null],
-    grace_period: [900 as number],
+    grace_period: [900 as number, [Validators.min(60), Validators.max(15552000)]],
     auto_quota: [null as number | null],
     remote_path: [[] as string[], [
       Validators.required,
@@ -388,6 +437,12 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.form.controls.name.addAsyncValidators([
       this.smbValidationService.validate(this.existingSmbShare?.name),
+    ]);
+    this.form.controls.audit.controls.watch_list.addAsyncValidators([
+      this.groupsExistValidator(),
+    ]);
+    this.form.controls.audit.controls.ignore_list.addAsyncValidators([
+      this.groupsExistValidator(),
     ]);
   }
 
@@ -834,12 +889,15 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   private updateExtensionsWarning(): void {
+    const config = this.smbConfig();
+    if (!config) {
+      return; // Guard against unloaded config
+    }
+
     const purpose = this.form.controls.purpose.value;
     const requiresExtensions = purpose === SmbSharePurpose.TimeMachineShare
       || purpose === SmbSharePurpose.FcpShare;
-    this.showExtensionsWarning.set(
-      !this.smbConfig()?.aapl_extensions && requiresExtensions,
-    );
+    this.showExtensionsWarning.set(!config.aapl_extensions && requiresExtensions);
   }
 
   private loadSmbConfig(): void {

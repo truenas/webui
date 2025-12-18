@@ -11,14 +11,24 @@
   </button>
 
   <mat-menu #addNicMenu="matMenu">
-    @for (nic of availableNics(); track nic.key) {
-      <button
-        mat-menu-item
-        [ixTest]="['add-nic', nic.key]"
-        (click)="addNic(nic.key)"
-      >
-        {{ nic.label }}
-      </button>
+    @for (group of availableNicGroups(); track group.type; let isLast = $last) {
+      @if (group.label) {
+        <div class="nic-group-header" mat-menu-item disabled>
+          {{ group.label }}
+        </div>
+      }
+      @for (nic of group.nics; track nic.key) {
+        <button
+          mat-menu-item
+          [ixTest]="['add-nic', nic.key]"
+          (click)="addNic(nic.key)"
+        >
+          {{ nic.label }}
+        </button>
+      }
+      @if (!isLast && group.label) {
+        <mat-divider></mat-divider>
+      }
     }
   </mat-menu>
 }

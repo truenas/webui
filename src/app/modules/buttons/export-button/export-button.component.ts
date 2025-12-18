@@ -57,6 +57,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   readonly controllerType = input<ControllerType>();
   readonly downloadMethod = input<keyof ApiCallDirectory>();
   readonly exportFormat = input<ExportFormat>(ExportFormat.Csv);
+  readonly customExportParams = input<Record<string, unknown>>();
 
   isLoading = false;
 
@@ -117,6 +118,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
       ...(this.isHaLicensed() && this.controllerType() && {
         remote_controller: this.controllerType() === ControllerType.Standby,
       }),
+      ...this.customExportParams(),
     }] as ApiJobParams<M>;
   }
 

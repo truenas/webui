@@ -20,6 +20,7 @@ describe('AddSubsystemNamespaceComponent', () => {
     providers: [
       mockProvider(SlideInRef, {
         close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
       }),
     ],
   });

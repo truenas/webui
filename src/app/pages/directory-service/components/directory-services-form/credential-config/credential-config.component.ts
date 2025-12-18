@@ -13,6 +13,7 @@ import {
 } from 'rxjs';
 import { DirectoryServiceCredentialType, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { helptextCredentials } from 'app/helptext/directory-service/credentials';
 import {
   adAndIpaSupportedCredentialTypes,
   DirectoryServiceCredential,
@@ -43,6 +44,8 @@ export class CredentialConfigComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
   private validationService = inject(DirectoryServiceValidationService);
+
+  protected readonly helptext = helptextCredentials;
 
   protected form = this.fb.group({
     credential_type: [null as DirectoryServiceCredentialType, Validators.required],

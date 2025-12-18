@@ -9,7 +9,7 @@ import { TerminalComponent } from 'app/modules/terminal/components/terminal/term
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-container-shell',
+  selector: 'ix-app-shell',
   template: '<ix-terminal [conf]="this"></ix-terminal>',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [

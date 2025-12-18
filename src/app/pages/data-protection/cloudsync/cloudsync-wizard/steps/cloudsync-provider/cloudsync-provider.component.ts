@@ -5,7 +5,7 @@ import { MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  catchError, EMPTY, pairwise, startWith,
+  catchError, EMPTY, of, pairwise, startWith,
 } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
@@ -65,8 +65,18 @@ export class CloudSyncProviderComponent implements OnInit {
 
   readonly helptext = helptext;
 
+  constructor() {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
+
   get areActionsDisabled(): boolean {
     return this.isLoading || this.form.invalid || !this.form.controls.exist_credential.value;
+  }
+
+  isDirty(): boolean {
+    return this.form.dirty;
   }
 
   ngOnInit(): void {
@@ -174,9 +184,5 @@ export class CloudSyncProviderComponent implements OnInit {
     this.existingCredential = this.credentials.find((credential) => credential.id === credsId);
     this.save.emit(this.existingCredential);
     this.cdr.markForCheck();
-  }
-
-  isDirty(): boolean {
-    return this.form.dirty;
   }
 }

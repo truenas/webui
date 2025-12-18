@@ -31,6 +31,7 @@ describe('CloudSyncProviderComponent', () => {
     next: jest.fn(),
     swap: jest.fn(),
     getData: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
   };
 
   const loading = {

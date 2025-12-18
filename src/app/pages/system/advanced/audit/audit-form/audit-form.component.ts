@@ -20,6 +20,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { greaterThanFg } from 'app/modules/forms/ix-forms/validators/validators';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -68,6 +69,14 @@ export class AuditFormComponent implements OnInit {
     quota: [null as number | null, [Validators.required, Validators.min(0), Validators.max(100)]],
     quota_fill_warning: [null as number | null, [Validators.required, Validators.min(5), Validators.max(80)]],
     quota_fill_critical: [null as number | null, [Validators.required, Validators.min(50), Validators.max(95)]],
+  }, {
+    validators: [
+      greaterThanFg(
+        'quota_fill_critical',
+        ['quota_fill_warning'],
+        this.translate.instant('Quota Fill Critical must be greater than Quota Fill Warning.'),
+      ),
+    ],
   });
 
   readonly tooltips = {

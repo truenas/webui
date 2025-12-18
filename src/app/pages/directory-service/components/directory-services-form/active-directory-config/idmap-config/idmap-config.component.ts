@@ -8,6 +8,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of, tap } from 'rxjs';
 import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-services.enum';
+import { helptextIdmap } from 'app/helptext/directory-service/idmap';
+import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import { domainIdmapTypeOptions, PrimaryDomainIdmap } from 'app/interfaces/active-directory-config.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -35,6 +37,9 @@ export class IdmapConfigComponent implements OnInit {
   idmap = input.required<PrimaryDomainIdmap>();
   idmapUpdated = output<[useDefaultIdmap: boolean, primaryDomainIdmap: PrimaryDomainIdmap]>();
   isValid = output<boolean>();
+
+  protected readonly helptext = helptextIdmap.idmap;
+  protected readonly helptextLdap = helptextLdap;
 
   protected form = this.fb.group({
     use_default_idmap: [true],

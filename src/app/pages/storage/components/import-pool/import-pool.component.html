@@ -6,31 +6,50 @@
 
 <mat-card>
   <mat-card-content>
-    <form
-      class="ix-form-container"
-      [formGroup]="formGroup"
-      (submit)="onSubmit()"
-    >
-      <ix-fieldset [title]="helptext.selectPool | translate">
-        <ix-select
-          [formControlName]="pool.fcName"
-          [label]="pool.label | translate"
-          [options]="pool.options"
-          [required]="true"
-        ></ix-select>
-      </ix-fieldset>
-      <ix-form-actions>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="import"
-          [disabled]="formGroup.invalid || isLoading()"
+    @switch (currentStep()) {
+      @case ('locked-sed') {
+        <ix-locked-sed-disks
+          [lockedDisks]="lockedSedDisks()"
+          (skip)="onLockedSedSkip()"
+          (unlock)="onLockedSedUnlock()"
+        ></ix-locked-sed-disks>
+      }
+      @case ('unlock-sed') {
+        <ix-unlock-sed-disks
+          [lockedDisks]="lockedSedDisks()"
+          [globalSedPassword]="globalSedPassword()"
+          (skip)="onUnlockSkip()"
+          (unlocked)="onUnlockSuccess()"
+        ></ix-unlock-sed-disks>
+      }
+      @case ('import') {
+        <form
+          class="ix-form-container"
+          [formGroup]="formGroup"
+          (submit)="onSubmit()"
         >
-          {{ 'Import' | translate }}
-        </button>
-      </ix-form-actions>
-    </form>
+          <ix-fieldset [title]="helptext.selectPool | translate">
+            <ix-select
+              [formControlName]="pool.fcName"
+              [label]="pool.label | translate"
+              [options]="pool.options"
+              [required]="true"
+            ></ix-select>
+          </ix-fieldset>
+          <ix-form-actions>
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              type="submit"
+              color="primary"
+              ixTest="import"
+              [disabled]="formGroup.invalid || isLoading()"
+            >
+              {{ 'Import' | translate }}
+            </button>
+          </ix-form-actions>
+        </form>
+      }
+    }
   </mat-card-content>
 </mat-card>

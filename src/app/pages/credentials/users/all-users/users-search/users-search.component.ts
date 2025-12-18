@@ -204,16 +204,17 @@ export class UsersSearchComponent implements OnInit {
     if (query.isBasicQuery) {
       let params = new ParamsBuilder<User>();
 
-      if (query.query) {
-        const term = `(?i)${query.query}`;
-        params = params
-          .filter('username', '~', term)
-          .orFilter('full_name', '~', term);
-      }
-
       const selectedTypes = this.selectedUserTypes;
       if (selectedTypes.length > 0 && selectedTypes.length < this.userTypeOptionsSignal().length) {
         params = this.addUserTypeFilters(params, selectedTypes);
+      }
+
+      if (query.query) {
+        const pattern = this.convertToRegexPattern(query.query);
+        const term = `(?i)${pattern}`;
+        params = params.andGroup((group) => {
+          group.filter('username', '~', term).orFilter('full_name', '~', term);
+        });
       }
 
       this.dataProvider().setParams(params.getParams());
@@ -261,6 +262,13 @@ export class UsersSearchComponent implements OnInit {
     });
   }
 
+  private convertToRegexPattern(term: string): string {
+    // Escape all regex special characters except *
+    const escaped = term.replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&');
+    // Convert * to .* for wildcard support
+    return escaped.replace(/\*/g, '.*');
+  }
+
   private addUserTypeFilters(params: ParamsBuilder<User>, selectedTypes: UserType[]): ParamsBuilder<User> {
     if (selectedTypes.length === 1) {
       const [type] = selectedTypes;
@@ -283,9 +291,8 @@ export class UsersSearchComponent implements OnInit {
       case UserType.Builtin:
         return params.andFilter('builtin', '=', true);
       case UserType.Local:
-        return params.andGroup((group) => {
-          group.filter('local', '=', true).andFilter('builtin', '=', false);
-          group.orFilter('username', '=', 'root');
+        return params.andFilter('local', '=', true).andGroup((group) => {
+          group.filter('builtin', '=', false).orFilter('username', '=', 'root');
         });
       case UserType.Directory:
         return params.andFilter('local', '=', false).andFilter('builtin', '=', false);
@@ -305,17 +312,13 @@ export class UsersSearchComponent implements OnInit {
         break;
       case UserType.Local:
         if (isFirst) {
-          group.group((subGroup: ParamsBuilderGroup<User>) => {
-            subGroup.group((innerGroup: ParamsBuilderGroup<User>) => {
-              innerGroup.filter('local', '=', true).andFilter('builtin', '=', false);
-              innerGroup.orFilter('username', '=', 'root');
-            });
+          group.filter('local', '=', true).andGroup((subGroup: ParamsBuilderGroup<User>) => {
+            subGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
           });
         } else {
           group.orGroup((subGroup: ParamsBuilderGroup<User>) => {
-            subGroup.group((innerGroup: ParamsBuilderGroup<User>) => {
-              innerGroup.filter('local', '=', true).andFilter('builtin', '=', false);
-              innerGroup.orFilter('username', '=', 'root');
+            subGroup.filter('local', '=', true).andGroup((innerGroup: ParamsBuilderGroup<User>) => {
+              innerGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
             });
           });
         }

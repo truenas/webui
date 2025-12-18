@@ -4,9 +4,12 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
+  combineLatest,
   debounceTime, distinctUntilChanged, filter, map,
   Observable,
   of,
+  shareReplay,
+  startWith,
   tap,
   take,
   withLatestFrom,
@@ -24,9 +27,11 @@ import { User } from 'app/interfaces/user.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
+import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
@@ -43,6 +48,7 @@ import { SudoCommandsValidatorService } from 'app/pages/credentials/users/user-f
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
+import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
@@ -56,6 +62,7 @@ import { StorageService } from 'app/services/storage.service';
     IxCheckboxComponent,
     TranslateModule,
     IxChipsComponent,
+    IxComboboxComponent,
     IxExplorerComponent,
     IxPermissionsComponent,
     DetailsTableComponent,
@@ -80,6 +87,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
   private sudoCommandsValidator = inject(SudoCommandsValidatorService);
+  private userService = inject(UserService);
 
   editingUser = input<User>();
   protected username = computed(() => this.userFormStore?.userConfig().username ?? '');
@@ -116,6 +124,12 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     ['immutable', '=', false],
   ]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  groupComboboxProvider: GroupComboboxProvider = new GroupComboboxProvider(
+    this.userService,
+    { valueField: 'id' },
   );
 
   protected readonly roleGroupMap = new Map<Role, string>([
@@ -236,12 +250,8 @@ export class AdditionalDetailsSectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupShellUpdate();
-    if (!this.editingUser()) {
-      if (this.shellAccess()) {
-        this.setFirstShellOption();
-      } else {
-        this.setNoLoginShell();
-      }
+    if (!this.editingUser() && !this.shellAccess()) {
+      this.setNoLoginShell();
     }
     this.detectHomeDirectoryChanges();
     this.setHomeSharePath();
@@ -446,22 +456,29 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   }
 
   private setupShellUpdate(): void {
-    this.form.controls.group.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((group) => {
-      this.updateShellOptions(group, this.form.value.groups);
+    combineLatest([
+      this.form.controls.group.valueChanges.pipe(startWith(this.form.controls.group.value)),
+      this.form.controls.groups.valueChanges.pipe(startWith(this.form.controls.groups.value)),
+    ]).pipe(
+      debounceTime(300),
+      untilDestroyed(this),
+    ).subscribe(([group, groups]) => {
+      this.updateShellOptions(group, groups);
     });
 
-    this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
-      this.updateShellOptions(this.form.value.group, groups);
-    });
-
+    // Handle setting nologin shell when shell access is disabled for new users.
+    // Note: setFirstShellOption() is handled by the effect in the constructor
+    // to avoid duplicate API calls.
     this.userFormStore.state$.pipe(
       map((state) => state.setupDetails.allowedAccess.shellAccess),
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((shellAccess) => {
-      if (shellAccess) {
-        this.setFirstShellOption();
-      } else {
+      if (this.editingUser()) {
+        // When editing, don't auto-set shell - keep user's current shell
+        return;
+      }
+      if (!shellAccess) {
         this.setNoLoginShell();
       }
     });

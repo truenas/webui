@@ -16,6 +16,7 @@ import {
   DirectoryServiceType,
 } from 'app/enums/directory-services.enum';
 import { Role } from 'app/enums/role.enum';
+import { helptextDirectoryServices } from 'app/helptext/directory-service/directory-services';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { DirectoryServiceCredential } from 'app/interfaces/directoryservice-credentials.interface';
 import { DirectoryServicesConfig } from 'app/interfaces/directoryservices-config.interface';
@@ -82,6 +83,8 @@ export class DirectoryServicesFormComponent implements OnInit {
   protected readonly previousConfig = signal<DirectoryServicesConfig | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly helptext = helptextDirectoryServices;
+  private readonly mainFormValid = signal(false);
 
   // Validation states are now managed by the validation service
   protected credentialData: DirectoryServiceCredential | null = null;
@@ -90,14 +93,13 @@ export class DirectoryServicesFormComponent implements OnInit {
 
   protected readonly isFormValid = computed(() => {
     return this.validationService.calculateFormValidity(
-      this.form,
+      this.mainFormValid(),
       this.form.controls.service_type.value,
     );
   });
 
   private updateFormValidity(): void {
-    // Validation is now computed automatically via the validation service
-    this.cdr.markForCheck();
+    this.mainFormValid.set(this.form.valid);
   }
 
   protected readonly form = this.fb.group({
@@ -105,7 +107,7 @@ export class DirectoryServicesFormComponent implements OnInit {
     enable: [false, Validators.required],
     enable_account_cache: [true, Validators.required],
     enable_dns_updates: [false, Validators.required],
-    timeout: [30, [Validators.required, Validators.min(1), Validators.max(40)]],
+    timeout: [30, [Validators.required, Validators.min(5), Validators.max(60)]],
     kerberos_realm: [null],
   });
 
@@ -300,8 +302,8 @@ export class DirectoryServicesFormComponent implements OnInit {
   }
 
   private setupFormWatchers(): void {
-    // Watch for main form changes
-    this.form.valueChanges.pipe(
+    // Watch for main form status changes (validity)
+    this.form.statusChanges.pipe(
       untilDestroyed(this),
     ).subscribe(() => {
       this.updateFormValidity();

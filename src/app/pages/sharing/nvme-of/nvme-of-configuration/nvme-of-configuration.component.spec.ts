@@ -41,6 +41,7 @@ describe('NvmeOfConfigurationComponent', () => {
       ]),
       mockProvider(SlideInRef, {
         close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
       }),
       provideMockStore({
         selectors: [

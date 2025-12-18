@@ -1,10 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, flush } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
@@ -16,8 +17,31 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
+import { UserService } from 'app/services/user.service';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+
+/**
+ * Type guard to check if a filter is a 'group in' filter.
+ */
+function isGroupInFilter(filter: unknown): filter is ['group', 'in', string[]] {
+  return Array.isArray(filter)
+    && filter.length === 3
+    && filter[0] === 'group'
+    && filter[1] === 'in'
+    && Array.isArray(filter[2]);
+}
+
+/**
+ * Type guard to check if a filter is a 'local' filter.
+ */
+function isLocalFilter(filter: unknown): filter is ['local', '=', boolean] {
+  return Array.isArray(filter)
+    && filter.length === 3
+    && filter[0] === 'local'
+    && filter[1] === '='
+    && typeof filter[2] === 'boolean';
+}
 
 describe('PrivilegeFormComponent', () => {
   let spectator: Spectator<PrivilegeFormComponent>;
@@ -30,6 +54,12 @@ describe('PrivilegeFormComponent', () => {
     getData: jest.fn((): undefined => undefined),
   };
 
+  // Test data - all available groups
+  const testGroups: Group[] = [
+    { group: 'Group A', gid: 111 } as Group,
+    { group: 'Group B', gid: 222 } as Group,
+  ];
+
   const fakeDataPrivilege = {
     id: 10,
     name: 'privilege',
@@ -37,7 +67,6 @@ describe('PrivilegeFormComponent', () => {
     local_groups: [
       { gid: 111, group: 'Group A' },
       { gid: 222, group: 'Group B' },
-      { gid: 333, group: null },
     ],
     ds_groups: [] as Group[],
     roles: [Role.ReadonlyAdmin],
@@ -50,10 +79,26 @@ describe('PrivilegeFormComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('group.query', [
-          { group: 'Group A', gid: 111 },
-          { group: 'Group B', gid: 222 },
-        ] as Group[]),
+        mockCall('group.query', (params) => {
+          // Handle all group.query calls - return groups based on filters
+          const filters = params?.[0] || [];
+          const groupInFilter = filters.find(isGroupInFilter);
+          const localFilter = filters.find(isLocalFilter);
+
+          // If filtering by group names, return only those groups
+          if (groupInFilter) {
+            const requestedNames = groupInFilter[2];
+            return testGroups.filter((group) => requestedNames.includes(group.group));
+          }
+
+          // If filtering by local=false (DS groups), return empty
+          if (localFilter?.[2] === false) {
+            return [] as Group[];
+          }
+
+          // Default: return all local groups
+          return testGroups;
+        }),
         mockCall('privilege.create'),
         mockCall('privilege.update'),
         mockCall('privilege.roles', [
@@ -68,6 +113,9 @@ describe('PrivilegeFormComponent', () => {
       mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(UserService, {
+        groupQueryDsCache: jest.fn(() => of([])),
       }),
       provideMockStore({
         selectors: [
@@ -145,13 +193,13 @@ describe('PrivilegeFormComponent', () => {
       expect(values).toEqual({
         Name: 'privilege',
         'Web Shell Access': true,
-        'Local Groups': ['Group A', 'Group B', 'Missing group - 333'],
+        'Local Groups': ['Group A', 'Group B'],
         'Directory Services Groups': [],
         Roles: ['Readonly Admin'],
       });
     });
 
-    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+    it('sends an update payload to websocket and closes modal when save is pressed', fakeAsync(async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Name: 'updated privilege',
@@ -162,6 +210,9 @@ describe('PrivilegeFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
+      // Flush all pending async operations
+      flush();
+
       expect(api.call).toHaveBeenCalledWith('privilege.update', [10, {
         ds_groups: [],
         local_groups: [111, 222],
@@ -169,7 +220,7 @@ describe('PrivilegeFormComponent', () => {
         roles: [Role.FullAdmin, Role.ReadonlyAdmin],
         web_shell: false,
       }]);
-    });
+    }));
   });
 
   describe('editing a build-in privilege', () => {
@@ -183,7 +234,7 @@ describe('PrivilegeFormComponent', () => {
       api = spectator.inject(ApiService);
     });
 
-    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+    it('sends an update payload to websocket and closes modal when save is pressed', fakeAsync(async () => {
       const form = await loader.getHarness(IxFormHarness);
 
       expect(await form.getDisabledState()).toEqual({
@@ -201,11 +252,196 @@ describe('PrivilegeFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
+      // Flush all pending async operations
+      flush();
+
       expect(api.call).toHaveBeenCalledWith('privilege.update', [10, {
         ds_groups: [],
         local_groups: [111, 222],
         web_shell: false,
       }]);
+    }));
+  });
+
+  describe('group validation', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
+    });
+
+    it('prevents saving when local group does not exist and shows error', fakeAsync(() => {
+      // Note: Cannot use IxFormHarness here because this tests an edge case where
+      // a group was valid when entered but got deleted before submission.
+      // The chips provider would prevent entering invalid groups in normal UI flow.
+      // Accessing protected form property via bracket notation for testing
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({
+        name: 'test privilege',
+        local_groups: ['Group A', 'NonExistentGroup'],
+        roles: [Role.FullAdmin],
+      });
+
+      spectator.component.onSubmit();
+
+      flush();
+
+      // Validation error should prevent privilege.create from being called
+      const privilegeCreateCalls = (api.call as jest.Mock).mock.calls.filter(
+        (call) => call[0] === 'privilege.create',
+      );
+      expect(privilegeCreateCalls).toHaveLength(0);
+    }));
+
+    it('prevents saving when DS group does not exist and shows error', fakeAsync(() => {
+      // Note: Cannot use IxFormHarness here because this tests an edge case where
+      // a group was valid when entered but got deleted before submission.
+      // The chips provider would prevent entering invalid groups in normal UI flow.
+      // Accessing protected form property via bracket notation for testing
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({
+        name: 'test privilege',
+        ds_groups: ['NonExistentDSGroup'],
+        roles: [Role.FullAdmin],
+      });
+
+      spectator.component.onSubmit();
+
+      flush();
+
+      // Validation error should prevent privilege.create from being called
+      const privilegeCreateCalls = (api.call as jest.Mock).mock.calls.filter(
+        (call) => call[0] === 'privilege.create',
+      );
+      expect(privilegeCreateCalls).toHaveLength(0);
+    }));
+  });
+
+  describe('group providers', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      api = spectator.inject(ApiService);
+    });
+
+    it('should call API with server-side prefix filter for local groups', async () => {
+      const provider = spectator.component.localGroupsProvider;
+
+      await lastValueFrom(provider('test'));
+
+      expect(api.call).toHaveBeenCalledWith('group.query', [
+        [['local', '=', true], ['group', '^', 'test']],
+        { limit: 50, order_by: ['group'] },
+      ]);
+    });
+
+    it('should apply client-side contains filtering for local groups', async () => {
+      const provider = spectator.component.localGroupsProvider;
+
+      // Mock API returns groups that start with 'gr' (server-side filter)
+      (api.call as jest.Mock).mockReturnValue(of([
+        { group: 'group-test' } as Group,
+        { group: 'grtest' } as Group,
+        { group: 'other-group' } as Group,
+      ]));
+
+      const result = await lastValueFrom(provider('test'));
+
+      // Client-side filter keeps only groups that contain 'test'
+      expect(result).toEqual(['group-test', 'grtest']);
+    });
+
+    it('should limit local group results to 50', async () => {
+      const provider = spectator.component.localGroupsProvider;
+
+      await lastValueFrom(provider(''));
+
+      expect(api.call).toHaveBeenCalledWith('group.query', [
+        [['local', '=', true]],
+        { limit: 50, order_by: ['group'] },
+      ]);
+    });
+
+    it('should order local groups by name', async () => {
+      const provider = spectator.component.localGroupsProvider;
+
+      await lastValueFrom(provider('test'));
+
+      const callArgs = (api.call as jest.Mock).mock.calls.find(
+        (call) => call[0] === 'group.query',
+      );
+      expect(callArgs[1][1]).toEqual({ limit: 50, order_by: ['group'] });
+    });
+
+    it('should use UserService.groupQueryDsCache for DS groups', async () => {
+      const provider = spectator.component.dsGroupsProvider;
+      const userService = spectator.inject(UserService);
+
+      jest.spyOn(userService, 'groupQueryDsCache').mockReturnValue(of([
+        { id: 1, group: 'domain-test', gid: 1001 } as Group,
+        { id: 2, group: 'test-domain', gid: 1002 } as Group,
+      ]));
+
+      const result = await lastValueFrom(provider('test'));
+
+      // Should call UserService.groupQueryDsCache with the query
+      expect(userService.groupQueryDsCache).toHaveBeenCalledWith('test', false, 0);
+
+      // Should return group names
+      expect(result).toEqual(['domain-test', 'test-domain']);
+    });
+
+    it('should limit DS groups results to 50', async () => {
+      const provider = spectator.component.dsGroupsProvider;
+      const userService = spectator.inject(UserService);
+
+      // Mock more than 50 groups
+      const manyGroups = Array.from({ length: 100 }, (_, i) => ({
+        id: i,
+        group: `group${i}`,
+        gid: 1000 + i,
+      } as Group));
+
+      jest.spyOn(userService, 'groupQueryDsCache').mockReturnValue(of(manyGroups));
+
+      const result = await lastValueFrom(provider('test'));
+
+      // Should limit to 50 results
+      expect(result).toHaveLength(50);
+    });
+
+    it('should handle empty query for local groups', async () => {
+      const provider = spectator.component.localGroupsProvider;
+
+      (api.call as jest.Mock).mockReturnValue(of([
+        { group: 'group1' } as Group,
+        { group: 'group2' } as Group,
+      ]));
+
+      const result = await lastValueFrom(provider(''));
+
+      // Empty query returns all groups up to limit
+      expect(result).toEqual(['group1', 'group2']);
+      expect(api.call).toHaveBeenCalledWith('group.query', [
+        [['local', '=', true]],
+        { limit: 50, order_by: ['group'] },
+      ]);
+    });
+
+    it('should handle whitespace-only query', async () => {
+      const provider = spectator.component.localGroupsProvider;
+
+      (api.call as jest.Mock).mockReturnValue(of([
+        { group: 'group1' } as Group,
+      ]));
+
+      const result = await lastValueFrom(provider('   '));
+
+      // Whitespace-only query is treated as empty
+      expect(result).toEqual(['group1']);
+      expect(api.call).toHaveBeenCalledWith('group.query', [
+        [['local', '=', true]],
+        { limit: 50, order_by: ['group'] },
+      ]);
     });
   });
 });

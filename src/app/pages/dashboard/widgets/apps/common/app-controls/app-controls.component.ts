@@ -6,14 +6,15 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { AppState } from 'app/enums/app-state.enum';
-import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { App } from 'app/interfaces/app.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 
 @UntilDestroy()
@@ -37,8 +38,9 @@ import { RedirectService } from 'app/services/redirect.service';
 export class AppControlsComponent {
   private translate = inject(TranslateService);
   private redirect = inject(RedirectService);
-  private snackbar = inject(SnackbarService);
+  private dialogService = inject(DialogService);
   private appService = inject(ApplicationsService);
+  private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
 
   app = input.required<LoadingState<App>>();
@@ -58,14 +60,16 @@ export class AppControlsComponent {
   });
 
   onRestartApp(app: App): void {
-    this.appService.restartApplication(app.name)
+    this.dialogService.jobDialog(
+      this.appService.restartApplication(app.name),
+      { title: this.translate.instant('Restarting App'), description: ignoreTranslation(app.name), canMinimize: true },
+    )
+      .afterClosed()
       .pipe(
-        tapOnce(() => this.snackbar.success(this.translate.instant('App is restarting'))),
+        this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       )
-      .subscribe({
-        complete: () => this.snackbar.success(this.translate.instant('App is restarted')),
-      });
+      .subscribe();
   }
 
   openAppDetails(app: App): void {

@@ -55,15 +55,26 @@
           
           <span class="timestamp">{{ message.formattedTime }}</span>
           
-          <button mat-icon-button 
+          @if (canCreateMock(message)) {
+            <button mat-icon-button
+                    matTooltip="Create mock from response"
+                    class="mock-button"
+                    ixTest="websocket-debug-create-mock"
+                    [attr.aria-label]="'Create mock from response'"
+                    (click)="createMockFromMessage(message); $event.stopPropagation()">
+              <ix-icon name="mdi-plus"></ix-icon>
+            </button>
+          }
+
+          <button mat-icon-button
                   matTooltip="Copy message"
-                  class="copy-button" 
+                  class="copy-button"
                   ixTest="websocket-debug-copy-message"
                   [attr.aria-label]="'Copy message'"
                   (click)="copyMessage(message); $event.stopPropagation()">
             <ix-icon name="mdi-content-copy"></ix-icon>
           </button>
-          
+
           <button mat-icon-button 
                   class="toggle-button"
                   ixTest="websocket-debug-toggle-message"

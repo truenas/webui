@@ -8,6 +8,7 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
+import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { ActiveDirectoryConfig, PrimaryDomainIdmap, DomainIdmap } from 'app/interfaces/active-directory-config.interface';
 import { DirectoryServicesUpdate } from 'app/interfaces/directoryservices-update.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -44,6 +45,7 @@ export class ActiveDirectoryConfigComponent implements OnInit {
   protected readonly primaryDomainIdmap = signal<PrimaryDomainIdmap>(null);
   protected readonly isIdmapValid = signal(true);
   protected readonly isTrustedDomainsValid = signal(true);
+  protected readonly helptext = helptextActiveDirectory;
 
   protected readonly form = this.fb.group({
     hostname: [null as string, Validators.required],

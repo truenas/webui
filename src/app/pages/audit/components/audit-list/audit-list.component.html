@@ -31,7 +31,7 @@
       [dataProvider]="dataProvider()"
     >
       <div class="user-avatar" [matTooltip]="audit.username">
-        <div [innerHTML]="getUserAvatarForLog(audit)"></div>
+        <div [innerHTML]="audit.username | userAvatar"></div>
         <span>{{ audit.username || '-' }}</span>
       </div>
     </ng-template>
@@ -42,13 +42,13 @@
       [columnIndex]="4"
       [dataProvider]="dataProvider()"
     >
-      <div class="event-data" [matTooltip]="getEventDataForLog(audit) | translate">
+      <div class="event-data" [matTooltip]="audit | getLogImportantData | translate">
         @if (audit.success) {
           <ix-icon name="mdi-check-circle"></ix-icon>
         } @else {
           <ix-icon class="error-color" name="mdi-close-circle"></ix-icon>
         }
-        <span>{{ getEventDataForLog(audit) | translate }}</span>
+        <span>{{ audit | getLogImportantData | translate }}</span>
       </div>
     </ng-template>
   </tbody>

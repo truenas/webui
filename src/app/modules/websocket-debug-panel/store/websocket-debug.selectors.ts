@@ -83,3 +83,8 @@ export const selectEnclosureScenario = createSelector(
   selectEnclosureMockConfig,
   (config) => config.scenario,
 );
+
+export const selectPrefilledMockConfig = createSelector(
+  selectWebSocketDebugState,
+  (state) => state.prefilledMockConfig,
+);

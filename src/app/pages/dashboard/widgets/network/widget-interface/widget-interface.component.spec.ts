@@ -1,5 +1,6 @@
 import { fakeAsync } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { ChartData } from 'chart.js';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
@@ -11,7 +12,7 @@ import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
+import { RateChartComponent } from 'app/pages/dashboard/widgets/network/common/rate-chart/rate-chart.component';
 import { WidgetInterfaceComponent } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.component';
 
 describe('WidgetInterfaceComponent', () => {
@@ -26,7 +27,7 @@ describe('WidgetInterfaceComponent', () => {
       WithLoadingStateDirective,
     ],
     declarations: [
-      MockComponent(NetworkChartComponent),
+      MockComponent(RateChartComponent),
       MockComponent(InterfaceStatusIconComponent),
     ],
     providers: [
@@ -125,10 +126,10 @@ describe('WidgetInterfaceComponent', () => {
 
     it('shows a chart with network traffic', () => {
       startDate = Date.now() - oneHourMillis - oneMinuteMillis;
-      const chart = spectator.query(NetworkChartComponent)!;
+      const chart = spectator.query(RateChartComponent)!;
       expect(chart).not.toBeNull();
 
-      const data = chart.data;
+      const data = (chart as unknown as Element & { data: ChartData<'line'> }).data;
       expect(data).toMatchObject({
         datasets: [
           {
@@ -209,10 +210,10 @@ describe('WidgetInterfaceComponent', () => {
 
     it('shows a chart with network traffic', () => {
       startDate = Date.now() - oneHourMillis - oneMinuteMillis;
-      const chart = spectator.query(NetworkChartComponent)!;
+      const chart = spectator.query(RateChartComponent)!;
       expect(chart).not.toBeNull();
 
-      const data = chart.data;
+      const data = (chart as unknown as Element & { data: ChartData<'line'> }).data;
       expect(data).toMatchObject({
         datasets: [
           {
@@ -282,7 +283,7 @@ describe('WidgetInterfaceComponent', () => {
 
     it('ensures chart is not rendered', fakeAsync(() => {
       spectator.tick(1);
-      const chart = spectator.query(NetworkChartComponent);
+      const chart = spectator.query(RateChartComponent);
       expect(chart).toBeNull();
     }));
   });

@@ -82,7 +82,7 @@ describe('ContainerFormComponent', () => {
         mockJob('container.create', fakeSuccessfulJob(createdContainer)),
         mockCall('container.update', existingContainer),
         mockCall('container.get_instance', existingContainer),
-        mockCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
+        mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
         mockCall('container.query', []),
       ]),
       mockProvider(SlideInRef, {
@@ -178,7 +178,7 @@ describe('ContainerFormComponent', () => {
           mockJob('container.create'),
           mockCall('container.update', existingContainer),
           mockCall('container.get_instance', existingContainer),
-          mockCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
+          mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
         ]),
         mockProvider(SlideInRef, {
@@ -319,7 +319,7 @@ describe('ContainerFormComponent', () => {
           mockJob('container.create'),
           mockCall('container.update', { ...existingContainer, name: 'updated-container' } as Container),
           mockCall('container.get_instance', existingContainer),
-          mockCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
+          mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
         ]),
         mockProvider(SlideInRef, {
@@ -472,7 +472,7 @@ describe('ContainerFormComponent', () => {
           mockJob('container.create', fakeSuccessfulJob(createdContainer)),
           mockCall('container.update', existingContainer),
           mockCall('container.get_instance', existingContainer),
-          mockCall('lxc.bridge_choices', { lxdbr0: 'lxdbr0' }),
+          mockCall('lxc.bridge_choices', { '[AUTO]': 'Automatic', lxdbr0: 'lxdbr0' }),
           mockCall('container.query', []),
         ]),
         mockProvider(SlideInRef, {

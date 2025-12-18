@@ -26,6 +26,7 @@ import {
   isErrorResponse, isSuccessResponse, isCallErrorData,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { updateMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
+import { PrefilledMockConfig } from 'app/modules/websocket-debug-panel/store/websocket-debug.reducer';
 
 @Component({
   selector: 'ix-mock-config-form',
@@ -48,6 +49,7 @@ import { updateMockConfig } from 'app/modules/websocket-debug-panel/store/websoc
 })
 export class MockConfigFormComponent implements OnInit, OnDestroy {
   readonly config = input<MockConfig | null>(null);
+  readonly prefilledData = input<PrefilledMockConfig | null>(null);
   readonly submitted = output<MockConfig>();
   readonly cancelled = output();
 
@@ -151,10 +153,20 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
         events: configValue.events || [],
       });
     } else {
-      // Set default value for new configs
-      this.form.patchValue({
-        responseType: 'success',
-      });
+      // Check for prefilled data from a response
+      const prefilled = this.prefilledData();
+      if (prefilled) {
+        this.form.patchValue({
+          methodName: prefilled.methodName,
+          responseType: 'success',
+          responseResult: this.stringifyJson(prefilled.responseResult),
+        });
+      } else {
+        // Set default value for new configs
+        this.form.patchValue({
+          responseType: 'success',
+        });
+      }
     }
 
     // Toggle validators based on response type
