@@ -1,4 +1,3 @@
-import { signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -54,16 +53,13 @@ describe('AllTargetsComponent', () => {
     });
 
     it('keeps the selected target when not in mobile view', () => {
+      jest.spyOn(spectator.component, 'isMobileView').mockReturnValue(false);
+
       const mockTarget = { id: 1, name: 'iSCSI-1' } as IscsiTarget;
       const dataProvider = new AsyncDataProvider(of([mockTarget]));
       dataProvider.expandedRow = mockTarget;
       Object.defineProperty(spectator.component, 'dataProvider', {
         value: dataProvider,
-      });
-
-      const mockMasterDetailView = signal({ isMobileView: () => false });
-      Object.defineProperty(spectator.component, 'masterDetailView', {
-        value: mockMasterDetailView,
       });
 
       spectator.component.onMobileDetailsClosed();
