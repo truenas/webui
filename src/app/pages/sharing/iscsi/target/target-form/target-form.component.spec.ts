@@ -23,6 +23,9 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  FcMpioInfoBannerComponent,
+} from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-mpio-info-banner/fc-mpio-info-banner.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -64,6 +67,7 @@ describe('TargetFormComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxIpInputWithNetmaskComponent,
+      FcMpioInfoBannerComponent,
     ],
     providers: [
       provideMockStore({
@@ -311,6 +315,24 @@ describe('TargetFormComponent', () => {
 
       const nameControl = await loader.getHarness(IxInputHarness.with({ label: 'Target Name' }));
       expect(await nameControl.getErrorText()).toBe('Target with this name already exists');
+    });
+  });
+
+  describe('MPIO info banner conditional display', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('should not display banner when there are 0 FC ports', async () => {
+      await form.fillForm({
+        Mode: 'Fibre Channel',
+      });
+      spectator.detectChanges();
+
+      const banner = spectator.query('ix-fc-mpio-info-banner');
+      expect(banner).not.toExist();
     });
   });
 });

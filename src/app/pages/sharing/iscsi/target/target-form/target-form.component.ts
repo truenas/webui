@@ -38,6 +38,9 @@ import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/tr
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
+  FcMpioInfoBannerComponent,
+} from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-mpio-info-banner/fc-mpio-info-banner.component';
+import {
   FcPortItemControlsComponent,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-port-item-controls/fc-port-item-controls.component';
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
@@ -65,6 +68,7 @@ import { LicenseService } from 'app/services/license.service';
     IxSelectComponent,
     FormActionsComponent,
     FcPortItemControlsComponent,
+    FcMpioInfoBannerComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,

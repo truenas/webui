@@ -7,6 +7,10 @@
       [formArray]="form().get('fcPorts')"
       (add)="addFcPort()()"
     >
+      @if (form().controls.fcPorts.controls.length >= 2) {
+        <ix-fc-mpio-info-banner></ix-fc-mpio-info-banner>
+      }
+
       @for (entry of form().controls.fcPorts.controls; track entry; let i = $index) {
         <ix-list-item [label]="'Port' | translate" (delete)="deleteFcPort()(i)">
           <ix-fc-port-item-controls
