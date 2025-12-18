@@ -40,7 +40,7 @@ describe('CloudBackupListComponent', () => {
       snapshot: false,
       enabled: false,
       job: {
-        state: JobState.Finished,
+        state: JobState.Success,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
@@ -54,7 +54,7 @@ describe('CloudBackupListComponent', () => {
       snapshot: false,
       enabled: true,
       job: {
-        state: JobState.Finished,
+        state: JobState.Success,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
@@ -121,8 +121,8 @@ describe('CloudBackupListComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', ''],
-      ['UA', '', 'No', 'Finished', '1 min. ago', ''],
-      ['UAH', '', 'No', 'Finished', '1 min. ago', ''],
+      ['UA', '', 'No', 'Completed', '1 min. ago', ''],
+      ['UAH', '', 'No', 'Completed', '1 min. ago', ''],
     ];
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
@@ -180,7 +180,7 @@ describe('CloudBackupListComponent', () => {
   it('shows success message when job finishes successfully', async () => {
     jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of({
       id: 1,
-      state: JobState.Finished,
+      state: JobState.Success,
     } as Job<void>));
 
     const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'success');

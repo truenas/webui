@@ -47,7 +47,7 @@ describe('RsyncTaskCardComponent', () => {
       delayupdates: true,
       job: {
         id: 1,
-        state: JobState.Finished,
+        state: JobState.Success,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
@@ -64,7 +64,7 @@ describe('RsyncTaskCardComponent', () => {
       state: {
         state: 'FAILED',
       },
-    } as RsyncTaskUi,
+    } as unknown as RsyncTaskUi,
   ];
 
   const createComponent = createComponentFactory({
@@ -79,11 +79,11 @@ describe('RsyncTaskCardComponent', () => {
             selector: selectJobs,
             value: [{
               id: 1,
-              state: 'FINISHED',
+              state: JobState.Success,
               time_finished: {
                 $date: new Date().getTime() - 50000,
               },
-            } as Job],
+            } as unknown as Job],
           },
           {
             selector: selectSystemConfigState,
@@ -123,7 +123,7 @@ describe('RsyncTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Path', 'Remote Host', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['/mnt/APPS', 'asd', 'Every hour, every day', 'Disabled', '1 min. ago', '', 'Finished', ''],
+      ['/mnt/APPS', 'asd', 'Every hour, every day', 'Disabled', '1 min. ago', '', 'Completed', ''],
     ];
 
     const cells = await table.getCellTexts();

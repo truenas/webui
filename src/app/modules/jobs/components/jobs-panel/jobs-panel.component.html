@@ -12,21 +12,21 @@
       </div>
       <div
         class="job-badge waiting"
-        [matTooltip]="'Waiting' | translate"
+        [matTooltip]="JobState.Waiting | jobStateDisplay"
       >
         <span class="job-badge-count">{{ waitingJobsCount$ | async }}</span>
         <ix-icon name="schedule" class="job-icon-waiting"></ix-icon>
       </div>
       <div
         class="job-badge success"
-        [matTooltip]="'Success' | translate"
+        [matTooltip]="JobState.Success | jobStateDisplay"
       >
         <span class="job-badge-count">{{ successJobsCount$ | async }}</span>
         <ix-icon name="mdi-check-circle" class="job-icon-success"></ix-icon>
       </div>
       <div
         class="job-badge failed"
-        [matTooltip]="'Failed' | translate"
+        [matTooltip]="JobState.Failed | jobStateDisplay"
       >
         <span class="job-badge-count">{{ failedJobsCount$ | async }}</span>
         <ix-icon name="cancel" class="job-icon-failed"></ix-icon>

@@ -15,6 +15,7 @@ import { rsyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTask, RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
@@ -230,7 +231,7 @@ export class RsyncTaskCardComponent implements OnInit {
   private transformRsyncTasks(rsyncTasks: RsyncTaskUi[]): RsyncTaskUi[] {
     return rsyncTasks.map((task: RsyncTaskUi) => {
       if (task.job === null) {
-        task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
+        task.state = { state: task.locked ? TaskState.Locked : TaskState.Pending };
       } else {
         task.state = { state: task.job.state };
         this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean), untilDestroyed(this))

@@ -3,7 +3,7 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { JobState } from 'app/enums/job-state.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 
@@ -72,7 +72,7 @@ describe('DownloadService', () => {
         time_finished: {
           $date: (new Date()).getTime(),
         },
-        state: JobState.Finished,
+        state: TaskState.Finished,
       }));
       jest.spyOn(spectator.service, 'downloadUrl').mockReturnValue(of(new Blob()));
 

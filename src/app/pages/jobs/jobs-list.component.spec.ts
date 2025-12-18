@@ -100,7 +100,7 @@ describe('JobsListComponent', () => {
     const expectedRows = [
       ['Name', 'State', 'Started', 'Finished'],
       ['cloudsync.sync', 'Failed', '2022-05-28 10:00:01', '2022-05-28 10:00:01'],
-      ['cloudsync.sync', 'Success', '2022-05-28 10:00:01', '2022-05-28 10:00:01'],
+      ['cloudsync.sync', 'Completed', '2022-05-28 10:00:01', '2022-05-28 10:00:01'],
     ];
 
     expect(cells).toEqual(expectedRows);

@@ -6,6 +6,7 @@ import {
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -130,9 +131,9 @@ export class FailoverValidationService {
     const terminalStates = [
       JobState.Success,
       JobState.Failed,
-      JobState.Error,
+      TaskState.Error,
       JobState.Aborted,
-      JobState.Finished,
+      TaskState.Finished,
     ];
 
     return this.api.subscribe('core.get_jobs').pipe(

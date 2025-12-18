@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
 import {
   filter, map,
 } from 'rxjs/operators';
+import { JobState } from 'app/enums/job-state.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -31,6 +32,7 @@ import {
   selectOngoingJobs,
   selectFinishedJobs,
 } from 'app/modules/jobs/store/job.selectors';
+import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
@@ -56,9 +58,11 @@ import { FailedJobError } from 'app/services/errors/error.classes';
     TranslateModule,
     AsyncPipe,
     TestDirective,
+    JobStateDisplayPipe,
   ],
 })
 export class JobsPanelComponent {
+  protected readonly JobState = JobState;
   private router = inject(Router);
   private store$ = inject<Store<JobSlice>>(Store);
   private dialogRef = inject<MatDialogRef<JobsPanelComponent>>(MatDialogRef);
