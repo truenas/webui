@@ -32,6 +32,10 @@ describe('AllTargetsComponent', () => {
     expect(spectator.component).toBeTruthy();
   });
 
+  it('should not be in mobile view by default', () => {
+    expect(spectator.component.isMobileView()).toBe(false);
+  });
+
   describe('onMobileDetailsClosed', () => {
     it('clears the selected target when in mobile view', () => {
       // pretend we're in mobile view
