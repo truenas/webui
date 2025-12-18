@@ -35,6 +35,9 @@ describe('AllTargetsComponent', () => {
 
   describe('onMobileDetailsClosed', () => {
     it('clears the selected target when in mobile view', () => {
+      // pretend we're in mobile view
+      jest.spyOn(spectator.component, 'isMobileView').mockReturnValue(true);
+
       // create a mock data provider and rig it to the component
       // we have to use `Object.defineProperty` here since they're protected values, and we don't
       // have a way to mock them otherwise. this is generally ill-advised, but in such a small case it's permissible.
@@ -43,12 +46,6 @@ describe('AllTargetsComponent', () => {
       dataProvider.expandedRow = mockTarget;
       Object.defineProperty(spectator.component, 'dataProvider', {
         value: dataProvider,
-      });
-
-      // and create a mock master detail view and also add it to the component
-      const mockMasterDetailView = signal({ isMobileView: () => true });
-      Object.defineProperty(spectator.component, 'masterDetailView', {
-        value: mockMasterDetailView,
       });
 
       // ensure the component nullifies the expanded row when we're in the mobile view
