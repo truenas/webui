@@ -38,22 +38,15 @@
     margin-left: auto;
   }
 
-  // Inline badge styling (after menu text)
-  .menu-badge {
-    align-items: center;
+  // Inline badge dot styling (after menu text)
+  .menu-badge-dot {
     background: var(--orange);
-    border-radius: 10px;
-    color: var(--always-white);
-    display: inline-flex;
-    font-size: 0.7rem;
-    font-weight: 600;
-    height: 18px;
-    justify-content: center;
-    line-height: 1;
-    margin-left: 8px;
-    min-width: 18px;
-    padding: 0 5px;
-    vertical-align: middle;
+    border-radius: 50%;
+    display: inline-block;
+    height: 6px;
+    margin-left: auto;
+    margin-right: 10px;
+    width: 6px;
 
     &.critical {
       background: var(--red);

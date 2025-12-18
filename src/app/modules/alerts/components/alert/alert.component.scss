@@ -136,7 +136,7 @@
   border-radius: 4px;
   margin-bottom: 6px;
   margin-top: 4px;
-  padding: 6px 8px;
+  padding: 0;
 
   .context-help-toggle {
     align-items: center;
@@ -146,6 +146,7 @@
     gap: 4px;
     justify-content: flex-start;
     line-height: inherit;
+    height: inherit;
     min-height: auto;
     opacity: 0.9;
     padding: 0;
@@ -197,16 +198,22 @@
     border: 1px solid var(--lines);
     border-radius: 4px;
     color: var(--fg1);
+    cursor: pointer;
     display: flex;
-    font-size: 0.8rem;
+    flex: 0 0 auto;
+    font-size: 0.75rem;
     gap: 4px;
-    line-height: 1.1;
-    min-height: 28px;
-    padding: 4px 10px;
+    justify-content: center;
+    line-height: 1;
+    min-width: fit-content;
+    padding: 0 8px;
     transition: all 0.2s ease;
+    white-space: nowrap;
+    height: max-content;
 
     ix-icon {
-      font-size: 14px;
+      width: 18px;
+      margin-right: 5px;
     }
 
     &:hover {
@@ -218,7 +225,7 @@
       background: var(--primary);
       border-color: var(--primary);
       color: var(--always-white);
-      font-weight: 500;
+      font-weight: 600;
 
       &:hover {
         background: var(--primary-hover, var(--primary));
@@ -226,4 +233,8 @@
       }
     }
   }
+}
+
+.alert-body {
+  width: 100%;
 }

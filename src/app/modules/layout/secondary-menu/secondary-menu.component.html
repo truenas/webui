@@ -16,7 +16,13 @@
         >
           <span class="submenu-text">{{ subItem.name | translate }}</span>
           @if (badgeCount > 0) {
-            <span class="submenu-badge" [class.critical]="hasCriticalAlerts(subItem)">{{ badgeCount }}</span>
+            <span
+              class="submenu-badge-dot"
+              role="status"
+              [class.critical]="hasCriticalAlerts(subItem)"
+              [matTooltip]="getBadgeTooltip(subItem) | translate"
+              [attr.aria-label]="getBadgeTooltip(subItem) | translate"
+            ></span>
           }
         </a>
       </mat-list-item>

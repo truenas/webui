@@ -25,7 +25,7 @@ describe('TransferModeExplanationComponent', () => {
   it('shows icon for the transfer mode provided', async () => {
     const icon = await loader.getHarness(MatIconHarness);
 
-    expect(await icon.getName()).toBe('sync');
+    expect(await icon.getName()).toBe('mdi-sync');
   });
 
   it('shows the transfer mode description', () => {

@@ -5,62 +5,66 @@
     <!-- Critical Alerts -->
     @for (alert of grouped.critical; track alert.uuid) {
       <div [class]="'page-alert ' + getAlertClass(alert.level)">
-        <div class="alert-header">
-          <ix-icon class="alert-icon" [name]="getAlertIcon(alert.level)"></ix-icon>
+        <ix-icon class="alert-icon" [name]="getAlertIcon(alert.level)"></ix-icon>
+        <div class="alert-content-wrapper">
           <div class="alert-content">
             <div class="alert-message">{{ alert.formatted }}</div>
             @if (alert.contextualHelp) {
               <div class="alert-help">{{ alert.contextualHelp }}</div>
             }
+            @if (alert.documentationUrl) {
+              <a
+                class="alert-docs-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                [href]="alert.documentationUrl"
+              >
+                {{ 'Learn More' | translate }}
+              </a>
+            }
           </div>
         </div>
 
-        @if (alert.actions && alert.actions.length > 0) {
-          <div class="alert-actions">
-            @for (action of alert.actions; track action.label) {
-              @if (action.primary) {
-                <button
-                  class="alert-action-btn primary"
-                  (click)="onActionClick(action.handler)"
-                >
-                  <ix-icon [name]="action.icon"></ix-icon>
-                  <span>{{ action.label | translate }}</span>
-                </button>
-              }
-            }
-          </div>
-        }
+        <button
+          class="dismiss-btn"
+          [attr.aria-label]="'Dismiss' | translate"
+          (click)="onDismiss(alert)"
+        >
+          <ix-icon name="clear"></ix-icon>
+        </button>
       </div>
     }
 
     <!-- Warning Alerts -->
     @for (alert of grouped.warnings; track alert.uuid) {
       <div [class]="'page-alert ' + getAlertClass(alert.level)">
-        <div class="alert-header">
-          <ix-icon class="alert-icon" [name]="getAlertIcon(alert.level)"></ix-icon>
+        <ix-icon class="alert-icon" [name]="getAlertIcon(alert.level)"></ix-icon>
+        <div class="alert-content-wrapper">
           <div class="alert-content">
             <div class="alert-message">{{ alert.formatted }}</div>
             @if (alert.contextualHelp) {
               <div class="alert-help">{{ alert.contextualHelp }}</div>
             }
+            @if (alert.documentationUrl) {
+              <a
+                class="alert-docs-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                [href]="alert.documentationUrl"
+              >
+                {{ 'Learn More' | translate }}
+              </a>
+            }
           </div>
         </div>
 
-        @if (alert.actions && alert.actions.length > 0) {
-          <div class="alert-actions">
-            @for (action of alert.actions; track action.label) {
-              @if (action.primary) {
-                <button
-                  class="alert-action-btn primary"
-                  (click)="onActionClick(action.handler)"
-                >
-                  <ix-icon [name]="action.icon"></ix-icon>
-                  <span>{{ action.label | translate }}</span>
-                </button>
-              }
-            }
-          </div>
-        }
+        <button
+          class="dismiss-btn"
+          [attr.aria-label]="'Dismiss' | translate"
+          (click)="onDismiss(alert)"
+        >
+          <ix-icon name="clear"></ix-icon>
+        </button>
       </div>
     }
   </div>

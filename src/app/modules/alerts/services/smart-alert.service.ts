@@ -18,14 +18,24 @@ export class SmartAlertService {
    * Enhances a basic alert with smart actions, contextual help, and metadata
    */
   enhanceAlert(alert: Alert): Alert & EnhancedAlert {
-    const enhancement = getAlertEnhancement(alert.source, alert.klass);
+    const enhancement = getAlertEnhancement(alert.source, alert.klass, alert.formatted || alert.text);
 
     if (!enhancement) {
       return alert as Alert & EnhancedAlert;
     }
 
+    // Filter out navigation actions that would navigate to the current page
+    const currentUrl = this.router.url.split('?')[0].split('#')[0]; // Remove query params and fragments
+    const filteredActions = enhancement.actions?.filter((action) => {
+      if (action.type === SmartAlertActionType.Navigate && action.route) {
+        const targetUrl = '/' + action.route.join('/');
+        return targetUrl !== currentUrl;
+      }
+      return true;
+    });
+
     // Bind handlers to actions
-    const boundActions = enhancement.actions?.map((action) => ({
+    const boundActions = filteredActions?.map((action) => ({
       ...action,
       handler: this.createActionHandler(action),
     }));
@@ -102,6 +112,9 @@ export class SmartAlertService {
 
   /**
    * Gets count of alerts by menu path for navigation badges
+   * Counts alerts for both the specific path and all parent paths
+   * Example: alert with path ['data-protection', 'cloud-backup']
+   * increments counts for both 'data-protection' and 'data-protection.cloud-backup'
    */
   getAlertCountsByMenuPath(alerts: (Alert & EnhancedAlert)[]): Map<string, { critical: number; warning: number }> {
     const counts = new Map<string, { critical: number; warning: number }>();
@@ -112,16 +125,31 @@ export class SmartAlertService {
         const menuPath = alert.relatedMenuPath;
         if (!menuPath) return;
 
-        const path = menuPath.join('.');
-        const current = counts.get(path) || { critical: 0, warning: 0 };
+        const isCritical = [
+          AlertLevel.Critical,
+          AlertLevel.Alert,
+          AlertLevel.Emergency,
+          AlertLevel.Error,
+        ].includes(alert.level);
+        const isWarning = [AlertLevel.Warning].includes(alert.level);
 
-        if ([AlertLevel.Critical, AlertLevel.Alert, AlertLevel.Emergency].includes(alert.level)) {
-          current.critical++;
-        } else if ([AlertLevel.Warning, AlertLevel.Error].includes(alert.level)) {
-          current.warning++;
+        // Count for each path segment and all parent paths
+        // Example: ['data-protection', 'cloud-backup'] creates entries for:
+        // - 'data-protection'
+        // - 'data-protection.cloud-backup'
+        for (let i = 1; i <= menuPath.length; i++) {
+          const pathSegments = menuPath.slice(0, i);
+          const path = pathSegments.join('.');
+          const current = counts.get(path) || { critical: 0, warning: 0 };
+
+          if (isCritical) {
+            current.critical++;
+          } else if (isWarning) {
+            current.warning++;
+          }
+
+          counts.set(path, current);
         }
-
-        counts.set(path, current);
       });
 
     return counts;

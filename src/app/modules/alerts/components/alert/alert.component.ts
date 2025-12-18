@@ -60,6 +60,7 @@ export class AlertComponent implements OnChanges, AfterViewInit {
 
   readonly alert = input.required<Alert>();
   readonly isHaLicensed = input<boolean>();
+  readonly showActions = input<boolean>(true);
 
   @ViewChild('alertMessage', { static: true }) alertMessage: ElementRef<HTMLElement>;
 

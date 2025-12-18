@@ -1,0 +1,19 @@
+.card-badge {
+  align-items: center;
+  background: var(--orange);
+  border-radius: 10px;
+  color: var(--always-white);
+  display: inline-flex;
+  font-size: 0.7rem;
+  font-weight: 600;
+  height: 18px;
+  justify-content: center;
+  line-height: 1;
+  min-width: 18px;
+  padding: 0 5px;
+  vertical-align: middle;
+
+  &.critical {
+    background: var(--red);
+  }
+}

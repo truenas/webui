@@ -81,4 +81,21 @@ export class NavigationComponent {
     const pathArray = item.state.split('/').filter((segment) => segment);
     return this.alertNavBadgeService.hasCriticalAlerts(pathArray, this.badgeCounts());
   }
+
+  /**
+   * Get badge tooltip for accessibility
+   */
+  getBadgeTooltip(item: MenuItem): string {
+    const count = this.getBadgeCount(item);
+    const isCritical = this.hasCriticalAlerts(item);
+
+    if (count === 0) {
+      return '';
+    }
+
+    if (isCritical) {
+      return count === 1 ? '1 critical alert' : `${count} critical alerts`;
+    }
+    return count === 1 ? '1 warning' : `${count} warnings`;
+  }
 }

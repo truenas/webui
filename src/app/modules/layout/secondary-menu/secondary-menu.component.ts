@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy, Component, inject, input, output,
 } from '@angular/core';
 import { MatList, MatListItem } from '@angular/material/list';
+import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLinkActive, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { HasAccessDirective } from 'app/directives/has-access/has-access.directive';
@@ -18,6 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     MatList,
     MatListItem,
+    MatTooltip,
     RouterLinkActive,
     RouterLink,
     AsyncPipe,
@@ -57,5 +59,22 @@ export class SecondaryMenuComponent {
 
     const pathArray = [menuNameValue, subItem.state];
     return this.alertNavBadgeService.hasCriticalAlerts(pathArray, this.badgeCounts());
+  }
+
+  /**
+   * Get badge tooltip for accessibility
+   */
+  getBadgeTooltip(subItem: SubMenuItem): string {
+    const count = this.getBadgeCount(subItem);
+    const isCritical = this.hasCriticalAlerts(subItem);
+
+    if (count === 0) {
+      return '';
+    }
+
+    if (isCritical) {
+      return count === 1 ? '1 critical alert' : `${count} critical alerts`;
+    }
+    return count === 1 ? '1 warning' : `${count} warnings`;
   }
 }

@@ -112,16 +112,16 @@ export class AlertsPanelComponent implements OnInit {
     [SmartAlertCategory.Applications]: 'Applications',
   };
 
-  // Category icons for display
+  // Category icons for display - matching side navigation icons
   protected readonly categoryIcons: Record<SmartAlertCategory, string> = {
-    [SmartAlertCategory.Storage]: 'mdi-database',
+    [SmartAlertCategory.Storage]: 'dns',
     [SmartAlertCategory.Network]: 'mdi-network',
-    [SmartAlertCategory.Services]: 'mdi-cog',
-    [SmartAlertCategory.System]: 'mdi-server',
-    [SmartAlertCategory.Security]: 'mdi-shield-check',
-    [SmartAlertCategory.Hardware]: 'mdi-chip',
-    [SmartAlertCategory.Tasks]: 'mdi-clipboard-check',
-    [SmartAlertCategory.Applications]: 'mdi-application',
+    [SmartAlertCategory.Services]: 'settings',
+    [SmartAlertCategory.System]: 'settings',
+    [SmartAlertCategory.Security]: 'vpn_key',
+    [SmartAlertCategory.Hardware]: 'mdi-server',
+    [SmartAlertCategory.Tasks]: 'security',
+    [SmartAlertCategory.Applications]: 'apps',
   };
 
   ngOnInit(): void {

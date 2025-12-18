@@ -1,9 +1,16 @@
 .card-title {
   align-items: center;
   display: flex;
+  gap: 8px;
+
+  a {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+  }
 
   ix-icon {
-    margin-left: 5px;
+    margin-left: auto;
   }
 }
 

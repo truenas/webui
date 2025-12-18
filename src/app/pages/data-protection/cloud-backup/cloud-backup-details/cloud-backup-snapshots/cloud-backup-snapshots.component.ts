@@ -82,7 +82,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     actionsWithMenuColumn({
       actions: [
         {
-          iconName: iconMarker('restore'),
+          iconName: iconMarker('mdi-restore'),
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
           requiredRoles: this.requiredRoles,

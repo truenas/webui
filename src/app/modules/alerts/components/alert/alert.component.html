@@ -70,7 +70,7 @@
     </div>
   }
 
-  @if (enhanced.actions && enhanced.actions.length > 0 && !alert().dismissed) {
+  @if (enhanced.actions && enhanced.actions.length > 0 && !alert().dismissed && showActions()) {
     <div class="smart-actions">
       @for (action of enhanced.actions; track action.label) {
         <button
@@ -112,7 +112,8 @@
     }
 
     @let linkLabel = link()?.label;
-    @if (linkLabel) {
+    @let hasSmartEnhancement = enhanced.category || (enhanced.actions && enhanced.actions.length > 0);
+    @if (linkLabel && !hasSmartEnhancement) {
       <a
         [ixTest]="[alert().key, 'open-link']"
         (click)="openLink()"

@@ -1,0 +1,9 @@
+@if (count() > 0) {
+  <span
+    class="card-badge"
+    role="status"
+    [class.critical]="hasCritical()"
+    [matTooltip]="tooltip() | translate"
+    [attr.aria-label]="tooltip() | translate"
+  >{{ count() }}</span>
+}
