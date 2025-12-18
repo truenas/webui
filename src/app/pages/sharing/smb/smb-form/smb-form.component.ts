@@ -834,12 +834,15 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   private updateExtensionsWarning(): void {
+    const config = this.smbConfig();
+    if (!config) {
+      return; // Guard against unloaded config
+    }
+
     const purpose = this.form.controls.purpose.value;
     const requiresExtensions = purpose === SmbSharePurpose.TimeMachineShare
       || purpose === SmbSharePurpose.FcpShare;
-    this.showExtensionsWarning.set(
-      !this.smbConfig()?.aapl_extensions && requiresExtensions,
-    );
+    this.showExtensionsWarning.set(!config.aapl_extensions && requiresExtensions);
   }
 
   private loadSmbConfig(): void {
