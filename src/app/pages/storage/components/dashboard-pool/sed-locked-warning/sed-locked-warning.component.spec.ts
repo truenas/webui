@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -58,11 +58,27 @@ describe('SedLockedWarningComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/storage', 'disks']);
   });
 
-  it('calls pool.reimport via job dialog when Import Again button is clicked', async () => {
+  it('calls pool.reimport and emits importSuccess when Import Again succeeds', async () => {
+    const importSuccessSpy = jest.spyOn(spectator.component.importSuccess, 'emit');
+
     const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import Again' }));
     await importButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.reimport', [pool.id]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(importSuccessSpy).toHaveBeenCalled();
+  });
+
+  it('does not emit importSuccess when import fails', async () => {
+    const importSuccessSpy = jest.spyOn(spectator.component.importSuccess, 'emit');
+    const dialogService = spectator.inject(DialogService);
+    jest.spyOn(dialogService, 'jobDialog').mockReturnValue({
+      afterClosed: () => throwError(() => new Error('Import failed')),
+    } as unknown as ReturnType<DialogService['jobDialog']>);
+
+    const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import Again' }));
+    await importButton.click();
+
+    expect(importSuccessSpy).not.toHaveBeenCalled();
   });
 });
