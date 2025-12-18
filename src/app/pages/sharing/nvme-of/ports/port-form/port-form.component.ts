@@ -7,7 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, switchMap,
+  finalize, switchMap, of,
 } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -75,6 +75,12 @@ export class PortFormComponent implements OnInit {
   protected readonly helptext = helptextNvmeOf;
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
+
+  constructor() {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   protected form = this.formBuilder.group({
     addr_trtype: [NvmeOfTransportType.Tcp],
