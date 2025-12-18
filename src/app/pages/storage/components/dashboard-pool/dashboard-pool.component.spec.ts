@@ -43,6 +43,7 @@ describe('DashboardPoolComponent', () => {
     name: 'deadpool',
     id: 4,
     status: PoolStatus.Online,
+    all_sed: false,
   } as Pool;
   const createComponent = createComponentFactory({
     component: DashboardPoolComponent,
