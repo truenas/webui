@@ -43,6 +43,7 @@ describe('NamespaceFormComponent', () => {
       mockProvider(SlideInRef, {
         getData: slideInGetData,
         close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
       }),
     ],
   });
