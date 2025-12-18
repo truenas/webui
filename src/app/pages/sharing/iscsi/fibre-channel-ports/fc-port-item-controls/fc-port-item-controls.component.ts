@@ -1,7 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, OnInit,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, OnInit,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -34,6 +34,8 @@ export class FcPortItemControlsComponent implements OnInit {
 
   readonly isEdit = input(false);
   readonly currentPort = input<string | null>(null);
+  readonly usedPhysicalPorts = input.required<string[]>();
+  readonly availablePorts = input.required<string[]>();
 
   // Local mode control (not part of parent form)
   modeControl = this.fb.control<'existing' | 'new'>('existing');
@@ -44,10 +46,29 @@ export class FcPortItemControlsComponent implements OnInit {
     { label: this.translate.instant('Create new virtual port'), value: 'new' },
   ] as Option[]);
 
-  // Data sources (observables for ix-select compatibility)
-  readonly existingPortOptions$ = this.api.call('fcport.port_choices', [false]).pipe(
-    map((ports) => Object.keys(ports).map((value) => ({ label: value, value } as Option))),
-  );
+  // Data sources (computed signal converted to observable for ix-select compatibility)
+  readonly existingPortOptions = computed(() => {
+    const availablePorts = this.availablePorts();
+    const usedPhysicalPorts = this.usedPhysicalPorts();
+    const currentPort = this.currentPort();
+
+    // Filter out ports that share physical port prefix with OTHER selections
+    let options = availablePorts
+      .filter((port) => {
+        const portPhysicalPrefix = port.split('/')[0];
+        return !usedPhysicalPorts.includes(portPhysicalPrefix);
+      })
+      .map((value) => ({ label: value, value } as Option));
+
+    // Add current port in edit mode (always show current selection)
+    if (this.isEdit() && currentPort && !options.some((option) => option.value === currentPort)) {
+      options = [{ label: currentPort, value: currentPort }, ...options];
+    }
+
+    return options;
+  });
+
+  readonly existingPortOptions$ = toObservable(this.existingPortOptions);
 
   readonly creatingPortOptions$ = this.api.call('fc.fc_host.query').pipe(
     map((hosts) => hosts.map((host) => ({

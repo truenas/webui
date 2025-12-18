@@ -13,6 +13,8 @@
             [form]="form().controls.fcPorts.at(i)"
             [isEdit]="false"
             [currentPort]="null"
+            [usedPhysicalPorts]="getUsedPhysicalPorts()(i)"
+            [availablePorts]="availablePorts()"
           ></ix-fc-port-item-controls>
         </ix-list-item>
       }

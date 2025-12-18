@@ -64,6 +64,8 @@
             [isFibreChannelMode]="isFibreChannelMode"
             [addFcPort]="addFcPort.bind(this)"
             [deleteFcPort]="deleteFcPort.bind(this)"
+            [getUsedPhysicalPorts]="getUsedPhysicalPortsExcludingFn()"
+            [availablePorts]="availableFcPorts()"
           ></ix-protocol-options-wizard-step>
 
           @if (isFibreChannelMode && validateFcPorts().length > 0) {

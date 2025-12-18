@@ -20,6 +20,31 @@ export class FibreChannelService {
   }
 
   /**
+   * Extracts the physical port identifier from a port form value.
+   * @param portForm The port form value containing either a port string or host_id
+   * @param hosts Array of FC hosts for looking up host aliases when creating virtual ports
+   * @returns The physical port identifier (e.g., "fc0" from "fc0/1"), or null if undetermined
+   */
+  getPhysicalPort(
+    portForm: FcPortFormValue,
+    hosts: { id: number; alias: string }[] = [],
+  ): string | null {
+    if (portForm.port) {
+      // Existing port: extract physical port from port string
+      // Example: "fc0/1" → "fc0", "fc1" → "fc1"
+      return portForm.port.split('/')[0];
+    }
+
+    if (portForm.host_id) {
+      // New virtual port: look up physical port from host_id
+      const hostMap = new Map(hosts.map((host) => [host.id, host.alias]));
+      return hostMap.get(portForm.host_id) || null;
+    }
+
+    return null;
+  }
+
+  /**
    * Validates that all ports in the array use different physical ports.
    * @param ports Array of port form values to validate.
    * @param hosts Array of FC hosts (required for validating host_id entries).
@@ -32,20 +57,8 @@ export class FibreChannelService {
     const physicalPorts = new Set<string>();
     const duplicates = new Set<string>();
 
-    // Build a map of host_id to alias for quick lookup
-    const hostMap = new Map(hosts.map((host) => [host.id, host.alias]));
-
     ports.forEach((portForm) => {
-      let physicalPort: string | null = null;
-
-      if (portForm.port) {
-        // Existing port: extract physical port from port string
-        // Example: "fc0/1" → "fc0", "fc1" → "fc1"
-        physicalPort = portForm.port.split('/')[0];
-      } else if (portForm.host_id) {
-        // New virtual port: look up physical port from host_id
-        physicalPort = hostMap.get(portForm.host_id) || null;
-      }
+      const physicalPort = this.getPhysicalPort(portForm, hosts);
 
       if (!physicalPort) {
         return; // Skip if we couldn't determine the physical port

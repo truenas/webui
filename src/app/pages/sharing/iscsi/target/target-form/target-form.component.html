@@ -71,6 +71,8 @@
                       [form]="form.controls.fcPorts.at(i)"
                       [isEdit]="!isNew"
                       [currentPort]="editingTargetPorts[i]"
+                      [usedPhysicalPorts]="getUsedPhysicalPortsExcluding()(i)"
+                      [availablePorts]="availableFcPorts()"
                     ></ix-fc-port-item-controls>
                   </ix-list-item>
                 }

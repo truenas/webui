@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -152,6 +152,8 @@ export class TargetFormComponent implements OnInit {
   protected editingTarget: IscsiTarget | undefined = undefined;
   protected editingTargetPorts: string[] = [];
   protected fcHosts = signal<{ id: number; alias: string }[]>([]);
+  protected availableFcPorts = signal<string[]>([]);
+  protected fcPortsSnapshot = signal<{ port: string | null; host_id: number | null }[]>([]);
 
   form = this.formBuilder.group({
     name: [
@@ -183,11 +185,28 @@ export class TargetFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Track form changes to update signal (prevents infinite change detection)
+    this.form.controls.fcPorts.valueChanges.pipe(
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.fcPortsSnapshot.set(this.form.controls.fcPorts.getRawValue());
+    });
+
+    // Initialize snapshot
+    this.fcPortsSnapshot.set(this.form.controls.fcPorts.getRawValue());
+
     // Load FC hosts for validation
     this.api.call('fc.fc_host.query').pipe(
       untilDestroyed(this),
     ).subscribe((hosts) => {
       this.fcHosts.set(hosts.map((host) => ({ id: host.id, alias: host.alias })));
+    });
+
+    // Load available FC port choices
+    this.api.call('fcport.port_choices', [false]).pipe(
+      untilDestroyed(this),
+    ).subscribe((portsData) => {
+      this.availableFcPorts.set(Object.keys(portsData));
     });
 
     if (this.editingTarget) {
@@ -304,6 +323,24 @@ export class TargetFormComponent implements OnInit {
   protected fcPortValidationErrors = (): string[] => {
     return this.validateFcPorts();
   };
+
+  protected getUsedPhysicalPortsExcluding = computed(() => {
+    const ports = this.fcPortsSnapshot();
+    const hosts = this.fcHosts();
+
+    // Create a map for each index
+    const result = new Map<number, string[]>();
+
+    for (let excludeIndex = 0; excludeIndex < ports.length; excludeIndex++) {
+      const filtered = ports
+        .filter((_, index) => index !== excludeIndex)
+        .map((portForm) => this.fcService.getPhysicalPort(portForm, hosts))
+        .filter((port): port is string => port !== null);
+      result.set(excludeIndex, filtered);
+    }
+
+    return (index: number) => result.get(index) || [];
+  });
 
   private loadFibreChannelPorts(): void {
     this.fcService.loadTargetPorts(this.editingTarget.id).pipe(

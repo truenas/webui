@@ -42,6 +42,8 @@ export class ProtocolOptionsWizardStepComponent implements OnInit {
   isFibreChannelMode = input(false);
   addFcPort = input.required<() => void>();
   deleteFcPort = input.required<(index: number) => void>();
+  getUsedPhysicalPorts = input.required<(excludeIndex: number) => string[]>();
+  availablePorts = input.required<string[]>();
 
   readonly helptextSharingIscsi = helptextIscsi;
 

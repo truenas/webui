@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -105,6 +105,8 @@ export class IscsiWizardComponent implements OnInit {
   toStop = signal<boolean>(false);
   namesInUse = signal<string[]>([]);
   fcHosts = signal<{ id: number; alias: string }[]>([]);
+  availableFcPorts = signal<string[]>([]);
+  fcPortsSnapshot = signal<{ port: string | null; host_id: number | null }[]>([]);
 
   createdZvol: Dataset | undefined;
   createdExtent: IscsiExtent | undefined;
@@ -303,7 +305,35 @@ export class IscsiWizardComponent implements OnInit {
     return this.form.controls.options.controls.fcPorts.valid && this.validateFcPorts().length === 0;
   }
 
+  protected getUsedPhysicalPortsExcludingFn = computed(() => {
+    const ports = this.fcPortsSnapshot();
+    const hosts = this.fcHosts();
+
+    // Create a map for each index
+    const result = new Map<number, string[]>();
+
+    for (let excludeIndex = 0; excludeIndex < ports.length; excludeIndex++) {
+      const filtered = ports
+        .filter((_, index) => index !== excludeIndex)
+        .map((portForm) => this.fcService.getPhysicalPort(portForm, hosts))
+        .filter((port): port is string => port !== null);
+      result.set(excludeIndex, filtered);
+    }
+
+    return (index: number) => result.get(index) || [];
+  });
+
   ngOnInit(): void {
+    // Track form changes to update signal (prevents infinite change detection)
+    this.form.controls.options.controls.fcPorts.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.fcPortsSnapshot.set(this.form.controls.options.controls.fcPorts.getRawValue());
+    });
+
+    // Initialize snapshot
+    this.fcPortsSnapshot.set(this.form.controls.options.controls.fcPorts.getRawValue());
+
     this.form.controls.extent.controls.path.disable();
     this.form.controls.extent.controls.filesize.disable();
     this.form.controls.extent.controls.dataset.disable();
@@ -339,6 +369,13 @@ export class IscsiWizardComponent implements OnInit {
           takeUntilDestroyed(this.destroyRef),
         ).subscribe((hosts) => {
           this.fcHosts.set(hosts.map((host) => ({ id: host.id, alias: host.alias })));
+        });
+
+        // Load available FC port choices
+        this.api.call('fcport.port_choices', [false]).pipe(
+          takeUntilDestroyed(this.destroyRef),
+        ).subscribe((portsData) => {
+          this.availableFcPorts.set(Object.keys(portsData));
         });
 
         // Auto-add first port when switching to FC mode (UX improvement)
