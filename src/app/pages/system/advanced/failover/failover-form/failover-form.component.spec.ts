@@ -40,6 +40,7 @@ describe('FailoverFormComponent', () => {
           disabled: false,
           timeout: 0,
         })),
+        requireConfirmationWhen: jest.fn(),
       }),
       mockProvider(SnackbarService),
       mockProvider(WebSocketStatusService, {

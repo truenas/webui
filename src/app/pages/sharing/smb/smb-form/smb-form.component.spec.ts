@@ -9,7 +9,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -18,6 +18,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
+import { DsUncachedGroup } from 'app/interfaces/ds-cache.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -47,6 +48,7 @@ import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dia
 import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -113,6 +115,7 @@ describe('SmbFormComponent', () => {
       mockAuth(),
       mockApi([
         mockCall('group.query', [{ id: 1, group: 'test', builtin: false }] as Group[]),
+        mockCall('group.get_group_obj', { gr_gid: 1000, gr_name: 'test', gr_mem: [] }),
         mockCall('sharing.smb.create', { ...existingShare }),
         mockCall('sharing.smb.update', { ...existingShare }),
         mockCall('sharing.smb.share_precheck', null),
@@ -427,10 +430,10 @@ describe('SmbFormComponent', () => {
       ]);
     });
 
-    it('creates FCP (MacOS Media Share) share', async () => {
+    it('creates FCP (Final Cut Pro Storage Share) share', async () => {
       await submitForm({
         ...commonValues,
-        Purpose: 'MacOS Media Share',
+        Purpose: 'Final Cut Pro Storage Share',
       });
 
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
@@ -539,7 +542,7 @@ describe('SmbFormComponent', () => {
       } as SmbConfig);
 
       await form.fillForm({
-        Purpose: 'MacOS Media Share',
+        Purpose: 'Final Cut Pro Storage Share',
       });
 
       spectator.detectChanges();
@@ -574,7 +577,7 @@ describe('SmbFormComponent', () => {
       expect(await checkbox.isDisabled()).toBe(false);
 
       // Switch to FCP - checkbox should be checked and disabled
-      await form.fillForm({ Purpose: 'MacOS Media Share' });
+      await form.fillForm({ Purpose: 'Final Cut Pro Storage Share' });
       spectator.detectChanges();
       checkbox = await loader.getHarness(
         IxCheckboxHarness.with({ label: formLabels.aapl_name_mangling }),
@@ -641,7 +644,7 @@ describe('SmbFormComponent', () => {
         'Private Datasets Share',
         'External Share',
         'Veeam Repository Share',
-        'MacOS Media Share',
+        'Final Cut Pro Storage Share',
       ]);
     });
 
@@ -1184,6 +1187,164 @@ describe('SmbFormComponent', () => {
       expect(errorElement).toBeTruthy();
       expect(errorElement?.textContent).toContain('At least one group must be specified');
     });
+
+    it('should show error when non-existent group is entered in watch list', fakeAsync(async () => {
+      // Mock API to return error for non-existent group
+      const userService = spectator.inject(UserService);
+      jest.spyOn(userService, 'getGroupByName').mockReturnValue(throwError(() => new Error('Group not found')));
+
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Manually add a non-existent group using the form control
+      const auditGroup = (spectator.component as unknown as { form: FormGroup }).form.controls.audit as FormGroup;
+      auditGroup.controls.watch_list.setValue(['nonexistent']);
+      auditGroup.controls.watch_list.markAsTouched();
+      auditGroup.controls.watch_list.updateValueAndValidity();
+
+      // Wait for async validation and debounce
+      spectator.tick(600);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error message is displayed
+      const errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement?.textContent).toContain('The following groups do not exist: nonexistent');
+
+      // Verify save button is disabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    }));
+
+    it('should show error when non-existent group is entered in ignore list', fakeAsync(async () => {
+      // Mock API to return error for non-existent group
+      const userService = spectator.inject(UserService);
+      jest.spyOn(userService, 'getGroupByName').mockReturnValue(throwError(() => new Error('Group not found')));
+
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Manually add a non-existent group using the form control
+      const auditGroup = (spectator.component as unknown as { form: FormGroup }).form.controls.audit as FormGroup;
+      auditGroup.controls.ignore_list.setValue(['nonexistent']);
+      auditGroup.controls.ignore_list.markAsTouched();
+      auditGroup.controls.ignore_list.updateValueAndValidity();
+
+      // Wait for async validation and debounce
+      spectator.tick(600);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify error message is displayed
+      const errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement?.textContent).toContain('The following groups do not exist: nonexistent');
+
+      // Verify save button is disabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    }));
+
+    it('should pass validation when all entered groups exist', fakeAsync(async () => {
+      // Mock API to return success for existing groups
+      const userService = spectator.inject(UserService);
+      jest.spyOn(userService, 'getGroupByName').mockReturnValue(of({
+        gr_gid: 1000,
+        gr_name: 'test',
+        gr_mem: [],
+      } as DsUncachedGroup));
+
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Add an existing group
+      const auditGroup = (spectator.component as unknown as { form: FormGroup }).form.controls.audit as FormGroup;
+      auditGroup.controls.watch_list.setValue(['test']);
+      auditGroup.controls.watch_list.markAsTouched();
+      auditGroup.controls.watch_list.updateValueAndValidity();
+
+      // Wait for async validation and debounce
+      spectator.tick(600);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify no error message is displayed
+      const errorElement = spectator.query('ix-errors mat-error');
+      expect(errorElement).toBeFalsy();
+
+      // Verify save button is enabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    }));
+
+    it('should disable save button during async validation', fakeAsync(async () => {
+      // Mock API with a delayed response to catch the PENDING state
+      const userService = spectator.inject(UserService);
+      const delayedObservable$ = new Subject<DsUncachedGroup>();
+      jest.spyOn(userService, 'getGroupByName').mockReturnValue(delayedObservable$.asObservable());
+
+      // Fill in required fields and enable audit logging
+      await form.fillForm({
+        Path: '/mnt/pool123/test',
+        Name: 'TestShare',
+        Purpose: 'Default Share',
+        'Enable Logging': true,
+      });
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Add a group to trigger async validation
+      const auditGroup = (spectator.component as unknown as { form: FormGroup }).form.controls.audit as FormGroup;
+      auditGroup.controls.watch_list.setValue(['test']);
+      auditGroup.controls.watch_list.markAsTouched();
+      auditGroup.controls.watch_list.updateValueAndValidity();
+
+      // Wait for debounce
+      spectator.tick(600);
+      spectator.detectChanges();
+
+      // Verify save button is disabled while validation is pending
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Complete the async validation
+      delayedObservable$.next({
+        gr_gid: 1000,
+        gr_name: 'test',
+        gr_mem: [],
+      } as DsUncachedGroup);
+      delayedObservable$.complete();
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Verify save button is now enabled
+      expect(await saveButton.isDisabled()).toBe(false);
+    }));
   });
 
   describe('Dataset Naming Schema null value', () => {
@@ -1380,6 +1541,158 @@ describe('SmbFormComponent', () => {
           }),
         }),
       ]);
+    });
+  });
+
+  describe('Submit button behavior with Apple SMB2/3 extensions', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      api = spectator.inject(ApiService);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      mockStore$ = spectator.inject(MockStore);
+
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'smb.config') {
+          return of({ aapl_extensions: false } as SmbConfig);
+        }
+        return of(null);
+      });
+    });
+
+    it('should disable submit button when extensions warning is shown', async () => {
+      // Select Time Machine Share (requires Apple SMB2/3 extensions)
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/timemachine',
+        Name: 'timemachine',
+      });
+
+      // Manually set the smbConfig signal to trigger the warning
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify warning is shown
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(true);
+
+      // Verify submit button is disabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Verify warning component is shown with correct id
+      const warningElement = spectator.query('#apple-extensions-warning');
+      expect(warningElement).toBeTruthy();
+    });
+
+    it('should enable submit button after extensions are enabled', async () => {
+      // Select Time Machine Share (requires Apple SMB2/3 extensions)
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/timemachine',
+        Name: 'timemachine',
+      });
+
+      // Set config to show warning
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify button is disabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Enable extensions
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['extensionsEnabled']();
+      spectator.detectChanges();
+
+      // Verify warning is gone and button is enabled
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(false);
+      expect(await saveButton.isDisabled()).toBe(false);
+
+      // Verify warning component is no longer shown
+      const warningElement = spectator.query('#apple-extensions-warning');
+      expect(warningElement).toBeFalsy();
+    });
+
+    it('should show warning reactively when switching between purposes requiring extensions', async () => {
+      // Start with Default Share (no warning)
+      await form.fillForm({
+        Purpose: 'Default Share',
+        Path: '/mnt/pool/default',
+        Name: 'default',
+      });
+
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify no warning for Default Share
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(false);
+      let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+
+      // Switch to Time Machine Share (warning should appear)
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+      });
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify warning is shown and button is disabled
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(true);
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Enable extensions
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['extensionsEnabled']();
+      spectator.detectChanges();
+
+      // Verify button is enabled
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(false);
+      expect(await saveButton.isDisabled()).toBe(false);
+
+      // Switch to FCP Share (another purpose requiring extensions with extensions disabled)
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      await form.fillForm({
+        Purpose: 'MacOS Media Share',
+      });
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify warning appears again for FCP share
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(true);
+      saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Switch back to Default Share (warning should disappear)
+      await form.fillForm({
+        Purpose: 'Default Share',
+      });
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify warning is gone
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(false);
+      expect(await saveButton.isDisabled()).toBe(false);
     });
   });
 
