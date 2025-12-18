@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
   createRoutingFactory, mockProvider, SpectatorRouting,
 } from '@ngneat/spectator/jest';
@@ -193,6 +194,13 @@ describe('DatasetAclEditorComponent', () => {
         });
       });
 
+      it('navigates after stripping the ACL - no returnUrl', () => {
+        const router = spectator.inject(Router);
+        spectator.component.onStripAclPressed();
+
+        expect(router.navigate).toHaveBeenCalledWith(['/datasets', '/mnt/pool/dataset']);
+      });
+
       it('adds another ace when Add item is pressed', async () => {
         const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Item' }));
         await addAceButton.click();
@@ -224,6 +232,13 @@ describe('DatasetAclEditorComponent', () => {
     it('sets returnUrl from query params when provided', () => {
       const store = spectator.inject(DatasetAclEditorStore);
       expect(store.state().returnUrl).toEqual(['/sharing']);
+    });
+
+    it('navigates after stripping the ACL - with returnUrl', () => {
+      const router = spectator.inject(Router);
+      spectator.component.onStripAclPressed();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/sharing']);
     });
   });
 });
