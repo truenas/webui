@@ -113,7 +113,7 @@ describe('DatasetAclEditorComponent', () => {
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(),
+          afterClosed: () => of({ wasStripped: true }),
         })),
       }),
       mockAuth(),
