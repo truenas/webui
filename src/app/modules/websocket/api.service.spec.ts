@@ -28,7 +28,7 @@ describe('ApiService', () => {
 
   const jobUpdate = {
     method: 'boot.attach',
-    state: JobState.Finished,
+    state: JobState.Success,
     time_finished: {
       $date: 123456789,
     },
@@ -61,6 +61,10 @@ describe('ApiService', () => {
     jest.spyOn(spectator.service.clearSubscriptions$, 'next');
 
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe('call', () => {
@@ -178,6 +182,7 @@ describe('ApiService', () => {
     });
 
     it('should throw on a failed job', async () => {
+      jest.spyOn(console, 'warn').mockImplementation();
       const mockJobId4 = 1237;
       const fakeUuid6 = 'fakeUUID6';
       // eslint-disable-next-line @typescript-eslint/no-require-imports

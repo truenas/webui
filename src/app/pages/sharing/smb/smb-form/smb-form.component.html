@@ -25,6 +25,7 @@
 
         @if (showExtensionsWarning()) {
           <ix-smb-extensions-warning
+            id="apple-extensions-warning"
             (extensionsEnabled)="extensionsEnabled()"
           ></ix-smb-extensions-warning>
         }
@@ -142,7 +143,7 @@
               [label]="'Watch List' | translate"
               [tooltip]="helptextSharingSmb.watchListTooltip | translate"
               [autocompleteProvider]="groupProvider"
-              [allowNewEntries]="false"
+              [allowNewEntries]="true"
             ></ix-chips>
 
             <ix-chips
@@ -150,7 +151,7 @@
               [label]="'Ignore List' | translate"
               [tooltip]="helptextSharingSmb.ignoreListTooltip | translate"
               [autocompleteProvider]="groupProvider"
-              [allowNewEntries]="false"
+              [allowNewEntries]="true"
             ></ix-chips>
           }
         </ix-fieldset>
@@ -294,8 +295,8 @@
               <ix-input
                 type="number"
                 formControlName="grace_period"
-                [label]="'Grace Period' | translate"
-                [tooltip]="'Specify delay before access timeout or share lock.' | translate"
+                [label]="helptextSharingSmb.gracePeriodLabel | translate"
+                [tooltip]="helptextSharingSmb.gracePeriodTooltip | translate"
               ></ix-input>
             }
 
@@ -318,7 +319,8 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading() || isAsyncValidatorPending"
+          [disabled]="form.invalid || isLoading() || isAsyncValidatorPending || showExtensionsWarning()"
+          [attr.aria-describedby]="showExtensionsWarning() ? 'apple-extensions-warning' : null"
         >
           {{ 'Save' | translate }}
         </button>

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, DestroyRef } from
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDivider } from '@angular/material/divider';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -12,6 +13,7 @@ import {
   ContainerNicDeviceType,
 } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   ContainerNicDevice,
 } from 'app/interfaces/container.interface';
@@ -31,6 +33,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
+    MatDivider,
     MatMenu,
     MatMenuItem,
     TestDirective,
@@ -53,30 +56,60 @@ export class AddNicMenuComponent {
   private containersStore = inject(ContainersStore);
   private matDialog = inject(MatDialog);
 
-  private readonly nicChoices = toSignal(this.getNicChoices(), { initialValue: {} });
+  protected readonly helptext = containersHelptext;
+
+  private readonly nicChoices = toSignal(
+    this.getNicChoices().pipe(
+      this.errorHandler.withErrorHandler(),
+    ),
+    { initialValue: {} as Record<string, string[]> },
+  );
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
-  protected readonly availableNics = computed(() => {
+  protected readonly availableNicGroups = computed(() => {
     const choices = this.nicChoices();
     const existingNics = this.devicesStore.devices()
       .filter((device) => device.dtype === ContainerDeviceType.Nic) as ContainerNicDevice[];
 
-    return Object.entries(choices)
-      .filter(([key]) => !existingNics.find((device) => device.nic_attach === key))
-      .map(([key, label]) => ({ key, label }));
+    const existingNicNames = new Set(existingNics.map((device) => device.nic_attach));
+    const seenNics = new Set<string>();
+
+    // Process grouped format: { "BRIDGE": ["ens1"], "MACVLAN": ["truenasbr0"] }
+    // Deduplicate NICs across groups to prevent the same NIC appearing in multiple groups
+    return Object.entries(choices || {})
+      .filter(([, nics]) => nics != null)
+      .map(([groupType, nics]) => ({
+        type: groupType,
+        label: this.getNicGroupLabel(groupType),
+        nics: nics
+          .filter((nic) => !existingNicNames.has(nic) && !seenNics.has(nic))
+          .map((nic) => {
+            seenNics.add(nic);
+            return { key: nic, label: nic };
+          }),
+      }))
+      .filter((group) => group.nics.length > 0);
   });
 
+  private getNicGroupLabel(groupType: string): string {
+    const labels: Record<string, string> = {
+      BRIDGE: containersHelptext.networkBridgedNicsLabel,
+      MACVLAN: containersHelptext.networkMacVlanNicsLabel,
+    };
+    return labels[groupType] || groupType;
+  }
+
   protected readonly hasNicsToAdd = computed(() => {
-    return this.availableNics().length > 0;
+    return this.availableNicGroups().some((group) => group.nics.length > 0);
   });
 
   protected addNic(nicKey: string): void {
     this.addDevice(nicKey);
   }
 
-  private getNicChoices(): Observable<Record<string, string>> {
-    return this.api.call('container.device.nic_attach_choices', []) as Observable<Record<string, string>>;
+  private getNicChoices(): Observable<Record<string, string[]>> {
+    return this.api.call('container.device.nic_attach_choices', []);
   }
 
   private addDevice(nicKey: string): void {

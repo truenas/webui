@@ -560,6 +560,7 @@ export class IscsiWizardComponent implements OnInit {
     this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
     this.isLoading.set(false);
+    this.form.markAsPristine();
     this.slideInRef.close({ response: this.createdTarget });
   }
 }

@@ -5,6 +5,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -68,6 +69,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     IxIconComponent,
     MatMenu,
     MatMenuItem,
+    MatTooltip,
     TranslateModule,
     IxSlideToggleComponent,
     SaveDebugButtonComponent,
@@ -95,6 +97,7 @@ export class SupportCardComponent implements OnInit {
   links = [helptext.docHub, helptext.forums, helptext.licensing];
   ticketText = helptext.ticket;
   proactiveText = helptext.proactive.title;
+  isProactiveSupportAvailable = signal(false);
 
   protected readonly isProductionControl = new FormControl(false, { nonNullable: true });
 
@@ -113,6 +116,7 @@ export class SupportCardComponent implements OnInit {
         this.hasLicense = true;
         this.licenseInfo = { ...systemInfo.license };
         this.parseLicenseInfo(this.licenseInfo);
+        this.checkProactiveSupportAvailability();
       }
       this.cdr.markForCheck();
     });
@@ -212,5 +216,17 @@ export class SupportCardComponent implements OnInit {
     this.isProductionControl.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((newStatus) => this.updateProductionStatus(newStatus));
+  }
+
+  private checkProactiveSupportAvailability(): void {
+    this.api.call('support.is_available')
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe((isAvailable) => {
+        this.isProactiveSupportAvailable.set(isAvailable);
+        this.cdr.markForCheck();
+      });
   }
 }

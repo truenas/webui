@@ -92,8 +92,8 @@ describe('DeviceFormComponent', () => {
         }),
         mockCall('vm.random_mac', '00:a0:98:30:09:90'),
         mockCall('vm.device.nic_attach_choices', {
-          enp0s3: 'enp0s3',
-          enp0s4: 'enp0s4',
+          BRIDGE: ['enp0s3'],
+          MACVLAN: ['enp0s4'],
         }),
         mockCall('vm.device.disk_choices', {
           '/dev/zvol/bassein/zvol1': 'bassein/zvol1',

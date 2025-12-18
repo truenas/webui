@@ -15,6 +15,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -82,16 +83,16 @@ describe('CloudSyncTaskCardComponent', () => {
       next_run_time: '2023-09-19T21:00:00.000Z',
       next_run: 'in about 21 hours',
       state: {
-        state: JobState.Running,
+        state: TaskState.Running,
       },
       job: {
         id: 1,
-        state: JobState.Finished,
+        state: JobState.Success,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
       },
-    } as CloudSyncTaskUi,
+    } as unknown as CloudSyncTaskUi,
   ];
 
   const createComponent = createComponentFactory({
@@ -111,7 +112,7 @@ describe('CloudSyncTaskCardComponent', () => {
           {
             selector: selectJobs,
             value: [{
-              state: JobState.Finished,
+              state: JobState.Success,
               id: 1,
               time_finished: cloudsyncTasks[0].job!.time_finished,
             } as Job],
@@ -159,7 +160,7 @@ describe('CloudSyncTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Description', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['custom-cloudsync', 'Every hour, every day', 'Disabled', '1 min. ago', '', 'Finished', ''],
+      ['custom-cloudsync', 'Every hour, every day', 'Disabled', '1 min. ago', '', 'Completed', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -235,7 +236,7 @@ describe('CloudSyncTaskCardComponent', () => {
   it('shows success message when job finishes successfully', async () => {
     const finishedJob = {
       id: 1,
-      state: JobState.Finished,
+      state: JobState.Success,
       time_finished: { $date: new Date().getTime() },
     } as Job<void>;
 

@@ -8,13 +8,15 @@ import { UserService } from 'app/services/user.service';
 
 interface UserComboboxOptions {
   valueField?: keyof Pick<User, 'username' | 'uid' | 'id'>;
+  initialOptions?: Option[];
   queryType?: ComboboxQueryType;
 }
 
 export class UserComboboxProvider implements IxComboboxProvider {
-  protected page = 1;
+  protected page = 0;
   readonly pageSize = 50;
   protected valueField: keyof Pick<User, 'username' | 'uid' | 'id'>;
+  private initialOptions: Option[];
   protected queryType: ComboboxQueryType;
 
   constructor(
@@ -22,6 +24,7 @@ export class UserComboboxProvider implements IxComboboxProvider {
     options: UserComboboxOptions = {},
   ) {
     this.valueField = options.valueField ?? 'username';
+    this.initialOptions = options.initialOptions ?? [];
     this.queryType = options.queryType ?? ComboboxQueryType.Default;
   }
 
@@ -43,7 +46,12 @@ export class UserComboboxProvider implements IxComboboxProvider {
 
     return queryMethod(filterValue, offset).pipe(
       map((users) => this.userQueryResToOptions(users)),
+      map((options) => [...this.initialOptions, ...this.excludeInitialOptions(options)]),
     );
+  }
+
+  private excludeInitialOptions(options: Option[]): Option[] {
+    return options.filter((option) => !this.initialOptions.some((initial) => initial.value === option.value));
   }
 
   private userQueryResToOptions(users: User[]): Option[] {

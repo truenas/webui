@@ -23,6 +23,9 @@
           [parse]="formatter.memorySizeParsing"
           [required]="true"
         ></ix-input>
+        @if (volsizeReadonlyWarning) {
+          <p class="volsize-warning">{{ volsizeReadonlyWarning }}</p>
+        }
       </ix-fieldset>
 
       <ix-fieldset [title]="'Additional Options' | translate">
@@ -276,6 +279,7 @@
                   <div edit>
                     <ix-input
                       formControlName="pbkdf2iters"
+                      type="number"
                       [attr.aria-label]="helptext.encryption.pbkdf2itersLabel | translate"
                       [required]="true"
                     ></ix-input>

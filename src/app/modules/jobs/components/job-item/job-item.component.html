@@ -35,7 +35,7 @@
           }
           @if (!job().progress.description) {
             <div class="job-time">
-              {{ 'Started' | translate }}:
+              {{ job().state | jobStateDisplay }}:
               <strong>
                 {{ job().time_started?.$date ? (job().time_started.$date | formatDateTime) : '–' }}
               </strong>
@@ -44,7 +44,7 @@
         }
         @case (JobState.Waiting) {
           <div class="job-time">
-            {{ 'Waiting' | translate }}:
+            {{ job().state | jobStateDisplay }}:
             <strong>
               {{ job().time_started?.$date ? (job().time_started.$date | formatDateTime) : '–' }}
             </strong>
@@ -52,7 +52,7 @@
         }
         @case (JobState.Success) {
            <div class="job-time">
-              {{ 'Finished' | translate }}:
+              {{ job().state | jobStateDisplay }}:
               <strong>
                 {{ job().time_finished?.$date ? (job().time_finished.$date | formatDateTime) : '–' }}
               </strong>
@@ -60,7 +60,16 @@
         }
         @case (JobState.Failed) {
           <div class="job-time">
-            {{ 'Stopped' | translate }}:
+            {{ job().state | jobStateDisplay }}:
+            <strong>
+              @let timeFinished = job().time_finished?.$date;
+              {{ timeFinished ? (timeFinished | formatDateTime) : '–' }}
+            </strong>
+          </div>
+        }
+        @case (JobState.Aborted) {
+          <div class="job-time">
+            {{ job().state | jobStateDisplay }}:
             <strong>
               @let timeFinished = job().time_finished?.$date;
               {{ timeFinished ? (timeFinished | formatDateTime) : '–' }}

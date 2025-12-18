@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -50,6 +50,7 @@ describe('SupportCardComponent', () => {
         mockCall('truenas.is_production', true),
         mockJob('truenas.set_production', fakeSuccessfulJob()),
         mockCall('system.product_type', ProductType.CommunityEdition),
+        mockCall('support.is_available', true),
       ]),
       provideMockStore({
         selectors: [
@@ -115,6 +116,42 @@ describe('SupportCardComponent', () => {
         await isProductionSystemToggle.setValue(false);
 
         expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('truenas.set_production', [false, false]);
+      });
+    });
+
+    describe('Proactive support availability', () => {
+      it('checks if proactive support is available when license is present', () => {
+        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('support.is_available');
+      });
+
+      it('sets isProactiveSupportAvailable signal to true when support is available', () => {
+        expect(spectator.component.isProactiveSupportAvailable()).toBe(true);
+      });
+
+      it('sets isProactiveSupportAvailable signal to false when support is not available', () => {
+        const api = spectator.inject(ApiService);
+        jest.spyOn(api, 'call').mockReturnValue(of(false));
+
+        spectator.component.ngOnInit();
+
+        expect(spectator.component.isProactiveSupportAvailable()).toBe(false);
+      });
+
+      it('handles errors when checking proactive support availability', () => {
+        spectator.component.isProactiveSupportAvailable.set(false);
+
+        const api = spectator.inject(ApiService);
+        jest.spyOn(api, 'call').mockImplementation((method: string) => {
+          if (method === 'support.is_available') {
+            return throwError(() => new Error('API error'));
+          }
+          return of(null);
+        });
+
+        const store$ = spectator.inject(MockStore);
+        store$.refreshState();
+
+        expect(spectator.component.isProactiveSupportAvailable()).toBe(false);
       });
     });
   });

@@ -86,6 +86,12 @@ export class NvmeOfConfigurationComponent implements OnInit {
     },
   ]);
 
+  constructor() {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
+
   ngOnInit(): void {
     this.loadConfiguration();
   }
