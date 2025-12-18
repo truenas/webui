@@ -4,6 +4,14 @@
   <div class="controls">
     <button
       mat-icon-button
+      ixTest="toggle-grouping"
+      [title]="(groupByCategory() ? 'Show All Alerts' : 'Group by Category') | translate"
+      (click)="toggleGroupByCategory()"
+    >
+      <ix-icon [name]="groupByCategory() ? 'mdi-view-list' : 'mdi-view-module'"></ix-icon>
+    </button>
+    <button
+      mat-icon-button
       ixTest="settings-menu"
       [title]="'Settings' | translate"
       [matMenuTriggerFor]="alertSettingsMenu"
@@ -56,24 +64,50 @@
     </div>
   }
 
-  @let unreadAlerts = unreadAlerts$ | async;
-  @if (!unreadAlerts?.length) {
+  @if (!enhancedUnreadAlerts()?.length) {
     <div class="no-alerts">
       <ix-icon class="icon" name="info"></ix-icon>
       <h4 class="message">{{ 'There are no alerts.' | translate }}</h4>
     </div>
   } @else {
-    <div class="alert-list unread-alerts">
-      @for (alert of unreadAlerts; track alert.id; let last = $last) {
-        <div
-          class="alert"
-          role="listitem"
-          [class.alert-last]="last"
-        >
-          <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+    @if (groupByCategory()) {
+      <!-- Grouped by category view -->
+      @for (entry of getCategoryEntries(groupedUnreadAlerts()); track entry[0]) {
+        @let category = entry[0];
+        @let alerts = entry[1];
+        <div class="category-section">
+          <div class="category-header">
+            <ix-icon [name]="getCategoryIcon(category)"></ix-icon>
+            <h4>{{ getCategoryLabel(category) | translate }}</h4>
+            <span class="category-count">{{ alerts.length }}</span>
+          </div>
+          <div class="alert-list">
+            @for (alert of alerts; track alert.id; let last = $last) {
+              <div
+                class="alert"
+                role="listitem"
+                [class.alert-last]="last"
+              >
+                <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+              </div>
+            }
+          </div>
         </div>
       }
-    </div>
+    } @else {
+      <!-- Flat list view -->
+      <div class="alert-list unread-alerts">
+        @for (alert of enhancedUnreadAlerts(); track alert.id; let last = $last) {
+          <div
+            class="alert"
+            role="listitem"
+            [class.alert-last]="last"
+          >
+            <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+          </div>
+        }
+      </div>
+    }
     <button
       *ixRequiresRoles="requiredRoles"
       matRipple
@@ -85,10 +119,12 @@
     </button>
   }
 
-  @let dismissedAlerts = dismissedAlerts$ | async;
-  @if (dismissedAlerts?.length) {
+  @if (enhancedDismissedAlerts()?.length) {
+    <div class="dismissed-section-header">
+      <h4>{{ 'Dismissed Alerts' | translate }}</h4>
+    </div>
     <div class="alert-list dismissed-alerts">
-      @for (alert of dismissedAlerts; track alert.id; let last = $last) {
+      @for (alert of enhancedDismissedAlerts(); track alert.id; let last = $last) {
         <div
           class="alert"
           role="listitem"

@@ -9,7 +9,9 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
 import { Role } from 'app/enums/role.enum';
 import { Alert } from 'app/interfaces/alert.interface';
+import { EnhancedAlert } from 'app/interfaces/smart-alert.interface';
 import { AlertLinkService } from 'app/modules/alerts/services/alert-link.service';
+import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
 import { alertPanelClosed, dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -54,6 +56,7 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   protected alertLink = inject(AlertLinkService);
+  private smartAlertService = inject(SmartAlertService);
 
   readonly alert = input.required<Alert>();
   readonly isHaLicensed = input<boolean>();
@@ -62,6 +65,7 @@ export class AlertComponent implements OnChanges, AfterViewInit {
 
   protected isCollapsed = signal<boolean>(true);
   protected isExpandable = signal<boolean>(false);
+  protected showContextHelp = signal<boolean>(false);
 
   protected readonly requiredRoles = [Role.AlertListWrite];
 
@@ -83,6 +87,10 @@ export class AlertComponent implements OnChanges, AfterViewInit {
 
   readonly link = computed(() => this.alertLink.getLink(this.alert().klass));
 
+  readonly enhancedAlert = computed<Alert & EnhancedAlert>(() => {
+    return this.smartAlertService.enhanceAlert(this.alert());
+  });
+
   ngOnChanges(): void {
     this.setStyles();
   }
@@ -96,6 +104,10 @@ export class AlertComponent implements OnChanges, AfterViewInit {
     this.isCollapsed.set(!this.isCollapsed());
   }
 
+  toggleContextHelp(): void {
+    this.showContextHelp.set(!this.showContextHelp());
+  }
+
   onDismiss(): void {
     this.store$.dispatch(dismissAlertPressed({ id: this.alert().id }));
   }
@@ -107,6 +119,13 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   openLink(): void {
     this.alertLink.openLink(this.alert().klass);
     this.store$.dispatch(alertPanelClosed());
+  }
+
+  onSmartActionClick(handler: (() => void) | undefined): void {
+    if (handler) {
+      handler();
+      this.store$.dispatch(alertPanelClosed());
+    }
   }
 
   private setStyles(): void {

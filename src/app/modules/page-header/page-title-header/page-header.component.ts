@@ -7,6 +7,7 @@ import { PageTitleService } from 'app/modules/layout/page-title.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { BreadcrumbComponent } from 'app/modules/page-header/breadcrumb/breadcrumb.component';
 import { HeaderBadgeComponent } from 'app/modules/page-header/header-badge/header-badge.component';
+import { PageAlertsComponent } from 'app/modules/page-header/page-alerts/page-alerts.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 /**
@@ -23,6 +24,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     BreadcrumbComponent,
     HeaderBadgeComponent,
     FakeProgressBarComponent,
+    PageAlertsComponent,
     TranslateModule,
     AsyncPipe,
     TooltipComponent,

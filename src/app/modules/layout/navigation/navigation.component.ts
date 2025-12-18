@@ -6,6 +6,7 @@ import { RouterLinkActive, RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { MenuItem, MenuItemType, SubMenuItem } from 'app/interfaces/menu-item.interface';
+import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NavigationService } from 'app/services/navigation/navigation.service';
@@ -30,6 +31,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
 })
 export class NavigationComponent {
   private navService = inject(NavigationService);
+  private alertNavBadgeService = inject(AlertNavBadgeService);
 
   readonly isSidenavCollapsed = input(false);
 
@@ -40,6 +42,9 @@ export class NavigationComponent {
   isHighlighted: string;
 
   readonly MenuItemType = MenuItemType;
+
+  // Alert badge counts for all menu paths
+  badgeCounts = this.alertNavBadgeService.getBadgeCountsSignal();
 
   toggleMenu(state: string, sub: SubMenuItem[]): void {
     this.menuToggled.emit([state, sub]);
@@ -59,5 +64,21 @@ export class NavigationComponent {
 
   getRouterLink(url: string): string[] {
     return ['/', ...url.split('/')];
+  }
+
+  /**
+   * Get badge count for a menu item
+   */
+  getBadgeCount(item: MenuItem): number {
+    const pathArray = item.state.split('/').filter((segment) => segment);
+    return this.alertNavBadgeService.getBadgeCountForPath(pathArray, this.badgeCounts());
+  }
+
+  /**
+   * Check if menu item has critical alerts (for badge color)
+   */
+  hasCriticalAlerts(item: MenuItem): boolean {
+    const pathArray = item.state.split('/').filter((segment) => segment);
+    return this.alertNavBadgeService.hasCriticalAlerts(pathArray, this.badgeCounts());
   }
 }
