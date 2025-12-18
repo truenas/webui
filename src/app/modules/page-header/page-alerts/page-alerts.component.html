@@ -8,7 +8,24 @@
         <ix-icon class="alert-icon" [name]="getAlertIcon(alert.level)"></ix-icon>
         <div class="alert-content-wrapper">
           <div class="alert-content">
-            <div class="alert-message">{{ alert.formatted }}</div>
+            <div class="alert-message">
+              @if (isLongMessage(alert.formatted)) {
+                @if (isExpanded(alert.uuid)) {
+                  {{ alert.formatted }}
+                } @else {
+                  {{ getTruncatedMessage(alert.formatted) }}
+                }
+                <button
+                  type="button"
+                  class="toggle-btn"
+                  (click)="toggleExpansion(alert.uuid)"
+                >
+                  {{ (isExpanded(alert.uuid) ? 'Show Less' : 'Show More') | translate }}
+                </button>
+              } @else {
+                {{ alert.formatted }}
+              }
+            </div>
             @if (alert.contextualHelp) {
               <div class="alert-help">{{ alert.contextualHelp }}</div>
             }
@@ -26,11 +43,13 @@
         </div>
 
         <button
+          type="button"
           class="dismiss-btn"
-          [attr.aria-label]="'Dismiss' | translate"
+          [attr.aria-label]="('Dismiss alert: {message}' | translate: { message: alert.formatted })"
+          [matTooltip]="'Dismiss' | translate"
           (click)="onDismiss(alert)"
         >
-          <ix-icon name="clear"></ix-icon>
+          <ix-icon name="clear" [attr.aria-hidden]="true"></ix-icon>
         </button>
       </div>
     }
@@ -41,7 +60,24 @@
         <ix-icon class="alert-icon" [name]="getAlertIcon(alert.level)"></ix-icon>
         <div class="alert-content-wrapper">
           <div class="alert-content">
-            <div class="alert-message">{{ alert.formatted }}</div>
+            <div class="alert-message">
+              @if (isLongMessage(alert.formatted)) {
+                @if (isExpanded(alert.uuid)) {
+                  {{ alert.formatted }}
+                } @else {
+                  {{ getTruncatedMessage(alert.formatted) }}
+                }
+                <button
+                  type="button"
+                  class="toggle-btn"
+                  (click)="toggleExpansion(alert.uuid)"
+                >
+                  {{ (isExpanded(alert.uuid) ? 'Show Less' : 'Show More') | translate }}
+                </button>
+              } @else {
+                {{ alert.formatted }}
+              }
+            </div>
             @if (alert.contextualHelp) {
               <div class="alert-help">{{ alert.contextualHelp }}</div>
             }
@@ -59,11 +95,65 @@
         </div>
 
         <button
+          type="button"
           class="dismiss-btn"
-          [attr.aria-label]="'Dismiss' | translate"
+          [attr.aria-label]="('Dismiss alert: {message}' | translate: { message: alert.formatted })"
+          [matTooltip]="'Dismiss' | translate"
           (click)="onDismiss(alert)"
         >
-          <ix-icon name="clear"></ix-icon>
+          <ix-icon name="clear" [attr.aria-hidden]="true"></ix-icon>
+        </button>
+      </div>
+    }
+
+    <!-- Info Alerts -->
+    @for (alert of grouped.info; track alert.uuid) {
+      <div [class]="'page-alert ' + getAlertClass(alert.level)">
+        <ix-icon class="alert-icon" [name]="getAlertIcon(alert.level)"></ix-icon>
+        <div class="alert-content-wrapper">
+          <div class="alert-content">
+            <div class="alert-message">
+              @if (isLongMessage(alert.formatted)) {
+                @if (isExpanded(alert.uuid)) {
+                  {{ alert.formatted }}
+                } @else {
+                  {{ getTruncatedMessage(alert.formatted) }}
+                }
+                <button
+                  type="button"
+                  class="toggle-btn"
+                  (click)="toggleExpansion(alert.uuid)"
+                >
+                  {{ (isExpanded(alert.uuid) ? 'Show Less' : 'Show More') | translate }}
+                </button>
+              } @else {
+                {{ alert.formatted }}
+              }
+            </div>
+            @if (alert.contextualHelp) {
+              <div class="alert-help">{{ alert.contextualHelp }}</div>
+            }
+            @if (alert.documentationUrl) {
+              <a
+                class="alert-docs-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                [href]="alert.documentationUrl"
+              >
+                {{ 'Learn More' | translate }}
+              </a>
+            }
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="dismiss-btn"
+          [attr.aria-label]="('Dismiss alert: {message}' | translate: { message: alert.formatted })"
+          [matTooltip]="'Dismiss' | translate"
+          (click)="onDismiss(alert)"
+        >
+          <ix-icon name="clear" [attr.aria-hidden]="true"></ix-icon>
         </button>
       </div>
     }

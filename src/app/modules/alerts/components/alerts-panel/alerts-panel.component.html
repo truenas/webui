@@ -8,7 +8,7 @@
       [title]="(groupByCategory() ? 'Show All Alerts' : 'Group by Category') | translate"
       (click)="toggleGroupByCategory()"
     >
-      <ix-icon [name]="groupByCategory() ? 'dns' : 'apps'"></ix-icon>
+      <ix-icon [name]="groupByCategory() ? 'lists' : 'apps'"></ix-icon>
     </button>
     <button
       mat-icon-button
@@ -42,6 +42,46 @@
       <ix-icon name="clear"></ix-icon>
     </button>
   </div>
+</div>
+
+<!-- Severity Filters -->
+<div class="severity-filters">
+  <button
+    class="filter-button"
+    [class.active]="severityFilter() === 'all'"
+    [ixTest]="['filter', 'all']"
+    (click)="setSeverityFilter('all')"
+  >
+    {{ 'All Alerts' | translate }}
+    <span class="count">{{ alertCounts().all }}</span>
+  </button>
+  <button
+    class="filter-button"
+    [class.active]="severityFilter() === 'critical'"
+    [ixTest]="['filter', 'critical']"
+    (click)="setSeverityFilter('critical')"
+  >
+    {{ 'Critical' | translate }}
+    <span class="count">{{ alertCounts().critical }}</span>
+  </button>
+  <button
+    class="filter-button"
+    [class.active]="severityFilter() === 'warning'"
+    [ixTest]="['filter', 'warning']"
+    (click)="setSeverityFilter('warning')"
+  >
+    {{ 'Warnings' | translate }}
+    <span class="count">{{ alertCounts().warning }}</span>
+  </button>
+  <button
+    class="filter-button"
+    [class.active]="severityFilter() === 'info'"
+    [ixTest]="['filter', 'info']"
+    (click)="setSeverityFilter('info')"
+  >
+    {{ 'Info' | translate }}
+    <span class="count">{{ alertCounts().info }}</span>
+  </button>
 </div>
 
 @if (isLoading$ | async) {

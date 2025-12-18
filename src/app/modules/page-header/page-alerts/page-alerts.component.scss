@@ -75,6 +75,23 @@
   line-height: 1.4;
 }
 
+.toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-left: 8px;
+  padding: 0;
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
 .alert-help {
   color: var(--fg2);
   font-size: 0.8rem;
@@ -132,7 +149,7 @@
   &.primary {
     background: var(--primary);
     border-color: var(--primary);
-    color: var(--always-white);
+    color: var(--primary-txt);
 
     &:hover {
       opacity: 0.9;

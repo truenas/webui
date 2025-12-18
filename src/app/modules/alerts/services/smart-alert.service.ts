@@ -116,8 +116,10 @@ export class SmartAlertService {
    * Example: alert with path ['data-protection', 'cloud-backup']
    * increments counts for both 'data-protection' and 'data-protection.cloud-backup'
    */
-  getAlertCountsByMenuPath(alerts: (Alert & EnhancedAlert)[]): Map<string, { critical: number; warning: number }> {
-    const counts = new Map<string, { critical: number; warning: number }>();
+  getAlertCountsByMenuPath(
+    alerts: (Alert & EnhancedAlert)[],
+  ): Map<string, { critical: number; warning: number; info: number }> {
+    const counts = new Map<string, { critical: number; warning: number; info: number }>();
 
     alerts
       .filter((alert) => !alert.dismissed && alert.relatedMenuPath)
@@ -132,6 +134,7 @@ export class SmartAlertService {
           AlertLevel.Error,
         ].includes(alert.level);
         const isWarning = [AlertLevel.Warning].includes(alert.level);
+        const isInfo = [AlertLevel.Info, AlertLevel.Notice].includes(alert.level);
 
         // Count for each path segment and all parent paths
         // Example: ['data-protection', 'cloud-backup'] creates entries for:
@@ -140,12 +143,14 @@ export class SmartAlertService {
         for (let i = 1; i <= menuPath.length; i++) {
           const pathSegments = menuPath.slice(0, i);
           const path = pathSegments.join('.');
-          const current = counts.get(path) || { critical: 0, warning: 0 };
+          const current = counts.get(path) || { critical: 0, warning: 0, info: 0 };
 
           if (isCritical) {
             current.critical++;
           } else if (isWarning) {
             current.warning++;
+          } else if (isInfo) {
+            current.info++;
           }
 
           counts.set(path, current);

@@ -2,8 +2,13 @@
   <span
     class="card-badge"
     role="status"
-    [class.critical]="hasCritical()"
+    [class.critical]="badgeType() === AlertBadgeType.Critical"
+    [class.warning]="badgeType() === AlertBadgeType.Warning"
+    [class.info]="badgeType() === AlertBadgeType.Info"
     [matTooltip]="tooltip() | translate"
     [attr.aria-label]="tooltip() | translate"
-  >{{ count() }}</span>
+  >
+    <ix-icon [name]="getIconForBadgeType()"></ix-icon>
+    {{ count() }}
+  </span>
 }

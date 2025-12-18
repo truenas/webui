@@ -3,7 +3,9 @@ import {
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 @Component({
   selector: 'ix-card-alert-badge',
@@ -12,12 +14,15 @@ import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badg
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    IxIconComponent,
     MatTooltip,
     TranslateModule,
   ],
 })
 export class CardAlertBadgeComponent {
   private alertNavBadgeService = inject(AlertNavBadgeService);
+
+  protected readonly AlertBadgeType = AlertBadgeType;
 
   readonly menuPath = input.required<string[]>();
 
@@ -31,15 +36,46 @@ export class CardAlertBadgeComponent {
     return this.alertNavBadgeService.hasCriticalAlerts(this.menuPath(), this.badgeCounts());
   });
 
+  protected readonly badgeType = computed((): AlertBadgeType => {
+    const counts = this.badgeCounts().get(this.menuPath().join('.'));
+    if (!counts) return AlertBadgeType.Info;
+
+    if (counts.critical > 0) return AlertBadgeType.Critical;
+    if (counts.warning > 0) return AlertBadgeType.Warning;
+    return AlertBadgeType.Info;
+  });
+
   protected readonly tooltip = computed(() => {
     const badgeCount = this.count();
-    const isCritical = this.hasCritical();
+    const counts = this.badgeCounts().get(this.menuPath().join('.'));
 
-    if (badgeCount === 0) return '';
+    if (badgeCount === 0 || !counts) return '';
 
-    if (isCritical) {
-      return badgeCount === 1 ? '1 critical alert' : `${badgeCount} critical alerts`;
+    const parts: string[] = [];
+    if (counts.critical > 0) {
+      parts.push(counts.critical === 1 ? '1 critical alert' : `${counts.critical} critical alerts`);
     }
-    return badgeCount === 1 ? '1 warning' : `${badgeCount} warnings`;
+    if (counts.warning > 0) {
+      parts.push(counts.warning === 1 ? '1 warning' : `${counts.warning} warnings`);
+    }
+    if (counts.info > 0) {
+      parts.push(counts.info === 1 ? '1 info alert' : `${counts.info} info alerts`);
+    }
+
+    return parts.join(', ');
   });
+
+  protected getIconForBadgeType(): string {
+    const type = this.badgeType();
+    switch (type) {
+      case AlertBadgeType.Critical:
+        return 'mdi-alert-circle';
+      case AlertBadgeType.Warning:
+        return 'mdi-alert';
+      case AlertBadgeType.Info:
+        return 'mdi-information';
+      default:
+        return 'mdi-information';
+    }
+  }
 }

@@ -5,6 +5,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLinkActive, RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { MenuItem, MenuItemType, SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -33,6 +34,9 @@ export class NavigationComponent {
   private navService = inject(NavigationService);
   private alertNavBadgeService = inject(AlertNavBadgeService);
 
+  protected readonly AlertBadgeType = AlertBadgeType;
+  protected readonly MenuItemType = MenuItemType;
+
   readonly isSidenavCollapsed = input(false);
 
   readonly menuToggled = output<[string, SubMenuItem[]]>();
@@ -40,8 +44,6 @@ export class NavigationComponent {
 
   menuItems = this.navService.menuItems;
   isHighlighted: string;
-
-  readonly MenuItemType = MenuItemType;
 
   // Alert badge counts for all menu paths
   badgeCounts = this.alertNavBadgeService.getBadgeCountsSignal();
@@ -83,19 +85,58 @@ export class NavigationComponent {
   }
 
   /**
+   * Get badge type (critical, warning, or info) for styling
+   */
+  getBadgeType(item: MenuItem): AlertBadgeType {
+    const pathArray = item.state.split('/').filter((segment) => segment);
+    const key = pathArray.join('.');
+    const counts = this.badgeCounts().get(key);
+
+    if (!counts) return AlertBadgeType.Info;
+
+    if (counts.critical > 0) return AlertBadgeType.Critical;
+    if (counts.warning > 0) return AlertBadgeType.Warning;
+    return AlertBadgeType.Info;
+  }
+
+  /**
    * Get badge tooltip for accessibility
    */
   getBadgeTooltip(item: MenuItem): string {
-    const count = this.getBadgeCount(item);
-    const isCritical = this.hasCriticalAlerts(item);
+    const pathArray = item.state.split('/').filter((segment) => segment);
+    const key = pathArray.join('.');
+    const counts = this.badgeCounts().get(key);
 
-    if (count === 0) {
-      return '';
+    if (!counts) return '';
+
+    const parts: string[] = [];
+    if (counts.critical > 0) {
+      parts.push(counts.critical === 1 ? '1 critical alert' : `${counts.critical} critical alerts`);
+    }
+    if (counts.warning > 0) {
+      parts.push(counts.warning === 1 ? '1 warning' : `${counts.warning} warnings`);
+    }
+    if (counts.info > 0) {
+      parts.push(counts.info === 1 ? '1 info alert' : `${counts.info} info alerts`);
     }
 
-    if (isCritical) {
-      return count === 1 ? '1 critical alert' : `${count} critical alerts`;
+    return parts.join(', ');
+  }
+
+  /**
+   * Get icon for badge based on alert type
+   */
+  getBadgeIcon(item: MenuItem): string {
+    const badgeType = this.getBadgeType(item);
+    switch (badgeType) {
+      case AlertBadgeType.Critical:
+        return 'mdi-alert-circle';
+      case AlertBadgeType.Warning:
+        return 'mdi-alert';
+      case AlertBadgeType.Info:
+        return 'mdi-information';
+      default:
+        return 'mdi-information';
     }
-    return count === 1 ? '1 warning' : `${count} warnings`;
   }
 }

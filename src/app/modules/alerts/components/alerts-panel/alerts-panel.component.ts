@@ -12,6 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Role } from 'app/enums/role.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
@@ -72,17 +73,42 @@ export class AlertsPanelComponent implements OnInit {
   // Group by category toggle
   protected groupByCategory = signal(true);
 
+  // Severity filter
+  protected severityFilter = signal<'all' | 'critical' | 'warning' | 'info'>('all');
+
   // Convert observables to signals for enhanced alerts
   private unreadAlertsSignal = toSignal(this.store$.select(selectUnreadAlerts), { initialValue: [] });
   private dismissedAlertsSignal = toSignal(this.store$.select(selectDismissedAlerts), { initialValue: [] });
 
   // Enhance alerts with smart actions
-  protected enhancedUnreadAlerts = computed<(Alert & EnhancedAlert)[]>(() => {
+  private allEnhancedUnreadAlerts = computed<(Alert & EnhancedAlert)[]>(() => {
     return this.unreadAlertsSignal().map((alert) => this.smartAlertService.enhanceAlert(alert));
   });
 
-  protected enhancedDismissedAlerts = computed<(Alert & EnhancedAlert)[]>(() => {
+  private allEnhancedDismissedAlerts = computed<(Alert & EnhancedAlert)[]>(() => {
     return this.dismissedAlertsSignal().map((alert) => this.smartAlertService.enhanceAlert(alert));
+  });
+
+  // Filtered alerts based on severity
+  protected enhancedUnreadAlerts = computed<(Alert & EnhancedAlert)[]>(() => {
+    const alerts = this.allEnhancedUnreadAlerts();
+    return this.filterBySeverity(alerts);
+  });
+
+  protected enhancedDismissedAlerts = computed<(Alert & EnhancedAlert)[]>(() => {
+    const alerts = this.allEnhancedDismissedAlerts();
+    return this.filterBySeverity(alerts);
+  });
+
+  // Counts for filter buttons (only unread/active alerts)
+  protected alertCounts = computed(() => {
+    const alerts = this.allEnhancedUnreadAlerts().filter((alert) => !alert.dismissed);
+    return {
+      all: alerts.length,
+      critical: alerts.filter((a) => this.isCritical(a.level)).length,
+      warning: alerts.filter((a) => this.isWarning(a.level)).length,
+      info: alerts.filter((a) => this.isInfo(a.level)).length,
+    };
   });
 
   // Group alerts by category
@@ -144,6 +170,44 @@ export class AlertsPanelComponent implements OnInit {
     this.groupByCategory.set(!this.groupByCategory());
   }
 
+  setSeverityFilter(filter: 'all' | 'critical' | 'warning' | 'info'): void {
+    this.severityFilter.set(filter);
+  }
+
+  private filterBySeverity(alerts: (Alert & EnhancedAlert)[]): (Alert & EnhancedAlert)[] {
+    const filter = this.severityFilter();
+    if (filter === 'all') {
+      return alerts;
+    }
+    if (filter === 'critical') {
+      return alerts.filter((a) => this.isCritical(a.level));
+    }
+    if (filter === 'warning') {
+      return alerts.filter((a) => this.isWarning(a.level));
+    }
+    if (filter === 'info') {
+      return alerts.filter((a) => this.isInfo(a.level));
+    }
+    return alerts;
+  }
+
+  private isCritical(level: AlertLevel): boolean {
+    return [
+      AlertLevel.Critical,
+      AlertLevel.Alert,
+      AlertLevel.Emergency,
+      AlertLevel.Error,
+    ].includes(level);
+  }
+
+  private isWarning(level: AlertLevel): boolean {
+    return level === AlertLevel.Warning;
+  }
+
+  private isInfo(level: AlertLevel): boolean {
+    return [AlertLevel.Info, AlertLevel.Notice].includes(level);
+  }
+
   navigateTo(route: string[], extras?: NavigationExtras): void {
     this.closePanel();
     this.router.navigate(route, extras);
@@ -153,12 +217,27 @@ export class AlertsPanelComponent implements OnInit {
     this.store$.dispatch(alertPanelClosed());
   }
 
-  // Helper to convert Map entries to array for template iteration
+  /**
+   * Helper to convert Map entries to array for template iteration
+   * Sorts categories with uncategorized items appearing last
+   */
   getCategoryEntries(
     categoryMap: Map<string, (Alert & EnhancedAlert)[]> | null,
   ): [string, (Alert & EnhancedAlert)[]][] {
     if (!categoryMap) return [];
-    return Array.from(categoryMap.entries());
+
+    const knownCategories = Object.values(SmartAlertCategory);
+
+    return Array.from(categoryMap.entries()).sort((a, b) => {
+      const aIsKnown = knownCategories.includes(a[0] as SmartAlertCategory);
+      const bIsKnown = knownCategories.includes(b[0] as SmartAlertCategory);
+
+      // Push unknown categories (like 'Uncategorized') to the end
+      if (!aIsKnown && bIsKnown) return 1;
+      if (aIsKnown && !bIsKnown) return -1;
+      // Keep other categories in their original order
+      return 0;
+    });
   }
 
   // Helper to get category icon

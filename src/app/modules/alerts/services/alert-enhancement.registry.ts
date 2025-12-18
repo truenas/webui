@@ -1,3 +1,4 @@
+import { marker as T } from 'app/helpers/translate.helper';
 import {
   SmartAlertAction,
   SmartAlertActionType,
@@ -25,11 +26,11 @@ export const smartAlertRegistry: SmartAlertConfig = {
     LicenseStatus: {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'general'],
-      contextualHelp: 'License issues can affect system features and support eligibility. Update your license to restore full functionality.',
+      contextualHelp: T('License issues can affect system features and support eligibility. Update your license to restore full functionality.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/general/addlicenseproactivesupport/',
       actions: [
         {
-          label: 'Update License',
+          label: T('Manage License'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-license'),
           route: ['/system', 'general'],
@@ -37,13 +38,13 @@ export const smartAlertRegistry: SmartAlertConfig = {
           primary: true,
         },
         {
-          label: 'Contact Support',
+          label: T('Contact Support'),
           type: SmartAlertActionType.ExternalLink,
           icon: iconMarker('mdi-help-circle'),
           externalUrl: 'https://support.ixsystems.com',
         },
         {
-          label: 'View Documentation',
+          label: T('View Documentation'),
           type: SmartAlertActionType.ExternalLink,
           icon: iconMarker('mdi-book-open-variant'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/general/addlicenseproactivesupport/',
@@ -54,19 +55,18 @@ export const smartAlertRegistry: SmartAlertConfig = {
     ProactiveSupport: {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'general'],
-      contextualHelp: 'Proactive Support helps iXsystems monitor your system health and provide early warnings. Configuration takes just a few minutes.',
+      contextualHelp: T('Proactive Support helps iXsystems monitor your system health and provide early warnings. Configuration takes just a few minutes.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/general/addlicenseproactivesupport/',
       actions: [
         {
-          label: 'Configure Support',
+          label: T('Configure Support'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-cog'),
           route: ['/system', 'general'],
-          fragment: 'support',
           primary: true,
         },
         {
-          label: 'Learn More',
+          label: T('Learn More'),
           type: SmartAlertActionType.ExternalLink,
           icon: iconMarker('mdi-information'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/general/addlicenseproactivesupport/',
@@ -77,11 +77,11 @@ export const smartAlertRegistry: SmartAlertConfig = {
     UnsupportedHardware: {
       category: SmartAlertCategory.Hardware,
       relatedMenuPath: ['system', 'general'],
-      contextualHelp: 'Your system is running on hardware that is not officially supported by iXsystems. This may affect stability, performance, and support eligibility.',
+      contextualHelp: T('Your system is running on hardware that is not officially supported by iXsystems. This may affect stability, performance, and support eligibility.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/gettingstarted/scalehardwareguide/',
       actions: [
         {
-          label: 'Update License',
+          label: T('Manage License'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-license'),
           route: ['/system', 'general'],
@@ -89,13 +89,13 @@ export const smartAlertRegistry: SmartAlertConfig = {
           primary: true,
         },
         {
-          label: 'Contact Support',
+          label: T('Contact Support'),
           type: SmartAlertActionType.ExternalLink,
           icon: iconMarker('mdi-help-circle'),
           externalUrl: 'https://support.ixsystems.com',
         },
         {
-          label: 'View Documentation',
+          label: T('View Documentation'),
           type: SmartAlertActionType.ExternalLink,
           icon: iconMarker('mdi-book-open-variant'),
           externalUrl: 'https://www.truenas.com/docs/scale/gettingstarted/scalehardwareguide/',
@@ -109,21 +109,70 @@ export const smartAlertRegistry: SmartAlertConfig = {
     CertificateAlert: {
       category: SmartAlertCategory.Security,
       relatedMenuPath: ['credentials', 'certificates'],
-      contextualHelp: 'Certificate issues can prevent secure connections and service access. Review and renew certificates before expiration.',
+      contextualHelp: T('Certificate issues can prevent secure connections and service access. Review and renew certificates before expiration.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/certificates/certificatesscale/',
       actions: [
         {
-          label: 'Manage Certificates',
+          label: T('Renew Certificate'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-certificate'),
           route: ['/credentials', 'certificates'],
           primary: true,
         },
         {
-          label: 'Certificate Guide',
+          label: T('Certificate Guide'),
           type: SmartAlertActionType.ExternalLink,
           icon: iconMarker('mdi-book-open-variant'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/certificates/certificatesscale/',
+        },
+      ],
+    },
+
+    /**
+     * Authentication and Account Security Alerts
+     */
+    RootLogin: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'users'],
+      contextualHelp: T('Using the root account for routine tasks poses security risks. Create dedicated administrator accounts with unique credentials for better security and accountability.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/managelocalusersscale/',
+      actions: [
+        {
+          label: T('Manage Users'),
+          type: SmartAlertActionType.Navigate,
+          icon: iconMarker('mdi-account-multiple'),
+          route: ['/credentials', 'users'],
+          primary: true,
+        },
+        {
+          label: T('User Management Guide'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: iconMarker('mdi-book-open-variant'),
+          externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/managelocalusersscale/',
+        },
+      ],
+    },
+
+    /**
+     * NVDIMM Hardware Alerts
+     */
+    NvdimmStatus: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('NVDIMM errors indicate issues with non-volatile memory modules. These can affect system stability and data integrity. Contact support for hardware diagnostics.'),
+      actions: [
+        {
+          label: T('View Enclosure'),
+          type: SmartAlertActionType.Navigate,
+          icon: iconMarker('mdi-server'),
+          route: ['/system', 'viewenclosure'],
+          primary: true,
+        },
+        {
+          label: T('Contact Support'),
+          type: SmartAlertActionType.ExternalLink,
+          icon: iconMarker('mdi-help-circle'),
+          externalUrl: 'https://support.ixsystems.com',
         },
       ],
     },
@@ -134,25 +183,25 @@ export const smartAlertRegistry: SmartAlertConfig = {
     VolumeStatus: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
-      contextualHelp: 'Storage pool health is critical for data integrity. Investigate and resolve pool issues immediately to prevent data loss.',
-      detailedHelp: 'Common pool issues include: degraded pools (missing/failed drives), scrub errors, capacity warnings, and replication problems.',
+      contextualHelp: T('Storage pool health is critical for data integrity. Investigate and resolve pool issues immediately to prevent data loss.'),
+      detailedHelp: T('Common pool issues include: degraded pools (missing/failed drives), scrub errors, capacity warnings, and replication problems.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/managepoolsscale/',
       actions: [
         {
-          label: 'View Storage',
+          label: T('View Storage'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-database'),
           route: ['/storage'],
           primary: true,
         },
         {
-          label: 'Managing Pools Guide',
+          label: T('Managing Pools Guide'),
           type: SmartAlertActionType.ExternalLink,
           icon: iconMarker('mdi-book-open-variant'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/managepoolsscale/',
         },
         {
-          label: 'Storage Documentation',
+          label: T('Storage Documentation'),
           type: SmartAlertActionType.ExternalLink,
           icon: iconMarker('mdi-help-circle'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/',
@@ -163,17 +212,17 @@ export const smartAlertRegistry: SmartAlertConfig = {
     PoolCapacity: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
-      contextualHelp: 'High pool usage can impact performance and prevent new data writes. Consider expanding capacity or cleaning up old data.',
+      contextualHelp: T('High pool usage can impact performance and prevent new data writes. Consider expanding capacity or cleaning up old data.'),
       actions: [
         {
-          label: 'View Storage',
+          label: T('View Storage'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-database'),
           route: ['/storage'],
           primary: true,
         },
         {
-          label: 'Managing Pools Guide',
+          label: T('Managing Pools Guide'),
           type: SmartAlertActionType.ExternalLink,
           icon: iconMarker('mdi-book-open-variant'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/managepoolsscale/',
@@ -186,22 +235,23 @@ export const smartAlertRegistry: SmartAlertConfig = {
      */
     IPMIStatus: {
       category: SmartAlertCategory.Network,
-      relatedMenuPath: ['network'],
-      contextualHelp: 'IPMI connectivity issues can prevent remote management. Check network configuration and IPMI settings.',
+      relatedMenuPath: ['system', 'network'],
+      contextualHelp: T('IPMI connectivity issues can prevent remote management. Check network configuration and IPMI settings.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/network/',
       actions: [
         {
-          label: 'Network Settings',
+          label: T('Configure IPMI'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-network'),
-          route: ['/network'],
+          icon: iconMarker('mdi-lan'),
+          route: ['/system', 'network'],
+          fragment: 'ipmi',
           primary: true,
         },
         {
-          label: 'IPMI Configuration',
+          label: T('Network Settings'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-lan'),
-          route: ['/network', 'ipmi'],
+          icon: iconMarker('mdi-network'),
+          route: ['/system', 'network'],
         },
       ],
     },
@@ -211,14 +261,14 @@ export const smartAlertRegistry: SmartAlertConfig = {
      */
     ServiceMonitor: {
       category: SmartAlertCategory.Services,
-      relatedMenuPath: ['services'],
-      contextualHelp: 'Service failures can interrupt critical functionality. Review service logs and configuration to identify the cause.',
+      relatedMenuPath: ['system', 'services'],
+      contextualHelp: T('Service failures can interrupt critical functionality. Review service logs and configuration to identify the cause.'),
       actions: [
         {
-          label: 'View Services',
+          label: T('View Services'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-cog'),
-          route: ['/services'],
+          route: ['/system', 'services'],
           primary: true,
         },
       ],
@@ -230,18 +280,18 @@ export const smartAlertRegistry: SmartAlertConfig = {
     ApplicationsStatus: {
       category: SmartAlertCategory.Applications,
       relatedMenuPath: ['apps'],
-      contextualHelp: 'Application issues may be caused by misconfiguration, resource constraints, or storage problems.',
+      contextualHelp: T('Application issues may be caused by misconfiguration, resource constraints, or storage problems.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/apps/',
       actions: [
         {
-          label: 'View Applications',
+          label: T('View Applications'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-application'),
           route: ['/apps', 'installed'],
           primary: true,
         },
         {
-          label: 'App Troubleshooting',
+          label: T('App Troubleshooting'),
           type: SmartAlertActionType.ExternalLink,
           icon: iconMarker('mdi-book-open-variant'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/apps/',
@@ -255,18 +305,18 @@ export const smartAlertRegistry: SmartAlertConfig = {
     UpdateCheck: {
       category: SmartAlertCategory.System,
       relatedMenuPath: ['system', 'update'],
-      contextualHelp: 'System updates include security patches, bug fixes, and new features. Review release notes before updating.',
+      contextualHelp: T('System updates include security patches, bug fixes, and new features. Review release notes before updating.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/gettingstarted/scaleupgrades/',
       actions: [
         {
-          label: 'View Updates',
+          label: T('Check for Updates'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-update'),
           route: ['/system', 'update'],
           primary: true,
         },
         {
-          label: 'Release Notes',
+          label: T('Release Notes'),
           type: SmartAlertActionType.ExternalLink,
           icon: iconMarker('mdi-note-text'),
           externalUrl: 'https://www.truenas.com/docs/scale/gettingstarted/scalereleasenotes/',
@@ -274,56 +324,17 @@ export const smartAlertRegistry: SmartAlertConfig = {
       ],
     },
 
-    /**
-     * Task Alerts
-     */
-    CloudSyncTaskFailed: {
-      category: SmartAlertCategory.Tasks,
-      relatedMenuPath: ['data-protection', 'cloudsync'],
-      contextualHelp: 'Cloud sync failures may be due to network issues, credential problems, or cloud provider limitations.',
-      actions: [
-        {
-          label: 'View Cloud Sync Tasks',
-          type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-cloud-sync'),
-          route: ['/data-protection', 'cloudsync'],
-          primary: true,
-        },
-      ],
-    },
-
-    ReplicationTaskFailed: {
-      category: SmartAlertCategory.Tasks,
-      relatedMenuPath: ['data-protection', 'replication'],
-      contextualHelp: 'Replication failures can cause backup gaps. Check network connectivity and destination system health.',
-      actions: [
-        {
-          label: 'View Replication Tasks',
-          type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-sync'),
-          route: ['/data-protection', 'replication'],
-          primary: true,
-        },
-      ],
-    },
-
     ScrubTaskFailed: {
       category: SmartAlertCategory.Storage,
-      relatedMenuPath: ['data-protection', 'scrub'],
-      contextualHelp: 'Scrub failures may indicate disk errors or pool corruption. Investigate pool health immediately.',
+      relatedMenuPath: ['storage'],
+      contextualHelp: T('Scrub failures may indicate disk errors or pool corruption. Investigate pool health and scheduled scrub tasks immediately.'),
       actions: [
         {
-          label: 'View Scrub Tasks',
+          label: T('View Storage'),
           type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-broom'),
-          route: ['/data-protection', 'scrub'],
-          primary: true,
-        },
-        {
-          label: 'Pool Status',
-          type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-information'),
+          icon: iconMarker('dns'),
           route: ['/storage'],
+          primary: true,
         },
       ],
     },
@@ -333,18 +344,18 @@ export const smartAlertRegistry: SmartAlertConfig = {
      */
     HardwareStatus: {
       category: SmartAlertCategory.Hardware,
-      relatedMenuPath: ['system', 'view-enclosure'],
-      contextualHelp: 'Hardware issues require immediate attention. Check system health, temperatures, and component status.',
+      relatedMenuPath: ['system', 'viewenclosure'],
+      contextualHelp: T('Hardware issues require immediate attention. Check system health, temperatures, and component status.'),
       actions: [
         {
-          label: 'View Enclosure',
+          label: T('View Enclosure'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-server'),
-          route: ['/system', 'view-enclosure'],
+          route: ['/system', 'viewenclosure'],
           primary: true,
         },
         {
-          label: 'Contact Support',
+          label: T('Contact Support'),
           type: SmartAlertActionType.ExternalLink,
           icon: iconMarker('mdi-help-circle'),
           externalUrl: 'https://support.ixsystems.com',
@@ -357,14 +368,15 @@ export const smartAlertRegistry: SmartAlertConfig = {
      */
     UpsStatus: {
       category: SmartAlertCategory.Hardware,
-      relatedMenuPath: ['system', 'ups'],
-      contextualHelp: 'UPS issues can affect power protection. Verify UPS connection and battery health.',
+      relatedMenuPath: ['system'],
+      contextualHelp: T('UPS issues can affect power protection. Verify UPS connection and battery health.'),
       actions: [
         {
-          label: 'UPS Configuration',
+          label: T('Configure UPS'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-flash'),
-          route: ['/system', 'ups'],
+          route: ['/system', 'services'],
+          fragment: 'ups',
           primary: true,
         },
       ],
@@ -377,24 +389,24 @@ export const smartAlertRegistry: SmartAlertConfig = {
     CloudBackupTaskFailed: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'cloud-backup'],
-      contextualHelp: 'Cloud backup failures may be caused by network connectivity issues, insufficient cloud storage space, invalid credentials, or expired authentication tokens.',
+      contextualHelp: T('Cloud backup failures may be caused by network connectivity issues, insufficient cloud storage space, invalid credentials, or expired authentication tokens.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/truecloudtasks/',
       actions: [
         {
-          label: 'View Cloud Backup Tasks',
+          label: T('View Cloud Backup'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-cloud-upload'),
           route: ['/data-protection', 'cloud-backup'],
           primary: true,
         },
         {
-          label: 'Cloud Credentials',
+          label: T('Check Credentials'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-key'),
           route: ['/credentials', 'backup-credentials'],
         },
         {
-          label: 'Backup Documentation',
+          label: T('Backup Documentation'),
           type: SmartAlertActionType.ExternalLink,
           icon: iconMarker('mdi-book-open-variant'),
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/truecloudtasks/',
@@ -402,23 +414,77 @@ export const smartAlertRegistry: SmartAlertConfig = {
       ],
     },
 
+    CloudSyncTaskFailed: {
+      category: SmartAlertCategory.Tasks,
+      relatedMenuPath: ['data-protection', 'cloudsync'],
+      contextualHelp: T('Cloud sync failures may be due to network issues, credential problems, or cloud provider limitations.'),
+      actions: [
+        {
+          label: T('View Cloud Sync'),
+          type: SmartAlertActionType.Navigate,
+          icon: iconMarker('mdi-cloud-sync'),
+          route: ['/data-protection', 'cloudsync'],
+          primary: true,
+        },
+      ],
+    },
+
+    ReplicationFailed: {
+      category: SmartAlertCategory.Tasks,
+      relatedMenuPath: ['data-protection', 'replication'],
+      contextualHelp: T('Replication failures can cause backup gaps. Check network connectivity and destination system health.'),
+      actions: [
+        {
+          label: T('View Replication'),
+          type: SmartAlertActionType.Navigate,
+          icon: iconMarker('mdi-sync'),
+          route: ['/data-protection', 'replication'],
+          primary: true,
+        },
+      ],
+    },
+
+    RsyncFailed: {
+      category: SmartAlertCategory.Tasks,
+      relatedMenuPath: ['data-protection', 'rsync'],
+      contextualHelp: T('Rsync task failures may be due to connectivity issues, permission problems, or incorrect paths.'),
+      actions: [
+        {
+          label: T('View Rsync Tasks'),
+          type: SmartAlertActionType.Navigate,
+          icon: iconMarker('mdi-sync'),
+          route: ['/data-protection', 'rsync'],
+          primary: true,
+        },
+      ],
+    },
+
+    SnapshotFailed: {
+      category: SmartAlertCategory.Tasks,
+      relatedMenuPath: ['data-protection', 'snapshot'],
+      contextualHelp: T('Snapshot failures may indicate storage issues or misconfigured retention policies.'),
+      actions: [
+        {
+          label: T('View Snapshots'),
+          type: SmartAlertActionType.Navigate,
+          icon: iconMarker('mdi-camera'),
+          route: ['/data-protection', 'snapshot'],
+          primary: true,
+        },
+      ],
+    },
+
     ScrubPaused: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
-      contextualHelp: 'Pool scrub is paused or not running. This may be due to pool being offline or scrub task being manually paused.',
+      contextualHelp: T('Pool scrub is paused or not running. This may be due to pool being offline or scrub task being manually paused. Check pool status and scheduled scrub configuration.'),
       actions: [
         {
-          label: 'View Storage',
+          label: T('View Storage'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('dns'),
           route: ['/storage'],
           primary: true,
-        },
-        {
-          label: 'View Scrub Tasks',
-          type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-broom'),
-          route: ['/data-protection', 'scrub'],
         },
       ],
     },
@@ -426,20 +492,14 @@ export const smartAlertRegistry: SmartAlertConfig = {
     ScrubNotRunning: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
-      contextualHelp: 'Pool scrub is not running. This may be due to pool being offline or scrub task configuration issues.',
+      contextualHelp: T('Pool scrub is not running. This may be due to pool being offline or scrub task configuration issues. Check pool status and scheduled scrub configuration.'),
       actions: [
         {
-          label: 'View Storage',
+          label: T('View Storage'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('dns'),
           route: ['/storage'],
           primary: true,
-        },
-        {
-          label: 'View Scrub Tasks',
-          type: SmartAlertActionType.Navigate,
-          icon: iconMarker('mdi-broom'),
-          route: ['/data-protection', 'scrub'],
         },
       ],
     },
@@ -461,18 +521,54 @@ const patternCategories: {
   relatedMenuPath?: string[];
   actions?: SmartAlertAction[];
 }[] = [
-  // Storage issues - check pool offline first (more specific)
+  // Storage issues - pool offline, degraded, scrub issues
   {
-    patterns: [/pool.*offline/i, /pool.*degraded/i, /pool.*unavailable/i, /disk.*fail/i, /vdev.*fail/i],
+    patterns: [/pool.*offline/i, /pool.*degraded/i, /pool.*unavailable/i, /disk.*fail/i, /vdev.*fail/i, /scrub/i],
     category: SmartAlertCategory.Storage,
     relatedMenuPath: ['storage'],
     actions: [
       {
-        label: 'View Storage',
+        label: T('View Storage'),
         type: SmartAlertActionType.Navigate,
         icon: iconMarker('dns'),
         route: ['/storage'],
         primary: true,
+      },
+    ],
+  },
+  // Root account usage
+  {
+    patterns: [/root.*account.*authenticate/i, /default.*administrator.*account/i, /root.*login/i],
+    category: SmartAlertCategory.Security,
+    relatedMenuPath: ['credentials', 'users'],
+    actions: [
+      {
+        label: T('Manage Users'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-account-multiple'),
+        route: ['/credentials', 'users'],
+        primary: true,
+      },
+    ],
+  },
+  // NVDIMM hardware issues
+  {
+    patterns: [/nvdimm/i, /nmem\d+/i],
+    category: SmartAlertCategory.Hardware,
+    relatedMenuPath: ['system', 'viewenclosure'],
+    actions: [
+      {
+        label: T('View Enclosure'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-server'),
+        route: ['/system', 'viewenclosure'],
+        primary: true,
+      },
+      {
+        label: T('Contact Support'),
+        type: SmartAlertActionType.ExternalLink,
+        icon: iconMarker('mdi-help-circle'),
+        externalUrl: 'https://support.ixsystems.com',
       },
     ],
   },
@@ -483,7 +579,7 @@ const patternCategories: {
     relatedMenuPath: ['credentials', 'certificates'],
     actions: [
       {
-        label: 'Manage Certificates',
+        label: T('Renew Certificate'),
         type: SmartAlertActionType.Navigate,
         icon: iconMarker('mdi-certificate'),
         route: ['/credentials', 'certificates'],
@@ -495,13 +591,13 @@ const patternCategories: {
   {
     patterns: [/network/i, /interface.*down/i, /ipmi/i, /ethernet/i],
     category: SmartAlertCategory.Network,
-    relatedMenuPath: ['network'],
+    relatedMenuPath: ['system', 'network'],
     actions: [
       {
-        label: 'Network Settings',
+        label: T('Go to Network'),
         type: SmartAlertActionType.Navigate,
         icon: iconMarker('mdi-network'),
-        route: ['/network'],
+        route: ['/system', 'network'],
         primary: true,
       },
     ],
@@ -510,10 +606,10 @@ const patternCategories: {
   {
     patterns: [/service.*fail/i, /service.*stop/i, /daemon/i],
     category: SmartAlertCategory.Services,
-    relatedMenuPath: ['services'],
+    relatedMenuPath: ['system', 'services'],
     actions: [
       {
-        label: 'View Services',
+        label: T('View Services'),
         type: SmartAlertActionType.Navigate,
         icon: iconMarker('settings'),
         route: ['/system', 'services'],
@@ -521,14 +617,14 @@ const patternCategories: {
       },
     ],
   },
-  // Application issues
+  // Application issues and updates
   {
-    patterns: [/app.*fail/i, /container/i, /kubernetes/i, /docker/i],
+    patterns: [/app.*fail/i, /container/i, /kubernetes/i, /docker/i, /updates are available for \d+ application/i],
     category: SmartAlertCategory.Applications,
-    relatedMenuPath: ['apps'],
+    relatedMenuPath: ['apps', 'installed'],
     actions: [
       {
-        label: 'View Applications',
+        label: T('View Applications'),
         type: SmartAlertActionType.Navigate,
         icon: iconMarker('apps'),
         route: ['/apps', 'installed'],
@@ -536,14 +632,14 @@ const patternCategories: {
       },
     ],
   },
-  // Task issues - scrub, backup, replication (less specific, comes after pool offline)
+  // Task issues - backup, replication, snapshot, sync (scrub handled separately above)
   {
-    patterns: [/scrub.*fail/i, /scrub.*error/i, /backup.*fail/i, /replication.*fail/i, /snapshot/i, /sync.*fail/i],
+    patterns: [/backup.*fail/i, /replication.*fail/i, /snapshot/i, /sync.*fail/i],
     category: SmartAlertCategory.Tasks,
     relatedMenuPath: ['data-protection'],
     actions: [
       {
-        label: 'Data Protection',
+        label: T('View Data Protection'),
         type: SmartAlertActionType.Navigate,
         icon: iconMarker('security'),
         route: ['/data-protection'],
@@ -551,14 +647,14 @@ const patternCategories: {
       },
     ],
   },
-  // System updates
+  // System updates (specific pattern to avoid matching application updates)
   {
-    patterns: [/update.*available/i, /upgrade/i, /new version/i],
+    patterns: [/(system|truenas).*update/i, /upgrade/i, /new version/i],
     category: SmartAlertCategory.System,
     relatedMenuPath: ['system', 'update'],
     actions: [
       {
-        label: 'View Updates',
+        label: T('View Updates'),
         type: SmartAlertActionType.Navigate,
         icon: iconMarker('mdi-update'),
         route: ['/system', 'update'],
@@ -568,9 +664,18 @@ const patternCategories: {
   },
   // Hardware issues
   {
-    patterns: [/hardware/i, /temperature/i, /fan/i, /power supply/i, /ups/i],
+    patterns: [/hardware/i, /enclosure/i, /temperature/i, /fan/i, /power supply/i, /ups/i],
     category: SmartAlertCategory.Hardware,
-    relatedMenuPath: ['system', 'view-enclosure'],
+    relatedMenuPath: ['system', 'viewenclosure'],
+    actions: [
+      {
+        label: T('View Enclosure'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-server'),
+        route: ['/system', 'viewenclosure'],
+        primary: true,
+      },
+    ],
   },
 ];
 

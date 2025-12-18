@@ -10,6 +10,7 @@ import { SmartAlertService } from './smart-alert.service';
 export interface NavBadge {
   critical: number;
   warning: number;
+  info: number;
 }
 
 /**
@@ -74,7 +75,7 @@ export class AlertNavBadgeService {
   getBadgeCountForPath(path: string[], badgeCounts: Map<string, NavBadge>): number {
     const key = path.join('.');
     const counts = badgeCounts.get(key);
-    return counts ? counts.critical + counts.warning : 0;
+    return counts ? counts.critical + counts.warning + counts.info : 0;
   }
 
   /**

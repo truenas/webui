@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { SmartAlertAction } from 'app/interfaces/smart-alert.interface';
+import { EnhancedAlert, SmartAlertAction } from 'app/interfaces/smart-alert.interface';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { dismissAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -27,6 +28,7 @@ import { AppState } from 'app/store';
   standalone: true,
   imports: [
     IxIconComponent,
+    MatTooltip,
     TranslateModule,
   ],
 })
@@ -40,6 +42,12 @@ export class PageAlertsComponent {
 
   // Get current route segments
   private currentRoute = toSignal(this.router.events, { initialValue: null });
+
+  // Track which alerts are expanded (by UUID)
+  private expandedAlertIds = signal<Set<string>>(new Set());
+
+  // Maximum length before truncating alert message
+  private readonly maxMessageLength = 200;
 
   /**
    * Filter alerts relevant to the current page
@@ -55,19 +63,36 @@ export class PageAlertsComponent {
     const pathSegments = url.split('/').filter((segment) => segment && !segment.startsWith('?'));
 
     // Filter alerts that match current route
-    return alerts.filter((alert) => {
+    const filteredAlerts = alerts.filter((alert) => {
       if (!alert.relatedMenuPath || alert.dismissed) {
         return false;
       }
 
-      // Check if alert's menu path matches current route
-      // Example: alert path ['storage'] matches route /storage
-      // Example: alert path ['system', 'general'] matches route /system/general
+      // Check if alert's menu path EXACTLY matches current route
+      // Example: alert path ['storage'] matches ONLY /storage (not /storage/disks)
+      // Example: alert path ['data-protection', 'cloud-backup'] matches ONLY /data-protection/cloud-backup
       const menuPath = alert.relatedMenuPath;
 
-      // Match if all menu path segments are in the current route
-      return menuPath.every((segment, index) => pathSegments[index] === segment);
+      // Require exact match: same length and all segments match
+      return menuPath.length === pathSegments.length
+        && menuPath.every((segment, index) => pathSegments[index] === segment);
     });
+
+    // De-duplicate alerts by formatted message (for HA setups where same alert comes from multiple nodes)
+    // In HA environments, the same alert message can appear multiple times from different controllers
+    const uniqueAlertsMap = new Map<string, Alert & EnhancedAlert>();
+    filteredAlerts.forEach((alert) => {
+      // Use normalized formatted message as the deduplication key (trim whitespace and normalize line breaks)
+      const dedupeKey = (alert.formatted || alert.text).trim().replace(/\s+/g, ' ');
+      const existing = uniqueAlertsMap.get(dedupeKey);
+
+      // Keep the most recent alert
+      if (!existing || (alert.datetime?.$date || 0) > (existing.datetime?.$date || 0)) {
+        uniqueAlertsMap.set(dedupeKey, alert);
+      }
+    });
+
+    return Array.from(uniqueAlertsMap.values());
   });
 
   /**
@@ -185,5 +210,42 @@ export class PageAlertsComponent {
       default:
         return 'info';
     }
+  }
+
+  /**
+   * Check if alert message is long and should be collapsible
+   */
+  protected isLongMessage(message: string): boolean {
+    return message.length > this.maxMessageLength;
+  }
+
+  /**
+   * Check if alert is currently expanded
+   */
+  protected isExpanded(alertId: string): boolean {
+    return this.expandedAlertIds().has(alertId);
+  }
+
+  /**
+   * Get truncated message for display
+   */
+  protected getTruncatedMessage(message: string): string {
+    if (message.length <= this.maxMessageLength) {
+      return message;
+    }
+    return message.substring(0, this.maxMessageLength) + '...';
+  }
+
+  /**
+   * Toggle expansion of alert message
+   */
+  protected toggleExpansion(alertId: string): void {
+    const expanded = new Set(this.expandedAlertIds());
+    if (expanded.has(alertId)) {
+      expanded.delete(alertId);
+    } else {
+      expanded.add(alertId);
+    }
+    this.expandedAlertIds.set(expanded);
   }
 }

@@ -1,11 +1,17 @@
+:host {
+  display: flex;
+  align-items: center;
+}
+
 .card-badge {
   align-items: center;
-  background: var(--orange);
+  background: var(--primary); // Default to info color (blue)
   border-radius: 10px;
-  color: var(--always-white);
+  color: var(--primary-txt);
   display: inline-flex;
   font-size: 0.7rem;
   font-weight: 600;
+  gap: 3px;
   height: 18px;
   justify-content: center;
   line-height: 1;
@@ -13,7 +19,21 @@
   padding: 0 5px;
   vertical-align: middle;
 
+  ix-icon {
+    font-size: 12px;
+    height: 12px;
+    width: 12px;
+  }
+
   &.critical {
     background: var(--red);
+  }
+
+  &.warning {
+    background: var(--orange);
+  }
+
+  &.info {
+    background: var(--primary);
   }
 }

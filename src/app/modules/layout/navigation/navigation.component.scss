@@ -40,16 +40,29 @@
 
   // Inline badge dot styling (after menu text)
   .menu-badge-dot {
-    background: var(--orange);
-    border-radius: 50%;
-    display: inline-block;
-    height: 6px;
-    margin-left: auto;
-    margin-right: 10px;
-    width: 6px;
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    margin-left: 6px;
+    width: 24px;
+    vertical-align: middle;
 
-    &.critical {
-      background: var(--red);
+    ix-icon {
+      font-size: 16px;
+      height: 16px;
+      width: 16px;
+    }
+
+    &.critical ix-icon {
+      color: var(--red) !important;
+    }
+
+    &.warning ix-icon {
+      color: var(--orange) !important;
+    }
+
+    &.info ix-icon {
+      color: var(--primary) !important;
     }
   }
 
