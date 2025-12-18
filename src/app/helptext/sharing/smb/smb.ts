@@ -157,6 +157,8 @@ export const helptextSharingSmb = {
  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.',
   ),
 
+  extensionsWarning: T('Please enable Apple SMB2/3 protocol extension support above before saving.'),
+
   streamsLabel: T('Enable Alternate Data Streams'),
   streamsTooltip: T(
     'Allows multiple \
