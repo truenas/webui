@@ -1669,7 +1669,7 @@ describe('SmbFormComponent', () => {
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
       await form.fillForm({
-        Purpose: 'MacOS Media Share',
+        Purpose: 'Final Cut Pro Storage Share',
       });
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['updateExtensionsWarning']();
