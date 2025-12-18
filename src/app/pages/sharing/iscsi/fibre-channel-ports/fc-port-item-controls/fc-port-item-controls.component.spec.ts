@@ -53,6 +53,8 @@ describe('FcPortItemControlsComponent', () => {
         form: mockForm,
         isEdit: false,
         currentPort: null,
+        usedPhysicalPorts: [],
+        availablePorts: ['fc0', 'fc1', 'fc2'],
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -186,6 +188,8 @@ describe('FcPortItemControlsComponent', () => {
           form: mockForm,
           isEdit: true,
           currentPort: 'fc0',
+          usedPhysicalPorts: [],
+          availablePorts: ['fc0', 'fc1', 'fc2'],
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -269,11 +273,6 @@ describe('FcPortItemControlsComponent', () => {
   });
 
   describe('API data loading', () => {
-    it('calls fcport.port_choices with correct parameters', () => {
-      const apiService = spectator.inject(ApiService);
-      expect(apiService.call).toHaveBeenCalledWith('fcport.port_choices', [false]);
-    });
-
     it('calls fc.fc_host.query', () => {
       const apiService = spectator.inject(ApiService);
       expect(apiService.call).toHaveBeenCalledWith('fc.fc_host.query');
@@ -308,6 +307,137 @@ describe('FcPortItemControlsComponent', () => {
       await portSelect.setValue('fc0');
 
       expect(mockForm.valid).toBe(true); // Should be valid with one port selected
+    });
+  });
+
+  describe('port filtering behavior', () => {
+    it('filters out ports with same physical port prefix as usedPhysicalPorts', async () => {
+      spectator.setInput('availablePorts', ['fc0', 'fc0/1', 'fc1', 'fc2']);
+      spectator.setInput('usedPhysicalPorts', ['fc0']);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      const options = await portSelect.getOptionLabels();
+
+      // Should NOT include fc0 or fc0/1 (same physical port)
+      expect(options).not.toContain('fc0');
+      expect(options).not.toContain('fc0/1');
+
+      // Should include fc1 and fc2 (different physical ports)
+      expect(options).toContain('fc1');
+      expect(options).toContain('fc2');
+    });
+
+    it('filters out virtual ports sharing physical port with used ports', async () => {
+      spectator.setInput('availablePorts', ['fc0', 'fc0/1', 'fc0/2', 'fc1']);
+      spectator.setInput('usedPhysicalPorts', ['fc0']);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      const options = await portSelect.getOptionLabels();
+
+      // Should NOT include any fc0 variants
+      expect(options).not.toContain('fc0');
+      expect(options).not.toContain('fc0/1');
+      expect(options).not.toContain('fc0/2');
+
+      // Should only include fc1
+      expect(options).toContain('fc1');
+      expect(options).toHaveLength(1);
+    });
+
+    it('shows all ports when usedPhysicalPorts is empty', async () => {
+      spectator.setInput('availablePorts', ['fc0', 'fc1', 'fc2']);
+      spectator.setInput('usedPhysicalPorts', []);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      const options = await portSelect.getOptionLabels();
+
+      // Should include all available ports
+      expect(options).toContain('fc0');
+      expect(options).toContain('fc1');
+      expect(options).toContain('fc2');
+    });
+
+    it('always includes currentPort in edit mode even if filtered', async () => {
+      spectator.setInput('availablePorts', ['fc0', 'fc1', 'fc2']);
+      spectator.setInput('usedPhysicalPorts', ['fc0']); // Would normally filter fc0
+      spectator.setInput('currentPort', 'fc0');
+      spectator.setInput('isEdit', true);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      const options = await portSelect.getOptionLabels();
+
+      // Should include fc0 (current port) even though it's in usedPhysicalPorts
+      expect(options).toContain('fc0');
+
+      // Should also include other non-conflicting ports
+      expect(options).toContain('fc1');
+      expect(options).toContain('fc2');
+    });
+  });
+
+  describe('reactivity to input changes', () => {
+    it('updates dropdown options when usedPhysicalPorts changes', async () => {
+      // Initial state: fc0 is used
+      spectator.setInput('availablePorts', ['fc0', 'fc1', 'fc2', 'fc3']);
+      spectator.setInput('usedPhysicalPorts', ['fc0']);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      let options = await portSelect.getOptionLabels();
+
+      // Should not include fc0
+      expect(options).not.toContain('fc0');
+      expect(options).toContain('fc1');
+      expect(options).toContain('fc2');
+
+      // Change to: fc2 is used instead
+      spectator.setInput('usedPhysicalPorts', ['fc2']);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      options = await portSelect.getOptionLabels();
+
+      // Should now exclude fc2 and show fc0
+      expect(options).toContain('fc0');
+      expect(options).toContain('fc1');
+      expect(options).not.toContain('fc2');
+      expect(options).toContain('fc3');
+    });
+
+    it('updates dropdown options when availablePorts changes', async () => {
+      // Initial state: limited ports
+      spectator.setInput('availablePorts', ['fc0', 'fc1']);
+      spectator.setInput('usedPhysicalPorts', []);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const portSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Port' }));
+      let options = await portSelect.getOptionLabels();
+
+      expect(options).toContain('fc0');
+      expect(options).toContain('fc1');
+      expect(options).not.toContain('fc2');
+
+      // Add fc2 to available ports
+      spectator.setInput('availablePorts', ['fc0', 'fc1', 'fc2']);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      options = await portSelect.getOptionLabels();
+
+      // Should now include fc2
+      expect(options).toContain('fc0');
+      expect(options).toContain('fc1');
+      expect(options).toContain('fc2');
     });
   });
 });
