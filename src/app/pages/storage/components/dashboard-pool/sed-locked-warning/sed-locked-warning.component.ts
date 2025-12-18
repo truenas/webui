@@ -42,7 +42,7 @@ export class SedLockedWarningComponent {
 
   protected onImportAgain(): void {
     this.dialogService.jobDialog(
-      this.api.job('pool.try_import', [this.pool().id]),
+      this.api.job('pool.reimport', [this.pool().id]),
       { title: this.translate.instant('Importing Pool') },
     )
       .afterClosed()

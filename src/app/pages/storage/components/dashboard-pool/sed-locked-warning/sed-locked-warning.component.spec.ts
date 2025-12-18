@@ -30,7 +30,7 @@ describe('SedLockedWarningComponent', () => {
         })),
       }),
       mockApi([
-        mockJob('pool.try_import', fakeSuccessfulJob()),
+        mockJob('pool.reimport', fakeSuccessfulJob()),
       ]),
     ],
   });
@@ -56,11 +56,11 @@ describe('SedLockedWarningComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/storage', 'disks']);
   });
 
-  it('calls pool.try_import via job dialog when Import Again button is clicked', async () => {
+  it('calls pool.reimport via job dialog when Import Again button is clicked', async () => {
     const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import Again' }));
     await importButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.try_import', [pool.id]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.reimport', [pool.id]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
   });
 });
