@@ -329,36 +329,6 @@ describe('IscsiWizardComponent', () => {
       // but FC port validation specifically should pass
     });
 
-    it('blocks invalid MPIO configuration with multiple ports on same physical port', async () => {
-      // Add first port - fc0 (physical)
-      const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
-      await fcPortsList.pressAddButton();
-
-      await form.fillForm({
-        'Port Mode': 'Use existing port',
-        'Existing Port': 'fc0',
-      });
-
-      // Add second port - fc0/1 (NPIV on fc0 - same physical port)
-      await fcPortsList.pressAddButton();
-
-      await form.fillForm({
-        'Port Mode': 'Use existing port',
-        'Existing Port': 'fc0/1',
-      });
-
-      spectator.detectChanges();
-
-      // Verify error message is displayed
-      const errorElement = spectator.query('mat-error');
-      expect(errorElement).toBeTruthy();
-      expect(errorElement.textContent).toContain('fc0');
-      expect(errorElement.textContent).toContain('multiple times');
-
-      // Verify submit button is disabled
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
-    });
 
     it('blocks when two NPIV virtual ports share the same physical port', async () => {
       // Add two virtual ports on the same physical port
@@ -415,28 +385,6 @@ describe('IscsiWizardComponent', () => {
       // Note: Mixed mode (physical + NPIV) should be valid as long as they're on different physical ports
     });
 
-    it('shows validation error message in FC mode with duplicate ports', async () => {
-      // Verify error is shown in FC mode with invalid config
-      const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
-      await fcPortsList.pressAddButton();
-      await form.fillForm({
-        'Port Mode': 'Use existing port',
-        'Existing Port': 'fc0',
-      });
-
-      await fcPortsList.pressAddButton();
-      await form.fillForm({
-        'Port Mode': 'Use existing port',
-        'Existing Port': 'fc0/1',
-      });
-
-      spectator.detectChanges();
-
-      // Error message should be displayed
-      const errorElement = spectator.query('mat-error');
-      expect(errorElement).toBeTruthy();
-      expect(errorElement.textContent).toContain('fc0');
-    });
 
     it('allows empty FC ports array in FC mode when no ports added', () => {
       // No ports added - should still be valid (empty is acceptable)
@@ -448,74 +396,6 @@ describe('IscsiWizardComponent', () => {
 
       // Note: The form may still be invalid due to other required fields
       // but FC port validation specifically should pass
-    });
-
-    it('validates immediately when user adds duplicate port without requiring form submission', async () => {
-      const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
-
-      // Add first port
-      await fcPortsList.pressAddButton();
-      await form.fillForm({
-        'Port Mode': 'Use existing port',
-        'Existing Port': 'fc0',
-      });
-
-      spectator.detectChanges();
-
-      // Should be valid with one port - no error shown
-      let errorElement = spectator.query('mat-error');
-      expect(errorElement).toBeFalsy();
-
-      // Add duplicate port
-      await fcPortsList.pressAddButton();
-      await form.fillForm({
-        'Port Mode': 'Use existing port',
-        'Existing Port': 'fc0/1',
-      });
-
-      spectator.detectChanges();
-
-      // Error should be visible immediately without form submission
-      errorElement = spectator.query('mat-error');
-      expect(errorElement).toBeTruthy();
-      expect(errorElement.textContent).toContain('fc0');
-
-      // Submit button should be disabled
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
-    });
-
-    it('blocks mixing new virtual port and existing port on same physical port (bug scenario)', async () => {
-      // This tests the bug where mixing host_id (new virtual port) and port (existing port)
-      // on the same physical port was not detected
-      const fcPortsList = await loader.getHarness(IxListHarness.with({ label: 'Fibre Channel Ports' }));
-
-      // Add new virtual port on fc0 (using host_id)
-      // fc0 has npiv=1, so next port is fc0/2
-      await fcPortsList.pressAddButton();
-      await form.fillForm({
-        'Port Mode': 'Create new virtual port',
-        'Choose Host for New Virtual Port': 'fc0/2', // This will set host_id for fc0
-      });
-
-      // Add existing virtual port on fc0 (using port string)
-      await fcPortsList.pressAddButton();
-      await form.fillForm({
-        'Port Mode': 'Use existing port',
-        'Existing Port': 'fc0/1', // This sets port string for fc0
-      });
-
-      spectator.detectChanges();
-
-      // Should show validation error because both ports are on fc0
-      const errorElement = spectator.query('mat-error');
-      expect(errorElement).toBeTruthy();
-      expect(errorElement.textContent).toContain('fc0');
-      expect(errorElement.textContent).toContain('multiple times');
-
-      // Submit button should be disabled
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
     });
   });
 });

@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -13,6 +15,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiAuthMethod, IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
+import { createFormArraySnapshot } from 'app/helpers/form-array-snapshot.helper';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
@@ -80,6 +83,7 @@ export class TargetFormComponent implements OnInit {
   private fcService = inject(FibreChannelService);
   private license = inject(LicenseService);
   private targetNameValidationService = inject(TargetNameValidationService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<IscsiTarget | undefined, IscsiTarget>>(SlideInRef);
 
   get isNew(): boolean {
@@ -150,10 +154,8 @@ export class TargetFormComponent implements OnInit {
 
   protected isLoading = signal(false);
   protected editingTarget: IscsiTarget | undefined = undefined;
-  protected editingTargetPorts: string[] = [];
   protected fcHosts = signal<{ id: number; alias: string }[]>([]);
   protected availableFcPorts = signal<string[]>([]);
-  protected fcPortsSnapshot = signal<{ port: string | null; host_id: number | null }[]>([]);
 
   form = this.formBuilder.group({
     name: [
@@ -170,6 +172,15 @@ export class TargetFormComponent implements OnInit {
     }>([]),
   });
 
+  // Reactive snapshot of FC ports form array for use in computed signals
+  protected fcPortsSnapshot = createFormArraySnapshot<{ port: string | null; host_id: number | null }>(
+    this.form.controls.fcPorts,
+    this.destroyRef,
+  );
+
+  // Computed signal for current port values (used in edit mode)
+  protected currentPorts = computed(() => this.fcPortsSnapshot().map((form) => form.port).filter(Boolean) as string[]);
+
   constructor() {
     const slideInRef = this.slideInRef;
 
@@ -185,16 +196,6 @@ export class TargetFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Track form changes to update signal (prevents infinite change detection)
-    this.form.controls.fcPorts.valueChanges.pipe(
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.fcPortsSnapshot.set(this.form.controls.fcPorts.getRawValue());
-    });
-
-    // Initialize snapshot
-    this.fcPortsSnapshot.set(this.form.controls.fcPorts.getRawValue());
-
     // Load FC hosts for validation
     this.api.call('fc.fc_host.query').pipe(
       untilDestroyed(this),
@@ -299,7 +300,6 @@ export class TargetFormComponent implements OnInit {
 
   protected deleteFcPort(index: number): void {
     this.form.controls.fcPorts.removeAt(index);
-    this.editingTargetPorts.splice(index, 1);
   }
 
   protected validateFcPorts(): string[] {
@@ -324,22 +324,15 @@ export class TargetFormComponent implements OnInit {
     return this.validateFcPorts();
   };
 
-  protected getUsedPhysicalPortsExcluding = computed(() => {
+  // Array of used physical ports for each index (excluding that index)
+  protected usedPhysicalPortsByIndex = computed(() => {
     const ports = this.fcPortsSnapshot();
     const hosts = this.fcHosts();
 
-    // Create a map for each index
-    const result = new Map<number, string[]>();
-
-    for (let excludeIndex = 0; excludeIndex < ports.length; excludeIndex++) {
-      const filtered = ports
-        .filter((_, index) => index !== excludeIndex)
-        .map((portForm) => this.fcService.getPhysicalPort(portForm, hosts))
-        .filter((port): port is string => port !== null);
-      result.set(excludeIndex, filtered);
-    }
-
-    return (index: number) => result.get(index) || [];
+    return ports.map((_item, currentIndex) => ports
+      .filter((_port, idx) => idx !== currentIndex)
+      .map((portForm) => this.fcService.getPhysicalPort(portForm, hosts))
+      .filter((port): port is string => port !== null));
   });
 
   private loadFibreChannelPorts(): void {
@@ -347,13 +340,11 @@ export class TargetFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((ports) => {
       this.form.controls.fcPorts.clear();
-      this.editingTargetPorts = [];
 
       ports.forEach((port) => {
         this.addFcPort();
         const index = this.form.controls.fcPorts.length - 1;
         this.form.controls.fcPorts.at(index).patchValue({ port: port.port, host_id: null });
-        this.editingTargetPorts.push(port.port);
       });
 
       this.cdr.markForCheck();

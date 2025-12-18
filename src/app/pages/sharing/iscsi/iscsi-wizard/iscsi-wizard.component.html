@@ -64,7 +64,7 @@
             [isFibreChannelMode]="isFibreChannelMode"
             [addFcPort]="addFcPort.bind(this)"
             [deleteFcPort]="deleteFcPort.bind(this)"
-            [getUsedPhysicalPorts]="getUsedPhysicalPortsExcludingFn()"
+            [getUsedPhysicalPorts]="getUsedPhysicalPortsFn()"
             [availablePorts]="availableFcPorts()"
           ></ix-protocol-options-wizard-step>
 

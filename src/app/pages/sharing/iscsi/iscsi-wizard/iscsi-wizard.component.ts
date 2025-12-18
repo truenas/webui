@@ -29,6 +29,7 @@ import {
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { createFormArraySnapshot } from 'app/helpers/form-array-snapshot.helper';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import {
   IscsiExtent,
@@ -106,7 +107,6 @@ export class IscsiWizardComponent implements OnInit {
   namesInUse = signal<string[]>([]);
   fcHosts = signal<{ id: number; alias: string }[]>([]);
   availableFcPorts = signal<string[]>([]);
-  fcPortsSnapshot = signal<{ port: string | null; host_id: number | null }[]>([]);
 
   createdZvol: Dataset | undefined;
   createdExtent: IscsiExtent | undefined;
@@ -153,6 +153,12 @@ export class IscsiWizardComponent implements OnInit {
       ),
     ],
   });
+
+  // Reactive snapshot of FC ports form array for use in computed signals
+  protected fcPortsSnapshot = createFormArraySnapshot<{ port: string | null; host_id: number | null }>(
+    this.form.controls.options.controls.fcPorts,
+    this.destroyRef,
+  );
 
   protected readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,
@@ -305,35 +311,23 @@ export class IscsiWizardComponent implements OnInit {
     return this.form.controls.options.controls.fcPorts.valid && this.validateFcPorts().length === 0;
   }
 
-  protected getUsedPhysicalPortsExcludingFn = computed(() => {
+  // Array of used physical ports for each index (excluding that index)
+  protected usedPhysicalPortsByIndex = computed(() => {
     const ports = this.fcPortsSnapshot();
     const hosts = this.fcHosts();
 
-    // Create a map for each index
-    const result = new Map<number, string[]>();
-
-    for (let excludeIndex = 0; excludeIndex < ports.length; excludeIndex++) {
-      const filtered = ports
-        .filter((_, index) => index !== excludeIndex)
-        .map((portForm) => this.fcService.getPhysicalPort(portForm, hosts))
-        .filter((port): port is string => port !== null);
-      result.set(excludeIndex, filtered);
-    }
-
-    return (index: number) => result.get(index) || [];
+    return ports.map((_item, currentIndex) => ports
+      .filter((_port, idx) => idx !== currentIndex)
+      .map((portForm) => this.fcService.getPhysicalPort(portForm, hosts))
+      .filter((port): port is string => port !== null));
   });
 
+  // Function wrapper for child components that expect function interface
+  protected getUsedPhysicalPortsFn = (): ((index: number) => string[]) => {
+    return (index: number) => this.usedPhysicalPortsByIndex()[index] || [];
+  };
+
   ngOnInit(): void {
-    // Track form changes to update signal (prevents infinite change detection)
-    this.form.controls.options.controls.fcPorts.valueChanges.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.fcPortsSnapshot.set(this.form.controls.options.controls.fcPorts.getRawValue());
-    });
-
-    // Initialize snapshot
-    this.fcPortsSnapshot.set(this.form.controls.options.controls.fcPorts.getRawValue());
-
     this.form.controls.extent.controls.path.disable();
     this.form.controls.extent.controls.filesize.disable();
     this.form.controls.extent.controls.dataset.disable();

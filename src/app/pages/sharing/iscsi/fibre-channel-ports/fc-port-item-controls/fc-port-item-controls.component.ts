@@ -2,13 +2,14 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { configurePortControlsForMode } from 'app/pages/sharing/iscsi/fibre-channel-ports/helpers/port-mode-control.helper';
 
 @Component({
   selector: 'ix-fc-port-item-controls',
@@ -90,29 +91,11 @@ export class FcPortItemControlsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Handle mode switching
+    // Handle mode switching with helper
     this.modeControl.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((mode) => {
-      if (mode === 'new') {
-        // Creating new virtual port
-        this.form().controls.port.clearValidators();
-        this.form().controls.port.disable();
-        this.form().controls.port.setValue(null);
-
-        this.form().controls.host_id.enable();
-        this.form().controls.host_id.setValidators([Validators.required]);
-      } else {
-        // Using existing port
-        this.form().controls.host_id.clearValidators();
-        this.form().controls.host_id.disable();
-        this.form().controls.host_id.setValue(null);
-
-        this.form().controls.port.enable();
-        this.form().controls.port.setValidators([Validators.required]);
-      }
-      this.form().controls.port.updateValueAndValidity();
-      this.form().controls.host_id.updateValueAndValidity();
+      configurePortControlsForMode(mode, this.form().controls);
     });
   }
 }
