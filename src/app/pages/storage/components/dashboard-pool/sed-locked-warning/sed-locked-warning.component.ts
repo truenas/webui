@@ -50,8 +50,10 @@ export class SedLockedWarningComponent {
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe(() => {
-        this.importSuccess.emit();
+      .subscribe((job) => {
+        if (job) {
+          this.importSuccess.emit();
+        }
       });
   }
 }

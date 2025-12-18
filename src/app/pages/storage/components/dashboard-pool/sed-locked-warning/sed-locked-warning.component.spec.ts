@@ -81,4 +81,17 @@ describe('SedLockedWarningComponent', () => {
 
     expect(importSuccessSpy).not.toHaveBeenCalled();
   });
+
+  it('does not emit importSuccess when dialog is cancelled', async () => {
+    const importSuccessSpy = jest.spyOn(spectator.component.importSuccess, 'emit');
+    const dialogService = spectator.inject(DialogService);
+    jest.spyOn(dialogService, 'jobDialog').mockReturnValue({
+      afterClosed: () => of(null),
+    } as unknown as ReturnType<DialogService['jobDialog']>);
+
+    const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import Again' }));
+    await importButton.click();
+
+    expect(importSuccessSpy).not.toHaveBeenCalled();
+  });
 });
