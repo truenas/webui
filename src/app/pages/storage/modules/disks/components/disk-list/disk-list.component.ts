@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, forkJoin, map, Observable, take,
+  filter, merge, map, Observable, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -54,6 +54,13 @@ import { LicenseService } from 'app/services/license.service';
 interface DiskUi extends Disk {
   selected?: boolean;
 }
+
+/**
+ * helper type used for building the `request$` observable to hand the data provider.
+ * follows the standard discriminated union pattern so we can key on the `kind` value to
+ * see which API method we just got a response from.
+ */
+type DiskResponse = { value: DetailsDisk[]; kind: 'details' } | { value: Disk[]; kind: 'query' };
 
 @Component({
   selector: 'ix-disk-list',
@@ -253,25 +260,53 @@ export class DiskListComponent implements OnInit {
         },
       };
 
-      const request$ = forkJoin([
+      // we need data from both of these calls to properly show everything
+      // but `disk.details` takes *significantly* longer than `disk.query` to execute.
+      // so we were getting long delays (5-10 seconds) between editing a drive and seeing the changes
+      // show up the next time you opened the menu.
+      //
+      // so, we parallelize the computation with `merge` and key on the kind of response to know what to set.
+      const request$ = merge(
+        // first, transform the data
         this.api.call('disk.details').pipe(
-          map((diskDetails) => [
-            ...diskDetails.unused,
-            ...diskDetails.used.filter((disk) => disk.exported_zpool),
-          ]),
+          map((diskDetails) => ({
+            value: [
+              ...diskDetails.unused,
+              ...diskDetails.used.filter((disk) => disk.exported_zpool),
+            ],
+            kind: 'details',
+          })),
         ),
-        this.api.call('disk.query', [[], extraOptions]),
-      ]).pipe(
-        map(([unusedDisks, disks]) => {
-          this.unusedDisks = unusedDisks;
-          this.disks = disks.map((disk) => ({
-            ...disk,
-            pool: this.getPoolColumn(disk),
-            selected: false,
-          }));
+        this.api.call('disk.query', [[], extraOptions]).pipe(
+          map((value) => ({
+            value,
+            kind: 'query',
+          })),
+        ),
+      ).pipe(
+        map((diskResponse: DiskResponse) => {
+          // response from `disk.details` - grab unused disks to show
+          if (diskResponse.kind === 'details') {
+            const unusedDisks = diskResponse.value;
+
+            this.unusedDisks = unusedDisks;
+          } else {
+            // response from `disk.query` - proess and show used disks
+            const disks: Disk[] = diskResponse.value;
+
+            this.disks = disks.map((disk) => ({
+              ...disk,
+              pool: this.getPoolColumn(disk),
+              selected: false,
+            }));
+          }
+
+          // AsyncDataProvider expects us to return a value, and it makes the most sense
+          // to give it `disks` instead of `unusedDisks`.
           return this.disks;
         }),
       );
+
       this.dataProvider = new AsyncDataProvider(request$);
       this.dataProvider.load();
     });
@@ -290,7 +325,9 @@ export class DiskListComponent implements OnInit {
     slideInRef$.pipe(
       filter((response) => !!response.response),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.dataProvider.load());
+    ).subscribe(() => {
+      this.dataProvider.load();
+    });
   }
 
   protected wipe(disk: Disk): void {
