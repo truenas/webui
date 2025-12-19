@@ -170,4 +170,36 @@ describe('WidgetResourcesService - realtimeUpdates$ subscription behavior', () =
     // Teardown SHOULD have been called after waiting past 2 seconds
     expect(teardownCount).toBe(1);
   }));
+
+  it('should handle rapid subscribe/unsubscribe cycles during widget initialization', fakeAsync(() => {
+    const spectator = createService();
+
+    // Simulate the race condition: widgets subscribe, then briefly unsubscribe
+    // during Angular change detection, then resubscribe
+    const sub1 = spectator.service.realtimeUpdates$.subscribe();
+    tick(50);
+
+    // Widget temporarily destroyed during @if evaluation or async pipe setup
+    sub1.unsubscribe();
+    tick(100); // Brief gap with zero subscribers
+
+    // Widget re-renders and subscribes again
+    const sub2 = spectator.service.realtimeUpdates$.subscribe();
+    tick(50);
+
+    // Another widget joins
+    const sub3 = spectator.service.realtimeUpdates$.subscribe();
+    tick(100);
+
+    // All these rapid changes should NOT have caused teardown
+    expect(teardownCount).toBe(0);
+
+    // Now simulate leaving the dashboard
+    sub2.unsubscribe();
+    sub3.unsubscribe();
+    tick(2100);
+
+    // After grace period, teardown should happen
+    expect(teardownCount).toBe(1);
+  }));
 });
