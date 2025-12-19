@@ -248,5 +248,28 @@ describe('IdmapConfigComponent', () => {
 
       expect(emittedValues[0]).toBe(false);
     });
+
+    it('should initialize sssd_compat from API values when RID backend is used', async () => {
+      const ridConfig: PrimaryDomainIdmap = {
+        builtin: {
+          name: 'builtin_test',
+          range_low: 90000001,
+          range_high: 100000000,
+        },
+        idmap_domain: {
+          name: 'AD03',
+          range_low: 100000001,
+          range_high: 200000000,
+          idmap_backend: IdmapBackend.Rid,
+          sssd_compat: true,
+        },
+      };
+
+      spectator.setInput('idmap', ridConfig);
+      spectator.component.ngOnInit();
+
+      const sssdCompatCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'SSSD Compat' }));
+      expect(await sssdCompatCheckbox.getValue()).toBe(true);
+    });
   });
 });
