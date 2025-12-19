@@ -5,6 +5,7 @@ import {
   SmartAlertCategory,
   SmartAlertConfig,
   SmartAlertEnhancement,
+  createFragmentExtractor,
 } from 'app/interfaces/smart-alert.interface';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 
@@ -63,6 +64,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-cog'),
           route: ['/system', 'general'],
+          fragment: 'support',
           primary: true,
         },
         {
@@ -412,6 +414,11 @@ export const smartAlertRegistry: SmartAlertConfig = {
           externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/truecloudtasks/',
         },
       ],
+      extractFragment: createFragmentExtractor(
+        'cloud-backup',
+        /Cloud\s+Backup(?:\s+Task)?\s+"([^"]+)"/i,
+        'cloud-backup-tasks',
+      ),
     },
 
     CloudSyncTaskFailed: {
@@ -427,6 +434,10 @@ export const smartAlertRegistry: SmartAlertConfig = {
           primary: true,
         },
       ],
+      extractFragment: createFragmentExtractor(
+        'cloudsync-task',
+        /Cloud\s+Sync(?:\s+Task)?\s+"([^"]+)"/i,
+      ),
     },
 
     ReplicationFailed: {
@@ -442,6 +453,12 @@ export const smartAlertRegistry: SmartAlertConfig = {
           primary: true,
         },
       ],
+      extractFragment: createFragmentExtractor(
+        'replication-task',
+        /Replication\s+"([^"]+)"/i,
+        undefined,
+        (value) => value.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase(),
+      ),
     },
 
     RsyncFailed: {
@@ -457,6 +474,11 @@ export const smartAlertRegistry: SmartAlertConfig = {
           primary: true,
         },
       ],
+      extractFragment: createFragmentExtractor(
+        'rsync-task',
+        /Rsync(?:\s+task)?\s+"([^"]+)"/i,
+        'rsync-tasks',
+      ),
     },
 
     SnapshotFailed: {
@@ -472,6 +494,11 @@ export const smartAlertRegistry: SmartAlertConfig = {
           primary: true,
         },
       ],
+      extractFragment: createFragmentExtractor(
+        'snapshot-task',
+        /(?:dataset|Periodic snapshot task)\s+"([^"]+)"/i,
+        'snapshot-tasks',
+      ),
     },
 
     ScrubPaused: {
