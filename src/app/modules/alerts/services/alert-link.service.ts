@@ -32,7 +32,7 @@ export class AlertLinkService {
     // Special handling for ZpoolCapacity alerts - check if it's for boot pool
     if (this.isZpoolCapacityAlert(alert.klass) && isBootPoolAlert(alert.args)) {
       return {
-        label: this.translate.instant('Manage boot pool'),
+        label: this.translate.instant('Manage Boot Environments'),
         route: bootListElements.anchorRouterLink,
       };
     }

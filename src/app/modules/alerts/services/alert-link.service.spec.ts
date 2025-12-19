@@ -40,7 +40,7 @@ describe('AlertLinkService', () => {
 
       const link = spectator.service.getLinkForAlert(alert);
       expect(link).toMatchObject({
-        label: 'Manage boot pool',
+        label: 'Manage Boot Environments',
         route: ['/system', 'boot'],
       });
     });
@@ -53,7 +53,7 @@ describe('AlertLinkService', () => {
 
       const link = spectator.service.getLinkForAlert(alert);
       expect(link).toMatchObject({
-        label: 'Manage boot pool',
+        label: 'Manage Boot Environments',
         route: ['/system', 'boot'],
       });
     });
