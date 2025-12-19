@@ -3,7 +3,7 @@
   [ixUiSearch]="searchableElements.elements.support"
 >
   <mat-toolbar-row class="title-bar">
-    <h3>{{ 'Support' | translate }}</h3>
+    <h3>{{ "Support" | translate }}</h3>
   </mat-toolbar-row>
 
   <mat-card-content>
@@ -55,17 +55,16 @@
                 ixTest="get-support"
                 [matMenuTriggerFor]="menu"
               >
-                <span>{{ 'Get Support' | translate }}</span>
+                <span>{{ "Get Support" | translate }}</span>
                 <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
               </button>
               <mat-menu #menu="matMenu" overlapTrigger="false">
-                <button
-                  mat-menu-item
-                  ixTest="file-ticket"
-                  (click)="feedbackDialog()"
+                <a
+                  href="https://github.com/HarborNAS/community/discussions/new?category=bug"
+                  target="_blank"
                 >
                   <span>{{ ticketText | translate }}</span>
-                </button>
+                </a>
                 <button
                   *ixRequiresRoles="[Role.SupportWrite]"
                   id="proactiveSupport"
@@ -73,8 +72,16 @@
                   ixTest="proactive-support"
                   [disabled]="!isProactiveSupportAvailable()"
                   [attr.aria-disabled]="!isProactiveSupportAvailable()"
-                  [matTooltip]="!isProactiveSupportAvailable() ? ('Requires Silver or Gold support contract' | translate) : ''"
-                  [attr.aria-label]="!isProactiveSupportAvailable() ? ('Requires Silver or Gold support contract' | translate) : ''"
+                  [matTooltip]="
+                    !isProactiveSupportAvailable()
+                      ? ('Requires Silver or Gold support contract' | translate)
+                      : ''
+                  "
+                  [attr.aria-label]="
+                    !isProactiveSupportAvailable()
+                      ? ('Requires Silver or Gold support contract' | translate)
+                      : ''
+                  "
                   (click)="openProactive()"
                 >
                   <span>{{ proactiveText | translate }}</span>
