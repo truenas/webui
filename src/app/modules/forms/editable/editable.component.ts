@@ -5,10 +5,10 @@ import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { combineLatest, fromEvent, Subject, Subscription, timer } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, startWith, takeUntil } from 'rxjs/operators';
-import { focusableElements } from 'app/directives/autofocus/focusable-elements.const';
 import { ValidationErrorCommunicationService } from 'app/modules/forms/validation-error-communication.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FocusService } from 'app/services/focus.service';
 
 /**
  * Editable component that allows inline editing of a value.
@@ -45,6 +45,7 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   private translate = inject(TranslateService);
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private document = inject(DOCUMENT);
+  private focusService = inject(FocusService);
   private injector = inject(Injector);
   private validationErrorService = inject(ValidationErrorCommunicationService);
   private destroy$ = new Subject<void>();
@@ -64,6 +65,11 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
    * Readonly just shows value as text.
    */
   readonly readonly = input(false);
+
+  /**
+   * Auto-focus the first focusable element when opened. Defaults to true.
+   */
+  readonly autoFocus = input(true);
 
   readonly closed = output();
 
@@ -150,7 +156,9 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
     this.addKeydownListener();
 
     afterNextRender(() => {
-      this.elementRef.nativeElement.querySelector<HTMLElement>(focusableElements)?.focus();
+      if (this.autoFocus()) {
+        this.focusService.focusFirstFocusableElement(this.elementRef.nativeElement);
+      }
       const editSlot = this.elementRef.nativeElement.querySelector<HTMLElement>('.edit-slot');
       if (editSlot) {
         editSlot.scrollIntoView({
