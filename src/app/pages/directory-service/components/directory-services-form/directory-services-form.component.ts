@@ -82,6 +82,7 @@ export class DirectoryServicesFormComponent implements OnInit {
 
   protected readonly previousConfig = signal<DirectoryServicesConfig | null>(null);
   protected readonly isLoading = signal(false);
+  private readonly mainFormValid = signal(false);
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly helptext = helptextDirectoryServices;
 
@@ -91,14 +92,24 @@ export class DirectoryServicesFormComponent implements OnInit {
   protected readonly DirectoryServiceType = DirectoryServiceType;
 
   protected readonly isFormValid = computed(() => {
-    return this.validationService.calculateFormValidity(
-      this.form,
-      this.form.controls.service_type.value,
-    );
+    const mainFormValid = this.mainFormValid();
+    const validationState = this.validationService.validationState();
+    const serviceType = this.form.controls.service_type.value;
+
+    let configValid = false;
+    if (serviceType === DirectoryServiceType.ActiveDirectory) {
+      configValid = validationState.isActiveDirectoryValid;
+    } else if (serviceType === DirectoryServiceType.Ldap) {
+      configValid = validationState.isLdapValid;
+    } else if (serviceType === DirectoryServiceType.Ipa) {
+      configValid = validationState.isIpaValid;
+    }
+
+    return configValid && validationState.isCredentialValid && mainFormValid;
   });
 
   private updateFormValidity(): void {
-    // Validation is now computed automatically via the validation service
+    this.mainFormValid.set(this.form.valid);
     this.cdr.markForCheck();
   }
 
