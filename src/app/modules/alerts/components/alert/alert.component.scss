@@ -1,10 +1,11 @@
 @import 'mixins/text';
 
 :host {
-  align-items: center;
+  align-items: flex-start;
   display: flex;
   flex-direction: row;
-  padding: 10px 12px;
+  padding: 8px 32px 8px 12px;
+  position: relative;
   word-break: break-word;
 
   &.dismissed {
@@ -25,7 +26,12 @@
 .alert-icon {
   cursor: default;
   flex: 0 0 auto;
-  padding-right: 12px;
+  padding-right: 4px;
+
+  ix-icon {
+    height: 18px;
+    width: 18px;
+  }
 
   &.warn {
     color: var(--orange);
@@ -133,7 +139,7 @@
 
 .context-help {
   background: var(--alt-bg2);
-  border-radius: 4px;
+  border-radius: 0;
   margin-bottom: 6px;
   margin-top: 4px;
   padding: 0;
@@ -153,7 +159,8 @@
     width: 100%;
 
     ix-icon {
-      font-size: 14px;
+      height: 14px;
+      width: 14px;
     }
 
     &:hover {
@@ -179,7 +186,8 @@
       gap: 4px;
 
       ix-icon {
-        font-size: 12px;
+        height: 12px;
+        width: 12px;
       }
     }
   }
@@ -196,7 +204,7 @@
     align-items: center;
     background: var(--alt-bg1);
     border: 1px solid var(--lines);
-    border-radius: 4px;
+    border-radius: 0;
     color: var(--fg1);
     cursor: pointer;
     display: flex;
@@ -212,6 +220,7 @@
     height: max-content;
 
     ix-icon {
+      height: 18px;
       width: 18px;
       margin-right: 5px;
     }
@@ -237,4 +246,29 @@
 
 .alert-body {
   width: 100%;
+}
+
+.dismiss-button {
+  color: var(--fg2);
+  opacity: 0.5;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+  transition: opacity 0.2s ease, color 0.2s ease;
+
+  ix-icon {
+    height: 18px;
+    width: 18px;
+  }
+
+  &:hover {
+    color: var(--fg1);
+    opacity: 1;
+  }
+
+  &:focus-visible {
+    opacity: 1;
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
 }

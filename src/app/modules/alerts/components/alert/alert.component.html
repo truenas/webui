@@ -123,3 +123,17 @@
     }
   </div>
 </div>
+
+@if (!alert().dismissed && showActions()) {
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-icon-button
+    class="dismiss-button"
+    [ixTest]="[alert().key, 'dismiss-icon']"
+    [attr.aria-label]="'Dismiss alert' | translate"
+    [matTooltip]="'Dismiss' | translate"
+    (click)="onDismiss()"
+  >
+    <ix-icon [name]="closeIcon"></ix-icon>
+  </button>
+}

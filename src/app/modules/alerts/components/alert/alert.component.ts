@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, HostBinding, input, OnChanges, signal, ViewChild, inject } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -21,11 +21,12 @@ import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 const alertIcons = {
-  error: iconMarker('error'),
-  warning: iconMarker('error'),
-  info: iconMarker('info'),
+  error: iconMarker('mdi-alert-circle'),
+  warning: iconMarker('mdi-alert'),
+  info: iconMarker('mdi-information'),
   notificationsActive: iconMarker('notifications_active'),
   checkCircle: iconMarker('check_circle'),
+  close: iconMarker('clear'),
 };
 
 enum AlertLevelColor {
@@ -45,6 +46,7 @@ enum AlertLevelColor {
     IxIconComponent,
     MatTooltip,
     MatButton,
+    MatIconButton,
     TestDirective,
     TranslateModule,
     FormatDateTimePipe,
@@ -69,6 +71,7 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   protected showContextHelp = signal<boolean>(false);
 
   protected readonly requiredRoles = [Role.AlertListWrite];
+  protected readonly closeIcon = alertIcons.close;
 
   alertLevelColor: AlertLevelColor | undefined;
   icon: string;

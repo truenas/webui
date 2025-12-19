@@ -13,10 +13,10 @@
 }
 
 .page-alert {
-  align-items: center;
+  align-items: flex-start;
   background: var(--bg2);
   border-left: 4px solid;
-  border-radius: 4px;
+  border-radius: 0;
   display: flex;
   gap: 10px;
   padding: 10px 36px 10px 12px;
@@ -59,8 +59,9 @@
 
 .alert-icon {
   flex-shrink: 0;
-  font-size: 20px;
-  margin-top: 2px;
+  height: 20px;
+  width: 20px;
+  margin-top: 0;
 }
 
 .alert-content {
@@ -122,7 +123,7 @@
   align-items: center;
   background: transparent;
   border: 1px solid var(--lines);
-  border-radius: 4px;
+  border-radius: 0;
   color: var(--fg1);
   cursor: pointer;
   display: flex;
@@ -138,7 +139,8 @@
   white-space: nowrap;
 
   ix-icon {
-    font-size: 16px;
+    height: 16px;
+    width: 16px;
   }
 
   &:hover {
@@ -179,11 +181,12 @@
   padding: 4px;
   position: absolute;
   right: 8px;
-  top: 8px;
+  top: 6px;
   transition: color 0.2s ease;
 
   ix-icon {
-    font-size: 18px;
+    height: 18px;
+    width: 18px;
   }
 
   &:hover {

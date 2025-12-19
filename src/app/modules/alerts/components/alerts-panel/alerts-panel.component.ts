@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
-import { MatRipple } from '@angular/material/core';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { NavigationExtras, Router } from '@angular/router';
@@ -28,6 +27,7 @@ import {
   selectDismissedAlerts,
   selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
@@ -50,7 +50,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     NavigateAndHighlightDirective,
     MatProgressBar,
     AlertComponent,
-    MatRipple,
     TranslateModule,
     AsyncPipe,
     RequiresRolesDirective,
@@ -73,8 +72,22 @@ export class AlertsPanelComponent implements OnInit {
   // Group by category toggle
   protected groupByCategory = signal(true);
 
+  // Icon for grouping toggle button
+  protected readonly groupingIcon = computed(() => {
+    return this.groupByCategory()
+      ? iconMarker('list')
+      : iconMarker('apps');
+  });
+
+  // Static icons
+  protected readonly settingsIcon = iconMarker('settings');
+  protected readonly clearIcon = iconMarker('clear');
+  protected readonly cancelIcon = iconMarker('cancel');
+  protected readonly infoIcon = iconMarker('info');
+  protected readonly bellIcon = iconMarker('notifications_none');
+
   // Severity filter
-  protected severityFilter = signal<'all' | 'critical' | 'warning' | 'info'>('all');
+  protected severityFilter = signal<'all' | 'critical' | 'warning' | 'info' | 'dismissed'>('all');
 
   // Convert observables to signals for enhanced alerts
   private unreadAlertsSignal = toSignal(this.store$.select(selectUnreadAlerts), { initialValue: [] });
@@ -100,14 +113,16 @@ export class AlertsPanelComponent implements OnInit {
     return this.filterBySeverity(alerts);
   });
 
-  // Counts for filter buttons (only unread/active alerts)
+  // Counts for filter buttons
   protected alertCounts = computed(() => {
-    const alerts = this.allEnhancedUnreadAlerts().filter((alert) => !alert.dismissed);
+    const unreadAlerts = this.allEnhancedUnreadAlerts();
+    const dismissedAlerts = this.allEnhancedDismissedAlerts();
     return {
-      all: alerts.length,
-      critical: alerts.filter((a) => this.isCritical(a.level)).length,
-      warning: alerts.filter((a) => this.isWarning(a.level)).length,
-      info: alerts.filter((a) => this.isInfo(a.level)).length,
+      all: unreadAlerts.length,
+      critical: unreadAlerts.filter((a) => this.isCritical(a.level)).length,
+      warning: unreadAlerts.filter((a) => this.isWarning(a.level)).length,
+      info: unreadAlerts.filter((a) => this.isInfo(a.level)).length,
+      dismissed: dismissedAlerts.length,
     };
   });
 
@@ -140,14 +155,14 @@ export class AlertsPanelComponent implements OnInit {
 
   // Category icons for display - matching side navigation icons
   protected readonly categoryIcons: Record<SmartAlertCategory, string> = {
-    [SmartAlertCategory.Storage]: 'dns',
-    [SmartAlertCategory.Network]: 'mdi-network',
-    [SmartAlertCategory.Services]: 'settings',
-    [SmartAlertCategory.System]: 'settings',
-    [SmartAlertCategory.Security]: 'vpn_key',
-    [SmartAlertCategory.Hardware]: 'mdi-server',
-    [SmartAlertCategory.Tasks]: 'security',
-    [SmartAlertCategory.Applications]: 'apps',
+    [SmartAlertCategory.Storage]: iconMarker('dns'),
+    [SmartAlertCategory.Network]: iconMarker('mdi-network'),
+    [SmartAlertCategory.Services]: iconMarker('settings'),
+    [SmartAlertCategory.System]: iconMarker('settings'),
+    [SmartAlertCategory.Security]: iconMarker('vpn_key'),
+    [SmartAlertCategory.Hardware]: iconMarker('mdi-server'),
+    [SmartAlertCategory.Tasks]: iconMarker('security'),
+    [SmartAlertCategory.Applications]: iconMarker('apps'),
   };
 
   ngOnInit(): void {
@@ -170,9 +185,23 @@ export class AlertsPanelComponent implements OnInit {
     this.groupByCategory.set(!this.groupByCategory());
   }
 
-  setSeverityFilter(filter: 'all' | 'critical' | 'warning' | 'info'): void {
+  setSeverityFilter(filter: 'all' | 'critical' | 'warning' | 'info' | 'dismissed'): void {
     this.severityFilter.set(filter);
   }
+
+  /**
+   * Check if we should show dismissed alerts section
+   */
+  protected shouldShowDismissed = computed(() => {
+    return this.severityFilter() === 'dismissed';
+  });
+
+  /**
+   * Check if we should show unread alerts section
+   */
+  protected shouldShowUnread = computed(() => {
+    return this.severityFilter() !== 'dismissed';
+  });
 
   private filterBySeverity(alerts: (Alert & EnhancedAlert)[]): (Alert & EnhancedAlert)[] {
     const filter = this.severityFilter();
@@ -242,7 +271,7 @@ export class AlertsPanelComponent implements OnInit {
 
   // Helper to get category icon
   getCategoryIcon(category: string): string {
-    return this.categoryIcons[category as SmartAlertCategory] || 'mdi-alert-circle';
+    return this.categoryIcons[category as SmartAlertCategory] || iconMarker('mdi-alert-circle');
   }
 
   // Helper to get category label

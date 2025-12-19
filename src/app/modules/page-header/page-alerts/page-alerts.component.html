@@ -11,9 +11,9 @@
             <div class="alert-message">
               @if (isLongMessage(alert.formatted)) {
                 @if (isExpanded(alert.uuid)) {
-                  {{ alert.formatted }}
+                  <span [innerHTML]="alert.formatted"></span>
                 } @else {
-                  {{ getTruncatedMessage(alert.formatted) }}
+                  <span [innerHTML]="getTruncatedMessage(alert.formatted)"></span>
                 }
                 <button
                   type="button"
@@ -23,7 +23,7 @@
                   {{ (isExpanded(alert.uuid) ? 'Show Less' : 'Show More') | translate }}
                 </button>
               } @else {
-                {{ alert.formatted }}
+                <span [innerHTML]="alert.formatted"></span>
               }
             </div>
             @if (alert.contextualHelp) {
@@ -63,9 +63,9 @@
             <div class="alert-message">
               @if (isLongMessage(alert.formatted)) {
                 @if (isExpanded(alert.uuid)) {
-                  {{ alert.formatted }}
+                  <span [innerHTML]="alert.formatted"></span>
                 } @else {
-                  {{ getTruncatedMessage(alert.formatted) }}
+                  <span [innerHTML]="getTruncatedMessage(alert.formatted)"></span>
                 }
                 <button
                   type="button"
@@ -75,7 +75,7 @@
                   {{ (isExpanded(alert.uuid) ? 'Show Less' : 'Show More') | translate }}
                 </button>
               } @else {
-                {{ alert.formatted }}
+                <span [innerHTML]="alert.formatted"></span>
               }
             </div>
             @if (alert.contextualHelp) {
@@ -115,9 +115,9 @@
             <div class="alert-message">
               @if (isLongMessage(alert.formatted)) {
                 @if (isExpanded(alert.uuid)) {
-                  {{ alert.formatted }}
+                  <span [innerHTML]="alert.formatted"></span>
                 } @else {
-                  {{ getTruncatedMessage(alert.formatted) }}
+                  <span [innerHTML]="getTruncatedMessage(alert.formatted)"></span>
                 }
                 <button
                   type="button"
@@ -127,7 +127,7 @@
                   {{ (isExpanded(alert.uuid) ? 'Show Less' : 'Show More') | translate }}
                 </button>
               } @else {
-                {{ alert.formatted }}
+                <span [innerHTML]="alert.formatted"></span>
               }
             </div>
             @if (alert.contextualHelp) {

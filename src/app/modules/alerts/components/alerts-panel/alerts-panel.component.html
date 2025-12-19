@@ -8,7 +8,7 @@
       [title]="(groupByCategory() ? 'Show All Alerts' : 'Group by Category') | translate"
       (click)="toggleGroupByCategory()"
     >
-      <ix-icon [name]="groupByCategory() ? 'lists' : 'apps'"></ix-icon>
+      <ix-icon [name]="groupingIcon()"></ix-icon>
     </button>
     <button
       mat-icon-button
@@ -16,7 +16,7 @@
       [title]="'Settings' | translate"
       [matMenuTriggerFor]="alertSettingsMenu"
     >
-      <ix-icon name="settings"></ix-icon>
+      <ix-icon [name]="settingsIcon"></ix-icon>
     </button>
     <mat-menu #alertSettingsMenu="matMenu">
       <a mat-menu-item ixTest="alert-settings" (click)="navigateTo(['/system', 'alert-settings'])">
@@ -39,7 +39,7 @@
       [title]="'Close panel' | translate"
       (click)="onPanelClosed()"
     >
-      <ix-icon name="clear"></ix-icon>
+      <ix-icon [name]="clearIcon"></ix-icon>
     </button>
   </div>
 </div>
@@ -82,6 +82,15 @@
     {{ 'Info' | translate }}
     <span class="count">{{ alertCounts().info }}</span>
   </button>
+  <button
+    class="filter-button"
+    [class.active]="severityFilter() === 'dismissed'"
+    [ixTest]="['filter', 'dismissed']"
+    (click)="setSeverityFilter('dismissed')"
+  >
+    {{ 'Dismissed' | translate }}
+    <span class="count">{{ alertCounts().dismissed }}</span>
+  </button>
 </div>
 
 @if (isLoading$ | async) {
@@ -96,7 +105,7 @@
   <!-- TODO: Consider extracting into its own component -->
   @if (error$ | async; as error) {
     <div class="error">
-      <ix-icon class="icon" color="accent" name="cancel"></ix-icon>
+      <ix-icon class="icon" color="accent" [name]="cancelIcon"></ix-icon>
       <h4 class="message">
         <span class="error-word">{{ 'Error:' | translate }}</span>
         {{ error }}
@@ -104,12 +113,23 @@
     </div>
   }
 
-  @if (!enhancedUnreadAlerts()?.length) {
+  @if (shouldShowUnread() && !enhancedUnreadAlerts()?.length) {
     <div class="no-alerts">
-      <ix-icon class="icon" name="info"></ix-icon>
-      <h4 class="message">{{ 'There are no alerts.' | translate }}</h4>
+      <ix-icon class="icon" [name]="bellIcon"></ix-icon>
+      <h3 class="title">{{ 'No alerts' | translate }}</h3>
+      <p class="subtitle">{{ 'Your system is running smoothly' | translate }}</p>
     </div>
-  } @else {
+  }
+
+  @if (shouldShowDismissed() && !enhancedDismissedAlerts()?.length) {
+    <div class="no-alerts">
+      <ix-icon class="icon" [name]="bellIcon"></ix-icon>
+      <h3 class="title">{{ 'No dismissed alerts' | translate }}</h3>
+      <p class="subtitle">{{ 'All alerts are active' | translate }}</p>
+    </div>
+  }
+
+  @if (shouldShowUnread() && enhancedUnreadAlerts()?.length) {
     @if (groupByCategory()) {
       <!-- Grouped by category view -->
       @for (entry of getCategoryEntries(groupedUnreadAlerts()); track entry[0]) {
@@ -150,7 +170,6 @@
     }
     <button
       *ixRequiresRoles="requiredRoles"
-      matRipple
       class="button-row"
       ixTest="dismiss-all-alerts"
       (click)="onDismissAll()"
@@ -159,25 +178,48 @@
     </button>
   }
 
-  @if (enhancedDismissedAlerts()?.length) {
-    <div class="dismissed-section-header">
-      <h4>{{ 'Dismissed Alerts' | translate }}</h4>
-    </div>
-    <div class="alert-list dismissed-alerts">
-      @for (alert of enhancedDismissedAlerts(); track alert.id; let last = $last) {
-        <div
-          class="alert"
-          role="listitem"
-          [class.alert-last]="last"
-        >
-          <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+  @if (shouldShowDismissed() && enhancedDismissedAlerts()?.length) {
+    @if (groupByCategory()) {
+      <!-- Grouped by category view for dismissed alerts -->
+      @for (entry of getCategoryEntries(groupedDismissedAlerts()); track entry[0]) {
+        @let category = entry[0];
+        @let alerts = entry[1];
+        <div class="category-section">
+          <div class="category-header">
+            <ix-icon [name]="getCategoryIcon(category)"></ix-icon>
+            <h4>{{ getCategoryLabel(category) | translate }}</h4>
+            <span class="category-count">{{ alerts.length }}</span>
+          </div>
+          <div class="alert-list">
+            @for (alert of alerts; track alert.id; let last = $last) {
+              <div
+                class="alert"
+                role="listitem"
+                [class.alert-last]="last"
+              >
+                <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+              </div>
+            }
+          </div>
         </div>
       }
-    </div>
+    } @else {
+      <!-- Flat list view for dismissed alerts -->
+      <div class="alert-list dismissed-alerts">
+        @for (alert of enhancedDismissedAlerts(); track alert.id; let last = $last) {
+          <div
+            class="alert"
+            role="listitem"
+            [class.alert-last]="last"
+          >
+            <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+          </div>
+        }
+      </div>
+    }
     <button
       *ixRequiresRoles="requiredRoles"
       class="button-row"
-      matRipple
       ixTest="reopen-all-alerts"
       (click)="onReopenAll()"
     >
