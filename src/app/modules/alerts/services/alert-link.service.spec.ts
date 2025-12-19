@@ -31,17 +31,6 @@ describe('AlertLinkService', () => {
     });
   });
 
-  describe('openLink', () => {
-    it('navigates to an alert link by its class', () => {
-      spectator.service.openLink(AlertClassName.ApiFailedLogin);
-
-      expect(spectator.inject(NavigateAndHighlightService).navigateAndHighlight).toHaveBeenCalledWith(
-        ['/credentials', 'users', 'api-keys'],
-        undefined,
-      );
-    });
-  });
-
   describe('getLinkForAlert', () => {
     it('returns boot pool link for boot pool capacity alerts', () => {
       const alert = {

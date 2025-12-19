@@ -15,13 +15,6 @@ export class AlertLinkService {
   private navigateAndHighlight = inject(NavigateAndHighlightService);
   private translate = inject(TranslateService);
 
-  openLink(alertClass: AlertClassName): void {
-    const link = this.getLink(alertClass);
-    if (link) {
-      this.navigateAndHighlight.navigateAndHighlight(link.route, link.hash);
-    }
-  }
-
   getLink(alertClass: AlertClassName): AlertLink | null {
     return supportedLinks.find((supportedlLink) => {
       return supportedlLink.classes.includes(alertClass);

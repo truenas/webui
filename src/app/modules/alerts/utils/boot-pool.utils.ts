@@ -6,11 +6,11 @@ export interface ZpoolCapacityAlertArgs {
   capacity: number;
 }
 
-export function isBootPoolAlert(alertArgs: unknown): boolean {
+export function isBootPoolAlert(alertArgs: unknown): alertArgs is ZpoolCapacityAlertArgs {
   if (!alertArgs || typeof alertArgs !== 'object') {
     return false;
   }
 
-  const args = alertArgs as ZpoolCapacityAlertArgs;
-  return bootPoolNames.includes(args.volume as typeof bootPoolNames[number]);
+  const args = alertArgs as Record<string, unknown>;
+  return typeof args.volume === 'string' && bootPoolNames.includes(args.volume as typeof bootPoolNames[number]);
 }
