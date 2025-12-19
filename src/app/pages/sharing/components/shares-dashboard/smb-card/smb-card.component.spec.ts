@@ -109,6 +109,14 @@ describe('SmbCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
+
+    const router = spectator.inject(Router);
+    // override the URL to what it would normally be so we can verify that
+    // the card supplies the router's value to the store.
+    Object.defineProperty(router, 'url', {
+      value: '/sharing',
+      writable: false,
+    });
   });
 
   it('should show table rows', async () => {
@@ -175,7 +183,7 @@ describe('SmbCardComponent', () => {
 
     expect(router.navigate).toHaveBeenCalledWith(
       ['/', 'datasets', 'acl', 'edit'],
-      { queryParams: { path: '/mnt/APPS/smb1' } },
+      { queryParams: { path: '/mnt/APPS/smb1', returnUrl: '/sharing' } },
     );
   });
 });

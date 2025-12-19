@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { Observable, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -229,5 +230,59 @@ describe('DatasetAclEditorStore', () => {
       );
     });
   });
-});
 
+  describe('returnUrl navigation', () => {
+    let router: Router;
+
+    beforeEach(async () => {
+      router = spectator.inject(Router);
+      jest.spyOn(router, 'navigate').mockImplementation();
+
+      store.loadAcl('/mnt/pool/dataset');
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+    });
+
+    it('navigates to returnUrl when set in state after save', async () => {
+      store.setState((state) => ({ ...state, returnUrl: '/sharing' }));
+
+      const saveParams = {
+        recursive: true,
+        traverse: true,
+        owner: 'someowner',
+        ownerGroup: 'somegroup',
+        applyOwner: true,
+        applyGroup: true,
+      };
+
+      store.saveAcl(saveParams);
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
+      expect(router.navigate).toHaveBeenCalledWith(['/sharing']);
+    });
+
+    it('navigates to default datasets path when returnUrl is null', async () => {
+      const saveParams = {
+        recursive: false,
+        traverse: false,
+        owner: 'root',
+        ownerGroup: 'wheel',
+        applyOwner: false,
+        applyGroup: false,
+      };
+
+      store.saveAcl(saveParams);
+
+      await new Promise((resolve) => {
+        setTimeout(resolve, 0);
+      });
+
+      expect(router.navigate).toHaveBeenCalledWith(['datasets', 'pool/dataset']);
+    });
+  });
+});
