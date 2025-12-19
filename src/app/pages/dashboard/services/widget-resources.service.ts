@@ -2,9 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { subHours } from 'date-fns';
 import {
-  Observable, Subject, catchError, debounceTime,
+  Observable, ReplaySubject, Subject, catchError, debounceTime,
   filter,
-  forkJoin, map, NEVER, of, repeat, shareReplay, startWith, throttleTime, timer,
+  forkJoin, map, NEVER, of, repeat, share, shareReplay, startWith, throttleTime, timer,
 } from 'rxjs';
 import { detectStaleData, StaleDataState } from 'app/helpers/operators/detect-stale-data.operator';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -43,7 +43,17 @@ export class WidgetResourcesService {
   private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
 
-  readonly realtimeUpdates$ = this.api.subscribe('reporting.realtime');
+  /**
+   * Realtime updates shared across all dashboard widgets.
+   * Uses resetOnRefCountZero to prevent premature unsubscription during
+   * widget initialization when components may briefly have zero subscribers.
+   */
+  readonly realtimeUpdates$ = this.api.subscribe('reporting.realtime').pipe(
+    share({
+      connector: () => new ReplaySubject(1),
+      resetOnRefCountZero: () => timer(2000),
+    }),
+  );
 
   readonly refreshInterval$ = timer(0, 5000).pipe(startWith(0));
   private readonly triggerRefreshDashboardSystemInfo$ = new Subject<void>();
@@ -87,7 +97,10 @@ export class WidgetResourcesService {
   // since pool.query doesn't emit events for scan updates, we need to subscribe to
   // the `pool.scan` endpoint to actually receive real-time scrub/resilver updates.
   readonly scans$ = this.api.subscribe('pool.scan').pipe(
-    shareReplay({ bufferSize: 1, refCount: true }),
+    share({
+      connector: () => new ReplaySubject(1),
+      resetOnRefCountZero: () => timer(2000),
+    }),
   );
 
   readonly updateAvailable$ = this.api.call('update.status').pipe(
