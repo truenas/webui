@@ -1,3 +1,4 @@
+import { fakeAsync, tick } from '@angular/core/testing';
 import {
   createServiceFactory,
   mockProvider,
@@ -5,12 +6,15 @@ import {
 } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
-import { firstValueFrom } from 'rxjs';
+import { finalize, firstValueFrom, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App } from 'app/interfaces/app.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { UpdateStatus } from 'app/interfaces/system-update.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -99,4 +103,71 @@ describe('WidgetResourcesService', () => {
       ).toEqual([interfaceEth0]);
     });
   });
+});
+
+describe('WidgetResourcesService - realtimeUpdates$ subscription behavior', () => {
+  let teardownCount: number;
+  let realtimeSubject$: Subject<ApiEvent<ReportingRealtimeUpdate>>;
+
+  const createService = createServiceFactory({
+    service: WidgetResourcesService,
+    providers: [
+      {
+        provide: ApiService,
+        useFactory: () => ({
+          subscribe: jest.fn(() => realtimeSubject$.pipe(
+            finalize(() => { teardownCount++; }),
+          )),
+          call: jest.fn(() => new Subject()),
+          callAndSubscribe: jest.fn(() => new Subject()),
+        }),
+      },
+      mockProvider(Store, { dispatch: jest.fn() }),
+      provideMockStore({
+        selectors: [{ selector: selectSystemInfo, value: {} as SystemInfo }],
+      }),
+    ],
+  });
+
+  beforeEach(() => {
+    teardownCount = 0;
+    realtimeSubject$ = new Subject();
+  });
+
+  it('should not unsubscribe during brief zero-refcount periods', fakeAsync(() => {
+    const spectator = createService();
+
+    // First subscriber
+    const sub1 = spectator.service.realtimeUpdates$.subscribe();
+    tick(100);
+
+    // Unsubscribe (refcount = 0)
+    sub1.unsubscribe();
+    tick(1000); // Within the 2-second window
+
+    // New subscriber before timer expires - should reuse existing subscription
+    const sub2 = spectator.service.realtimeUpdates$.subscribe();
+    tick(100);
+
+    // Teardown should NOT have been called because we resubscribed within 2 seconds
+    expect(teardownCount).toBe(0);
+
+    sub2.unsubscribe();
+    tick(2100); // Past the 2-second window, cleanup happens
+  }));
+
+  it('should unsubscribe after the resetOnRefCountZero delay expires', fakeAsync(() => {
+    const spectator = createService();
+
+    // First subscriber
+    const sub1 = spectator.service.realtimeUpdates$.subscribe();
+    tick(100);
+
+    // Unsubscribe and wait past the 2-second window
+    sub1.unsubscribe();
+    tick(2100);
+
+    // Teardown SHOULD have been called after waiting past 2 seconds
+    expect(teardownCount).toBe(1);
+  }));
 });
