@@ -231,7 +231,7 @@ describe('DatasetAclEditorComponent', () => {
 
     it('sets returnUrl from query params when provided', () => {
       const store = spectator.inject(DatasetAclEditorStore);
-      expect(store.state().returnUrl).toEqual(['/sharing']);
+      expect(store.state().returnUrl).toBe('/sharing');
     });
 
     it('navigates after stripping the ACL - with returnUrl', () => {

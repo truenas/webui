@@ -246,7 +246,7 @@ describe('DatasetAclEditorStore', () => {
     });
 
     it('navigates to returnUrl when set in state after save', async () => {
-      store.setState((state) => ({ ...state, returnUrl: ['/sharing'] }));
+      store.setState((state) => ({ ...state, returnUrl: '/sharing' }));
 
       const saveParams = {
         recursive: true,

@@ -252,7 +252,10 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       .pipe(
         this.errorHandler.withErrorHandler(),
         tap(() => {
-          const returnRoute = this.state().returnUrl ?? ['datasets', this.get()?.mountpoint?.replace(`${mntPath}/`, '')];
+          const returnUrl = this.state().returnUrl;
+          const returnRoute = returnUrl
+            ? [returnUrl]
+            : ['datasets', this.get()?.mountpoint?.replace(`${mntPath}/`, '')];
           this.router.navigate(returnRoute);
         }),
       );
