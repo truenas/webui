@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  AsyncValidatorFn, FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
+  FormControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -13,11 +13,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
+import { endWith, Observable, of } from 'rxjs';
 import {
-  endWith, forkJoin, Observable, of,
-} from 'rxjs';
-import {
-  catchError, debounceTime, filter, map, switchMap, take, tap,
+  debounceTime, filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
@@ -53,6 +51,7 @@ import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -120,6 +119,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private validatorsService = inject(IxValidatorsService);
   private store$ = inject<Store<ServicesState>>(Store);
   private smbValidationService = inject(SmbValidationService);
+  private existenceValidator = inject(UserGroupExistenceValidationService);
   slideInRef = inject<SlideInRef<{
     existingSmbShare?: SmbShare;
     defaultSmbShare?: SmbShare;
@@ -282,48 +282,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     };
   }
 
-  private groupsExistValidator(): AsyncValidatorFn {
-    return (control): Observable<ValidationErrors | null> => {
-      const groups = control.value as string[];
-
-      if (!groups || groups.length === 0) {
-        return of(null);
-      }
-
-      // Move debounce BEFORE the API calls to prevent firing them on every keystroke
-      return of(groups).pipe(
-        debounceTime(500),
-        switchMap((debouncedGroups) => {
-          const groupChecks = debouncedGroups.map((groupName: string) => {
-            return this.userService.getGroupByName(groupName).pipe(
-              map(() => ({ groupName, exists: true })),
-              catchError(() => of({ groupName, exists: false })),
-            );
-          });
-          return forkJoin(groupChecks);
-        }),
-        map((results) => {
-          const nonExistentGroups = results
-            .filter((result) => !result.exists)
-            .map((result) => result.groupName);
-
-          if (nonExistentGroups.length > 0) {
-            return {
-              groupsDoNotExist: {
-                message: this.translate.instant(
-                  'The following groups do not exist: {groups}',
-                  { groups: nonExistentGroups.join(', ') },
-                ),
-              },
-            };
-          }
-
-          return null;
-        }),
-      );
-    };
-  }
-
   protected form = this.formBuilder.group({
     // Common for all share purposes
     purpose: [SmbSharePurpose.DefaultShare as SmbSharePurpose | null],
@@ -439,10 +397,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       this.smbValidationService.validate(this.existingSmbShare?.name),
     ]);
     this.form.controls.audit.controls.watch_list.addAsyncValidators([
-      this.groupsExistValidator(),
+      this.existenceValidator.validateGroupsExist(),
     ]);
     this.form.controls.audit.controls.ignore_list.addAsyncValidators([
-      this.groupsExistValidator(),
+      this.existenceValidator.validateGroupsExist(),
     ]);
   }
 

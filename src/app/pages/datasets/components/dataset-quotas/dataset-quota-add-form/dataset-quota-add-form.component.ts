@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, signal, inject } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, Component, signal, inject,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -20,6 +22,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -47,16 +50,16 @@ import { UserService } from 'app/services/user.service';
     TestDirective,
   ],
 })
-export class DatasetQuotaAddFormComponent {
+export class DatasetQuotaAddFormComponent implements AfterViewInit {
   private authService = inject(AuthService);
   private formBuilder = inject(FormBuilder);
   private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   formatter = inject(IxFormatterService);
-  private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(FormErrorHandlerService);
   private userService = inject(UserService);
+  private existenceValidator = inject(UserGroupExistenceValidationService);
   slideInRef = inject<SlideInRef<{
     quotaType: DatasetQuotaType;
     datasetId: string;
@@ -146,6 +149,15 @@ export class DatasetQuotaAddFormComponent {
 
     this.quotaType = slideInRef.getData().quotaType;
     this.datasetId = slideInRef.getData().datasetId;
+  }
+
+  ngAfterViewInit(): void {
+    this.form.controls.users.addAsyncValidators([
+      this.existenceValidator.validateUsersExist(),
+    ]);
+    this.form.controls.groups.addAsyncValidators([
+      this.existenceValidator.validateGroupsExist(),
+    ]);
   }
 
   protected onSubmit(): void {

@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal, inject,
+} from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -20,6 +22,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -52,7 +55,7 @@ import { UserService } from 'app/services/user.service';
     TranslateModule,
   ],
 })
-export class ServiceSshComponent implements OnInit {
+export class ServiceSshComponent implements OnInit, AfterViewInit {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -60,6 +63,7 @@ export class ServiceSshComponent implements OnInit {
   private userService = inject(UserService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
+  private existenceValidator = inject(UserGroupExistenceValidationService);
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.SshWrite];
@@ -124,6 +128,12 @@ export class ServiceSshComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
       },
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.form.controls.password_login_groups.addAsyncValidators([
+      this.existenceValidator.validateGroupsExist(),
+    ]);
   }
 
   onAdvancedSettingsToggled(): void {

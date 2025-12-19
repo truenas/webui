@@ -116,6 +116,18 @@ describe('PrivilegeFormComponent', () => {
       }),
       mockProvider(UserService, {
         groupQueryDsCache: jest.fn(() => of([])),
+        getGroupByName: jest.fn((groupName: string) => {
+          // Return existing groups, error for non-existent ones
+          const existingGroup = testGroups.find((group) => group.group === groupName);
+          if (existingGroup) {
+            return of(existingGroup);
+          }
+          return of(null);
+        }),
+        getUserByName: jest.fn(() => {
+          // Mock user validation - all users are considered non-existent for testing
+          return of(null);
+        }),
       }),
       provideMockStore({
         selectors: [

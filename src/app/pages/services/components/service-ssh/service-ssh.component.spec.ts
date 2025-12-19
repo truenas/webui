@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
@@ -15,6 +16,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
+import { UserService } from 'app/services/user.service';
 
 const fakeGroupDataSource = [{
   id: 1,
@@ -67,6 +69,17 @@ describe('ServiceSshComponent', () => {
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),
+      mockProvider(UserService, {
+        groupQueryDsCache: jest.fn(() => of(fakeGroupDataSource)),
+        getGroupByName: jest.fn((groupName: string) => {
+          const existingGroup = fakeGroupDataSource.find((group) => group.group === groupName);
+          if (existingGroup) {
+            return of(existingGroup);
+          }
+          return of(null);
+        }),
+        getUserByName: jest.fn(() => of(null)),
+      }),
       mockAuth(),
     ],
   });

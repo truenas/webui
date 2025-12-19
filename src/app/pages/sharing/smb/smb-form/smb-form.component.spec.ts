@@ -166,6 +166,16 @@ describe('SmbFormComponent', () => {
       mockProvider(FormErrorHandlerService, {
         handleValidationErrors: jest.fn(),
       }),
+      mockProvider(UserService, {
+        groupQueryDsCache: jest.fn(() => of([{ group: 'test', gid: 1 }])),
+        getGroupByName: jest.fn((groupName: string) => {
+          if (groupName === 'test') {
+            return of({ group: 'test', gid: 1 });
+          }
+          return of(null);
+        }),
+        getUserByName: jest.fn(() => of(null)),
+      }),
     ],
   });
 
