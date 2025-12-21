@@ -83,7 +83,7 @@ export class UpdateComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly manualUpdateUrl = computed(() => {
     const versionRegex = new RegExp(/(\d+\.\d+)/);
-    const sysver = this.systemVersion();
+    const sysver = this.systemVersion() || '';
     const version = versionRegex.exec(sysver);
 
     if (sysver.includes('MASTER') || !version) {
