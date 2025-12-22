@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { Actions, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, forkJoin, Observable, of, from,
@@ -22,6 +23,8 @@ import { FailoverValidationService } from 'app/services/failover-validation.serv
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
+import { AppState } from 'app/store';
+import { failoverLicensedStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 import { loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 
 interface SigninState {
@@ -54,6 +57,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private activatedRoute = inject(ActivatedRoute);
   private failoverValidation = inject(FailoverValidationService);
   private window = inject<Window>(WINDOW);
+  private store$ = inject<Store<AppState>>(Store);
 
   loginBanner$ = this.select((state) => state.loginBanner);
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
@@ -246,6 +250,13 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   performFailoverChecksAndCompleteLogin(): Observable<LoginResult> {
     return this.failoverValidation.validateFailover().pipe(
+      tap((result) => {
+        // Dispatch HA license status synchronously before adminUiInitialized.
+        // NgRx reducers are synchronous, so the state is updated before completeLogin()
+        // dispatches adminUiInitialized, preventing ha-info.effects loadFailoverLicensedStatus
+        // from making a duplicate API call.
+        this.store$.dispatch(failoverLicensedStatusLoaded({ isHaLicensed: result.isHaLicensed }));
+      }),
       switchMap((result) => {
         if (result.success) {
           return this.completeLogin();

@@ -1,6 +1,7 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
+import { Store } from '@ngrx/store';
 import {
   BehaviorSubject, firstValueFrom, of, throwError,
 } from 'rxjs';
@@ -19,6 +20,7 @@ import { FailoverValidationService } from 'app/services/failover-validation.serv
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
+import { failoverLicensedStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
@@ -74,8 +76,9 @@ describe('SigninStore', () => {
       },
       mockProvider(ActivatedRoute, { snapshot: { queryParamMap: { get: jest.fn((): null => null) } } }),
       mockProvider(FailoverValidationService, {
-        validateFailover: jest.fn(() => of({ success: true })),
+        validateFailover: jest.fn(() => of({ success: true, isHaLicensed: false })),
       }),
+      mockProvider(Store),
       mockProvider(ErrorHandlerService),
       mockProvider(AuthService, {
         authToken$: of('EXISTING_TOKEN'),
@@ -259,7 +262,7 @@ describe('SigninStore', () => {
         value: of(mockLoggedInUser),
       });
       // Mock failover validation to succeed
-      jest.spyOn(spectator.inject(FailoverValidationService), 'validateFailover').mockReturnValue(of({ success: true }));
+      jest.spyOn(spectator.inject(FailoverValidationService), 'validateFailover').mockReturnValue(of({ success: true, isHaLicensed: false }));
       jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(true);
 
       spectator.service.init();
@@ -292,7 +295,7 @@ describe('SigninStore', () => {
         value: of(mockLoggedInUser),
       });
       // Mock failover validation to succeed
-      jest.spyOn(spectator.inject(FailoverValidationService), 'validateFailover').mockReturnValue(of({ success: true }));
+      jest.spyOn(spectator.inject(FailoverValidationService), 'validateFailover').mockReturnValue(of({ success: true, isHaLicensed: false }));
       jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(true);
 
       spectator.service.init();
@@ -323,7 +326,7 @@ describe('SigninStore', () => {
       });
 
       // Mock failover validation to succeed
-      jest.spyOn(spectator.inject(FailoverValidationService), 'validateFailover').mockReturnValue(of({ success: true }));
+      jest.spyOn(spectator.inject(FailoverValidationService), 'validateFailover').mockReturnValue(of({ success: true, isHaLicensed: false }));
 
       spectator.service.init();
 
@@ -354,7 +357,7 @@ describe('SigninStore', () => {
       });
 
       // Mock failover validation to succeed
-      jest.spyOn(spectator.inject(FailoverValidationService), 'validateFailover').mockReturnValue(of({ success: true }));
+      jest.spyOn(spectator.inject(FailoverValidationService), 'validateFailover').mockReturnValue(of({ success: true, isHaLicensed: false }));
 
       spectator.service.init();
 
@@ -463,7 +466,7 @@ describe('SigninStore', () => {
       jest.spyOn(authService, 'initializeSession').mockReturnValue(of(LoginResult.Success));
 
       // Call completeLogin directly (it's private, so we need to access it via performFailoverChecksAndCompleteLogin)
-      jest.spyOn(spectator.inject(FailoverValidationService), 'validateFailover').mockReturnValue(of({ success: true }));
+      jest.spyOn(spectator.inject(FailoverValidationService), 'validateFailover').mockReturnValue(of({ success: true, isHaLicensed: false }));
 
       const result = await firstValueFrom(spectator.service.performFailoverChecksAndCompleteLogin());
 
@@ -478,7 +481,7 @@ describe('SigninStore', () => {
     it('completes login when failover validation succeeds', async () => {
       const failoverValidation = spectator.inject(FailoverValidationService);
       // Mock failover validation to succeed
-      jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(of({ success: true }));
+      jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(of({ success: true, isHaLicensed: false }));
       jest.spyOn(authService, 'initializeSession').mockReturnValue(of(LoginResult.Success));
       // Mock the handleSuccessfulLogin effect
       jest.spyOn(spectator.service, 'handleSuccessfulLogin');
@@ -489,10 +492,36 @@ describe('SigninStore', () => {
       expect(authService.initializeSession).toHaveBeenCalled();
     });
 
+    it('dispatches failoverLicensedStatusLoaded with true when HA is licensed', async () => {
+      const failoverValidation = spectator.inject(FailoverValidationService);
+      const store$ = spectator.inject(Store);
+      const dispatchSpy = jest.spyOn(store$, 'dispatch');
+
+      jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(of({ success: true, isHaLicensed: true }));
+      jest.spyOn(authService, 'initializeSession').mockReturnValue(of(LoginResult.Success));
+
+      await firstValueFrom(spectator.service.performFailoverChecksAndCompleteLogin());
+
+      expect(dispatchSpy).toHaveBeenCalledWith(failoverLicensedStatusLoaded({ isHaLicensed: true }));
+    });
+
+    it('dispatches failoverLicensedStatusLoaded with false when HA is not licensed', async () => {
+      const failoverValidation = spectator.inject(FailoverValidationService);
+      const store$ = spectator.inject(Store);
+      const dispatchSpy = jest.spyOn(store$, 'dispatch');
+
+      jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(of({ success: true, isHaLicensed: false }));
+      jest.spyOn(authService, 'initializeSession').mockReturnValue(of(LoginResult.Success));
+
+      await firstValueFrom(spectator.service.performFailoverChecksAndCompleteLogin());
+
+      expect(dispatchSpy).toHaveBeenCalledWith(failoverLicensedStatusLoaded({ isHaLicensed: false }));
+    });
+
     it('returns NoAccess when failover validation fails', async () => {
       const failoverValidation = spectator.inject(FailoverValidationService);
       jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(
-        of({ success: false, error: 'Failover check failed' }),
+        of({ success: false, error: 'Failover check failed', isHaLicensed: true }),
       );
       jest.spyOn(spectator.service, 'setLoadingState');
       const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'error');
@@ -531,7 +560,7 @@ describe('SigninStore', () => {
         value: of(mockLoggedInUser),
       });
       // Mock failover validation to succeed
-      jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(of({ success: true }));
+      jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(of({ success: true, isHaLicensed: false }));
 
       spectator.service.handleSuccessfulLogin();
 
@@ -547,7 +576,7 @@ describe('SigninStore', () => {
     it('handles failover validation failure in handleSuccessfulLogin', async () => {
       const failoverValidation = spectator.inject(FailoverValidationService);
       jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(
-        of({ success: false, error: 'Failover check failed' }),
+        of({ success: false, error: 'Failover check failed', isHaLicensed: true }),
       );
       jest.spyOn(api, 'call').mockReturnValueOnce(of({ enabled: false }));
       jest.spyOn(spectator.service, 'setLoadingState');
@@ -583,7 +612,7 @@ describe('SigninStore', () => {
         value: of(mockLoggedInUser),
       });
       // Mock failover validation to succeed
-      const failoverSpy = jest.spyOn(spectator.inject(FailoverValidationService), 'validateFailover').mockReturnValue(of({ success: true }));
+      const failoverSpy = jest.spyOn(spectator.inject(FailoverValidationService), 'validateFailover').mockReturnValue(of({ success: true, isHaLicensed: false }));
       jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(true);
 
       spectator.service.init();
@@ -604,7 +633,7 @@ describe('SigninStore', () => {
       jest.spyOn(authService, 'setQueryToken');
       jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
       jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(
-        of({ success: false, error: 'Failover error' }),
+        of({ success: false, error: 'Failover error', isHaLicensed: true }),
       );
       jest.spyOn(api, 'call').mockReturnValueOnce(of({ enabled: false }));
 

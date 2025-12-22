@@ -50,7 +50,7 @@ describe('FailoverValidationService', () => {
       api.mockCall('failover.licensed', false);
 
       spectator.service.validateFailover().subscribe((result) => {
-        expect(result).toEqual({ success: true });
+        expect(result).toEqual({ success: true, isHaLicensed: false });
         expect(api.call).toHaveBeenCalledWith('failover.licensed');
         expect(api.call).not.toHaveBeenCalledWith('failover.status');
       });
@@ -62,7 +62,7 @@ describe('FailoverValidationService', () => {
       api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoPong]);
 
       spectator.service.validateFailover().subscribe((result) => {
-        expect(result).toEqual({ success: true });
+        expect(result).toEqual({ success: true, isHaLicensed: true });
         expect(api.call).toHaveBeenCalledWith('failover.licensed');
         expect(api.call).toHaveBeenCalledWith('failover.status');
         expect(api.call).toHaveBeenCalledWith('failover.disabled.reasons');
@@ -74,7 +74,7 @@ describe('FailoverValidationService', () => {
       api.mockCall('failover.status', FailoverStatus.Single);
 
       spectator.service.validateFailover().subscribe((result) => {
-        expect(result).toEqual({ success: true });
+        expect(result).toEqual({ success: true, isHaLicensed: true });
         expect(api.call).toHaveBeenCalledWith('failover.licensed');
         expect(api.call).toHaveBeenCalledWith('failover.status');
         expect(api.call).not.toHaveBeenCalledWith('failover.disabled.reasons');
@@ -90,6 +90,7 @@ describe('FailoverValidationService', () => {
           success: false,
           error: 'TrueNAS High Availability is in an inconsistent state. Please try again in a few minutes and contact the system administrator if the problem persists.',
           errorType: FailoverErrorType.FailoverFailed,
+          isHaLicensed: true,
         });
       });
     });
@@ -128,7 +129,7 @@ describe('FailoverValidationService', () => {
       jest.spyOn(api, 'subscribe').mockReturnValue(of(mockJobEvent));
 
       spectator.service.validateFailover().subscribe((result) => {
-        expect(result).toEqual({ success: true });
+        expect(result).toEqual({ success: true, isHaLicensed: true });
         expect(spectator.inject(LoaderService).open).toHaveBeenCalledWith(
           'Waiting for failover operation to complete...',
         );
@@ -181,6 +182,7 @@ describe('FailoverValidationService', () => {
         success: false,
         error: 'Failover operation timed out. This may indicate a problem with the failover process. Please contact the system administrator.',
         errorType: FailoverErrorType.Timeout,
+        isHaLicensed: true,
       });
       expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
     }));
