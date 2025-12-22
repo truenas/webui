@@ -193,7 +193,7 @@ export interface DatasetDetails {
   nvmet_shares?: { enabled: boolean; path: string }[];
   vms?: { name: string; path: string }[];
   apps?: { name: string; path: string }[];
-  webshares?: WebShareSummary[];
+  webshare_shares?: WebShareSummary[];
   children?: DatasetDetails[];
   volsize?: ZfsProperty<string, number>; // Present for type === DatasetType.Volume
   thick_provisioned?: boolean; // Present for type === DatasetType.Volume
