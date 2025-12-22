@@ -16,6 +16,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
 import { SmbConfigUpdate, smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
+import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -37,6 +38,7 @@ import { TruenasConnectService } from 'app/modules/truenas-connect/services/true
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 interface BindIp {
@@ -83,8 +85,11 @@ export class ServiceSmbComponent implements OnInit {
   slideInRef = inject<SlideInRef<undefined, boolean>>(SlideInRef);
 
   protected isFormLoading = signal(false);
+  protected hasIncompatibleShares = signal(false);
+  protected isSmb1Enabled = signal(false);
 
   protected isEnterprise = toSignal(this.store$.select(selectIsEnterprise), { initialValue: false });
+  protected isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed), { initialValue: false });
 
   protected isTruenasConnectConfigured = computed(() => {
     const config = this.truenasConnectService.config();
@@ -99,9 +104,16 @@ export class ServiceSmbComponent implements OnInit {
     return !this.isEnterprise() && !this.isTruenasConnectConfigured();
   });
 
+  protected isStatefulFailoverEnabled = computed(() => {
+    return this.isHaLicensed() && !this.hasIncompatibleShares() && !this.isSmb1Enabled();
+  });
+
   /**
    * Reactively enable/disable the Spotlight checkbox based on TrueNAS Connect configuration
    * and Enterprise status. On non-Enterprise systems, Spotlight requires TrueNAS Connect.
+   *
+   * Reactively enable/disable the Stateful Failover checkbox based on HA license,
+   * incompatible shares, and SMB1 status.
    */
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -114,6 +126,15 @@ export class ServiceSmbComponent implements OnInit {
         this.form.controls.spotlight_search.enable();
       } else {
         this.form.controls.spotlight_search.disable();
+      }
+    });
+
+    effect(() => {
+      const isEnabled = this.isStatefulFailoverEnabled();
+      if (isEnabled) {
+        this.form.controls.stateful_failover.enable();
+      } else {
+        this.form.controls.stateful_failover.disable();
       }
     });
   }
@@ -147,6 +168,7 @@ export class ServiceSmbComponent implements OnInit {
     multichannel: [false, []],
     encryption: [SmbEncryption.Default],
     spotlight_search: [false, []],
+    stateful_failover: [false, []],
   });
 
   protected readonly requiredRoles = [Role.SharingSmbWrite];
@@ -170,6 +192,7 @@ export class ServiceSmbComponent implements OnInit {
     aapl_extensions: helptextServiceSmb.aaplExtensionsTooltip,
     multichannel: helptextServiceSmb.multichannelTooltip,
     spotlight_search: helptextServiceSmb.spotlightSearchTooltip,
+    stateful_failover: helptextServiceSmb.statefulFailoverTooltip,
   };
 
   readonly unixCharsetOptions$ = this.api.call('smb.unixcharset_choices').pipe(choicesToOptions());
@@ -195,6 +218,18 @@ export class ServiceSmbComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading.set(true);
 
+    this.form.controls.enable_smb1.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.isSmb1Enabled.set(value));
+
+    this.api.call('sharing.smb.query').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (shares) => {
+        const incompatiblePurposes = [SmbSharePurpose.MultiProtocolShare, SmbSharePurpose.LegacyShare];
+        const hasIncompatible = shares.some((share) => incompatiblePurposes.includes(share.purpose));
+        this.hasIncompatibleShares.set(hasIncompatible);
+      },
+    });
+
     this.api.call('smb.config').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (config) => {
         const searchProtocolEnabled = config.search_protocols.includes(smbSearchSpotlight);
@@ -204,6 +239,7 @@ export class ServiceSmbComponent implements OnInit {
           spotlight_search: searchProtocolEnabled,
           bindip: config.bindip.map((ip) => ({ bindIp: ip })),
         });
+        this.isSmb1Enabled.set(config.enable_smb1);
         this.isFormLoading.set(false);
       },
       error: (error: unknown) => {
@@ -240,11 +276,11 @@ export class ServiceSmbComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-    const { spotlight_search: spotlightSearch, ...formValues } = this.form.value;
+    const { spotlight_search: spotlightSearch, ...formValues } = this.form.getRawValue();
     const values: SmbConfigUpdate = {
       ...formValues,
       search_protocols: spotlightSearch ? [smbSearchSpotlight] : [],
-      bindip: this.form.value.bindip.map((value) => value.bindIp),
+      bindip: this.form.getRawValue().bindip.map((value) => value.bindIp),
     };
 
     this.isFormLoading.set(true);
