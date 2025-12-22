@@ -95,7 +95,7 @@ export class UsageCardComponent {
     return (ancestor.webshare_shares || [])
       .filter((webshare) => currentDataset.mountpoint.startsWith(webshare.path))
       .map((webshare) => ({
-        name: webshare.name,
+        name: webshare.share_name,
         path: webshare.path,
         parentDataset: ancestor.name,
       }));
@@ -166,14 +166,14 @@ export class UsageCardComponent {
   });
 
   private getUniqueInheritedShareNames(): string[] {
-    const directShareNames = (this.dataset().webshare_shares ?? []).map((share) => share.name);
+    const directShareNames = (this.dataset().webshare_shares ?? []).map((share) => share.share_name);
     return this.inheritedWebShares()
       .map((share) => share.name)
       .filter((name) => !directShareNames.includes(name));
   }
 
   readonly combinedWebShareDisplay = computed(() => {
-    const directShareNames = (this.dataset().webshare_shares ?? []).map((share) => share.name);
+    const directShareNames = (this.dataset().webshare_shares ?? []).map((share) => share.share_name);
     const uniqueInheritedNames = this.getUniqueInheritedShareNames()
       .map((name) => `${name} (inherited)`);
 
