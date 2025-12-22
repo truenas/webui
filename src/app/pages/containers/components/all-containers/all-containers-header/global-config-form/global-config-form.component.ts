@@ -28,6 +28,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 @Component({
   selector: 'ix-global-config-form',
   templateUrl: './global-config-form.component.html',
+  styleUrl: './global-config-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormActionsComponent,
@@ -64,21 +65,47 @@ export class GlobalConfigFormComponent implements OnInit {
     v4_network: [null as string | null],
     v6_network: [null as string | null],
     preferred_pool: [null as string | null],
+  }, {
+    validators: [],
   });
 
-  // Store validators as class members so we can reference them when adding/removing
-  private readonly ipCidrValidator = ipv4or6cidrValidator();
+  /**
+   * Wrapper for IP/CIDR validator that properly handles null values.
+   *
+   * Note: The upstream ipv4or6cidrValidator() only checks for empty string ('') and undefined,
+   * but not null. Since our form fields use null as the initial value, we need this wrapper
+   * to treat null as valid (field is optional). This ensures that an untouched field with
+   * null value doesn't trigger validation errors.
+   *
+   * Returns a new validator instance on each call to avoid shared state issues between
+   * multiple form controls (ipv4or6cidrValidator uses internal state via thisControl).
+   */
+  private ipCidrValidatorWrapper(): ValidatorFn {
+    return (control) => {
+      // If value is null, empty string, or undefined, it's valid (field is optional)
+      if (control.value == null || control.value === '') {
+        return null;
+      }
+      // Otherwise, validate the IP/CIDR format using the upstream validator
+      return ipv4or6cidrValidator()(control);
+    };
+  }
 
-  private readonly atLeastOneNetworkValidator: ValidatorFn = () => {
-    const v4 = this.form.controls.v4_network.value;
-    const v6 = this.form.controls.v6_network.value;
-    return v4?.trim() || v6?.trim()
+  private readonly atLeastOneNetworkValidator: ValidatorFn = (formGroup) => {
+    if (!formGroup) {
+      return null;
+    }
+    const v4 = formGroup.get('v4_network')?.value;
+    const v6 = formGroup.get('v6_network')?.value;
+
+    // Check if either field has a non-empty value
+    const hasV4 = v4 != null && String(v4).trim() !== '';
+    const hasV6 = v6 != null && String(v6).trim() !== '';
+
+    return hasV4 || hasV6
       ? null
       : { atLeastOneNetworkRequired: true };
   };
-
-  // Group validators together for cleaner add/remove calls
-  private readonly networkValidators = [this.ipCidrValidator, this.atLeastOneNetworkValidator];
 
   protected bridgeOptions$ = this.api.call('lxc.bridge_choices').pipe(
     choicesToOptions(),
@@ -108,12 +135,13 @@ export class GlobalConfigFormComponent implements OnInit {
       this.updateNetworkValidators();
     });
 
-    // When either network field changes, re-validate both (for "at least one" validation)
+    // When either network field changes, re-validate form (for "at least one" validation)
     this.form.controls.v4_network.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       if (this.isAutoBridge) {
-        this.form.controls.v6_network.updateValueAndValidity({ emitEvent: false });
+        // Update form validation without emitEvent to trigger validator check
+        this.form.updateValueAndValidity();
       }
     });
 
@@ -121,7 +149,8 @@ export class GlobalConfigFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       if (this.isAutoBridge) {
-        this.form.controls.v4_network.updateValueAndValidity({ emitEvent: false });
+        // Update form validation without emitEvent to trigger validator check
+        this.form.updateValueAndValidity();
       }
     });
 
@@ -150,19 +179,25 @@ export class GlobalConfigFormComponent implements OnInit {
     const v4Control = this.form.controls.v4_network;
     const v6Control = this.form.controls.v6_network;
 
+    // Always clear validators first to avoid duplicates
+    v4Control.clearValidators();
+    v6Control.clearValidators();
+    this.form.removeValidators(this.atLeastOneNetworkValidator);
+
     if (this.isAutoBridge) {
       // When bridge is automatic, at least one network (v4 or v6) must be specified
-      // Add both IP/CIDR format validation and "at least one" validation
-      v4Control.addValidators(this.networkValidators);
-      v6Control.addValidators(this.networkValidators);
-    } else {
-      // When bridge is not automatic, remove our custom validators
-      v4Control.removeValidators(this.networkValidators);
-      v6Control.removeValidators(this.networkValidators);
+      // Add IP/CIDR format validation to both fields using wrapper that handles null values
+      // These validators validate format only when a value is present (not null/empty)
+      // Call wrapper function each time to get fresh validator instances (avoids shared state)
+      v4Control.addValidators(this.ipCidrValidatorWrapper());
+      v6Control.addValidators(this.ipCidrValidatorWrapper());
+      // Add form-level "at least one" validation
+      this.form.addValidators(this.atLeastOneNetworkValidator);
     }
 
     v4Control.updateValueAndValidity({ emitEvent: false });
     v6Control.updateValueAndValidity({ emitEvent: false });
+    this.form.updateValueAndValidity({ emitEvent: false });
   }
 
   onSubmit(): void {
