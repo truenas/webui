@@ -1,0 +1,28 @@
+<div class="sed-locked-warning" role="alert">
+  <div class="warning-content">
+    <div class="warning-header">
+      <ix-icon name="mdi-alert-circle"></ix-icon>
+      <span class="warning-title">{{ 'Pool Failed to Import - SED Disks Locked' | translate }}</span>
+    </div>
+    <p class="warning-message">
+      {{ 'This pool uses Self-Encrypting Drives (SED) that are currently locked. The pool cannot be imported until the drives are unlocked with the correct password.' | translate }}
+    </p>
+  </div>
+  <div class="warning-actions">
+    <button
+      mat-button
+      ixTest="view-disks"
+      (click)="onViewDisks()"
+    >
+      {{ 'View Disks' | translate }}
+    </button>
+    <button
+      mat-button
+      color="primary"
+      ixTest="import-again"
+      (click)="onImportAgain()"
+    >
+      {{ 'Import Again' | translate }}
+    </button>
+  </div>
+</div>

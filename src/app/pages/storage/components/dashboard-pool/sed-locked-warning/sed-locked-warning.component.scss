@@ -1,0 +1,49 @@
+.sed-locked-warning {
+  background-color: var(--alt-bg1);
+  border: 1px solid var(--lines);
+  border-left: 4px solid var(--red);
+  border-radius: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 16px;
+}
+
+.warning-content {
+  flex: 1;
+  min-width: 280px;
+}
+
+.warning-header {
+  align-items: center;
+  color: var(--red);
+  display: flex;
+  font-size: 14px;
+  font-weight: 600;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  ix-icon {
+    font-size: 20px;
+  }
+}
+
+.warning-title {
+  line-height: 1.4;
+}
+
+.warning-message {
+  color: var(--fg2);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.warning-actions {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+}
