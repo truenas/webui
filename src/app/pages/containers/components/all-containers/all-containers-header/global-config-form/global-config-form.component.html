@@ -26,13 +26,6 @@
         ></ix-select>
 
         @if (isAutoBridge) {
-          @if (!showNetworkError) {
-            <p class="hint">
-              <strong>{{ 'Note' | translate }}:</strong>
-              {{ 'At least one network (IPv4 or IPv6) must be specified.' | translate }}
-            </p>
-          }
-
           <ix-ip-input-with-netmask
             formControlName="v4_network"
             [label]="'IPv4 Network' | translate"
@@ -43,11 +36,10 @@
             [label]="'IPv6 Network' | translate"
           ></ix-ip-input-with-netmask>
 
-          @if (showNetworkError) {
-            <mat-error class="network-error">
-              {{ 'At least one network (IPv4 or IPv6) must be specified' | translate }}
-            </mat-error>
-          }
+          <p class="hint">
+            <strong>{{ 'Note' | translate }}:</strong>
+            {{ 'At least one network (IPv4 or IPv6) must be specified.' | translate }}
+          </p>
         }
       </ix-fieldset>
 

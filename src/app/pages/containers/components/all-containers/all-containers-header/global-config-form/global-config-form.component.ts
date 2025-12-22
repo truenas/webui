@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatError } from '@angular/material/form-field';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   finalize, of,
@@ -37,7 +36,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatButton,
     MatCard,
     MatCardContent,
-    MatError,
     ReactiveFormsModule,
     RequiresRolesDirective,
     TestDirective,
@@ -119,12 +117,6 @@ export class GlobalConfigFormComponent implements OnInit {
 
   get isAutoBridge(): boolean {
     return this.form.controls.bridge.value === this.autoBridge;
-  }
-
-  get showNetworkError(): boolean {
-    return this.isAutoBridge
-      && this.form.hasError('atLeastOneNetworkRequired')
-      && (this.form.controls.v4_network.touched || this.form.controls.v6_network.touched);
   }
 
   constructor() {
