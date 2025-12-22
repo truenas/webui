@@ -98,6 +98,15 @@ export class DiskListComponent implements OnInit {
   private licenseService = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
 
+  /** internal state flag for when `disk.details` comes back with data for the first time. if this is `true`,
+   * then `unusedDisks` has been set at least once. (but still may be empty)
+   */
+  private detailsLoaded = false;
+  /** text to be shown when we're still waiting on `disk.details` for pool name */
+  private poolLoadingText = this.translate.instant('Loading...');
+  /** text to be shown when a pool cannot be assigned to a disk. */
+  private poolNonexistentText = this.translate.instant('N/A');
+
   protected readonly requiredRoles = [Role.DiskWrite];
   protected readonly searchableElements = diskListElements;
 
@@ -285,24 +294,29 @@ export class DiskListComponent implements OnInit {
         ),
       ).pipe(
         map((diskResponse: DiskResponse) => {
-          // response from `disk.details` - grab unused disks to show
+          let disks: Disk[] = this.disks;
+          // response from `disk.details` - grab unused disks to show.
           if (diskResponse.kind === 'details') {
             const unusedDisks = diskResponse.value;
 
             this.unusedDisks = unusedDisks;
+            this.detailsLoaded = true;
           } else {
-            // response from `disk.query` - process and show used disks
-            const disks: Disk[] = diskResponse.value;
-
-            this.disks = disks.map((disk) => ({
-              ...disk,
-              // no race condition here, since `getPoolColumn` handles disks that may not exist
-              // insidie the `this.unusedDisks` array yet. regardless, this shouldn't really ever be an issue
-              // since the `.details` endpoint returns much faster than the `.query` endpoint
-              pool: this.getPoolColumn(disk),
-              selected: false,
-            }));
+            // response from `disk.query` - overwrite value for processing.
+            disks = diskResponse.value;
           }
+
+          // we always process the `disks` list to trigger re-rendering of the component
+          // whenever either of these come back with data.
+          this.disks = disks.map((disk) => {
+            // in the case where details aren't loaded, override the pool column to say 'Loading...'.
+            // otherwise, use `getPoolColumn` to determine what that column should say.
+            const pool = this.detailsLoaded ? this.getPoolColumn(disk) : this.poolLoadingText;
+            return {
+              ...disk,
+              pool,
+            };
+          });
 
           // AsyncDataProvider expects us to return a value, and it makes the most sense
           // to give it `disks` instead of `unusedDisks`.
@@ -386,7 +400,11 @@ export class DiskListComponent implements OnInit {
     if (unusedDisk?.exported_zpool) {
       return `${unusedDisk.exported_zpool} (${this.translate.instant('Exported')})`;
     }
-    return diskToCheck.pool || this.translate.instant('N/A');
+
+    if (diskToCheck.pool === this.poolLoadingText) {
+      return this.poolNonexistentText;
+    }
+    return diskToCheck.pool || this.poolNonexistentText;
   }
 
   private prepareDisks(disks: DiskUi[]): Disk[] {
