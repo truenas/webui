@@ -291,11 +291,14 @@ export class DiskListComponent implements OnInit {
 
             this.unusedDisks = unusedDisks;
           } else {
-            // response from `disk.query` - proess and show used disks
+            // response from `disk.query` - process and show used disks
             const disks: Disk[] = diskResponse.value;
 
             this.disks = disks.map((disk) => ({
               ...disk,
+              // no race condition here, since `getPoolColumn` handles disks that may not exist
+              // insidie the `this.unusedDisks` array yet. regardless, this shouldn't really ever be an issue
+              // since the `.details` endpoint returns much faster than the `.query` endpoint
               pool: this.getPoolColumn(disk),
               selected: false,
             }));
