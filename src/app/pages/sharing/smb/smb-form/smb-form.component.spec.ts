@@ -47,6 +47,7 @@ import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dia
 import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -162,6 +163,16 @@ describe('SmbFormComponent', () => {
       }),
       mockProvider(FormErrorHandlerService, {
         handleValidationErrors: jest.fn(),
+      }),
+      mockProvider(UserService, {
+        groupQueryDsCache: jest.fn(() => of([{ group: 'test', gid: 1 }])),
+        getGroupByName: jest.fn((groupName: string) => {
+          if (groupName === 'test') {
+            return of({ group: 'test', gid: 1 });
+          }
+          return of(null);
+        }),
+        getUserByName: jest.fn(() => of(null)),
       }),
     ],
   });
@@ -1380,6 +1391,85 @@ describe('SmbFormComponent', () => {
           }),
         }),
       ]);
+    });
+  });
+
+  describe('Submit button behavior with Apple SMB2/3 extensions', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      api = spectator.inject(ApiService);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      mockStore$ = spectator.inject(MockStore);
+
+      jest.spyOn(api, 'call').mockImplementation((method) => {
+        if (method === 'smb.config') {
+          return of({ aapl_extensions: false } as SmbConfig);
+        }
+        return of(null);
+      });
+    });
+
+    it('should disable submit button when extensions warning is shown', async () => {
+      // Select Time Machine Share (requires Apple SMB2/3 extensions)
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/timemachine',
+        Name: 'timemachine',
+      });
+
+      // Manually set the smbConfig signal to trigger the warning
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify warning is shown
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(true);
+
+      // Verify submit button is disabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Verify warning component is shown with correct id
+      const warningElement = spectator.query('#apple-extensions-warning');
+      expect(warningElement).toBeTruthy();
+    });
+
+    it('should enable submit button after extensions are enabled', async () => {
+      // Select Time Machine Share (requires Apple SMB2/3 extensions)
+      await form.fillForm({
+        Purpose: 'Time Machine Share',
+        Path: '/mnt/pool/timemachine',
+        Name: 'timemachine',
+      });
+
+      // Set config to show warning
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfig);
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['updateExtensionsWarning']();
+      spectator.detectChanges();
+
+      // Verify button is disabled
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+
+      // Enable extensions
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['extensionsEnabled']();
+      spectator.detectChanges();
+
+      // Verify warning is gone and button is enabled
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      expect(spectator.component['showExtensionsWarning']()).toBe(false);
+      expect(await saveButton.isDisabled()).toBe(false);
+
+      // Verify warning component is no longer shown
+      const warningElement = spectator.query('#apple-extensions-warning');
+      expect(warningElement).toBeFalsy();
     });
   });
 
