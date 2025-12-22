@@ -80,14 +80,14 @@ describe('TargetDetailsComponent', () => {
     expect(spectator.query(IscsiGroupsCardComponent)).toExist();
   });
 
-  it('renders FibreChannelPortCardComponent if targetPort is set', () => {
+  it('renders FibreChannelPortCardComponent if targetPorts are set', () => {
     spectator.detectChanges();
     expect(spectator.query(FibreChannelPortCardComponent)).toExist();
-    expect(spectator.query(FibreChannelPortCardComponent)?.port).toEqual(mockPort);
+    expect(spectator.query(FibreChannelPortCardComponent)?.ports).toEqual([mockPort]);
   });
 
-  it('should render FibreChannelPortCardComponent even if no targetPort is available', () => {
-    spectator.component.targetPort.set(null);
+  it('should render FibreChannelPortCardComponent even if no targetPorts are available', () => {
+    spectator.component.targetPorts.set([]);
     spectator.detectChanges();
 
     expect(spectator.query(FibreChannelPortCardComponent)).not.toBeNull();
