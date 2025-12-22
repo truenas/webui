@@ -50,10 +50,9 @@ export class SedLockedWarningComponent {
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((job) => {
-        if (job) {
-          this.importSuccess.emit();
-        }
+      // afterClosed() only emits on job success; errors are thrown and caught by withErrorHandler()
+      .subscribe(() => {
+        this.importSuccess.emit();
       });
   }
 }
