@@ -109,4 +109,13 @@ describe('DatasetRolesCellComponent', () => {
 
     expect(await ixIcon.getName()).toBe('ix-nvme-share');
   });
+
+  it('shows "WebShare" icon for dataset', async () => {
+    await setupTest({
+      name: 'root/webshares',
+      webshare_shares: [{}],
+    } as DatasetDetails, false);
+
+    expect(await ixIcon.getName()).toBe('ix-webshare');
+  });
 });

@@ -76,7 +76,7 @@ export class UsageCardComponent {
     const inheritedShares: InheritedWebShare[] = [];
 
     for (const ancestor of ancestors) {
-      if (ancestor.webshares?.length) {
+      if (ancestor.webshare_shares?.length) {
         const ancestorShares = this.getMatchingWebShares(ancestor, currentDataset);
         inheritedShares.push(...ancestorShares);
       }
@@ -92,7 +92,7 @@ export class UsageCardComponent {
     ancestor: DatasetDetails,
     currentDataset: DatasetDetails,
   ): InheritedWebShare[] {
-    return (ancestor.webshares || [])
+    return (ancestor.webshare_shares || [])
       .filter((webshare) => currentDataset.mountpoint.startsWith(webshare.path))
       .map((webshare) => ({
         name: webshare.name,
@@ -158,7 +158,7 @@ export class UsageCardComponent {
   });
 
   readonly hasDirectWebShares = computed(() => {
-    return this.dataset().webshares?.length > 0;
+    return this.dataset().webshare_shares?.length > 0;
   });
 
   readonly hasInheritedWebShares = computed(() => {
@@ -166,14 +166,14 @@ export class UsageCardComponent {
   });
 
   private getUniqueInheritedShareNames(): string[] {
-    const directShareNames = (this.dataset().webshares ?? []).map((share) => share.name);
+    const directShareNames = (this.dataset().webshare_shares ?? []).map((share) => share.name);
     return this.inheritedWebShares()
       .map((share) => share.name)
       .filter((name) => !directShareNames.includes(name));
   }
 
   readonly combinedWebShareDisplay = computed(() => {
-    const directShareNames = (this.dataset().webshares ?? []).map((share) => share.name);
+    const directShareNames = (this.dataset().webshare_shares ?? []).map((share) => share.name);
     const uniqueInheritedNames = this.getUniqueInheritedShareNames()
       .map((name) => `${name} (inherited)`);
 
@@ -189,7 +189,7 @@ export class UsageCardComponent {
       && !this.dataset().smb_shares?.length
       && !this.dataset().nfs_shares?.length
       && !this.dataset().iscsi_shares?.length
-      && !this.dataset().webshares?.length
+      && !this.dataset().webshare_shares?.length
       && !this.hasInheritedWebShares();
   });
 
