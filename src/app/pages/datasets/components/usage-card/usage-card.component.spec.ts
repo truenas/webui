@@ -201,8 +201,8 @@ describe('UsageCardComponent', () => {
             mountpoint: '/mnt/pool/dataset',
             name: 'pool/dataset',
             webshare_shares: [
-              { name: 'share1', path: '/mnt/pool/dataset/docs' },
-              { name: 'share2', path: '/mnt/pool/dataset/media' },
+              { share_name: 'share1', path: '/mnt/pool/dataset/docs', enabled: true },
+              { share_name: 'share2', path: '/mnt/pool/dataset/media', enabled: true },
             ],
           },
         },
@@ -219,9 +219,9 @@ describe('UsageCardComponent', () => {
       spectator.setInput('dataset', {
         ...datasetDummy,
         webshare_shares: [
-          { name: 'docs', path: '/mnt/pool/dataset/docs' },
-          { name: 'media', path: '/mnt/pool/dataset/media' },
-          { name: 'photos', path: '/mnt/pool/dataset/photos' },
+          { share_name: 'docs', path: '/mnt/pool/dataset/docs', enabled: true },
+          { share_name: 'media', path: '/mnt/pool/dataset/media', enabled: true },
+          { share_name: 'photos', path: '/mnt/pool/dataset/photos', enabled: true },
         ],
       });
       spectator.detectChanges();
@@ -409,7 +409,7 @@ describe('UsageCardComponent', () => {
         smb_shares: [],
         nfs_shares: [],
         iscsi_shares: [],
-        webshare_shares: [{ name: 'share1', path: 'path1' }],
+        webshare_shares: [{ share_name: 'share1', path: 'path1', enabled: true }],
         apps: [],
         vms: [],
       });

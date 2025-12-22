@@ -17,8 +17,18 @@ import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { WithInherit } from 'app/enums/with-inherit.enum';
 import { YesNo } from 'app/enums/yes-no.enum';
-import { WebShareSummary } from 'app/interfaces/webshare-config.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
+
+/** Base interface for dataset share summaries from middleware */
+export interface DatasetShareSummary {
+  enabled: boolean;
+  path: string;
+}
+
+/** Named share summary (SMB, WebShare) */
+export interface NamedDatasetShareSummary extends DatasetShareSummary {
+  share_name: string;
+}
 
 export interface Dataset {
   available: ZfsProperty<string, number>;
@@ -187,13 +197,13 @@ export interface DatasetDetails {
   snapshot_tasks_count?: number;
   cloudsync_tasks_count?: number;
   rsync_tasks_count?: number;
-  smb_shares?: { enabled: boolean; path: string; share_name: string }[];
-  nfs_shares?: { enabled: boolean; path: string }[];
-  iscsi_shares?: { enabled: boolean; type: IscsiExtentType; path: string }[];
-  nvmet_shares?: { enabled: boolean; path: string }[];
+  smb_shares?: NamedDatasetShareSummary[];
+  nfs_shares?: DatasetShareSummary[];
+  iscsi_shares?: (DatasetShareSummary & { type: IscsiExtentType })[];
+  nvmet_shares?: DatasetShareSummary[];
   vms?: { name: string; path: string }[];
   apps?: { name: string; path: string }[];
-  webshare_shares?: WebShareSummary[];
+  webshare_shares?: NamedDatasetShareSummary[];
   children?: DatasetDetails[];
   volsize?: ZfsProperty<string, number>; // Present for type === DatasetType.Volume
   thick_provisioned?: boolean; // Present for type === DatasetType.Volume
