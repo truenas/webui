@@ -98,8 +98,9 @@ export class DiskListComponent implements OnInit {
   private licenseService = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
 
-  /** internal state flag for when `disk.details` comes back with data for the first time. if this is `true`,
-   * then `unusedDisks` has been set at least once. (but still may be empty)
+  /**
+   * internal state flag for when `disk.details` comes back with data for the first time. if this is `true`,
+   * then `unusedDisks` has been set at least once (but still may be empty)
    */
   private detailsLoaded = false;
   /** text to be shown when we're still waiting on `disk.details` for pool name */
@@ -309,9 +310,8 @@ export class DiskListComponent implements OnInit {
           // we always process the `disks` list to trigger re-rendering of the component
           // whenever either of these come back with data.
           this.disks = disks.map((disk) => {
-            // in the case where details aren't loaded, override the pool column to say 'Loading...'.
-            // otherwise, use `getPoolColumn` to determine what that column should say.
-            const pool = this.detailsLoaded ? this.getPoolColumn(disk) : this.poolLoadingText;
+            const pool = this.getPoolColumn(disk);
+
             return {
               ...disk,
               pool,
@@ -401,10 +401,12 @@ export class DiskListComponent implements OnInit {
       return `${unusedDisk.exported_zpool} (${this.translate.instant('Exported')})`;
     }
 
-    if (diskToCheck.pool === this.poolLoadingText) {
+    const fallback = this.detailsLoaded ? this.poolNonexistentText : this.poolLoadingText;
+    if (diskToCheck.pool === this.poolLoadingText && this.detailsLoaded) {
       return this.poolNonexistentText;
     }
-    return diskToCheck.pool || this.poolNonexistentText;
+
+    return diskToCheck.pool || fallback;
   }
 
   private prepareDisks(disks: DiskUi[]): Disk[] {

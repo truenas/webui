@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SedStatus } from 'app/enums/sed-status.enum';
@@ -22,6 +22,7 @@ import {
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DiskBulkEditComponent,
 } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
@@ -144,181 +145,367 @@ describe('DiskListComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
-  });
+  describe('standard behavior', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(IxTableHarness);
+    });
 
-  it('shows table rows', async () => {
-    const expectedRows = [
-      [
-        '',
-        'Name',
-        'Serial',
-        'Disk Size',
-        'Pool',
-        'Self-Encrypting Drive (SED)',
-      ],
-      [
-        '',
-        'sda',
-        'serial1',
-        '40 GiB',
-        'boot-pool',
-        'Unsupported',
-      ],
-      [
-        '',
-        'sdb',
-        'serial2',
-        '5 GiB',
-        'test pool (Exported)',
-        'Unsupported',
-      ],
-      [
-        '',
-        'sdc',
-        'serial3',
-        '5 GiB',
-        'N/A',
-        'Locked',
-      ],
-    ];
+    it('shows table rows', async () => {
+      const expectedRows = [
+        [
+          '',
+          'Name',
+          'Serial',
+          'Disk Size',
+          'Pool',
+          'Self-Encrypting Drive (SED)',
+        ],
+        [
+          '',
+          'sda',
+          'serial1',
+          '40 GiB',
+          'boot-pool',
+          'Unsupported',
+        ],
+        [
+          '',
+          'sdb',
+          'serial2',
+          '5 GiB',
+          'test pool (Exported)',
+          'Unsupported',
+        ],
+        [
+          '',
+          'sdc',
+          'serial3',
+          '5 GiB',
+          'N/A',
+          'Locked',
+        ],
+      ];
 
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
-  });
+      const cells = await table.getCellTexts();
+      expect(cells).toEqual(expectedRows);
+    });
 
-  it('opens edit form when Edit button is pressed', async () => {
-    const fakeDisk = fakeDisks[0];
-    await table.expandRow(0);
+    it('opens edit form when Edit button is pressed', async () => {
+      const fakeDisk = fakeDisks[0];
+      await table.expandRow(0);
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
-    await editButton.click();
+      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      await editButton.click();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { data: fakeDisk });
-  });
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { data: fakeDisk });
+    });
 
-  it('shows wipe disk dialog when Wipe button is pressed', async () => {
-    const fakeDisk = fakeDisks[1];
-    await table.expandRow(1);
+    it('shows wipe disk dialog when Wipe button is pressed', async () => {
+      const fakeDisk = fakeDisks[1];
+      await table.expandRow(1);
 
-    const manualTestButton = await loader.getHarness(MatButtonHarness.with({ text: 'Wipe' }));
-    await manualTestButton.click();
+      const manualTestButton = await loader.getHarness(MatButtonHarness.with({ text: 'Wipe' }));
+      await manualTestButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DiskWipeDialog, {
-      data: {
-        diskName: fakeDisk.name,
-        exportedPool: fakeUnusedDisks[0].exported_zpool,
-      },
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DiskWipeDialog, {
+        data: {
+          diskName: fakeDisk.name,
+          exportedPool: fakeUnusedDisks[0].exported_zpool,
+        },
+      });
+    });
+
+    it('opens bulk edit form when multiple disks are selected and Edit is pressed', async () => {
+      await table.selectRows([0, 1]);
+
+      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit Disks' }));
+      await editButton.click();
+
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+        DiskBulkEditComponent,
+        {
+          data: [
+            expect.objectContaining({
+              name: 'sda',
+            }),
+            expect.objectContaining({
+              name: 'sdb',
+            }),
+          ],
+        },
+      );
+    });
+
+    it('shows unlock SED dialog when Unlock button is pressed for locked SED disk', async () => {
+      await table.expandRow(2);
+
+      const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
+      await unlockButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(UnlockSedDialog, {
+        data: { diskName: 'sdc' },
+      });
+    });
+
+    it('shows reset SED dialog when SED Reset button is pressed for locked SED disk', async () => {
+      await table.expandRow(2);
+
+      const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'SED Reset' }));
+      await resetButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ResetSedDialog, {
+        data: { diskName: 'sdc' },
+      });
     });
   });
 
-  it('opens bulk edit form when multiple disks are selected and Edit is pressed', async () => {
-    await table.selectRows([0, 1]);
+  describe('parallel API calls', () => {
+    let diskQuerySubject$: Subject<Disk[]>;
+    let diskDetailsSubject$: Subject<{ unused: DetailsDisk[]; used: DetailsDisk[] }>;
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit Disks' }));
-    await editButton.click();
+    beforeEach(() => {
+      diskQuerySubject$ = new Subject();
+      diskDetailsSubject$ = new Subject();
 
-    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
-      DiskBulkEditComponent,
-      {
-        data: [
-          expect.objectContaining({
-            name: 'sda',
-          }),
-          expect.objectContaining({
-            name: 'sdb',
+      spectator = createComponent({
+        providers: [
+          mockProvider(ApiService, {
+            call: jest.fn((method: string) => {
+              if (method === 'disk.query') {
+                return diskQuerySubject$.asObservable();
+              }
+              if (method === 'disk.details') {
+                return diskDetailsSubject$.asObservable();
+              }
+              return of(null);
+            }),
           }),
         ],
-      },
-    );
-  });
-
-  it('shows unlock SED dialog when Unlock button is pressed for locked SED disk', async () => {
-    await table.expandRow(2);
-
-    const unlockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Unlock' }));
-    await unlockButton.click();
-
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(UnlockSedDialog, {
-      data: { diskName: 'sdc' },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
-  });
 
-  it('shows reset SED dialog when SED Reset button is pressed for locked SED disk', async () => {
-    await table.expandRow(2);
+    it('shows "Loading..." in pool column when disk.query returns before disk.details', async () => {
+      diskQuerySubject$.next(fakeDisks);
+      spectator.detectChanges();
 
-    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'SED Reset' }));
-    await resetButton.click();
+      table = await loader.getHarness(IxTableHarness);
+      const cells = await table.getCellTexts();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ResetSedDialog, {
-      data: { diskName: 'sdc' },
-    });
-  });
-});
-
-describe('DiskListComponent - without SED license', () => {
-  let spectator: Spectator<DiskListComponent>;
-  let loader: HarnessLoader;
-  let table: IxTableHarness;
-
-  const fakeDisks = [
-    {
-      identifier: 'identifier1',
-      name: 'sda',
-      serial: 'serial1',
-      size: 42949672960,
-      pool: 'boot-pool',
-    },
-  ] as Disk[];
-
-  const createComponent = createComponentFactory({
-    component: DiskListComponent,
-    imports: [
-      MockComponent(PageHeaderComponent),
-      BasicSearchComponent,
-      IxTableColumnsSelectorComponent,
-      IxTableDetailsRowDirective,
-      IxTableDetailsRowComponent,
-    ],
-    providers: [
-      mockAuth(),
-      mockProvider(Router),
-      mockProvider(SlideIn, {
-        open: jest.fn(() => of()),
-      }),
-      mockProvider(MatDialog),
-      mockProvider(LicenseService, {
-        hasSed$: of(false),
-      }),
-      provideMockStore({
-        selectors: [
-          {
-            selector: selectPreferences,
-            value: {},
-          },
+      expect(cells).toEqual([
+        [
+          '',
+          'Name',
+          'Serial',
+          'Disk Size',
+          'Pool',
+          'Self-Encrypting Drive (SED)',
         ],
-      }),
-      mockApi([
-        mockCall('disk.query', fakeDisks),
-        mockCall('disk.details', { unused: [], used: [] }),
-      ]),
-    ],
+        [
+          '',
+          'sda',
+          'serial1',
+          '40 GiB',
+          'boot-pool',
+          'Unsupported',
+        ],
+        [
+          '',
+          'sdb',
+          'serial2',
+          '5 GiB',
+          'Loading...',
+          'Unsupported',
+        ],
+        [
+          '',
+          'sdc',
+          'serial3',
+          '5 GiB',
+          'Loading...',
+          'Locked',
+        ],
+      ]);
+    });
+
+    it('updates pool column correctly after disk.details arrives', async () => {
+      diskQuerySubject$.next(fakeDisks);
+      spectator.detectChanges();
+
+      table = await loader.getHarness(IxTableHarness);
+      let cells = await table.getCellTexts();
+
+      expect(cells).toEqual([
+        [
+          '',
+          'Name',
+          'Serial',
+          'Disk Size',
+          'Pool',
+          'Self-Encrypting Drive (SED)',
+        ],
+        [
+          '',
+          'sda',
+          'serial1',
+          '40 GiB',
+          'boot-pool',
+          'Unsupported',
+        ],
+        [
+          '',
+          'sdb',
+          'serial2',
+          '5 GiB',
+          'Loading...',
+          'Unsupported',
+        ],
+        [
+          '',
+          'sdc',
+          'serial3',
+          '5 GiB',
+          'Loading...',
+          'Locked',
+        ],
+      ]);
+
+      diskDetailsSubject$.next({ unused: fakeUnusedDisks, used: [] });
+      spectator.detectChanges();
+
+      table = await loader.getHarness(IxTableHarness);
+      cells = await table.getCellTexts();
+
+      expect(cells).toEqual([
+        [
+          '',
+          'Name',
+          'Serial',
+          'Disk Size',
+          'Pool',
+          'Self-Encrypting Drive (SED)',
+        ],
+        [
+          '',
+          'sda',
+          'serial1',
+          '40 GiB',
+          'boot-pool',
+          'Unsupported',
+        ],
+        [
+          '',
+          'sdb',
+          'serial2',
+          '5 GiB',
+          'test pool (Exported)',
+          'Unsupported',
+        ],
+        [
+          '',
+          'sdc',
+          'serial3',
+          '5 GiB',
+          'N/A',
+          'Locked',
+        ],
+      ]);
+    });
+
+    it('handles disk.details returning before disk.query', async () => {
+      diskDetailsSubject$.next({ unused: fakeUnusedDisks, used: [] });
+      spectator.detectChanges();
+
+      diskQuerySubject$.next(fakeDisks);
+      spectator.detectChanges();
+
+      table = await loader.getHarness(IxTableHarness);
+      const cells = await table.getCellTexts();
+
+      expect(cells).toEqual([
+        [
+          '',
+          'Name',
+          'Serial',
+          'Disk Size',
+          'Pool',
+          'Self-Encrypting Drive (SED)',
+        ],
+        [
+          '',
+          'sda',
+          'serial1',
+          '40 GiB',
+          'boot-pool',
+          'Unsupported',
+        ],
+        [
+          '',
+          'sdb',
+          'serial2',
+          '5 GiB',
+          'test pool (Exported)',
+          'Unsupported',
+        ],
+        [
+          '',
+          'sdc',
+          'serial3',
+          '5 GiB',
+          'N/A',
+          'Locked',
+        ],
+      ]);
+    });
+
+    it('shows "N/A" for disks without pools after disk.details loads', async () => {
+      const disksWithoutPools = [
+        {
+          name: 'sdc', serial: 'serial3', size: 1000000000, devname: 'sdc', pool: null,
+        },
+      ] as Disk[];
+
+      diskQuerySubject$.next(disksWithoutPools);
+      spectator.detectChanges();
+
+      diskDetailsSubject$.next({ unused: [], used: [] });
+      spectator.detectChanges();
+
+      table = await loader.getHarness(IxTableHarness);
+      const cells = await table.getCellTexts();
+
+      expect(cells).toEqual([
+        ['', 'Name', 'Serial', 'Disk Size', 'Pool', 'Self-Encrypting Drive (SED)'],
+        ['', 'sdc', 'serial3', '953.67 MiB', 'N/A', 'Unsupported'],
+      ]);
+    });
   });
 
-  beforeEach(async () => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTableHarness);
-  });
+  describe('without SED license', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(LicenseService, {
+            hasSed$: of(false),
+          }),
+          mockApi([
+            mockCall('disk.query', [fakeDisks[0]]),
+            mockCall('disk.details', { unused: [], used: [] }),
+          ]),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(IxTableHarness);
+    });
 
-  it('hides SED column when hasSed$ is false', async () => {
-    const cells = await table.getCellTexts();
-    const headerRow = cells[0];
+    it('hides SED column when hasSed$ is false', async () => {
+      const cells = await table.getCellTexts();
+      const headerRow = cells[0];
 
-    expect(headerRow).not.toContain('Self-Encrypting Drive (SED)');
-    expect(headerRow).toEqual(['', 'Name', 'Serial', 'Disk Size', 'Pool']);
+      expect(headerRow).not.toContain('Self-Encrypting Drive (SED)');
+      expect(headerRow).toEqual(['', 'Name', 'Serial', 'Disk Size', 'Pool']);
+    });
   });
 });
