@@ -126,6 +126,7 @@ describe('DiskFormComponent', () => {
       await clearPassword.setValue(true);
 
       expect(sedPassword.isDisabled()).toBeTruthy();
+      expect(await sedPassword.getValue()).toBe('');
     });
 
     it('sets disk settings when form is opened', async () => {
