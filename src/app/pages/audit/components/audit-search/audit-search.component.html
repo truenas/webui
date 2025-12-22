@@ -56,7 +56,6 @@
             [addReportNameArgument]="true"
             [searchQuery]="searchQuery()"
             [sorting]="dataProvider().sorting"
-            [defaultFilters]="basicQueryFilters()"
             [controllerType]="dataProvider().selectedControllerType"
             [filename]="exportFilename()"
             [fileType]="exportFileType()"
@@ -75,6 +74,7 @@
         class="search-input"
         [properties]="searchProperties()"
         [advancedSearchPlaceholder]="advancedSearchPlaceholder"
+        [advancedOnly]="true"
         [query]="searchQuery()"
         (runSearch)="onSearch(searchInput.query()); updateUrlOptions(); searchInput.advancedSearch()?.hideDatePicker()"
       ></ix-search-input>

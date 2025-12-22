@@ -17,17 +17,19 @@
     }
   </div>
 
-  <span
-    class="switch-link"
-    ixTest="switch-to-basic"
-    tabindex="0"
-    [matTooltip]="'Switch To Basic' | translate"
-    (click)="switchToBasic.emit()"
-    (keydown.enter)="switchToBasic.emit()"
-  >
-    <ix-icon name="mdi-tune"></ix-icon>
-    {{ 'Basic' | translate }}
-  </span>
+  @if (allowBasic()) {
+    <span
+      class="switch-link"
+      ixTest="switch-to-basic"
+      tabindex="0"
+      [matTooltip]="'Switch To Basic' | translate"
+      (click)="switchToBasic.emit()"
+      (keydown.enter)="switchToBasic.emit()"
+    >
+      <ix-icon name="mdi-tune"></ix-icon>
+      {{ 'Basic' | translate }}
+    </span>
+  }
 
   <span
     class="reset-icon reset-input"

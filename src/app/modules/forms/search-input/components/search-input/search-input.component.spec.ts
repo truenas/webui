@@ -107,4 +107,27 @@ describe('SearchInputComponent', () => {
 
     expect(spectator.component.runSearch.emit).toHaveBeenCalledWith();
   });
+
+  it('should debounce basic search and auto-trigger runSearch', () => {
+    jest.useFakeTimers();
+    jest.spyOn(spectator.component.runSearch, 'emit').mockImplementation();
+
+    expect(spectator.queryAll(BasicSearchComponent)).toHaveLength(1);
+
+    // Emit multiple query changes in quick succession
+    spectator.query(BasicSearchComponent)!.queryChange.emit('test');
+    spectator.query(BasicSearchComponent)!.queryChange.emit('test1');
+    spectator.query(BasicSearchComponent)!.queryChange.emit('test12');
+
+    // Should not trigger runSearch immediately
+    expect(spectator.component.runSearch.emit).not.toHaveBeenCalled();
+
+    // Fast forward time by 400ms (debounce time)
+    jest.advanceTimersByTime(400);
+
+    // Should trigger runSearch once after debounce
+    expect(spectator.component.runSearch.emit).toHaveBeenCalledTimes(1);
+
+    jest.useRealTimers();
+  });
 });

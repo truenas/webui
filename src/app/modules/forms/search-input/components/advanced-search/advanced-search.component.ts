@@ -51,6 +51,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
   readonly filterPresets = input<FilterPreset<T>[]>([]);
   readonly properties = input<SearchProperty<T>[]>([]);
   readonly placeholder = input('');
+  readonly allowBasic = input(true);
 
   readonly paramsChange = output<QueryFilters<T>>();
   readonly switchToBasic = output();

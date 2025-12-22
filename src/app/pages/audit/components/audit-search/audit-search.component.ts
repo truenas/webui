@@ -21,7 +21,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -67,9 +66,9 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
 
   readonly dataProvider = input.required<AuditApiDataProvider>();
 
-  protected readonly searchQuery = signal<SearchQuery<AuditEntry>>({ query: '', isBasicQuery: true });
+  protected readonly searchQuery = signal<SearchQuery<AuditEntry>>({ filters: [], isBasicQuery: false });
   protected readonly searchProperties = signal<SearchProperty<AuditEntry>[]>([]);
-  protected readonly advancedSearchPlaceholder = this.translate.instant('Event = "Close" AND Username = "admin"');
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Event = "Authentication" AND Username = "admin"');
   protected readonly serviceControl = new FormControl<AuditService>(AuditService.Middleware);
   protected readonly serviceOptions$ = of(mapToOptions(auditServiceLabels, this.translate));
   protected readonly exportFormat = signal<ExportFormat>(ExportFormat.Csv);
@@ -91,14 +90,6 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     );
   });
 
-  basicQueryFilters = computed<QueryFilters<AuditEntry>>(() => {
-    const searchTerm = (this.searchQuery() as { query: string })?.query?.trim() || '';
-    if (!searchTerm) {
-      return [];
-    }
-    const term = `(?i)${searchTerm}`;
-    return [['OR', [['event', '~', term], ['username', '~', term]]]] as QueryFilters<AuditEntry>;
-  });
 
   protected readonly exportFilename = computed(() => {
     const format = this.exportFormat().toLowerCase();
@@ -205,12 +196,6 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     }
 
     this.searchQuery.set(query);
-
-    if (query?.isBasicQuery) {
-      // Use the computed basicQueryFilters instead of duplicating the logic
-      // TODO: Incorrect cast, because of incorrect typing inside of DataProvider
-      this.dataProvider().setParams([this.basicQueryFilters()] as unknown as [AuditQueryParams]);
-    }
 
     if (query && !query.isBasicQuery) {
       // TODO: Incorrect cast, because of incorrect typing inside of DataProvider

@@ -5,6 +5,7 @@
     [filterPresets]="filterPresets()"
     [properties]="properties()"
     [placeholder]="advancedSearchPlaceholder()"
+    [allowBasic]="!advancedOnly()"
     (paramsChange)="advancedSearchUpdated($event)"
     (switchToBasic)="toggleAdvancedMode()"
     (runSearch)="runSearch.emit()"

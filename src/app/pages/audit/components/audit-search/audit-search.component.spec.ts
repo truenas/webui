@@ -272,21 +272,6 @@ describe('AuditSearchComponent', () => {
       expect(exportButton.sorting()).toEqual(mockAuditApiDataProvider.sorting);
     });
 
-    it('should pass basicQueryFilters to ExportButtonComponent', () => {
-      const searchInput = spectator.query(SearchInputComponent);
-      searchInput.query.set({
-        query: 'authentication',
-        isBasicQuery: true,
-      });
-      searchInput.runSearch.emit();
-      spectator.detectChanges();
-
-      const exportButton = spectator.query(ExportButtonComponent);
-      expect(exportButton.defaultFilters()).toEqual([
-        ['OR', [['event', '~', '(?i)authentication'], ['username', '~', '(?i)authentication']]],
-      ]);
-    });
-
     it('should pass selected service to ExportButtonComponent via customExportParams', () => {
       const exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.customExportParams()).toEqual({ services: [AuditService.Middleware] });
@@ -302,34 +287,6 @@ describe('AuditSearchComponent', () => {
   });
 
   describe('search functionality', () => {
-    it('should update basicQueryFilters based on search query', () => {
-      const searchInput = spectator.query(SearchInputComponent);
-      searchInput.query.set({
-        query: 'test',
-        isBasicQuery: true,
-      });
-      searchInput.runSearch.emit();
-      spectator.detectChanges();
-
-      const exportButton = spectator.query(ExportButtonComponent);
-      expect(exportButton.defaultFilters()).toEqual([
-        ['OR', [['event', '~', '(?i)test'], ['username', '~', '(?i)test']]],
-      ]);
-    });
-
-    it('should handle empty search query', () => {
-      const searchInput = spectator.query(SearchInputComponent);
-      searchInput.query.set({
-        query: '',
-        isBasicQuery: true,
-      });
-      searchInput.runSearch.emit();
-      spectator.detectChanges();
-
-      const exportButton = spectator.query(ExportButtonComponent);
-      expect(exportButton.defaultFilters()).toEqual([]);
-    });
-
     it('should call dataProvider load on search', () => {
       const searchInput = spectator.query(SearchInputComponent);
       searchInput.query.set({
