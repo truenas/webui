@@ -88,6 +88,10 @@ describe('GlobalConfigFormComponent', () => {
     const v4NetworkInput = await form.getControl('IPv4 Network');
     expect(v4NetworkInput).toBeTruthy();
 
+    // Wait for validators to be applied and form to update
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
     // Save button should be enabled because v4_network already has a value from initial config
     let saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     expect(await saveButton.isDisabled()).toBe(false);
@@ -138,6 +142,10 @@ describe('GlobalConfigFormComponent', () => {
       'IPv6 Network': '',
     });
 
+    // Wait for form to update
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
     // Save button should be disabled because at least one network is required
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     expect(await saveButton.isDisabled()).toBe(true);
@@ -156,6 +164,10 @@ describe('GlobalConfigFormComponent', () => {
       'IPv4 Network': '',
       'IPv6 Network': 'fd00::/64',
     });
+
+    // Wait for form to update
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
 
     // Save button should be enabled because v6 is provided
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -188,6 +200,11 @@ describe('GlobalConfigFormComponent', () => {
       'IPv4 Network': '',
       'IPv6 Network': '',
     });
+
+    // Wait for form to update
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
     saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     expect(await saveButton.isDisabled()).toBe(true);
 
@@ -196,9 +213,145 @@ describe('GlobalConfigFormComponent', () => {
       Bridge: 'bridge1',
     });
 
+    // Wait for form to update
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
     // Save button should be enabled again as network fields are no longer required
     saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     expect(await saveButton.isDisabled()).toBe(false);
+  });
+
+  it('shows hint text when automatic bridge is selected', async () => {
+    await spectator.fixture.whenStable();
+
+    // Switch to automatic bridge
+    await form.fillForm({
+      Bridge: 'Automatic',
+    });
+
+    // Wait for template to update
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    // Hint text should be visible
+    const hintText = spectator.query('.hint');
+    expect(hintText).toBeTruthy();
+    expect(hintText?.textContent).toContain('At least one network (IPv4 or IPv6) must be specified');
+  });
+
+  it('hides hint text when switching away from automatic bridge', async () => {
+    await spectator.fixture.whenStable();
+
+    // Switch to automatic bridge first
+    await form.fillForm({
+      Bridge: 'Automatic',
+    });
+
+    // Wait for template to update
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    // Hint should be visible
+    let hintText = spectator.query('.hint');
+    expect(hintText).toBeTruthy();
+
+    // Switch back to specific bridge
+    await form.fillForm({
+      Bridge: 'bridge1',
+    });
+
+    // Wait for template to update
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    // Hint should be gone
+    hintText = spectator.query('.hint');
+    expect(hintText).toBeFalsy();
+  });
+
+  it('shows error message and hides hint when both network fields are empty and touched', async () => {
+    await spectator.fixture.whenStable();
+
+    // Switch to automatic bridge
+    await form.fillForm({
+      Bridge: 'Automatic',
+    });
+
+    // Wait for template to update
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    // Hint should be visible initially
+    let hintText = spectator.query('.hint');
+    expect(hintText).toBeTruthy();
+
+    // Clear both network fields
+    await form.fillForm({
+      'IPv4 Network': '',
+      'IPv6 Network': '',
+    });
+
+    // Trigger touch on both fields
+    const v4Input = spectator.query('input[name="v4_network"]');
+    const v6Input = spectator.query('input[name="v6_network"]');
+
+    v4Input?.dispatchEvent(new Event('blur'));
+    v6Input?.dispatchEvent(new Event('blur'));
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    // Error message should be visible
+    const errorText = spectator.query('.network-error');
+    expect(errorText).toBeTruthy();
+    expect(errorText?.textContent).toContain('At least one network (IPv4 or IPv6) must be specified');
+
+    // Hint should be hidden
+    hintText = spectator.query('.hint');
+    expect(hintText).toBeFalsy();
+  });
+
+  it('hides error message and shows hint when at least one network field is filled', async () => {
+    await spectator.fixture.whenStable();
+
+    // Switch to automatic bridge
+    await form.fillForm({
+      Bridge: 'Automatic',
+    });
+
+    // Clear both fields first
+    await form.fillForm({
+      'IPv4 Network': '',
+      'IPv6 Network': '',
+    });
+
+    // Touch both fields to trigger error
+    const v4Input = spectator.query('input[name="v4_network"]');
+    const v6Input = spectator.query('input[name="v6_network"]');
+
+    v4Input?.dispatchEvent(new Event('blur'));
+    v6Input?.dispatchEvent(new Event('blur'));
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    // Error should be visible, hint should be hidden
+    let errorText = spectator.query('.network-error');
+    expect(errorText).toBeTruthy();
+    let hintText = spectator.query('.hint');
+    expect(hintText).toBeFalsy();
+
+    // Fill in IPv4 field
+    await form.fillForm({
+      'IPv4 Network': '192.168.1.0/24',
+    });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    // Error should be gone, hint should be back
+    errorText = spectator.query('.network-error');
+    expect(errorText).toBeFalsy();
+    hintText = spectator.query('.hint');
+    expect(hintText).toBeTruthy();
   });
 });
 
