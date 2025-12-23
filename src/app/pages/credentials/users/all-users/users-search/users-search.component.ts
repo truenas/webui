@@ -1,14 +1,14 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, input, signal, OnInit, inject, computed, effect,
+  ChangeDetectionStrategy, Component, input, signal, OnInit, inject, computed, DestroyRef,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of, map } from 'rxjs';
+import { of, map, filter } from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { ParamsBuilder, ParamsBuilderGroup } from 'app/helpers/params-builder/params-builder.class';
@@ -74,7 +74,9 @@ export class UsersSearchComponent implements OnInit {
 
   protected readonly userPresets = signal<FilterPreset<User>[]>([]);
   private readonly isBuiltinFilterActive = signal<boolean>(false);
-  private readonly isActiveDirectoryFilterActive = signal<boolean>(false);
+  private readonly isLocalFilterActive = signal<boolean>(false);
+
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly userTypeOptionsSignal = computed(() => {
     const options: SelectOption[] = [
@@ -99,20 +101,22 @@ export class UsersSearchComponent implements OnInit {
     map((state: DirectoryServicesStatus) => state.status !== DirectoryServiceStatus.Disabled),
   ));
 
-  private lastProcessedQuery = signal<SearchQuery<User> | null>(null);
+  private readonly isActiveDirectoryEnabled$ = toObservable(this.isActiveDirectoryEnabled);
 
-  constructor() {
-    effect(() => {
-      const isAdEnabled = this.isActiveDirectoryEnabled();
-      if (isAdEnabled !== undefined) {
-        this.updateUserPresets();
-      }
-    });
-  }
+  private lastProcessedQuery = signal<SearchQuery<User> | null>(null);
 
   ngOnInit(): void {
     this.updateBuiltinActiveState();
     this.setSearchProperties(this.dataProvider().currentPage$.getValue());
+
+    this.isActiveDirectoryEnabled$
+      .pipe(
+        filter((isAdEnabled) => isAdEnabled !== undefined),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => {
+        this.updateUserPresets();
+      });
   }
 
   private setSearchProperties(users: User[]): void {
@@ -315,35 +319,39 @@ export class UsersSearchComponent implements OnInit {
   }
 
   private applyUserTypeToGroup(group: ParamsBuilderGroup<User>, type: UserType, isFirst: boolean): void {
-    switch (type) {
-      case UserType.Local:
-        if (this.showBuiltinUsers) {
-          if (isFirst) {
-            group.filter('local', '=', true);
-          } else {
-            group.orFilter('local', '=', true);
-          }
-        } else {
-          if (isFirst) {
-            group.filter('local', '=', true).andGroup((subGroup: ParamsBuilderGroup<User>) => {
-              subGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
-            });
-          } else {
-            group.orGroup((subGroup: ParamsBuilderGroup<User>) => {
-              subGroup.filter('local', '=', true).andGroup((innerGroup: ParamsBuilderGroup<User>) => {
-                innerGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
-              });
-            });
-          }
-        }
-        break;
-      case UserType.Directory:
+    if (type === UserType.Directory) {
+      if (isFirst) {
+        group.filter('local', '=', false);
+      } else {
+        group.orFilter('local', '=', false);
+      }
+      return;
+    }
+
+    if (type === UserType.Local) {
+      if (this.showBuiltinUsers) {
         if (isFirst) {
-          group.filter('local', '=', false);
+          group.filter('local', '=', true);
         } else {
-          group.orFilter('local', '=', false);
+          group.orFilter('local', '=', true);
         }
-        break;
+      } else {
+        this.applyLocalNonBuiltinFilter(group, isFirst);
+      }
+    }
+  }
+
+  private applyLocalNonBuiltinFilter(group: ParamsBuilderGroup<User>, isFirst: boolean): void {
+    if (isFirst) {
+      group.filter('local', '=', true).andGroup((subGroup: ParamsBuilderGroup<User>) => {
+        subGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
+      });
+    } else {
+      group.orGroup((subGroup: ParamsBuilderGroup<User>) => {
+        subGroup.filter('local', '=', true).andGroup((innerGroup: ParamsBuilderGroup<User>) => {
+          innerGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
+        });
+      });
     }
   }
 
@@ -437,7 +445,7 @@ export class UsersSearchComponent implements OnInit {
     }
 
     this.isBuiltinFilterActive.set(hasBuiltinTrue);
-    this.isActiveDirectoryFilterActive.set(hasLocalTrue);
+    this.isLocalFilterActive.set(hasLocalTrue);
     this.updateUserPresets();
   }
 
@@ -456,8 +464,8 @@ export class UsersSearchComponent implements OnInit {
 
     const isAdEnabled = this.isActiveDirectoryEnabled();
     if (isAdEnabled) {
-      const isActiveDirectoryActive = this.isActiveDirectoryFilterActive();
-      const adPreset = getActiveDirectoryTogglePreset(isActiveDirectoryActive);
+      const isLocalActive = this.isLocalFilterActive();
+      const adPreset = getActiveDirectoryTogglePreset(isLocalActive);
       presets.push({
         ...adPreset,
         label: this.translate.instant(adPreset.label),

@@ -210,7 +210,7 @@ describe('UsersSearchComponent', () => {
       expect(adPreset).toBeDefined();
     });
 
-    it('updates AD filter state when local filter is applied', async () => {
+    it('updates local filter state when local filter is applied', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
       await searchInput.toggleMode();
       const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
@@ -220,7 +220,7 @@ describe('UsersSearchComponent', () => {
       spectator.detectChanges();
 
       expect(
-        (component as unknown as { isActiveDirectoryFilterActive: () => boolean }).isActiveDirectoryFilterActive(),
+        (component as unknown as { isLocalFilterActive: () => boolean }).isLocalFilterActive(),
       ).toBe(true);
     });
 
