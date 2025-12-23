@@ -76,7 +76,7 @@ export class UsersSearchComponent implements OnInit {
 
   private readonly destroyRef = inject(DestroyRef);
 
-  private readonly userTypeOptionsSignal = computed(() => {
+  private readonly userTypeOptions = computed(() => {
     const options: SelectOption[] = [
       { label: this.translate.instant('Local'), value: UserType.Local },
     ];
@@ -92,7 +92,8 @@ export class UsersSearchComponent implements OnInit {
     return this.selectedUserTypes().includes(UserType.Local);
   });
 
-  protected readonly userTypeOptions$ = toObservable(this.userTypeOptionsSignal);
+  // Observable required by ix-select component
+  protected readonly userTypeOptions$ = toObservable(this.userTypeOptions);
 
   private readonly api = inject(ApiService);
   private readonly isActiveDirectoryEnabled = toSignal(this.api.call('directoryservices.status').pipe(
