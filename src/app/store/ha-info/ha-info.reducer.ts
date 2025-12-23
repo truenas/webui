@@ -8,12 +8,12 @@ import {
 
 export interface HaInfoState {
   haStatus: HaStatus | null;
-  isHaLicensed: boolean;
+  isHaLicensed: boolean | null;
 }
 
 const initialState: HaInfoState = {
   haStatus: null,
-  isHaLicensed: false,
+  isHaLicensed: null,
 };
 
 export const haInfoReducer = createReducer(
