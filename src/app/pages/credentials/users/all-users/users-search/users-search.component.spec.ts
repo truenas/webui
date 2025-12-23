@@ -539,7 +539,8 @@ describe('UsersSearchComponent', () => {
       // 4. Switch back to Basic mode
       await searchInput.toggleMode();
 
-      // Verify back in Basic mode and default filtering is restored (Local + Directory)
+      // Verify back in Basic mode. Mode switching resets to defaults (Local + Directory)
+      // regardless of the previous selection (which was only Local at the start of this test)
       expect(await searchInput.isInAdvancedMode()).toBe(false);
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
@@ -598,13 +599,82 @@ describe('UsersSearchComponent', () => {
       // Select Local and enable built-in
       (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
         .onUserTypeChange([UserType.Local]);
-      (component as unknown as { showBuiltinUsers: boolean }).showBuiltinUsers = true;
+      (component as unknown as { onShowBuiltinChange: (show: boolean) => void })
+        .onShowBuiltinChange(true);
 
       // Deselect Local
       (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
         .onUserTypeChange([UserType.Directory]);
 
-      expect((component as unknown as { showBuiltinUsers: boolean }).showBuiltinUsers).toBe(false);
+      expect((component as unknown as { showBuiltinUsers: () => boolean }).showBuiltinUsers()).toBe(false);
+    });
+
+    it('maintains builtin toggle state when searching', async () => {
+      // Select only Local
+      (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
+        .onUserTypeChange([UserType.Local]);
+
+      // Enable show built-in users
+      (component as unknown as { onShowBuiltinChange: (show: boolean) => void })
+        .onShowBuiltinChange(true);
+      jest.clearAllMocks();
+
+      // Perform a search
+      const searchInput = await loader.getHarness(SearchInputHarness);
+      await searchInput.setValue('test');
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      await button.click();
+
+      // Verify toggle state is maintained and filter includes built-in users
+      expect((component as unknown as { showBuiltinUsers: () => boolean }).showBuiltinUsers()).toBe(true);
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [
+          ['local', '=', true],
+          ['OR', [['username', '~', '(?i)test'], ['full_name', '~', '(?i)test']]],
+        ],
+        {},
+      ]);
+    });
+
+    it('resets toggle when switching from Basic to Advanced mode', async () => {
+      // Select only Local and enable built-in toggle
+      (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
+        .onUserTypeChange([UserType.Local]);
+      (component as unknown as { onShowBuiltinChange: (show: boolean) => void })
+        .onShowBuiltinChange(true);
+
+      expect((component as unknown as { showBuiltinUsers: () => boolean }).showBuiltinUsers()).toBe(true);
+
+      const searchInput = await loader.getHarness(SearchInputHarness);
+
+      // Switch to Advanced mode
+      await searchInput.toggleMode();
+
+      // Switch back to Basic mode - toggle should be reset
+      await searchInput.toggleMode();
+
+      expect((component as unknown as { showBuiltinUsers: () => boolean }).showBuiltinUsers()).toBe(false);
+    });
+
+    it('includes built-in filter with both Local and Directory when toggle is on', () => {
+      // Both Local and Directory selected (default)
+      (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
+        .onUserTypeChange([UserType.Local, UserType.Directory]);
+
+      // Enable show built-in users
+      (component as unknown as { onShowBuiltinChange: (show: boolean) => void })
+        .onShowBuiltinChange(true);
+
+      // With built-in enabled and both types, Local filter should not exclude built-in
+      expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
+        [
+          ['OR', [
+            ['local', '=', true],
+            ['local', '=', false],
+          ]],
+        ],
+        {},
+      ]);
     });
   });
 });
