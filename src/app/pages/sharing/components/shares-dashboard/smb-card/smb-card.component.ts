@@ -21,6 +21,7 @@ import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumu
 import {
   ExternalSmbShareOptions, LegacySmbShareOptions, SmbShare, SmbSharesec,
 } from 'app/interfaces/smb-share.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -77,6 +78,7 @@ import { selectService } from 'app/store/services/services.selectors';
     AsyncPipe,
     RouterLink,
     EmptyComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class SmbCardComponent implements OnInit {
@@ -92,6 +94,7 @@ export class SmbCardComponent implements OnInit {
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
   protected readonly emptyConfig = smbCardEmptyConfig;
+  protected readonly cardMenuPath = ['sharing', 'smb'];
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 

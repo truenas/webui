@@ -1002,7 +1002,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
     // SMB
     SMBPath: {
       category: SmartAlertCategory.Services,
-      relatedMenuPath: ['shares', 'smb'],
+      relatedMenuPath: ['sharing', 'smb'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/shares/smb/managesmbshares/',
       actions: [{
         label: T('Go to SMB shares'),
@@ -1015,7 +1015,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
 
     SMBLegacyProtocol: {
       category: SmartAlertCategory.Services,
-      relatedMenuPath: ['shares', 'smb'],
+      relatedMenuPath: ['sharing', 'smb'],
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/services/smbservicescale/',
       actions: [{
         label: T('Go to SMB sessions'),
