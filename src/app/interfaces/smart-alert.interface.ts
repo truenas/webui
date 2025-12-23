@@ -59,6 +59,9 @@ export interface SmartAlertEnhancement {
 
   // Dynamic fragment extraction for highlighting
   extractFragment?: (alertMessage: string) => string | undefined;
+
+  // Dynamic API parameter extraction for automated actions
+  extractApiParams?: (alert: { args: unknown; text: string; formatted: string }) => unknown;
 }
 
 export interface SmartAlertConfig {
@@ -124,5 +127,41 @@ export function createFragmentExtractor(
     }
 
     return fallbackAnchor;
+  };
+}
+
+/**
+ * Creates a standard task ID extractor for API call actions.
+ * Handles the common pattern where alert.args contains either:
+ * - An array with an object { id: number, name: string }
+ * - An array with a direct ID value
+ * - A direct object with an id property
+ *
+ * @returns A function that extracts the task ID from alert args
+ *
+ * @example
+ * // In alert-enhancement.registry.ts:
+ * CloudBackupTaskFailed: {
+ *   extractApiParams: createTaskIdExtractor(),
+ * }
+ */
+export function createTaskIdExtractor(): (alert: { args: unknown }) => unknown {
+  return (alert: { args: unknown }) => {
+    // Handle array args (most common case)
+    if (Array.isArray(alert.args) && alert.args.length > 0) {
+      const firstArg = alert.args[0];
+      // If it's an object with an id property, extract the id
+      if (typeof firstArg === 'object' && firstArg !== null && 'id' in firstArg) {
+        return (firstArg as { id: number }).id;
+      }
+      // Otherwise use the first argument directly (already a number)
+      return firstArg;
+    }
+    // Fallback: check if args is directly an object with id property
+    if (typeof alert.args === 'object' && alert.args !== null && 'id' in alert.args) {
+      return (alert.args as { id: number }).id;
+    }
+    // Last resort: return args as-is
+    return alert.args;
   };
 }

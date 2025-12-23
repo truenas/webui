@@ -6,6 +6,7 @@ import {
   SmartAlertConfig,
   SmartAlertEnhancement,
   createFragmentExtractor,
+  createTaskIdExtractor,
 } from 'app/interfaces/smart-alert.interface';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 
@@ -395,11 +396,18 @@ export const smartAlertRegistry: SmartAlertConfig = {
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/truecloudtasks/',
       actions: [
         {
+          label: T('Rerun Cloud Backup'),
+          type: SmartAlertActionType.ApiCall,
+          icon: iconMarker('mdi-play-circle'),
+          apiMethod: 'cloud_backup.sync',
+          primary: true,
+          requiresConfirmation: true,
+        },
+        {
           label: T('View Cloud Backup'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-cloud-upload'),
           route: ['/data-protection', 'cloud-backup'],
-          primary: true,
         },
         {
           label: T('Check Credentials'),
@@ -419,6 +427,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         /Cloud\s+Backup(?:\s+Task)?\s+"([^"]+)"/i,
         'cloud-backup-tasks',
       ),
+      extractApiParams: createTaskIdExtractor(),
     },
 
     CloudSyncTaskFailed: {
@@ -427,17 +436,25 @@ export const smartAlertRegistry: SmartAlertConfig = {
       contextualHelp: T('Cloud sync failures may be due to network issues, credential problems, or cloud provider limitations.'),
       actions: [
         {
+          label: T('Rerun Cloud Sync'),
+          type: SmartAlertActionType.ApiCall,
+          icon: iconMarker('mdi-play-circle'),
+          apiMethod: 'cloudsync.sync',
+          primary: true,
+          requiresConfirmation: true,
+        },
+        {
           label: T('View Cloud Sync'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-cloud-sync'),
           route: ['/data-protection', 'cloudsync'],
-          primary: true,
         },
       ],
       extractFragment: createFragmentExtractor(
         'cloudsync-task',
         /Cloud\s+Sync(?:\s+Task)?\s+"([^"]+)"/i,
       ),
+      extractApiParams: createTaskIdExtractor(),
     },
 
     ReplicationFailed: {
@@ -446,11 +463,18 @@ export const smartAlertRegistry: SmartAlertConfig = {
       contextualHelp: T('Replication failures can cause backup gaps. Check network connectivity and destination system health.'),
       actions: [
         {
+          label: T('Rerun Replication'),
+          type: SmartAlertActionType.ApiCall,
+          icon: iconMarker('mdi-play-circle'),
+          apiMethod: 'replication.run',
+          primary: true,
+          requiresConfirmation: true,
+        },
+        {
           label: T('View Replication'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-sync'),
           route: ['/data-protection', 'replication'],
-          primary: true,
         },
       ],
       extractFragment: createFragmentExtractor(
@@ -459,6 +483,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
         undefined,
         (value) => value.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase(),
       ),
+      extractApiParams: createTaskIdExtractor(),
     },
 
     RsyncFailed: {
@@ -467,11 +492,18 @@ export const smartAlertRegistry: SmartAlertConfig = {
       contextualHelp: T('Rsync task failures may be due to connectivity issues, permission problems, or incorrect paths.'),
       actions: [
         {
+          label: T('Rerun Rsync Task'),
+          type: SmartAlertActionType.ApiCall,
+          icon: iconMarker('mdi-play-circle'),
+          apiMethod: 'rsynctask.run',
+          primary: true,
+          requiresConfirmation: true,
+        },
+        {
           label: T('View Rsync Tasks'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-sync'),
           route: ['/data-protection', 'rsync'],
-          primary: true,
         },
       ],
       extractFragment: createFragmentExtractor(
@@ -479,12 +511,13 @@ export const smartAlertRegistry: SmartAlertConfig = {
         /Rsync(?:\s+task)?\s+"([^"]+)"/i,
         'rsync-tasks',
       ),
+      extractApiParams: createTaskIdExtractor(),
     },
 
     SnapshotFailed: {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'snapshot'],
-      contextualHelp: T('Snapshot failures may indicate storage issues or misconfigured retention policies.'),
+      contextualHelp: T('Snapshot failures may indicate storage issues or misconfigured retention policies. Snapshot tasks run automatically on schedule and cannot be manually triggered.'),
       actions: [
         {
           label: T('View Snapshots'),
