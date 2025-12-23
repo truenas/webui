@@ -66,7 +66,7 @@ export class UsersSearchComponent implements OnInit {
 
   protected readonly searchProperties = signal<SearchProperty<User>[]>([]);
 
-  protected selectedUserTypes: UserType[] = [UserType.Local, UserType.Directory];
+  protected readonly selectedUserTypes = signal<UserType[]>([UserType.Local, UserType.Directory]);
 
   protected showBuiltinUsers = false;
 
@@ -88,9 +88,9 @@ export class UsersSearchComponent implements OnInit {
     return options;
   });
 
-  protected get isBuiltinCheckboxEnabled(): boolean {
-    return this.selectedUserTypes.includes(UserType.Local);
-  }
+  protected readonly isBuiltinCheckboxEnabled = computed(() => {
+    return this.selectedUserTypes().includes(UserType.Local);
+  });
 
   protected readonly userTypeOptions$ = toObservable(this.userTypeOptionsSignal);
 
@@ -210,7 +210,7 @@ export class UsersSearchComponent implements OnInit {
     if (query.isBasicQuery) {
       let params = new ParamsBuilder<User>();
 
-      const selectedTypes = this.selectedUserTypes;
+      const selectedTypes = this.selectedUserTypes();
       if (selectedTypes.length > 0) {
         params = this.addUserTypeFilters(params, selectedTypes);
       }
@@ -233,7 +233,7 @@ export class UsersSearchComponent implements OnInit {
   }
 
   protected onUserTypeChange(selectedTypes: UserType[]): void {
-    this.selectedUserTypes = selectedTypes;
+    this.selectedUserTypes.set(selectedTypes);
     if (!selectedTypes.includes(UserType.Local)) {
       this.showBuiltinUsers = false;
     }
@@ -477,9 +477,9 @@ export class UsersSearchComponent implements OnInit {
     if (targetMode === 'basic') {
       // Basic mode: show local and directory users by default
       this.dataProvider().setParams([]);
-      this.selectedUserTypes = [UserType.Local, UserType.Directory];
+      this.selectedUserTypes.set([UserType.Local, UserType.Directory]);
       this.showBuiltinUsers = false;
-      this.onUserTypeChange(this.selectedUserTypes);
+      this.onUserTypeChange(this.selectedUserTypes());
     } else {
       // Advanced mode: show ALL users (no filtering)
       this.dataProvider().setParams([]);

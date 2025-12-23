@@ -580,7 +580,7 @@ describe('UsersSearchComponent', () => {
         .onUserTypeChange([UserType.Directory]);
 
       expect(
-        (component as unknown as { isBuiltinCheckboxEnabled: boolean }).isBuiltinCheckboxEnabled,
+        (component as unknown as { isBuiltinCheckboxEnabled: () => boolean }).isBuiltinCheckboxEnabled(),
       ).toBe(false);
     });
 
@@ -590,13 +590,14 @@ describe('UsersSearchComponent', () => {
         .onUserTypeChange([UserType.Local]);
 
       expect(
-        (component as unknown as { isBuiltinCheckboxEnabled: boolean }).isBuiltinCheckboxEnabled,
+        (component as unknown as { isBuiltinCheckboxEnabled: () => boolean }).isBuiltinCheckboxEnabled(),
       ).toBe(true);
     });
 
     it('resets built-in checkbox when Local is deselected', () => {
       // Select Local and enable built-in
-      (component as unknown as { selectedUserTypes: UserType[] }).selectedUserTypes = [UserType.Local];
+      (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
+        .onUserTypeChange([UserType.Local]);
       (component as unknown as { showBuiltinUsers: boolean }).showBuiltinUsers = true;
 
       // Deselect Local
