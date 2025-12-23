@@ -5,6 +5,7 @@ import {
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of, map } from 'rxjs';
@@ -29,7 +30,6 @@ import { getDefaultPresets, getBuiltinTogglePreset, getActiveDirectoryTogglePres
 const searchDebounceTime = 250;
 
 enum UserType {
-  Builtin = 'builtin',
   Local = 'local',
   Directory = 'directory',
 }
@@ -44,6 +44,7 @@ enum UserType {
   imports: [
     FakeProgressBarComponent,
     MatButton,
+    MatSlideToggle,
     AsyncPipe,
     FormsModule,
     SearchInputComponent,
@@ -67,7 +68,9 @@ export class UsersSearchComponent implements OnInit {
 
   protected readonly searchProperties = signal<SearchProperty<User>[]>([]);
 
-  protected selectedUserTypes: UserType[] = [UserType.Local];
+  protected selectedUserTypes: UserType[] = [UserType.Local, UserType.Directory];
+
+  protected showBuiltinUsers = false;
 
   protected readonly userPresets = signal<FilterPreset<User>[]>([]);
   private readonly isBuiltinFilterActive = signal<boolean>(false);
@@ -75,7 +78,6 @@ export class UsersSearchComponent implements OnInit {
 
   private readonly userTypeOptionsSignal = computed(() => {
     const options: SelectOption[] = [
-      { label: this.translate.instant('Built-In'), value: UserType.Builtin },
       { label: this.translate.instant('Local'), value: UserType.Local },
     ];
 
@@ -85,6 +87,10 @@ export class UsersSearchComponent implements OnInit {
 
     return options;
   });
+
+  protected get isBuiltinCheckboxEnabled(): boolean {
+    return this.selectedUserTypes.includes(UserType.Local);
+  }
 
   protected readonly userTypeOptions$ = toObservable(this.userTypeOptionsSignal);
 
@@ -205,7 +211,7 @@ export class UsersSearchComponent implements OnInit {
       let params = new ParamsBuilder<User>();
 
       const selectedTypes = this.selectedUserTypes;
-      if (selectedTypes.length > 0 && selectedTypes.length < this.userTypeOptionsSignal().length) {
+      if (selectedTypes.length > 0) {
         params = this.addUserTypeFilters(params, selectedTypes);
       }
 
@@ -228,6 +234,14 @@ export class UsersSearchComponent implements OnInit {
 
   protected onUserTypeChange(selectedTypes: UserType[]): void {
     this.selectedUserTypes = selectedTypes;
+    if (!selectedTypes.includes(UserType.Local)) {
+      this.showBuiltinUsers = false;
+    }
+    this.onSearch(this.searchQuery());
+  }
+
+  protected onShowBuiltinChange(showBuiltin: boolean): void {
+    this.showBuiltinUsers = showBuiltin;
     this.onSearch(this.searchQuery());
   }
 
@@ -288,14 +302,15 @@ export class UsersSearchComponent implements OnInit {
 
   private applySingleUserTypeFilter(params: ParamsBuilder<User>, type: UserType): ParamsBuilder<User> {
     switch (type) {
-      case UserType.Builtin:
-        return params.andFilter('builtin', '=', true);
       case UserType.Local:
+        if (this.showBuiltinUsers) {
+          return params.andFilter('local', '=', true);
+        }
         return params.andFilter('local', '=', true).andGroup((group) => {
           group.filter('builtin', '=', false).orFilter('username', '=', 'root');
         });
       case UserType.Directory:
-        return params.andFilter('local', '=', false).andFilter('builtin', '=', false);
+        return params.andFilter('local', '=', false);
       default:
         return params;
     }
@@ -303,35 +318,32 @@ export class UsersSearchComponent implements OnInit {
 
   private applyUserTypeToGroup(group: ParamsBuilderGroup<User>, type: UserType, isFirst: boolean): void {
     switch (type) {
-      case UserType.Builtin:
-        if (isFirst) {
-          group.filter('builtin', '=', true);
-        } else {
-          group.orFilter('builtin', '=', true);
-        }
-        break;
       case UserType.Local:
-        if (isFirst) {
-          group.filter('local', '=', true).andGroup((subGroup: ParamsBuilderGroup<User>) => {
-            subGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
-          });
+        if (this.showBuiltinUsers) {
+          if (isFirst) {
+            group.filter('local', '=', true);
+          } else {
+            group.orFilter('local', '=', true);
+          }
         } else {
-          group.orGroup((subGroup: ParamsBuilderGroup<User>) => {
-            subGroup.filter('local', '=', true).andGroup((innerGroup: ParamsBuilderGroup<User>) => {
-              innerGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
+          if (isFirst) {
+            group.filter('local', '=', true).andGroup((subGroup: ParamsBuilderGroup<User>) => {
+              subGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
             });
-          });
+          } else {
+            group.orGroup((subGroup: ParamsBuilderGroup<User>) => {
+              subGroup.filter('local', '=', true).andGroup((innerGroup: ParamsBuilderGroup<User>) => {
+                innerGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
+              });
+            });
+          }
         }
         break;
       case UserType.Directory:
         if (isFirst) {
-          group.group((subGroup: ParamsBuilderGroup<User>) => {
-            subGroup.filter('local', '=', false).andFilter('builtin', '=', false);
-          });
+          group.filter('local', '=', false);
         } else {
-          group.orGroup((subGroup: ParamsBuilderGroup<User>) => {
-            subGroup.filter('local', '=', false).andFilter('builtin', '=', false);
-          });
+          group.orFilter('local', '=', false);
         }
         break;
     }
@@ -459,9 +471,10 @@ export class UsersSearchComponent implements OnInit {
 
   private resetToModeDefaults(targetMode: 'basic' | 'advanced'): void {
     if (targetMode === 'basic') {
-      // Basic mode: show local users + root only
+      // Basic mode: show local and directory users by default
       this.dataProvider().setParams([]);
-      this.selectedUserTypes = [UserType.Local];
+      this.selectedUserTypes = [UserType.Local, UserType.Directory];
+      this.showBuiltinUsers = false;
       this.onUserTypeChange(this.selectedUserTypes);
     } else {
       // Advanced mode: show ALL users (no filtering)

@@ -17,7 +17,6 @@ import * as UsersSearchPresets from 'app/pages/credentials/users/all-users/users
 import { UsersSearchComponent } from 'app/pages/credentials/users/all-users/users-search/users-search.component';
 
 enum UserType {
-  Builtin = 'builtin',
   Local = 'local',
   Directory = 'directory',
 }
@@ -84,28 +83,34 @@ describe('UsersSearchComponent', () => {
   });
 
   describe('Basic Search', () => {
-    it('performs search with the correct value', async () => {
+    it('performs search with the correct value with both Local and Directory selected by default', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
       await searchInput.setValue('root');
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
       await button.click();
 
+      // With both Local and Directory selected, the filter combines both types in a single OR group
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
-          ['local', '=', true],
-          ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+          ['OR', [
+            [
+              ['local', '=', true],
+              ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+            ],
+            ['local', '=', false],
+          ]],
           ['OR', [['username', '~', '(?i)root'], ['full_name', '~', '(?i)root']]],
         ],
         {},
       ]);
     });
 
-    it('searches with user type filters', async () => {
+    it('searches with only Local user type selected', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
 
-      // Select builtin user type
+      // Select only Local user type
       (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
-        .onUserTypeChange([UserType.Builtin]);
+        .onUserTypeChange([UserType.Local]);
       await searchInput.setValue('test');
 
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
@@ -113,7 +118,8 @@ describe('UsersSearchComponent', () => {
 
       expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
         [
-          ['builtin', '=', true],
+          ['local', '=', true],
+          ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
           ['OR', [['username', '~', '(?i)test'], ['full_name', '~', '(?i)test']]],
         ],
         {},
@@ -121,12 +127,16 @@ describe('UsersSearchComponent', () => {
     });
 
     it('converts * wildcard to .* in search pattern', async () => {
+      // Select only Local to simplify test
+      (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
+        .onUserTypeChange([UserType.Local]);
+
       const searchInput = await loader.getHarness(SearchInputHarness);
       await searchInput.setValue('*user');
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
       await button.click();
 
-      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+      expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
         [
           ['local', '=', true],
           ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
@@ -137,12 +147,16 @@ describe('UsersSearchComponent', () => {
     });
 
     it('escapes regex special characters in search pattern', async () => {
+      // Select only Local to simplify test
+      (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
+        .onUserTypeChange([UserType.Local]);
+
       const searchInput = await loader.getHarness(SearchInputHarness);
       await searchInput.setValue('(test)');
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
       await button.click();
 
-      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+      expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
         [
           ['local', '=', true],
           ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
@@ -217,7 +231,6 @@ describe('UsersSearchComponent', () => {
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
           ['local', '=', false],
-          ['builtin', '=', false],
         ],
         {},
       ]);
@@ -416,7 +429,7 @@ describe('UsersSearchComponent', () => {
   });
 
   describe('Search Mode Switching - Default States', () => {
-    it('shows default local users on page load, switches to all users in Advanced, then back to local users in Basic', async () => {
+    it('shows local and directory users by default, switches to all in Advanced, then back to default in Basic', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
 
       // Verify component starts in Basic mode
@@ -424,19 +437,18 @@ describe('UsersSearchComponent', () => {
 
       // Component doesn't call setParams on initialization in test, so trigger user type change
       (component as unknown as { onUserTypeChange: (types: string[]) => void })
-        .onUserTypeChange(['local']);
+        .onUserTypeChange(['local', 'directory']);
 
-      // Verify initial Basic mode applies local user filtering
+      // Verify initial Basic mode applies both Local and Directory user filtering
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
-          ['local', '=', true],
-          [
-            'OR',
+          ['OR', [
             [
-              ['builtin', '=', false],
-              ['username', '=', 'root'],
+              ['local', '=', true],
+              ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
             ],
-          ],
+            ['local', '=', false],
+          ]],
         ],
         {},
       ]);
@@ -459,17 +471,16 @@ describe('UsersSearchComponent', () => {
       await searchInput.toggleMode();
       expect(await searchInput.isInAdvancedMode()).toBe(false);
 
-      // Verify Basic mode again applies local user filtering
+      // Verify Basic mode again applies default filtering
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
-          ['local', '=', true],
-          [
-            'OR',
+          ['OR', [
             [
-              ['builtin', '=', false],
-              ['username', '=', 'root'],
+              ['local', '=', true],
+              ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
             ],
-          ],
+            ['local', '=', false],
+          ]],
         ],
         {},
       ]);
@@ -478,6 +489,11 @@ describe('UsersSearchComponent', () => {
 
   describe('Search Mode Switching - Query Clearing', () => {
     it('clears search queries when switching modes and maintains correct default filtering', async () => {
+      // Select only Local for this test
+      (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
+        .onUserTypeChange([UserType.Local]);
+      jest.clearAllMocks();
+
       const searchInput = await loader.getHarness(SearchInputHarness);
 
       // 1. Enter basic search query
@@ -523,21 +539,71 @@ describe('UsersSearchComponent', () => {
       // 4. Switch back to Basic mode
       await searchInput.toggleMode();
 
-      // Verify back in Basic mode and default local users filtering is restored
+      // Verify back in Basic mode and default filtering is restored (Local + Directory)
       expect(await searchInput.isInAdvancedMode()).toBe(false);
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
-          ['local', '=', true],
-          [
-            'OR',
+          ['OR', [
             [
-              ['builtin', '=', false],
-              ['username', '=', 'root'],
+              ['local', '=', true],
+              ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
             ],
-          ],
+            ['local', '=', false],
+          ]],
         ],
         {},
       ]);
+    });
+  });
+
+  describe('Show Built-in Users Checkbox', () => {
+    it('shows built-in users when checkbox is enabled', () => {
+      // Select only Local
+      (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
+        .onUserTypeChange([UserType.Local]);
+
+      // Enable show built-in users
+      (component as unknown as { onShowBuiltinChange: (show: boolean) => void })
+        .onShowBuiltinChange(true);
+
+      expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
+        [
+          ['local', '=', true],
+        ],
+        {},
+      ]);
+    });
+
+    it('disables built-in checkbox when Local is not selected', () => {
+      // Select only Directory
+      (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
+        .onUserTypeChange([UserType.Directory]);
+
+      expect(
+        (component as unknown as { isBuiltinCheckboxEnabled: boolean }).isBuiltinCheckboxEnabled,
+      ).toBe(false);
+    });
+
+    it('enables built-in checkbox when Local is selected', () => {
+      // Select Local
+      (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
+        .onUserTypeChange([UserType.Local]);
+
+      expect(
+        (component as unknown as { isBuiltinCheckboxEnabled: boolean }).isBuiltinCheckboxEnabled,
+      ).toBe(true);
+    });
+
+    it('resets built-in checkbox when Local is deselected', () => {
+      // Select Local and enable built-in
+      (component as unknown as { selectedUserTypes: UserType[] }).selectedUserTypes = [UserType.Local];
+      (component as unknown as { showBuiltinUsers: boolean }).showBuiltinUsers = true;
+
+      // Deselect Local
+      (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
+        .onUserTypeChange([UserType.Directory]);
+
+      expect((component as unknown as { showBuiltinUsers: boolean }).showBuiltinUsers).toBe(false);
     });
   });
 });
