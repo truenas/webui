@@ -434,6 +434,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'cloudsync'],
       contextualHelp: T('Cloud sync failures may be due to network issues, credential problems, or cloud provider limitations.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/cloudsynctasks/',
       actions: [
         {
           label: T('Rerun Cloud Sync'),
@@ -461,6 +462,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'replication'],
       contextualHelp: T('Replication failures can cause backup gaps. Check network connectivity and destination system health.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/replication/',
       actions: [
         {
           label: T('Rerun Replication'),
@@ -490,6 +492,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       category: SmartAlertCategory.Tasks,
       relatedMenuPath: ['data-protection', 'rsync'],
       contextualHelp: T('Rsync task failures may be due to connectivity issues, permission problems, or incorrect paths.'),
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/rsynctasksscale/',
       actions: [
         {
           label: T('Rerun Rsync Task'),
@@ -562,6 +565,822 @@ export const smartAlertRegistry: SmartAlertConfig = {
           primary: true,
         },
       ],
+    },
+
+    // Applications
+    FailuresInAppMigration: {
+      category: SmartAlertCategory.Applications,
+      relatedMenuPath: ['apps', 'installed'],
+      actions: [{
+        label: T('Go to Applications'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-apps'),
+        route: ['/apps', 'installed'],
+        primary: true,
+      }],
+    },
+
+    AppUpdate: {
+      category: SmartAlertCategory.Applications,
+      relatedMenuPath: ['apps', 'installed'],
+      actions: [{
+        label: T('Go to Applications'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-apps'),
+        route: ['/apps', 'installed'],
+        primary: true,
+      }],
+    },
+
+    ApplicationsStartFailed: {
+      category: SmartAlertCategory.Applications,
+      relatedMenuPath: ['apps', 'installed'],
+      actions: [{
+        label: T('Go to Applications'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-apps'),
+        route: ['/apps', 'installed'],
+        primary: true,
+      }],
+    },
+
+    ApplicationsConfigurationFailed: {
+      category: SmartAlertCategory.Applications,
+      relatedMenuPath: ['apps', 'installed'],
+      actions: [{
+        label: T('Go to App Settings'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-cog'),
+        route: ['/apps', 'installed'],
+        fragment: 'installed',
+        primary: true,
+      }],
+    },
+
+    // Certificates
+    CertificateExpired: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'certificates'],
+      actions: [{
+        label: T('Go to Certificates'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-certificate'),
+        route: ['/credentials', 'certificates'],
+        primary: true,
+      }],
+    },
+
+    CertificateIsExpiring: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'certificates'],
+      actions: [{
+        label: T('Go to Certificates'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-certificate'),
+        route: ['/credentials', 'certificates'],
+        primary: true,
+      }],
+    },
+
+    CertificateIsExpiringSoon: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'certificates'],
+      actions: [{
+        label: T('Go to Certificates'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-certificate'),
+        route: ['/credentials', 'certificates'],
+        primary: true,
+      }],
+    },
+
+    CertificateParsingFailed: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'certificates'],
+      actions: [{
+        label: T('Go to Certificates'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-certificate'),
+        route: ['/credentials', 'certificates'],
+        primary: true,
+      }],
+    },
+
+    CertificateRevoked: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'certificates'],
+      actions: [{
+        label: T('Go to Certificates'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-certificate'),
+        route: ['/credentials', 'certificates'],
+        primary: true,
+      }],
+    },
+
+    WebUiCertificateSetupFailed: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'general'],
+      actions: [{
+        label: T('Go to GUI Settings'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-desktop-mac'),
+        route: ['/system', 'general'],
+        fragment: 'gui-settings',
+        primary: true,
+      }],
+    },
+
+    WebUiBindAddressV2: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'general'],
+      actions: [{
+        label: T('Go to GUI Settings'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-desktop-mac'),
+        route: ['/system', 'general'],
+        fragment: 'gui-settings',
+        primary: true,
+      }],
+    },
+
+    // Directory Services
+    ActiveDirectoryDomainBind: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['credentials', 'directory-services'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/directoryservices/configadscale/',
+      actions: [{
+        label: T('Go To Directory Services'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-sitemap'),
+        route: ['/credentials', 'directory-services'],
+        primary: true,
+      }],
+    },
+
+    ActiveDirectoryDomainHealth: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['credentials', 'directory-services'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/directoryservices/configadscale/',
+      actions: [{
+        label: T('Go To Directory Services'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-sitemap'),
+        route: ['/credentials', 'directory-services'],
+        primary: true,
+      }],
+    },
+
+    LdapBind: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['credentials', 'directory-services'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/directoryservices/configldapscale/',
+      actions: [{
+        label: T('Go To Directory Services'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-sitemap'),
+        route: ['/credentials', 'directory-services'],
+        primary: true,
+      }],
+    },
+
+    // Network
+    NoCriticalFailoverInterfaceFound: {
+      category: SmartAlertCategory.Network,
+      relatedMenuPath: ['network'],
+      actions: [{
+        label: T('Go to Network Interfaces'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-lan'),
+        route: ['/network'],
+        primary: true,
+      }],
+    },
+
+    NetworkCardsMismatchOnActiveNode: {
+      category: SmartAlertCategory.Network,
+      relatedMenuPath: ['network'],
+      actions: [{
+        label: T('Go to Network Interfaces'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-lan'),
+        route: ['/network'],
+        primary: true,
+      }],
+    },
+
+    NetworkCardsMismatchOnStandbyNode: {
+      category: SmartAlertCategory.Network,
+      relatedMenuPath: ['network'],
+      actions: [{
+        label: T('Go to Network Interfaces'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-lan'),
+        route: ['/network'],
+        primary: true,
+      }],
+    },
+
+    BONDMissingPorts: {
+      category: SmartAlertCategory.Network,
+      relatedMenuPath: ['network'],
+      actions: [{
+        label: T('Go to Network Interfaces'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-lan'),
+        route: ['/network'],
+        primary: true,
+      }],
+    },
+
+    BONDInactivePorts: {
+      category: SmartAlertCategory.Network,
+      relatedMenuPath: ['network'],
+      actions: [{
+        label: T('Go to Network Interfaces'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-lan'),
+        route: ['/network'],
+        primary: true,
+      }],
+    },
+
+    BONDNoActivePorts: {
+      category: SmartAlertCategory.Network,
+      relatedMenuPath: ['network'],
+      actions: [{
+        label: T('Go to Network Interfaces'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-lan'),
+        route: ['/network'],
+        primary: true,
+      }],
+    },
+
+    // Failover
+    FailoverSyncFailed: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'failover'],
+      actions: [{
+        label: T('Go to Failover Settings'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-sync'),
+        route: ['/system', 'failover'],
+        fragment: 'failover',
+        primary: true,
+      }],
+    },
+
+    FailoverKeysSyncFailed: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'failover'],
+      actions: [{
+        label: T('Go to Failover Settings'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-sync'),
+        route: ['/system', 'failover'],
+        fragment: 'failover',
+        primary: true,
+      }],
+    },
+
+    // JBOF
+    JBOFRedfishComm: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'jbof'],
+      actions: [{
+        label: T('Go to JBOF'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-expansion-card'),
+        route: ['/system', 'jbof'],
+        primary: true,
+      }],
+    },
+
+    JBOFElementCritical: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'jbof'],
+      actions: [{
+        label: T('Go to JBOF'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-expansion-card'),
+        route: ['/system', 'jbof'],
+        primary: true,
+      }],
+    },
+
+    JBOFElementWarning: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'jbof'],
+      actions: [{
+        label: T('Go to JBOF'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-expansion-card'),
+        route: ['/system', 'jbof'],
+        primary: true,
+      }],
+    },
+
+    JBOFTearDownFailure: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'jbof'],
+      actions: [{
+        label: T('Go to JBOF'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-expansion-card'),
+        route: ['/system', 'jbof'],
+        primary: true,
+      }],
+    },
+
+    JBOFInvalidData: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'jbof'],
+      actions: [{
+        label: T('Go to JBOF'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-expansion-card'),
+        route: ['/system', 'jbof'],
+        primary: true,
+      }],
+    },
+
+    // Disks & SMART
+    SMART: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['storage', 'disks'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/disks/',
+      actions: [{
+        label: T('Go to Disks'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-harddisk'),
+        route: ['/storage', 'disks'],
+        primary: true,
+      }],
+    },
+
+    Smartd: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['system', 'services'],
+      actions: [{
+        label: T('Go to Services'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-cog'),
+        route: ['/system', 'services'],
+        primary: true,
+      }],
+    },
+
+    // KMIP
+    KMIPConnectionFailed: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'kmip'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/configuringkmipscale/',
+      actions: [{
+        label: T('Go to KMIP'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-key-variant'),
+        route: ['/credentials', 'kmip'],
+        primary: true,
+      }],
+    },
+
+    KMIPSEDGlobalPasswordSyncFailure: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'kmip'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/configuringkmipscale/',
+      actions: [{
+        label: T('Go to KMIP'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-key-variant'),
+        route: ['/credentials', 'kmip'],
+        primary: true,
+      }],
+    },
+
+    KMIPSEDDisksSyncFailure: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'kmip'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/configuringkmipscale/',
+      actions: [{
+        label: T('Go to KMIP'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-key-variant'),
+        route: ['/credentials', 'kmip'],
+        primary: true,
+      }],
+    },
+
+    KMIPZFSDatasetsSyncFailure: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'kmip'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/credentials/configuringkmipscale/',
+      actions: [{
+        label: T('Go to KMIP'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-key-variant'),
+        route: ['/credentials', 'kmip'],
+        primary: true,
+      }],
+    },
+
+    // NFS
+    NFSBindAddress: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['system', 'services'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/services/nfsservicescale/',
+      actions: [{
+        label: T('Go to NFS Service'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-folder-network'),
+        route: ['/system', 'services'],
+        fragment: 'nfs',
+        primary: true,
+      }],
+    },
+
+    // SMB
+    SMBPath: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['shares', 'smb'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/shares/smb/managesmbshares/',
+      actions: [{
+        label: T('Go to SMB shares'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-folder-network'),
+        route: ['/sharing', 'smb'],
+        primary: true,
+      }],
+    },
+
+    SMBLegacyProtocol: {
+      category: SmartAlertCategory.Services,
+      relatedMenuPath: ['shares', 'smb'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/services/smbservicescale/',
+      actions: [{
+        label: T('Go to SMB sessions'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-folder-network'),
+        route: ['/sharing', 'smb', 'status', 'sessions'],
+        primary: true,
+      }],
+    },
+
+    // Datasets
+    ShareLocked: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['datasets'],
+      actions: [{
+        label: T('Go to Datasets'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-database'),
+        route: ['/datasets'],
+        primary: true,
+      }],
+    },
+
+    QuotaCritical: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['datasets'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/datasets/managequotas/',
+      actions: [{
+        label: T('Go to Datasets'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-database'),
+        route: ['/datasets'],
+        primary: true,
+      }],
+    },
+
+    QuotaWarning: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['datasets'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/datasets/managequotas/',
+      actions: [{
+        label: T('Go to Datasets'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-database'),
+        route: ['/datasets'],
+        primary: true,
+      }],
+    },
+
+    EncryptedDataset: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['datasets'],
+      actions: [{
+        label: T('Go to Datasets'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-database'),
+        route: ['/datasets'],
+        primary: true,
+      }],
+    },
+
+    TaskLocked: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['datasets'],
+      actions: [{
+        label: T('Go to Datasets'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-database'),
+        route: ['/datasets'],
+        primary: true,
+      }],
+    },
+
+    // Storage/Pools
+    PoolUpgraded: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['storage'],
+      actions: [{
+        label: T('Go to Storage'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('dns'),
+        route: ['/storage'],
+        primary: true,
+      }],
+    },
+
+    ZpoolCapacityCritical: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['storage'],
+      actions: [{
+        label: T('Go to Storage'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('dns'),
+        route: ['/storage'],
+        primary: true,
+      }],
+    },
+
+    ZpoolCapacityWarning: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['storage'],
+      actions: [{
+        label: T('Go to Storage'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('dns'),
+        route: ['/storage'],
+        primary: true,
+      }],
+    },
+
+    ZpoolCapacityNotice: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['storage'],
+      actions: [{
+        label: T('Go to Storage'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('dns'),
+        route: ['/storage'],
+        primary: true,
+      }],
+    },
+
+    VolumeStatus: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['storage'],
+      actions: [{
+        label: T('Go to Storage'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('dns'),
+        route: ['/storage'],
+        primary: true,
+      }],
+    },
+
+    PoolUsbDisks: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['storage'],
+      actions: [{
+        label: T('Go to Storage'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('dns'),
+        route: ['/storage'],
+        primary: true,
+      }],
+    },
+
+    // Snapshots
+    SnapshotTotalCount: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['datasets'],
+      actions: [{
+        label: T('Go to Snapshots'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-camera'),
+        route: ['/datasets'],
+        primary: true,
+      }],
+    },
+
+    SnapshotCount: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['datasets'],
+      actions: [{
+        label: T('Go to Snapshots'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-camera'),
+        route: ['/datasets'],
+        primary: true,
+      }],
+    },
+
+    // API Keys
+    ApiKeyRevoked: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'users'],
+      actions: [{
+        label: T('Go to API keys'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-key'),
+        route: ['/credentials', 'users'],
+        primary: true,
+      }],
+    },
+
+    APIFailedLogin: {
+      category: SmartAlertCategory.Security,
+      relatedMenuPath: ['credentials', 'users'],
+      actions: [{
+        label: T('Go to API keys'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-key'),
+        route: ['/credentials', 'users'],
+        primary: true,
+      }],
+    },
+
+    // Boot Pool
+    BootPoolStatus: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'boot'],
+      actions: [{
+        label: T('Go to Boot Pools'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-layers'),
+        route: ['/system', 'boot'],
+        primary: true,
+      }],
+    },
+
+    // License - already covered by LicenseStatus source but adding class mappings
+    LicenseHasExpired: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'general'],
+      actions: [{
+        label: T('Go to System Settings'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('settings'),
+        route: ['/system', 'general'],
+        fragment: 'support',
+        primary: true,
+      }],
+    },
+
+    LicenseIsExpiring: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'general'],
+      actions: [{
+        label: T('Go to System Settings'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('settings'),
+        route: ['/system', 'general'],
+        fragment: 'support',
+        primary: true,
+      }],
+    },
+
+    License: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'general'],
+      actions: [{
+        label: T('Go to System Settings'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('settings'),
+        route: ['/system', 'general'],
+        fragment: 'support',
+        primary: true,
+      }],
+    },
+
+    ProactiveSupport: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'general'],
+      actions: [{
+        label: T('Go to System Settings'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('settings'),
+        route: ['/system', 'general'],
+        fragment: 'support',
+        primary: true,
+      }],
+    },
+
+    // System Updates
+    HasUpdate: {
+      category: SmartAlertCategory.System,
+      relatedMenuPath: ['system', 'update'],
+      actions: [{
+        label: T('Go to System Updates'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-update'),
+        route: ['/system', 'update'],
+        primary: true,
+      }],
+    },
+
+    // Data Protection - already have CloudBackupTaskFailed, CloudSyncTaskFailed, ReplicationFailed
+    ReplicationSuccess: {
+      category: SmartAlertCategory.Tasks,
+      relatedMenuPath: ['data-protection', 'replication'],
+      actions: [{
+        label: T('Go to Data Protection'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('security'),
+        route: ['/data-protection'],
+        primary: true,
+      }],
+    },
+
+    ScrubFinished: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['storage'],
+      actions: [{
+        label: T('Go to Data Protection'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('security'),
+        route: ['/data-protection'],
+        primary: true,
+      }],
+    },
+
+    ScrubNotStarted: {
+      category: SmartAlertCategory.Storage,
+      relatedMenuPath: ['storage'],
+      actions: [{
+        label: T('Go to Data Protection'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('security'),
+        route: ['/data-protection'],
+        primary: true,
+      }],
+    },
+
+    // VMware Snapshots
+    VMWareLoginFailed: {
+      category: SmartAlertCategory.Tasks,
+      relatedMenuPath: ['data-protection', 'vmware-snapshots'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/creatingvmwaresnapshots/',
+      actions: [{
+        label: T('Go to VMWare Snapshots'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-camera'),
+        route: ['/data-protection', 'vmware-snapshots'],
+        primary: true,
+      }],
+    },
+
+    VMWareSnapshotDeleteFailed: {
+      category: SmartAlertCategory.Tasks,
+      relatedMenuPath: ['data-protection', 'vmware-snapshots'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/creatingvmwaresnapshots/',
+      actions: [{
+        label: T('Go to VMWare Snapshots'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-camera'),
+        route: ['/data-protection', 'vmware-snapshots'],
+        primary: true,
+      }],
+    },
+
+    VMWareSnapshotCreateFailed: {
+      category: SmartAlertCategory.Tasks,
+      relatedMenuPath: ['data-protection', 'vmware-snapshots'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/dataprotection/creatingvmwaresnapshots/',
+      actions: [{
+        label: T('Go to VMWare Snapshots'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-camera'),
+        route: ['/data-protection', 'vmware-snapshots'],
+        primary: true,
+      }],
+    },
+
+    // UPS
+    UPSCommbad: {
+      category: SmartAlertCategory.Hardware,
+      relatedMenuPath: ['system', 'services'],
+      documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/services/upsservicesscale/',
+      actions: [{
+        label: T('Go to UPS service'),
+        type: SmartAlertActionType.Navigate,
+        icon: iconMarker('mdi-flash'),
+        route: ['/system', 'services'],
+        fragment: 'ups',
+        primary: true,
+      }],
     },
   },
 

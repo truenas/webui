@@ -110,17 +110,6 @@
         {{ 'Dismiss' | translate }}
       </a>
     }
-
-    @let linkLabel = link()?.label;
-    @let hasSmartEnhancement = enhanced.category || (enhanced.actions && enhanced.actions.length > 0);
-    @if (linkLabel && !hasSmartEnhancement) {
-      <a
-        [ixTest]="[alert().key, 'open-link']"
-        (click)="openLink()"
-      >
-        {{ linkLabel | translate }}
-      </a>
-    }
   </div>
 </div>
 

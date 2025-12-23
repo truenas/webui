@@ -16,7 +16,6 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertPageObject } from 'app/modules/alerts/components/alert/alert.page-object';
-import { AlertLinkService } from 'app/modules/alerts/services/alert-link.service';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey, selectAlerts } from 'app/modules/alerts/store/alert.selectors';
@@ -124,15 +123,9 @@ describe('AlertComponent', () => {
     ]);
   });
 
-  it('shows a link for an alert class', () => {
-    const link = spectator.query(byText('Go to API keys'))!;
-    expect(link).toExist();
-
-    const alertLinkService = spectator.inject(AlertLinkService);
-    jest.spyOn(alertLinkService, 'openLink').mockImplementation();
-    spectator.click(link);
-
-    expect(alertLinkService.openLink).toHaveBeenCalledWith(AlertClassName.ApiKeyRevoked);
+  it('shows smart action button for enhanced alerts', () => {
+    const actionButton = spectator.query(byText('View API Keys'))!;
+    expect(actionButton).toExist();
   });
 
   it('reopens a dismissed alert when Re-open link is pressed', async () => {

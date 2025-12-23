@@ -10,7 +10,6 @@ import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
 import { Role } from 'app/enums/role.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert } from 'app/interfaces/smart-alert.interface';
-import { AlertLinkService } from 'app/modules/alerts/services/alert-link.service';
 import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
 import { alertPanelClosed, dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
@@ -57,7 +56,6 @@ enum AlertLevelColor {
 export class AlertComponent implements OnChanges, AfterViewInit {
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
-  protected alertLink = inject(AlertLinkService);
   private smartAlertService = inject(SmartAlertService);
 
   readonly alert = input.required<Alert>();
@@ -89,8 +87,6 @@ export class AlertComponent implements OnChanges, AfterViewInit {
     return this.translate.instant(levelLabel);
   });
 
-  readonly link = computed(() => this.alertLink.getLink(this.alert().klass));
-
   readonly enhancedAlert = computed<Alert & EnhancedAlert>(() => {
     return this.smartAlertService.enhanceAlert(this.alert());
   });
@@ -118,11 +114,6 @@ export class AlertComponent implements OnChanges, AfterViewInit {
 
   onReopen(): void {
     this.store$.dispatch(reopenAlertPressed({ id: this.alert().id }));
-  }
-
-  openLink(): void {
-    this.alertLink.openLink(this.alert().klass);
-    this.store$.dispatch(alertPanelClosed());
   }
 
   onSmartActionClick(handler: (() => void) | undefined): void {
