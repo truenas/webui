@@ -127,4 +127,86 @@ export class UserGroupExistenceValidationService {
       );
     };
   }
+
+  /**
+   * Creates an async validator that checks if a single user exists in the system.
+   * Used for combobox components where only one user can be selected.
+   *
+   * @param debounceMs - Debounce time in milliseconds. Defaults to 500ms.
+   * @returns AsyncValidatorFn that validates single user existence
+   *
+   * @example
+   * ```typescript
+   * this.form.controls.owner.addAsyncValidators([
+   *   this.validationService.validateUserExists()
+   * ]);
+   * ```
+   */
+  validateUserExists(debounceMs = 500): AsyncValidatorFn {
+    return (control): Observable<ValidationErrors | null> => {
+      const username = control.value as string;
+
+      if (!username || username.trim() === '') {
+        return of(null);
+      }
+
+      return of(username).pipe(
+        debounceTime(debounceMs),
+        switchMap((debouncedUsername): Observable<ValidationErrors | null> => {
+          return this.userService.getUserByName(debouncedUsername).pipe(
+            map((): null => null),
+            catchError((): Observable<ValidationErrors> => of({
+              userDoesNotExist: {
+                message: this.translate.instant(
+                  'User "{username}" does not exist',
+                  { username: debouncedUsername },
+                ),
+              },
+            })),
+          );
+        }),
+      );
+    };
+  }
+
+  /**
+   * Creates an async validator that checks if a single group exists in the system.
+   * Used for combobox components where only one group can be selected.
+   *
+   * @param debounceMs - Debounce time in milliseconds. Defaults to 500ms.
+   * @returns AsyncValidatorFn that validates single group existence
+   *
+   * @example
+   * ```typescript
+   * this.form.controls.ownerGroup.addAsyncValidators([
+   *   this.validationService.validateGroupExists()
+   * ]);
+   * ```
+   */
+  validateGroupExists(debounceMs = 500): AsyncValidatorFn {
+    return (control): Observable<ValidationErrors | null> => {
+      const groupName = control.value as string;
+
+      if (!groupName || groupName.trim() === '') {
+        return of(null);
+      }
+
+      return of(groupName).pipe(
+        debounceTime(debounceMs),
+        switchMap((debouncedGroupName): Observable<ValidationErrors | null> => {
+          return this.userService.getGroupByName(debouncedGroupName).pipe(
+            map((): null => null),
+            catchError((): Observable<ValidationErrors> => of({
+              groupDoesNotExist: {
+                message: this.translate.instant(
+                  'Group "{groupName}" does not exist',
+                  { groupName: debouncedGroupName },
+                ),
+              },
+            })),
+          );
+        }),
+      );
+    };
+  }
 }

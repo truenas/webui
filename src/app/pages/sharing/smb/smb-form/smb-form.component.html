@@ -137,19 +137,17 @@
           <ix-errors [control]="form.controls.audit"></ix-errors>
 
           @if (form.value.audit.enable) {
-            <ix-chips
+            <ix-group-chips
               formControlName="watch_list"
               [label]="'Watch List' | translate"
               [tooltip]="helptextSharingSmb.watchListTooltip | translate"
-              [autocompleteProvider]="groupProvider"
-            ></ix-chips>
+            ></ix-group-chips>
 
-            <ix-chips
+            <ix-group-chips
               formControlName="ignore_list"
               [label]="'Ignore List' | translate"
               [tooltip]="helptextSharingSmb.ignoreListTooltip | translate"
-              [autocompleteProvider]="groupProvider"
-            ></ix-chips>
+            ></ix-group-chips>
           }
         </ix-fieldset>
 

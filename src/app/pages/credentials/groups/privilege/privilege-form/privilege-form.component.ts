@@ -22,6 +22,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -49,6 +50,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxFieldsetComponent,
     IxInputComponent,
     IxChipsComponent,
+    IxGroupChipsComponent,
     IxSelectComponent,
     IxCheckboxComponent,
     FormActionsComponent,
@@ -156,27 +158,6 @@ export class PrivilegeFormComponent implements OnInit, AfterViewInit {
     );
   };
 
-  /**
-   * Provider for directory service groups autocomplete.
-   *
-   * Uses ChipsProvider instead of GroupComboboxProvider for consistency with localGroupsProvider.
-   * See localGroupsProvider documentation for rationale.
-   *
-   * Uses UserService.groupQueryDsCache for proper handling of:
-   * - Domain-prefixed group names (e.g., "ACME\admin")
-   * - Case-insensitive regex search
-   * - Exact name match fallback
-   * - Proper backslash escaping
-   *
-   * Limited to 50 results for performance.
-   */
-  readonly dsGroupsProvider: ChipsProvider = (query: string) => {
-    return this.userService.groupQueryDsCache(query || '', false, 0).pipe(
-      map((groups) => groups.slice(0, this.GROUP_QUERY_LIMIT)),
-      map((groups) => groups.map((group) => group.group)),
-    );
-  };
-
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -196,9 +177,6 @@ export class PrivilegeFormComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.form.controls.local_groups.addAsyncValidators([
-      this.existenceValidator.validateGroupsExist(),
-    ]);
-    this.form.controls.ds_groups.addAsyncValidators([
       this.existenceValidator.validateGroupsExist(),
     ]);
   }

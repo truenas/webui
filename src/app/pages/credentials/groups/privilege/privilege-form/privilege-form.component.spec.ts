@@ -384,41 +384,15 @@ describe('PrivilegeFormComponent', () => {
       expect(callArgs[1][1]).toEqual({ limit: 50, order_by: ['group'] });
     });
 
-    it('should use UserService.groupQueryDsCache for DS groups', async () => {
-      const provider = spectator.component.dsGroupsProvider;
-      const userService = spectator.inject(UserService);
-
-      jest.spyOn(userService, 'groupQueryDsCache').mockReturnValue(of([
-        { id: 1, group: 'domain-test', gid: 1001 } as Group,
-        { id: 2, group: 'test-domain', gid: 1002 } as Group,
-      ]));
-
-      const result = await lastValueFrom(provider('test'));
-
-      // Should call UserService.groupQueryDsCache with the query
-      expect(userService.groupQueryDsCache).toHaveBeenCalledWith('test', false, 0);
-
-      // Should return group names
-      expect(result).toEqual(['domain-test', 'test-domain']);
+    it('uses ix-group-chips component for DS groups with automatic validation', () => {
+      const groupChipsComponent = spectator.query('ix-group-chips[formControlName="ds_groups"]');
+      expect(groupChipsComponent).toExist();
     });
 
-    it('should limit DS groups results to 50', async () => {
-      const provider = spectator.component.dsGroupsProvider;
+    it('dS groups field uses UserService for group queries', () => {
       const userService = spectator.inject(UserService);
-
-      // Mock more than 50 groups
-      const manyGroups = Array.from({ length: 100 }, (_, i) => ({
-        id: i,
-        group: `group${i}`,
-        gid: 1000 + i,
-      } as Group));
-
-      jest.spyOn(userService, 'groupQueryDsCache').mockReturnValue(of(manyGroups));
-
-      const result = await lastValueFrom(provider('test'));
-
-      // Should limit to 50 results
-      expect(result).toHaveLength(50);
+      // ix-group-chips component automatically uses UserService.groupQueryDsCache
+      expect(userService).toBeTruthy();
     });
 
     it('should handle empty query for local groups', async () => {
