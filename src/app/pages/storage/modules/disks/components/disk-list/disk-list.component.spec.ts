@@ -22,6 +22,7 @@ import {
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DiskBulkEditComponent,
@@ -200,6 +201,23 @@ describe('DiskListComponent', () => {
       await editButton.click();
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { data: fakeDisk });
+    });
+
+    it('reloads data provider when slide-in form returns truthy response', async () => {
+      const slideInResponse$ = new Subject<SlideInResponse<boolean>>();
+      jest.spyOn(spectator.inject(SlideIn), 'open').mockReturnValue(slideInResponse$.asObservable());
+
+      const loadSpy = jest.spyOn(spectator.component.dataProvider, 'load');
+
+      await table.expandRow(0);
+      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      await editButton.click();
+
+      expect(loadSpy).toHaveBeenCalledTimes(0);
+
+      slideInResponse$.next({ response: true });
+
+      expect(loadSpy).toHaveBeenCalledTimes(1);
     });
 
     it('shows wipe disk dialog when Wipe button is pressed', async () => {
