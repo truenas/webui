@@ -190,21 +190,31 @@ describe('DiskFormComponent', () => {
     it('closes the form after the operation times out', fakeAsync(async () => {
       const apiService = spectator.inject(ApiService);
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      let resubCount = 0;
+
+      await form.fillForm({
+        'SED Password': 'password',
+      });
 
       apiService.call.mockImplementation((method) => {
-        if (method === 'disk.update') {
-          return of(dataDisk);
+        if (method === 'disk.query') {
+          return defer(() => {
+            resubCount += 1;
+            return of([{ ...dataDisk, passwd: 'will_never_match' }]);
+          });
         }
-        return of([{ ...dataDisk, passwd: 'unmatched_password' }]);
+
+        return of(dataDisk);
       });
 
       await saveButton.click();
 
-      // fast-forward through all the retries (3 retries * 2000ms = 6000ms)
+      // fast-forward through all the retries. (3 retries * 2000ms = 6000ms)
       tick(6000);
       spectator.detectChanges();
-
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+      // total number of tries should be 4 due to the initial try. (1 + 3)
+      expect(resubCount).toBe(4);
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     }));
 

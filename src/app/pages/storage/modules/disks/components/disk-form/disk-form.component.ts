@@ -7,7 +7,7 @@ import { MatDivider } from '@angular/material/divider';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of, first, map, forkJoin, repeat, defaultIfEmpty } from 'rxjs';
+import { of, map, forkJoin, retry, catchError } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
@@ -148,25 +148,29 @@ export class DiskFormComponent {
     // then, we call `disk.query` repeatedly until we get a response *matching* the updated disk.
     // we do this because `disk.update` returns immediately, but may not have finished updating the disk.
     const diskQuery$ = this.api.call('disk.query', [[['identifier', '=', this.existingDisk().identifier]], { extra: { passwords: true } }]).pipe(
-      map((disks) => disks.at(0)),
-      repeat({
-        count: this.submitRetries,
-        delay: this.submitRetryDelay,
-      }),
-      first((disk: Disk) => {
-        // type assertion here is safe since `DiskUpdate` is a strict subtype of `Disk`
+      // check if the updated disk matches what we submitted. if not, throw an error upwards
+      map((disks) => {
+        const disk = disks.at(0);
+        // type assertion is safe here since `DiskUpdate` is subtypes `Disk`
         const keys = Object.keys(valuesDiskUpdate) as (keyof DiskUpdate)[];
         for (const key of keys) {
           if (disk[key] !== valuesDiskUpdate[key]) {
-            return false;
+            throw new Error();
           }
         }
 
-        return true;
+        return disk;
       }),
-      // in the case where the API doesn't respond in time, we just carry on so as not to
-      // block the user outright.
-      defaultIfEmpty(null),
+      // here, any errors we threw in the `map` function signal us to retry
+      // just to see if anything changed.
+      retry({
+        count: this.submitRetries,
+        delay: this.submitRetryDelay,
+      }),
+      // and ultimately, just in case the API doesn't respond in a reasonable amount of time,
+      // we just continue anyway since we'd be impeding the user. we use `null` here instead of
+      // `EMPTY` since we need to emit a value to the `forkJoin` below.
+      catchError(() => of(null)),
     );
 
     this.isLoading.set(true);
