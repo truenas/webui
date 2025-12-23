@@ -102,8 +102,6 @@ export class UsersSearchComponent implements OnInit {
   private lastProcessedQuery = signal<SearchQuery<User> | null>(null);
 
   constructor() {
-    this.updateBuiltinActiveState();
-
     effect(() => {
       const isAdEnabled = this.isActiveDirectoryEnabled();
       if (isAdEnabled !== undefined) {
