@@ -7,7 +7,7 @@ import { MatDivider } from '@angular/material/divider';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of, first, map, forkJoin, repeat } from 'rxjs';
+import { of, first, map, forkJoin, repeat, defaultIfEmpty } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
@@ -164,6 +164,9 @@ export class DiskFormComponent {
 
         return true;
       }),
+      // in the case where the API doesn't respond in time, we just carry on so as not to
+      // block the user outright.
+      defaultIfEmpty(null),
     );
 
     this.isLoading.set(true);

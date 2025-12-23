@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import {
@@ -185,6 +186,27 @@ describe('DiskFormComponent', () => {
       );
       expect(callCount).toBe(2);
     });
+
+    it('closes the form after the operation times out', fakeAsync(async () => {
+      const apiService = spectator.inject(ApiService);
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+
+      apiService.call.mockImplementation((method) => {
+        if (method === 'disk.update') {
+          return of(dataDisk);
+        }
+        return of([{ ...dataDisk, passwd: 'unmatched_password' }]);
+      });
+
+      await saveButton.click();
+
+      // fast-forward through all the retries (3 retries * 2000ms = 6000ms)
+      tick(6000);
+      spectator.detectChanges();
+
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    }));
 
     it('sets disk settings when form is opened', async () => {
       const formValue = await form.getValues();
