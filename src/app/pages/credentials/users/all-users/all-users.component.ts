@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, viewChild, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, viewChild, OnDestroy, ChangeDetectorRef, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, startWith, tap } from 'rxjs';
@@ -25,7 +25,6 @@ import { setUsernameInUrl } from 'app/pages/credentials/users/router-utils';
 import { userPageEntered } from 'app/pages/credentials/users/store/user.actions';
 import { AppState } from 'app/store';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-all-users',
   templateUrl: './all-users.component.html',
@@ -49,6 +48,7 @@ export class AllUsersComponent implements OnInit, OnDestroy {
   private location = inject(Location);
   private cdr = inject(ChangeDetectorRef);
   private store$ = inject<Store<AppState>>(Store);
+  private destroyRef = inject(DestroyRef);
 
   private readonly defaultParams = [
     [
@@ -86,7 +86,7 @@ export class AllUsersComponent implements OnInit, OnDestroy {
 
     this.dataProvider.currentPage$.pipe(
       filter(Boolean),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((users) => {
       const name = (this.dataProvider.expandedRow?.username || urlUsername) ?? null;
 
@@ -121,7 +121,7 @@ export class AllUsersComponent implements OnInit, OnDestroy {
             break;
         }
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
