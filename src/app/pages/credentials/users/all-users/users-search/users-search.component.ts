@@ -100,6 +100,7 @@ export class UsersSearchComponent implements OnInit {
     map((state: DirectoryServicesStatus) => state.status !== DirectoryServiceStatus.Disabled),
   ));
 
+  // Observable for subscription in ngOnInit - signal is used in computed signals
   private readonly isActiveDirectoryEnabled$ = toObservable(this.isActiveDirectoryEnabled);
 
   private lastProcessedQuery = signal<SearchQuery<User> | null>(null);
