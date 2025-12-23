@@ -6,7 +6,6 @@ import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-i
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of, map, filter } from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
@@ -34,7 +33,6 @@ enum UserType {
   Directory = 'directory',
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-users-search',
   templateUrl: './users-search.component.html',
