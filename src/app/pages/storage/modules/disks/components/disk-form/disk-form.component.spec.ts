@@ -6,6 +6,7 @@ import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { of, defer } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
@@ -94,6 +95,15 @@ describe('DiskFormComponent', () => {
     });
 
     it('saves disk settings when form is saved', async () => {
+      const apiService = spectator.inject(ApiService);
+      apiService.call.mockImplementation((method) => {
+        if (method === 'disk.update') return of(dataDisk);
+        if (method === 'disk.query') {
+          return of([{ ...dataDisk, advpowermgmt: DiskPowerLevel.Level64, description: 'New disk description' }]);
+        }
+        return of();
+      });
+
       await form.fillForm({
         'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
         Description: 'New disk description',
@@ -102,7 +112,7 @@ describe('DiskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
+      expect(apiService.call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
         advpowermgmt: '64',
         description: 'New disk description',
         hddstandby: '10',
@@ -141,6 +151,41 @@ describe('DiskFormComponent', () => {
       });
     });
 
+    it('retries disk.query until updated values are confirmed', async () => {
+      const apiService = spectator.inject(ApiService);
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+
+      let callCount = 0;
+      apiService.call.mockImplementation((method) => {
+        if (method === 'disk.update') return of(dataDisk);
+        if (method === 'disk.query') {
+          return defer(() => {
+            const ret = callCount === 0
+              ? [{ ...dataDisk, passwd: 'old_password' }]
+              : [{ ...dataDisk, passwd: '' }];
+            callCount += 1;
+            return of(ret);
+          });
+        }
+
+        return of();
+      });
+
+      await form.fillForm({ 'Clear SED Password': true });
+      await saveButton.click();
+
+      await spectator.fixture.whenStable();
+
+      expect(apiService.call).toHaveBeenCalledWith(
+        'disk.query',
+        [
+          [['identifier', '=', dataDisk.identifier]],
+          { extra: { passwords: true } },
+        ],
+      );
+      expect(callCount).toBe(2);
+    });
+
     it('sets disk settings when form is opened', async () => {
       const formValue = await form.getValues();
       expect(formValue).toEqual({
@@ -155,6 +200,20 @@ describe('DiskFormComponent', () => {
     });
 
     it('saves disk settings when form is saved', async () => {
+      const apiService = spectator.inject(ApiService);
+      apiService.call.mockImplementation((method) => {
+        if (method === 'disk.update') return of(dataDisk);
+        if (method === 'disk.query') {
+          return of([{
+            ...dataDisk,
+            advpowermgmt: DiskPowerLevel.Level64,
+            description: 'New disk description',
+            passwd: '123456',
+          }]);
+        }
+        return of();
+      });
+
       await form.fillForm({
         'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
         Description: 'New disk description',
@@ -164,7 +223,7 @@ describe('DiskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
+      expect(apiService.call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
         advpowermgmt: '64',
         description: 'New disk description',
         hddstandby: '10',
