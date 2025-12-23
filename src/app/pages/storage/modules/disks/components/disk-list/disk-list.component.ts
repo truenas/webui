@@ -402,6 +402,9 @@ export class DiskListComponent implements OnInit {
     }
 
     const fallback = this.detailsLoaded ? this.poolNonexistentText : this.poolLoadingText;
+
+    // some confusing logic here: if the loading text is present, but the details are loaded,
+    // then we need to convert that into the `N/A` text.
     if (diskToCheck.pool === this.poolLoadingText && this.detailsLoaded) {
       return this.poolNonexistentText;
     }

@@ -12,8 +12,6 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -121,12 +119,26 @@ describe('DiskFormComponent', () => {
     });
 
     it('disables \'SED Password\' when \'Clear SED Password\' is checked', async () => {
-      const clearPassword = await loader.getHarness(IxCheckboxHarness.with({ label: 'Clear SED Password' }));
-      const sedPassword = await loader.getHarness(IxInputHarness.with({ label: 'SED Password' }));
-      await clearPassword.setValue(true);
+      await form.fillForm({
+        'SED Password': 'sed_password',
+      });
 
-      expect(sedPassword.isDisabled()).toBeTruthy();
-      expect(await sedPassword.getValue()).toBe('');
+      await form.fillForm({
+        'Clear SED Password': true,
+      });
+
+      spectator.detectChanges();
+
+      const formValue = await form.getValues();
+      expect(formValue).toEqual({
+        'Advanced Power Management': 'Level 127 - Maximum power usage with Standby',
+        'Clear SED Password': true,
+        Description: 'Some disk description',
+        'HDD Standby': '10',
+        Name: 'sdc',
+        'SED Password': '',
+        Serial: 'VB9fbb6dfe-9cf26570',
+      });
     });
 
     it('sets disk settings when form is opened', async () => {
