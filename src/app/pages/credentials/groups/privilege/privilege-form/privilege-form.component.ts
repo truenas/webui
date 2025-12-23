@@ -31,7 +31,6 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -67,7 +66,6 @@ export class PrivilegeFormComponent implements OnInit, AfterViewInit {
   private errorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
   private dialog = inject(DialogService);
-  private userService = inject(UserService);
   private existenceValidator = inject(UserGroupExistenceValidationService);
   slideInRef = inject<SlideInRef<Privilege | undefined, boolean>>(SlideInRef);
 
