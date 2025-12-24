@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, isDevMode, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { EnhancedAlert, SmartAlertAction } from 'app/interfaces/smart-alert.interface';
+import { maxAlertMessageLength } from 'app/modules/alerts/constants/alert-display.constants';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { dismissAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -47,7 +48,34 @@ export class PageAlertsComponent {
   private expandedAlertIds = signal<Set<string>>(new Set());
 
   // Maximum length before truncating alert message
-  private readonly maxMessageLength = 200;
+  private readonly maxMessageLength = maxAlertMessageLength;
+
+  /**
+   * Memoized duplicate info map that only recomputes when alerts change
+   * Maps alert key -> { count, allIds } for all unread alerts system-wide
+   */
+  private duplicateInfoMap = computed(() => {
+    const alerts = this.allAlerts();
+    const duplicateInfo = new Map<string, { count: number; allIds: string[] }>();
+
+    // Single pass: count all unread alerts by key
+    alerts.forEach((alert) => {
+      if (alert.dismissed) return;
+
+      const existing = duplicateInfo.get(alert.key);
+      if (existing) {
+        existing.count++;
+        existing.allIds.push(alert.id);
+      } else {
+        duplicateInfo.set(alert.key, {
+          count: 1,
+          allIds: [alert.id],
+        });
+      }
+    });
+
+    return duplicateInfo;
+  });
 
   /**
    * Filter alerts relevant to the current page
@@ -58,75 +86,55 @@ export class PageAlertsComponent {
 
     const alerts = this.allAlerts();
     const url = this.router.url;
+    const duplicateInfo = this.duplicateInfoMap();
 
-    // Parse current route into segments
+    // Parse current route into segments once
     const pathSegments = url.split('/').filter((segment) => segment && !segment.startsWith('?'));
 
-    // First, count ALL duplicates by key (across all pages) to get the true duplicate count
-    const allAlertsByKey = new Map<string, (Alert & EnhancedAlert)[]>();
-    alerts.filter((alert) => !alert.dismissed).forEach((alert) => {
-      if (!allAlertsByKey.has(alert.key)) {
-        allAlertsByKey.set(alert.key, []);
-      }
-      const group = allAlertsByKey.get(alert.key);
-      if (group) {
-        group.push(alert);
-      }
-    });
-
-    // Create a map of key -> total duplicate count and all IDs
-    const duplicateInfo = new Map<string, { count: number; allIds: string[] }>();
-    allAlertsByKey.forEach((alertGroup, key) => {
-      duplicateInfo.set(key, {
-        count: alertGroup.length,
-        allIds: alertGroup.map((a) => a.id),
-      });
-    });
-
-    // Filter alerts that match current route
-    const filteredAlerts = alerts.filter((alert) => {
-      if (!alert.relatedMenuPath || alert.dismissed) {
-        return false;
-      }
-
-      // Check if alert's menu path EXACTLY matches current route
-      // Example: alert path ['storage'] matches ONLY /storage (not /storage/disks)
-      // Example: alert path ['data-protection', 'cloud-backup'] matches ONLY /data-protection/cloud-backup
-      const menuPath = alert.relatedMenuPath;
-
-      // Require exact match: same length and all segments match
-      return menuPath.length === pathSegments.length
-        && menuPath.every((segment, index) => pathSegments[index] === segment);
-    });
-
-    // Group filtered alerts by key (to show only one per key on the page)
+    // Single pass: filter by route and group by key simultaneously
     const alertsByKey = new Map<string, (Alert & EnhancedAlert)[]>();
-    filteredAlerts.forEach((alert) => {
-      if (!alertsByKey.has(alert.key)) {
-        alertsByKey.set(alert.key, []);
-      }
+
+    for (const alert of alerts) {
+      // Skip dismissed or alerts without menu path
+      if (!alert.relatedMenuPath || alert.dismissed) continue;
+
+      // Check exact route match
+      const menuPath = alert.relatedMenuPath;
+      const isMatch = menuPath.length === pathSegments.length
+        && menuPath.every((segment, index) => pathSegments[index] === segment);
+
+      if (!isMatch) continue;
+
+      // Group by key
       const group = alertsByKey.get(alert.key);
       if (group) {
         group.push(alert);
+      } else {
+        alertsByKey.set(alert.key, [alert]);
       }
-    });
+    }
 
-    // For each group, keep the most recent alert and add TOTAL duplicate count (from all pages)
+    // For each group, keep the most recent alert and add system-wide duplicate count
     const uniqueAlerts: (Alert & EnhancedAlert & { duplicateCount: number; allIds: string[] })[] = [];
-    alertsByKey.forEach((alertGroup) => {
-      // Sort by datetime to get most recent (use toSorted to avoid mutation)
-      const sorted = alertGroup.toSorted((a, b) => (b.datetime?.$date || 0) - (a.datetime?.$date || 0));
-      const mostRecent = sorted[0];
 
-      // Get the total duplicate count across all pages (not just this page)
-      const info = duplicateInfo.get(mostRecent.key);
+    for (const [key, alertGroup] of alertsByKey) {
+      // Find most recent (alerts are usually already sorted, but ensure correctness)
+      let mostRecent = alertGroup[0];
+      for (let i = 1; i < alertGroup.length; i++) {
+        if ((alertGroup[i].datetime?.$date || 0) > (mostRecent.datetime?.$date || 0)) {
+          mostRecent = alertGroup[i];
+        }
+      }
+
+      // Get system-wide duplicate count
+      const info = duplicateInfo.get(key);
 
       uniqueAlerts.push({
         ...mostRecent,
         duplicateCount: info?.count || 1,
         allIds: info?.allIds || [mostRecent.id],
       });
-    });
+    }
 
     return uniqueAlerts;
   });
@@ -200,6 +208,8 @@ export class PageAlertsComponent {
   protected onActionClick(handler: (() => void) | undefined): void {
     if (handler) {
       handler();
+    } else if (isDevMode()) {
+      console.warn('[PageAlerts] Alert action clicked but handler is undefined');
     }
   }
 

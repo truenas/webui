@@ -9,7 +9,7 @@
         @if (hasDuplicates(alert)) {
           <span
             class="duplicate-count-badge"
-            [matTooltip]="getDuplicateCount(alert) + ' ' + ('instances of this alert' | translate)"
+            [matTooltip]="getDuplicateCount(alert) + ' ' + ('system-wide instances of this alert' | translate)"
           >
             {{ getDuplicateCount(alert) }}
           </span>
@@ -18,14 +18,21 @@
           <div class="alert-content">
             <div class="alert-message">
               @if (isLongMessage(alert.formatted)) {
-                @if (isExpanded(alert.id)) {
-                  <span [innerHTML]="alert.formatted"></span>
-                } @else {
-                  <span [innerHTML]="getTruncatedMessage(alert.formatted)"></span>
-                }
+                <div
+                  [attr.id]="'alert-content-' + alert.id"
+                  [attr.aria-live]="'polite'"
+                >
+                  @if (isExpanded(alert.id)) {
+                    <span [innerHTML]="alert.formatted"></span>
+                  } @else {
+                    <span [innerHTML]="getTruncatedMessage(alert.formatted)"></span>
+                  }
+                </div>
                 <button
                   type="button"
                   class="toggle-btn"
+                  [attr.aria-expanded]="isExpanded(alert.id)"
+                  [attr.aria-controls]="'alert-content-' + alert.id"
                   (click)="toggleExpansion(alert.id)"
                 >
                   {{ (isExpanded(alert.id) ? 'Show Less' : 'Show More') | translate }}
@@ -54,7 +61,7 @@
           type="button"
           class="dismiss-btn"
           [attr.aria-label]="hasDuplicates(alert) ? (('Dismiss all ' + getDuplicateCount(alert) + ' instances') | translate) : ('Dismiss alert: {message}' | translate: { message: alert.formatted })"
-          [matTooltip]="hasDuplicates(alert) ? (('Dismiss all ' + getDuplicateCount(alert) + ' instances') | translate) : ('Dismiss' | translate)"
+          [matTooltip]="hasDuplicates(alert) ? (('Dismiss all ' + getDuplicateCount(alert) + ' system-wide instances') | translate) : ('Dismiss' | translate)"
           (click)="onDismiss(alert)"
         >
           <ix-icon name="clear" [attr.aria-hidden]="true"></ix-icon>
@@ -69,7 +76,7 @@
         @if (hasDuplicates(alert)) {
           <span
             class="duplicate-count-badge"
-            [matTooltip]="getDuplicateCount(alert) + ' ' + ('instances of this alert' | translate)"
+            [matTooltip]="getDuplicateCount(alert) + ' ' + ('system-wide instances of this alert' | translate)"
           >
             {{ getDuplicateCount(alert) }}
           </span>
@@ -78,14 +85,21 @@
           <div class="alert-content">
             <div class="alert-message">
               @if (isLongMessage(alert.formatted)) {
-                @if (isExpanded(alert.id)) {
-                  <span [innerHTML]="alert.formatted"></span>
-                } @else {
-                  <span [innerHTML]="getTruncatedMessage(alert.formatted)"></span>
-                }
+                <div
+                  [attr.id]="'alert-content-' + alert.id"
+                  [attr.aria-live]="'polite'"
+                >
+                  @if (isExpanded(alert.id)) {
+                    <span [innerHTML]="alert.formatted"></span>
+                  } @else {
+                    <span [innerHTML]="getTruncatedMessage(alert.formatted)"></span>
+                  }
+                </div>
                 <button
                   type="button"
                   class="toggle-btn"
+                  [attr.aria-expanded]="isExpanded(alert.id)"
+                  [attr.aria-controls]="'alert-content-' + alert.id"
                   (click)="toggleExpansion(alert.id)"
                 >
                   {{ (isExpanded(alert.id) ? 'Show Less' : 'Show More') | translate }}
@@ -114,7 +128,7 @@
           type="button"
           class="dismiss-btn"
           [attr.aria-label]="hasDuplicates(alert) ? (('Dismiss all ' + getDuplicateCount(alert) + ' instances') | translate) : ('Dismiss alert: {message}' | translate: { message: alert.formatted })"
-          [matTooltip]="hasDuplicates(alert) ? (('Dismiss all ' + getDuplicateCount(alert) + ' instances') | translate) : ('Dismiss' | translate)"
+          [matTooltip]="hasDuplicates(alert) ? (('Dismiss all ' + getDuplicateCount(alert) + ' system-wide instances') | translate) : ('Dismiss' | translate)"
           (click)="onDismiss(alert)"
         >
           <ix-icon name="clear" [attr.aria-hidden]="true"></ix-icon>
@@ -129,7 +143,7 @@
         @if (hasDuplicates(alert)) {
           <span
             class="duplicate-count-badge"
-            [matTooltip]="getDuplicateCount(alert) + ' ' + ('instances of this alert' | translate)"
+            [matTooltip]="getDuplicateCount(alert) + ' ' + ('system-wide instances of this alert' | translate)"
           >
             {{ getDuplicateCount(alert) }}
           </span>
@@ -138,14 +152,21 @@
           <div class="alert-content">
             <div class="alert-message">
               @if (isLongMessage(alert.formatted)) {
-                @if (isExpanded(alert.id)) {
-                  <span [innerHTML]="alert.formatted"></span>
-                } @else {
-                  <span [innerHTML]="getTruncatedMessage(alert.formatted)"></span>
-                }
+                <div
+                  [attr.id]="'alert-content-' + alert.id"
+                  [attr.aria-live]="'polite'"
+                >
+                  @if (isExpanded(alert.id)) {
+                    <span [innerHTML]="alert.formatted"></span>
+                  } @else {
+                    <span [innerHTML]="getTruncatedMessage(alert.formatted)"></span>
+                  }
+                </div>
                 <button
                   type="button"
                   class="toggle-btn"
+                  [attr.aria-expanded]="isExpanded(alert.id)"
+                  [attr.aria-controls]="'alert-content-' + alert.id"
                   (click)="toggleExpansion(alert.id)"
                 >
                   {{ (isExpanded(alert.id) ? 'Show Less' : 'Show More') | translate }}
@@ -174,7 +195,7 @@
           type="button"
           class="dismiss-btn"
           [attr.aria-label]="hasDuplicates(alert) ? (('Dismiss all ' + getDuplicateCount(alert) + ' instances') | translate) : ('Dismiss alert: {message}' | translate: { message: alert.formatted })"
-          [matTooltip]="hasDuplicates(alert) ? (('Dismiss all ' + getDuplicateCount(alert) + ' instances') | translate) : ('Dismiss' | translate)"
+          [matTooltip]="hasDuplicates(alert) ? (('Dismiss all ' + getDuplicateCount(alert) + ' system-wide instances') | translate) : ('Dismiss' | translate)"
           (click)="onDismiss(alert)"
         >
           <ix-icon name="clear" [attr.aria-hidden]="true"></ix-icon>
