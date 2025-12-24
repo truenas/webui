@@ -57,9 +57,11 @@ export class IxGroupComboboxComponent implements AfterViewInit, ControlValueAcce
   }
 
   ngAfterViewInit(): void {
-    // Add async validator to check group existence
+    // Only add validation if custom values are allowed.
+    // When allowCustomValue is false, users can only select from autocomplete
+    // suggestions which are guaranteed to exist, making validation redundant.
     const control = this.controlDirective.control;
-    if (control) {
+    if (control && this.allowCustomValue()) {
       control.addAsyncValidators([
         this.existenceValidator.validateGroupExists(),
       ]);

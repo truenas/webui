@@ -61,13 +61,17 @@ export class IxUserChipsComponent implements AfterViewInit, ControlValueAccessor
   }
 
   ngAfterViewInit(): void {
-    // Add async validator to check user existence
+    // Add async validator to check user existence.
+    // The base ix-chips component defaults to allowNewEntries=true,
+    // so validation is needed since users can type custom values.
     const control = this.controlDirective.control;
     if (control) {
       control.addAsyncValidators([
         this.existenceValidator.validateUsersExist(),
       ]);
-      control.updateValueAndValidity();
+      // Don't call updateValueAndValidity() here to avoid showing validation errors
+      // immediately on form load. Validation will run automatically when the user
+      // interacts with the field or when the form is submitted.
     }
   }
 

@@ -57,9 +57,11 @@ export class IxUserComboboxComponent implements AfterViewInit, ControlValueAcces
   }
 
   ngAfterViewInit(): void {
-    // Add async validator to check user existence
+    // Only add validation if custom values are allowed.
+    // When allowCustomValue is false, users can only select from autocomplete
+    // suggestions which are guaranteed to exist, making validation redundant.
     const control = this.controlDirective.control;
-    if (control) {
+    if (control && this.allowCustomValue()) {
       control.addAsyncValidators([
         this.existenceValidator.validateUserExists(),
       ]);

@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, OnInit, signal, inject,
+  ChangeDetectionStrategy, Component, OnInit, signal, inject,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
@@ -26,7 +26,6 @@ import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { UserGroupExistenceValidationService } from 'app/modules/forms/ix-forms/validators/user-group-existence-validation.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -59,14 +58,13 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TranslateModule,
   ],
 })
-export class PrivilegeFormComponent implements OnInit, AfterViewInit {
+export class PrivilegeFormComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
   private dialog = inject(DialogService);
-  private existenceValidator = inject(UserGroupExistenceValidationService);
   slideInRef = inject<SlideInRef<Privilege | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
@@ -171,12 +169,6 @@ export class PrivilegeFormComponent implements OnInit, AfterViewInit {
         this.form.controls.roles.disable();
       }
     }
-  }
-
-  ngAfterViewInit(): void {
-    this.form.controls.local_groups.addAsyncValidators([
-      this.existenceValidator.validateGroupsExist(),
-    ]);
   }
 
   private setPrivilegeForEdit(existingPrivilege: Privilege): void {

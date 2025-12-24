@@ -61,13 +61,17 @@ export class IxGroupChipsComponent implements AfterViewInit, ControlValueAccesso
   }
 
   ngAfterViewInit(): void {
-    // Add async validator to check group existence
+    // Add async validator to check group existence.
+    // The base ix-chips component defaults to allowNewEntries=true,
+    // so validation is needed since users can type custom values.
     const control = this.controlDirective.control;
     if (control) {
       control.addAsyncValidators([
         this.existenceValidator.validateGroupsExist(),
       ]);
-      control.updateValueAndValidity();
+      // Don't call updateValueAndValidity() here to avoid showing validation errors
+      // immediately on form load. Validation will run automatically when the user
+      // interacts with the field or when the form is submitted.
     }
   }
 
