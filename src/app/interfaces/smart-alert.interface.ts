@@ -1,4 +1,5 @@
 import { AlertLevel } from 'app/enums/alert-level.enum';
+import { Alert } from 'app/interfaces/alert.interface';
 
 export enum SmartAlertCategory {
   Storage = 'storage',
@@ -64,12 +65,69 @@ export interface SmartAlertEnhancement {
   extractApiParams?: (alert: { args: unknown; text: string; formatted: string }) => unknown;
 }
 
-export interface SmartAlertConfig {
-  // Map by source
-  bySource?: Record<string, SmartAlertEnhancement>;
+/**
+ * Conditional enhancement that applies different configurations based on alert context.
+ * Use this when an alert class needs different actions/paths depending on alert.args or other context.
+ *
+ * @example
+ * // ZpoolCapacity alerts redirect to Boot Environments when it's the boot pool
+ * ZpoolCapacityCritical: {
+ *   conditions: [
+ *     {
+ *       check: (alert) => isBootPoolAlert(alert.args),
+ *       enhancement: { category: SmartAlertCategory.System, ... }
+ *     }
+ *   ],
+ *   defaultEnhancement: { category: SmartAlertCategory.Storage, ... }
+ * }
+ */
+export interface ConditionalSmartAlertEnhancement {
+  /**
+   * Array of conditions to check in order.
+   * First matching condition wins.
+   */
+  conditions: {
+    /** Function that returns true if this enhancement should be applied */
+    check: (alert: Alert) => boolean;
+    /** Enhancement configuration to use when check passes */
+    enhancement: SmartAlertEnhancement;
+  }[];
+  /** Fallback enhancement when no conditions match */
+  defaultEnhancement: SmartAlertEnhancement;
+}
 
-  // Map by class name
-  byClass?: Record<string, SmartAlertEnhancement>;
+/**
+ * Type guard to check if an enhancement is conditional
+ */
+export function isConditionalEnhancement(
+  enhancement: SmartAlertEnhancement | ConditionalSmartAlertEnhancement,
+): enhancement is ConditionalSmartAlertEnhancement {
+  return 'conditions' in enhancement && 'defaultEnhancement' in enhancement;
+}
+
+/**
+ * Resolves a conditional enhancement to a concrete enhancement based on alert context
+ */
+export function resolveConditionalEnhancement(
+  conditional: ConditionalSmartAlertEnhancement,
+  alert: Alert,
+): SmartAlertEnhancement {
+  // Check conditions in order
+  for (const condition of conditional.conditions) {
+    if (condition.check(alert)) {
+      return condition.enhancement;
+    }
+  }
+  // Return default if no conditions match
+  return conditional.defaultEnhancement;
+}
+
+export interface SmartAlertConfig {
+  // Map by source (supports both regular and conditional enhancements)
+  bySource?: Record<string, SmartAlertEnhancement | ConditionalSmartAlertEnhancement>;
+
+  // Map by class name (supports both regular and conditional enhancements)
+  byClass?: Record<string, SmartAlertEnhancement | ConditionalSmartAlertEnhancement>;
 
   // Map by level
   byLevel?: Partial<Record<AlertLevel, Partial<SmartAlertEnhancement>>>;

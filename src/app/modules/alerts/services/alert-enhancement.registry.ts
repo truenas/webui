@@ -1,14 +1,20 @@
 import { marker as T } from 'app/helpers/translate.helper';
+import { Alert } from 'app/interfaces/alert.interface';
 import {
   SmartAlertAction,
   SmartAlertActionType,
   SmartAlertCategory,
   SmartAlertConfig,
   SmartAlertEnhancement,
+  ConditionalSmartAlertEnhancement,
   createFragmentExtractor,
   createTaskIdExtractor,
+  isConditionalEnhancement,
+  resolveConditionalEnhancement,
 } from 'app/interfaces/smart-alert.interface';
+import { isBootPoolAlert } from 'app/modules/alerts/utils/boot-pool.utils';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
 
 /**
  * Registry of smart alert enhancements that map alert sources and classes
@@ -574,7 +580,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Applications'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-apps'),
+        icon: iconMarker('apps'),
         route: ['/apps', 'installed'],
         primary: true,
       }],
@@ -586,7 +592,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Applications'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-apps'),
+        icon: iconMarker('apps'),
         route: ['/apps', 'installed'],
         primary: true,
       }],
@@ -598,7 +604,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to Applications'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-apps'),
+        icon: iconMarker('apps'),
         route: ['/apps', 'installed'],
         primary: true,
       }],
@@ -684,7 +690,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to GUI Settings'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-desktop-mac'),
+        icon: iconMarker('mdi-desktop-classic'),
         route: ['/system', 'general'],
         fragment: 'gui-settings',
         primary: true,
@@ -697,7 +703,7 @@ export const smartAlertRegistry: SmartAlertConfig = {
       actions: [{
         label: T('Go to GUI Settings'),
         type: SmartAlertActionType.Navigate,
-        icon: iconMarker('mdi-desktop-mac'),
+        icon: iconMarker('mdi-desktop-classic'),
         route: ['/system', 'general'],
         fragment: 'gui-settings',
         primary: true,
@@ -1103,40 +1109,124 @@ export const smartAlertRegistry: SmartAlertConfig = {
     },
 
     ZpoolCapacityCritical: {
-      category: SmartAlertCategory.Storage,
-      relatedMenuPath: ['storage'],
-      actions: [{
-        label: T('Go to Storage'),
-        type: SmartAlertActionType.Navigate,
-        icon: iconMarker('dns'),
-        route: ['/storage'],
-        primary: true,
-      }],
-    },
+      conditions: [
+        {
+          // Boot pool capacity - direct to Boot Environments management
+          check: (alert: Alert) => isBootPoolAlert(alert.args),
+          enhancement: {
+            category: SmartAlertCategory.System,
+            relatedMenuPath: ['system', 'boot'],
+            contextualHelp: T('Boot pool capacity is critically high. Clean up old boot environments to free up space and prevent system issues.'),
+            documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
+            actions: [{
+              label: T('Manage Boot Environments'),
+              type: SmartAlertActionType.Navigate,
+              icon: iconMarker('mdi-layers'),
+              route: bootListElements.anchorRouterLink,
+              primary: true,
+            }, {
+              label: T('Boot Environments Guide'),
+              type: SmartAlertActionType.ExternalLink,
+              icon: iconMarker('mdi-book-open-variant'),
+              externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
+            }],
+          },
+        },
+      ],
+      defaultEnhancement: {
+        // Regular data pool capacity - direct to Storage
+        category: SmartAlertCategory.Storage,
+        relatedMenuPath: ['storage'],
+        contextualHelp: T('Storage pool capacity is critically high. Consider expanding capacity or cleaning up old data.'),
+        actions: [{
+          label: T('Go to Storage'),
+          type: SmartAlertActionType.Navigate,
+          icon: iconMarker('dns'),
+          route: ['/storage'],
+          primary: true,
+        }],
+      },
+    } satisfies ConditionalSmartAlertEnhancement,
 
     ZpoolCapacityWarning: {
-      category: SmartAlertCategory.Storage,
-      relatedMenuPath: ['storage'],
-      actions: [{
-        label: T('Go to Storage'),
-        type: SmartAlertActionType.Navigate,
-        icon: iconMarker('dns'),
-        route: ['/storage'],
-        primary: true,
-      }],
-    },
+      conditions: [
+        {
+          // Boot pool capacity - direct to Boot Environments management
+          check: (alert: Alert) => isBootPoolAlert(alert.args),
+          enhancement: {
+            category: SmartAlertCategory.System,
+            relatedMenuPath: ['system', 'boot'],
+            contextualHelp: T('Boot pool capacity is high. Consider cleaning up old boot environments to free up space.'),
+            documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
+            actions: [{
+              label: T('Manage Boot Environments'),
+              type: SmartAlertActionType.Navigate,
+              icon: iconMarker('mdi-layers'),
+              route: bootListElements.anchorRouterLink,
+              primary: true,
+            }, {
+              label: T('Boot Environments Guide'),
+              type: SmartAlertActionType.ExternalLink,
+              icon: iconMarker('mdi-book-open-variant'),
+              externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
+            }],
+          },
+        },
+      ],
+      defaultEnhancement: {
+        // Regular data pool capacity - direct to Storage
+        category: SmartAlertCategory.Storage,
+        relatedMenuPath: ['storage'],
+        contextualHelp: T('Storage pool capacity is high. Monitor usage and consider expanding capacity.'),
+        actions: [{
+          label: T('Go to Storage'),
+          type: SmartAlertActionType.Navigate,
+          icon: iconMarker('dns'),
+          route: ['/storage'],
+          primary: true,
+        }],
+      },
+    } satisfies ConditionalSmartAlertEnhancement,
 
     ZpoolCapacityNotice: {
-      category: SmartAlertCategory.Storage,
-      relatedMenuPath: ['storage'],
-      actions: [{
-        label: T('Go to Storage'),
-        type: SmartAlertActionType.Navigate,
-        icon: iconMarker('dns'),
-        route: ['/storage'],
-        primary: true,
-      }],
-    },
+      conditions: [
+        {
+          // Boot pool capacity - direct to Boot Environments management
+          check: (alert: Alert) => isBootPoolAlert(alert.args),
+          enhancement: {
+            category: SmartAlertCategory.System,
+            relatedMenuPath: ['system', 'boot'],
+            contextualHelp: T('Boot pool usage is increasing. Consider reviewing and cleaning up old boot environments.'),
+            documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
+            actions: [{
+              label: T('Manage Boot Environments'),
+              type: SmartAlertActionType.Navigate,
+              icon: iconMarker('mdi-layers'),
+              route: bootListElements.anchorRouterLink,
+              primary: true,
+            }, {
+              label: T('Boot Environments Guide'),
+              type: SmartAlertActionType.ExternalLink,
+              icon: iconMarker('mdi-book-open-variant'),
+              externalUrl: 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/boot/managingbootenvironments/',
+            }],
+          },
+        },
+      ],
+      defaultEnhancement: {
+        // Regular data pool capacity - direct to Storage
+        category: SmartAlertCategory.Storage,
+        relatedMenuPath: ['storage'],
+        contextualHelp: T('Storage pool usage is increasing. Monitor capacity trends.'),
+        actions: [{
+          label: T('Go to Storage'),
+          type: SmartAlertActionType.Navigate,
+          icon: iconMarker('dns'),
+          route: ['/storage'],
+          primary: true,
+        }],
+      },
+    } satisfies ConditionalSmartAlertEnhancement,
 
     VolumeStatus: {
       category: SmartAlertCategory.Storage,
@@ -1560,35 +1650,59 @@ const patternCategories: {
 
 /**
  * Helper function to get enhancement for an alert
+ *
+ * @param source - Alert source
+ * @param klass - Alert class name
+ * @param alertText - Alert message text
+ * @param alert - Full alert object (required for conditional enhancements)
+ * @returns Resolved enhancement or null if no match found
  */
 export function getAlertEnhancement(
   source: string,
   klass?: string,
   alertText?: string,
+  alert?: Alert,
 ): SmartAlertEnhancement | null {
+  let enhancement: SmartAlertEnhancement | ConditionalSmartAlertEnhancement | null = null;
+
   // Try to match by source first
   if (smartAlertRegistry.bySource?.[source]) {
-    return smartAlertRegistry.bySource[source];
+    enhancement = smartAlertRegistry.bySource[source];
   }
 
   // Try to match by class
-  if (klass && smartAlertRegistry.byClass?.[klass]) {
-    return smartAlertRegistry.byClass[klass];
+  if (!enhancement && klass && smartAlertRegistry.byClass?.[klass]) {
+    enhancement = smartAlertRegistry.byClass[klass];
   }
 
   // Fallback: try pattern-based categorization
   // Pattern matches provide category, path, and optional default actions
-  if (alertText) {
+  if (!enhancement && alertText) {
     for (const rule of patternCategories) {
       if (rule.patterns.some((pattern) => pattern.test(alertText))) {
-        return {
+        enhancement = {
           category: rule.category,
           relatedMenuPath: rule.relatedMenuPath,
           actions: rule.actions || [],
         };
+        break;
       }
     }
   }
 
-  return null;
+  // If no enhancement found, return null
+  if (!enhancement) {
+    return null;
+  }
+
+  // Resolve conditional enhancements if alert is provided
+  if (isConditionalEnhancement(enhancement)) {
+    if (!alert) {
+      console.warn('Conditional enhancement found but no alert object provided. Using default enhancement.');
+      return enhancement.defaultEnhancement;
+    }
+    return resolveConditionalEnhancement(enhancement, alert);
+  }
+
+  return enhancement;
 }

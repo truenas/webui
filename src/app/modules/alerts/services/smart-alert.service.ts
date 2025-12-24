@@ -34,7 +34,12 @@ export class SmartAlertService {
    * Enhances a basic alert with smart actions, contextual help, and metadata
    */
   enhanceAlert(alert: Alert): Alert & EnhancedAlert {
-    const enhancement = getAlertEnhancement(alert.source, alert.klass, alert.formatted || alert.text);
+    const enhancement = getAlertEnhancement(
+      alert.source,
+      alert.klass,
+      alert.formatted || alert.text,
+      alert, // Pass full alert for conditional enhancement resolution
+    );
 
     if (!enhancement) {
       return alert as Alert & EnhancedAlert;
@@ -223,7 +228,7 @@ export class SmartAlertService {
           );
           // Refresh the page immediately when task starts so user sees the running state
           this.refreshPageIfOnTaskRoute(relatedRoute);
-        } else if ((job.state === JobState.Success || job.state === JobState.Finished) && !hasShownCompleted) {
+        } else if (job.state === JobState.Success && !hasShownCompleted) {
           // Show "completed" notification only once when job finishes successfully
           hasShownCompleted = true;
           this.snackbar.success(
@@ -261,7 +266,12 @@ export class SmartAlertService {
    * Gets the related route for an alert based on its enhancement
    */
   private getRelatedRouteForAlert(alert: Alert): string | null {
-    const enhancement = getAlertEnhancement(alert.source, alert.klass, alert.formatted || alert.text);
+    const enhancement = getAlertEnhancement(
+      alert.source,
+      alert.klass,
+      alert.formatted || alert.text,
+      alert, // Pass full alert for conditional enhancement resolution
+    );
     if (enhancement?.relatedMenuPath) {
       return '/' + enhancement.relatedMenuPath.join('/');
     }
