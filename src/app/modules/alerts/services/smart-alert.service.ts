@@ -313,8 +313,8 @@ export class SmartAlertService {
   /**
    * Groups enhanced alerts by category
    */
-  groupAlertsByCategory(alerts: (Alert & EnhancedAlert)[]): Map<string, (Alert & EnhancedAlert)[]> {
-    const grouped = new Map<string, (Alert & EnhancedAlert)[]>();
+  groupAlertsByCategory<T extends Alert & EnhancedAlert>(alerts: T[]): Map<string, T[]> {
+    const grouped = new Map<string, T[]>();
 
     alerts.forEach((alert) => {
       const category = alert.category || 'Uncategorized';

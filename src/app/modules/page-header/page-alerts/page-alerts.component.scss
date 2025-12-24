@@ -64,6 +64,23 @@
   margin-top: 0;
 }
 
+.duplicate-count-badge {
+  align-items: center;
+  background: var(--alt-bg2);
+  border: 1px solid var(--lines);
+  border-radius: 12px;
+  cursor: help;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  height: 18px;
+  justify-content: center;
+  min-width: 18px;
+  padding: 0 6px;
+  margin-top: 1px;
+}
+
 .alert-content {
   display: flex;
   flex-direction: column;

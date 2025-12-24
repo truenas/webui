@@ -34,6 +34,11 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
+/**
+ * Extended alert with duplicate count information
+ */
+type AlertWithDuplicates = Alert & EnhancedAlert & { duplicateCount: number };
+
 @UntilDestroy()
 @Component({
   selector: 'ix-alerts-panel',
@@ -70,7 +75,7 @@ export class AlertsPanelComponent implements OnInit {
   isHaLicensed = false;
 
   // Group by category toggle
-  protected groupByCategory = signal(true);
+  groupByCategory = signal(true);
 
   // Icon for grouping toggle button
   protected readonly groupingIcon = computed(() => {
@@ -93,22 +98,24 @@ export class AlertsPanelComponent implements OnInit {
   private unreadAlertsSignal = toSignal(this.store$.select(selectUnreadAlerts), { initialValue: [] });
   private dismissedAlertsSignal = toSignal(this.store$.select(selectDismissedAlerts), { initialValue: [] });
 
-  // Enhance alerts with smart actions
-  private allEnhancedUnreadAlerts = computed<(Alert & EnhancedAlert)[]>(() => {
-    return this.unreadAlertsSignal().map((alert) => this.smartAlertService.enhanceAlert(alert));
+  // Enhance alerts with smart actions and add duplicate counts
+  private allEnhancedUnreadAlerts = computed<AlertWithDuplicates[]>(() => {
+    const alerts = this.unreadAlertsSignal().map((alert) => this.smartAlertService.enhanceAlert(alert));
+    return this.addDuplicateCounts(alerts);
   });
 
-  private allEnhancedDismissedAlerts = computed<(Alert & EnhancedAlert)[]>(() => {
-    return this.dismissedAlertsSignal().map((alert) => this.smartAlertService.enhanceAlert(alert));
+  private allEnhancedDismissedAlerts = computed<AlertWithDuplicates[]>(() => {
+    const alerts = this.dismissedAlertsSignal().map((alert) => this.smartAlertService.enhanceAlert(alert));
+    return this.addDuplicateCounts(alerts);
   });
 
   // Filtered alerts based on severity
-  protected enhancedUnreadAlerts = computed<(Alert & EnhancedAlert)[]>(() => {
+  protected enhancedUnreadAlerts = computed<AlertWithDuplicates[]>(() => {
     const alerts = this.allEnhancedUnreadAlerts();
     return this.filterBySeverity(alerts);
   });
 
-  protected enhancedDismissedAlerts = computed<(Alert & EnhancedAlert)[]>(() => {
+  protected enhancedDismissedAlerts = computed<AlertWithDuplicates[]>(() => {
     const alerts = this.allEnhancedDismissedAlerts();
     return this.filterBySeverity(alerts);
   });
@@ -169,6 +176,24 @@ export class AlertsPanelComponent implements OnInit {
     this.checkHaStatus();
   }
 
+  /**
+   * Adds duplicate count to each alert.
+   * Counts how many alerts share the same key (duplicate instances).
+   */
+  private addDuplicateCounts<T extends Alert>(alerts: T[]): (T & { duplicateCount: number })[] {
+    // Count alerts by key
+    const keyCounts = new Map<string, number>();
+    alerts.forEach((alert) => {
+      keyCounts.set(alert.key, (keyCounts.get(alert.key) || 0) + 1);
+    });
+
+    // Add duplicate count to each alert
+    return alerts.map((alert) => ({
+      ...alert,
+      duplicateCount: keyCounts.get(alert.key) || 1,
+    }));
+  }
+
   onPanelClosed(): void {
     this.store$.dispatch(alertPanelClosed());
   }
@@ -203,7 +228,7 @@ export class AlertsPanelComponent implements OnInit {
     return this.severityFilter() !== 'dismissed';
   });
 
-  private filterBySeverity(alerts: (Alert & EnhancedAlert)[]): (Alert & EnhancedAlert)[] {
+  private filterBySeverity<T extends Alert & EnhancedAlert>(alerts: T[]): T[] {
     const filter = this.severityFilter();
     if (filter === 'all') {
       return alerts;
@@ -251,8 +276,8 @@ export class AlertsPanelComponent implements OnInit {
    * Sorts categories with uncategorized items appearing last
    */
   getCategoryEntries(
-    categoryMap: Map<string, (Alert & EnhancedAlert)[]> | null,
-  ): [string, (Alert & EnhancedAlert)[]][] {
+    categoryMap: Map<string, AlertWithDuplicates[]> | null,
+  ): [string, AlertWithDuplicates[]][] {
     if (!categoryMap) return [];
 
     const knownCategories = Object.values(SmartAlertCategory);

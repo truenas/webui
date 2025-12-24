@@ -40,8 +40,24 @@ export const alertReducer = createReducer(
 
   on(adminUiInitialized, (state) => ({ ...state, isLoading: true, error: null as string | null })),
   on(alertsLoaded, (state, { alerts }) => {
+    // Preserve dismissed state for alerts that were dismissed locally
+    // but haven't synced to the server yet
+    const locallyDismissedIds = new Set(
+      Object.values(state.entities)
+        .filter((a): a is Alert => !!a?.dismissed)
+        .map((a) => a.id),
+    );
+
+    const mergedAlerts = alerts.map((alert) => {
+      // If this alert was dismissed locally, keep it dismissed
+      if (locallyDismissedIds.has(alert.id)) {
+        return { ...alert, dismissed: true };
+      }
+      return alert;
+    });
+
     return {
-      ...adapter.setAll(alerts, state),
+      ...adapter.setAll(mergedAlerts, state),
       isLoading: false,
     };
   }),
@@ -57,18 +73,40 @@ export const alertReducer = createReducer(
   }),
   on(alertRemoved, (state, { id }) => adapter.removeOne(id, state)),
 
-  on(dismissAlertPressed, (state, { id }) => adapter.updateOne({
-    id,
-    changes: {
-      dismissed: true,
-    },
-  }, state)),
-  on(reopenAlertPressed, (state, { id }) => adapter.updateOne({
-    id,
-    changes: {
-      dismissed: false,
-    },
-  }, state)),
+  on(dismissAlertPressed, (state, { id }) => {
+    // Find the alert being dismissed
+    const alert = state.entities[id];
+    if (!alert) {
+      return state;
+    }
+
+    // Find all alerts with the same key and mark them as dismissed
+    const updates = Object.values(state.entities)
+      .filter((a): a is Alert => a !== undefined && a.key === alert.key)
+      .map((a) => ({
+        id: a.id,
+        changes: { dismissed: true },
+      }));
+
+    return adapter.updateMany(updates, state);
+  }),
+  on(reopenAlertPressed, (state, { id }) => {
+    // Find the alert being reopened
+    const alert = state.entities[id];
+    if (!alert) {
+      return state;
+    }
+
+    // Find all alerts with the same key and mark them as not dismissed
+    const updates = Object.values(state.entities)
+      .filter((a): a is Alert => a !== undefined && a.key === alert.key)
+      .map((a) => ({
+        id: a.id,
+        changes: { dismissed: false },
+      }));
+
+    return adapter.updateMany(updates, state);
+  }),
 
   on(dismissAllAlertsPressed, (state) => {
     return adapter.map((alert) => ({ ...alert, dismissed: true }), state);

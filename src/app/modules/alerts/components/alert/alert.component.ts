@@ -58,9 +58,24 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   private translate = inject(TranslateService);
   private smartAlertService = inject(SmartAlertService);
 
-  readonly alert = input.required<Alert>();
+  readonly alert = input.required<Alert & { duplicateCount?: number }>();
   readonly isHaLicensed = input<boolean>();
   readonly showActions = input<boolean>(true);
+
+  /**
+   * Indicates if this alert has multiple instances (duplicates)
+   */
+  protected readonly hasDuplicates = computed(() => {
+    const count = this.alert().duplicateCount;
+    return count !== undefined && count > 1;
+  });
+
+  /**
+   * The number of duplicate instances of this alert
+   */
+  protected readonly duplicateCount = computed(() => {
+    return this.alert().duplicateCount || 1;
+  });
 
   @ViewChild('alertMessage', { static: true }) alertMessage: ElementRef<HTMLElement>;
 

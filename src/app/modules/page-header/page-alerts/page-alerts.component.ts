@@ -62,6 +62,27 @@ export class PageAlertsComponent {
     // Parse current route into segments
     const pathSegments = url.split('/').filter((segment) => segment && !segment.startsWith('?'));
 
+    // First, count ALL duplicates by key (across all pages) to get the true duplicate count
+    const allAlertsByKey = new Map<string, (Alert & EnhancedAlert)[]>();
+    alerts.filter((alert) => !alert.dismissed).forEach((alert) => {
+      if (!allAlertsByKey.has(alert.key)) {
+        allAlertsByKey.set(alert.key, []);
+      }
+      const group = allAlertsByKey.get(alert.key);
+      if (group) {
+        group.push(alert);
+      }
+    });
+
+    // Create a map of key -> total duplicate count and all IDs
+    const duplicateInfo = new Map<string, { count: number; allIds: string[] }>();
+    allAlertsByKey.forEach((alertGroup, key) => {
+      duplicateInfo.set(key, {
+        count: alertGroup.length,
+        allIds: alertGroup.map((a) => a.id),
+      });
+    });
+
     // Filter alerts that match current route
     const filteredAlerts = alerts.filter((alert) => {
       if (!alert.relatedMenuPath || alert.dismissed) {
@@ -78,21 +99,36 @@ export class PageAlertsComponent {
         && menuPath.every((segment, index) => pathSegments[index] === segment);
     });
 
-    // De-duplicate alerts by formatted message (for HA setups where same alert comes from multiple nodes)
-    // In HA environments, the same alert message can appear multiple times from different controllers
-    const uniqueAlertsMap = new Map<string, Alert & EnhancedAlert>();
+    // Group filtered alerts by key (to show only one per key on the page)
+    const alertsByKey = new Map<string, (Alert & EnhancedAlert)[]>();
     filteredAlerts.forEach((alert) => {
-      // Use normalized formatted message as the deduplication key (trim whitespace and normalize line breaks)
-      const dedupeKey = (alert.formatted || alert.text).trim().replace(/\s+/g, ' ');
-      const existing = uniqueAlertsMap.get(dedupeKey);
-
-      // Keep the most recent alert
-      if (!existing || (alert.datetime?.$date || 0) > (existing.datetime?.$date || 0)) {
-        uniqueAlertsMap.set(dedupeKey, alert);
+      if (!alertsByKey.has(alert.key)) {
+        alertsByKey.set(alert.key, []);
+      }
+      const group = alertsByKey.get(alert.key);
+      if (group) {
+        group.push(alert);
       }
     });
 
-    return Array.from(uniqueAlertsMap.values());
+    // For each group, keep the most recent alert and add TOTAL duplicate count (from all pages)
+    const uniqueAlerts: (Alert & EnhancedAlert & { duplicateCount: number; allIds: string[] })[] = [];
+    alertsByKey.forEach((alertGroup) => {
+      // Sort by datetime to get most recent (use toSorted to avoid mutation)
+      const sorted = alertGroup.toSorted((a, b) => (b.datetime?.$date || 0) - (a.datetime?.$date || 0));
+      const mostRecent = sorted[0];
+
+      // Get the total duplicate count across all pages (not just this page)
+      const info = duplicateInfo.get(mostRecent.key);
+
+      uniqueAlerts.push({
+        ...mostRecent,
+        duplicateCount: info?.count || 1,
+        allIds: info?.allIds || [mostRecent.id],
+      });
+    });
+
+    return uniqueAlerts;
   });
 
   /**
@@ -168,10 +204,11 @@ export class PageAlertsComponent {
   }
 
   /**
-   * Dismiss an alert
+   * Dismiss an alert (and all its duplicates with the same key)
    */
   protected onDismiss(alert: Alert): void {
-    this.store$.dispatch(dismissAlertPressed({ id: alert.uuid }));
+    // Dispatch single dismiss action - the reducer and effect handle dismissing all duplicates
+    this.store$.dispatch(dismissAlertPressed({ id: alert.id }));
   }
 
   /**
@@ -247,5 +284,19 @@ export class PageAlertsComponent {
       expanded.add(alertId);
     }
     this.expandedAlertIds.set(expanded);
+  }
+
+  /**
+   * Check if alert has duplicate instances
+   */
+  protected hasDuplicates(alert: { duplicateCount?: number }): boolean {
+    return (alert.duplicateCount || 0) > 1;
+  }
+
+  /**
+   * Get duplicate count for alert
+   */
+  protected getDuplicateCount(alert: { duplicateCount?: number }): number {
+    return alert.duplicateCount || 1;
   }
 }

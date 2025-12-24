@@ -6,8 +6,6 @@ import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jes
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { ngMocks } from 'ng-mocks';
-import { firstValueFrom } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -18,14 +16,14 @@ import { AlertComponent } from 'app/modules/alerts/components/alert/alert.compon
 import { AlertPageObject } from 'app/modules/alerts/components/alert/alert.page-object';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
-import { alertStateKey, selectAlerts } from 'app/modules/alerts/store/alert.selectors';
+import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { systemConfigReducer, SystemConfigState } from 'app/store/system-config/system-config.reducer';
 import { systemConfigStateKey } from 'app/store/system-config/system-config.selectors';
 
 const dummyAlert = {
   id: '79',
+  key: 'cpu-alert',
   datetime: {
     $date: 1641811015,
   },
@@ -38,7 +36,6 @@ const dummyAlert = {
 
 describe('AlertComponent', () => {
   let spectator: Spectator<AlertComponent>;
-  let api: ApiService;
   let alert: AlertPageObject;
   let loader: HarnessLoader;
 
@@ -79,7 +76,6 @@ describe('AlertComponent', () => {
       },
     });
 
-    api = spectator.inject(ApiService);
     alert = new AlertPageObject(spectator);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
@@ -99,7 +95,7 @@ describe('AlertComponent', () => {
 
   it('shows an alert icon', async () => {
     const icon = await alert.getIconHarness();
-    expect(await icon.getName()).toBe('error');
+    expect(await icon.getName()).toBe('mdi-alert-circle');
   });
 
   it('shows alert datetime (formatted according to system settings) and system timezone', () => {
@@ -109,37 +105,44 @@ describe('AlertComponent', () => {
     expect(formatPipe.transform).toHaveBeenCalledWith(1641811015);
   });
 
-  it('dismisses an open alert when Dismiss link is pressed', async () => {
+  it('dismisses an open alert when Dismiss link is pressed', () => {
+    const store$ = spectator.inject(Store);
+    const dispatchSpy = jest.spyOn(store$, 'dispatch');
+
     alert.clickDismissLink();
 
-    expect(api.call).toHaveBeenCalledWith('alert.dismiss', ['79']);
-
-    const state = await firstValueFrom(spectator.inject(Store).pipe(map(selectAlerts)));
-    expect(state).toEqual([
-      {
-        ...dummyAlert,
-        dismissed: true,
-      },
-    ]);
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: '[Alert Panel] Dismiss Pressed',
+        id: '79',
+      }),
+    );
   });
 
   it('shows smart action button for enhanced alerts', () => {
-    const actionButton = spectator.query(byText('View API Keys'))!;
+    const actionButton = spectator.query(byText('Go to API keys'))!;
     expect(actionButton).toExist();
   });
 
-  it('reopens a dismissed alert when Re-open link is pressed', async () => {
-    spectator.setInput('alert', {
+  it('reopens a dismissed alert when Re-open link is pressed', () => {
+    const dismissedAlert = {
       ...dummyAlert,
       dismissed: true,
-    } as Alert);
+    } as Alert;
+
+    spectator.setInput('alert', dismissedAlert);
+
+    const store$ = spectator.inject(Store);
+    const dispatchSpy = jest.spyOn(store$, 'dispatch');
 
     alert.clickReopenLink();
 
-    expect(api.call).toHaveBeenCalledWith('alert.restore', ['79']);
-
-    const state = await firstValueFrom(spectator.inject(Store).pipe(map(selectAlerts)));
-    expect(state).toEqual([dummyAlert]);
+    expect(dispatchSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: '[Alert Panel] Reopen Pressed',
+        id: '79',
+      }),
+    );
   });
 
   it('shows expand/collapse button when alert message is too long', async () => {

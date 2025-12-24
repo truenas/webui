@@ -86,11 +86,18 @@
   margin-bottom: 1px;
 }
 
+.alert-header {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
 .alert-level {
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  margin-bottom: 2px;
+  margin: 0;
   text-transform: uppercase;
 
   &.warn {
@@ -108,6 +115,21 @@
   &.error {
     color: var(--red);
   }
+}
+
+.duplicate-count-badge {
+  align-items: center;
+  background: var(--alt-bg2);
+  border: 1px solid var(--lines);
+  border-radius: 12px;
+  cursor: help;
+  display: inline-flex;
+  font-size: 0.65rem;
+  font-weight: 600;
+  height: 18px;
+  justify-content: center;
+  min-width: 18px;
+  padding: 0 6px;
 }
 
 .alert-time {

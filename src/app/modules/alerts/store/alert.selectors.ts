@@ -1,4 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { AlertLevel } from 'app/enums/alert-level.enum';
 import { adapter, AlertsState } from 'app/modules/alerts/store/alert.reducer';
 
 export const alertStateKey = 'alerts';
@@ -32,7 +33,7 @@ export const selectDismissedAlerts = createSelector(
 
 export const selectImportantUnreadAlertsCount = createSelector(
   selectUnreadAlerts,
-  (alerts) => alerts.length,
+  (alerts) => alerts.filter((alert) => ![AlertLevel.Info, AlertLevel.Notice].includes(alert.level)).length,
 );
 
 /**
