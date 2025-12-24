@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, forkJoin, map, Observable, take,
+  filter, merge, map, Observable, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -55,6 +55,13 @@ interface DiskUi extends Disk {
   selected?: boolean;
 }
 
+/**
+ * helper type used for building the `request$` observable to hand the data provider.
+ * follows the standard discriminated union pattern so we can key on the `kind` value to
+ * see which API method we just got a response from.
+ */
+type DiskResponse = { value: DetailsDisk[]; kind: 'details' } | { value: Disk[]; kind: 'query' };
+
 @Component({
   selector: 'ix-disk-list',
   templateUrl: './disk-list.component.html',
@@ -90,6 +97,16 @@ export class DiskListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private licenseService = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
+
+  /**
+   * internal state flag for when `disk.details` comes back with data for the first time. if this is `true`,
+   * then `unusedDisks` has been set at least once (but still may be empty)
+   */
+  private detailsLoaded = false;
+  /** text to be shown when we're still waiting on `disk.details` for pool name */
+  private poolLoadingText = this.translate.instant('Loading...');
+  /** text to be shown when a pool cannot be assigned to a disk. */
+  private poolNonexistentText = this.translate.instant('N/A');
 
   protected readonly requiredRoles = [Role.DiskWrite];
   protected readonly searchableElements = diskListElements;
@@ -253,25 +270,60 @@ export class DiskListComponent implements OnInit {
         },
       };
 
-      const request$ = forkJoin([
+      // we need data from both of these calls to properly show everything
+      // but `disk.details` takes *significantly* longer than `disk.query` to execute.
+      // so we were getting long delays (5-10 seconds) between editing a drive and seeing the changes
+      // show up the next time you opened the menu.
+      //
+      // so, we parallelize the computation with `merge` and key on the kind of response to know what to set.
+      const request$ = merge(
+        // first, transform the data
         this.api.call('disk.details').pipe(
-          map((diskDetails) => [
-            ...diskDetails.unused,
-            ...diskDetails.used.filter((disk) => disk.exported_zpool),
-          ]),
+          map((diskDetails) => ({
+            value: [
+              ...diskDetails.unused,
+              ...diskDetails.used.filter((disk) => disk.exported_zpool),
+            ],
+            kind: 'details',
+          })),
         ),
-        this.api.call('disk.query', [[], extraOptions]),
-      ]).pipe(
-        map(([unusedDisks, disks]) => {
-          this.unusedDisks = unusedDisks;
-          this.disks = disks.map((disk) => ({
-            ...disk,
-            pool: this.getPoolColumn(disk),
-            selected: false,
-          }));
+        this.api.call('disk.query', [[], extraOptions]).pipe(
+          map((value) => ({
+            value,
+            kind: 'query',
+          })),
+        ),
+      ).pipe(
+        map((diskResponse: DiskResponse) => {
+          let disks: Disk[] = this.disks;
+          // response from `disk.details` - grab unused disks to show.
+          if (diskResponse.kind === 'details') {
+            const unusedDisks = diskResponse.value;
+
+            this.unusedDisks = unusedDisks;
+            this.detailsLoaded = true;
+          } else {
+            // response from `disk.query` - overwrite value for processing.
+            disks = diskResponse.value;
+          }
+
+          // we always process the `disks` list to trigger re-rendering of the component
+          // whenever either of these come back with data.
+          this.disks = disks.map((disk) => {
+            const pool = this.getPoolColumn(disk);
+
+            return {
+              ...disk,
+              pool,
+            };
+          });
+
+          // AsyncDataProvider expects us to return a value, and it makes the most sense
+          // to give it `disks` instead of `unusedDisks`.
           return this.disks;
         }),
       );
+
       this.dataProvider = new AsyncDataProvider(request$);
       this.dataProvider.load();
     });
@@ -290,7 +342,9 @@ export class DiskListComponent implements OnInit {
     slideInRef$.pipe(
       filter((response) => !!response.response),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.dataProvider.load());
+    ).subscribe(() => {
+      this.dataProvider.load();
+    });
   }
 
   protected wipe(disk: Disk): void {
@@ -346,7 +400,16 @@ export class DiskListComponent implements OnInit {
     if (unusedDisk?.exported_zpool) {
       return `${unusedDisk.exported_zpool} (${this.translate.instant('Exported')})`;
     }
-    return diskToCheck.pool || this.translate.instant('N/A');
+
+    const fallback = this.detailsLoaded ? this.poolNonexistentText : this.poolLoadingText;
+
+    // some confusing logic here: if the loading text is present, but the details are loaded,
+    // then we need to convert that into the `N/A` text.
+    if (diskToCheck.pool === this.poolLoadingText && this.detailsLoaded) {
+      return this.poolNonexistentText;
+    }
+
+    return diskToCheck.pool || fallback;
   }
 
   private prepareDisks(disks: DiskUi[]): Disk[] {

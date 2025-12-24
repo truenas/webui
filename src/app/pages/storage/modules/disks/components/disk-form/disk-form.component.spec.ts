@@ -1,19 +1,19 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { of, defer } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -96,6 +96,15 @@ describe('DiskFormComponent', () => {
     });
 
     it('saves disk settings when form is saved', async () => {
+      const apiService = spectator.inject(ApiService);
+      apiService.call.mockImplementation((method) => {
+        if (method === 'disk.update') return of(dataDisk);
+        if (method === 'disk.query') {
+          return of([{ ...dataDisk, advpowermgmt: DiskPowerLevel.Level64, description: 'New disk description' }]);
+        }
+        return of();
+      });
+
       await form.fillForm({
         'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
         Description: 'New disk description',
@@ -104,7 +113,7 @@ describe('DiskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
+      expect(apiService.call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
         advpowermgmt: '64',
         description: 'New disk description',
         hddstandby: '10',
@@ -121,12 +130,93 @@ describe('DiskFormComponent', () => {
     });
 
     it('disables \'SED Password\' when \'Clear SED Password\' is checked', async () => {
-      const clearPassword = await loader.getHarness(IxCheckboxHarness.with({ label: 'Clear SED Password' }));
-      const sedPassword = await loader.getHarness(IxInputHarness.with({ label: 'SED Password' }));
-      await clearPassword.setValue(true);
+      await form.fillForm({
+        'SED Password': 'sed_password',
+      });
 
-      expect(sedPassword.isDisabled()).toBeTruthy();
+      await form.fillForm({
+        'Clear SED Password': true,
+      });
+
+      spectator.detectChanges();
+
+      const formValue = await form.getValues();
+      expect(formValue).toEqual({
+        'Advanced Power Management': 'Level 127 - Maximum power usage with Standby',
+        'Clear SED Password': true,
+        Description: 'Some disk description',
+        'HDD Standby': '10',
+        Name: 'sdc',
+        'SED Password': '',
+        Serial: 'VB9fbb6dfe-9cf26570',
+      });
     });
+
+    it('retries disk.query until updated values are confirmed', async () => {
+      const apiService = spectator.inject(ApiService);
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+
+      let callCount = 0;
+      apiService.call.mockImplementation((method) => {
+        if (method === 'disk.update') return of(dataDisk);
+        if (method === 'disk.query') {
+          return defer(() => {
+            const ret = callCount === 0
+              ? [{ ...dataDisk, passwd: 'old_password' }]
+              : [{ ...dataDisk, passwd: '' }];
+            callCount += 1;
+            return of(ret);
+          });
+        }
+
+        return of();
+      });
+
+      await form.fillForm({ 'Clear SED Password': true });
+      await saveButton.click();
+
+      await spectator.fixture.whenStable();
+
+      expect(apiService.call).toHaveBeenCalledWith(
+        'disk.query',
+        [
+          [['identifier', '=', dataDisk.identifier]],
+          { extra: { passwords: true } },
+        ],
+      );
+      expect(callCount).toBe(2);
+    });
+
+    it('closes the form after the operation times out', fakeAsync(async () => {
+      const apiService = spectator.inject(ApiService);
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      let resubCount = 0;
+
+      await form.fillForm({
+        'SED Password': 'password',
+      });
+
+      apiService.call.mockImplementation((method) => {
+        if (method === 'disk.query') {
+          return defer(() => {
+            resubCount += 1;
+            return of([{ ...dataDisk, passwd: 'will_never_match' }]);
+          });
+        }
+
+        return of(dataDisk);
+      });
+
+      await saveButton.click();
+
+      // fast-forward through all the retries. (3 retries * 2000ms = 6000ms)
+      tick(6000);
+      spectator.detectChanges();
+      // total number of tries should be 4 due to the initial try. (1 + 3)
+      expect(resubCount).toBe(4);
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: true });
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    }));
 
     it('sets disk settings when form is opened', async () => {
       const formValue = await form.getValues();
@@ -142,6 +232,20 @@ describe('DiskFormComponent', () => {
     });
 
     it('saves disk settings when form is saved', async () => {
+      const apiService = spectator.inject(ApiService);
+      apiService.call.mockImplementation((method) => {
+        if (method === 'disk.update') return of(dataDisk);
+        if (method === 'disk.query') {
+          return of([{
+            ...dataDisk,
+            advpowermgmt: DiskPowerLevel.Level64,
+            description: 'New disk description',
+            passwd: '123456',
+          }]);
+        }
+        return of();
+      });
+
       await form.fillForm({
         'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
         Description: 'New disk description',
@@ -151,7 +255,7 @@ describe('DiskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
+      expect(apiService.call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
         advpowermgmt: '64',
         description: 'New disk description',
         hddstandby: '10',
