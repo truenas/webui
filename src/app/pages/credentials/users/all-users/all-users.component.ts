@@ -7,7 +7,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { filter, startWith, tap } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { CollectionChangeType } from 'app/enums/api.enum';
-import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
@@ -21,6 +20,7 @@ import { UserDetailHeaderComponent } from 'app/pages/credentials/users/all-users
 import { UserDetailsComponent } from 'app/pages/credentials/users/all-users/user-details/user-details.component';
 import { UserListComponent } from 'app/pages/credentials/users/all-users/user-list/user-list.component';
 import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-data-provider';
+import { getDefaultUserTypeFilters } from 'app/pages/credentials/users/all-users/users-search/users-search-presets';
 import { setUsernameInUrl } from 'app/pages/credentials/users/router-utils';
 import { userPageEntered } from 'app/pages/credentials/users/store/user.actions';
 import { AppState } from 'app/store';
@@ -50,16 +50,7 @@ export class AllUsersComponent implements OnInit, OnDestroy {
   private store$ = inject<Store<AppState>>(Store);
   private destroyRef = inject(DestroyRef);
 
-  private readonly defaultParams = [
-    [
-      ['OR', [
-        [['local', '=', true], ['OR', [['builtin', '=', false], ['username', '=', 'root']]]],
-        ['local', '=', false],
-      ]],
-    ],
-  ] as QueryParams<User>;
-
-  protected readonly dataProvider = new UsersDataProvider(this.api, this.defaultParams);
+  protected readonly dataProvider = new UsersDataProvider(this.api, [getDefaultUserTypeFilters(), {}]);
 
   protected readonly searchableElements = allUsersElements;
   protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);

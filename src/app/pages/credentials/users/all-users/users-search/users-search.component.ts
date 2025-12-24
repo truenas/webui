@@ -10,7 +10,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of, map, filter } from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
-import { ParamsBuilder, ParamsBuilderGroup } from 'app/helpers/params-builder/params-builder.class';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { FilterPreset, QueryFilters, QueryFilter } from 'app/interfaces/query-api.interface';
@@ -24,14 +23,12 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-data-provider';
-import { getDefaultPresets, getBuiltinTogglePreset, getActiveDirectoryTogglePreset } from './users-search-presets';
+import {
+  getDefaultPresets, getBuiltinTogglePreset, getActiveDirectoryTogglePreset,
+  UserType, buildUserTypeFilters,
+} from './users-search-presets';
 
 const searchDebounceTime = 250;
-
-enum UserType {
-  Local = 'local',
-  Directory = 'directory',
-}
 
 @Component({
   selector: 'ix-users-search',
@@ -210,22 +207,18 @@ export class UsersSearchComponent implements OnInit {
     this.searchQuery.set(query);
 
     if (query.isBasicQuery) {
-      let params = new ParamsBuilder<User>();
-
       const selectedTypes = this.selectedUserTypes();
-      if (selectedTypes.length > 0) {
-        params = this.addUserTypeFilters(params, selectedTypes);
-      }
+      const typeFilters = buildUserTypeFilters(selectedTypes, this.showBuiltinUsers());
+
+      let filters: QueryFilters<User> = [...typeFilters];
 
       if (query.query) {
         const pattern = this.convertToRegexPattern(query.query);
         const term = `(?i)${pattern}`;
-        params = params.andGroup((group) => {
-          group.filter('username', '~', term).orFilter('full_name', '~', term);
-        });
+        filters = [...filters, ['OR', [['username', '~', term], ['full_name', '~', term]]] as QueryFilters<User>[number]];
       }
 
-      this.dataProvider().setParams(params.getParams());
+      this.dataProvider().setParams([filters, {}]);
     } else {
       const advancedFilters = (query as AdvancedSearchQuery<User>).filters;
       this.dataProvider().setParams([advancedFilters]);
@@ -283,76 +276,6 @@ export class UsersSearchComponent implements OnInit {
     const escaped = term.replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&');
     // Convert * to .* for wildcard support
     return escaped.replace(/\*/g, '.*');
-  }
-
-  private addUserTypeFilters(params: ParamsBuilder<User>, selectedTypes: UserType[]): ParamsBuilder<User> {
-    if (selectedTypes.length === 1) {
-      const [type] = selectedTypes;
-      return this.applySingleUserTypeFilter(params, type);
-    }
-
-    if (selectedTypes.length > 1) {
-      return params.andGroup((group: ParamsBuilderGroup<User>) => {
-        selectedTypes.forEach((type, index) => {
-          this.applyUserTypeToGroup(group, type, index === 0);
-        });
-      });
-    }
-
-    return params;
-  }
-
-  private applySingleUserTypeFilter(params: ParamsBuilder<User>, type: UserType): ParamsBuilder<User> {
-    switch (type) {
-      case UserType.Local:
-        if (this.showBuiltinUsers()) {
-          return params.andFilter('local', '=', true);
-        }
-        return params.andFilter('local', '=', true).andGroup((group) => {
-          group.filter('builtin', '=', false).orFilter('username', '=', 'root');
-        });
-      case UserType.Directory:
-        return params.andFilter('local', '=', false);
-      default:
-        return params;
-    }
-  }
-
-  private applyUserTypeToGroup(group: ParamsBuilderGroup<User>, type: UserType, isFirst: boolean): void {
-    if (type === UserType.Directory) {
-      if (isFirst) {
-        group.filter('local', '=', false);
-      } else {
-        group.orFilter('local', '=', false);
-      }
-      return;
-    }
-
-    if (type === UserType.Local) {
-      if (this.showBuiltinUsers()) {
-        if (isFirst) {
-          group.filter('local', '=', true);
-        } else {
-          group.orFilter('local', '=', true);
-        }
-      } else {
-        this.applyLocalNonBuiltinFilter(group, isFirst);
-      }
-    }
-  }
-
-  private applyLocalNonBuiltinFilter(group: ParamsBuilderGroup<User>, isFirst: boolean): void {
-    if (isFirst) {
-      group.filter('local', '=', true).andGroup((subGroup: ParamsBuilderGroup<User>) => {
-        subGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
-      });
-    } else {
-      group.orGroup((subGroup: ParamsBuilderGroup<User>) => {
-        subGroup.filter('local', '=', true).andGroup((innerGroup: ParamsBuilderGroup<User>) => {
-          innerGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
-        });
-      });
-    }
   }
 
   protected onQueryChange(query: SearchQuery<User>): void {
