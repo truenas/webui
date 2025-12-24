@@ -43,7 +43,7 @@ describe('UsersSearchComponent', () => {
       ...mockUserApiDataProvider,
       currentPage$: new BehaviorSubject([
         {
-          id: 1, username: 'root', builtin: true, local: false, full_name: 'Root User',
+          id: 1, username: 'root', builtin: true, local: true, full_name: 'Root User',
         } as User,
         {
           id: 2, username: 'localuser1', builtin: false, local: true, full_name: 'Local User 1',
@@ -52,10 +52,10 @@ describe('UsersSearchComponent', () => {
           id: 3, username: 'localuser2', builtin: false, local: true, full_name: 'Local User 2',
         } as User,
         {
-          id: 4, username: 'daemon', builtin: true, local: false, full_name: 'Daemon User',
+          id: 4, username: 'daemon', builtin: true, local: true, full_name: 'Daemon User',
         } as User,
         {
-          id: 5, username: 'www', builtin: true, local: false, full_name: 'Web Server User',
+          id: 5, username: 'www', builtin: true, local: true, full_name: 'Web Server User',
         } as User,
         {
           id: 6, username: 'aduser1', builtin: false, local: false, full_name: 'AD User 1',
