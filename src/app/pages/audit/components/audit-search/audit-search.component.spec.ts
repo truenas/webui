@@ -284,8 +284,9 @@ describe('AuditSearchComponent', () => {
       spectator.detectChanges();
 
       const exportButton = spectator.query(ExportButtonComponent);
+      // "authentication" matches AUTHENTICATION event, so only searches by event
       expect(exportButton.defaultFilters()).toEqual([
-        ['OR', [['event', '~', '(?i)authentication'], ['username', '~', '(?i)authentication']]],
+        ['event', '~', 'AUTHENTICATION'],
       ]);
     });
 
@@ -314,8 +315,9 @@ describe('AuditSearchComponent', () => {
       spectator.detectChanges();
 
       const exportButton = spectator.query(ExportButtonComponent);
+      // "test" doesn't match any event enum, so only searches username
       expect(exportButton.defaultFilters()).toEqual([
-        ['OR', [['event', '~', '(?i)test'], ['username', '~', '(?i)test']]],
+        ['username', '~', 'test'],
       ]);
     });
 
@@ -330,6 +332,70 @@ describe('AuditSearchComponent', () => {
 
       const exportButton = spectator.query(ExportButtonComponent);
       expect(exportButton.defaultFilters()).toEqual([]);
+    });
+
+    it('should escape special regex characters in basic search', () => {
+      const searchInput = spectator.query(SearchInputComponent);
+      searchInput.query.set({
+        query: '.test',
+        isBasicQuery: true,
+      });
+      searchInput.runSearch.emit();
+      spectator.detectChanges();
+
+      const exportButton = spectator.query(ExportButtonComponent);
+      // ".test" doesn't match any event enum, so only searches username
+      expect(exportButton.defaultFilters()).toEqual([
+        ['username', '~', '\\.test'],
+      ]);
+    });
+
+    it('should escape parentheses in basic search', () => {
+      const searchInput = spectator.query(SearchInputComponent);
+      searchInput.query.set({
+        query: '(test)',
+        isBasicQuery: true,
+      });
+      searchInput.runSearch.emit();
+      spectator.detectChanges();
+
+      const exportButton = spectator.query(ExportButtonComponent);
+      // "(test)" doesn't match any event enum, so only searches username
+      expect(exportButton.defaultFilters()).toEqual([
+        ['username', '~', '\\(test\\)'],
+      ]);
+    });
+
+    it('should convert wildcards (*) to regex (.*) while escaping other characters', () => {
+      const searchInput = spectator.query(SearchInputComponent);
+      searchInput.query.set({
+        query: 'auth*',
+        isBasicQuery: true,
+      });
+      searchInput.runSearch.emit();
+      spectator.detectChanges();
+
+      const exportButton = spectator.query(ExportButtonComponent);
+      // "auth*" matches AUTHENTICATION event, so only searches by event
+      expect(exportButton.defaultFilters()).toEqual([
+        ['event', '~', 'AUTHENTICATION'],
+      ]);
+    });
+
+    it('should replace spaces with underscores in event pattern', () => {
+      const searchInput = spectator.query(SearchInputComponent);
+      searchInput.query.set({
+        query: 'method call',
+        isBasicQuery: true,
+      });
+      searchInput.runSearch.emit();
+      spectator.detectChanges();
+
+      const exportButton = spectator.query(ExportButtonComponent);
+      // "method call" matches METHOD_CALL event, so only searches by event
+      expect(exportButton.defaultFilters()).toEqual([
+        ['event', '~', 'METHOD_CALL'],
+      ]);
     });
 
     it('should call dataProvider load on search', () => {
