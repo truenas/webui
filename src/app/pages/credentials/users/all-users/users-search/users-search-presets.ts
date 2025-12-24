@@ -1,11 +1,17 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { FilterPreset, QueryFilters } from 'app/interfaces/query-api.interface';
+import { FilterPreset, QueryFilter, QueryFilters } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 
 export enum UserType {
   Local = 'local',
   Directory = 'directory',
 }
+
+/**
+ * Represents a filter expression for OR groups.
+ * Can be either a single QueryFilter or a nested QueryFilters array.
+ */
+type UserTypeFilterExpression = QueryFilter<User> | QueryFilters<User>;
 
 /**
  * Builds query filters for user type selection.
@@ -49,7 +55,7 @@ function buildSingleTypeFilter(type: UserType, showBuiltinUsers: boolean): Query
 function buildTypeFilterExpression(
   type: UserType,
   showBuiltinUsers: boolean,
-): unknown {
+): UserTypeFilterExpression {
   if (type === UserType.Directory) {
     return ['local', '=', false];
   }
@@ -63,7 +69,7 @@ function buildTypeFilterExpression(
   return [
     ['local', '=', true],
     ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
-  ];
+  ] as QueryFilters<User>;
 }
 
 /**

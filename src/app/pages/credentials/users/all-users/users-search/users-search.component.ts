@@ -7,12 +7,12 @@ import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of, map, filter } from 'rxjs';
+import { Subject, of, map, debounceTime } from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
-import { FilterPreset, QueryFilters, QueryFilter } from 'app/interfaces/query-api.interface';
+import { QueryFilters, QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
@@ -67,11 +67,64 @@ export class UsersSearchComponent implements OnInit {
 
   protected readonly showBuiltinUsers = signal<boolean>(false);
 
-  protected readonly userPresets = signal<FilterPreset<User>[]>([]);
-  private readonly isBuiltinFilterActive = signal<boolean>(false);
-  private readonly isLocalFilterActive = signal<boolean>(false);
+  /**
+   * Computed signal that checks if builtin=true filter is active in advanced search.
+   * Derived directly from searchQuery to avoid manual synchronization.
+   */
+  private readonly isBuiltinFilterActive = computed(() => {
+    const query = this.searchQuery();
+    if (query.isBasicQuery) return false;
+    return (query as AdvancedSearchQuery<User>).filters.some(
+      (filterItem) => Array.isArray(filterItem)
+        && filterItem.length === 3
+        && filterItem[0] === 'builtin'
+        && filterItem[1] === '='
+        && filterItem[2] === true,
+    );
+  });
 
-  private readonly destroyRef = inject(DestroyRef);
+  /**
+   * Computed signal that checks if local=true filter is active in advanced search.
+   * Derived directly from searchQuery to avoid manual synchronization.
+   */
+  private readonly isLocalFilterActive = computed(() => {
+    const query = this.searchQuery();
+    if (query.isBasicQuery) return false;
+    return (query as AdvancedSearchQuery<User>).filters.some(
+      (filterItem) => Array.isArray(filterItem)
+        && filterItem.length === 3
+        && filterItem[0] === 'local'
+        && filterItem[1] === '='
+        && filterItem[2] === true,
+    );
+  });
+
+  /**
+   * Computed signal for user presets based on current filter state.
+   */
+  protected readonly userPresets = computed(() => {
+    const presets = getDefaultPresets().map((preset) => ({
+      ...preset,
+      label: this.translate.instant(preset.label),
+    }));
+
+    const builtinPreset = getBuiltinTogglePreset(this.isBuiltinFilterActive());
+    presets.push({
+      ...builtinPreset,
+      label: this.translate.instant(builtinPreset.label),
+    });
+
+    const isAdEnabled = this.isActiveDirectoryEnabled();
+    if (isAdEnabled) {
+      const adPreset = getActiveDirectoryTogglePreset(this.isLocalFilterActive());
+      presets.push({
+        ...adPreset,
+        label: this.translate.instant(adPreset.label),
+      });
+    }
+
+    return presets;
+  });
 
   private readonly userTypeOptions = computed(() => {
     const options: SelectOption[] = [
@@ -97,23 +150,22 @@ export class UsersSearchComponent implements OnInit {
     map((state: DirectoryServicesStatus) => state.status !== DirectoryServiceStatus.Disabled),
   ));
 
-  // Observable for subscription in ngOnInit - signal is used in computed signals
-  private readonly isActiveDirectoryEnabled$ = toObservable(this.isActiveDirectoryEnabled);
-
   private lastProcessedQuery = signal<SearchQuery<User> | null>(null);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly advancedSearchSubject$ = new Subject<SearchQuery<User>>();
 
   ngOnInit(): void {
-    this.updateBuiltinActiveState();
     this.setSearchProperties(this.dataProvider().currentPage$.getValue());
+    this.setupAdvancedSearchDebounce();
+  }
 
-    this.isActiveDirectoryEnabled$
-      .pipe(
-        filter((isAdEnabled) => isAdEnabled !== undefined),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        this.updateUserPresets();
-      });
+  private setupAdvancedSearchDebounce(): void {
+    this.advancedSearchSubject$.pipe(
+      debounceTime(searchDebounceTime),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((query) => {
+      this.onSearch(query);
+    });
   }
 
   private setSearchProperties(users: User[]): void {
@@ -292,7 +344,6 @@ export class UsersSearchComponent implements OnInit {
 
       this.searchQuery.set(emptyQuery);
       this.resetToModeDefaults(targetMode);
-      this.updateBuiltinActiveState();
       return; // Exit early since resetToModeDefaults handles the filtering
     }
 
@@ -303,14 +354,11 @@ export class UsersSearchComponent implements OnInit {
       const lastQuery = this.lastProcessedQuery();
       if (!this.queriesEqual(lastQuery, query)) {
         this.lastProcessedQuery.set(query);
-        setTimeout(() => {
-          this.onSearch(query);
-        }, searchDebounceTime);
+        this.advancedSearchSubject$.next(query);
       }
     }
 
     this.searchQuery.set(query);
-    this.updateBuiltinActiveState();
   }
 
   private removeConflictingFilters(query: AdvancedSearchQuery<User>): AdvancedSearchQuery<User> {
@@ -345,57 +393,6 @@ export class UsersSearchComponent implements OnInit {
       ...query,
       filters: otherFilters,
     };
-  }
-
-  private updateBuiltinActiveState(): void {
-    const currentQuery = this.searchQuery();
-    let hasBuiltinTrue = false;
-    let hasLocalTrue = false;
-
-    if (!currentQuery.isBasicQuery) {
-      const advancedQuery = currentQuery as AdvancedSearchQuery<User>;
-      advancedQuery.filters.forEach((filterItem) => {
-        if (Array.isArray(filterItem) && filterItem.length === 3) {
-          const [property, operator, value] = filterItem;
-          if (property === 'builtin' && operator === '=' && value === true) {
-            hasBuiltinTrue = true;
-          }
-          if (property === 'local' && operator === '=' && value === true) {
-            hasLocalTrue = true;
-          }
-        }
-      });
-    }
-
-    this.isBuiltinFilterActive.set(hasBuiltinTrue);
-    this.isLocalFilterActive.set(hasLocalTrue);
-    this.updateUserPresets();
-  }
-
-  private updateUserPresets(): void {
-    const presets = getDefaultPresets().map((preset) => ({
-      ...preset,
-      label: this.translate.instant(preset.label),
-    }));
-
-    const isBuiltinActive = this.isBuiltinFilterActive();
-    const builtinPreset = getBuiltinTogglePreset(isBuiltinActive);
-    presets.push({
-      ...builtinPreset,
-      label: this.translate.instant(builtinPreset.label),
-    });
-
-    const isAdEnabled = this.isActiveDirectoryEnabled();
-    if (isAdEnabled) {
-      const isLocalActive = this.isLocalFilterActive();
-      const adPreset = getActiveDirectoryTogglePreset(isLocalActive);
-      presets.push({
-        ...adPreset,
-        label: this.translate.instant(adPreset.label),
-      });
-    }
-
-    this.userPresets.set(presets);
   }
 
   private resetToModeDefaults(targetMode: 'basic' | 'advanced'): void {
