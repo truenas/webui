@@ -92,6 +92,14 @@
             [tooltip]="tooltips.multichannel | translate"
           ></ix-checkbox>
 
+          @if (isHaLicensed()) {
+            <ix-checkbox
+              formControlName="stateful_failover"
+              [label]="'Stateful Failover' | translate"
+              [tooltip]="tooltips.stateful_failover | translate"
+            ></ix-checkbox>
+          }
+
           <ix-checkbox
             formControlName="spotlight_search"
             [label]="'Enable Search (Spotlight)' | translate"

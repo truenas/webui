@@ -35,6 +35,11 @@
             formControlName="v6_network"
             [label]="'IPv6 Network' | translate"
           ></ix-ip-input-with-netmask>
+
+          <p class="hint">
+            <strong>{{ 'Note' | translate }}:</strong>
+            {{ 'At least one network (IPv4 or IPv6) must be specified.' | translate }}
+          </p>
         }
       </ix-fieldset>
 

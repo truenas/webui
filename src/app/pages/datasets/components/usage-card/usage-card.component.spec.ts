@@ -200,9 +200,9 @@ describe('UsageCardComponent', () => {
             ...datasetDummy,
             mountpoint: '/mnt/pool/dataset',
             name: 'pool/dataset',
-            webshares: [
-              { name: 'share1', path: '/mnt/pool/dataset/docs' },
-              { name: 'share2', path: '/mnt/pool/dataset/media' },
+            webshare_shares: [
+              { share_name: 'share1', path: '/mnt/pool/dataset/docs', enabled: true },
+              { share_name: 'share2', path: '/mnt/pool/dataset/media', enabled: true },
             ],
           },
         },
@@ -218,10 +218,10 @@ describe('UsageCardComponent', () => {
     it('shows multiple webshares with proper formatting', () => {
       spectator.setInput('dataset', {
         ...datasetDummy,
-        webshares: [
-          { name: 'docs', path: '/mnt/pool/dataset/docs' },
-          { name: 'media', path: '/mnt/pool/dataset/media' },
-          { name: 'photos', path: '/mnt/pool/dataset/photos' },
+        webshare_shares: [
+          { share_name: 'docs', path: '/mnt/pool/dataset/docs', enabled: true },
+          { share_name: 'media', path: '/mnt/pool/dataset/media', enabled: true },
+          { share_name: 'photos', path: '/mnt/pool/dataset/photos', enabled: true },
         ],
       });
       spectator.detectChanges();
@@ -234,7 +234,7 @@ describe('UsageCardComponent', () => {
     it('does not show webshare row when dataset has no webshares', () => {
       spectator.setInput('dataset', {
         ...datasetDummy,
-        webshares: [],
+        webshare_shares: [],
         smb_shares: [],
         nfs_shares: [],
         iscsi_shares: [],
@@ -255,7 +255,7 @@ describe('UsageCardComponent', () => {
         smb_shares: [],
         nfs_shares: [],
         iscsi_shares: [],
-        webshares: [],
+        webshare_shares: [],
         children: [],
         apps: [],
         vms: [],
@@ -286,7 +286,7 @@ describe('UsageCardComponent', () => {
         smb_shares: [],
         nfs_shares: [],
         iscsi_shares: [],
-        webshares: [],
+        webshare_shares: [],
         apps: [],
         vms: [],
       });
@@ -302,7 +302,7 @@ describe('UsageCardComponent', () => {
         smb_shares: [],
         nfs_shares: [],
         iscsi_shares: [],
-        webshares: [],
+        webshare_shares: [],
         apps: [],
         vms: [],
       });
@@ -319,7 +319,7 @@ describe('UsageCardComponent', () => {
         smb_shares: [],
         nfs_shares: [],
         iscsi_shares: [],
-        webshares: [],
+        webshare_shares: [],
         apps: [],
         vms: [],
       });
@@ -334,7 +334,7 @@ describe('UsageCardComponent', () => {
         smb_shares: [],
         nfs_shares: [],
         iscsi_shares: [],
-        webshares: [],
+        webshare_shares: [],
         apps: [{ name: 'app1', path: 'path1' }],
         vms: [],
       });
@@ -349,7 +349,7 @@ describe('UsageCardComponent', () => {
         smb_shares: [],
         nfs_shares: [],
         iscsi_shares: [],
-        webshares: [],
+        webshare_shares: [],
         apps: [],
         vms: [{ name: 'vm1', path: 'path1' }],
       });
@@ -364,7 +364,7 @@ describe('UsageCardComponent', () => {
         smb_shares: [{ share_name: 'smb1', path: 'path1', enabled: true }],
         nfs_shares: [],
         iscsi_shares: [],
-        webshares: [],
+        webshare_shares: [],
         apps: [],
         vms: [],
       });
@@ -379,7 +379,7 @@ describe('UsageCardComponent', () => {
         smb_shares: [],
         nfs_shares: [{ enabled: true, path: 'path1' }],
         iscsi_shares: [],
-        webshares: [],
+        webshare_shares: [],
         apps: [],
         vms: [],
       });
@@ -394,7 +394,7 @@ describe('UsageCardComponent', () => {
         smb_shares: [],
         nfs_shares: [],
         iscsi_shares: [{ enabled: true, type: IscsiExtentType.Disk, path: 'path1' }],
-        webshares: [],
+        webshare_shares: [],
         apps: [],
         vms: [],
       });
@@ -409,7 +409,7 @@ describe('UsageCardComponent', () => {
         smb_shares: [],
         nfs_shares: [],
         iscsi_shares: [],
-        webshares: [{ name: 'share1', path: 'path1' }],
+        webshare_shares: [{ share_name: 'share1', path: 'path1', enabled: true }],
         apps: [],
         vms: [],
       });
@@ -425,7 +425,7 @@ describe('UsageCardComponent', () => {
         smb_shares: [],
         nfs_shares: [],
         iscsi_shares: [],
-        webshares: [],
+        webshare_shares: [],
         apps: [],
         vms: [],
       });

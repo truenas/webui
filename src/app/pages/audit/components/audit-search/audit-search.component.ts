@@ -70,6 +70,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
   protected readonly searchQuery = signal<SearchQuery<AuditEntry>>({ query: '', isBasicQuery: true });
   protected readonly searchProperties = signal<SearchProperty<AuditEntry>[]>([]);
   protected readonly advancedSearchPlaceholder = this.translate.instant('Event = "Close" AND Username = "admin"');
+  protected readonly basicSearchPlaceholder = this.translate.instant('Search by Event or Username');
   protected readonly serviceControl = new FormControl<AuditService>(AuditService.Middleware);
   protected readonly serviceOptions$ = of(mapToOptions(auditServiceLabels, this.translate));
   protected readonly exportFormat = signal<ExportFormat>(ExportFormat.Csv);
@@ -96,8 +97,34 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     if (!searchTerm) {
       return [];
     }
-    const term = `(?i)${searchTerm}`;
-    return [['OR', [['event', '~', term], ['username', '~', term]]]] as QueryFilters<AuditEntry>;
+    const pattern = this.convertToRegexPattern(searchTerm);
+
+    // Get all AuditEvent enum values
+    const allEventValues = Object.values(AuditEvent);
+
+    // Convert search term to uppercase with underscores/hyphens for event matching
+    const eventPattern = pattern.replace(/\s+/g, '_').toUpperCase().replace(/_/g, '[_-]');
+
+    // Find all enum values that match the search pattern
+    const matchedEvents = allEventValues.filter((eventValue) => {
+      try {
+        const regex = new RegExp(eventPattern, 'i');
+        return regex.test(eventValue);
+      } catch {
+        return false;
+      }
+    });
+
+    // If we found matching events, search only by event
+    // Note: When multiple events match (e.g., "log" matches both LOGIN and LOGOUT),
+    // we use only the first match to keep the search simple and predictable.
+    // This prioritizes alphabetically first enum values.
+    if (matchedEvents.length > 0) {
+      return [['event', '~', matchedEvents[0]]] as QueryFilters<AuditEntry>;
+    }
+
+    // Otherwise search by username only
+    return [['username', '~', pattern]] as QueryFilters<AuditEntry>;
   });
 
   protected readonly exportFilename = computed(() => {
@@ -219,6 +246,7 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       );
     }
 
+    this.updateUrlOptions();
     this.dataProvider().load();
   }
 
@@ -306,5 +334,12 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
       label: user.username,
       value: `"${user.username}"`,
     }));
+  }
+
+  private convertToRegexPattern(term: string): string {
+    // Escape all regex special characters except *
+    const escaped = term.replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&');
+    // Convert * to .* for wildcard support
+    return escaped.replace(/\*/g, '.*');
   }
 }

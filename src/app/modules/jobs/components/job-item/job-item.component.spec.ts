@@ -4,6 +4,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
+import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
 describe('JobItemComponent', () => {
@@ -16,6 +17,7 @@ describe('JobItemComponent', () => {
     ],
     imports: [
       MapValuePipe,
+      JobStateDisplayPipe,
     ],
   });
 
@@ -71,7 +73,7 @@ describe('JobItemComponent', () => {
     });
 
     expect(spectator.query('.job-description')).toHaveText('cloudsync.sync');
-    expect(spectator.query('.job-time')).toHaveText('Stopped:  1970-01-20 03:03:31');
+    expect(spectator.query('.job-time')).toHaveText('Failed:  1970-01-20 03:03:31');
     expect(spectator.query('.job-credentials')).toHaveText('Created by: root (Token)');
     expect(spectator.query('.job-icon-failed')).toBeTruthy();
   });

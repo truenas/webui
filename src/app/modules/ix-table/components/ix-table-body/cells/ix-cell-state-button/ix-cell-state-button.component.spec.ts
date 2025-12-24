@@ -77,7 +77,7 @@ describe('IxCellStateButtonComponent', () => {
 
   it('shows status text', async () => {
     const button = await loader.getHarness(MatButtonHarness);
-    expect(await button.getText()).toBe('Success');
+    expect(await button.getText()).toBe('Completed');
     expect(await (await button.host()).hasClass('fn-theme-green')).toBeTruthy();
   });
 

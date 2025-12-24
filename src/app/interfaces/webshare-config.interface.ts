@@ -20,5 +20,3 @@ export interface WebShare {
 }
 
 export type WebShareUpdate = Omit<WebShare, 'id' | 'locked'>;
-
-export type WebShareSummary = Pick<WebShare, 'name' | 'path'>;

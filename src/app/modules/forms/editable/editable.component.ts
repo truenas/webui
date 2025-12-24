@@ -66,6 +66,11 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
    */
   readonly readonly = input(false);
 
+  /**
+   * Auto-focus the first focusable element when opened. Defaults to true.
+   */
+  readonly autoFocus = input(true);
+
   readonly closed = output();
 
   isOpen = signal(false);
@@ -150,7 +155,9 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
     this.addKeydownListener();
 
     afterNextRender(() => {
-      this.focusService.focusFirstFocusableElement(this.elementRef.nativeElement);
+      if (this.autoFocus()) {
+        this.focusService.focusFirstFocusableElement(this.elementRef.nativeElement);
+      }
       const editSlot = this.elementRef.nativeElement.querySelector<HTMLElement>('.edit-slot');
       if (editSlot) {
         editSlot.scrollIntoView({

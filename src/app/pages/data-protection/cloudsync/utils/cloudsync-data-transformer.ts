@@ -1,6 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
-import { JobState } from 'app/enums/job-state.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { DataProtectionTaskState } from 'app/interfaces/data-protection-task-state.interface';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { TaskService } from 'app/services/task.service';
 
@@ -75,7 +76,16 @@ export class CloudSyncDataTransformer {
         : (lastRunTime as Date).getTime().toString();
     }
 
-    const transformed = {
+    // Determine the state
+    let state: DataProtectionTaskState;
+    if (task.job === null) {
+      state = { state: task.locked ? TaskState.Locked : TaskState.Pending };
+    } else {
+      // When job is active, show the job's current state
+      state = { state: task.job.state };
+    }
+
+    const transformed: CloudSyncTaskUi = {
       ...task,
       credential: task.credentials.name,
       next_run: nextRunString,
@@ -84,15 +94,8 @@ export class CloudSyncDataTransformer {
       last_run: lastRunTime?.toString() || '',
       last_run_sort_key: lastRunSortKey,
       frequency_sort_key: frequencySortKey,
-      state: { state: JobState.Pending }, // Will be overridden below
+      state,
     };
-
-    // Set proper state
-    if (task.job === null) {
-      transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };
-    } else {
-      transformed.state = { state: task.job.state };
-    }
 
     return transformed;
   }

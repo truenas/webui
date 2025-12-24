@@ -73,7 +73,7 @@ describe('RsyncTaskListComponent', () => {
       user: 'peter',
       job: {
         id: 2,
-        state: JobState.Finished,
+        state: JobState.Success,
       } as Job,
     },
   ] as RsyncTask[];
@@ -126,7 +126,7 @@ describe('RsyncTaskListComponent', () => {
               },
               {
                 id: 2,
-                state: JobState.Finished,
+                state: JobState.Success,
               },
             ],
           },
@@ -178,7 +178,7 @@ describe('RsyncTaskListComponent', () => {
         'Disabled',
         'Second task',
         'peter',
-        'Finished',
+        'Completed',
         'No',
         '',
       ],

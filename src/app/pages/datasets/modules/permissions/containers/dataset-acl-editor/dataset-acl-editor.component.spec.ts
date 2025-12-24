@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import {
   createRoutingFactory, mockProvider, SpectatorRouting,
 } from '@ngneat/spectator/jest';
@@ -112,7 +113,7 @@ describe('DatasetAclEditorComponent', () => {
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
-          afterClosed: () => of(),
+          afterClosed: () => of({ wasStripped: true }),
         })),
       }),
       mockAuth(),
@@ -122,85 +123,122 @@ describe('DatasetAclEditorComponent', () => {
     },
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    api = spectator.inject(MockApiService);
-    matDialog = spectator.inject(MatDialog);
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  });
-
-  describe('preset modal', () => {
-    it('shows select preset modal if user presses "Use Preset"', async () => {
-      const usePresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Use Preset' }));
-      await usePresetButton.click();
-
-      expect(matDialog.open).toHaveBeenCalledWith(
-        SelectPresetModalComponent,
-        { data: { allowCustom: false, datasetPath: '/mnt/pool/dataset' } },
-      );
+  describe('empty return URL', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      api = spectator.inject(MockApiService);
+      matDialog = spectator.inject(MatDialog);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('shows save as preset modal if user presses "Save As Preset"', async () => {
-      const saveAsPresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save As Preset' }));
-      await saveAsPresetButton.click();
-
-      expect(matDialog.open).toHaveBeenCalledWith(
-        SaveAsPresetModalComponent,
-        { data: { aclType: AclType.Nfs4, datasetPath: '/mnt/pool/dataset' } },
-      );
-    });
-  });
-
-  describe('loading and layout', () => {
-    it('loads acl and stats for the dataset specified', () => {
-      expect(api.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/pool/dataset', true, true]);
-      expect(api.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/pool/dataset']);
+    it('sets returnUrl to null when not provided', () => {
+      const store = spectator.inject(DatasetAclEditorStore);
+      expect(store.state().returnUrl).toBeNull();
     });
 
-    it('shows loaded acl', () => {
-      const items = spectator.queryAll('ix-permissions-item');
-      expect(items).toHaveLength(3);
+    describe('preset modal', () => {
+      it('shows select preset modal if user presses "Use Preset"', async () => {
+        const usePresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Use Preset' }));
+        await usePresetButton.click();
 
-      expect(items[0]).toHaveText('User - john');
-      expect(items[0]).toHaveText('Allow | Modify');
-      expect(items[1]).toHaveText('owner@ - john');
-      expect(items[1]).toHaveText('Allow | Read');
-      expect(items[2]).toHaveText('everyone@');
-      expect(items[2]).toHaveText('Deny | Read');
-    });
+        expect(matDialog.open).toHaveBeenCalledWith(
+          SelectPresetModalComponent,
+          { data: { allowCustom: false, datasetPath: '/mnt/pool/dataset' } },
+        );
+      });
 
-    it('shows form for appropriate ace selected', () => {
-      const form = spectator.query(EditNfsAceComponent)!;
+      it('shows save as preset modal if user presses "Save As Preset"', async () => {
+        const saveAsPresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save As Preset' }));
+        await saveAsPresetButton.click();
 
-      expect(form).toExist();
-      expect(form.ace).toBe(acl.acl[0]);
-    });
-  });
-
-  describe('editing', () => {
-    it('opens Strip ACL dialog when Strip Acl is pressed', async () => {
-      const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACL' }));
-      await stripButton.click();
-
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StripAclModalComponent, {
-        data: { path: '/mnt/pool/dataset' },
+        expect(matDialog.open).toHaveBeenCalledWith(
+          SaveAsPresetModalComponent,
+          { data: { aclType: AclType.Nfs4, datasetPath: '/mnt/pool/dataset' } },
+        );
       });
     });
 
-    it('adds another ace when Add item is pressed', async () => {
-      const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Item' }));
-      await addAceButton.click();
+    describe('loading and layout', () => {
+      it('loads acl and stats for the dataset specified', () => {
+        expect(api.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/pool/dataset', true, true]);
+        expect(api.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/pool/dataset']);
+      });
 
-      const items = spectator.queryAll('ix-permissions-item');
-      expect(items).toHaveLength(4);
-      expect(items[3]).toHaveText('User - ?');
-      expect(items[3]).toHaveText('Allow | Modify');
+      it('shows loaded acl', () => {
+        const items = spectator.queryAll('ix-permissions-item');
+        expect(items).toHaveLength(3);
+
+        expect(items[0]).toHaveText('User - john');
+        expect(items[0]).toHaveText('Allow | Modify');
+        expect(items[1]).toHaveText('owner@ - john');
+        expect(items[1]).toHaveText('Allow | Read');
+        expect(items[2]).toHaveText('everyone@');
+        expect(items[2]).toHaveText('Deny | Read');
+      });
+
+      it('shows form for appropriate ace selected', () => {
+        const form = spectator.query(EditNfsAceComponent)!;
+
+        expect(form).toExist();
+        expect(form.ace).toBe(acl.acl[0]);
+      });
+    });
+
+    describe('editing', () => {
+      it('opens Strip ACL dialog when Strip Acl is pressed', async () => {
+        const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACL' }));
+        await stripButton.click();
+
+        expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StripAclModalComponent, {
+          data: { path: '/mnt/pool/dataset' },
+        });
+      });
+
+      it('navigates after stripping the ACL - no returnUrl', () => {
+        const router = spectator.inject(Router);
+        spectator.component.onStripAclPressed();
+
+        expect(router.navigate).toHaveBeenCalledWith(['/datasets', '/mnt/pool/dataset']);
+      });
+
+      it('adds another ace when Add item is pressed', async () => {
+        const addAceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Item' }));
+        await addAceButton.click();
+
+        const items = spectator.queryAll('ix-permissions-item');
+        expect(items).toHaveLength(4);
+        expect(items[3]).toHaveText('User - ?');
+        expect(items[3]).toHaveText('Allow | Modify');
+      });
+    });
+
+    describe('saving', () => {
+      it('renders save controls', () => {
+        expect(spectator.query(AclEditorSaveControlsComponent)).toExist();
+      });
     });
   });
 
-  describe('saving', () => {
-    it('renders save controls', () => {
-      expect(spectator.query(AclEditorSaveControlsComponent)).toExist();
+  describe('return URL navigation', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        queryParams: {
+          path: '/mnt/pool/dataset',
+          returnUrl: '/sharing',
+        },
+      });
+    });
+
+    it('sets returnUrl from query params when provided', () => {
+      const store = spectator.inject(DatasetAclEditorStore);
+      expect(store.state().returnUrl).toBe('/sharing');
+    });
+
+    it('navigates after stripping the ACL - with returnUrl', () => {
+      const router = spectator.inject(Router);
+      spectator.component.onStripAclPressed();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/sharing']);
     });
   });
 });

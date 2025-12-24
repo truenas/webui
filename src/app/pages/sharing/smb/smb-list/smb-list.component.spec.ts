@@ -108,7 +108,15 @@ describe('SmbListComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
-    jest.spyOn(spectator.inject(Router), 'navigate').mockImplementation();
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate').mockImplementation();
+
+    // override the URL to what it would normally be so we can verify that
+    // the list component supplies the router's value to the store.
+    Object.defineProperty(router, 'url', {
+      value: '/sharing/smb',
+      writable: false,
+    });
   });
 
   it('shows accurate page title', () => {
@@ -150,7 +158,7 @@ describe('SmbListComponent', () => {
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(
       ['/', 'datasets', 'acl', 'edit'],
-      { queryParams: { path: '/some-path' } },
+      { queryParams: { path: '/some-path', returnUrl: '/sharing/smb' } },
     );
   });
 

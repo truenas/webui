@@ -278,7 +278,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe((job: Job) => {
-      if (job.state === JobState.Success || job.state === JobState.Finished) {
+      if (job.state === JobState.Success) {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» completed successfully.', { name: row.description }));
       }
       this.updateRowStateAndJob(row, job.state, job);
@@ -329,7 +329,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe((job: Job) => {
-      if (job.state === JobState.Success || job.state === JobState.Finished) {
+      if (job.state === JobState.Success) {
         this.snackbar.success(this.translate.instant('Cloud Sync Task «{name}» dry run completed successfully.', { name: row.description }));
       }
       this.updateRowStateAndJob(row, job.state, job);

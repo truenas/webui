@@ -141,6 +141,7 @@ export interface ApiJobDirectory {
   'pool.export': { params: PoolExportParams; response: void };
   'pool.import_find': { params: void; response: PoolFindResult[] };
   'pool.import_pool': { params: [PoolImportParams]; response: boolean };
+  'pool.reimport': { params: [id: number]; response: boolean };
   'pool.remove': { params: PoolRemoveParams; response: void };
   'pool.replace': { params: [id: number, params: PoolReplaceParams]; response: boolean };
   'pool.scrub': { params: PoolScrubTaskParams; response: void };
