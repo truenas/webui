@@ -92,19 +92,17 @@
             [tooltip]="tooltips.multichannel | translate"
           ></ix-checkbox>
 
-          <ix-combobox
+          <ix-group-combobox
             formControlName="admin_group"
             [label]="'Administrators Group' | translate"
             [tooltip]="tooltips.admin_group | translate"
-            [provider]="adminGroupProvider"
-          ></ix-combobox>
+          ></ix-group-combobox>
 
-          <ix-combobox
+          <ix-user-combobox
             formControlName="guest"
             [label]="'Guest Account' | translate"
             [tooltip]="tooltips.guest | translate"
-            [provider]="guestAccountProvider"
-          ></ix-combobox>
+          ></ix-user-combobox>
 
           <ix-input
             formControlName="filemask"

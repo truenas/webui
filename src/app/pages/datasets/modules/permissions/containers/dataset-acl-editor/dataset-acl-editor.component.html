@@ -17,11 +17,10 @@
       <div class="ownership-row" [formGroup]="ownerFormGroup">
         <div class="control">
           <label class="header-label">{{ 'Owner' | translate }}:</label>
-          <ix-combobox
+          <ix-user-combobox
             class="owner-combobox"
             formControlName="owner"
-            [provider]="userProvider"
-          ></ix-combobox>
+          ></ix-user-combobox>
           <ix-checkbox
             formControlName="applyOwner"
             [label]="'Apply Owner' | translate"
@@ -31,11 +30,10 @@
 
         <div class="control">
           <label class="header-label">{{ 'Owner Group' | translate }}:</label>
-          <ix-combobox
+          <ix-group-combobox
             class="owner-combobox"
             formControlName="ownerGroup"
-            [provider]="groupProvider"
-          ></ix-combobox>
+          ></ix-group-combobox>
           <ix-checkbox
             formControlName="applyGroup"
             [label]="'Apply Group' | translate"

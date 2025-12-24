@@ -8,25 +8,23 @@
     ></ix-select>
 
     @if (isUserTag) {
-      <ix-combobox
+      <ix-user-combobox
         formControlName="user"
         [label]="'User' | translate"
         [tooltip]="tooltips.user | translate"
-        [provider]="userProvider"
         [allowCustomValue]="true"
         [required]="true"
-      ></ix-combobox>
+      ></ix-user-combobox>
     }
 
     @if (isGroupTag) {
-      <ix-combobox
+      <ix-group-combobox
         formControlName="group"
         [label]="'Group' | translate"
         [tooltip]="tooltips.group | translate"
-        [provider]="groupProvider"
         [allowCustomValue]="true"
         [required]="true"
-      ></ix-combobox>
+      ></ix-group-combobox>
     }
 
     <ix-checkbox-list

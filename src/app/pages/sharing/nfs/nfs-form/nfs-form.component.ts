@@ -20,19 +20,18 @@ import { helptextSharingNfs } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
@@ -44,7 +43,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -65,7 +63,8 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     ExplorerCreateDatasetComponent,
     IxInputComponent,
     IxCheckboxComponent,
-    IxComboboxComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     IxSelectComponent,
     IxListComponent,
     IxListItemComponent,
@@ -80,7 +79,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 export class NfsFormComponent implements OnInit {
   private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
-  private userService = inject(UserService);
   private translate = inject(TranslateService);
   private filesystemService = inject(FilesystemService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -131,8 +129,6 @@ export class NfsFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   readonly helptext = helptextSharingNfs;
-  readonly userProvider = new UserComboboxProvider(this.userService);
-  readonly groupProvider = new GroupComboboxProvider(this.userService);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 

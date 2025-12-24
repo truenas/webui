@@ -48,33 +48,29 @@
             [label]="'Read Only' | translate"
           ></ix-checkbox>
 
-          <ix-combobox
+          <ix-user-combobox
             formControlName="maproot_user"
             [label]="'Maproot User' | translate"
             [tooltip]="helptext.maprootUserTooltip | translate"
-            [provider]="userProvider"
-          ></ix-combobox>
+          ></ix-user-combobox>
 
-          <ix-combobox
+          <ix-group-combobox
             formControlName="maproot_group"
             [label]="'Maproot Group' | translate"
             [tooltip]="helptext.maprootGroupTooltip | translate"
-            [provider]="groupProvider"
-          ></ix-combobox>
+          ></ix-group-combobox>
 
-          <ix-combobox
+          <ix-user-combobox
             formControlName="mapall_user"
             [label]="'Mapall User' | translate"
             [tooltip]="helptext.mapallUserTooltip | translate"
-            [provider]="userProvider"
-          ></ix-combobox>
+          ></ix-user-combobox>
 
-          <ix-combobox
+          <ix-group-combobox
             formControlName="mapall_group"
             [label]="'Mapall Group' | translate"
             [tooltip]="helptext.mapallGroupTooltip | translate"
-            [provider]="groupProvider"
-          ></ix-combobox>
+          ></ix-group-combobox>
 
           <ix-select
             formControlName="security"

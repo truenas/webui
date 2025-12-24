@@ -16,13 +16,12 @@
           [tooltip]="tooltips.command | translate"
         ></ix-input>
 
-        <ix-combobox
+        <ix-user-combobox
           formControlName="user"
           [label]="'Run As User' | translate"
           [required]="true"
           [tooltip]="tooltips.user | translate"
-          [provider]="userProvider"
-        ></ix-combobox>
+        ></ix-user-combobox>
 
         <ix-scheduler
           formControlName="schedule"

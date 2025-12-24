@@ -21,16 +21,14 @@ import {
   BasicNfsPermissions,
   NfsAclItem,
 } from 'app/interfaces/acl.interface';
-import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { newNfsAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
-import { UserService } from 'app/services/user.service';
 import {
   NfsFormFlagsType,
   nfsFormFlagsTypeLabels,
@@ -48,7 +46,8 @@ import {
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxSelectComponent,
-    IxComboboxComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     IxRadioGroupComponent,
     IxCheckboxListComponent,
     TranslateModule,
@@ -57,7 +56,6 @@ import {
 export class EditNfsAceComponent implements OnChanges, OnInit {
   private formBuilder = inject(FormBuilder);
   private store = inject(DatasetAclEditorStore);
-  private userService = inject(UserService);
   private translate = inject(TranslateService);
 
   readonly ace = input.required<NfsAclItem>();
@@ -96,9 +94,6 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     basicFlag: helptextAcl.flagsTooltip,
     advancedFlags: helptextAcl.flagsTooltip,
   };
-
-  readonly userProvider = new UserComboboxProvider(this.userService);
-  readonly groupProvider = new GroupComboboxProvider(this.userService);
 
   get isUserTag(): boolean {
     return this.form.value.tag === NfsAclTag.User;
