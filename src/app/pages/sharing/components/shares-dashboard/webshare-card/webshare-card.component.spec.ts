@@ -69,8 +69,7 @@ describe('WebShareCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
-    imports: [
-      IxTablePagerShowMoreComponent,
+    imports: [IxTablePagerShowMoreComponent,
     ],
     declarations: [
       MockComponents(
@@ -93,6 +92,11 @@ describe('WebShareCardComponent', () => {
         mockCall('user.query', [{ id: 1, username: 'testuser', webshare: true } as User]),
       ]),
       provideMockStore({
+        initialState: {
+          alerts: {
+            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
+          },
+        },
         selectors: [
           {
             selector: selectSystemInfo,
@@ -257,8 +261,7 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
 
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
-    imports: [
-      IxTablePagerShowMoreComponent,
+    imports: [IxTablePagerShowMoreComponent,
     ],
     declarations: [
       MockComponents(
@@ -278,6 +281,11 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       provideMockStore({
+        initialState: {
+          alerts: {
+            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
+          },
+        },
         selectors: [
           {
             selector: selectSystemInfo,
@@ -354,8 +362,7 @@ describe('WebShareCardComponent - No WebShare users configured', () => {
 
   const createComponent = createComponentFactory({
     component: WebShareCardComponent,
-    imports: [
-      IxTablePagerShowMoreComponent,
+    imports: [IxTablePagerShowMoreComponent,
     ],
     declarations: [
       MockComponents(
@@ -375,6 +382,11 @@ describe('WebShareCardComponent - No WebShare users configured', () => {
         mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       provideMockStore({
+        initialState: {
+          alerts: {
+            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
+          },
+        },
         selectors: [
           {
             selector: selectSystemInfo,

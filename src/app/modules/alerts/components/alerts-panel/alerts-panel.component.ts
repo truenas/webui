@@ -1,11 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { NavigationExtras, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
@@ -39,7 +38,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
  */
 type AlertWithDuplicates = Alert & EnhancedAlert & { duplicateCount: number };
 
-@UntilDestroy()
 @Component({
   selector: 'ix-alerts-panel',
   templateUrl: './alerts-panel.component.html',
@@ -65,6 +63,7 @@ export class AlertsPanelComponent implements OnInit {
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private smartAlertService = inject(SmartAlertService);
+  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.AlertListWrite];
 
@@ -309,9 +308,11 @@ export class AlertsPanelComponent implements OnInit {
       return;
     }
 
-    this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
-      this.isHaLicensed = isHaLicensed;
-      this.cdr.markForCheck();
-    });
+    this.store$.select(selectIsHaLicensed)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((isHaLicensed) => {
+        this.isHaLicensed = isHaLicensed;
+        this.cdr.markForCheck();
+      });
   }
 }
