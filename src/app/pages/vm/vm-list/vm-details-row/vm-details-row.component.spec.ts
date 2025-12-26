@@ -55,7 +55,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
       mockProvider(VmService, {
         hasVirtualizationSupport$: of(true),
         downloadLogs: jest.fn(() => of(fakeFile('test.log'))),
-        doStart: jest.fn(() => of()),
+        doStartResume: jest.fn(() => of()),
         doStop: jest.fn(() => of()),
         doRestart: jest.fn(() => of()),
         doPowerOff: jest.fn(() => of()),
