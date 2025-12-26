@@ -33,6 +33,7 @@ describe('VmService', () => {
         mockCall('core.download'),
         mockCall('vm.virtualization_details', { supported: true, error: null }),
         mockCall('vm.start'),
+        mockCall('vm.resume'),
         mockCall('vm.poweroff'),
         mockCall('vm.get_available_memory', 4096),
         mockJob('vm.stop', fakeSuccessfulJob()),
