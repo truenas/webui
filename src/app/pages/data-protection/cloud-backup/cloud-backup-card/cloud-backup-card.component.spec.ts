@@ -68,8 +68,7 @@ describe('CloudBackupCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: CloudBackupCardComponent,
-    imports: [
-    ],
+    imports: [],
     providers: [
       mockAuth(),
       mockApi([
@@ -88,6 +87,11 @@ describe('CloudBackupCardComponent', () => {
         })),
       }),
       provideMockStore({
+        initialState: {
+          alerts: {
+            ids: [], entities: {}, isLoading: false, isPanelOpen: false, error: null,
+          },
+        },
         selectors: [
           {
             selector: selectSystemConfigState,

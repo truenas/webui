@@ -37,6 +37,7 @@ describe('AlertEffects', () => {
 
   const mockAlert = {
     id: '1',
+    key: 'alert-key-1',
     level: AlertLevel.Critical,
     dismissed: false,
     datetime: { $date: 1000 },
@@ -44,6 +45,7 @@ describe('AlertEffects', () => {
 
   const mockAlert2 = {
     id: '2',
+    key: 'alert-key-2',
     level: AlertLevel.Warning,
     dismissed: false,
     datetime: { $date: 2000 },
@@ -259,6 +261,7 @@ describe('AlertEffects', () => {
 
   describe('dismissAlert$', () => {
     it('calls API to dismiss alert', async () => {
+      store$.overrideSelector(selectUnreadAlerts, [mockAlert]);
       jest.spyOn(apiService, 'call').mockReturnValue(of(null));
 
       actions$ = of(dismissAlertPressed({ id: '1' }));
@@ -272,6 +275,7 @@ describe('AlertEffects', () => {
     });
 
     it('handles error and reverts dismissed state', async () => {
+      store$.overrideSelector(selectUnreadAlerts, [mockAlert]);
       const error = new Error('Dismiss failed');
       jest.spyOn(apiService, 'call').mockReturnValue(throwError(() => error));
       const dispatchSpy = jest.spyOn(store$, 'dispatch');
@@ -292,6 +296,8 @@ describe('AlertEffects', () => {
 
   describe('reopenAlert$', () => {
     it('calls API to restore alert', async () => {
+      const dismissedAlert = { ...mockAlert, dismissed: true } as Alert;
+      store$.overrideSelector(selectDismissedAlerts, [dismissedAlert]);
       jest.spyOn(apiService, 'call').mockReturnValue(of(null));
 
       actions$ = of(reopenAlertPressed({ id: '1' }));
@@ -305,6 +311,8 @@ describe('AlertEffects', () => {
     });
 
     it('handles error and reverts reopened state', async () => {
+      const dismissedAlert = { ...mockAlert, dismissed: true } as Alert;
+      store$.overrideSelector(selectDismissedAlerts, [dismissedAlert]);
       const error = new Error('Restore failed');
       jest.spyOn(apiService, 'call').mockReturnValue(throwError(() => error));
       const dispatchSpy = jest.spyOn(store$, 'dispatch');
