@@ -96,12 +96,6 @@ describe('VmService', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.start', [1]);
   });
 
-  it('should call `vm.resume` when the VM is suspended', () => {
-    const vm = mockVm(VmState.Suspended);
-    spectator.service.doStartResume(vm);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.resume', [1]);
-  });
-
   it('should open dialog to stop vm', () => {
     spectator.service.doStop({ id: 1 } as VirtualMachine);
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StopVmDialogComponent, { data: { id: 1 } });

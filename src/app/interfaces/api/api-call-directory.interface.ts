@@ -965,7 +965,7 @@ export interface ApiCallDirectory {
   'vm.start': { params: [id: number, params?: { overcommit?: boolean }]; response: void };
   'vm.update': { params: [id: number, update: VirtualMachineUpdate]; response: VirtualMachine };
   'vm.virtualization_details': { params: void; response: VirtualizationDetails };
-  'vm.resume': { params: [id: number]; response: VirtualizationDetails };
+  'vm.resume': { params: [id: number]; response: void };
 
   // Vmware
   'vmware.create': { params: [VmwareSnapshotUpdate]; response: VmwareSnapshot };

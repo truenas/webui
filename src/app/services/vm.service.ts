@@ -84,7 +84,9 @@ export class VmService {
     // call `vm.resume` if the VM is suspended, otherwise call `vm.start`
     const method = shouldDoResume ? this.wsMethods.resume : this.wsMethods.start;
 
-    return this.api.call(method, params as ApiCallParams<typeof this.wsMethods.start>)
+    type StartResumeParams = ApiCallParams<typeof this.wsMethods.start> | ApiCallParams<typeof this.wsMethods.resume>;
+
+    return this.api.call(method, params as StartResumeParams)
       .pipe(
         this.loader.withLoader(),
         take(1),
