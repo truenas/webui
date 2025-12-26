@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { VmState } from 'app/enums/vm.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -14,6 +15,14 @@ import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { VmService } from './vm.service';
+
+/**
+ * helper function to create a mock VM object
+ * @param state state to put the VM in
+ * @param name name to give the VM - will affect the log download name
+ * @returns a mock `VirtualMachine` object
+ */
+const mockVm = (state: VmState = VmState.Stopped, name = 'vm'): VirtualMachine => ({ id: 1, name, status: { state } } as VirtualMachine);
 
 describe('VmService', () => {
   let spectator: SpectatorService<VmService>;
@@ -75,8 +84,21 @@ describe('VmService', () => {
   });
 
   it('should call websocket to start vm', () => {
-    spectator.service.doStart({ id: 1 } as VirtualMachine);
+    const vm = mockVm(VmState.Stopped);
+    spectator.service.doStartResume(vm);
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.start', [1]);
+  });
+
+  it('should call `vm.start` when the VM is stopped', () => {
+    const vm = mockVm(VmState.Stopped);
+    spectator.service.doStartResume(vm);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.start', [1]);
+  });
+
+  it('should call `vm.resume` when the VM is suspended', () => {
+    const vm = mockVm(VmState.Suspended);
+    spectator.service.doStartResume(vm);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.resume', [1]);
   });
 
   it('should open dialog to stop vm', () => {
@@ -93,12 +115,14 @@ describe('VmService', () => {
   });
 
   it('should call websocket to poweroff vm', () => {
-    spectator.service.doPowerOff({ id: 1 } as VirtualMachine);
+    const vm = mockVm(VmState.Running);
+    spectator.service.doPowerOff(vm);
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.poweroff', [1]);
   });
 
   it('should call websocket to download vm logs', () => {
-    spectator.service.downloadLogs({ id: 1, name: 'test' } as VirtualMachine);
+    const vm = mockVm(VmState.Running, 'test');
+    spectator.service.downloadLogs(vm);
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.download', ['vm.log_file_download', [1], '1_test.log']);
   });
 });
