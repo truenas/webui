@@ -10,7 +10,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
-  Subject, of, map, debounceTime, switchMap, catchError,
+  Subject, of, map, debounceTime, tap, catchError,
 } from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
@@ -178,10 +178,7 @@ export class UsersSearchComponent implements OnInit {
   private setupAdvancedSearchDebounce(): void {
     this.advancedSearchSubject$.pipe(
       debounceTime(searchDebounceTime),
-      switchMap((query) => {
-        this.onSearch(query);
-        return of(null);
-      }),
+      tap((query) => this.onSearch(query)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }

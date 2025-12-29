@@ -100,7 +100,8 @@ export class AllUsersComponent implements OnInit, OnDestroy {
   }
 
   private subscribeToUserChanges(): void {
-    this.api.subscribe('user.query').pipe(startWith(null)).pipe(
+    this.api.subscribe('user.query').pipe(
+      startWith(null),
       tap((event) => {
         switch (event?.msg) {
           case CollectionChangeType.Changed:
