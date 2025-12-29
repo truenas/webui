@@ -1,17 +1,11 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { FilterPreset, QueryFilter, QueryFilters } from 'app/interfaces/query-api.interface';
+import { FilterPreset, QueryFilters } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 
 export enum UserType {
   Local = 'local',
   Directory = 'directory',
 }
-
-/**
- * Represents a filter expression for OR groups.
- * Can be either a single QueryFilter or a nested QueryFilters array.
- */
-type UserTypeFilterExpression = QueryFilter<User> | QueryFilters<User>;
 
 /**
  * Builds query filters for user type selection.
@@ -30,9 +24,15 @@ export function buildUserTypeFilters(
     return buildSingleTypeFilter(type, showBuiltinUsers);
   }
 
-  // Multiple types selected - combine with OR
-  const typeFilters = selectedTypes.map((type) => buildTypeFilterExpression(type, showBuiltinUsers));
-  return [['OR', typeFilters]] as QueryFilters<User>;
+  // Both Local and Directory selected
+  if (showBuiltinUsers) {
+    // Show all users - no filter needed
+    return [];
+  }
+
+  // Hide builtin users: builtin=false OR local=false
+  // This shows: non-builtin local users + all directory users (which are never builtin)
+  return [['OR', [['builtin', '=', false], ['local', '=', false]]]] as QueryFilters<User>;
 }
 
 function buildSingleTypeFilter(type: UserType, showBuiltinUsers: boolean): QueryFilters<User> {
@@ -46,26 +46,6 @@ function buildSingleTypeFilter(type: UserType, showBuiltinUsers: boolean): Query
   }
 
   // Local without builtin
-  return [
-    ['local', '=', true],
-    ['builtin', '=', false],
-  ] as QueryFilters<User>;
-}
-
-function buildTypeFilterExpression(
-  type: UserType,
-  showBuiltinUsers: boolean,
-): UserTypeFilterExpression {
-  if (type === UserType.Directory) {
-    return ['local', '=', false];
-  }
-
-  // UserType.Local
-  if (showBuiltinUsers) {
-    return ['local', '=', true];
-  }
-
-  // Local without builtin - nested structure for OR group
   return [
     ['local', '=', true],
     ['builtin', '=', false],

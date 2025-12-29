@@ -83,16 +83,10 @@ describe('UsersSearchComponent', () => {
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
       await button.click();
 
-      // With both Local and Directory selected, the filter combines both types in a single OR group
+      // With both Local and Directory selected, builtin=false OR local=false filters out builtin local users
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
-          ['OR', [
-            [
-              ['local', '=', true],
-              ['builtin', '=', false],
-            ],
-            ['local', '=', false],
-          ]],
+          ['OR', [['builtin', '=', false], ['local', '=', false]]],
           ['OR', [['username', '~', '(?i)root'], ['full_name', '~', '(?i)root']]],
         ],
         {},
@@ -413,13 +407,7 @@ describe('UsersSearchComponent', () => {
       // Verify initial Basic mode applies both Local and Directory user filtering
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
-          ['OR', [
-            [
-              ['local', '=', true],
-              ['builtin', '=', false],
-            ],
-            ['local', '=', false],
-          ]],
+          ['OR', [['builtin', '=', false], ['local', '=', false]]],
         ],
         {},
       ]);
@@ -445,13 +433,7 @@ describe('UsersSearchComponent', () => {
       // Verify Basic mode again applies default filtering
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
-          ['OR', [
-            [
-              ['local', '=', true],
-              ['builtin', '=', false],
-            ],
-            ['local', '=', false],
-          ]],
+          ['OR', [['builtin', '=', false], ['local', '=', false]]],
         ],
         {},
       ]);
@@ -515,13 +497,7 @@ describe('UsersSearchComponent', () => {
       expect(await searchInput.isInAdvancedMode()).toBe(false);
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
-          ['OR', [
-            [
-              ['local', '=', true],
-              ['builtin', '=', false],
-            ],
-            ['local', '=', false],
-          ]],
+          ['OR', [['builtin', '=', false], ['local', '=', false]]],
         ],
         {},
       ]);
@@ -617,21 +593,16 @@ describe('UsersSearchComponent', () => {
       expect(await newToggleHarness.isChecked()).toBe(false);
     });
 
-    it('includes built-in filter with both Local and Directory when toggle is on', async () => {
+    it('shows all users when both Local and Directory selected with toggle on', async () => {
       const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
       await selectHarness.setValue(['Local', 'Directory Services']);
 
       const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
       await toggleHarness.check();
 
-      // With built-in enabled and both types, Local filter should not exclude built-in
+      // With built-in enabled and both types, no filter is needed - show all users
       expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
-        [
-          ['OR', [
-            ['local', '=', true],
-            ['local', '=', false],
-          ]],
-        ],
+        [],
         {},
       ]);
     });
