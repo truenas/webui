@@ -53,21 +53,21 @@ describe('TopologyCategoryDescriptionPipe', () => {
     } as PoolManagerTopologyCategory, false)).toBe('3 × 2 GiB (HDD)');
   });
 
-  it('returns disk count when disk info is not available (e.g., manually selected spares)', () => {
+  it('returns VDEVs count when disk info is not available (e.g., manually selected spares)', () => {
     expect(spectator.service.transform({
       diskSize: null,
       diskType: null,
       width: null,
-      vdevs: [[{}, {}]],
-    } as PoolManagerTopologyCategory, true, true)).toBe('2 disks');
+      vdevs: [[{}, {}], [{}]],
+    } as PoolManagerTopologyCategory, true, true)).toBe('Manual selection | 2 VDEVs');
   });
 
-  it('returns singular disk label when only one disk is selected', () => {
+  it('returns single VDEV when only one VDEV exists', () => {
     expect(spectator.service.transform({
       diskSize: null,
       diskType: null,
       width: null,
       vdevs: [[{}]],
-    } as PoolManagerTopologyCategory, true, true)).toBe('1 disk');
+    } as PoolManagerTopologyCategory, true, true)).toBe('Manual selection | 1 VDEVs');
   });
 });
