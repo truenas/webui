@@ -172,7 +172,11 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
     this.getDefaultEncryptionType$()
       .pipe(untilDestroyed(this))
       .subscribe((defaultEncryptionType) => {
+        // In update mode, preserve the pool name
+        const poolName = this.isAddingVdevs() ? this.pool()?.name || '' : undefined;
+
         this.form.reset({
+          name: poolName,
           encryptionType: defaultEncryptionType,
           encryptionStandard: defaultEncryptionStandard,
         });
