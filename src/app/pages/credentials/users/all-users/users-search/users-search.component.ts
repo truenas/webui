@@ -6,8 +6,12 @@ import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-i
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Subject, of, map, debounceTime } from 'rxjs';
+import { isEqual } from 'lodash-es';
+import {
+  Subject, of, map, debounceTime, switchMap, catchError,
+} from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
@@ -40,6 +44,7 @@ const searchDebounceTime = 250;
     FakeProgressBarComponent,
     MatButton,
     MatSlideToggle,
+    MatTooltip,
     AsyncPipe,
     FormsModule,
     SearchInputComponent,
@@ -142,13 +147,24 @@ export class UsersSearchComponent implements OnInit {
     return this.selectedUserTypes().includes(UserType.Local);
   });
 
+  protected readonly builtinToggleTooltip = computed(() => {
+    if (!this.isBuiltinCheckboxEnabled()) {
+      return this.translate.instant('Available only when Local users are selected');
+    }
+    return '';
+  });
+
   // Observable required by ix-select component
   protected readonly userTypeOptions$ = toObservable(this.userTypeOptions);
 
   private readonly api = inject(ApiService);
-  private readonly isActiveDirectoryEnabled = toSignal(this.api.call('directoryservices.status').pipe(
-    map((state: DirectoryServicesStatus) => state.status !== DirectoryServiceStatus.Disabled),
-  ));
+  private readonly isActiveDirectoryEnabled = toSignal(
+    this.api.call('directoryservices.status').pipe(
+      map((state: DirectoryServicesStatus) => state.status !== DirectoryServiceStatus.Disabled),
+      catchError(() => of(false)),
+    ),
+    { initialValue: false },
+  );
 
   private lastProcessedQuery = signal<SearchQuery<User> | null>(null);
   private readonly destroyRef = inject(DestroyRef);
@@ -162,10 +178,12 @@ export class UsersSearchComponent implements OnInit {
   private setupAdvancedSearchDebounce(): void {
     this.advancedSearchSubject$.pipe(
       debounceTime(searchDebounceTime),
+      switchMap((query) => {
+        this.onSearch(query);
+        return of(null);
+      }),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((query) => {
-      this.onSearch(query);
-    });
+    ).subscribe();
   }
 
   private setSearchProperties(users: User[]): void {
@@ -307,7 +325,7 @@ export class UsersSearchComponent implements OnInit {
   }
 
   private filtersEqual(filters1: QueryFilters<User>, filters2: QueryFilters<User>): boolean {
-    return JSON.stringify(filters1) === JSON.stringify(filters2);
+    return isEqual(filters1, filters2);
   }
 
   private convertToRegexPattern(term: string): string {
