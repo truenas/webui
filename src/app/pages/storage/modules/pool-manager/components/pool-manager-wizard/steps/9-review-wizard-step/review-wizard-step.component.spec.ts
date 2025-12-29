@@ -140,6 +140,24 @@ describe('ReviewWizardStepComponent', () => {
       expect(getSummaryItem('Log')).toBe('Manual layout | 1 VDEVs');
     });
 
+    it('shows disk count for spare disks with null disk info', () => {
+      state$.next({
+        ...state,
+        topology: {
+          ...state.topology,
+          [VDevType.Spare]: {
+            diskSize: null,
+            diskType: null,
+            width: null,
+            vdevs: [[{}, {}]],
+          },
+        },
+      } as PoolManagerState);
+      spectator.detectChanges();
+
+      expect(getSummaryItem('Spare')).toBe('2 disks');
+    });
+
     it('shows total capacity', () => {
       expect(getSummaryItem('Est. Usable Raw Capacity')).toBe('2 GiB');
     });
