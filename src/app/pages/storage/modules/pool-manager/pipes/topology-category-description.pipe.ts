@@ -21,9 +21,7 @@ export class TopologyCategoryDescriptionPipe implements PipeTransform {
 
     // Handle case where disk info is not available (e.g., manually selected spare disks)
     if (category.diskSize === null || category.diskType === null || category.width === null) {
-      const totalDisks = category.vdevs.flat().length;
-      const diskLabel = totalDisks === 1 ? this.translate.instant('disk') : this.translate.instant('disks');
-      return `${totalDisks} ${diskLabel}`;
+      return `${this.translate.instant('Manual selection')} | ${category.vdevs.length} VDEVs`;
     }
 
     const layoutTypeData = notLimitedToOneLayout ? `${category.vdevsNumber} × ${category.layout} | ` : '';
