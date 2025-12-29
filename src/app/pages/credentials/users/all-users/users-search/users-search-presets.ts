@@ -31,7 +31,11 @@ export function buildUserTypeFilters(
   }
 
   // Hide builtin users: builtin=false OR local=false
-  // This shows: non-builtin local users + all directory users (which are never builtin)
+  // This shows:
+  //   - Local non-builtin users (local=true, builtin=false) ✓
+  //   - Directory users (local=false, builtin=N/A) ✓
+  // This hides:
+  //   - Local builtin users (local=true, builtin=true) ✗
   return [['OR', [['builtin', '=', false], ['local', '=', false]]]] as QueryFilters<User>;
 }
 
