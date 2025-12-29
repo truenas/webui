@@ -2,9 +2,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { SpectatorService } from '@ngneat/spectator';
 import { createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { firstValueFrom, of } from 'rxjs';
+import { firstValueFrom, of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { JsonRpcErrorCode } from 'app/enums/api.enum';
 import { VmState } from 'app/enums/vm.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
@@ -14,6 +15,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ApiCallError } from './errors/error.classes';
 import { VmService } from './vm.service';
 
 /**
@@ -90,10 +92,16 @@ describe('VmService', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.start', [1]);
   });
 
-  it('should call `vm.start` when the VM is stopped', () => {
-    const vm = mockVm(VmState.Stopped);
+  it('should call `vm.resume` when the VM is suspended', () => {
+    const vm = mockVm(VmState.Suspended);
     spectator.service.doStartResume(vm);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.start', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.resume', [1]);
+  });
+
+  it('should not pass overcommit parameter when resuming suspended VM', () => {
+    const vm = mockVm(VmState.Suspended);
+    spectator.service.doStartResume(vm, true); // overcommit=true
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.resume', [1]); // no overcommit param
   });
 
   it('should open dialog to stop vm', () => {
@@ -119,5 +127,25 @@ describe('VmService', () => {
     const vm = mockVm(VmState.Running, 'test');
     spectator.service.downloadLogs(vm);
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.download', ['vm.log_file_download', [1], '1_test.log']);
+  });
+
+  it('should open an error dialog when the VM fails to start', async () => {
+    const vm = mockVm(VmState.Shutoff);
+    const apiService = spectator.inject(ApiService);
+    const errorHandlerService = spectator.inject(ErrorHandlerService);
+    const callSpy = jest.spyOn(apiService, 'call');
+    const mockImpl = callSpy.getMockImplementation();
+
+    callSpy.mockImplementation((method) => {
+      if (method === 'vm.start') {
+        return throwError(() => new ApiCallError({ code: JsonRpcErrorCode.CallError, message: 'Failed to start VM' }));
+      }
+
+      return mockImpl(method);
+    });
+
+    await firstValueFrom(spectator.service.doStartResume(vm));
+    expect(apiService.call).toHaveBeenCalledWith('vm.start', [1]);
+    expect(errorHandlerService.showErrorModal).toHaveBeenCalled();
   });
 });
