@@ -1,22 +1,13 @@
 <!-- 'background-image': `url('assets/images/backgrounds/white-bg.jpg')`, -->
-<mat-sidenav-container
-  class="app-side-nav-container flex flex-col h-full overflow-hidden"
-  [style]="{
+<mat-sidenav-container class="app-side-nav-container flex flex-col h-full overflow-hidden" [style]="{
     'background-image': `url('assets/images/backgrounds/new-bg.png')`,
-  }"
->
+  }">
   <ix-app-bar></ix-app-bar>
   <ix-topbar></ix-topbar>
 
-  <main
-    mat-sidenav-content
-    class="h-full pt-[104px] pb-[30px] pr-[30px] pl-[110px]"
-    [ngClass]=""
-  >
-    <div
-      class="relative h-full rounded-4xl overflow-hidden"
-      [ngClass]="router.url.startsWith('/desktop') ? '' : 'bg-background'"
-    >
+  <main mat-sidenav-content class="h-full pt-[104px] pb-[30px] pr-[30px] pl-[110px]" [ngClass]="">
+    <div class="relative h-full rounded-4xl overflow-hidden"
+      [ngClass]="router.url.startsWith('/desktop') ? '' : 'bg-background/60'">
       <div class="overflow-auto h-full">
         <router-outlet></router-outlet>
       </div>
@@ -25,13 +16,9 @@
 
   <!-- Alert bar -->
   @if (isInit) {
-    <mat-sidenav
-      class="alert-sidenav"
-      position="end"
-      [opened]="isAlertPanelOpen$ | async"
-      (closed)="onAlertsPanelClosed()"
-    >
-      <ix-alerts-panel></ix-alerts-panel>
-    </mat-sidenav>
+  <mat-sidenav class="alert-sidenav" position="end" [opened]="isAlertPanelOpen$ | async"
+    (closed)="onAlertsPanelClosed()">
+    <ix-alerts-panel></ix-alerts-panel>
+  </mat-sidenav>
   }
 </mat-sidenav-container>

@@ -16,14 +16,12 @@
 
 .edit-mode-buttons {
   align-items: center;
-  background: var(--bg1);
   display: flex;
   gap: 10px;
-  height: 56px;
   margin: 0;
-  position: fixed;
-  right: 108px;
-  top: 104px;
+  position: absolute;
+  right: 178px;
+  top: 21px;
   z-index: 100;
 
   @media (max-width: 767px) {
@@ -87,7 +85,6 @@
 }
 
 .group-container {
-  background-color: var(--bg1);
   height: 100%;
   outline: 1px dashed transparent;
   position: relative;

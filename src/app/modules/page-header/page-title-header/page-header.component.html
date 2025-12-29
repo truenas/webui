@@ -1,8 +1,6 @@
 <!-- <ix-breadcrumb class="breadcrumbs"></ix-breadcrumb> -->
-<div
-  class="h-16 flex justify-between items-center p-4 bg-background border-b border-border text-foreground sticky z-10"
-  [ngClass]="'top-0'"
->
+<div class="flex justify-between items-center p-5 bg-[#fbf7ff] border-b border-border text-foreground sticky z-10"
+  [ngClass]="'top-0'">
   <div>
     @let title = pageTitle();
     <h1>
@@ -10,38 +8,36 @@
     </h1>
 
     @if (tooltip()) {
-      <ix-tooltip
-        class="tooltip"
-        [message]="tooltip() | translate"
-      ></ix-tooltip>
+    <ix-tooltip class="tooltip" [message]="tooltip() | translate"></ix-tooltip>
     }
 
     @if ((hasNewIndicator$ | async) || customBadgeTitle()) {
-      <ix-header-badge
-        [customBadgeTitle]="customBadgeTitle()"
-      ></ix-header-badge>
+    <ix-header-badge [customBadgeTitle]="customBadgeTitle()"></ix-header-badge>
     }
   </div>
 
-  <div class="flex items-center gap-8">
+  <div class="flex items-center gap-5">
     <ng-content></ng-content>
     @if (!isSub()) {
-      <div class="flex items-center gap-8">
-        <button mat-button class="cursor-pointer" (click)="minimize()">
-          <ix-icon name="mdi-minus"></ix-icon>
-        </button>
+    <div class="border-r h-[42px]"></div>
+    <div class="flex items-center gap-5">
+      <button mat-button class="cursor-pointer border w-[46px] h-[42px] rounded-full flex items-center justify-center"
+        (click)="minimize()">
+        <ix-icon name="mdi-minus"></ix-icon>
+      </button>
 
-        <!-- <a matIconButton class="cursor-pointer">
+      <!-- <a matIconButton class="cursor-pointer">
           <ix-icon name="mdi-fullscreen"></ix-icon>
         </a> -->
 
-        <button mat-button class="cursor-pointer" (click)="close()">
-          <ix-icon name="mdi-close"></ix-icon>
-        </button>
-      </div>
+      <button class="cursor-pointer border w-[46px] h-[42px] rounded-full flex items-center justify-center"
+        (click)="close()">
+        <ix-icon name="mdi-close"></ix-icon>
+      </button>
+    </div>
     }
   </div>
 </div>
 @if (loading()) {
-  <ix-fake-progress-bar [loading]="true"></ix-fake-progress-bar>
+<ix-fake-progress-bar [loading]="true"></ix-fake-progress-bar>
 }

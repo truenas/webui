@@ -13,7 +13,7 @@
     "*.css": "tailwindcss"
   },
   "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "vscode.html-language-features",
     "editor.formatOnSave": true
   },
   "[css]": {
