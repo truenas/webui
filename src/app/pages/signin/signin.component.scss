@@ -17,6 +17,7 @@
 
 .login-form {
   min-height: 100vh;
+  background-image: url("assets/images/backgrounds/new-bg.png");
 }
 
 .page-wrap {
@@ -51,32 +52,22 @@
 }
 
 .form-container {
-  padding: 20px 32px 8px;
+  padding: 0 32px 8px;
 }
 
 .logo-wrapper {
   align-items: center;
-  background-color: var(--bg2);
-
-  // Fallback for browsers that don't support image-set
-  background-image: url("assets/images/signin/stars-sky-800w.jpg");
-  background-image: image-set(
-    url("assets/images/signin/stars-sky-400w.avif") 1x,
-    url("assets/images/signin/stars-sky-800w.avif") 2x,
-    url("assets/images/signin/stars-sky-1200w.avif") 3x
-  );
   background-size: cover;
-  border-bottom: solid 1px var(--lines);
   display: flex;
   height: 250px;
   position: relative;
   text-align: center;
 
   .logo {
-    fill: #fff;
     height: auto;
     position: relative;
     width: 100%;
+    height: 84px;
     z-index: 2;
   }
 }

@@ -1,5 +1,5 @@
-@import 'scss-imports/cssvars';
-@import 'text-security/text-security.css';
+@import "scss-imports/cssvars";
+@import "text-security/text-security.css";
 
 :host {
   border-radius: 12px;
@@ -88,18 +88,19 @@
 }
 
 .input-container {
-  height: 40px;
+  height: 46px;
+  border-radius: 100px;
 
   .toggle_pw {
-    @include variable(display, --toggle_pw_display_prop, 'inline');
+    @include variable(display, --toggle_pw_display_prop, "inline");
     opacity: var(--disabled-opacity);
   }
 
   .toggle_pw ix-icon {
     height: 18px;
     position: relative;
-    right: 4px;
-    top: -2px;
+    right: 0;
+    top: -8px;
     width: 18px;
   }
 }

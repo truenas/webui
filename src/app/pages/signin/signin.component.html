@@ -14,58 +14,49 @@
     } -->
 
     @if (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) {
-      <mat-card>
-        <mat-card-content>
-          <ix-disconnected-message></ix-disconnected-message>
-        </mat-card-content>
-      </mat-card>
+    <mat-card>
+      <mat-card-content>
+        <ix-disconnected-message></ix-disconnected-message>
+      </mat-card-content>
+    </mat-card>
     } @else if (isConnected$ | async) {
-      @if (hasAuthToken && (isTokenWithinTimeline$ | async)) {
-        <mat-card>
-          <mat-card-content>
-            <h3 class="logging-in">{{ "Logging in..." | translate }}</h3>
-          </mat-card-content>
-        </mat-card>
-      } @else {
-        <mat-card>
-          <mat-card-content>
-            <div>
-              <div class="logo-wrapper">
-                <ix-icon
-                  name="ix-harbor-logo"
-                  class="logo"
-                  [fullSize]="true"
-                ></ix-icon>
-              </div>
-
-              <div class="card-bottom">
-                <div class="form-container">
-                  @if (wasAdminSet$ | async) {
-                    <ix-signin-form
-                      [disabled]="!(canLogin$ | async)"
-                    ></ix-signin-form>
-                  } @else {
-                    <ix-set-admin-password-form></ix-set-admin-password-form>
-                  }
-                </div>
-
-                <ix-true-command-status></ix-true-command-status>
-
-                <ix-copyright-line
-                  class="copyright"
-                  [skipType]="true"
-                ></ix-copyright-line>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      }
+    @if (hasAuthToken && (isTokenWithinTimeline$ | async)) {
+    <mat-card>
+      <mat-card-content>
+        <h3 class="logging-in">{{ "Logging in..." | translate }}</h3>
+      </mat-card-content>
+    </mat-card>
     } @else {
-      <div class="logo-with-animation-wrapper">
+    <mat-card>
+      <mat-card-content>
         <div>
-          <ix-icon name="ix-harbor-logo-mark" [fullSize]="true"></ix-icon>
+          <div class="logo-wrapper">
+            <img src="assets/images/signin-banner.svg" alt="Sign In Banner" class="logo" />
+          </div>
+
+          <div class="card-bottom">
+            <div class="form-container">
+              @if (wasAdminSet$ | async) {
+              <ix-signin-form [disabled]="!(canLogin$ | async)"></ix-signin-form>
+              } @else {
+              <ix-set-admin-password-form></ix-set-admin-password-form>
+              }
+            </div>
+
+            <ix-true-command-status></ix-true-command-status>
+
+            <ix-copyright-line class="copyright" [skipType]="true"></ix-copyright-line>
+          </div>
         </div>
+      </mat-card-content>
+    </mat-card>
+    }
+    } @else {
+    <div class="logo-with-animation-wrapper">
+      <div>
+        <ix-icon name="ix-harbor-logo-mark" [fullSize]="true"></ix-icon>
       </div>
+    </div>
     }
   </div>
 </div>
