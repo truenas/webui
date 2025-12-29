@@ -1,0 +1,129 @@
+<ix-page-header [pageTitle]="'File Manager' | translate"></ix-page-header>
+
+<div class="file-manager-container">
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="navigation-buttons">
+      <button mat-icon-button
+              [disabled]="!canGoBack()"
+              (click)="goBack()"
+              matTooltip="Go Back">
+        <ix-icon name="mdi-arrow-left"></ix-icon>
+      </button>
+      <button mat-icon-button
+              [disabled]="!canGoForward()"
+              (click)="goForward()"
+              matTooltip="Go Forward">
+        <ix-icon name="mdi-arrow-right"></ix-icon>
+      </button>
+      <button mat-icon-button
+              [disabled]="!hasParent()"
+              (click)="goUp()"
+              matTooltip="Go to Parent Directory">
+        <ix-icon name="mdi-arrow-up"></ix-icon>
+      </button>
+    </div>
+
+    <div class="breadcrumb">
+      @for (crumb of breadcrumbs(); track crumb.path; let last = $last) {
+        @if (!last) {
+          <span class="crumb" (click)="navigateTo(crumb.path)">{{ crumb.name }}</span>
+          <ix-icon name="mdi-chevron-right" class="separator"></ix-icon>
+        } @else {
+          <span class="crumb current">{{ crumb.name }}</span>
+        }
+      }
+    </div>
+
+    <div class="toolbar-actions">
+      <button mat-icon-button
+              (click)="toggleViewMode()"
+              [matTooltip]="viewMode() === 'grid' ? 'Switch to List View' : 'Switch to Grid View'">
+        <ix-icon [name]="viewMode() === 'grid' ? 'mdi-format-list-text' : 'mdi-view-dashboard'"></ix-icon>
+      </button>
+      <button mat-icon-button
+              (click)="loadDirectory(currentPath())"
+              matTooltip="Refresh">
+        <ix-icon name="refresh"></ix-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="content-area">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="section-title">Favorites</div>
+        <mat-nav-list>
+          <a mat-list-item (click)="navigateTo('/mnt')">
+            <ix-icon name="mdi-folder" matListItemIcon></ix-icon>
+            <span matListItemTitle>Home</span>
+          </a>
+        </mat-nav-list>
+      </div>
+    </div>
+
+    <!-- Files Area -->
+    <div class="files-area">
+      @if (isLoading()) {
+        <div class="loading-overlay">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      } @else {
+        @if (items().length === 0) {
+          <div class="empty-state">
+            <ix-icon name="mdi-folder-open" class="empty-icon"></ix-icon>
+            <p>{{ 'This folder is empty' | translate }}</p>
+          </div>
+        } @else {
+          @if (viewMode() === 'grid') {
+            <div class="file-grid">
+              @for (item of items(); track item.path) {
+                <div class="file-item"
+                     [class.selected]="isSelected(item)"
+                     (click)="onItemClick(item, $event)"
+                     (dblclick)="onItemDoubleClick(item)">
+                  <ix-icon [name]="getFileIcon(item)"
+                           [class]="getFileIconClass(item)"></ix-icon>
+                  <span class="file-name">{{ item.name }}</span>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="file-list">
+              <div class="list-header">
+                <span class="col-name">Name</span>
+                <span class="col-size">Size</span>
+                <span class="col-type">Type</span>
+              </div>
+              @for (item of items(); track item.path) {
+                <div class="list-item"
+                     [class.selected]="isSelected(item)"
+                     (click)="onItemClick(item, $event)"
+                     (dblclick)="onItemDoubleClick(item)">
+                  <span class="col-name">
+                    <ix-icon [name]="getFileIcon(item)"
+                             [class]="getFileIconClass(item)"></ix-icon>
+                    {{ item.name }}
+                  </span>
+                  <span class="col-size">{{ isDirectory(item) ? '-' : formatSize(item.size) }}</span>
+                  <span class="col-type">{{ item.type }}</span>
+                </div>
+              }
+            </div>
+          }
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span>{{ items().length }} items</span>
+    @if (selectedItems().size > 0) {
+      <span class="separator">|</span>
+      <span>{{ selectedItems().size }} selected</span>
+    }
+  </div>
+</div>

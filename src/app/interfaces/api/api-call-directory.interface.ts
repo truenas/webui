@@ -519,6 +519,10 @@ export interface ApiCallDirectory {
   'filesystem.listdir': { params: ListdirQueryParams; response: FileRecord[] };
   'filesystem.stat': { params: [path: string]; response: FileSystemStat };
   'filesystem.statfs': { params: [path: string]; response: Statfs };
+  'filesystem.rename': { params: [{ src: string; dst: string }]; response: boolean };
+  'filesystem.copy': { params: [{ src: string; dst: string; options?: { recursive?: boolean; preserve_attrs?: boolean } }]; response: boolean };
+  'filesystem.delete': { params: [{ path: string; options?: { recursive?: boolean } }]; response: boolean };
+  'filesystem.mkdir': { params: [{ path: string; options?: { mode?: string; raise_chmod_error?: boolean } }]; response: FileRecord };
 
   // FTP
   'ftp.config': { params: void; response: FtpConfig };

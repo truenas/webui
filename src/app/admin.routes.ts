@@ -66,6 +66,11 @@ export const adminRoutes: Routes = [
         data: { title: T('Datasets'), breadcrumb: T('Datasets') },
       },
       {
+        path: 'file-manager',
+        loadChildren: () => import('./pages/file-manager/file-manager.routes').then((module) => module.fileManagerRoutes),
+        data: { title: T('File Manager'), breadcrumb: T('File Manager') },
+      },
+      {
         path: 'storage',
         loadChildren: () => import('./pages/storage/storage.routes').then((module) => module.storageRoutes),
         data: { title: T('Storage'), breadcrumb: T('Storage') },
