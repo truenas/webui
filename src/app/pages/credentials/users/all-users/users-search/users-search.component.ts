@@ -357,6 +357,9 @@ export class UsersSearchComponent implements OnInit {
         this.lastProcessedQuery.set(query);
         this.advancedSearchSubject$.next(query);
       }
+      // Don't update searchQuery here - let onSearch handle it after debounce
+      // to keep signal state consistent with actual search state
+      return;
     }
 
     this.searchQuery.set(query);
