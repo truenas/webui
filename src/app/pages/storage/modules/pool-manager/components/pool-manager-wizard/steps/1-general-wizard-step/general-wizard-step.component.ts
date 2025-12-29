@@ -172,7 +172,8 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
     this.getDefaultEncryptionType$()
       .pipe(untilDestroyed(this))
       .subscribe((defaultEncryptionType) => {
-        // In update mode, preserve the pool name
+        // When adding VDEVs to existing pool, preserve the pool name (it's read-only)
+        // When creating new pool, clear the name field (undefined allows form.reset to clear it)
         const poolName = this.isAddingVdevs() ? this.pool()?.name || '' : undefined;
 
         this.form.reset({
