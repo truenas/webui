@@ -89,7 +89,7 @@ describe('UsersSearchComponent', () => {
           ['OR', [
             [
               ['local', '=', true],
-              ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+              ['builtin', '=', false],
             ],
             ['local', '=', false],
           ]],
@@ -112,7 +112,7 @@ describe('UsersSearchComponent', () => {
       expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
         [
           ['local', '=', true],
-          ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+          ['builtin', '=', false],
           ['OR', [['username', '~', '(?i)test'], ['full_name', '~', '(?i)test']]],
         ],
         {},
@@ -131,7 +131,7 @@ describe('UsersSearchComponent', () => {
       expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
         [
           ['local', '=', true],
-          ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+          ['builtin', '=', false],
           ['OR', [['username', '~', '(?i).*user'], ['full_name', '~', '(?i).*user']]],
         ],
         {},
@@ -150,7 +150,7 @@ describe('UsersSearchComponent', () => {
       expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
         [
           ['local', '=', true],
-          ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+          ['builtin', '=', false],
           ['OR', [['username', '~', '(?i)\\(test\\)'], ['full_name', '~', '(?i)\\(test\\)']]],
         ],
         {},
@@ -416,7 +416,7 @@ describe('UsersSearchComponent', () => {
           ['OR', [
             [
               ['local', '=', true],
-              ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+              ['builtin', '=', false],
             ],
             ['local', '=', false],
           ]],
@@ -448,7 +448,7 @@ describe('UsersSearchComponent', () => {
           ['OR', [
             [
               ['local', '=', true],
-              ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+              ['builtin', '=', false],
             ],
             ['local', '=', false],
           ]],
@@ -476,7 +476,7 @@ describe('UsersSearchComponent', () => {
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
           ['local', '=', true],
-          ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+          ['builtin', '=', false],
           ['OR', [['username', '~', '(?i)localuser'], ['full_name', '~', '(?i)localuser']]],
         ],
         {},
@@ -518,7 +518,7 @@ describe('UsersSearchComponent', () => {
           ['OR', [
             [
               ['local', '=', true],
-              ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+              ['builtin', '=', false],
             ],
             ['local', '=', false],
           ]],

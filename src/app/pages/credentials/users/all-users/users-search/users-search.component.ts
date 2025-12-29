@@ -307,20 +307,7 @@ export class UsersSearchComponent implements OnInit {
   }
 
   private filtersEqual(filters1: QueryFilters<User>, filters2: QueryFilters<User>): boolean {
-    if (filters1.length !== filters2.length) {
-      return false;
-    }
-
-    return filters1.every((filter1, index) => {
-      const filter2 = filters2[index];
-
-      if (Array.isArray(filter1) && Array.isArray(filter2)) {
-        return filter1.length === filter2.length
-          && filter1.every((item, i) => item === filter2[i]);
-      }
-
-      return filter1 === filter2;
-    });
+    return JSON.stringify(filters1) === JSON.stringify(filters2);
   }
 
   private convertToRegexPattern(term: string): string {

@@ -34,7 +34,7 @@ export class UserEffects {
     switchMap((preferences) => {
       let params: QueryParams<User> = [];
       if (preferences.hideBuiltinUsers) {
-        params = [[['OR', [['builtin', '=', false], ['username', '=', 'root']]]]] as QueryParams<User>;
+        params = [[['builtin', '=', false]]] as QueryParams<User>;
       }
       return this.api.call('user.query', params).pipe(
         map((users) => usersLoaded({ users })),

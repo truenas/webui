@@ -45,10 +45,10 @@ function buildSingleTypeFilter(type: UserType, showBuiltinUsers: boolean): Query
     return [['local', '=', true]];
   }
 
-  // Local without builtin (except root)
+  // Local without builtin
   return [
     ['local', '=', true],
-    ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+    ['builtin', '=', false],
   ] as QueryFilters<User>;
 }
 
@@ -65,10 +65,10 @@ function buildTypeFilterExpression(
     return ['local', '=', true];
   }
 
-  // Local without builtin (except root) - nested structure for OR group
+  // Local without builtin - nested structure for OR group
   return [
     ['local', '=', true],
-    ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+    ['builtin', '=', false],
   ] as QueryFilters<User>;
 }
 
