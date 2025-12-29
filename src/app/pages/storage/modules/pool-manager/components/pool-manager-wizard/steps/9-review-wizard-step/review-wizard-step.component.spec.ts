@@ -155,7 +155,7 @@ describe('ReviewWizardStepComponent', () => {
       } as PoolManagerState);
       spectator.detectChanges();
 
-      expect(getSummaryItem('Spare')).toBe('Manual selection | 2 VDEVs');
+      expect(getSummaryItem('Spare')).toBe('Manual layout | 2 VDEVs');
     });
 
     it('shows total capacity', () => {

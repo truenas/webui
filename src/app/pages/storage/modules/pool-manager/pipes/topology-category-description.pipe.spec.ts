@@ -59,7 +59,7 @@ describe('TopologyCategoryDescriptionPipe', () => {
       diskType: null,
       width: null,
       vdevs: [[{}, {}], [{}]],
-    } as PoolManagerTopologyCategory, true, true)).toBe('Manual selection | 2 VDEVs');
+    } as PoolManagerTopologyCategory, true, true)).toBe('Manual layout | 2 VDEVs');
   });
 
   it('returns single VDEV when only one VDEV exists', () => {
@@ -68,6 +68,6 @@ describe('TopologyCategoryDescriptionPipe', () => {
       diskType: null,
       width: null,
       vdevs: [[{}]],
-    } as PoolManagerTopologyCategory, true, true)).toBe('Manual selection | 1 VDEVs');
+    } as PoolManagerTopologyCategory, true, true)).toBe('Manual layout | 1 VDEVs');
   });
 });
