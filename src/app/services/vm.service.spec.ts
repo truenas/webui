@@ -5,9 +5,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { JsonRpcErrorCode } from 'app/enums/api.enum';
+import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { VmState } from 'app/enums/vm.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -147,5 +148,34 @@ describe('VmService', () => {
     await firstValueFrom(spectator.service.doStartResume(vm));
     expect(apiService.call).toHaveBeenCalledWith('vm.start', [1]);
     expect(errorHandlerService.showErrorModal).toHaveBeenCalled();
+  });
+
+  it('should overcommit memory when VM start fails', async () => {
+    const vm = mockVm(VmState.Shutoff);
+    const apiService = spectator.inject(ApiService);
+    const dialogService = spectator.inject(DialogService);
+    const callSpy = jest.spyOn(apiService, 'call');
+    const confirmSpy = jest.spyOn(dialogService, 'confirm');
+    const mockImpl = callSpy.getMockImplementation();
+
+    callSpy.mockImplementationOnce((method) => {
+      if (method === 'vm.start') {
+        return throwError(() => new ApiCallError({
+          code: JsonRpcErrorCode.CallError,
+          message: 'Failed to start VM',
+          data: {
+            errname: ApiErrorName.NoMemory,
+          } as ApiErrorDetails,
+        }));
+      }
+
+      return mockImpl(method);
+    });
+
+    confirmSpy.mockImplementation(() => of({ confirmed: true, secondaryCheckbox: false }));
+
+    await firstValueFrom(spectator.service.doStartResume(vm));
+    expect(apiService.call).toHaveBeenLastCalledWith('vm.start', [1, { overcommit: true }]);
+    expect(dialogService.confirm).toHaveBeenCalled();
   });
 });
