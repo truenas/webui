@@ -12,7 +12,6 @@ export const defaultPreferences: Preferences = {
   },
   tableDisplayedColumns: [],
 
-  hideBuiltinUsers: true,
   hideBuiltinGroups: true,
 
   showSnapshotExtraColumns: false,
