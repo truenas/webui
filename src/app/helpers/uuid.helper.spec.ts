@@ -44,5 +44,12 @@ describe('generateUuid', () => {
 
       expect(uuids.size).toBe(100);
     });
+
+    it('should have correct version and variant bits', () => {
+      const uuid = generateUuid();
+
+      expect(uuid[14]).toBe('4');
+      expect(['8', '9', 'a', 'b']).toContain(uuid[19]);
+    });
   });
 });
