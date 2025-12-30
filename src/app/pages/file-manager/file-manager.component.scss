@@ -80,6 +80,36 @@
   }
 }
 
+// Upload Progress
+.upload-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background-color: var(--alt-bg2);
+  border-bottom: 1px solid var(--lines);
+
+  .upload-filename {
+    font-size: 13px;
+    color: var(--fg1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+
+  mat-progress-bar {
+    flex: 1;
+  }
+
+  .upload-percent {
+    font-size: 13px;
+    color: var(--fg2);
+    min-width: 40px;
+    text-align: right;
+  }
+}
+
 // Content Area
 .content-area {
   display: flex;

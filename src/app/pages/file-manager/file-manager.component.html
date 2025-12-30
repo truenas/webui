@@ -36,18 +36,43 @@
     </div>
 
     <div class="toolbar-actions">
+      <input type="file"
+             #fileInput
+             hidden
+             (change)="onFileSelected($event)">
+      <button mat-icon-button
+              (click)="triggerUpload()"
+              [disabled]="isUploading()"
+              [matTooltip]="'Upload File' | translate">
+        <ix-icon name="mdi-upload"></ix-icon>
+      </button>
+      <button mat-icon-button
+              (click)="downloadSelectedFiles()"
+              [disabled]="!hasFileSelected() || isDownloading()"
+              [matTooltip]="'Download Selected' | translate">
+        <ix-icon name="mdi-download"></ix-icon>
+      </button>
       <button mat-icon-button
               (click)="toggleViewMode()"
-              [matTooltip]="viewMode() === 'grid' ? 'Switch to List View' : 'Switch to Grid View'">
+              [matTooltip]="viewMode() === 'grid' ? ('Switch to List View' | translate) : ('Switch to Grid View' | translate)">
         <ix-icon [name]="viewMode() === 'grid' ? 'mdi-format-list-text' : 'mdi-view-dashboard'"></ix-icon>
       </button>
       <button mat-icon-button
               (click)="loadDirectory(currentPath())"
-              matTooltip="Refresh">
+              [matTooltip]="'Refresh' | translate">
         <ix-icon name="refresh"></ix-icon>
       </button>
     </div>
   </div>
+
+  <!-- Upload Progress Bar -->
+  @if (isUploading()) {
+    <div class="upload-progress">
+      <span class="upload-filename">{{ 'Uploading' | translate }}: {{ uploadFileName() }}</span>
+      <mat-progress-bar mode="determinate" [value]="uploadProgress()"></mat-progress-bar>
+      <span class="upload-percent">{{ uploadProgress() }}%</span>
+    </div>
+  }
 
   <!-- Main Content Area -->
   <div class="content-area">
