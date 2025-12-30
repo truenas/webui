@@ -109,7 +109,14 @@ describe('DiskFormComponent', () => {
         description: 'New disk description',
         hddstandby: '10',
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
+        response: [{
+          identifier: '{serial}VB9fbb6dfe-9cf26570',
+          advpowermgmt: '64',
+          description: 'New disk description',
+          hddstandby: '10',
+        }],
+      });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
   });
@@ -157,7 +164,15 @@ describe('DiskFormComponent', () => {
         hddstandby: '10',
         passwd: '123456',
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
+        response: [{
+          identifier: '{serial}VB9fbb6dfe-9cf26570',
+          advpowermgmt: '64',
+          description: 'New disk description',
+          hddstandby: '10',
+          passwd: '123456',
+        }],
+      });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
   });

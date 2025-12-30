@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, forkJoin, map, Observable, take,
+  filter, forkJoin, map, Observable, Subject, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -42,7 +42,7 @@ import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
-import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
+import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
 import { ResetSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/reset-sed-dialog/reset-sed-dialog.component';
 import { sedStatusColumn } from 'app/pages/storage/modules/disks/components/disk-list/sed-status-cell/sed-status-cell.component';
@@ -93,6 +93,8 @@ export class DiskListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.DiskWrite];
   protected readonly searchableElements = diskListElements;
+
+  protected diskUpdates$ = new Subject<DiskFormResponse[number]>();
 
   dataProvider: AsyncDataProvider<DiskUi>;
   searchQuery = signal('');
@@ -274,12 +276,32 @@ export class DiskListComponent implements OnInit {
       );
       this.dataProvider = new AsyncDataProvider(request$);
       this.dataProvider.load();
+
+      this.diskUpdates$.pipe(
+        takeUntilDestroyed(this.destroyRef),
+      ).subscribe((diskUpdate) => {
+        // find the edited disk inside our internal representation of the disks
+        // and update it to match the new params.
+        this.disks = this.disks.map((disk) => {
+          if (disk.identifier === diskUpdate.identifier) {
+            return { ...disk, ...diskUpdate };
+          }
+
+          return disk;
+        });
+
+        // trigger a UI update by manually setting the rows in the data provider.
+        // ultimately, if this is being called, we've already called the data provider's
+        // `load` method and are just waiting for it to come back. this takes some time though (5-10s), so
+        // we reconcile the local UI immediately so there is zero inconsistency.
+        this.dataProvider.setRows(this.disks);
+      });
     });
   }
 
   protected edit(disks: DiskUi[]): void {
     const preparedDisks = this.prepareDisks(disks);
-    let slideInRef$: Observable<SlideInResponse<boolean>>;
+    let slideInRef$: Observable<SlideInResponse<DiskFormResponse>>;
 
     if (preparedDisks.length > 1) {
       slideInRef$ = this.slideIn.open(DiskBulkEditComponent, { data: preparedDisks });
@@ -290,7 +312,16 @@ export class DiskListComponent implements OnInit {
     slideInRef$.pipe(
       filter((response) => !!response.response),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.dataProvider.load());
+    ).subscribe((response) => {
+      const resp = response.response;
+
+      // this gets the updated disk data from the single-disk edit form (not the bulk-edit form)
+      // and emits it over `diskUpdates$`.
+      if (typeof resp !== 'boolean') {
+        resp.forEach((upd) => this.diskUpdates$.next(upd));
+      }
+      this.dataProvider.load();
+    });
   }
 
   protected wipe(disk: Disk): void {
