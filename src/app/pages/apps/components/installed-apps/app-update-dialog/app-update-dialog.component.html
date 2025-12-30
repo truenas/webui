@@ -59,6 +59,7 @@
           rel="noopener noreferrer"
           class="changelog-url"
           [href]="dialogConfig.appInfo.metadata.changelog_url"
+          [attr.aria-label]="'View Upstream Release Notes (opens in new window)' | translate"
         >
           <ix-icon name="mdi-open-in-new"></ix-icon>
           {{ 'View Upstream Release Notes' | translate }}

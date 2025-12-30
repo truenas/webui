@@ -27,9 +27,11 @@ export class AppUpdateCellComponent {
     const catalogVersion = `${app.version} → ${app.latest_version}`;
     const appVersion = `${app.metadata.app_version} → ${app.human_version}`;
 
-    return this.translate.instant(
-      'Update available\nCatalog: {catalogVersion}\nApp: {appVersion}',
-      { catalogVersion, appVersion },
-    );
+    // Using line breaks for tooltip - Angular Material tooltips support this
+    const updateAvailable = this.translate.instant('Update available');
+    const catalog = this.translate.instant('Catalog');
+    const appLabel = this.translate.instant('App');
+
+    return `${updateAvailable}\n${catalog}: ${catalogVersion}\n${appLabel}: ${appVersion}`;
   }
 }
