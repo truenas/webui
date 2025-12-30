@@ -14,6 +14,7 @@ html .ix-dark {
   --mat-button-text-container-shape: 100px;
 
   --mat-button-toggle-height: 34px;
+  --mat-button-toggle-shape: 100px;
 
   --mat-card-title-text-tracking: normal;
 
@@ -354,10 +355,6 @@ html .ix-dark {
       background-color: var(--fg2) !important;
       opacity: 0.6;
     }
-  }
-
-  .mat-button-toggle-button {
-    font-family: var(--font-family-body);
   }
 
   .mat-mdc-select {

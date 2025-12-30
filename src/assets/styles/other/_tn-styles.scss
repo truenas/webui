@@ -167,11 +167,6 @@ $primary-dark: color.adjust(map.get($md-primary, 500), $lightness: -8%);
     @include variable(color, --fg2, $fg2);
   }
 
-  .mat-button-toggle-checked {
-    @include variable(color, --fg2, $fg2);
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-
   .mat-mdc-card .mat-divider {
     @include variable(background, --alt-fg1, $alt-fg1);
     opacity: 0.15;

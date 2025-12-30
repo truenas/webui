@@ -1,6 +1,6 @@
-@import 'mixins/loader';
-@import 'scss-imports/variables';
-@import 'scss-imports/cssvars';
+@import "mixins/loader";
+@import "scss-imports/variables";
+@import "scss-imports/cssvars";
 
 :host {
   align-items: stretch;
@@ -25,7 +25,7 @@
 
     &::before {
       background: var(--bg2);
-      content: '';
+      content: "";
       display: block;
       height: 100%;
       left: 0;
@@ -46,12 +46,6 @@
   min-height: 430px;
 }
 
-.mat-button-toggle .ix-icon {
-  font-size: 24px;
-  line-height: normal;
-  margin-bottom: 4px;
-}
-
 .master-container {
   flex-grow: 1;
 }
@@ -60,7 +54,7 @@ cdk-virtual-scroll-viewport {
   height: 100%;
   width: 100%;
 
-  @media(max-width: $breakpoint-sm) {
+  @media (max-width: $breakpoint-sm) {
     height: 100vh;
 
     &::ng-deep {
