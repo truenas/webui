@@ -28,6 +28,10 @@ export class UserEffects {
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
 
+  // Note: This effect loads users into NgRx store for use by user-form.component.ts
+  // The main users list (all-users.component.ts) uses its own UsersDataProvider
+  // with component-level filtering via getDefaultUserTypeFilters()
+  // TODO: builtinUsersToggled action is never dispatched - consider removing it
   loadUsers$ = createEffect(() => this.actions$.pipe(
     ofType(userPageEntered, builtinUsersToggled),
     switchMap(() => this.store$.pipe(waitForPreferences, take(1))),

@@ -41,15 +41,17 @@ export function buildUserTypeFilters(
 
 function buildSingleTypeFilter(type: UserType, showBuiltinUsers: boolean): QueryFilters<User> {
   if (type === UserType.Directory) {
+    // Show directory users only (local=false)
     return [['local', '=', false]];
   }
 
   // UserType.Local
   if (showBuiltinUsers) {
+    // Show all local users including built-in (local=true, any builtin value)
     return [['local', '=', true]];
   }
 
-  // Local without builtin
+  // Show local users excluding built-in (local=true, builtin=false)
   return [
     ['local', '=', true],
     ['builtin', '=', false],

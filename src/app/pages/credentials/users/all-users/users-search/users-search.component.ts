@@ -270,7 +270,11 @@ export class UsersSearchComponent implements OnInit {
       return;
     }
 
-    this.searchQuery.set(query);
+    // Update signal only if changed to avoid unnecessary rerenders
+    // For advanced queries, signal is already updated in onQueryChange
+    if (!this.queriesEqual(this.searchQuery(), query)) {
+      this.searchQuery.set(query);
+    }
 
     if (query.isBasicQuery) {
       const selectedTypes = this.selectedUserTypes();
@@ -352,13 +356,14 @@ export class UsersSearchComponent implements OnInit {
       const originalQuery = query as AdvancedSearchQuery<User>;
       query = this.removeConflictingFilters(originalQuery);
 
+      // Update signal immediately so computed signals see current state
+      this.searchQuery.set(query);
+
       const lastQuery = this.lastProcessedQuery();
       if (!this.queriesEqual(lastQuery, query)) {
         this.lastProcessedQuery.set(query);
         this.advancedSearchSubject$.next(query);
       }
-      // Don't update searchQuery here - let onSearch handle it after debounce
-      // to keep signal state consistent with actual search state
       return;
     }
 
