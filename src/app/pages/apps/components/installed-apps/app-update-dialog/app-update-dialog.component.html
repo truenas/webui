@@ -10,50 +10,66 @@
   </div>
 
   @if (selectedVersion?.available_versions_for_upgrade?.length) {
-    <div class="resource">
-      <span>{{ 'Version to be updated to' | translate }}:</span>
-      <mat-form-field class="form-element">
-        <mat-select
-          ixTest="versions"
-          [(ngModel)]="selectedVersionKey"
-          (ngModelChange)="onVersionOptionChanged()"
-        >
-          @for (option of versionOptions | keyvalue: originalOrder; track option) {
-            <mat-option
-              [value]="option.key"
-              [ixTest]="['versions', option.value.latest_human_version]"
-            >
-              {{ option.value.latest_human_version }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+    <div class="version-info">
+      <div class="version-row">
+        <span class="version-label">{{ 'Catalog Version' | translate }}:</span>
+        <span class="version-value">
+          {{ dialogConfig.appInfo.version }}
+          <ix-icon name="mdi-arrow-right"></ix-icon>
+          {{ selectedVersion.latest_version }}
+        </span>
+      </div>
+      <div class="version-row">
+        <span class="version-label">{{ 'App Version' | translate }}:</span>
+        <span class="version-value">
+          {{ dialogConfig.appInfo.metadata.app_version }}
+          <ix-icon name="mdi-arrow-right"></ix-icon>
+          {{ selectedVersion.latest_human_version }}
+        </span>
+      </div>
     </div>
+
+    @if (versionOptions.size > 1) {
+      <div class="resource">
+        <span>{{ 'Version to be updated to' | translate }}:</span>
+        <mat-form-field class="form-element">
+          <mat-select
+            ixTest="versions"
+            [(ngModel)]="selectedVersionKey"
+            (ngModelChange)="onVersionOptionChanged()"
+          >
+            @for (option of versionOptions | keyvalue: originalOrder; track option) {
+              <mat-option
+                [value]="option.key"
+                [ixTest]="['versions', option.value.latest_human_version]"
+              >
+                {{ option.value.latest_human_version }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    }
+
+    @if (dialogConfig.appInfo.metadata.changelog_url) {
+      <div class="changelog-link">
+        <span class="changelog-label">{{ 'Changelog' | translate }}:</span>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          class="changelog-url"
+          [href]="dialogConfig.appInfo.metadata.changelog_url"
+        >
+          <ix-icon name="mdi-open-in-new"></ix-icon>
+          {{ 'View Upstream Release Notes' | translate }}
+        </a>
+      </div>
+    }
   } @else {
     <div class="resource">
       <span>{{ 'Only image(s) will be updated' | translate }}</span>
     </div>
   }
-
-
-  <mat-accordion>
-    @if (selectedVersion?.available_versions_for_upgrade?.length) {
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            {{ 'Changelog' | translate }}
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="expansion-content">
-          <div class="detail-row row-dark">
-            <div
-              [innerHTML]="selectedVersion.changelog || ('No Changelog' | translate)"
-            ></div>
-          </div>
-        </div>
-      </mat-expansion-panel>
-    }
-  </mat-accordion>
 
   <ix-form-actions>
     <button
