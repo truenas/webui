@@ -225,6 +225,14 @@ describe('ReviewWizardStepComponent', () => {
       const store = spectator.inject(PoolManagerStore);
       expect(store.startOver).toHaveBeenCalled();
     });
+
+    it('shows Start Over button when updating an existing pool', () => {
+      spectator.setInput('isAddingVdevs', true);
+      spectator.detectChanges();
+
+      const startOverButton = spectator.query('button[ixTest="start-over"]');
+      expect(startOverButton).toBeTruthy();
+    });
   });
 
   describe('validation', () => {
