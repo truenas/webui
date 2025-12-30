@@ -22,10 +22,14 @@ export class AppUpdateCellComponent {
     return ['update', this.showIcon() ? 'has-icon' : 'has-cell'];
   }
 
-  protected getVersionMsg(version: string): string {
+  protected getVersionMsg(): string {
+    const app = this.app();
+    const catalogVersion = `${app.version} → ${app.latest_version}`;
+    const appVersion = `${app.metadata.app_version} → ${app.human_version}`;
+
     return this.translate.instant(
-      '{version} is available!',
-      { version: version || 'Update' },
+      'Update available\nCatalog: {catalogVersion}\nApp: {appVersion}',
+      { catalogVersion, appVersion },
     );
   }
 }

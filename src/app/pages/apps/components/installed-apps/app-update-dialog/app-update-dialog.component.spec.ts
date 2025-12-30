@@ -2,17 +2,21 @@ import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { ImgFallbackModule } from 'ngx-img-fallback';
+import { App } from 'app/interfaces/app.interface';
 import { AppUpdateDialog } from 'app/pages/apps/components/installed-apps/app-update-dialog/app-update-dialog.component';
 
 const fakeAppInfo = {
   name: 'elastic-search',
+  version: '1.0.1',
   metadata: {
     icon: 'https://images.contentstack.io/v3/assets/bltefdd0b53724fa2ce/blt280217a63b82a734/6202d3378b1f312528798412/elastic-logo.svg',
+    app_version: '8.7.0',
+    changelog_url: 'https://github.com/elastic/elasticsearch/releases',
   },
   id: 'elastic-search',
   human_version: '8.7.0_1.0.1',
   human_latest_version: '8.7.0_1.0.2',
-};
+} as unknown as App;
 
 const fakeUpgradeSummary = {
   container_images_to_update: {},
