@@ -3,7 +3,7 @@ mat-button-toggle-group.mat-button-toggle-group {
 
   &.mat-button-toggle-group-appearance-standard {
     border-color: $border-color;
-    border-radius: 0;
+    border-radius: 100px;
 
     .mat-button-toggle + .mat-button-toggle {
       border-color: $border-color;
@@ -39,11 +39,6 @@ mat-button-toggle-group.mat-button-toggle-group {
       .mat-button-toggle-button {
         cursor: not-allowed;
       }
-    }
-
-    .mat-button-toggle-label-content {
-      line-height: 34px;
-      padding: 0 12px;
     }
   }
 }
