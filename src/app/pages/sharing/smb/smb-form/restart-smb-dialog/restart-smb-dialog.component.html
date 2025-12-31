@@ -1,23 +1,30 @@
 <mat-dialog-content>
   <h3>{{ 'Restart SMB Service' | translate }}</h3>
   <div>
-    <p>{{ helptext.restartPt1 | translate }}</p>
-    <ul>
-      @if (data.homeshare) {
-        <li>{{ homeShareMessage | translate }}</li>
-      }
-      @if (data.timemachine) {
-        <li>{{ timemachineMessage | translate }}</li>
-      }
-      @if (data.hosts) {
-        <li>{{ hostsMessage | translate }}</li>
-      }
-      @if (data.path) {
-        <li>{{ pathMessage | translate }}</li>
-      }
-    </ul>
-
-    <p><strong>{{ helptext.restartPt2 }}</strong></p>
+    <p>{{ helptext.restartMessage | translate }}</p>
+    <p><strong>{{ helptext.restartPrompt | translate }}</strong></p>
+    <p>{{ helptext.restartCaution | translate }}</p>
+    <a
+      class="learn-more-link"
+      ixTest="learn-more"
+      (click)="toggleLearnMore()"
+      (keydown.enter)="toggleLearnMore()"
+    >
+      {{ 'Learn more' | translate }}
+      <ix-icon [name]="showLearnMore() ? 'mdi-chevron-up' : 'mdi-chevron-down'"></ix-icon>
+    </a>
+    @if (showLearnMore()) {
+      <div class="learn-more-content">
+        <p>{{ helptext.restartLearnMore | translate }}</p>
+        <p>{{ helptext.restartLearnMoreExamples | translate }}</p>
+        <ul>
+          <li>{{ helptext.restartExampleTimeMachine | translate }}</li>
+          <li>{{ helptext.restartExampleHostsAllowDeny | translate }}</li>
+          <li>{{ helptext.restartExamplePath | translate }}</li>
+        </ul>
+        <p>{{ helptext.restartLearnMoreOtherCases | translate }}</p>
+      </div>
+    }
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

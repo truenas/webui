@@ -241,8 +241,17 @@ export const helptextSharingSmb = {
 After the grace period is up, the share will become read-only. \
 Must be between 60 seconds (1 minute) and 15552000 seconds (180 days).'),
 
-  restartPt1: T(
-    'The following changes to this SMB Share require the SMB Service to be restarted before they can take effect.',
+  restartMessage: T(
+    'Changes to the SMB share configuration may not fully apply to existing SMB client sessions until the SMB service restarts.',
   ),
-  restartPt2: T('Would you like to restart the SMB Service?'),
+  restartPrompt: T('Do you want to restart the SMB service now?'),
+  restartCaution: T('CAUTION: Restarting the SMB service causes a short service interruption for all connected SMB clients.'),
+  restartLearnMore: T(
+    'SMB clients maintain persistent connections to the server. When share settings change, connected clients may continue using cached configurations until they reconnect. Restarting the SMB service forces all clients to disconnect and reconnect, ensuring they receive the updated share configuration immediately.',
+  ),
+  restartLearnMoreExamples: T('Examples of changes that benefit from a restart include:'),
+  restartExampleTimeMachine: T('Time Machine settings - changes how the SMB server advertises itself to clients.'),
+  restartExampleHostsAllowDeny: T('Hosts Allow/Deny - more restrictive settings may not deny access to currently connected clients until they reconnect.'),
+  restartExamplePath: T('Path changes - clients will not see this change until they negotiate a new session.'),
+  restartLearnMoreOtherCases: T('Other configuration changes may also benefit from a restart.'),
 };
