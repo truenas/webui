@@ -110,6 +110,7 @@ export interface ApiJobDirectory {
   // Directory Services
   'directoryservices.cache_refresh': { params: void; response: void };
   'directoryservices.leave': { params: [DirectoryServicesLeaveParams]; response: void };
+  'directoryservices.sync_keytab': { params: void; response: void };
   'directoryservices.update': { params: [DirectoryServicesUpdate]; response: DirectoryServicesUpdateResponse };
 
   // Disk

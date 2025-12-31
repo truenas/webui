@@ -1,14 +1,15 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, OnInit, inject, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { Role } from 'app/enums/role.enum';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -28,6 +29,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
@@ -67,16 +69,18 @@ export class KerberosKeytabsListComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   protected emptyService = inject(EmptyService);
   private slideIn = inject(SlideIn);
+  private snackbar = inject(SnackbarService);
 
   readonly paginator = input(true);
   readonly inCard = input(false);
+  readonly showSyncButton = input(false);
 
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = kerberosKeytabsListElements;
 
+  protected readonly isActiveDirectoryEnabled = signal(false);
   filterString = '';
   dataProvider: AsyncDataProvider<KerberosKeytab>;
-  kerberosRealsm: KerberosKeytab[] = [];
   columns = createTable<KerberosKeytab>([
     textColumn({
       title: this.translate.instant('Name'),
@@ -124,15 +128,29 @@ export class KerberosKeytabsListComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const keytabsRows$ = this.api.call('kerberos.keytab.query').pipe(
-      tap((keytabsRows) => this.kerberosRealsm = keytabsRows),
-      untilDestroyed(this),
-    );
+    const keytabsRows$ = this.api.call('kerberos.keytab.query');
     this.dataProvider = new AsyncDataProvider<KerberosKeytab>(keytabsRows$);
     this.setDefaultSort();
     this.getKerberosKeytabs();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
       this.onListFiltered(this.filterString);
+    });
+
+    if (this.inCard()) {
+      this.isActiveDirectoryEnabled.set(this.showSyncButton());
+    } else {
+      this.checkActiveDirectoryStatus();
+    }
+  }
+
+  private checkActiveDirectoryStatus(): void {
+    this.api.call('directoryservices.status').pipe(
+      untilDestroyed(this),
+    ).subscribe((status) => {
+      this.isActiveDirectoryEnabled.set(
+        status.type === DirectoryServiceType.ActiveDirectory
+        && status.status !== DirectoryServiceStatus.Disabled,
+      );
     });
   }
 
@@ -158,5 +176,36 @@ export class KerberosKeytabsListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
+  }
+
+  syncKeytab(): void {
+    if (!this.isActiveDirectoryEnabled()) {
+      return;
+    }
+
+    this.dialogService.confirm({
+      title: this.translate.instant('Sync Keytab'),
+      message: this.translate.instant('This operation synchronizes the local kerberos keytab with entries from the remote domain controller. This may be disruptive and is only required if manual changes have been made to SPNs on the remote domain controller. Do you want to continue?'),
+      buttonText: this.translate.instant('Sync'),
+    })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => {
+          return this.dialogService.jobDialog(
+            this.api.job('directoryservices.sync_keytab'),
+            { title: this.translate.instant('Sync Keytab') },
+          ).afterClosed();
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: () => {
+          this.snackbar.success(this.translate.instant('Keytab synchronized successfully.'));
+          this.getKerberosKeytabs();
+        },
+        error: (error: unknown) => {
+          this.errorHandler.showErrorModal(error);
+        },
+      });
   }
 }
