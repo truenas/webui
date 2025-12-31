@@ -46,7 +46,7 @@ export class IxUserComboboxComponent implements AfterViewInit, ControlValueAcces
   readonly hint = input<TranslatedString>();
   readonly tooltip = input<TranslatedString>();
   readonly required = input<boolean>(false);
-  readonly allowCustomValue = input<boolean>(false);
+  readonly allowCustomValue = input<boolean>(true);
 
   private readonly ixCombobox = viewChild.required(IxComboboxComponent);
 
@@ -57,7 +57,7 @@ export class IxUserComboboxComponent implements AfterViewInit, ControlValueAcces
   }
 
   ngAfterViewInit(): void {
-    // Only add validation if custom values are allowed.
+    // Add validation to check user existence when custom values are allowed (default).
     // When allowCustomValue is false, users can only select from autocomplete
     // suggestions which are guaranteed to exist, making validation redundant.
     const control = this.controlDirective.control;
