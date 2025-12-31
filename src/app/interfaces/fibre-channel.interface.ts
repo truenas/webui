@@ -48,3 +48,8 @@ export interface FibreChannelHost {
   wwpn_b: string;
   npiv: number;
 }
+
+export interface FcPortFormValue {
+  port: string | null;
+  host_id: number | null;
+}
