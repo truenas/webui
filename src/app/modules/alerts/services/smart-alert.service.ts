@@ -135,19 +135,23 @@ export class SmartAlertService {
                     this.searchDirectives.setPendingUiHighlightElement(null);
                   } else {
                     // Wait for directive to be registered
+                    let cleanupTimer: number | undefined;
                     const subscription = this.searchDirectives.directiveAdded$.subscribe(() => {
                       const foundDirective = this.searchDirectives.get(pendingElement);
                       if (foundDirective) {
                         foundDirective.highlight(pendingElement);
                         this.searchDirectives.setPendingUiHighlightElement(null);
+                        if (cleanupTimer !== undefined) {
+                          clearTimeout(cleanupTimer);
+                        }
                         subscription.unsubscribe();
                       }
                     });
 
-                    // Cleanup after 10 seconds
-                    setTimeout(() => {
+                    // Cleanup after 10 seconds if directive never appears
+                    cleanupTimer = setTimeout(() => {
                       subscription.unsubscribe();
-                    }, 10000);
+                    }, 10000) as unknown as number;
                   }
                 }, searchDelayConst * 2);
                 return;
@@ -209,8 +213,8 @@ export class SmartAlertService {
         const taskId = action.apiParams as number;
 
         // Validate that we have a valid API method and task ID
-        if (!action.apiMethod || taskId === undefined || taskId === null) {
-          throw new Error(`Invalid API call parameters: method=${action.apiMethod}, taskId=${taskId}`);
+        if (!action.apiMethod || taskId === undefined || taskId === null || typeof taskId !== 'number') {
+          throw new Error(`Invalid API call parameters: method=${action.apiMethod}, taskId=${taskId}, type=${typeof taskId}`);
         }
 
         // Cast apiMethod to any to avoid TypeScript error with dynamic method names
@@ -289,6 +293,10 @@ export class SmartAlertService {
     const currentUrl = this.router.url.split('?')[0].split('#')[0];
     if (currentUrl === relatedRoute) {
       // User is on the task page, reload the route to refresh the data
+      // This uses the "navigate away and back" pattern which is necessary because:
+      // 1. Angular doesn't reload a route when navigating to the same URL
+      // 2. Components may not have explicit data reload mechanisms
+      // 3. This ensures fresh data from the server after task execution
       this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
         this.router.navigate([relatedRoute]);
       });

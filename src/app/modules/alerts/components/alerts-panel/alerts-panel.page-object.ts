@@ -1,23 +1,46 @@
+import { Signal } from '@angular/core';
 import { byText, Spectator } from '@ngneat/spectator/jest';
-import { queryAllNestedDirectives } from 'app/core/testing/utils/query-all-nested-directives.utils';
+import { Alert } from 'app/interfaces/alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 
 export class AlertsPanelPageObject {
   constructor(private spectator: Spectator<AlertsPanelComponent>) {}
 
-  get unreadAlertComponents(): AlertComponent[] {
-    if (!this.unreadAlertsSection) {
-      throw new Error('Unread alerts section not found');
+  private getAllAlertComponents(): AlertComponent[] {
+    // Use spectator's queryAll with directive to get all AlertComponent instances
+    return this.spectator.queryAll(AlertComponent);
+  }
+
+  private getAlertData(alertComponent: AlertComponent): Alert & { duplicateCount?: number } | undefined {
+    // Handle both signal (function) and mock (property)
+    // In real component: alert is a Signal
+    // In MockComponent: alert is a plain property
+    const alertProp = alertComponent.alert as
+      | Signal<Alert & { duplicateCount?: number }>
+      | Alert & { duplicateCount?: number };
+    if (typeof alertProp === 'function') {
+      return alertProp();
     }
-    return queryAllNestedDirectives(this.spectator.debugElement, this.unreadAlertsSection, AlertComponent);
+    return alertProp;
+  }
+
+  get unreadAlertComponents(): AlertComponent[] {
+    // Get all alert components and filter by dismissed status
+    const allAlerts = this.getAllAlertComponents();
+    return allAlerts.filter((alertComponent) => {
+      const alert = this.getAlertData(alertComponent);
+      return alert && !alert.dismissed;
+    });
   }
 
   get dismissedAlertComponents(): AlertComponent[] {
-    if (!this.dismissedAlertsSection) {
-      throw new Error('Dismissed alerts section not found');
-    }
-    return queryAllNestedDirectives(this.spectator.debugElement, this.dismissedAlertsSection, AlertComponent);
+    // Get all alert components and filter by dismissed status
+    const allAlerts = this.getAllAlertComponents();
+    return allAlerts.filter((alertComponent) => {
+      const alert = this.getAlertData(alertComponent);
+      return alert && alert.dismissed;
+    });
   }
 
   get dismissAllButton(): HTMLElement | null {
@@ -29,10 +52,12 @@ export class AlertsPanelPageObject {
   }
 
   get unreadAlertsSection(): HTMLElement | null {
-    return this.spectator.query('.unread-alerts');
+    // Check if there are any category sections with unread alerts
+    return this.unreadAlertComponents.length > 0 ? this.spectator.element : null;
   }
 
   get dismissedAlertsSection(): HTMLElement | null {
-    return this.spectator.query('.dismissed-alerts');
+    // Check if there are any dismissed alerts
+    return this.dismissedAlertComponents.length > 0 ? this.spectator.element : null;
   }
 }

@@ -5,7 +5,6 @@ import { MockComponent } from 'ng-mocks';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -92,7 +91,6 @@ describe('AlertsPanelComponent', () => {
         },
       }),
       EffectsModule.forRoot([AlertEffects]),
-      NavigateAndHighlightDirective,
     ],
     declarations: [
       MockComponent(AlertComponent),
@@ -114,8 +112,6 @@ describe('AlertsPanelComponent', () => {
     api = spectator.inject(ApiService);
     alertPanel = new AlertsPanelPageObject(spectator);
 
-    // Disable grouping by category for tests to use flat list view
-    spectator.component.groupByCategory.set(false);
     spectator.detectChanges();
   });
 

@@ -118,13 +118,10 @@ export class PageAlertsComponent {
     const uniqueAlerts: (Alert & EnhancedAlert & { duplicateCount: number; allIds: string[] })[] = [];
 
     for (const [key, alertGroup] of alertsByKey) {
-      // Find most recent (alerts are usually already sorted, but ensure correctness)
-      let mostRecent = alertGroup[0];
-      for (let i = 1; i < alertGroup.length; i++) {
-        if ((alertGroup[i].datetime?.$date || 0) > (mostRecent.datetime?.$date || 0)) {
-          mostRecent = alertGroup[i];
-        }
-      }
+      // Find most recent alert using reduce
+      const mostRecent = alertGroup.reduce((latest, current) => (
+        (current.datetime?.$date || 0) > (latest.datetime?.$date || 0) ? current : latest
+      ));
 
       // Get system-wide duplicate count
       const info = duplicateInfo.get(key);

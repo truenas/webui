@@ -39,8 +39,9 @@ export const selectImportantUnreadAlertsCount = createSelector(
 /**
  * Selector to get unread alerts for badge calculation
  * Components can enhance these alerts with SmartAlertService and compute badge counts
+ * Only includes WARNING level and above (excludes Info and Notice)
  */
 export const selectAlertsForNavBadges = createSelector(
   selectUnreadAlerts,
-  (alerts) => alerts,
+  (alerts) => alerts.filter((alert) => ![AlertLevel.Info, AlertLevel.Notice].includes(alert.level)),
 );

@@ -1,15 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { NavigationExtras, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
-import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Role } from 'app/enums/role.enum';
@@ -29,7 +27,9 @@ import {
 } from 'app/modules/alerts/store/alert.selectors';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -39,7 +39,6 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
  */
 type AlertWithDuplicates = Alert & EnhancedAlert & { duplicateCount: number };
 
-@UntilDestroy()
 @Component({
   selector: 'ix-alerts-panel',
   templateUrl: './alerts-panel.component.html',
@@ -52,7 +51,6 @@ type AlertWithDuplicates = Alert & EnhancedAlert & { duplicateCount: number };
     IxIconComponent,
     MatMenu,
     MatMenuItem,
-    NavigateAndHighlightDirective,
     MatProgressBar,
     AlertComponent,
     TranslateModule,
@@ -65,6 +63,8 @@ export class AlertsPanelComponent implements OnInit {
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private smartAlertService = inject(SmartAlertService);
+  private destroyRef = inject(DestroyRef);
+  private slideIn = inject(SlideIn);
 
   protected readonly requiredRoles = [Role.AlertListWrite];
 
@@ -73,16 +73,6 @@ export class AlertsPanelComponent implements OnInit {
 
   private readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = false;
-
-  // Group by category toggle
-  groupByCategory = signal(true);
-
-  // Icon for grouping toggle button
-  protected readonly groupingIcon = computed(() => {
-    return this.groupByCategory()
-      ? iconMarker('list')
-      : iconMarker('apps');
-  });
 
   // Static icons
   protected readonly settingsIcon = iconMarker('settings');
@@ -133,18 +123,12 @@ export class AlertsPanelComponent implements OnInit {
     };
   });
 
-  // Group alerts by category
+  // Group alerts by category (always enabled)
   protected groupedUnreadAlerts = computed(() => {
-    if (!this.groupByCategory()) {
-      return null;
-    }
     return this.smartAlertService.groupAlertsByCategory(this.enhancedUnreadAlerts());
   });
 
   protected groupedDismissedAlerts = computed(() => {
-    if (!this.groupByCategory()) {
-      return null;
-    }
     return this.smartAlertService.groupAlertsByCategory(this.enhancedDismissedAlerts());
   });
 
@@ -206,10 +190,6 @@ export class AlertsPanelComponent implements OnInit {
     this.store$.dispatch(dismissAllAlertsPressed());
   }
 
-  toggleGroupByCategory(): void {
-    this.groupByCategory.set(!this.groupByCategory());
-  }
-
   setSeverityFilter(filter: 'all' | 'critical' | 'warning' | 'info' | 'dismissed'): void {
     this.severityFilter.set(filter);
   }
@@ -267,6 +247,11 @@ export class AlertsPanelComponent implements OnInit {
     this.router.navigate(route, extras);
   }
 
+  openEmailForm(): void {
+    this.closePanel();
+    this.slideIn.open(EmailFormComponent, { data: undefined });
+  }
+
   closePanel(): void {
     this.store$.dispatch(alertPanelClosed());
   }
@@ -309,9 +294,11 @@ export class AlertsPanelComponent implements OnInit {
       return;
     }
 
-    this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
-      this.isHaLicensed = isHaLicensed;
-      this.cdr.markForCheck();
-    });
+    this.store$.select(selectIsHaLicensed)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((isHaLicensed) => {
+        this.isHaLicensed = isHaLicensed;
+        this.cdr.markForCheck();
+      });
   }
 }

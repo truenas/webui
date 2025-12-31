@@ -71,11 +71,12 @@ export class AlertNavBadgeService {
 
   /**
    * Get badge count for a specific menu path
+   * Only includes WARNING level and above
    */
   getBadgeCountForPath(path: string[], badgeCounts: Map<string, NavBadge>): number {
     const key = path.join('.');
     const counts = badgeCounts.get(key);
-    return counts ? counts.critical + counts.warning + counts.info : 0;
+    return counts ? counts.critical + counts.warning : 0;
   }
 
   /**
