@@ -315,11 +315,9 @@ export class DiskListComponent implements OnInit {
     ).subscribe((response) => {
       const resp = response.response;
 
-      // this gets the updated disk data from the single-disk edit form (not the bulk-edit form)
+      // this gets the updated disk data from the disk edit form (both single and bulk)
       // and emits it over `diskUpdates$`.
-      if (typeof resp !== 'boolean') {
-        resp.forEach((upd) => this.diskUpdates$.next(upd));
-      }
+      resp.forEach((upd) => this.diskUpdates$.next(upd));
       this.dataProvider.load();
     });
   }
