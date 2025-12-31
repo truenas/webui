@@ -1,0 +1,31 @@
+.learn-more-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: var(--link);
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  ix-icon {
+    font-size: 18px;
+  }
+}
+
+.learn-more-content {
+  margin-top: 8px;
+  padding: 12px;
+  background-color: var(--bg);
+  border-radius: 4px;
+
+  ul {
+    margin: 8px 0;
+    padding-left: 24px;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+}
