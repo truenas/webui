@@ -14,7 +14,6 @@ export interface Preferences {
   sidenavStatus: SidenavStatusData;
   userTheme: string;
   tableDisplayedColumns: TableDisplayedColumns[];
-  hideBuiltinUsers: boolean;
   hideBuiltinGroups: boolean;
   autoRefreshReports: boolean;
   showSnapshotExtraColumns: boolean;

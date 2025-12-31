@@ -13,7 +13,7 @@ import { AppState } from 'app/store/index';
 import {
   autoRefreshReportsToggled,
   builtinGroupsToggled,
-  builtinUsersToggled, guiFormSubmitted, lifetimeTokenUpdated, localizationFormSubmitted,
+  guiFormSubmitted, lifetimeTokenUpdated, localizationFormSubmitted,
   preferencesLoaded, preferredColumnsUpdated,
   shownNewIndicatorKeysUpdated,
   themeNotFound,
@@ -68,7 +68,6 @@ export class PreferencesEffects {
       sidenavUpdated,
       themeNotFound,
       preferredColumnsUpdated,
-      builtinUsersToggled,
       snapshotExtraColumnsToggled,
       shownNewIndicatorKeysUpdated,
       builtinGroupsToggled,

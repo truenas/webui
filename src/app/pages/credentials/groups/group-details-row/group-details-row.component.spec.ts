@@ -69,9 +69,7 @@ describe('GroupDetailsRowComponent', () => {
         selectors: [
           {
             selector: selectPreferences,
-            value: {
-              hideBuiltinUsers: false,
-            } as Preferences,
+            value: {} as Preferences,
           },
         ],
       }),
