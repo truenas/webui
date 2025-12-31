@@ -107,6 +107,28 @@ export class AppBulkUpdateComponent {
     return this.expandedItems().includes(row.key);
   }
 
+  getVersionInfo(app: App, appName: string): {
+    currentAppVersion: string;
+    currentCatalogVersion: string;
+    latestAppVersion: string;
+    latestCatalogVersion: string;
+  } {
+    const versionParts = app.human_version.split('_');
+    const currentAppVersion = versionParts[0];
+    const currentCatalogVersion = versionParts[1] || versionParts[0];
+
+    const summary = this.upgradeSummaryMap.get(appName);
+    const latestAppVersion = summary?.latest_human_version?.split('_')[0] || currentAppVersion;
+    const latestCatalogVersion = this.form.value[appName] || app.latest_version;
+
+    return {
+      currentAppVersion,
+      currentCatalogVersion,
+      latestAppVersion,
+      latestCatalogVersion,
+    };
+  }
+
   private getUpgradeSummary(name: string, version?: string): void {
     this.loadingMap.set(name, true);
     this.appService

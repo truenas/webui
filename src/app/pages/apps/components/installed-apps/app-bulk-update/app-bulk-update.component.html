@@ -14,8 +14,8 @@
           <mat-panel-title>
             <ix-bulk-list-item [item]="bulkItem.value">
               @let versionParts = bulkItem.value.item.human_version.split('_');
-              {{ bulkItem.key }}
-              {{ versionParts[0] }}
+              <span class="app-name-text">{{ bulkItem.key }}</span>
+              <span class="app-version">{{ versionParts[0] }}</span>
 
               <div class="version">
                 <span>{{ versionParts[1] || versionParts[0] }}</span>
@@ -37,9 +37,29 @@
           </mat-panel-title>
         </mat-expansion-panel-header>
 
-        @let summary = upgradeSummaryMap.get(bulkItem.key);
         <div class="expansion-content">
           @if(isItemExpanded(bulkItem)) {
+            @let versionInfo = getVersionInfo(bulkItem.value.item, bulkItem.key);
+
+            <div class="version-info">
+              <div class="version-row">
+                <span class="version-label">{{ 'Catalog Version' | translate }}:</span>
+                <span class="version-value">
+                  {{ versionInfo.currentCatalogVersion }}
+                  <ix-icon name="mdi-arrow-right"></ix-icon>
+                  {{ versionInfo.latestCatalogVersion }}
+                </span>
+              </div>
+              <div class="version-row">
+                <span class="version-label">{{ 'App Version' | translate }}:</span>
+                <span class="version-value">
+                  {{ versionInfo.currentAppVersion }}
+                  <ix-icon name="mdi-arrow-right"></ix-icon>
+                  {{ versionInfo.latestAppVersion }}
+                </span>
+              </div>
+            </div>
+
             <ix-select
               [formControlName]="bulkItem.key"
               [label]="'Version to be updated to' | translate"
@@ -52,22 +72,21 @@
             <span>{{ bulkItem.value.message ? (bulkItem.value.message | translate) : '' }}</span>
           }
 
-          <mat-accordion class="details-list" displayMode="flat">
-            <mat-expansion-panel>
-              <mat-expansion-panel-header collapsedHeight="48px" expandedHeight="48px">
-                <mat-panel-title>{{ 'Changelog' | translate }}</mat-panel-title>
-              </mat-expansion-panel-header>
-              <div class="details-expansion-content">
-                <div class="detail-row row-dark">
-                  @if (summary?.changelog) {
-                    <div [innerHTML]="summary?.changelog"></div>
-                  } @else {
-                    {{ 'No Changelog' | translate }}
-                  }
-                </div>
-              </div>
-            </mat-expansion-panel>
-          </mat-accordion>
+          @if (bulkItem.value.item.metadata.changelog_url) {
+            <div class="changelog-link">
+              <span class="changelog-label">{{ 'Changelog' | translate }}:</span>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                class="changelog-url"
+                [href]="bulkItem.value.item.metadata.changelog_url"
+                [attr.aria-label]="'View Upstream Release Notes (opens in new window)' | translate"
+              >
+                <ix-icon name="mdi-open-in-new"></ix-icon>
+                {{ 'View Upstream Release Notes' | translate }}
+              </a>
+            </div>
+          }
         </div>
       </mat-expansion-panel>
     }
