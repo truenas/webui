@@ -472,6 +472,25 @@ describe('SmbFormComponent', () => {
         }),
       ]);
     });
+
+    it('sends hosts allow and deny values when specified', async () => {
+      await submitForm({
+        ...commonValues,
+        Purpose: 'Default Share',
+        'Hosts Allow': ['192.168.1.0/24', '10.0.0.1'],
+        'Hosts Deny': ['172.16.0.0/16'],
+      });
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          purpose: SmbSharePurpose.DefaultShare,
+          options: expect.objectContaining({
+            hostsallow: ['192.168.1.0/24', '10.0.0.1'],
+            hostsdeny: ['172.16.0.0/16'],
+          }),
+        }),
+      ]);
+    });
   });
 
   describe('edit default share', () => {
