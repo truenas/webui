@@ -62,6 +62,7 @@ export class AllowedAccessSectionComponent {
   constructor() {
     this.setFieldRelations();
     this.updateStoreOnChanges();
+    this.setFieldDisablements();
 
     // Revalidate when password changes
     effect(() => {
@@ -107,6 +108,18 @@ export class AllowedAccessSectionComponent {
     }
 
     return null;
+  }
+
+  private setFieldDisablements(): void {
+    // create an effect to handle root user disablements
+    effect(() => {
+      if (this.editingUser()?.uid === 0) {
+        // specifically, the root user can never be a member of the webshare group
+        // nor can they posess any role except for the Full Admin role they already have.
+        this.form.controls.webshare.disable();
+        this.form.controls.truenas_access.disable();
+      }
+    });
   }
 
   private setFieldRelations(): void {

@@ -109,6 +109,42 @@ describe('AllowedAccessSectionComponent', () => {
     });
   });
 
+  describe('root user restrictions', () => {
+    it('disables webshare and truenas access for root user', async () => {
+      spectator.setInput('editingUser', {
+        uid: 0,
+        username: 'root',
+        smb: true,
+        webshare: false,
+        roles: [Role.FullAdmin],
+      } as User);
+      spectator.detectChanges();
+
+      const webshareAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'WebShare Access' }));
+      expect(await webshareAccessCheckbox.isDisabled()).toBe(true);
+
+      const truenasAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'TrueNAS Access' }));
+      expect(await truenasAccessCheckbox.isDisabled()).toBe(true);
+    });
+
+    it('allows webshare and truenas access for non-root users', async () => {
+      spectator.setInput('editingUser', {
+        uid: 1001,
+        username: 'not-root',
+        smb: true,
+        webshare: false,
+        roles: [Role.FullAdmin],
+      } as User);
+      spectator.detectChanges();
+
+      const webshareAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'WebShare Access' }));
+      expect(await webshareAccessCheckbox.isDisabled()).toBe(false);
+
+      const truenasAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'TrueNAS Access' }));
+      expect(await truenasAccessCheckbox.isDisabled()).toBe(false);
+    });
+  });
+
   it('updates store when allowed access checkboxes are changed', async () => {
     const smbCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'SMB Access' }));
     const shellCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Shell Access' }));
