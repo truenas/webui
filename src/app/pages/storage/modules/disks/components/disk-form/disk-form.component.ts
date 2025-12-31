@@ -113,6 +113,7 @@ export class DiskFormComponent implements OnInit {
           if (state) {
             // clear the password AND disable the form so as not to confuse users
             controlPasswd.setValue('');
+            controlPasswd.markAsPristine();
             controlPasswd.disable();
           } else {
             controlPasswd.enable();
