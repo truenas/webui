@@ -34,6 +34,6 @@ export class RestartSmbDialog {
   readonly showLearnMore = signal(false);
 
   toggleLearnMore(): void {
-    this.showLearnMore.update((value) => !value);
+    this.showLearnMore.set(!this.showLearnMore());
   }
 }

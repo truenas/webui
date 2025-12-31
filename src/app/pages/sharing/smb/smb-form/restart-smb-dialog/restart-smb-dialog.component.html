@@ -6,7 +6,10 @@
     <p>{{ helptext.restartCaution | translate }}</p>
     <a
       class="learn-more-link"
+      role="button"
+      tabindex="0"
       ixTest="learn-more"
+      [attr.aria-expanded]="showLearnMore()"
       (click)="toggleLearnMore()"
       (keydown.enter)="toggleLearnMore()"
     >
