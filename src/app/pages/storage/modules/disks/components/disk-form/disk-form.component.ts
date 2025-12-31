@@ -111,6 +111,8 @@ export class DiskFormComponent implements OnInit {
         (state) => {
           const controlPasswd = this.form.controls.passwd;
           if (state) {
+            // clear the password AND disable the form so as not to confuse users
+            controlPasswd.setValue('');
             controlPasswd.disable();
           } else {
             controlPasswd.enable();
