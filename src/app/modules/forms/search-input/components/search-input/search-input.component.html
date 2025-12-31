@@ -13,6 +13,7 @@
   <ix-basic-search
     [query]="basicQuery"
     [allowAdvanced]="allowAdvanced()"
+    [placeholder]="basicSearchPlaceholder()"
     (queryChange)="basicSearchUpdated($event)"
     (switchToAdvanced)="toggleAdvancedMode()"
     (runSearch)="runSearch.emit()"

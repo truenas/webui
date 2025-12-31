@@ -27,6 +27,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class BasicSearchComponent implements AfterViewInit {
   readonly query = model<string>();
   readonly allowAdvanced = input(false);
+  readonly placeholder = input<string>('');
 
   readonly switchToAdvanced = output();
   readonly queryChange = output<string>();
