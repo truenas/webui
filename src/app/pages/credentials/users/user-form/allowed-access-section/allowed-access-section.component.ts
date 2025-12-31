@@ -111,14 +111,28 @@ export class AllowedAccessSectionComponent {
   }
 
   private setFieldDisablements(): void {
-    // create an effect to handle root user disablements
+    // the root user is not permitted to:
+    //   * be a member of the webshare group.
+    //   * have any other access role besides Full Admin.
+    const nonRootExclusiveControls = [
+      this.form.controls.webshare,
+      this.form.controls.truenas_access,
+      this.form.controls.role,
+    ];
+
+    // this effect will re-run if `editingUser` changes.
     effect(() => {
-      if (this.editingUser()?.uid === 0) {
-        // specifically, the root user can never be a member of the webshare group
-        // nor can they posess any role except for the Full Admin role they already have.
-        this.form.controls.webshare.disable();
-        this.form.controls.truenas_access.disable();
-      }
+      const doDisable = this.editingUser()?.uid === 0;
+
+      // for each exclusive control, disable or enable it based on whether
+      // we're editing the root user or any other non-root user.
+      nonRootExclusiveControls.forEach((control) => {
+        if (doDisable) {
+          control.disable();
+        } else {
+          control.enable();
+        }
+      });
     });
   }
 
