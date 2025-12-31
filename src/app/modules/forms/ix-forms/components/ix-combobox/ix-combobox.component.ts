@@ -131,6 +131,13 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
     if (!this.allowCustomValue() && !this.selectedOption) {
       this.resetInput();
+      return;
+    }
+
+    // Commit custom value on blur if one is typed
+    if (this.allowCustomValue() && this.textContent && !this.selectedOption) {
+      this.value = this.textContent;
+      this.onChange(this.textContent);
     }
   }
 
@@ -224,8 +231,14 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   onChanged(changedValue: string): void {
+    // Clear selected option when user starts typing something new
     if (this.selectedOption?.value || this.value) {
-      this.resetInput();
+      this.selectedOption = null;
+      this.value = null;
+      // If custom values aren't allowed, immediately clear the form control
+      if (!this.allowCustomValue()) {
+        this.onChange(null);
+      }
     }
     this.textContent = changedValue;
     this.filterChanged$.next(changedValue);

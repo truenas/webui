@@ -13,9 +13,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
-import {
-  endWith, Observable, of,
-} from 'rxjs';
+import { endWith, Observable, of } from 'rxjs';
 import {
   debounceTime, filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
@@ -41,12 +39,12 @@ import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/ix-group-chips/ix-group-chips.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
@@ -68,7 +66,6 @@ import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { UserService } from 'app/services/user.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
@@ -91,6 +88,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxSelectComponent,
     IxCheckboxComponent,
     IxChipsComponent,
+    IxGroupChipsComponent,
     IxErrorsComponent,
     FormActionsComponent,
     RequiresRolesDirective,
@@ -111,7 +109,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private datasetService = inject(DatasetService);
   private translate = inject(TranslateService);
   private router = inject(Router);
-  private userService = inject(UserService);
   protected loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
@@ -146,12 +143,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private wasStripAclWarningShown = false;
   private smbConfig = signal<SmbConfig | null>(null);
 
-  protected groupProvider: ChipsProvider = (query) => {
-    return this.userService.groupQueryDsCache(query).pipe(
-      map((groups) => groups.map((group) => group.group)),
-    );
-  };
-
   title: string = helptextSharingSmb.formTitleAdd;
 
   createDatasetProps: Omit<DatasetCreate, 'name'> = {
@@ -169,7 +160,14 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   }
 
   get isAsyncValidatorPending(): boolean {
-    return this.form.controls.name.status === 'PENDING' && this.form.controls.name.touched;
+    const nameControl = this.form.controls.name;
+    const auditGroup = this.form.controls.audit;
+    const watchListControl = auditGroup.controls.watch_list;
+    const ignoreListControl = auditGroup.controls.ignore_list;
+
+    return (nameControl.status === 'PENDING' && nameControl.touched)
+      || (watchListControl.status === 'PENDING' && watchListControl.touched)
+      || (ignoreListControl.status === 'PENDING' && ignoreListControl.touched);
   }
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({

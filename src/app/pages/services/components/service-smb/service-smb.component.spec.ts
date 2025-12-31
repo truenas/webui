@@ -91,6 +91,8 @@ describe('ServiceSmbComponent', () => {
         userQueryDsCache: jest.fn(() => of([{
           username: 'test-username',
         }])),
+        getUserByName: (username: string) => of({ username } as User),
+        getGroupByName: (groupName: string) => of({ group: groupName }),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
