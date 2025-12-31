@@ -56,6 +56,9 @@ enum SortableField {
 }
 
 function doSortCompare(a: number | string, b: number | string, isAsc: boolean): number {
+  if (a === b) {
+    return 0;
+  }
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }
 
@@ -416,14 +419,26 @@ export class InstalledAppsListComponent implements OnInit {
       switch (sort.active as SortableField) {
         case SortableField.Application:
           return doSortCompare(a.name, b.name, isAsc);
-        case SortableField.State:
-          return doSortCompare(a.state, b.state, isAsc);
-        case SortableField.Updates:
-          return doSortCompare(
+        case SortableField.State: {
+          const comparison = doSortCompare(a.state, b.state, isAsc);
+          // Secondary sort by name when states are equal
+          if (comparison === 0) {
+            return doSortCompare(a.name, b.name, true);
+          }
+          return comparison;
+        }
+        case SortableField.Updates: {
+          const comparison = doSortCompare(
             a.upgrade_available ? 1 : 0,
             b.upgrade_available ? 1 : 0,
             isAsc,
           );
+          // Secondary sort by name when update availability is equal
+          if (comparison === 0) {
+            return doSortCompare(a.name, b.name, true);
+          }
+          return comparison;
+        }
         default:
           return doSortCompare(a.name, b.name, isAsc);
       }
