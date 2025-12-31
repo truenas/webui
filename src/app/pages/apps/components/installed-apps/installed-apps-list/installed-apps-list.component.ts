@@ -1,10 +1,10 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
-import { Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
+import { MatSort, MatSortHeader, Sort, SortDirection } from '@angular/material/sort';
 import { MatColumnDef } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
@@ -110,13 +110,10 @@ export class InstalledAppsListComponent implements OnInit {
 
   dataSource: App[] = [];
   selectedApp: App | undefined;
-  searchQuery = signal('');
+  searchQuery = toSignal(this.installedAppsStore.searchQuery$, { requireSync: true });
   appJobs = new Map<string, Job<void, AppStartQueryParams>>();
   selection = new SelectionModel<string>(true, []);
-  sortingInfo: Sort = {
-    active: SortableField.Application,
-    direction: 'asc',
-  };
+  sortingInfo = toSignal(this.installedAppsStore.sortingInfo$, { requireSync: true });
 
   readonly sortableField = SortableField;
 
@@ -186,7 +183,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.searchQuery.set(query);
+    this.installedAppsStore.setSearchQuery(query);
 
     if (!this.filteredApps.length) {
       this.showLoadStatus(EmptyType.NoSearchResults);
@@ -271,7 +268,7 @@ export class InstalledAppsListComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: ([,, apps]) => {
-        this.setDatasourceWithSort(this.sortingInfo, apps);
+        this.setDatasourceWithSort(this.sortingInfo(), apps);
         this.selectAppForDetails(this.appId());
         this.cdr.markForCheck();
       },
@@ -295,7 +292,7 @@ export class InstalledAppsListComponent implements OnInit {
         // This ensures the UI stays in sync even for minimized jobs.
         if (job) {
           this.appJobs.set(name, job);
-          this.setDatasourceWithSort(this.sortingInfo);
+          this.setDatasourceWithSort(this.sortingInfo());
           this.cdr.markForCheck();
         }
       });
@@ -318,7 +315,7 @@ export class InstalledAppsListComponent implements OnInit {
         // This ensures the UI stays in sync even for minimized jobs.
         if (job) {
           this.appJobs.set(name, job);
-          this.setDatasourceWithSort(this.sortingInfo);
+          this.setDatasourceWithSort(this.sortingInfo());
           this.cdr.markForCheck();
         }
       });
@@ -341,7 +338,7 @@ export class InstalledAppsListComponent implements OnInit {
         // This ensures the UI stays in sync even for minimized jobs.
         if (job) {
           this.appJobs.set(name, job);
-          this.setDatasourceWithSort(this.sortingInfo);
+          this.setDatasourceWithSort(this.sortingInfo());
           this.cdr.markForCheck();
         }
       });
@@ -408,10 +405,10 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   setDatasourceWithSort(sort: Sort, apps?: App[]): void {
-    this.sortingInfo = sort;
+    this.installedAppsStore.setSortingInfo(sort);
     const sourceArray = apps && apps.length > 0 ? apps : this.dataSource;
     this.dataSource = [...sourceArray].sort((a, b) => {
-      const isAsc = sort.direction === 'asc';
+      const isAsc: boolean = sort.direction === ('asc' as SortDirection);
 
       switch (sort.active as SortableField) {
         case SortableField.Application:
@@ -515,7 +512,7 @@ export class InstalledAppsListComponent implements OnInit {
       .subscribe((event) => {
         const [name] = event.fields.arguments;
         this.appJobs.set(name, event.fields);
-        this.setDatasourceWithSort(this.sortingInfo);
+        this.setDatasourceWithSort(this.sortingInfo());
         this.cdr.markForCheck();
       });
   }

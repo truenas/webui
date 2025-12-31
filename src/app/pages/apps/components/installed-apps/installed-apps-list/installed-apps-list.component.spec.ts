@@ -2,13 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Sort, SortDirection } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
@@ -36,6 +37,8 @@ describe('InstalledAppsListComponent', () => {
   let spectator: Spectator<InstalledAppsListComponent>;
   let applicationsService: ApplicationsService;
   let loader: HarnessLoader;
+  let searchQuerySubject$: BehaviorSubject<string>;
+  let sortingInfoSubject$: BehaviorSubject<Sort>;
 
   const apps = [
     {
@@ -81,10 +84,21 @@ describe('InstalledAppsListComponent', () => {
         isDockerStarted$: of(true),
         selectedPool$: of('pool'),
       }),
-      mockProvider(InstalledAppsStore, {
-        isLoading$: of(false),
-        installedApps$: of(apps),
-      }),
+      {
+        provide: InstalledAppsStore,
+        useFactory: () => {
+          searchQuerySubject$ = new BehaviorSubject('');
+          sortingInfoSubject$ = new BehaviorSubject<Sort>({ active: 'application', direction: 'asc' as SortDirection });
+          return {
+            isLoading$: of(false),
+            installedApps$: of(apps),
+            searchQuery$: searchQuerySubject$.asObservable(),
+            sortingInfo$: sortingInfoSubject$.asObservable(),
+            setSearchQuery: jest.fn((query: string) => searchQuerySubject$.next(query)),
+            setSortingInfo: jest.fn((info: Sort) => sortingInfoSubject$.next(info)),
+          };
+        },
+      },
       mockProvider(AppsStore, {
         isLoading$: of(false),
         availableApps$: of([]),
@@ -233,7 +247,7 @@ describe('InstalledAppsListComponent', () => {
     const originalDataSource = [...apps];
     component.dataSource = originalDataSource;
 
-    component.setDatasourceWithSort({ active: 'application', direction: 'asc' }, []);
+    component.setDatasourceWithSort({ active: 'application', direction: 'asc' as SortDirection }, []);
 
     expect(component.dataSource).toHaveLength(2);
     expect(component.dataSource[0].name).toBe('test-app-1');
@@ -250,7 +264,7 @@ describe('InstalledAppsListComponent', () => {
       upgrade_available: false,
     }] as App[];
 
-    component.setDatasourceWithSort({ active: 'application', direction: 'asc' }, newApps);
+    component.setDatasourceWithSort({ active: 'application', direction: 'asc' as SortDirection }, newApps);
 
     expect(component.dataSource).toHaveLength(1);
     expect(component.dataSource[0].name).toBe('new-app');
