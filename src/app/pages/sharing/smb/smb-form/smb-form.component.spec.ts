@@ -321,6 +321,8 @@ describe('SmbFormComponent', () => {
         },
         options: {
           aapl_name_mangling: true,
+          hostsallow: [],
+          hostsdeny: [],
         },
       }]);
     });
@@ -345,6 +347,8 @@ describe('SmbFormComponent', () => {
             auto_snapshot: true,
             auto_dataset_creation: true,
             dataset_naming_schema: '%u',
+            hostsallow: [],
+            hostsdeny: [],
           },
         }),
       ]);
@@ -362,6 +366,8 @@ describe('SmbFormComponent', () => {
           purpose: SmbSharePurpose.MultiProtocolShare,
           options: {
             aapl_name_mangling: true,
+            hostsallow: [],
+            hostsdeny: [],
           },
         }),
       ]);
@@ -381,6 +387,8 @@ describe('SmbFormComponent', () => {
           options: {
             grace_period: 900,
             aapl_name_mangling: true,
+            hostsallow: [],
+            hostsdeny: [],
           },
         }),
       ]);
@@ -402,6 +410,8 @@ describe('SmbFormComponent', () => {
             dataset_naming_schema: '%u',
             auto_quota: 20,
             aapl_name_mangling: true,
+            hostsallow: [],
+            hostsdeny: [],
           },
         }),
       ]);
@@ -433,7 +443,10 @@ describe('SmbFormComponent', () => {
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
           purpose: SmbSharePurpose.VeeamRepositoryShare,
-          options: {},
+          options: {
+            hostsallow: [],
+            hostsdeny: [],
+          },
         }),
       ]);
     });
@@ -461,7 +474,28 @@ describe('SmbFormComponent', () => {
           },
           options: {
             aapl_name_mangling: true,
+            hostsallow: [],
+            hostsdeny: [],
           },
+        }),
+      ]);
+    });
+
+    it('sends hosts allow and deny values when specified', async () => {
+      await submitForm({
+        ...commonValues,
+        Purpose: 'Default Share',
+        'Hosts Allow': ['192.168.1.0/24', '10.0.0.1'],
+        'Hosts Deny': ['172.16.0.0/16'],
+      });
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          purpose: SmbSharePurpose.DefaultShare,
+          options: expect.objectContaining({
+            hostsallow: ['192.168.1.0/24', '10.0.0.1'],
+            hostsdeny: ['172.16.0.0/16'],
+          }),
         }),
       ]);
     });
@@ -488,6 +522,8 @@ describe('SmbFormComponent', () => {
         'Browsable to Network Clients': true,
         'Access Based Share Enumeration': true,
         'Enable Logging': false,
+        'Hosts Allow': [],
+        'Hosts Deny': [],
 
         'Use Apple-style Character Encoding': true,
       });
@@ -625,6 +661,8 @@ describe('SmbFormComponent', () => {
         'Export Read Only',
         'Browsable to Network Clients',
         'Access Based Share Enumeration',
+        'Hosts Allow',
+        'Hosts Deny',
         'Enable Logging',
         'Use Apple-style Character Encoding',
       ]);
