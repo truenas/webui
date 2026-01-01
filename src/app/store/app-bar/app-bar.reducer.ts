@@ -24,7 +24,7 @@ function loadStateFromStorage(): AppBarItem[] {
   } catch (error) {
     console.error('Failed to load app-bar state from localStorage:', error);
   }
-  // 返回默认状态
+  // Default state if nothing is stored
   return [
     {
       status: 'open',
