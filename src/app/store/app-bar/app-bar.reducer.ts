@@ -10,16 +10,33 @@ import {
 
 export type AppBarState = AppBarItem;
 
-export const initialState: AppBarItem[] = [
-  {
-    status: 'open',
-    name: 'Desktop',
-    icon: iconMarker('mdi-monitor'),
-    iconActive: iconMarker('mdi-monitor'),
-    state: 'desktop',
-  },
-  // more items can be added dynamically
-];
+const appBarStorageKey = 'ix-app-bar-state';
+
+function loadStateFromStorage(): AppBarItem[] {
+  try {
+    const stored = localStorage.getItem(appBarStorageKey);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load app-bar state from localStorage:', error);
+  }
+  // 返回默认状态
+  return [
+    {
+      status: 'open',
+      name: 'Desktop',
+      icon: iconMarker('mdi-monitor'),
+      iconActive: iconMarker('mdi-monitor'),
+      state: 'desktop',
+    },
+  ];
+}
+
+export const initialState: AppBarItem[] = loadStateFromStorage();
 
 function updateItem(state: AppBarState[], stateId: string, changes: Partial<AppBarState>): AppBarState[] {
   return state.map((item) => (item.state === stateId ? { ...item, ...changes } : { ...item, status: 'minimized' as const }));

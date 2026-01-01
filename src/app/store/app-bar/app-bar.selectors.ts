@@ -3,5 +3,5 @@ import { AppBarState } from './app-bar.reducer';
 
 export const appBarStateKey = 'app-bar';
 
-// 选择整个 appBar 数组
+// Select the entire appBar array
 export const selectAppBarState = createFeatureSelector<AppBarState[]>('app-bar');
