@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Sort, SortDirection } from '@angular/material/sort';
+import { SortDirection } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -37,8 +37,8 @@ describe('InstalledAppsListComponent', () => {
   let spectator: Spectator<InstalledAppsListComponent>;
   let applicationsService: ApplicationsService;
   let loader: HarnessLoader;
-  let searchQuerySubject$: BehaviorSubject<string>;
-  let sortingInfoSubject$: BehaviorSubject<Sort>;
+  let searchQuery$: BehaviorSubject<string>;
+  let sortingInfo$: BehaviorSubject<{ active: string; direction: SortDirection }>;
 
   const apps = [
     {
@@ -87,15 +87,15 @@ describe('InstalledAppsListComponent', () => {
       {
         provide: InstalledAppsStore,
         useFactory: () => {
-          searchQuerySubject$ = new BehaviorSubject('');
-          sortingInfoSubject$ = new BehaviorSubject<Sort>({ active: 'application', direction: 'asc' as SortDirection });
+          searchQuery$ = new BehaviorSubject('');
+          sortingInfo$ = new BehaviorSubject({ active: 'application', direction: 'asc' as SortDirection });
           return {
             isLoading$: of(false),
             installedApps$: of(apps),
-            searchQuery$: searchQuerySubject$.asObservable(),
-            sortingInfo$: sortingInfoSubject$.asObservable(),
-            setSearchQuery: jest.fn((query: string) => searchQuerySubject$.next(query)),
-            setSortingInfo: jest.fn((info: Sort) => sortingInfoSubject$.next(info)),
+            searchQuery$: searchQuery$.asObservable(),
+            sortingInfo$: sortingInfo$.asObservable(),
+            setSearchQuery: jest.fn((query: string) => searchQuery$.next(query)),
+            setSortingInfo: jest.fn((info: { active: string; direction: SortDirection }) => sortingInfo$.next(info)),
           };
         },
       },

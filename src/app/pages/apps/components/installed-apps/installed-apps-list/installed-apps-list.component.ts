@@ -4,7 +4,7 @@ import { Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, 
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSort, MatSortHeader, Sort, SortDirection } from '@angular/material/sort';
+import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
 import { MatColumnDef } from '@angular/material/table';
 import { MatTooltip } from '@angular/material/tooltip';
 import {
@@ -408,7 +408,7 @@ export class InstalledAppsListComponent implements OnInit {
     this.installedAppsStore.setSortingInfo(sort);
     const sourceArray = apps && apps.length > 0 ? apps : this.dataSource;
     this.dataSource = [...sourceArray].sort((a, b) => {
-      const isAsc: boolean = sort.direction === ('asc' as SortDirection);
+      const isAsc = sort.direction === 'asc';
 
       switch (sort.active as SortableField) {
         case SortableField.Application:
