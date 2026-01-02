@@ -1,13 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject, combineLatest, Observable, of,
 } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { first, map, switchMap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -39,7 +40,6 @@ import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
 import { JobTab } from 'app/pages/jobs/job-tab.enum';
 import { jobsListElements } from 'app/pages/jobs/jobs-list.elements';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-jobs-list',
   templateUrl: './jobs-list.component.html',
@@ -69,6 +69,8 @@ export class JobsListComponent implements OnInit {
   private translate = inject(TranslateService);
   private store$ = inject<Store<JobSlice>>(Store);
   private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = jobsListElements;
 
@@ -127,10 +129,21 @@ export class JobsListComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.selectedJobs$.pipe(untilDestroyed(this)).subscribe((jobs) => {
+    combineLatest([
+      this.selectedJobs$,
+      this.route.queryParams.pipe(first()),
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(([jobs, queryParams]) => {
       this.jobs = jobs;
       this.onListFiltered(this.searchQuery());
       this.setDefaultSort();
+
+      if (queryParams.jobId) {
+        const jobId = Number(queryParams.jobId);
+        if (!Number.isNaN(jobId)) {
+          this.autoExpandRow(jobId);
+        }
+      }
+
       this.cdr.markForCheck();
     });
   }
@@ -154,6 +167,14 @@ export class JobsListComponent implements OnInit {
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.jobs, query, columnKeys: ['method', 'description'] });
+  }
+
+  private autoExpandRow(jobId: number): void {
+    const jobToExpand = this.jobs.find((job) => job.id === jobId);
+    // if there's already a row expanded, don't override it
+    if (jobToExpand && !this.dataProvider.expandedRow) {
+      this.dataProvider.expandedRow = jobToExpand;
+    }
   }
 
   private setDefaultSort(): void {

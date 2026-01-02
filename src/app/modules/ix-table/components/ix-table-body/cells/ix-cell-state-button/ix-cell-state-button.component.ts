@@ -5,6 +5,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -56,6 +57,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
   translate: TranslateService = inject(TranslateService);
   dialogService: DialogService = inject(DialogService);
   errorHandler: ErrorHandlerService = inject(ErrorHandlerService);
+  router: Router = inject(Router);
 
   private readonly rowUpdateEffect = effect(() => {
     this.setupRow();
@@ -142,7 +144,46 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     }
 
     if (state.error) {
-      this.dialogService.error({ title: state.state, message: `<pre>${state.error}</pre>` });
+      // by default, we just show the error message
+      const message = `<pre>${state.error}</pre>`;
+
+      // if there's a log excerpt though, we include the additional
+      // 'View Details' and 'Download Logs' buttons.
+      let logs;
+      let actions;
+      if (this.job()?.logs_excerpt) {
+        logs = this.job()?.logs_excerpt ? this.job() : null;
+
+        // only show the 'View Details' button when we're *not* on the jobs page
+        // since it would imply to the user there's somewhere else they could go
+        // and that clicking it would take them there.
+        const showDetailsButton = !this.router.isActive(
+          '/jobs',
+          {
+            matrixParams: 'ignored',
+            queryParams: 'ignored',
+            paths: 'exact',
+            fragment: 'ignored',
+          },
+        );
+
+        // the 'View Logs' button will take the user to the jobs page and expand the failed job's row
+        if (showDetailsButton) {
+          actions = [{
+            label: this.translate.instant('View Details'),
+            route: '/jobs',
+            params: { jobId: this.job().id },
+          }];
+        }
+      }
+
+      this.dialogService.error({
+        title: state.state,
+        message,
+        // since these two may be undefined and are optional, we can just include them in the call outright
+        logs,
+        actions,
+      });
       return;
     }
 

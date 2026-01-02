@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
@@ -64,6 +65,9 @@ describe('JobsListComponent', () => {
       }),
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
+      mockProvider(ActivatedRoute, {
+        queryParams: of({}),
+      }),
       mockApi([
         mockCall('core.job_download_logs', 'http://localhost/download/log'),
       ]),
@@ -125,5 +129,42 @@ describe('JobsListComponent', () => {
     await secondExpandButton.click();
 
     expect(spectator.queryAll('.expanded')).toHaveLength(1);
+  });
+
+  it('should auto-expand row when jobId query parameter is provided', () => {
+    const mockActivatedRoute = spectator.inject(ActivatedRoute);
+    mockActivatedRoute.queryParams = of({ jobId: '446' });
+
+    store$.overrideSelector(selectJobs, fakeJobDataSource);
+    store$.refreshState();
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    expect(spectator.queryAll('.expanded')).toHaveLength(1);
+    expect(spectator.query('.expanded')).toContainText('cloudsync.sync');
+  });
+
+  it('should not expand any row when jobId query parameter does not match any job', () => {
+    const mockActivatedRoute = spectator.inject(ActivatedRoute);
+    mockActivatedRoute.queryParams = of({ jobId: '999' });
+
+    store$.overrideSelector(selectJobs, fakeJobDataSource);
+    store$.refreshState();
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    expect(spectator.queryAll('.expanded')).toHaveLength(0);
+  });
+
+  it('should not expand any row when no jobId query parameter is provided', () => {
+    const mockActivatedRoute = spectator.inject(ActivatedRoute);
+    mockActivatedRoute.queryParams = of({});
+
+    store$.overrideSelector(selectJobs, fakeJobDataSource);
+    store$.refreshState();
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    expect(spectator.queryAll('.expanded')).toHaveLength(0);
   });
 });
