@@ -78,6 +78,15 @@ export class AllowedAccessSectionComponent {
     });
   }
 
+  /**
+   * the access role dropdown should be shown if the truenas access checkbox
+   * is checked OR the user we're editing is the root user - just to show that the
+   * root user does have a role.
+   */
+  protected showAccessRoleControl(): boolean {
+    return !!this.form.value.truenas_access || this.editingUser()?.uid === 0;
+  }
+
   private smbAccessValidator(formGroup: AbstractControl): ValidationErrors | null {
     const smbEnabled = formGroup.get('smb')?.value;
 

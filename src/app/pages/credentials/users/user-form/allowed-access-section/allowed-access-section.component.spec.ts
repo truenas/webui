@@ -125,6 +125,9 @@ describe('AllowedAccessSectionComponent', () => {
 
       const truenasAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'TrueNAS Access' }));
       expect(await truenasAccessCheckbox.isDisabled()).toBe(true);
+
+      const truenasAccessDropdown = await loader.getHarness(IxSelectHarness);
+      expect(await truenasAccessDropdown.isDisabled()).toBe(true);
     });
 
     it('allows webshare and truenas access for non-root users', async () => {
@@ -142,6 +145,9 @@ describe('AllowedAccessSectionComponent', () => {
 
       const truenasAccessCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'TrueNAS Access' }));
       expect(await truenasAccessCheckbox.isDisabled()).toBe(false);
+
+      const truenasAccessDropdown = await loader.getHarness(IxSelectHarness);
+      expect(await truenasAccessDropdown.isDisabled()).toBe(false);
     });
   });
 
