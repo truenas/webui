@@ -62,7 +62,6 @@ export class AllowedAccessSectionComponent {
   constructor() {
     this.setFieldRelations();
     this.updateStoreOnChanges();
-    this.setFieldDisablements();
 
     // Revalidate when password changes
     effect(() => {
@@ -129,19 +128,16 @@ export class AllowedAccessSectionComponent {
       this.form.controls.role,
     ];
 
-    // this effect will re-run if `editingUser` changes.
-    effect(() => {
-      const doDisable = this.editingUser()?.uid === 0;
+    const doDisable = this.editingUser()?.uid === 0;
 
-      // for each exclusive control, disable or enable it based on whether
-      // we're editing the root user or any other non-root user.
-      nonRootExclusiveControls.forEach((control) => {
-        if (doDisable) {
-          control.disable();
-        } else {
-          control.enable();
-        }
-      });
+    // for each exclusive control, disable or enable it based on whether
+    // we're editing the root user or any other non-root user.
+    nonRootExclusiveControls.forEach((control) => {
+      if (doDisable) {
+        control.disable();
+      } else {
+        control.enable();
+      }
     });
   }
 
@@ -203,6 +199,10 @@ export class AllowedAccessSectionComponent {
           ssh_access: hasSshAccess(this.editingUser()),
           role: roleValue,
         });
+
+        // after patching the form values, disable any controls that need disabling
+        this.setFieldDisablements();
+
         this.userFormStore.updateSetupDetails({ role: roleValue });
       }
     });
