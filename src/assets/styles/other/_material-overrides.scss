@@ -13,7 +13,7 @@ html .ix-dark {
   --mdc-list-list-item-supporting-text-color: var(--fg2);
   --mat-button-text-container-shape: 100px;
 
-  --mat-button-toggle-height: 34px;
+  --mat-button-toggle-height: 42px;
   --mat-button-toggle-shape: 100px;
 
   --mat-button-toggle-selected-state-background-color: var(--primary);
@@ -195,6 +195,10 @@ html .ix-dark {
 
   .mat-mdc-slide-toggle {
     --mat-switch-label-text-color: var(--fg2);
+  }
+
+  .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+    padding: 0 16px;
   }
 
   .mat-mdc-standard-chip:not(.mdc-evolution-chip--disabled) {
