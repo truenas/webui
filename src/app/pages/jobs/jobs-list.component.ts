@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { ActivatedRoute } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -40,7 +40,6 @@ import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
 import { JobTab } from 'app/pages/jobs/job-tab.enum';
 import { jobsListElements } from 'app/pages/jobs/jobs-list.elements';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-jobs-list',
   templateUrl: './jobs-list.component.html',
@@ -71,6 +70,7 @@ export class JobsListComponent implements OnInit {
   private store$ = inject<Store<JobSlice>>(Store);
   private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = jobsListElements;
 
@@ -129,18 +129,22 @@ export class JobsListComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.selectedJobs$.pipe(untilDestroyed(this)).subscribe((jobs) => {
+    combineLatest([
+      this.selectedJobs$,
+      this.route.queryParams,
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(([jobs, queryParams]) => {
       this.jobs = jobs;
       this.onListFiltered(this.searchQuery());
       this.setDefaultSort();
-      this.cdr.markForCheck();
-    });
 
-    this.route.queryParams.pipe(untilDestroyed(this)).subscribe((queryParams) => {
       if (queryParams.jobId) {
-        this.autoExpandRow(Number(queryParams.jobId));
-        this.cdr.markForCheck();
+        const jobId = Number(queryParams.jobId);
+        if (!Number.isNaN(jobId)) {
+          this.autoExpandRow(jobId);
+        }
       }
+
+      this.cdr.markForCheck();
     });
   }
 
