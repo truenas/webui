@@ -1,4 +1,5 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
+import { Sort, SortDirection } from '@angular/material/sort';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
@@ -16,14 +17,27 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
+enum SortableField {
+  Application = 'application',
+  State = 'state',
+  Updates = 'updates',
+}
+
 export interface InstalledAppsState {
   installedApps: App[];
   isLoading: boolean;
+  searchQuery: string;
+  sortingInfo: Sort;
 }
 
 const initialState: InstalledAppsState = {
   installedApps: [],
   isLoading: false,
+  searchQuery: '',
+  sortingInfo: {
+    active: SortableField.Application,
+    direction: 'asc' as SortDirection,
+  },
 };
 
 @UntilDestroy()
@@ -37,6 +51,8 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
 
   readonly installedApps$ = this.select((state) => state.installedApps);
   readonly isLoading$ = this.select((state) => state.isLoading);
+  readonly searchQuery$ = this.select((state) => state.searchQuery);
+  readonly sortingInfo$ = this.select((state) => state.sortingInfo);
   private installedAppsSubscription: Subscription;
 
   constructor() {
@@ -187,5 +203,13 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       recommendedApps: updateApps(state.recommendedApps),
       latestApps: updateApps(state.latestApps),
     }));
+  }
+
+  setSearchQuery(searchQuery: string): void {
+    this.patchState({ searchQuery });
+  }
+
+  setSortingInfo(sortingInfo: Sort): void {
+    this.patchState({ sortingInfo });
   }
 }

@@ -7,7 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent, MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
@@ -29,6 +29,8 @@ import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-
 describe('InstalledAppsComponent', () => {
   let spectator: Spectator<InstalledAppsComponent>;
   let applicationsService: ApplicationsService;
+  let searchQuery$: BehaviorSubject<string>;
+  let sortingInfo$: BehaviorSubject<{ active: string; direction: string }>;
 
   const app = {
     id: 'ix-test-app',
@@ -59,10 +61,21 @@ describe('InstalledAppsComponent', () => {
         isDockerStarted$: of(true),
         selectedPool$: of('pool'),
       }),
-      mockProvider(InstalledAppsStore, {
-        isLoading$: of(false),
-        installedApps$: of([app]),
-      }),
+      {
+        provide: InstalledAppsStore,
+        useFactory: () => {
+          searchQuery$ = new BehaviorSubject('');
+          sortingInfo$ = new BehaviorSubject({ active: 'application', direction: 'asc' });
+          return {
+            isLoading$: of(false),
+            installedApps$: of([app]),
+            searchQuery$: searchQuery$.asObservable(),
+            sortingInfo$: sortingInfo$.asObservable(),
+            setSearchQuery: jest.fn((query: string) => searchQuery$.next(query)),
+            setSortingInfo: jest.fn((info: { active: string; direction: string }) => sortingInfo$.next(info)),
+          };
+        },
+      },
       mockProvider(LayoutService, {
         navigatePreservingScroll: jest.fn(() => of()),
       }),
