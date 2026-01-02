@@ -77,6 +77,15 @@ export class AllowedAccessSectionComponent {
     });
   }
 
+  /**
+   * the access role dropdown should be shown if the truenas access checkbox
+   * is checked OR the user we're editing is the root user - just to show that the
+   * root user does have a role.
+   */
+  protected showAccessRoleControl(): boolean {
+    return !!this.form.value.truenas_access || this.editingUser()?.uid === 0;
+  }
+
   private smbAccessValidator(formGroup: AbstractControl): ValidationErrors | null {
     const smbEnabled = formGroup.get('smb')?.value;
 
@@ -107,6 +116,29 @@ export class AllowedAccessSectionComponent {
     }
 
     return null;
+  }
+
+  private setFieldDisablements(): void {
+    // the root user is not permitted to:
+    //   * be a member of the webshare group.
+    //   * have any other access role besides Full Admin.
+    const nonRootExclusiveControls = [
+      this.form.controls.webshare,
+      this.form.controls.truenas_access,
+      this.form.controls.role,
+    ];
+
+    const doDisable = this.editingUser()?.uid === 0;
+
+    // for each exclusive control, disable or enable it based on whether
+    // we're editing the root user or any other non-root user.
+    nonRootExclusiveControls.forEach((control) => {
+      if (doDisable) {
+        control.disable();
+      } else {
+        control.enable();
+      }
+    });
   }
 
   private setFieldRelations(): void {
@@ -167,6 +199,10 @@ export class AllowedAccessSectionComponent {
           ssh_access: hasSshAccess(this.editingUser()),
           role: roleValue,
         });
+
+        // after patching the form values, disable any controls that need disabling
+        this.setFieldDisablements();
+
         this.userFormStore.updateSetupDetails({ role: roleValue });
       }
     });
