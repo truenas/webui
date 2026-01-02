@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -69,6 +70,7 @@ export class JobsListComponent implements OnInit {
   private translate = inject(TranslateService);
   private store$ = inject<Store<JobSlice>>(Store);
   private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
 
   protected readonly searchableElements = jobsListElements;
 
@@ -133,6 +135,13 @@ export class JobsListComponent implements OnInit {
       this.setDefaultSort();
       this.cdr.markForCheck();
     });
+
+    this.route.queryParams.pipe(untilDestroyed(this)).subscribe((queryParams) => {
+      if (queryParams.jobId) {
+        this.autoExpandRow(Number(queryParams.jobId));
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   protected onTabChange(tab: JobTab): void {
@@ -154,6 +163,13 @@ export class JobsListComponent implements OnInit {
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.jobs, query, columnKeys: ['method', 'description'] });
+  }
+
+  private autoExpandRow(jobId: number): void {
+    const jobToExpand = this.jobs.find((job) => job.id === jobId);
+    if (jobToExpand) {
+      this.dataProvider.expandedRow = jobToExpand;
+    }
   }
 
   private setDefaultSort(): void {
