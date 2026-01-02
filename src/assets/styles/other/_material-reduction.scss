@@ -670,13 +670,6 @@ ix-root {
     outline-width: 0;
   }
 
-  .cdk-focused,
-  .cdk-keyboard-focused,
-  .cdk-mouse-focused {
-    @extend %focused-shared;
-    background-color: var(--focus-bg) !important;
-  }
-
   .ix-tree-node:focus-visible,
   .ix-tree-node:focus,
   ix-app-row:focus-visible,

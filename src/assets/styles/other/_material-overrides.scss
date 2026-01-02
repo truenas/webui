@@ -16,7 +16,10 @@ html .ix-dark {
   --mat-button-toggle-height: 34px;
   --mat-button-toggle-shape: 100px;
 
+  --mat-button-toggle-selected-state-background-color: var(--primary);
   --mat-card-title-text-tracking: normal;
+
+  --focus-bg: var(--primary);
 
   --mdc-dialog-subhead-color: var(--fg1);
   --mdc-dialog-supporting-text-color: var(--fg2);
@@ -173,7 +176,7 @@ html .ix-dark {
     var(--mat-sys-body-medium-line-height, 1.5rem)
   );
   --mat-dialog-subhead-tracking: 0;
-  --mat-button-toggle-selected-state-text-color: var(--fg1);
+  --mat-button-toggle-selected-state-text-color: var(--primary-txt);
   --mat-slide-toggle-label-text-color: var(--fg1);
   --mat-checkbox-selected-checkmark-color: var(--primary-txt);
   --mat-checkbox-disabled-selected-icon-color: var(--grey);
