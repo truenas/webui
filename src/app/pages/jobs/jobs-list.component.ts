@@ -8,7 +8,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject, combineLatest, Observable, of,
 } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { first, map, switchMap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -131,7 +131,7 @@ export class JobsListComponent implements OnInit {
   ngOnInit(): void {
     combineLatest([
       this.selectedJobs$,
-      this.route.queryParams,
+      this.route.queryParams.pipe(first()),
     ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(([jobs, queryParams]) => {
       this.jobs = jobs;
       this.onListFiltered(this.searchQuery());
