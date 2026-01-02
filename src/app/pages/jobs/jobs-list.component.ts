@@ -171,7 +171,8 @@ export class JobsListComponent implements OnInit {
 
   private autoExpandRow(jobId: number): void {
     const jobToExpand = this.jobs.find((job) => job.id === jobId);
-    if (jobToExpand) {
+    // if there's already a row expanded, don't override it
+    if (jobToExpand && !this.dataProvider.expandedRow) {
       this.dataProvider.expandedRow = jobToExpand;
     }
   }
