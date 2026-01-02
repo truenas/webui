@@ -861,7 +861,7 @@ body .mat-vertical-content {
 
 ix-table,
 table {
-  overflow: auto;
+  // overflow: auto;
 
   @media (max-width: $breakpoint-md) {
     tr th {

@@ -1,4 +1,4 @@
-@import 'mixins/text';
+@import "mixins/text";
 
 :host {
   display: block;
@@ -6,8 +6,9 @@
 }
 
 table {
-  background: var(--contrast-darker);
-  border: solid 1px var(--contrast-lighter);
+  // background: var(--contrast-darker);
+  // border: solid 1px transparent;
+  background: #f6f0fe;
   border-collapse: collapse;
   color: var(--fg2);
   table-layout: fixed;
