@@ -5,11 +5,9 @@
     {{ "Configure" | translate }}
   </button>
   }
-</ix-page-header>
 
-<ix-page-content>
   @if (isEditing()) {
-  <div class="edit-mode-buttons">
+  <div class="space-x-4">
     @if (customLayout()) {
     <button mat-button type="button" ixTest="reset" [disabled]="isLoading()"
       [matTooltip]="'Restore default set of widgets' | translate" (click)="onReset()">
@@ -17,7 +15,7 @@
     </button>
     }
 
-    <button mat-button class="add-button" ixTest="add-group" [disabled]="isLoading()" (click)="onAddGroup()">
+    <button mat-button ixTest="add-group" [disabled]="isLoading()" (click)="onAddGroup()">
       {{ "Add" | translate }}
     </button>
     <button mat-button color="primary" ixTest="save" [disabled]="isLoading()" (click)="onSave()">
@@ -28,7 +26,9 @@
     </button>
   </div>
   }
+</ix-page-header>
 
+<ix-page-content>
   @if (isLoadingFirstTime()) {
   <ngx-skeleton-loader class="groups loading" [count]="6"
     [theme]="{ background: 'var(--alt-bg2)', opacity: 0.25, margin: 0 }"></ngx-skeleton-loader>
