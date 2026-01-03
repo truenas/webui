@@ -33,6 +33,7 @@ import {
   selectJobState,
   selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
@@ -46,6 +47,7 @@ import { jobsListElements } from 'app/pages/jobs/jobs-list.elements';
   styleUrls: ['./jobs-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    PageContentComponent,
     PageHeaderComponent,
     MatButtonToggleGroup,
     MatButtonToggle,

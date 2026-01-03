@@ -12,22 +12,21 @@
   <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
 </ix-page-header>
 
-<div class="p-4">
-  <div class='rounded-2xl overflow-hidden'>
-    <ix-table [ixUiSearch]="searchableElements.elements.jobs"
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)">
-      <thead ix-table-head [columns]="columns" [dataProvider]="dataProvider"></thead>
-      <tbody ix-table-body [columns]="columns" [dataProvider]="dataProvider" [isLoading]="!!(isLoading$ | async)">
-        <ng-template let-job ix-table-cell [columnIndex]="0" [dataProvider]="dataProvider">
-          <ix-job-name [job]="job"></ix-job-name>
-        </ng-template>
 
-        <ng-template let-job ix-table-details-row [dataProvider]="dataProvider">
-          <ix-job-logs-row [job]="job"></ix-job-logs-row>
-        </ng-template>
-      </tbody>
-    </ix-table>
-    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
-  </div>
-</div>
+<ix-page-content>
+  <ix-table [ixUiSearch]="searchableElements.elements.jobs" [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
+    [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)">
+    <thead ix-table-head [columns]="columns" [dataProvider]="dataProvider"></thead>
+    <tbody ix-table-body [columns]="columns" [dataProvider]="dataProvider" [isLoading]="!!(isLoading$ | async)">
+      <ng-template let-job ix-table-cell [columnIndex]="0" [dataProvider]="dataProvider">
+        <ix-job-name [job]="job"></ix-job-name>
+      </ng-template>
+
+      <ng-template let-job ix-table-details-row [dataProvider]="dataProvider">
+        <ix-job-logs-row [job]="job"></ix-job-logs-row>
+      </ng-template>
+    </tbody>
+  </ix-table>
+
+  <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+</ix-page-content>
