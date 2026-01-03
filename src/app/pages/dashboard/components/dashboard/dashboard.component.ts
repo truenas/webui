@@ -18,6 +18,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
@@ -56,6 +57,7 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
     CdkDrag,
     CdkDropList,
     AnimateOutDirective,
+    PageContentComponent,
   ],
   providers: [
     WidgetResourcesService,
