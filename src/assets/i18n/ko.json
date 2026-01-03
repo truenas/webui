@@ -305,7 +305,7 @@
   "The WebShare service must be configured and started before adding WebShares.": "",
   "This configuration defines how domain accounts joined to TrueNAS are mapped to Unix UIDs and GIDs on the TrueNAS server. Most TrueNAS deployments use the RID backend, which algorithmically assigns UIDs and GIDs based on the Active Directory account SID. Another common option is the AD backend, which reads predefined Active Directory LDAP schema attributes that assign explicit UID and GID numbers to accounts.": "",
   "This field cannot be changed while the NVMe service is running. Please stop the service first.": "",
-  "This operation is IRREVERSIBLE and will PERMANENTLY DESTROY ALL DATA on this disk.": "이 작업은 되돌릴 수 없고 이 디스크의 모든 데이터를 영구적으로 파시합니다.",
+  "This operation is IRREVERSIBLE and will PERMANENTLY DESTROY ALL DATA on this disk.": "이 작업은 되돌릴 수 없고 이 디스크의 모든 데이터를 영구적으로 파기합니다.",
   "This password will be used to configure all SED-capable disks in this pool.": "",
   "This password will be used to unlock all selected disks.": "",
   "This path is already covered by the WebShare \"{name}\" at {path}": "",
