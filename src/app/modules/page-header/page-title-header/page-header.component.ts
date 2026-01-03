@@ -86,11 +86,9 @@ export class PageHeaderComponent implements OnInit, OnDestroy {
   private getCurrentMenuItemState(): string {
     const currentUrl = this.router.url.replace('/', '');
 
-    // 查找匹配的 menuItem
     const matchedItem = this.navService.menuItems.find((item) => {
       if (currentUrl.startsWith(item.state)) return true;
 
-      // 检查子菜单
       if (item.sub) {
         return item.sub.some((subItem) => subItem.state === currentUrl);
       }
