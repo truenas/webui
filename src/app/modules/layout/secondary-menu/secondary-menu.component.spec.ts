@@ -1,11 +1,23 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
+import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
+import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
 import { SecondaryMenuComponent } from 'app/modules/layout/secondary-menu/secondary-menu.component';
 
 describe('SecondaryMenuComponent', () => {
   let spectator: Spectator<SecondaryMenuComponent>;
   const createComponent = createComponentFactory({
     component: SecondaryMenuComponent,
+    imports: [
+      StoreModule.forRoot({
+        [alertStateKey]: alertReducer,
+      }, {
+        initialState: {
+          [alertStateKey]: adapter.setAll([], alertsInitialState),
+        },
+      }),
+    ],
   });
 
   beforeEach(() => {

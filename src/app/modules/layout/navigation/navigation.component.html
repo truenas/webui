@@ -16,6 +16,7 @@
           (click)="updateHighlightedClass(item.state)"
         >
           @if (item.type === MenuItemType.Link) {
+            @let badgeCount = getBadgeCount(item);
             <a
               matTooltipPosition="right"
               [ixTest]="getItemName(item)"
@@ -25,9 +26,25 @@
               (click)="closeMenu()"
             >
               <ix-icon [name]="item.icon"></ix-icon>
-              <span>{{ item.name | translate }}</span>
+              <span class="menu-text">
+                {{ item.name | translate }}
+                @if (badgeCount > 0) {
+                  <span
+                    class="menu-badge-dot"
+                    role="status"
+                    [class.critical]="getBadgeType(item) === AlertBadgeType.Critical"
+                    [class.warning]="getBadgeType(item) === AlertBadgeType.Warning"
+                    [class.info]="getBadgeType(item) === AlertBadgeType.Info"
+                    [matTooltip]="getBadgeTooltip(item) | translate"
+                    [attr.aria-label]="getBadgeTooltip(item) | translate"
+                  >
+                    <ix-icon [name]="getBadgeIcon(item)"></ix-icon>
+                  </span>
+                }
+              </span>
             </a>
           } @else if (item.type === MenuItemType.SlideOut) {
+            @let badgeCount = getBadgeCount(item);
             <a
               tabindex="0"
               role="button"
@@ -42,7 +59,22 @@
               (keydown.space)="$event.preventDefault(); toggleMenu(item.state, item.sub || [])"
               >
               <ix-icon [name]="item.icon"></ix-icon>
-              <span>{{ item.name | translate }}</span>
+              <span class="menu-text">
+                {{ item.name | translate }}
+                @if (badgeCount > 0) {
+                  <span
+                    class="menu-badge-dot"
+                    role="status"
+                    [class.critical]="getBadgeType(item) === AlertBadgeType.Critical"
+                    [class.warning]="getBadgeType(item) === AlertBadgeType.Warning"
+                    [class.info]="getBadgeType(item) === AlertBadgeType.Info"
+                    [matTooltip]="getBadgeTooltip(item) | translate"
+                    [attr.aria-label]="getBadgeTooltip(item) | translate"
+                  >
+                    <ix-icon [name]="getBadgeIcon(item)"></ix-icon>
+                  </span>
+                }
+              </span>
               <ix-icon class="menu-caret">keyboard_arrow_right</ix-icon>
             </a>
           }

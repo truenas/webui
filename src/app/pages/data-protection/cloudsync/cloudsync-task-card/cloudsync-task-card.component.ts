@@ -20,6 +20,7 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { CardAlertBadgeComponent } from 'app/modules/alerts/components/card-alert-badge/card-alert-badge.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -74,6 +75,7 @@ import { AppState } from 'app/store';
     TranslateModule,
     AsyncPipe,
     EmptyComponent,
+    CardAlertBadgeComponent,
   ],
 })
 export class CloudSyncTaskCardComponent implements OnInit {
@@ -91,6 +93,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];
   protected readonly emptyConfig = cloudSyncTaskEmptyConfig;
+  protected readonly cardMenuPath = ['data-protection', 'cloudsync'];
 
   cloudSyncTasks: CloudSyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
@@ -157,13 +160,13 @@ export class CloudSyncTaskCardComponent implements OnInit {
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('sync'),
+          iconName: iconMarker('mdi-sync'),
           tooltip: this.translate.instant('Dry Run'),
           onClick: (row) => this.dryRun(row),
           requiredRoles: this.requiredRoles,
         },
         {
-          iconName: iconMarker('restore'),
+          iconName: iconMarker('mdi-restore'),
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
           requiredRoles: this.requiredRoles,
