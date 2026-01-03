@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnDestroy,
 } from '@angular/core';
 
 @Component({
@@ -9,8 +8,4 @@ import {
   templateUrl: './page-content.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PageContentComponent implements OnDestroy {
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
-  }
-}
+export class PageContentComponent {}
