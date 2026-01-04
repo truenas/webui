@@ -19,18 +19,14 @@
   </button>
 </div>
 
-<div class="drag-handle" cdkDragHandle>
-  <ix-icon name="mdi-drag-horizontal"></ix-icon>
-</div>
-
-<div class="edit-and-delete">
+<div class="flex">
   <button
     mat-icon-button
     [attr.aria-label]="'Edit group' | translate"
     [ixTest]="['edit-group', 'widget' + index()]"
     (click)="edit.emit()"
   >
-    <ix-icon name="edit"></ix-icon>
+    <ix-icon class="size-5!" name="ix-dashboard-edit"></ix-icon>
   </button>
   <button
     mat-icon-button
@@ -38,6 +34,9 @@
     [ixTest]="['delete-group', 'widget' + index()]"
     (click)="delete.emit()"
   >
-    <ix-icon name="mdi-delete"></ix-icon>
+    <ix-icon class="size-5!" name="ix-dashboard-delete"></ix-icon>
+  </button>
+  <button mat-icon-button cdkDragHandle>
+    <ix-icon class="size-5!" name="ix-dashboard-drag"></ix-icon>
   </button>
 </div>

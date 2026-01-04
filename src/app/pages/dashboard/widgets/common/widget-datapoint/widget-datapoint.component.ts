@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import { Ng2FittextModule } from 'ng2-fittext';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -16,6 +16,7 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
     MatCardContent,
     Ng2FittextModule,
     TranslateModule,
+    MatCardHeader,
   ],
 })
 export class WidgetDatapointComponent {

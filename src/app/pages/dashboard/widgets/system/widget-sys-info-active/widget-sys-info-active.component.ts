@@ -2,7 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
@@ -50,6 +50,7 @@ import {
     CopyButtonComponent,
     TranslateModule,
     UptimePipe,
+    MatCardHeader,
   ],
 })
 export class WidgetSysInfoActiveComponent {

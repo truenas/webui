@@ -1,9 +1,8 @@
 <mat-card class="card">
+  <mat-card-header class="border-b pb-5!">
+    <h3>{{ label() | translate }}</h3>
+  </mat-card-header>
   <mat-card-content class="card-content">
-    <div class="header">
-      <h3>{{ label() | translate }}</h3>
-    </div>
-
     <div
       fittext
       [class]="['container', size()]"

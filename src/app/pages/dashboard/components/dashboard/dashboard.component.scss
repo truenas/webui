@@ -36,12 +36,6 @@
 }
 
 .group-container.editing {
-  outline: 1px dashed var(--alt-fg1);
-
-  .group {
-    transform: scale(0.85) translate(0, 10px);
-  }
-
   .controls {
     opacity: 1;
   }

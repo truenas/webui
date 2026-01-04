@@ -13,11 +13,7 @@
     "*.css": "tailwindcss"
   },
   "[html]": {
-    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
-    "editor.formatOnSave": true
-  },
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.formatOnSave": true
   },
   "i18n-ally.keystyle": "nested"
