@@ -16,7 +16,6 @@ import { systemUptimeWidget } from 'app/pages/dashboard/widgets/system/widget-sy
 @Component({
   selector: 'ix-widget-system-uptime',
   templateUrl: './widget-system-uptime.component.html',
-  styleUrls: ['./widget-system-uptime.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     WithLoadingStateDirective,

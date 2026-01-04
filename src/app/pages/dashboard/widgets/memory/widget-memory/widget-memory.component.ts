@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TinyColor } from '@ctrl/tinycolor';
@@ -40,6 +40,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     TranslateModule,
     AsyncPipe,
     WidgetStaleDataNoticeComponent,
+    MatCardHeader,
   ],
 })
 export class WidgetMemoryComponent {

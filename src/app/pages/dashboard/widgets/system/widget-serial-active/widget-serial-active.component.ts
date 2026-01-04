@@ -14,7 +14,6 @@ import {
 @Component({
   selector: 'ix-widget-serial-active',
   templateUrl: './widget-serial-active.component.html',
-  styleUrls: ['./widget-serial-active.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     WithLoadingStateDirective,

@@ -1,9 +1,11 @@
 <mat-card class="card">
+  <mat-card-header class='border-b pb-5!'>
+    <h3>{{ name | translate }}</h3>
+  </mat-card-header>
+
   <mat-card-content class="card-content">
     <div class="header">
       <div class="title">
-        <h3>{{ name | translate }}</h3>
-
         @if (!!allCount) {
           <div class="status-container">
             @if (!!failedCount) {

@@ -12,7 +12,6 @@ import { osVersionWidget } from 'app/pages/dashboard/widgets/system/widget-os-ve
 @Component({
   selector: 'ix-widget-os-version',
   templateUrl: './widget-os-version.component.html',
-  styleUrls: ['./widget-os-version.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     WithLoadingStateDirective,

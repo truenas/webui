@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { helptextAbout } from 'app/helptext/about';
@@ -23,6 +23,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     IxIconComponent,
     CopyrightLineComponent,
     TranslateModule,
+    MatCardHeader,
   ],
 })
 export class WidgetHelpComponent {
