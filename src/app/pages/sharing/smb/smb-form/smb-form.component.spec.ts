@@ -258,6 +258,30 @@ describe('SmbFormComponent', () => {
       );
     });
 
+    it('should not restart service when user clicks No in restart dialog', async () => {
+      const matDialog = spectator.inject(MatDialog);
+      matDialog.open = jest.fn(() => ({
+        afterClosed: () => of(false),
+      })) as unknown as typeof matDialog.open;
+
+      mockStore$.overrideSelector(selectServices, [{
+        id: 4,
+        service: ServiceName.Cifs,
+        enable: true,
+        state: ServiceStatus.Running,
+      } as Service]);
+
+      await form.fillForm({
+        Path: '/mnt/pool123/new',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(matDialog.open).toHaveBeenCalledWith(RestartSmbDialog);
+      expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+    });
+
     it('should show strip acl warning if acl is trivial when path changes', async () => {
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
       await pathControl.setValue('/mnt/pool2/ds22');
