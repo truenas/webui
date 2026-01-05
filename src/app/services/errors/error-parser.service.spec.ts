@@ -111,6 +111,12 @@ describe('ErrorParserService', () => {
         title: 'FAILED',
         message: 'DUMMY_ERROR',
         stackTrace: 'LOGS',
+        actions: [{
+          label: 'View Details',
+          route: '/jobs',
+          params: { jobId: failedJob.id },
+        }],
+        logs: failedJob,
       });
     });
 

@@ -189,6 +189,13 @@ export class ErrorParserService {
       title: job.state,
       message: job.error || job.exception || this.translate.instant('Unknown error'),
       stackTrace: job.logs_excerpt || job.exception,
+      // display a `View Details` button and `Download Logs` button on any failed job dialogs
+      actions: [{
+        label: this.translate.instant('View Details'),
+        route: '/jobs',
+        params: { jobId: job.id },
+      }],
+      logs: job.logs_excerpt ? job : undefined,
     };
   }
 
