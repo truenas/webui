@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map } from 'rxjs';
@@ -25,6 +25,7 @@ import { selectHasEnclosureSupport, selectIsEnterprise, selectIsIxHardware } fro
     MatCardContent,
     ProductImageComponent,
     TranslateModule,
+    MatCardHeader,
   ],
 })
 export class WidgetSystemImageComponent implements WidgetComponent {
