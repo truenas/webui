@@ -167,7 +167,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
           },
         );
 
-        // the 'View Logs' button will take the user to the jobs page and expand the failed job's row
+        // the 'View Details' button will take the user to the jobs page and expand the failed job's row
         if (showDetailsButton) {
           actions = [{
             label: this.translate.instant('View Details'),

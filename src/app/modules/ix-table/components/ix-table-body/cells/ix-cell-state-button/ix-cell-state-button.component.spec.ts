@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -119,5 +120,63 @@ describe('IxCellStateButtonComponent', () => {
   it('gets aria label correctly', () => {
     const button = spectator.query('button')!;
     expect(button.getAttribute('aria-label')).toBe('Label 1 Label 2');
+  });
+
+  it('opens the dialog correctly when not on the jobs page', async () => {
+    const job = {
+      id: 123456,
+      logs_excerpt: 'failed',
+      state: JobState.Failed,
+      error: 'failed',
+    };
+
+    spectator.component.setRow({
+      state: job.state,
+      job,
+      warnings: [{}, {}],
+    } as TestTableData);
+
+    const button = await loader.getHarness(MatButtonHarness);
+    await button.click();
+
+    expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
+      title: job.state,
+      message: '<pre>failed</pre>',
+      logs: job,
+      actions: [{
+        label: 'View Details',
+        route: '/jobs',
+        params: { jobId: job.id },
+      }],
+    });
+  });
+
+  it('does not show the `View Details` button when on the jobs page', async () => {
+    const job = {
+      id: 123456,
+      logs_excerpt: 'failed',
+      state: JobState.Failed,
+      error: 'failed',
+    };
+    const router = spectator.inject(Router);
+
+    // mock the router's `isActive` call to always return true,
+    // so it looks like we're on the `/jobs` page.
+    jest.spyOn(router, 'isActive').mockReturnValue(true);
+    spectator.component.setRow({
+      state: job.state,
+      job,
+      warnings: [{}, {}],
+    } as TestTableData);
+
+    const button = await loader.getHarness(MatButtonHarness);
+    await button.click();
+
+    expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
+      title: job.state,
+      message: '<pre>failed</pre>',
+      logs: job,
+      // no actions should be given, since the component thinks we're on the jobs page
+    });
   });
 });
