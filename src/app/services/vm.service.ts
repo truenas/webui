@@ -6,7 +6,7 @@ import {
   BehaviorSubject, catchError, filter, Observable, of, repeat, Subject, switchMap, take,
 } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
-import { VmDisplayType } from 'app/enums/vm.enum';
+import { VmDisplayType, VmState } from 'app/enums/vm.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
@@ -45,6 +45,7 @@ export class VmService {
     start: 'vm.start',
     restart: 'vm.restart',
     poweroff: 'vm.poweroff',
+    resume: 'vm.resume',
   } as const;
 
   constructor() {
@@ -67,10 +68,25 @@ export class VmService {
     this.checkMemory$.next();
   }
 
-  doStart(vm: VirtualMachine, overcommit = false): Observable<boolean> {
-    const params = overcommit ? [vm.id, { overcommit: true }] : [vm.id];
+  /**
+   * start or resume a stopped, suspended, or shutoff VM.
+   * @param vm the vm to start or resume
+   * @param overcommit whether to allow memory overcommitment when starting the VM.
+   *        only applicable when the VM is shutoff - does not apply to suspended VMs.
+   * @returns success status (true or false)
+   */
+  doStartResume(vm: VirtualMachine, overcommit = false): Observable<boolean> {
+    const shouldDoResume = vm.status.state === VmState.Suspended;
 
-    return this.api.call(this.wsMethods.start, params as ApiCallParams<typeof this.wsMethods.start>)
+    // build the params for the request - `overcommit` is only applicable to `vm.start`.
+    const params = overcommit && !shouldDoResume ? [vm.id, { overcommit: true }] : [vm.id];
+
+    // call `vm.resume` if the VM is suspended, otherwise call `vm.start`
+    const method = shouldDoResume ? this.wsMethods.resume : this.wsMethods.start;
+
+    type StartResumeParams = ApiCallParams<typeof this.wsMethods.start> | ApiCallParams<typeof this.wsMethods.resume>;
+
+    return this.api.call(method, params as StartResumeParams)
       .pipe(
         this.loader.withLoader(),
         take(1),
@@ -262,7 +278,7 @@ export class VmService {
       .pipe(
         filter(Boolean),
         take(1),
-        switchMap(() => this.doStart(vm, true)),
+        switchMap(() => this.doStartResume(vm, true)),
       )
       .subscribe();
   }

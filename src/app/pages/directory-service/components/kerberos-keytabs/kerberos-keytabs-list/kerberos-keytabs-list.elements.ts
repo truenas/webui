@@ -17,5 +17,13 @@ export const kerberosKeytabsListElements = {
         T('Kerberos Keytab'),
       ],
     },
+    sync: {
+      hierarchy: [T('Sync Kerberos Keytab')],
+      anchor: 'sync-kerberos-keytab',
+      synonyms: [
+        T('Synchronize Kerberos Keytab'),
+        T('Sync Keytab'),
+      ],
+    },
   },
 } satisfies UiSearchableElement;
