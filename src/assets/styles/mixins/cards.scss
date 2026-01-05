@@ -1,6 +1,6 @@
-@import 'mixins/animations';
-@import 'mixins/buttons';
-@import 'scss-imports/variables';
+@import "mixins/animations";
+@import "mixins/buttons";
+@import "scss-imports/variables";
 
 @mixin details-cards {
   height: 100%;
@@ -37,7 +37,6 @@
 
 @mixin details-card {
   border: none;
-  border-radius: 0;
   margin: 0;
 
   mat-card-header {

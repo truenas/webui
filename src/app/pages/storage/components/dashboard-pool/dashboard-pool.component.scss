@@ -32,21 +32,6 @@
   }
 }
 
-.cards {
-  display: grid;
-  grid-template-columns: calc(50% - 4px) calc(50% - 4px);
-
-  @media #{$media-lt-md} {
-    grid-template-columns: auto;
-  }
-
-  @media #{$media-gt-lg} {
-    grid-template-columns: calc(25% - 6px) calc(25% - 6px) calc(25% - 6px) calc(
-        25% - 6px
-      );
-  }
-}
-
 .skeleton-content {
   .pool-header {
     ngx-skeleton-loader {

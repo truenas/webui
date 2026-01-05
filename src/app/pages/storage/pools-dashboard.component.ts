@@ -12,6 +12,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { PageContentComponent } from 'app/modules/page-content/page-content.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -39,6 +40,7 @@ import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-st
     EmptyComponent,
     UnusedResourcesComponent,
     TranslateModule,
+    PageContentComponent,
   ],
   providers: [
     PoolsDashboardStore,

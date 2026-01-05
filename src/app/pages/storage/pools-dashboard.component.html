@@ -27,43 +27,45 @@
   }
 </ix-page-header>
 
-<div [ixUiSearch]="searchableElements.elements.storageDashboard">
-  @if (arePoolsLoading()) {
-    <ix-dashboard-pool
-      class="pool"
-      [isLoading]="true"
-    ></ix-dashboard-pool>
-
-    <ix-dashboard-pool
-      class="pool"
-      [isLoading]="true"
-    ></ix-dashboard-pool>
-  }
-
-  @if (hasNoPools() && !arePoolsLoading()) {
-    <div class="entity-empty-wrapper">
-      <ix-empty
-        [conf]="emptyConfig"
-        [requiredRoles]="requiredRoles"
-      ></ix-empty>
-    </div>
-  }
-
-  @if (!hasNoPools() && !arePoolsLoading()) {
-    @if (!hasNoPools()) {
-      <ix-unused-resources
-        [pools]="pools()"
-      ></ix-unused-resources>
-    }
-
-    @for (pool of pools(); track pool; let i = $index) {
+<ix-page-content>
+  <div [ixUiSearch]="searchableElements.elements.storageDashboard">
+    @if (arePoolsLoading()) {
       <ix-dashboard-pool
         class="pool"
-        [pool]="pool"
-        [disks]="getDisksByPool(pool)"
-        [isLoading]="isLoadingPoolDetails()"
-        [rootDataset]="rootDatasets[pool.name]"
+        [isLoading]="true"
+      ></ix-dashboard-pool>
+
+      <ix-dashboard-pool
+        class="pool"
+        [isLoading]="true"
       ></ix-dashboard-pool>
     }
-  }
-</div>
+
+    @if (hasNoPools() && !arePoolsLoading()) {
+      <div class="entity-empty-wrapper">
+        <ix-empty
+          [conf]="emptyConfig"
+          [requiredRoles]="requiredRoles"
+        ></ix-empty>
+      </div>
+    }
+
+    @if (!hasNoPools() && !arePoolsLoading()) {
+      @if (!hasNoPools()) {
+        <ix-unused-resources
+          [pools]="pools()"
+        ></ix-unused-resources>
+      }
+
+      @for (pool of pools(); track pool; let i = $index) {
+        <ix-dashboard-pool
+          class="pool"
+          [pool]="pool"
+          [disks]="getDisksByPool(pool)"
+          [isLoading]="isLoadingPoolDetails()"
+          [rootDataset]="rootDatasets[pool.name]"
+        ></ix-dashboard-pool>
+      }
+    }
+  </div>
+</ix-page-content>
