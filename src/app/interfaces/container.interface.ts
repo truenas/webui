@@ -52,7 +52,6 @@ export interface Container {
 }
 
 export type CreateContainer = Partial<Omit<Container, 'id' | 'dataset' | 'status' | 'idmap'>> & {
-  uuid: string;
   name: string;
   autostart: boolean;
   pool: string;

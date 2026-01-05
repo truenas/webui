@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output, inject,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -74,8 +76,8 @@ export class ReviewWizardStepComponent implements OnInit {
 
   get showStartOver(): boolean {
     return Boolean(
-      this.state.name
-      || this.state.encryptionType !== EncryptionType.None
+      this.state?.name
+      || this.state?.encryptionType !== EncryptionType.None
       || this.nonEmptyTopologyCategories?.length,
     );
   }

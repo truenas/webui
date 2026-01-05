@@ -60,12 +60,6 @@ describe('MessageListComponent', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-
-    // Mock crypto.randomUUID
-    global.crypto = {
-      randomUUID: jest.fn(() => `test-uuid-${Math.random()}`),
-    } as unknown as Crypto;
-
     spectator = createComponent();
     store$ = spectator.inject(MockStore);
     jest.spyOn(store$, 'dispatch');
