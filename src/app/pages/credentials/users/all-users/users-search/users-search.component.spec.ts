@@ -394,7 +394,7 @@ describe('UsersSearchComponent', () => {
   });
 
   describe('Search Mode Switching - Default States', () => {
-    it('shows local and directory users by default, switches to all in Advanced, then back to default in Basic', async () => {
+    it('maintains consistent default filtering when switching between Basic and Advanced modes', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
 
       // Verify component starts in Basic mode
@@ -419,8 +419,12 @@ describe('UsersSearchComponent', () => {
       await searchInput.toggleMode();
       expect(await searchInput.isInAdvancedMode()).toBe(true);
 
-      // Verify Advanced mode shows all users (no filtering applied)
-      expect(mockDataProvider.setParams).toHaveBeenCalledWith([]);
+      // Verify Advanced mode applies same default filtering as basic mode for consistency
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [
+          ['OR', [['builtin', '=', false], ['local', '=', false]]],
+        ],
+      ]);
       expect(mockDataProvider.load).toHaveBeenCalled();
 
       // Reset mock to track new calls
@@ -470,9 +474,13 @@ describe('UsersSearchComponent', () => {
       // 2. Switch to Advanced mode
       await searchInput.toggleMode();
 
-      // Verify Advanced mode is active and shows all users
+      // Verify Advanced mode is active and applies default filtering for consistency
       expect(await searchInput.isInAdvancedMode()).toBe(true);
-      expect(mockDataProvider.setParams).toHaveBeenCalledWith([]);
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [
+          ['OR', [['builtin', '=', false], ['local', '=', false]]],
+        ],
+      ]);
       expect(mockDataProvider.load).toHaveBeenCalled();
 
       // Reset mock to track new calls

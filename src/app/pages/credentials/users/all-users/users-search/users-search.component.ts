@@ -29,7 +29,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-data-provider';
 import {
   getDefaultPresets, getBuiltinTogglePreset, getActiveDirectoryTogglePreset,
-  UserType, buildUserTypeFilters,
+  UserType, buildUserTypeFilters, getDefaultUserTypeFilters,
 } from './users-search-presets';
 
 const searchDebounceTime = 250;
@@ -412,8 +412,10 @@ export class UsersSearchComponent implements OnInit {
       this.showBuiltinUsers.set(false);
       this.onUserTypeChange(this.selectedUserTypes());
     } else {
-      // Advanced mode: show ALL users (no filtering)
-      this.dataProvider().setParams([]);
+      // Advanced mode: apply same default filters as basic mode for consistency
+      // This ensures switching modes doesn't change results without user input
+      const defaultFilters = getDefaultUserTypeFilters();
+      this.dataProvider().setParams([defaultFilters]);
       this.dataProvider().load();
     }
   }
