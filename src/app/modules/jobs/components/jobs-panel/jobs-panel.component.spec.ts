@@ -194,6 +194,11 @@ describe('JobsPanelComponent', () => {
       message: 'Some error',
       title: 'FAILED',
       stackTrack: undefined,
+      actions: [{
+        label: 'View Details',
+        params: { jobId: failedJob.id },
+        route: '/jobs',
+      }],
     });
   });
 
