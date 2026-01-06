@@ -3595,7 +3595,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mdi/js@npm:~7.4.47":
+"@mdi/angular-material@npm:^7.2.96":
+  version: 7.2.96
+  resolution: "@mdi/angular-material@npm:7.2.96"
+  checksum: 10/78b4d14c3ff6e51458ca8b06b8563b781493a5f2fa181236e42804109863a5d0ac17da92a17ba004816a387b7f1d8c706e813d87eb8c1c5a80b13343418a66a0
+  languageName: node
+  linkType: hard
+
+"@mdi/js@npm:^7.4.47, @mdi/js@npm:~7.4.47":
   version: 7.4.47
   resolution: "@mdi/js@npm:7.4.47"
   checksum: 10/c1a8fc82f23030bccc0cf324b13b73a0034d06140e79f8bc7b0e4e59275624c470e5ca6524d6141ad8c4fe3ad0f314c7af99afb3e38df163eb50d3b13b9eab17
@@ -17924,28 +17931,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"truenas-ui@file:../truenas-ui-components/dist/truenas-ui::locator=truenas-webui%40workspace%3A.":
-  version: 0.0.1
-  resolution: "truenas-ui@file:../truenas-ui-components/dist/truenas-ui#../truenas-ui-components/dist/truenas-ui::hash=bc81cd&locator=truenas-webui%40workspace%3A."
+"truenas-ui@git@github.com:iXsystems/truenas-ui-components.git#cc961f6f3aa681732483129aaeefe3fe18f659b8":
+  version: 0.0.0
+  resolution: "truenas-ui@git@github.com:iXsystems/truenas-ui-components.git#commit=cc961f6f3aa681732483129aaeefe3fe18f659b8"
   dependencies:
     "@material-design-icons/svg": "npm:~0.14.13"
+    "@mdi/angular-material": "npm:^7.2.96"
+    "@mdi/js": "npm:^7.4.47"
     "@mdi/svg": "npm:~7.4.47"
     "@types/svg-sprite": "npm:~0.0.39"
     "@types/vinyl": "npm:~2.0.12"
     cheerio: "npm:~1.0.0"
+    fast-glob: "npm:^3.3.3"
     svg-sprite: "npm:~2.0.4"
     tslib: "npm:^2.3.0"
     tsx: "npm:~4.19.1"
     vinyl: "npm:~3.0.0"
   peerDependencies:
-    "@angular/cdk": ^19.2.7
-    "@angular/common": ^19.1.0
-    "@angular/core": ^19.1.0
-    "@mdi/angular-material": ^7.2.96
-    "@mdi/js": ^7.4.47
+    "@angular/animations": ^20.0.0
+    "@angular/cdk": ^20.0.0
+    "@angular/common": ^20.0.0
+    "@angular/core": ^20.0.0
+    "@angular/forms": ^20.0.0
+    "@angular/platform-browser": ^20.0.0
+    "@angular/platform-browser-dynamic": ^20.0.0
+    "@angular/router": ^20.0.0
+    rxjs: ^7.5.0
+    zone.js: ^0.15.0
   bin:
-    truenas-icons: scripts/icon-sprite/cli.js
-  checksum: 10/e2a481fe1d9ed2896b8bcc99762df23f3c8e811e799a8cad90d90bed091f751889a671e822bf86eef3619d8095b7d60e733d112ade20da87047a7b558d7847ec
+    truenas-icons: ./dist/truenas-ui/scripts/icon-sprite/cli.js
+  checksum: 10/ec413df97740bc626ac2769c9bc10e36913640eeb974f79af0eff4f8cb6f6b584e60daf2cd27b062267443d2c89d79c1e8093998a9556128129c6cf60d6b304e
   languageName: node
   linkType: hard
 
@@ -18095,7 +18110,7 @@ __metadata:
     stylelint-config-standard: "npm:^36.0.0"
     svg-sprite: "npm:~2.0.4"
     text-security: "npm:~3.2.1"
-    truenas-ui: "file:../truenas-ui-components/dist/truenas-ui"
+    truenas-ui: "git@github.com:iXsystems/truenas-ui-components.git#cc961f6f3aa681732483129aaeefe3fe18f659b8"
     ts-jest: "npm:~29.2.5"
     tsconfig-paths: "npm:~4.2.0"
     tsx: "npm:~4.19.1"

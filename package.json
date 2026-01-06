@@ -191,7 +191,7 @@
     "stylelint-config-standard": "^36.0.0",
     "svg-sprite": "~2.0.4",
     "text-security": "~3.2.1",
-    "truenas-ui": "file:../truenas-ui-components/dist/truenas-ui",
+    "truenas-ui": "git@github.com:iXsystems/truenas-ui-components.git#cc961f6f3aa681732483129aaeefe3fe18f659b8",
     "ts-jest": "~29.2.5",
     "tsconfig-paths": "~4.2.0",
     "tsx": "~4.19.1",
