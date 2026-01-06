@@ -154,16 +154,18 @@ export class JobsListComponent implements OnInit {
     //
     // the `take(1)` operator is there to ensure that `jobsTrigger$` only ever emits once,
     // which will prevent job updates re-triggering row expansion.
-    combineLatest([jobsTrigger$.pipe(take(1)), queryTrigger$]).subscribe(([_, query]) => {
-      if (query.jobId) {
-        const jobId = Number(query.jobId);
-        if (!Number.isNaN(jobId)) {
-          this.autoExpandRow(jobId);
+    combineLatest([jobsTrigger$.pipe(take(1)), queryTrigger$])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(([_, query]) => {
+        if (query.jobId) {
+          const jobId = Number(query.jobId);
+          if (!Number.isNaN(jobId)) {
+            this.autoExpandRow(jobId);
+          }
         }
-      }
 
-      this.cdr.markForCheck();
-    });
+        this.cdr.markForCheck();
+      });
   }
 
   protected onRowExpanded(job: Job): void {
