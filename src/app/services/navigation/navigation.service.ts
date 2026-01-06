@@ -2,9 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
+import { tnIconMarker } from 'truenas-ui';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { LicenseService } from 'app/services/license.service';
 
 @UntilDestroy()
@@ -20,42 +20,42 @@ export class NavigationService {
       name: T('Dashboard'),
       type: MenuItemType.Link,
       tooltip: T('Dashboard'),
-      icon: iconMarker('dashboard'),
+      icon: tnIconMarker('view-dashboard', 'mdi'),
       state: 'dashboard',
     },
     {
       name: T('Storage'),
       type: MenuItemType.Link,
       tooltip: T('Storage'),
-      icon: iconMarker('dns'),
+      icon: tnIconMarker('dns', 'mdi'),
       state: 'storage',
     },
     {
       name: T('Datasets'),
       type: MenuItemType.Link,
       tooltip: T('Datasets'),
-      icon: iconMarker('ix-dataset-root'),
+      icon: tnIconMarker('tn-dataset-root'),
       state: 'datasets',
     },
     {
       name: T('Shares'),
       type: MenuItemType.Link,
       tooltip: T('Shares'),
-      icon: iconMarker('folder_shared'),
+      icon: tnIconMarker('folder-account', 'mdi'),
       state: 'sharing',
     },
     {
       name: T('Data Protection'),
       type: MenuItemType.Link,
       tooltip: T('Data Protection'),
-      icon: iconMarker('security'),
+      icon: tnIconMarker('security', 'mdi'),
       state: 'data-protection',
     },
     {
       name: T('Credentials'),
       type: MenuItemType.SlideOut,
       tooltip: T('Credentials'),
-      icon: iconMarker('vpn_key'),
+      icon: tnIconMarker('key', 'mdi'),
       state: 'credentials',
       sub: [
         { name: T('Users'), state: 'users' },
@@ -74,7 +74,7 @@ export class NavigationService {
       name: T('Containers'),
       type: MenuItemType.Link,
       tooltip: T('Containers'),
-      icon: iconMarker('mdi-package-variant-closed'),
+      icon: tnIconMarker('package-variant-closed', 'mdi'),
       state: 'containers',
       isVisible$: this.license.shouldShowContainers$,
     },
@@ -82,7 +82,7 @@ export class NavigationService {
       name: T('Virtual Machines'),
       type: MenuItemType.Link,
       tooltip: T('Virtual Machines'),
-      icon: iconMarker('mdi-laptop'),
+      icon: tnIconMarker('laptop', 'mdi'),
       state: 'vm',
       isVisible$: this.license.hasVms$,
     },
@@ -90,7 +90,7 @@ export class NavigationService {
       name: T('Apps'),
       type: MenuItemType.Link,
       tooltip: T('Apps'),
-      icon: iconMarker('apps'),
+      icon: tnIconMarker('apps', 'mdi'),
       state: 'apps',
       isVisible$: this.license.hasApps$,
     },
@@ -98,14 +98,14 @@ export class NavigationService {
       name: T('Reporting'),
       type: MenuItemType.Link,
       tooltip: T('Reports'),
-      icon: iconMarker('insert_chart'),
+      icon: tnIconMarker('chart-bar', 'mdi'),
       state: 'reportsdashboard/cpu',
     },
     {
       name: T('System'),
       type: MenuItemType.SlideOut,
       tooltip: T('System'),
-      icon: iconMarker('settings'),
+      icon: tnIconMarker('cog', 'mdi'),
       state: 'system',
       sub: [
         { name: T('Update'), state: 'update' },
