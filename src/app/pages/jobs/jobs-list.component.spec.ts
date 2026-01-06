@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
@@ -13,6 +13,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxEmptyRowHarness } from 'app/modules/ix-table/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxRowHarness } from 'app/modules/ix-table/components/ix-table/row.harness';
 import { jobsInitialState, JobsState } from 'app/modules/jobs/store/job.reducer';
 import { selectJobs, selectJobState } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -166,5 +167,24 @@ describe('JobsListComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.queryAll('.expanded')).toHaveLength(0);
+  });
+
+  it('sets URL parameters when a row is expanded', async () => {
+    const route = spectator.inject(ActivatedRoute);
+
+    const router = spectator.inject(Router);
+    const navigateSpy = jest.spyOn(router, 'navigate');
+    store$.overrideSelector(selectJobs, fakeJobDataSource);
+    store$.refreshState();
+
+    const firstRow = await loader.getHarness(IxRowHarness);
+    const firstRowButton = await firstRow.getHarness(MatButtonHarness.with({ selector: '[ixTest="toggle-row"]' }));
+    await firstRowButton.click();
+
+    expect(navigateSpy).toHaveBeenCalledWith([], {
+      relativeTo: route,
+      queryParams: { jobId: fakeJobDataSource[0].id },
+      queryParamsHandling: 'merge',
+    });
   });
 });

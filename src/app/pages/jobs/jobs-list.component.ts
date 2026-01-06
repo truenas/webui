@@ -8,7 +8,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject, combineLatest, Observable, of,
 } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { first, map, switchMap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -138,7 +138,7 @@ export class JobsListComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     );
 
-    // handle jobs changing and update our internal represetation inside `this.jobs`
+    // handle jobs changing and update our internal representation inside `this.jobs`
     jobsTrigger$.subscribe((jobs) => {
       this.jobs = jobs;
       this.onListFiltered(this.searchQuery());
@@ -151,7 +151,10 @@ export class JobsListComponent implements OnInit {
     // were to try and run `autoExpandRow` before `this.jobs` was populated, then
     // nothing would happen. `combineLatest` is a neat way to ensure that BOTH observables have
     // values before doing anything.
-    combineLatest([jobsTrigger$, queryTrigger$]).subscribe(([_, query]) => {
+    //
+    // the `first()` operator is there to ensure that `jobsTrigger$` only ever emits once,
+    // which will prevent job updates re-triggering row expansion.
+    combineLatest([jobsTrigger$.pipe(first()), queryTrigger$]).subscribe(([_, query]) => {
       if (query.jobId) {
         const jobId = Number(query.jobId);
         if (!Number.isNaN(jobId)) {
