@@ -68,6 +68,7 @@ describe('IscsiWizardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockApi([
+        mockCall('tn_connect.config'),
         mockCall('fc.capable', true),
         mockCall('iscsi.global.sessions', [] as IscsiGlobalSession[]),
         mockCall('iscsi.extent.query', []),

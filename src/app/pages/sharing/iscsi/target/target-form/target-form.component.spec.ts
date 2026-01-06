@@ -87,6 +87,7 @@ describe('TargetFormComponent', () => {
       }),
       mockProvider(SlideInRef, slideInRef),
       mockApi([
+        mockCall('tn_connect.config'),
         mockCall('fc.fc_host.query', []),
         mockCall('fcport.port_choices', {}),
         mockCall('iscsi.target.create'),
@@ -261,8 +262,8 @@ describe('TargetFormComponent', () => {
       spectator.component.initiators$.subscribe((options) => initiator = options);
       spectator.component.auths$.subscribe((options) => auth = options);
 
-      expect(api.call).toHaveBeenNthCalledWith(1, 'fc.capable');
-      expect(api.call).toHaveBeenNthCalledWith(2, 'tn_connect.config');
+      expect(api.call).toHaveBeenNthCalledWith(1, 'tn_connect.config');
+      expect(api.call).toHaveBeenNthCalledWith(2, 'fc.capable');
       expect(api.call).toHaveBeenNthCalledWith(3, 'iscsi.portal.query', []);
       expect(api.call).toHaveBeenNthCalledWith(4, 'iscsi.initiator.query', []);
       expect(api.call).toHaveBeenNthCalledWith(5, 'iscsi.auth.query', []);
