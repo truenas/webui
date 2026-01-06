@@ -3,10 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatBadgeHarness } from '@angular/material/badge/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIconHarness } from '@angular/material/icon/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { TnIconHarness } from 'truenas-ui';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
 import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import { selectIsJobPanelOpen, selectRunningJobsCount } from 'app/modules/jobs/store/job.selectors';
@@ -46,8 +46,8 @@ describe('JobsIndicatorComponent', () => {
 
   it('shows an icon with a badge for number of running jobs', async () => {
     const iconButton = await loader.getHarness(MatButtonHarness);
-    const icon = await iconButton.getHarness(MatIconHarness);
-    expect(await icon.getName()).toMatch('assignment');
+    const icon = await iconButton.getHarness(TnIconHarness);
+    expect(await icon.getName()).toBe('clipboard-text');
 
     const badge = await loader.getHarness(MatBadgeHarness);
     expect(await badge.getText()).toBe('4');

@@ -191,7 +191,7 @@
     "stylelint-config-standard": "^36.0.0",
     "svg-sprite": "~2.0.4",
     "text-security": "~3.2.1",
-    "truenas-ui": "git@github.com:iXsystems/truenas-ui-components.git#331213dccbb83f38c7f244c0866fbc01b9642d33",
+    "truenas-ui": "file:../truenas-ui-components/dist/truenas-ui",
     "ts-jest": "~29.2.5",
     "tsconfig-paths": "~4.2.0",
     "tsx": "~4.19.1",
@@ -215,6 +215,7 @@
   "devDependencies": {
     "@angular-eslint/template-parser": "~20.7.0",
     "@markuplint/ml-core": "~4.13.1",
+    "@mdi/js": "~7.4.47",
     "@typescript-eslint/types": "~8.41.0",
     "@typescript-eslint/utils": "~8.41.0",
     "prettier": "~3.6.2"

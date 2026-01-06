@@ -9,6 +9,7 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
+import { TnIconHarness } from 'truenas-ui';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -17,7 +18,6 @@ import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.inte
 import { selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
@@ -159,7 +159,7 @@ describe('TopbarComponent', () => {
 
   describe('update icon', () => {
     it('shows an icon when there is an active update job', async () => {
-      const icon = await loader.getHarness(IxIconHarness.with({ name: 'system_update_alt' }));
+      const icon = await loader.getHarness(TnIconHarness.with({ name: 'download' }));
       expect(icon).toExist();
     });
   });
