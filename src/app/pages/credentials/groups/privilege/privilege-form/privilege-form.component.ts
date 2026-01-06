@@ -1,10 +1,11 @@
-import { Component, ChangeDetectionStrategy, OnInit, signal, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  Component, ChangeDetectionStrategy, OnInit, signal, inject, DestroyRef,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -34,7 +35,6 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-privilege-form',
   templateUrl: './privilege-form.component.html',
@@ -57,6 +57,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   ],
 })
 export class PrivilegeFormComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private api = inject(ApiService);
@@ -76,6 +77,7 @@ export class PrivilegeFormComponent implements OnInit {
   protected isLoading = signal(false);
   protected showDsAuthCheckbox = signal(false);
   protected dsAuthEnabled = signal(false);
+  private dsStatus = signal<DirectoryServicesStatus | null>(null);
 
   protected form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -195,14 +197,21 @@ export class PrivilegeFormComponent implements OnInit {
     // Load current ds_auth status
     this.store$.pipe(
       waitForGeneralConfig,
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((generalConfig) => {
       this.dsAuthEnabled.set(generalConfig.ds_auth);
     });
 
+    // Load directory services status once on init (cache it)
+    this.api.call('directoryservices.status').pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((status) => {
+      this.dsStatus.set(status);
+    });
+
     // Watch for DS groups being added and show inline checkbox if needed
     this.form.controls.ds_groups.valueChanges.pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe((dsGroups) => {
       this.updateDsAuthCheckboxVisibility(dsGroups);
     });
@@ -221,7 +230,7 @@ export class PrivilegeFormComponent implements OnInit {
   /**
    * Updates the visibility of the ds_auth checkbox based on:
    * - Whether DS groups are present
-   * - Whether DS is actually enabled
+   * - Whether DS is actually enabled (cached from init)
    * - Whether ds_auth is currently disabled
    * - Enterprise mode
    */
@@ -244,14 +253,10 @@ export class PrivilegeFormComponent implements OnInit {
       return;
     }
 
-    // Check if Directory Services are actually enabled
-    this.api.call('directoryservices.status').pipe(
-      untilDestroyed(this),
-    ).subscribe((dsStatus: DirectoryServicesStatus) => {
-      // Only show checkbox if DS is enabled (not disabled)
-      const shouldShow = dsStatus.type && dsStatus.status !== DirectoryServiceStatus.Disabled;
-      this.showDsAuthCheckbox.set(shouldShow);
-    });
+    // Check if Directory Services are actually enabled (using cached status)
+    const status = this.dsStatus();
+    const shouldShow = status?.type && status.status !== DirectoryServiceStatus.Disabled;
+    this.showDsAuthCheckbox.set(shouldShow);
   }
 
   onSubmit(): void {
@@ -281,7 +286,7 @@ export class PrivilegeFormComponent implements OnInit {
         return of(null);
       }),
       finalize(() => this.isLoading.set(false)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.slideInRef.close({ response: true });

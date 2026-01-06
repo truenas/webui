@@ -657,12 +657,5 @@ describe('PrivilegeFormComponent', () => {
       const checkbox = spectator.query('ix-checkbox[formControlName="enable_ds_auth"]');
       expect(checkbox).toBeFalsy();
     }));
-
-    it('should update ds_auth setting when conditions are met', () => {
-      // This test verifies the logic exists to update ds_auth
-      // Full integration testing with form submission is complex due to async observable chains
-      // Manual testing confirms the feature works as expected
-      expect(true).toBe(true);
-    });
   });
 });
