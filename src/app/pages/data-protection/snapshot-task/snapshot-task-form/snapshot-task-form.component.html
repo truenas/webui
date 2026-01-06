@@ -92,6 +92,21 @@
               formControlName="enabled"
               [label]="labels.enabled | translate"
             ></ix-checkbox>
+
+            @if (!isNew && true) {
+              <div class="retention-warning">
+                <p class="warning-text">
+                  {{ 'Warning: This change will affect the retention of' | translate }}
+                  <strong>{{ affectedSnapshots().length }}</strong>
+                  {{ 'existing snapshot(s)' | translate }}.
+                </p>
+                <ix-checkbox
+                  formControlName="fixate_removal_date"
+                  [label]="labels.fixate_removal_date | translate"
+                  [tooltip]="tooltips.fixate_removal_date | translate"
+                ></ix-checkbox>
+              </div>
+            }
           </ix-fieldset>
         </div>
       </div>

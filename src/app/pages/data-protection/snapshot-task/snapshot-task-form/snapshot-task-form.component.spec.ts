@@ -68,6 +68,7 @@ describe('SnapshotTaskComponent', () => {
       mockApi([
         mockCall('pool.snapshottask.create'),
         mockCall('pool.snapshottask.update'),
+        mockCall('pool.snapshottask.update_will_change_retention_for', {}),
       ]),
       mockProvider(DialogService),
       mockProvider(SlideIn),
@@ -189,6 +190,7 @@ describe('SnapshotTaskComponent', () => {
           enabled: false,
           exclude: ['root'],
           recursive: false,
+          fixate_removal_date: true,
           schedule: {
             dom: '*',
             dow: '*',
@@ -199,6 +201,24 @@ describe('SnapshotTaskComponent', () => {
         },
       ]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+
+    it('does not include fixate_removal_date when no snapshots are affected', async () => {
+      const apiService = spectator.inject(ApiService);
+
+      await form.fillForm({
+        'Allow Taking Empty Snapshots': false,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(apiService.call).toHaveBeenCalledWith('pool.snapshottask.update', [
+        1,
+        expect.objectContaining({
+          fixate_removal_date: true,
+        }),
+      ]);
     });
   });
 });

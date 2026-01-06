@@ -733,6 +733,7 @@ export interface ApiCallDirectory {
   'pool.snapshottask.delete': { params: [id: number]; response: boolean };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
   'pool.snapshottask.update': { params: [id: number, update: PeriodicSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
+  'pool.snapshottask.update_will_change_retention_for': { params: [id: number, update: PeriodicSnapshotTaskUpdate]; response: Record<string, string[]> };
   'pool.upgrade': { params: [id: number]; response: boolean };
   'pool.validate_name': { params: string[]; response: boolean | { error: boolean } };
 

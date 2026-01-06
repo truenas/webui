@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, switchMap, debounceTime, combineLatest, startWith } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { Role } from 'app/enums/role.enum';
@@ -89,10 +89,12 @@ export class SnapshotTaskFormComponent implements OnInit {
     end: ['23:59', Validators.required],
     allow_empty: [true],
     enabled: [true],
+    fixate_removal_date: [true],
   });
 
   protected isLoading = signal(false);
   protected editingTask: PeriodicSnapshotTask | undefined;
+  protected affectedSnapshots = signal<string[]>([]);
 
   readonly labels = {
     dataset: helptextSnapshotForm.datasetLabel,
@@ -105,6 +107,7 @@ export class SnapshotTaskFormComponent implements OnInit {
     end: helptextSnapshotForm.endLabel,
     allow_empty: helptextSnapshotForm.allowEmptyLabel,
     enabled: helptextSnapshotForm.enabledLabel,
+    fixate_removal_date: helptextSnapshotForm.fixateRemovalDateLabel,
   };
 
   readonly tooltips = {
@@ -116,6 +119,7 @@ export class SnapshotTaskFormComponent implements OnInit {
     begin: helptextSnapshotForm.beginTooltip,
     end: helptextSnapshotForm.endTooltip,
     allow_empty: helptextSnapshotForm.allowEmptyTooltip,
+    fixate_removal_date: helptextSnapshotForm.fixateRemovalDateTooltip,
   };
 
   readonly datasetOptions$ = this.storageService.getDatasetNameOptions();
@@ -136,7 +140,60 @@ export class SnapshotTaskFormComponent implements OnInit {
   ngOnInit(): void {
     if (this.editingTask) {
       this.setTaskForEdit(this.editingTask);
+      this.setupRetentionChangeDetection();
     }
+  }
+
+  private setupRetentionChangeDetection(): void {
+    if (!this.editingTask) {
+      return;
+    }
+
+    // Watch for changes in fields that affect retention
+    const relevantFields$ = combineLatest([
+      this.form.controls.naming_schema.valueChanges.pipe(startWith(this.form.controls.naming_schema.value)),
+      this.form.controls.schedule.valueChanges.pipe(startWith(this.form.controls.schedule.value)),
+      this.form.controls.lifetime_value.valueChanges.pipe(startWith(this.form.controls.lifetime_value.value)),
+      this.form.controls.lifetime_unit.valueChanges.pipe(startWith(this.form.controls.lifetime_unit.value)),
+      this.form.controls.begin.valueChanges.pipe(startWith(this.form.controls.begin.value)),
+      this.form.controls.end.valueChanges.pipe(startWith(this.form.controls.end.value)),
+    ]);
+
+    relevantFields$.pipe(
+      debounceTime(300),
+      switchMap(() => {
+        const values = this.form.value;
+        const params = {
+          ...values,
+          schedule: this.isTimeMode
+            ? {
+                begin: values.begin,
+                end: values.end,
+                ...crontabToSchedule(this.form.getRawValue().schedule),
+              }
+            : crontabToSchedule(this.form.getRawValue().schedule),
+        };
+        delete params.begin;
+        delete params.end;
+        delete params.fixate_removal_date;
+
+        return this.api.call('pool.snapshottask.update_will_change_retention_for', [
+          this.editingTask.id,
+          params as PeriodicSnapshotTaskUpdate,
+        ]);
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (response: Record<string, string[]>) => {
+        // Flatten all affected snapshots from all change types
+        const allAffectedSnapshots = Object.values(response).flat();
+        this.affectedSnapshots.set(allAffectedSnapshots);
+      },
+      error: () => {
+        // Silently handle errors - not critical for form functionality
+        this.affectedSnapshots.set([]);
+      },
+    });
   }
 
   protected get isTimeMode(): boolean {
@@ -167,6 +224,11 @@ export class SnapshotTaskFormComponent implements OnInit {
     };
     delete params.begin;
     delete params.end;
+
+    // Only include fixate_removal_date when updating (not creating)
+    if (this.isNew) {
+      delete params.fixate_removal_date;
+    }
 
     this.isLoading.set(true);
     let request$: Observable<unknown>;
