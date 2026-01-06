@@ -166,20 +166,12 @@ export class JobsListComponent implements OnInit {
     });
   }
 
-  protected onRowExpanded(job: Job | null): void {
-    if (job) {
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { jobId: job.id },
-        queryParamsHandling: 'merge',
-      });
-    } else {
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { jobId: null },
-        queryParamsHandling: 'merge',
-      });
-    }
+  protected onRowExpanded(job: Job): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { jobId: job.id },
+      queryParamsHandling: 'merge',
+    });
   }
 
   protected onTabChange(tab: JobTab): void {
