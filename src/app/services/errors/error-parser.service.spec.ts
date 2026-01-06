@@ -109,7 +109,7 @@ describe('ErrorParserService', () => {
 
       expect(errorReport).toEqual({
         title: 'FAILED',
-        message: 'DUMMY_ERROR',
+        message: '<pre>DUMMY_ERROR</pre>',
         stackTrace: 'LOGS',
         actions: [{
           label: 'View Details',

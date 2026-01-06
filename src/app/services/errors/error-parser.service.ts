@@ -185,9 +185,18 @@ export class ErrorParserService {
       return this.parseJobWithArrayExtra(job);
     }
 
+    let message: string;
+    if (job.error) {
+      message = `<pre>${job.error}</pre>`;
+    } else if (job.exception) {
+      message = `<pre>${job.exception}</pre>`;
+    } else {
+      message = this.translate.instant('Unknown error');
+    }
+
     return {
       title: job.state,
-      message: job.error || job.exception || this.translate.instant('Unknown error'),
+      message,
       stackTrace: job.logs_excerpt || job.exception,
       // display a `View Details` button and `Download Logs` button on any failed job dialogs
       actions: [{
