@@ -7,8 +7,10 @@ import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -22,6 +24,23 @@ describe('BootEnvironmentListComponent', () => {
   let loader: HarnessLoader;
   let api: ApiService;
   let table: IxTableHarness;
+
+  const bootEnvironmentsWithKeep = [
+    ...fakeBootEnvironmentsDataSource,
+    {
+      id: '25.04.0-MASTER-20241020-084512',
+      dataset: 'boot-pool/ROOT/25.04.0-MASTER-20241020-084512',
+      active: false,
+      activated: false,
+      created: {
+        $date: 1729411512000,
+      },
+      used_bytes: 3100000000,
+      used: '2.88 GiB',
+      keep: true,
+      can_activate: true,
+    } as BootEnvironment,
+  ];
 
   const createComponent = createComponentFactory({
     component: BootEnvironmentListComponent,
@@ -37,7 +56,8 @@ describe('BootEnvironmentListComponent', () => {
         timezone: 'America/Los_Angeles',
       }),
       mockApi([
-        mockCall('boot.environment.query', fakeBootEnvironmentsDataSource),
+        mockCall('boot.environment.query', bootEnvironmentsWithKeep),
+        mockCall('boot.environment.keep'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -80,9 +100,58 @@ describe('BootEnvironmentListComponent', () => {
         'No',
         '',
       ],
+      [
+        '',
+        '25.04.0-MASTER-20241020-084512',
+        'No',
+        '2024-10-20 01:05:12',
+        '2.89 GiB',
+        'Yes',
+        '',
+      ],
     ];
 
     expect(api.call).toHaveBeenCalledWith('boot.environment.query');
     expect(cells).toEqual(expectedRows);
+  });
+
+  it('shows "Keep" action with outline bookmark icon when keep is false', async () => {
+    const keepIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'bookmark_border' }), 1, 6);
+    expect(keepIcon).toBeDefined();
+  });
+
+  it('shows "Unkeep" action with filled bookmark icon when keep is true', async () => {
+    const unkeepIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'bookmark' }), 3, 6);
+    expect(unkeepIcon).toBeDefined();
+  });
+
+  it('calls API to set keep flag when Keep action is clicked', async () => {
+    const keepIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'bookmark_border' }), 1, 6);
+    await keepIcon.click();
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: 'Keep',
+      message: 'Keep this Boot Environment?',
+      buttonText: 'Set Keep Flag',
+    });
+
+    expect(api.call).toHaveBeenCalledWith('boot.environment.keep', [
+      { id: '25.04.0-MASTER-20241105-224807', value: true },
+    ]);
+  });
+
+  it('calls API to remove keep flag when Unkeep action is clicked', async () => {
+    const unkeepIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'bookmark' }), 3, 6);
+    await unkeepIcon.click();
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: 'Unkeep',
+      message: 'No longer keep this Boot Environment?',
+      buttonText: 'Remove Keep Flag',
+    });
+
+    expect(api.call).toHaveBeenCalledWith('boot.environment.keep', [
+      { id: '25.04.0-MASTER-20241020-084512', value: false },
+    ]);
   });
 });
