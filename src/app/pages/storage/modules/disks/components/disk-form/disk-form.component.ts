@@ -28,6 +28,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
+export type DiskFormResponse = (DiskUpdate & { identifier: string })[];
+
 @UntilDestroy()
 @Component({
   selector: 'ix-disk-form',
@@ -59,7 +61,7 @@ export class DiskFormComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private errorHandler = inject(FormErrorHandlerService);
   private snackbarService = inject(SnackbarService);
-  slideInRef = inject<SlideInRef<Disk, boolean>>(SlideInRef);
+  slideInRef = inject<SlideInRef<Disk, DiskFormResponse>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
 
@@ -109,6 +111,9 @@ export class DiskFormComponent implements OnInit {
         (state) => {
           const controlPasswd = this.form.controls.passwd;
           if (state) {
+            // clear the password AND disable the form so as not to confuse users
+            controlPasswd.setValue('');
+            controlPasswd.markAsPristine();
             controlPasswd.disable();
           } else {
             controlPasswd.enable();
@@ -136,15 +141,21 @@ export class DiskFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
+    const diskId = this.existingDisk().identifier;
     const valuesDiskUpdate: DiskUpdate = this.prepareUpdate(this.form.value);
 
     this.isLoading.set(true);
-    this.api.call('disk.update', [this.existingDisk().identifier, valuesDiskUpdate])
+    this.api.call('disk.update', [diskId, valuesDiskUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.slideInRef.close({ response: true });
+          this.slideInRef.close({
+            response: [{
+              identifier: diskId,
+              ...valuesDiskUpdate,
+            }],
+          });
           this.snackbarService.success(this.translate.instant('Disk settings successfully saved.'));
         },
         error: (error: unknown) => {

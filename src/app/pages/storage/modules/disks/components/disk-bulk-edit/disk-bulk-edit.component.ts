@@ -24,6 +24,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 
 @UntilDestroy()
 @Component({
@@ -53,7 +54,7 @@ export class DiskBulkEditComponent {
   private translate = inject(TranslateService);
   private snackbarService = inject(SnackbarService);
   private errorHandler = inject(FormErrorHandlerService);
-  slideInRef = inject<SlideInRef<Disk[], boolean>>(SlideInRef);
+  slideInRef = inject<SlideInRef<Disk[], DiskFormResponse>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
 
@@ -139,7 +140,6 @@ export class DiskBulkEditComponent {
           this.isLoading = false;
           const isSuccessful = job.result.every((result) => {
             if (result.error !== null) {
-              this.slideInRef.close({ response: false, error: result.error });
               this.dialogService.error({
                 title: helptextDisks.errorDialogTitle,
                 message: result.error,
@@ -151,13 +151,20 @@ export class DiskBulkEditComponent {
           });
 
           if (isSuccessful) {
-            this.slideInRef.close({ response: true });
+            this.slideInRef.close({
+              response: req.map((diskUpdate) => ({
+                identifier: diskUpdate[0],
+                ...diskUpdate[1],
+              })),
+            });
             this.snackbarService.success(successText);
+          } else {
+            this.slideInRef.close({ response: [] });
           }
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.slideInRef.close({ response: false, error });
+          this.slideInRef.close({ response: [], error });
           this.errorHandler.handleValidationErrors(error, this.form);
         },
       });
