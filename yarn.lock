@@ -17926,7 +17926,7 @@ __metadata:
 
 "truenas-ui@file:../truenas-ui-components/dist/truenas-ui::locator=truenas-webui%40workspace%3A.":
   version: 0.0.1
-  resolution: "truenas-ui@file:../truenas-ui-components/dist/truenas-ui#../truenas-ui-components/dist/truenas-ui::hash=d3f512&locator=truenas-webui%40workspace%3A."
+  resolution: "truenas-ui@file:../truenas-ui-components/dist/truenas-ui#../truenas-ui-components/dist/truenas-ui::hash=bc81cd&locator=truenas-webui%40workspace%3A."
   dependencies:
     "@material-design-icons/svg": "npm:~0.14.13"
     "@mdi/svg": "npm:~7.4.47"
@@ -17945,7 +17945,7 @@ __metadata:
     "@mdi/js": ^7.4.47
   bin:
     truenas-icons: scripts/icon-sprite/cli.js
-  checksum: 10/ed5b368ae0dbc98ae0ee502855775daff066e84f28909e462a0df74acdb676bf82ffbe9cafe028c994415474553f34b1680deef163126d727791667d1f4f540f
+  checksum: 10/e2a481fe1d9ed2896b8bcc99762df23f3c8e811e799a8cad90d90bed091f751889a671e822bf86eef3619d8095b7d60e733d112ade20da87047a7b558d7847ec
   languageName: node
   linkType: hard
 
