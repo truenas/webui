@@ -2,13 +2,13 @@ import { AsyncPipe } from '@angular/common';
 import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject, combineLatest, Observable, of,
 } from 'rxjs';
-import { first, map, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -70,6 +70,7 @@ export class JobsListComponent implements OnInit {
   private store$ = inject<Store<JobSlice>>(Store);
   private cdr = inject(ChangeDetectorRef);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = jobsListElements;
@@ -129,16 +130,30 @@ export class JobsListComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    combineLatest([
-      this.selectedJobs$,
-      this.route.queryParams.pipe(first()),
-    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(([jobs, queryParams]) => {
+    const jobsTrigger$ = this.selectedJobs$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    );
+
+    const queryTrigger$ = this.route.queryParams.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    );
+
+    // handle jobs changing and update our internal represetation inside `this.jobs`
+    jobsTrigger$.subscribe((jobs) => {
       this.jobs = jobs;
       this.onListFiltered(this.searchQuery());
       this.setDefaultSort();
+      this.cdr.markForCheck();
+    });
 
-      if (queryParams.jobId) {
-        const jobId = Number(queryParams.jobId);
+    // handle query updates and expand rows according to URL params.
+    // we combine `queryTrigger$` with `jobsTrigger$` since, if we
+    // were to try and run `autoExpandRow` before `this.jobs` was populated, then
+    // nothing would happen. `combineLatest` is a neat way to ensure that BOTH observables have
+    // values before doing anything.
+    combineLatest([jobsTrigger$, queryTrigger$]).subscribe(([_, query]) => {
+      if (query.jobId) {
+        const jobId = Number(query.jobId);
         if (!Number.isNaN(jobId)) {
           this.autoExpandRow(jobId);
         }
@@ -146,6 +161,22 @@ export class JobsListComponent implements OnInit {
 
       this.cdr.markForCheck();
     });
+  }
+
+  protected onRowExpanded(job: Job | null): void {
+    if (job) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { jobId: job.id },
+        queryParamsHandling: 'merge',
+      });
+    } else {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { jobId: null },
+        queryParamsHandling: 'merge',
+      });
+    }
   }
 
   protected onTabChange(tab: JobTab): void {
@@ -171,9 +202,10 @@ export class JobsListComponent implements OnInit {
 
   private autoExpandRow(jobId: number): void {
     const jobToExpand = this.jobs.find((job) => job.id === jobId);
-    // if there's already a row expanded, don't override it
-    if (jobToExpand && !this.dataProvider.expandedRow) {
+    if (jobToExpand) {
+      // set the expanded row and force a re-render
       this.dataProvider.expandedRow = jobToExpand;
+      this.dataProvider.currentPage$.next(this.dataProvider.currentPage$.value);
     }
   }
 

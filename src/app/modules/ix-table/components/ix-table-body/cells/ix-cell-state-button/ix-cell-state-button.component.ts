@@ -26,6 +26,7 @@ import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
 import { JobStateDisplayPipe } from 'app/modules/pipes/job-state-display/job-state-display.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { FailedJobError } from 'app/services/errors/error.classes';
 
 interface RowState {
   state: {
@@ -144,46 +145,8 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     }
 
     if (state.error) {
-      // by default, we just show the error message
-      const message = `<pre>${state.error}</pre>`;
-
-      // if there's a log excerpt though, we include the additional
-      // 'View Details' and 'Download Logs' buttons.
-      let logs;
-      let actions;
-      if (this.job()?.logs_excerpt) {
-        logs = this.job()?.logs_excerpt ? this.job() : null;
-
-        // only show the 'View Details' button when we're *not* on the jobs page
-        // since it would imply to the user there's somewhere else they could go
-        // and that clicking it would take them there.
-        const showDetailsButton = !this.router.isActive(
-          '/jobs',
-          {
-            matrixParams: 'ignored',
-            queryParams: 'ignored',
-            paths: 'exact',
-            fragment: 'ignored',
-          },
-        );
-
-        // the 'View Details' button will take the user to the jobs page and expand the failed job's row
-        if (showDetailsButton) {
-          actions = [{
-            label: this.translate.instant('View Details'),
-            route: '/jobs',
-            params: { jobId: this.job().id },
-          }];
-        }
-      }
-
-      this.dialogService.error({
-        title: state.state,
-        message,
-        // since these two may be undefined and are optional, we can just include them in the call outright
-        logs,
-        actions,
-      });
+      const error: FailedJobError = new FailedJobError(this.job());
+      this.errorHandler.showErrorModal(error);
       return;
     }
 
