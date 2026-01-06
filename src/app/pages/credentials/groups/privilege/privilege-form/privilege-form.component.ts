@@ -11,10 +11,11 @@ import {
   Observable, combineLatest, finalize, map, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
+import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
@@ -61,7 +62,6 @@ export class PrivilegeFormComponent implements OnInit {
   private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
-  private dialog = inject(DialogService);
   private userService = inject(UserService);
   slideInRef = inject<SlideInRef<Privilege | undefined, boolean>>(SlideInRef);
 
@@ -74,6 +74,8 @@ export class PrivilegeFormComponent implements OnInit {
   private readonly GROUP_QUERY_LIMIT = 50;
 
   protected isLoading = signal(false);
+  protected showDsAuthCheckbox = signal(false);
+  protected dsAuthEnabled = signal(false);
 
   protected form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -81,6 +83,7 @@ export class PrivilegeFormComponent implements OnInit {
     ds_groups: [[] as string[]],
     web_shell: [false],
     roles: [[] as Role[]],
+    enable_ds_auth: [false],
   });
 
   protected readonly helptext = helptextPrivilege;
@@ -188,6 +191,21 @@ export class PrivilegeFormComponent implements OnInit {
         this.form.controls.roles.disable();
       }
     }
+
+    // Load current ds_auth status
+    this.store$.pipe(
+      waitForGeneralConfig,
+      untilDestroyed(this),
+    ).subscribe((generalConfig) => {
+      this.dsAuthEnabled.set(generalConfig.ds_auth);
+    });
+
+    // Watch for DS groups being added and show inline checkbox if needed
+    this.form.controls.ds_groups.valueChanges.pipe(
+      untilDestroyed(this),
+    ).subscribe((dsGroups) => {
+      this.updateDsAuthCheckboxVisibility(dsGroups);
+    });
   }
 
   private setPrivilegeForEdit(existingPrivilege: Privilege): void {
@@ -200,6 +218,42 @@ export class PrivilegeFormComponent implements OnInit {
     });
   }
 
+  /**
+   * Updates the visibility of the ds_auth checkbox based on:
+   * - Whether DS groups are present
+   * - Whether DS is actually enabled
+   * - Whether ds_auth is currently disabled
+   * - Enterprise mode
+   */
+  private updateDsAuthCheckboxVisibility(dsGroups: string[]): void {
+    // Hide checkbox if no DS groups
+    if (!dsGroups?.length) {
+      this.showDsAuthCheckbox.set(false);
+      return;
+    }
+
+    // Hide checkbox in non-enterprise mode
+    if (!this.isEnterprise()) {
+      this.showDsAuthCheckbox.set(false);
+      return;
+    }
+
+    // Hide checkbox if ds_auth is already enabled
+    if (this.dsAuthEnabled()) {
+      this.showDsAuthCheckbox.set(false);
+      return;
+    }
+
+    // Check if Directory Services are actually enabled
+    this.api.call('directoryservices.status').pipe(
+      untilDestroyed(this),
+    ).subscribe((dsStatus: DirectoryServicesStatus) => {
+      // Only show checkbox if DS is enabled (not disabled)
+      const shouldShow = dsStatus.type && dsStatus.status !== DirectoryServiceStatus.Disabled;
+      this.showDsAuthCheckbox.set(shouldShow);
+    });
+  }
+
   onSubmit(): void {
     this.isLoading.set(true);
 
@@ -207,19 +261,22 @@ export class PrivilegeFormComponent implements OnInit {
     combineLatest([this.localGroupsUids$, this.dsGroupsUids$]).pipe(
       switchMap(([localGroups, dsGroups]) => {
         const values: PrivilegeUpdate = {
-          ...this.form.value,
+          name: this.form.value.name,
           local_groups: localGroups,
           ds_groups: dsGroups,
+          web_shell: this.form.value.web_shell,
+          roles: this.form.value.roles,
         };
 
         return this.existingPrivilege
           ? this.api.call('privilege.update', [this.existingPrivilege.id, values])
           : this.api.call('privilege.create', [values]);
       }),
-      switchMap(() => this.store$.pipe(waitForGeneralConfig)),
-      switchMap((generalConfig) => {
-        if (this.isEnterprise() && !generalConfig.ds_auth) {
-          return this.enableDsAuth();
+      switchMap(() => {
+        // If ds_auth checkbox was shown and checked, enable ds_auth
+        if (this.showDsAuthCheckbox() && this.form.value.enable_ds_auth) {
+          return this.api.call('system.general.update', [{ ds_auth: true }])
+            .pipe(finalize(() => this.store$.dispatch(generalConfigUpdated())));
         }
         return of(null);
       }),
@@ -233,22 +290,6 @@ export class PrivilegeFormComponent implements OnInit {
         this.errorHandler.handleValidationErrors(error, this.form);
       },
     });
-  }
-
-  private enableDsAuth(): Observable<unknown> {
-    return this.dialog.confirm({
-      title: this.translate.instant('Allow access'),
-      message: this.translate.instant('Allow Directory Service users to access WebUI?'),
-      buttonText: this.translate.instant('Allow'),
-    }).pipe(
-      switchMap((confirmed) => {
-        if (confirmed) {
-          return this.api.call('system.general.update', [{ ds_auth: true }])
-            .pipe(finalize(() => this.store$.dispatch(generalConfigUpdated())));
-        }
-        return of(null);
-      }),
-    );
   }
 
   /**
