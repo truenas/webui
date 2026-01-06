@@ -15,6 +15,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
+import { TnIconComponent } from 'truenas-ui';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
@@ -24,7 +25,6 @@ import { RebootRequiredDialog } from 'app/modules/dialog/components/reboot-requi
 import { UpdateDialog } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
@@ -59,7 +59,7 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
     MatToolbarRow,
     MatIconButton,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     GlobalSearchTriggerComponent,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,

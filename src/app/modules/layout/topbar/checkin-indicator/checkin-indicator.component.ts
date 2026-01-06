@@ -7,10 +7,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { TnIconComponent } from 'truenas-ui';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { checkinIndicatorPressed } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -27,7 +27,7 @@ import {
   imports: [
     MatIconButton,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     AsyncPipe,
     TranslateModule,
     TestDirective,

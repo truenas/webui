@@ -5,10 +5,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
+import { TnIconComponent } from 'truenas-ui';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   ResilverProgressDialog,
 } from 'app/modules/layout/topbar/resilvering-indicator/resilver-progress/resilver-progress.component';
@@ -23,7 +23,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   imports: [
     MatIconButton,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     AsyncPipe,
     TranslateModule,
     TestDirective,

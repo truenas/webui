@@ -8,9 +8,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { TnIconComponent } from 'truenas-ui';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
 import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import { selectIsJobPanelOpen, selectRunningJobsCount } from 'app/modules/jobs/store/job.selectors';
@@ -30,7 +30,7 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
     MatIconButton,
     MatBadge,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     AsyncPipe,
     TranslateModule,
     UiSearchDirective,

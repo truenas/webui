@@ -205,6 +205,10 @@ body .mat-mdc-select-trigger {
   word-break: break-all;
 }
 
+[mat-menu-item] tn-icon {
+  margin-right: 16px;
+}
+
 /*-------- Scrollbar ---------*/
 body * {
   scrollbar-color: rgba(0, 0, 0, 28%) var(--contrast-lightest);
