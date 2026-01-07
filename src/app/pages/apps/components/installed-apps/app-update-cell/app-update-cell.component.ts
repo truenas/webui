@@ -29,9 +29,9 @@ export class AppUpdateCellComponent {
 
     // Using line breaks for tooltip - Angular Material tooltips support this
     const updateAvailable = this.translate.instant('Update available');
-    const catalog = this.translate.instant('Catalog');
-    const appLabel = this.translate.instant('App');
+    const version = this.translate.instant('Version');
+    const appVersionLabel = this.translate.instant('App Version');
 
-    return `${updateAvailable}\n${catalog}: ${catalogVersion}\n${appLabel}: ${appVersion}`;
+    return `${updateAvailable}\n${appVersionLabel}: ${appVersion}\n${version}: ${catalogVersion}`;
   }
 }
