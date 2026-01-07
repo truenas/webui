@@ -1,11 +1,3 @@
-:host {
-  display: block;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
 .ix-slidein-title-bar {
   align-content: center;
   align-items: center;
@@ -18,31 +10,6 @@
   &.has-many-components {
     justify-content: flex-start;
   }
-}
-
-.ix-form-title {
-  color: var(--fg1);
-  word-break: break-all;
-}
-
-.title-left-margin {
-  margin-left: 30px;
-}
-
-#ix-close-icon {
-  color: var(--fg1);
-  cursor: pointer;
-  margin-left: 20px;
-
-  &:focus {
-    border-radius: 50%;
-    outline: 1.5px solid var(--primary);
-  }
-
-}
-
-.icon-margin-right {
-  margin-right: 20px;
 }
 
 .progress-bar {

@@ -1,7 +1,7 @@
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, HostListener, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, ViewChild, inject } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   debounceTime, fromEvent,
@@ -38,27 +38,11 @@ export class SlideInContainerComponent implements AfterViewInit {
   private keydownSubscription?: Subscription;
   private slideInRef?: SlideInRef<unknown, unknown>;
 
-  @HostBinding('class.slide-in-visible') private isVisible = false;
-  @HostBinding('class.slide-in-hidden') private isHidden = true;
-  @HostBinding('style.width') private width = '480px';
-  @HostBinding('style.max-width') private maxWidth = '480px';
+  @HostBinding('class.slide-in-visible') isVisible = false;
+  @HostBinding('class.slide-in-hidden') isHidden = true;
+  @HostBinding('style.width') width = '480px';
+  @HostBinding('style.max-width') maxWidth = '480px';
   private isWide = false;
-
-  @HostListener('transitionend', ['$event'])
-  private onTransitionEnd(event: TransitionEvent): void {
-    // Only handle events that originated from this element, not from children
-    if (event.target !== event.currentTarget) {
-      return;
-    }
-    if (event.propertyName === 'transform') {
-      if (this.isVisible && !this.isHidden) {
-        this.whenVisible$.next();
-      }
-      if (this.isHidden && !this.isVisible) {
-        this.whenHidden$.next();
-      }
-    }
-  }
 
   ngAfterViewInit(): void {
     this.resizeSubject$.pipe(
@@ -128,11 +112,6 @@ export class SlideInContainerComponent implements AfterViewInit {
         this.focusService.focusFirstFocusableElement(container);
       }
     });
-  }
-
-  @HostListener('window:resize')
-  private onResize(): void {
-    this.resizeSubject$.next();
   }
 
   private updateWidth(): void {

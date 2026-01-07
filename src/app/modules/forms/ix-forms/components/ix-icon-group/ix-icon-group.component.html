@@ -1,9 +1,11 @@
 @if (label() || tooltip()) {
+  <div class="flex justify-center">
   <ix-label
     [label]="label()"
     [tooltip]="tooltip()"
     [required]="required()"
   ></ix-label>
+  </div>
 }
 
 <div

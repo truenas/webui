@@ -2,7 +2,7 @@
   color: var(--fg1);
   display: block;
   font-size: 12px;
-  margin: 12px 0;
+  margin: 12px auto;
   padding: 8px 0;
 
   ix-icon {
@@ -13,6 +13,7 @@
 .icon-group {
   align-items: center;
   display: flex;
+  justify-content: center;
   gap: 4px;
   min-height: 30px;
 }
