@@ -80,14 +80,19 @@ export class AppControlsComponent {
   }
 
   openPortal(url: string): void {
-    const portalUrl = new URL(url);
+    try {
+      const portalUrl = new URL(url);
 
-    if (portalUrl.hostname === '0.0.0.0') {
-      const hostname = this.window.location.hostname;
-      const isIpv6 = ipRegex.v6().test(hostname);
-      portalUrl.hostname = isIpv6 ? `[${hostname}]` : hostname;
+      if (portalUrl.hostname === '0.0.0.0') {
+        const hostname = this.window.location.hostname.replace(/^\[|\]$/g, '');
+        const isIpv6 = ipRegex.v6().test(hostname);
+        portalUrl.hostname = isIpv6 ? `[${hostname}]` : hostname;
+      }
+
+      this.redirect.openWindow(portalUrl.href);
+    } catch (error: unknown) {
+      console.error('Invalid portal URL:', url, error);
+      this.redirect.openWindow(url);
     }
-
-    this.redirect.openWindow(portalUrl.href);
   }
 }
