@@ -80,7 +80,7 @@ describe('AppControlsComponent', () => {
     const portalButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-web' }));
     await portalButton.click();
 
-    expect(redirectSpy).toHaveBeenCalledWith('http://test.com');
+    expect(redirectSpy).toHaveBeenCalledWith('http://test.com/');
   });
 
   it('should open portal menu and show other portals', async () => {
@@ -93,7 +93,7 @@ describe('AppControlsComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Other UI' });
 
-    expect(redirectSpy).toHaveBeenCalledWith('https://other.example.com');
+    expect(redirectSpy).toHaveBeenCalledWith('https://other.example.com/');
   });
 
   it('should call openPortal with correct url when menu item clicked', () => {
@@ -132,5 +132,27 @@ describe('AppControlsComponent', () => {
     await appButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'installed', app.metadata.train, app.id]);
+  });
+
+  it('replaces 0.0.0.0 hostname with current window hostname', async () => {
+    const appWith0000 = {
+      ...app,
+      portals: {
+        'Web UI': 'http://0.0.0.0:8000/ui?q=ui#yes',
+      },
+    } as App;
+
+    spectator.setInput('app', {
+      isLoading: false,
+      error: null,
+      value: appWith0000,
+    } as LoadingState<App>);
+    spectator.detectChanges();
+
+    const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
+    const portalButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-web' }));
+    await portalButton.click();
+
+    expect(redirectSpy).toHaveBeenCalledWith('http://localhost:8000/ui?q=ui#yes');
   });
 });
