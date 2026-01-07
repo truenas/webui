@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { TnThemeService, TnTheme } from 'truenas-ui';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Theme } from 'app/interfaces/theme.interface';
 import { allThemes, defaultTheme } from 'app/modules/theme/theme.constants';
@@ -18,6 +19,7 @@ import { selectTheme } from 'app/store/preferences/preferences.selectors';
 export class ThemeService {
   private store$ = inject<Store<AppState>>(Store);
   private window = inject<Window>(WINDOW);
+  private tnThemeService = inject(TnThemeService);
 
   defaultTheme = defaultTheme.name;
   activeTheme = this.defaultTheme;
@@ -25,6 +27,20 @@ export class ThemeService {
 
   allThemes: Theme[] = allThemes;
   loadTheme$ = new Subject<string>();
+
+  /**
+   * Maps WebUI theme names to component library theme enum values.
+   */
+  readonly webuiToComponentLibraryThemeMap: Record<string, TnTheme> = {
+    'ix-dark': TnTheme.Dark,
+    'ix-blue': TnTheme.Blue,
+    dracula: TnTheme.Dracula,
+    nord: TnTheme.Nord,
+    paper: TnTheme.Paper,
+    'solarized-dark': TnTheme.SolarizedDark,
+    midnight: TnTheme.Midnight,
+    'high-contrast': TnTheme.HighContrast,
+  };
 
   get isDefaultTheme(): boolean {
     return this.activeTheme === this.defaultTheme;
@@ -55,6 +71,9 @@ export class ThemeService {
 
     this.setCssVars(selectedTheme);
     this.updateThemeInLocalStorage(selectedTheme);
+
+    // Sync with component library theme (compatibility layer)
+    this.syncComponentLibraryTheme(theme);
   }
 
   updateThemeInLocalStorage(theme: Theme): void {
@@ -217,5 +236,24 @@ export class ThemeService {
     }
 
     return theme;
+  }
+
+  /**
+   * Synchronizes the WebUI theme with the component library theme.
+   * This compatibility layer ensures both theme systems stay in sync.
+   */
+  private syncComponentLibraryTheme(webuiThemeName: string): void {
+    const tnTheme = this.mapWebuiThemeToComponentLibraryTheme(webuiThemeName);
+    if (tnTheme) {
+      this.tnThemeService.setTheme(tnTheme);
+    }
+  }
+
+  /**
+   * Maps WebUI theme names to component library theme enum values.
+   * Returns null if no mapping exists.
+   */
+  private mapWebuiThemeToComponentLibraryTheme(webuiThemeName: string): TnTheme | null {
+    return this.webuiToComponentLibraryThemeMap[webuiThemeName] ?? null;
   }
 }

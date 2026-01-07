@@ -1,5 +1,6 @@
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnThemeService, TnTheme } from 'truenas-ui';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -19,6 +20,9 @@ describe('ThemeService', () => {
         ],
       }),
       mockWindow(),
+      mockProvider(TnThemeService, {
+        setTheme: jest.fn(() => true),
+      }),
     ],
   });
 
@@ -35,6 +39,37 @@ describe('ThemeService', () => {
       expect(spectator.service.darkTest('hsl(0, 0%, 100%)')).toBe(false);
       expect(spectator.service.darkTest('hsl(0, 0%, 49%)')).toBe(true);
       expect(spectator.service.darkTest('hsl(0, 0%, 50%)')).toBe(false);
+    });
+  });
+
+  describe('theme synchronization with component library', () => {
+    it('synchronizes component library theme when WebUI theme changes', () => {
+      const tnThemeService = spectator.inject(TnThemeService);
+      jest.clearAllMocks();
+
+      spectator.service.onThemeChanged('ix-dark');
+
+      expect(tnThemeService.setTheme).toHaveBeenCalledWith(TnTheme.Dark);
+    });
+
+    it('maps all WebUI themes to correct component library themes', () => {
+      const tnThemeService = spectator.inject(TnThemeService);
+      const themeMap = spectator.service.webuiToComponentLibraryThemeMap;
+
+      Object.entries(themeMap).forEach(([webuiTheme, tnTheme]) => {
+        jest.clearAllMocks();
+        spectator.service.onThemeChanged(webuiTheme);
+        expect(tnThemeService.setTheme).toHaveBeenCalledWith(tnTheme);
+      });
+    });
+
+    it('does not call TnThemeService.setTheme for unmapped themes', () => {
+      const tnThemeService = spectator.inject(TnThemeService);
+      jest.clearAllMocks();
+
+      spectator.service.onThemeChanged('unknown-theme');
+
+      expect(tnThemeService.setTheme).not.toHaveBeenCalled();
     });
   });
 });
