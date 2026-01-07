@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
-import { Component, ChangeDetectionStrategy, output, input, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, inject, input } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -27,9 +27,8 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -70,7 +69,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
   imports: [
     InstalledAppsListBulkActionsComponent,
     FakeProgressBarComponent,
-    SearchInput1Component,
+    BasicSearchComponent,
     IxIconComponent,
     MatSort,
     AsyncPipe,
@@ -113,13 +112,10 @@ export class InstalledAppsListComponent implements OnInit {
 
   dataSource: App[] = [];
   selectedApp: App | undefined;
-  filterString = '';
+  searchQuery = toSignal(this.installedAppsStore.searchQuery$, { requireSync: true });
   appJobs = new Map<string, Job<void, AppStartQueryParams>>();
   selection = new SelectionModel<string>(true, []);
-  sortingInfo: Sort = {
-    active: SortableField.Application,
-    direction: SortDirection.Asc,
-  };
+  sortingInfo = toSignal(this.installedAppsStore.sortingInfo$, { requireSync: true });
 
   readonly sortableField = SortableField;
 
@@ -135,7 +131,7 @@ export class InstalledAppsListComponent implements OnInit {
 
   get filteredApps(): App[] {
     return this.dataSource
-      .filter((app) => app?.name?.toLocaleLowerCase().includes(this.filterString.toLocaleLowerCase()));
+      .filter((app) => app?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase()));
   }
 
   get allAppsChecked(): boolean {
@@ -210,8 +206,8 @@ export class InstalledAppsListComponent implements OnInit {
     }
   }
 
-  onSearch(query: string): void {
-    this.filterString = query;
+  protected onListFiltered(query: string): void {
+    this.installedAppsStore.setSearchQuery(query);
 
     if (!this.filteredApps.length) {
       this.showLoadStatus(EmptyType.NoSearchResults);
@@ -296,7 +292,7 @@ export class InstalledAppsListComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: ([,, apps]) => {
-        this.sortChanged(this.sortingInfo, apps);
+        this.setDatasourceWithSort(this.sortingInfo(), apps);
         this.selectAppForDetails(this.appId());
         this.cdr.markForCheck();
       },
@@ -320,7 +316,7 @@ export class InstalledAppsListComponent implements OnInit {
         // This ensures the UI stays in sync even for minimized jobs.
         if (job) {
           this.appJobs.set(name, job);
-          this.sortChanged(this.sortingInfo);
+          this.setDatasourceWithSort(this.sortingInfo());
           this.cdr.markForCheck();
         }
       });
@@ -343,7 +339,7 @@ export class InstalledAppsListComponent implements OnInit {
         // This ensures the UI stays in sync even for minimized jobs.
         if (job) {
           this.appJobs.set(name, job);
-          this.sortChanged(this.sortingInfo);
+          this.setDatasourceWithSort(this.sortingInfo());
           this.cdr.markForCheck();
         }
       });
@@ -366,7 +362,7 @@ export class InstalledAppsListComponent implements OnInit {
         // This ensures the UI stays in sync even for minimized jobs.
         if (job) {
           this.appJobs.set(name, job);
-          this.sortChanged(this.sortingInfo);
+          this.setDatasourceWithSort(this.sortingInfo());
           this.cdr.markForCheck();
         }
       });
@@ -432,8 +428,8 @@ export class InstalledAppsListComponent implements OnInit {
       .subscribe((job: Job<CoreBulkResponse[]>) => this.handleDeletionResult(job));
   }
 
-  sortChanged(sort: Sort, apps?: App[]): void {
-    this.sortingInfo = sort;
+  setDatasourceWithSort(sort: Sort, apps?: App[]): void {
+    this.installedAppsStore.setSortingInfo(sort);
     const sourceArray = apps && apps.length > 0 ? apps : this.dataSource;
     this.dataSource = [...sourceArray].sort((a, b) => {
       const isAsc = sort.direction === 'asc';
@@ -520,7 +516,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private resetSearch(): void {
-    this.onSearch('');
+    this.onListFiltered('');
   }
 
   private redirectToInstalledAppsWithoutDetails(): void {
@@ -538,7 +534,7 @@ export class InstalledAppsListComponent implements OnInit {
       .subscribe((event) => {
         const [name] = event.fields.arguments;
         this.appJobs.set(name, event.fields);
-        this.sortChanged(this.sortingInfo);
+        this.setDatasourceWithSort(this.sortingInfo());
         this.cdr.markForCheck();
       });
   }

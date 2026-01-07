@@ -2,13 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { SortDirection } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
@@ -16,6 +17,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -36,6 +38,8 @@ describe('InstalledAppsListComponent', () => {
   let spectator: Spectator<InstalledAppsListComponent>;
   let applicationsService: ApplicationsService;
   let loader: HarnessLoader;
+  let searchQuery$: BehaviorSubject<string>;
+  let sortingInfo$: BehaviorSubject<{ active: string; direction: SortDirection }>;
 
   const apps = [
     {
@@ -81,10 +85,21 @@ describe('InstalledAppsListComponent', () => {
         isDockerStarted$: of(true),
         selectedPool$: of('pool'),
       }),
-      mockProvider(InstalledAppsStore, {
-        isLoading$: of(false),
-        installedApps$: of(apps),
-      }),
+      {
+        provide: InstalledAppsStore,
+        useFactory: () => {
+          searchQuery$ = new BehaviorSubject('');
+          sortingInfo$ = new BehaviorSubject({ active: 'application', direction: 'asc' as SortDirection });
+          return {
+            isLoading$: of(false),
+            installedApps$: of(apps),
+            searchQuery$: searchQuery$.asObservable(),
+            sortingInfo$: sortingInfo$.asObservable(),
+            setSearchQuery: jest.fn((query: string) => searchQuery$.next(query)),
+            setSortingInfo: jest.fn((info: { active: string; direction: SortDirection }) => sortingInfo$.next(info)),
+          };
+        },
+      },
       mockProvider(AppsStore, {
         isLoading$: of(false),
         availableApps$: of([]),
@@ -141,7 +156,7 @@ describe('InstalledAppsListComponent', () => {
   it('shows an empty list when there are no search results', () => {
     expect(spectator.query(EmptyComponent)).not.toExist();
 
-    spectator.query(SearchInput1Component)!.search.emit('test-app-3');
+    spectator.query(BasicSearchComponent)!.queryChange.emit('test-app-3');
     spectator.detectChanges();
 
     const appRows = spectator.queryAll(AppRowComponent);
@@ -226,5 +241,33 @@ describe('InstalledAppsListComponent', () => {
         ],
       ],
     ]);
+  });
+
+  it('handles sortChanged with empty apps array correctly', () => {
+    const component = spectator.component;
+    const originalDataSource = [...apps];
+    component.dataSource = originalDataSource;
+
+    component.setDatasourceWithSort({ active: 'application', direction: 'asc' as SortDirection }, []);
+
+    expect(component.dataSource).toHaveLength(2);
+    expect(component.dataSource[0].name).toBe('test-app-1');
+    expect(component.dataSource[1].name).toBe('test-app-2');
+  });
+
+  it('handles sortChanged with valid apps array correctly', () => {
+    const component = spectator.component;
+    const newApps = [{
+      id: 'ix-new-app',
+      name: 'new-app',
+      metadata: { name: 'new-app', train: 'test' },
+      state: AppState.Running,
+      upgrade_available: false,
+    }] as App[];
+
+    component.setDatasourceWithSort({ active: 'application', direction: 'asc' as SortDirection }, newApps);
+
+    expect(component.dataSource).toHaveLength(1);
+    expect(component.dataSource[0].name).toBe('new-app');
   });
 });

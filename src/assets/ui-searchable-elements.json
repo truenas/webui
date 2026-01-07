@@ -1674,6 +1674,29 @@
     "hierarchy": [
       "Directory Services",
       "Kerberos Keytabs",
+      "Sync Kerberos Keytab"
+    ],
+    "synonyms": [
+      "Synchronize Kerberos Keytab",
+      "Sync Keytab"
+    ],
+    "requiredRoles": [
+      "DIRECTORY_SERVICE_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/directoryservice",
+      "kerberoskeytabs"
+    ],
+    "routerLink": null,
+    "anchor": "sync-kerberos-keytab",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Directory Services",
+      "Kerberos Keytabs",
       "Add Kerberos Keytab"
     ],
     "synonyms": [

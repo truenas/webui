@@ -18,11 +18,10 @@
     [loading]="isLoading()"
   ></ix-fake-progress-bar>
 
-  <ix-search-input1
-    [maxLength]="100"
-    [value]="filterString"
-    (search)="onSearch($event)"
-  ></ix-search-input1>
+  <ix-basic-search
+    [query]="searchQuery()"
+    (queryChange)="onListFiltered($event)"
+  ></ix-basic-search>
 </div>
 
 @if ((dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading())) {
@@ -31,10 +30,10 @@
   <div
     class="sticky-header"
     matSort
-    matSortActive="application"
-    matSortDirection="asc"
     matSortDisableClear
-    (matSortChange)="sortChanged($event)"
+    [matSortActive]="sortingInfo().active"
+    [matSortDirection]="sortingInfo().direction"
+    (matSortChange)="setDatasourceWithSort($event)"
   >
     <div class="app-header-row">
       <div>
@@ -89,10 +88,10 @@
   <div
     matSort
     matSortDisableClear
-    matSortActive="application"
-    matSortDirection="asc"
     class="app-wrapper"
-    (matSortChange)="sortChanged($event)"
+    [matSortActive]="sortingInfo().active"
+    [matSortDirection]="sortingInfo().direction"
+    (matSortChange)="setDatasourceWithSort($event)"
   >
     <div class="app-inner">
       <div class="apps-rows">
