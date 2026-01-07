@@ -3,9 +3,9 @@ import { ChangeDetectionStrategy, Component, input, output, inject } from '@angu
 import { MatNavList, MatListItem } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLinkActive, RouterLink } from '@angular/router';
+import { TnIconComponent } from '@ixsystems/truenas-ui';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from 'truenas-ui';
 import { MenuItem, MenuItemType, SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NavigationService } from 'app/services/navigation/navigation.service';

@@ -3,13 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter, signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { TnIconHarness } from '@ixsystems/truenas-ui';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { TnIconHarness } from 'truenas-ui';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';

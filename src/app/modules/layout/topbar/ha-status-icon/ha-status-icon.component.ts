@@ -3,11 +3,11 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject }
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
+import { TnIconComponent } from '@ixsystems/truenas-ui';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { TnIconComponent } from 'truenas-ui';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import {
   HaStatusPopoverComponent,

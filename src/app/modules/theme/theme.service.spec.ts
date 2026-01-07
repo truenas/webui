@@ -1,6 +1,6 @@
+import { TnThemeService, TnTheme } from '@ixsystems/truenas-ui';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnThemeService, TnTheme } from 'truenas-ui';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';

@@ -3,11 +3,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { TnIconHarness, TnSpriteLoaderService } from '@ixsystems/truenas-ui';
 import {
   Spectator, createComponentFactory, mockProvider, SpectatorFactory,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { TnIconHarness, TnSpriteLoaderService } from 'truenas-ui';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';

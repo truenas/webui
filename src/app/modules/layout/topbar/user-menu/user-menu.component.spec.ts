@@ -3,11 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
+import { TnSpriteLoaderService } from '@ixsystems/truenas-ui';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
-import { TnSpriteLoaderService } from 'truenas-ui';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { dummyUser } from 'app/core/testing/utils/mock-auth.utils';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';

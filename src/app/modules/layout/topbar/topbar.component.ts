@@ -9,13 +9,13 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { TnIconComponent } from '@ixsystems/truenas-ui';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
-import { TnIconComponent } from 'truenas-ui';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
