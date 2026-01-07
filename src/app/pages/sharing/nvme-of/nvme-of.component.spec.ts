@@ -5,6 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import {
@@ -34,6 +35,9 @@ describe('NvmeOfComponent', () => {
       ),
     ],
     providers: [
+      mockApi([
+        mockCall('tn_connect.config'),
+      ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => {
           return of({ response: { id: 1 } });

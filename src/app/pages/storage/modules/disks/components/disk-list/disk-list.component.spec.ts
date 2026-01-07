@@ -22,10 +22,11 @@ import {
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DiskBulkEditComponent,
 } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
-import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
+import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { DiskListComponent } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.component';
 import {
   ResetSedDialog,
@@ -256,6 +257,30 @@ describe('DiskListComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ResetSedDialog, {
       data: { diskName: 'sdc' },
     });
+  });
+
+  it('updates disks when edit form is saved', async () => {
+    const api = spectator.inject(ApiService);
+    const slideIn = spectator.inject(SlideIn);
+    const fakeDisk = fakeDisks[0];
+
+    const mockUpd: DiskFormResponse = [fakeDisk];
+    const mockSlideInRef$ = of({ response: mockUpd, error: null });
+
+    jest.spyOn(slideIn, 'open').mockReturnValue(mockSlideInRef$);
+
+    await table.expandRow(0);
+
+    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+    await editButton.click();
+
+    expect(slideIn.open).toHaveBeenCalledWith(DiskFormComponent, { data: fakeDisk });
+
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    expect(api.call).toHaveBeenCalledWith('disk.query', expect.anything());
+    expect(api.call).toHaveBeenCalledWith('disk.details');
   });
 });
 

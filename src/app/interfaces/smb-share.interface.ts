@@ -106,7 +106,7 @@ export interface ExternalSmbShare extends BaseShare {
 
 export interface VeeamRepositorySmbShare extends BaseShare {
   purpose: SmbSharePurpose.VeeamRepositoryShare;
-  options: Record<string, never>;
+  options: VeeamRepositorySmbShareOptions;
 }
 
 export interface FcpSmbShare extends BaseShare {
@@ -116,6 +116,8 @@ export interface FcpSmbShare extends BaseShare {
 
 export interface FcpSmbShareOptions {
   aapl_name_mangling?: boolean;
+  hostsallow?: string[];
+  hostsdeny?: string[];
 }
 
 export type SmbShareOptions
@@ -126,6 +128,7 @@ export type SmbShareOptions
     | TimeLockedSmbShareOptions
     | PrivateDatasetsSmbShareOptions
     | ExternalSmbShareOptions
+    | VeeamRepositorySmbShareOptions
     | FcpSmbShareOptions;
 
 export interface LegacySmbShareOptions {
@@ -150,6 +153,8 @@ export interface LegacySmbShareOptions {
 
 export interface DefaultSmbShareOptions {
   aapl_name_mangling?: boolean;
+  hostsallow?: string[];
+  hostsdeny?: string[];
 }
 
 export interface TimeMachineSmbShareOptions {
@@ -158,25 +163,38 @@ export interface TimeMachineSmbShareOptions {
   auto_snapshot?: boolean;
   auto_dataset_creation?: boolean;
   dataset_naming_schema?: string | null;
+  hostsallow?: string[];
+  hostsdeny?: string[];
 }
 
 export interface MultiProtocolSmbShareOptions {
   aapl_name_mangling?: boolean;
+  hostsallow?: string[];
+  hostsdeny?: string[];
 }
 
 export interface TimeLockedSmbShareOptions {
   grace_period?: number;
   aapl_name_mangling?: boolean;
+  hostsallow?: string[];
+  hostsdeny?: string[];
 }
 
 export interface PrivateDatasetsSmbShareOptions {
   dataset_naming_schema?: string | null;
   auto_quota?: number;
   aapl_name_mangling?: boolean;
+  hostsallow?: string[];
+  hostsdeny?: string[];
 }
 
 export interface ExternalSmbShareOptions {
   remote_path?: string[];
+}
+
+export interface VeeamRepositorySmbShareOptions {
+  hostsallow?: string[];
+  hostsdeny?: string[];
 }
 
 export interface SmbSharesec {
