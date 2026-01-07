@@ -7,7 +7,7 @@ import { defaultPreferences } from 'app/store/preferences/default-preferences.co
 import {
   autoRefreshReportsToggled,
   builtinGroupsToggled,
-  builtinUsersToggled, dashboardStateUpdated, guiFormClosedWithoutSaving, guiFormSubmitted,
+  dashboardStateUpdated, guiFormClosedWithoutSaving, guiFormSubmitted,
   lifetimeTokenUpdated,
   terminalFontSizeUpdated,
   localizationFormSubmitted, noPreferencesFound,
@@ -65,9 +65,6 @@ export const preferencesReducer = createReducer(
   on(lifetimeTokenUpdated, (state, { lifetime }) => updatePreferences(state, { lifetime })),
   on(terminalFontSizeUpdated, (state, { fontSize }) => updatePreferences(state, { terminalFontSize: fontSize })),
 
-  on(builtinUsersToggled, (state) => updatePreferences(state, {
-    hideBuiltinUsers: !state.preferences?.hideBuiltinUsers,
-  })),
   on(builtinGroupsToggled, (state) => updatePreferences(state, {
     hideBuiltinGroups: !state.preferences?.hideBuiltinGroups,
   })),
