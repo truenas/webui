@@ -31,6 +31,7 @@ describe('AppCardComponent', () => {
           icon_url: 'https://www.seti.org/logo.png',
           description: 'Use your computer to help SETI@home search for extraterrestrial intelligence.',
           latest_version: '1.0.0',
+          latest_app_version: 'v2.1.0',
           train: 'stable',
           installed: true,
           popularity_rank: 99,
@@ -64,7 +65,8 @@ describe('AppCardComponent', () => {
     expect(spectator.query('.train')).toHaveText('stable');
   });
 
-  it('shows app version', () => {
-    expect(spectator.query('.version')).toHaveExactText('1.0.0');
+  it('shows app version and catalog version', () => {
+    expect(spectator.query('.version')).toContainText('v2.1.0');
+    expect(spectator.query('.catalog-version')).toHaveExactText('(1.0.0)');
   });
 });

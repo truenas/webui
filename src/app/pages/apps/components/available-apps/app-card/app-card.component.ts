@@ -31,4 +31,8 @@ export class AppCardComponent {
     const description = this.app().description || '';
     return description.length > 150 ? `${description.substring(0, 150)}...` : description;
   });
+
+  protected readonly versionTooltip = computed(() => {
+    return `Upstream Application Version: ${this.app().latest_app_version}\nTrueNAS Catalog Version: ${this.app().latest_version}`;
+  });
 }
