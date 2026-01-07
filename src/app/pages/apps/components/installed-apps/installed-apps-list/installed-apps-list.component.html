@@ -30,9 +30,9 @@
   <div
     class="sticky-header"
     matSort
-    matSortActive="application"
-    matSortDirection="asc"
     matSortDisableClear
+    [matSortActive]="sortingInfo().active"
+    [matSortDirection]="sortingInfo().direction"
     (matSortChange)="setDatasourceWithSort($event)"
   >
     <div class="app-header-row">
@@ -88,9 +88,9 @@
   <div
     matSort
     matSortDisableClear
-    matSortActive="application"
-    matSortDirection="asc"
     class="app-wrapper"
+    [matSortActive]="sortingInfo().active"
+    [matSortDirection]="sortingInfo().direction"
     (matSortChange)="setDatasourceWithSort($event)"
   >
     <div class="app-inner">
