@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isObject } from 'lodash-es';
@@ -43,7 +45,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-support-card',
   templateUrl: './support-card.component.html',
@@ -75,6 +76,7 @@ export class SupportCardComponent implements OnInit {
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly Role = Role;
@@ -99,7 +101,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
+    this.store$.pipe(waitForSystemInfo, takeUntilDestroyed(this.destroyRef)).subscribe((systemInfo) => {
       this.systemInfo = { ...systemInfo };
       this.systemInfo.memory = (systemInfo.physmem / GiB).toFixed(0) + ' GiB';
 
@@ -194,14 +196,14 @@ export class SupportCardComponent implements OnInit {
           }),
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     )
       .subscribe();
   }
 
   private loadProductionStatus(): void {
     this.api.call('truenas.is_production')
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((isProduction) => {
         this.isProductionControl.setValue(isProduction, { emitEvent: false });
         this.cdr.markForCheck();
@@ -210,7 +212,7 @@ export class SupportCardComponent implements OnInit {
 
   private saveProductionStatusOnChange(): void {
     this.isProductionControl.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((newStatus) => this.updateProductionStatus(newStatus));
   }
 
@@ -218,7 +220,7 @@ export class SupportCardComponent implements OnInit {
     this.api.call('support.is_available')
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((isAvailable) => {
         this.isProactiveSupportAvailable.set(isAvailable);
@@ -234,7 +236,7 @@ export class SupportCardComponent implements OnInit {
     this.api.call('support.is_available_and_enabled')
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((isEnabled) => {
         this.isProactiveSupportEnabled.set(isEnabled);
