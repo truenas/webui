@@ -1,10 +1,10 @@
 export enum SaveConfigFlowResult {
-  Confirmed,
-  ProceedWithoutBackup,
+  Confirmed = 'Confirmed',
+  ProceedWithoutBackup = 'ProceedWithoutBackup',
 }
 
 export enum ConfigDownloadRetryAction {
-  Retry,
-  Cancel,
-  Continue,
+  Retry = 'Retry',
+  Cancel = 'Cancel',
+  Continue = 'Continue',
 }
