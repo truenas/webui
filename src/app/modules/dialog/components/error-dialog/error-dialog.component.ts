@@ -80,7 +80,7 @@ export class ErrorDialog {
 
   protected handleAction(action: ErrorReportAction): void {
     if (action.route) {
-      this.router.navigate([action.route]);
+      this.router.navigate([action.route], { queryParams: action.params });
       this.dialogRef.close();
     } else if (action.action) {
       action.action();
