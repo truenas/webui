@@ -174,7 +174,7 @@ export class SystemSecurityFormComponent implements OnInit {
    */
   private setupStigRequirements(): void {
     // bail early if stig mode is already enabled, since all requirements must already be satisfied
-    if (this.isStigEnabled()) {
+    if (this.slideInRef.getData().enable_gpos_stig) {
       return;
     }
 
@@ -492,6 +492,7 @@ export class SystemSecurityFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe((stigEnabled) => {
+        this.isStigEnabled.set(stigEnabled);
         if (stigEnabled) {
           this.setupStigRequirements();
 

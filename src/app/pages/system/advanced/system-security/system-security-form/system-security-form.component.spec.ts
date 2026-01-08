@@ -10,6 +10,7 @@ import { stigPasswordRequirements } from 'app/constants/stig-password-requiremen
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { DockerStatus } from 'app/enums/docker-status.enum';
 import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -74,7 +75,10 @@ describe('SystemSecurityFormComponent', () => {
             return of([]);
           }
           if (method === 'auth.twofactor.config') {
-            return of({ enabled: true });
+            return of({ enabled: true, services: { ssh: true } });
+          }
+          if (method === 'docker.status') {
+            return of({ status: DockerStatus.Unconfigured } as { status: DockerStatus });
           }
           return of(null);
         }),
@@ -404,6 +408,10 @@ describe('SystemSecurityFormComponent', () => {
         'Enable General Purpose OS STIG compatibility mode': true,
       });
 
+      // Wait for the form to process the STIG toggle and update values
+      await stigSpectator.fixture.whenStable();
+      stigSpectator.detectChanges();
+
       // When STIG is enabled, the form automatically adds missing required rules
       // So the values should already include all required complexity rules
       const values = await stigForm.getValues();
@@ -421,6 +429,7 @@ describe('SystemSecurityFormComponent', () => {
         stigPasswordComplexity: {
           required: stigPasswordRequirements.passwordComplexity,
           actual: [PasswordComplexityRuleset.Upper, PasswordComplexityRuleset.Lower],
+          message: 'STIG requires Upper, Lower, Number, and Special complexity rules.',
         },
       });
     });
@@ -529,6 +538,7 @@ describe('SystemSecurityFormComponent', () => {
     let dialogService: DialogService;
 
     beforeEach(async () => {
+      jest.clearAllMocks();
       warningSpectator = createComponent();
       warningLoader = TestbedHarnessEnvironment.loader(warningSpectator.fixture);
       warningForm = await warningLoader.getHarness(IxFormHarness);
@@ -542,12 +552,21 @@ describe('SystemSecurityFormComponent', () => {
         { username: 'user2', roles: [{ id: 2 }] } as unknown as User,
       ];
 
-      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: unknown[] | object | void) => {
         if (method === 'user.query') {
+          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
+            return of([
+              { username: 'root', password_disabled: true } as User,
+              { username: 'truenas_admin', password_disabled: true } as User,
+            ]);
+          }
           return of(usersWithoutTwoFa);
         }
         if (method === 'auth.twofactor.config') {
-          return of({ enabled: true });
+          return of({ enabled: true, services: { ssh: true } });
+        }
+        if (method === 'docker.status') {
+          return of({ status: DockerStatus.Unconfigured, description: '' });
         }
         return of(null);
       });
@@ -572,12 +591,23 @@ describe('SystemSecurityFormComponent', () => {
     });
 
     it('does not show warning when all users have 2FA configured', async () => {
-      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: unknown[] | object | void) => {
         if (method === 'user.query') {
+          // Check if this is the local user query (for root/admin check) or the 2FA check
+          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0][0] === 'local') {
+            // Return mock root and admin users with passwords disabled
+            return of([
+              { username: 'root', password_disabled: true } as User,
+              { username: 'truenas_admin', password_disabled: true } as User,
+            ]);
+          }
           return of([]); // No users without 2FA
         }
         if (method === 'auth.twofactor.config') {
-          return of({ enabled: true });
+          return of({ enabled: true, services: { ssh: true } });
+        }
+        if (method === 'docker.status') {
+          return of({ status: DockerStatus.Unconfigured, description: '' });
         }
         return of(null);
       });
@@ -604,7 +634,10 @@ describe('SystemSecurityFormComponent', () => {
           return of(usersWithoutTwoFa);
         }
         if (method === 'auth.twofactor.config') {
-          return of({ enabled: true });
+          return of({ enabled: true, services: { ssh: true } });
+        }
+        if (method === 'docker.status') {
+          return of({ status: DockerStatus.Unconfigured });
         }
         return of(null);
       });
@@ -630,7 +663,10 @@ describe('SystemSecurityFormComponent', () => {
           return of(usersWithoutTwoFa);
         }
         if (method === 'auth.twofactor.config') {
-          return of({ enabled: true });
+          return of({ enabled: true, services: { ssh: true } });
+        }
+        if (method === 'docker.status') {
+          return of({ status: DockerStatus.Unconfigured });
         }
         return of(null);
       });
@@ -660,7 +696,10 @@ describe('SystemSecurityFormComponent', () => {
           return throwError(() => error);
         }
         if (method === 'auth.twofactor.config') {
-          return of({ enabled: true });
+          return of({ enabled: true, services: { ssh: true } });
+        }
+        if (method === 'docker.status') {
+          return of({ status: DockerStatus.Unconfigured });
         }
         return of(null);
       });
