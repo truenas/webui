@@ -69,4 +69,18 @@ describe('AppCardComponent', () => {
     expect(spectator.query('.version')).toContainText('v2.1.0');
     expect(spectator.query('.catalog-version')).toHaveExactText('(1.0.0)');
   });
+
+  it('shows N/A when version information is missing', () => {
+    spectator.setInput({
+      app: {
+        name: 'TestApp',
+        latest_version: null,
+        latest_app_version: null,
+      } as AvailableApp,
+    });
+    spectator.detectChanges();
+
+    expect(spectator.query('.version')).toContainText('N/A');
+    expect(spectator.query('.catalog-version')).toContainText('N/A');
+  });
 });

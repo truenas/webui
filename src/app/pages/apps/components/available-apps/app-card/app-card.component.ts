@@ -33,6 +33,8 @@ export class AppCardComponent {
   });
 
   protected readonly versionTooltip = computed(() => {
-    return `Upstream Application Version: ${this.app().latest_app_version}\nTrueNAS Catalog Version: ${this.app().latest_version}`;
+    const appVersion = this.app().latest_app_version || 'N/A';
+    const catalogVersion = this.app().latest_version || 'N/A';
+    return `Upstream Application Version: ${appVersion}\nTrueNAS Catalog Version: ${catalogVersion}`;
   });
 }

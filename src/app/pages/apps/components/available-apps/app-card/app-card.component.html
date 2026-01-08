@@ -29,8 +29,8 @@
       class="version"
       [matTooltip]="versionTooltip()"
     >
-      {{ app().latest_app_version }}
-      <span class="catalog-version">({{ app().latest_version }})</span>
+      {{ app().latest_app_version || ('N/A' | translate) }}
+      <span class="catalog-version">({{ app().latest_version || ('N/A' | translate) }})</span>
     </div>
   </div>
 
