@@ -31,7 +31,6 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -102,7 +101,6 @@ export class InstalledAppsListComponent implements OnInit {
   private location = inject(Location);
   private appsStats = inject(AppsStatsService);
   private loader = inject(LoaderService);
-  private layoutService = inject(LayoutService);
 
   readonly appId = injectParams('appId');
   readonly isMobileView = input<boolean>();
@@ -202,8 +200,8 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   viewDetails(app: App): void {
+    this.location.replaceState(`/apps/installed/${app.metadata.train}/${app.id}`);
     this.selectAppForDetails(app.id);
-    this.layoutService.navigatePreservingScroll(this.router, ['/apps/installed', app.metadata.train, app.id]);
 
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(true);

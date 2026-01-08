@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Location } from '@angular/common';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
@@ -151,11 +152,10 @@ describe('InstalledAppsListComponent', () => {
   });
 
   it('shows details', () => {
-    const router = spectator.inject(Router);
+    const locationSpy = jest.spyOn(spectator.inject(Location), 'replaceState');
     spectator.click(spectator.query('ix-app-row')!);
-    expect(spectator.inject(LayoutService).navigatePreservingScroll).toHaveBeenCalledWith(router, [
-      '/apps/installed', 'test-catalog-train', 'ix-test-app-1',
-    ]);
+    expect(locationSpy).toHaveBeenCalledWith('/apps/installed/test-catalog-train/ix-test-app-1');
+    expect(spectator.component.selectedApp).toEqual(apps[0]);
   });
 
   it('starts application', () => {
