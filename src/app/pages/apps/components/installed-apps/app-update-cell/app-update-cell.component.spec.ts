@@ -26,7 +26,13 @@ describe('AppUpdateCellComponent', () => {
   });
 
   it('checks text when app has update', () => {
-    setupTest({ upgrade_available: true } as App);
+    setupTest({
+      upgrade_available: true,
+      version: '1.0.0',
+      latest_version: '1.0.1',
+      metadata: { app_version: '8.7.0' },
+      human_version: '8.7.1',
+    } as App);
 
     expect(spectator.query('span')).toHaveText('Update available');
   });
