@@ -360,11 +360,8 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
       catchError((error: unknown) => {
         // Handle slide-in errors gracefully
         this.errorHandler.handleError(error);
-        // Clear selection to allow "Add New" to be clicked again
-        this.selectedOption.set(null);
-        if (this.inputElementRef()?.nativeElement) {
-          this.inputElementRef().nativeElement.value = '';
-        }
+        // Clear selection and reset form control value to allow "Add New" to be clicked again
+        this.resetInput();
         this.autocompleteTrigger()?.closePanel();
         return of(null);
       }),
@@ -395,11 +392,8 @@ export class IxUserPickerComponent implements ControlValueAccessor, OnInit {
 
           this.cdr.markForCheck();
         } else {
-          // User cancelled - clear selection to allow "Add New" to be clicked again
-          this.selectedOption.set(null);
-          if (this.inputElementRef()?.nativeElement) {
-            this.inputElementRef().nativeElement.value = '';
-          }
+          // User cancelled - clear selection and reset form control value to allow "Add New" to be clicked again
+          this.resetInput();
         }
 
         // Close panel immediately - the selection is already set

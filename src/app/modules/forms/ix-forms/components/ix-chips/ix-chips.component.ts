@@ -182,21 +182,41 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   onInputBlur(): void {
     const trigger = this.autocompleteTrigger();
+    const inputValue = this.chipInput().nativeElement.value;
 
-    // If autocomplete panel is open, an option selection is in progress
-    // Skip blur processing to avoid adding search text as a chip
+    // If autocomplete panel is open, wait for it to close before processing blur
     if (trigger?.panelOpen) {
+      // If there's a typed value, process it after the panel closes
+      if (inputValue.trim() && this.allowNewEntries() && !this.resolveValue()) {
+        trigger.panelClosingActions.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+          // Re-check the input value after panel closes, in case user selected an option
+          const currentValue = this.chipInput().nativeElement.value;
+          if (currentValue.trim()) {
+            this.onAdd(currentValue);
+          } else {
+            // Call onTouch even if no value was added to trigger validation
+            this.onTouch();
+          }
+        });
+      } else {
+        // No value to process, but still need to trigger validation
+        trigger.panelClosingActions.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+          this.onTouch();
+        });
+      }
       return;
     }
 
     if (!this.allowNewEntries() || this.resolveValue()) {
       this.chipInput().nativeElement.value = '';
+      this.onTouch();
       return;
     }
 
-    const inputValue = this.chipInput().nativeElement.value;
     if (inputValue.trim()) {
       this.onAdd(inputValue);
+    } else {
+      this.onTouch();
     }
   }
 

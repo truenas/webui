@@ -120,12 +120,12 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
 
     this.messages = newErrors.filter((message) => !!message) as string[];
 
-    if (this.control().errors) {
-      this.control().markAllAsTouched();
-    }
-
     this.cdr.markForCheck();
-    this.announceErrors();
+
+    // Only announce errors if the control has been touched or is dirty
+    if (this.control().touched || this.control().dirty) {
+      this.announceErrors();
+    }
   }
 
   /**

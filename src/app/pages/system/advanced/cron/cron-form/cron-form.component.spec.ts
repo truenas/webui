@@ -76,6 +76,7 @@ describe('CronFormComponent', () => {
           { username: 'root' },
           { username: 'steven' },
         ] as User[]),
+        getUserByName: (username: string) => of({ username } as User),
       }),
       mockProvider(SlideInRef, componentRef),
       mockAuth(),

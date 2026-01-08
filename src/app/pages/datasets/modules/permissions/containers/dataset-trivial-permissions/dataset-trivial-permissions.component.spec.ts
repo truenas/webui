@@ -59,6 +59,8 @@ describe('DatasetTrivialPermissionsComponent', () => {
           { username: 'root' },
           { username: 'games' },
         ]),
+        getUserByName: (username: string) => of({ username } as { username: string }),
+        getGroupByName: (groupName: string) => of({ group: groupName }),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
