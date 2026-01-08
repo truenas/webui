@@ -24,7 +24,6 @@ export const lifetimeTokenUpdated = createAction('[Preferences] Lifetime Token U
 export const terminalFontSizeUpdated = createAction('[Preferences] Terminal Font Size Updated', props<{ fontSize: number }>());
 
 export const autoRefreshReportsToggled = createAction('[Preferences] Auto Refresh Reports Toggled');
-export const builtinUsersToggled = createAction('[Preferences] Builtin Users Toggled');
 export const builtinGroupsToggled = createAction('[Preferences] Builtin Groups Toggled');
 export const snapshotExtraColumnsToggled = createAction('[Preferences] Snapshot Extra Columns Toggled');
 
