@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, OnInit, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -11,11 +11,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  catchError, filter, finalize, forkJoin, map, Observable, of, shareReplay, switchMap,
+  catchError, EMPTY, filter, finalize, forkJoin, map, Observable, of, shareReplay, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ApiErrorName } from 'app/enums/api.enum';
+import { ConfigDownloadRetryAction, SaveConfigFlowResult } from 'app/enums/config-download-retry.enum';
 import { Role } from 'app/enums/role.enum';
 import { UpdateCode } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -25,6 +26,7 @@ import { UpdateConfig, UpdateProfileChoices, UpdateStatus } from 'app/interfaces
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -33,18 +35,22 @@ import {
   SaveConfigDialogMessages,
 } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import {
+  ConfigDownloadRetryDialog,
+} from 'app/pages/system/update/components/config-download-retry-dialog/config-download-retry-dialog.component';
+import {
   DynamicMarkdownComponent,
 } from 'app/pages/system/update/components/dynamic-markdown/dynamic-markdown.component';
 import {
   UpdateProfileCard,
 } from 'app/pages/system/update/components/update-profile-card/update-profile-card.component';
 import { systemUpdateElements } from 'app/pages/system/update/update.elements';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
+import { selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -67,6 +73,9 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     MarkdownModule,
     DynamicMarkdownComponent,
   ],
+  providers: [
+    DatePipe,
+  ],
 })
 export class UpdateComponent implements OnInit {
   private router = inject(Router);
@@ -78,12 +87,20 @@ export class UpdateComponent implements OnInit {
   private sysGenService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
   private window = inject<Window>(WINDOW);
+  private download = inject(DownloadService);
+  private loader = inject(LoaderService);
+  private datePipe = inject(DatePipe);
 
   protected readonly searchableElements = systemUpdateElements;
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly manualUpdateUrl = computed(() => {
     const versionRegex = new RegExp(/(\d+\.\d+)/);
     const sysver = this.systemVersion();
+
+    if (!sysver) {
+      return 'https://www.truenas.com/docs/scale/scaletutorials/systemsettings/updatescale/';
+    }
+
     const version = versionRegex.exec(sysver);
 
     if (sysver.includes('MASTER') || !version) {
@@ -228,7 +245,7 @@ export class UpdateComponent implements OnInit {
   }
 
   protected manualUpdate(): void {
-    this.offerToSaveConfiguration()
+    this.saveConfigWithRetry()
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.router.navigate(['/system/update/manualupdate']);
@@ -236,9 +253,16 @@ export class UpdateComponent implements OnInit {
   }
 
   protected onInstallUpdatePressed(): void {
-    this.offerToSaveConfiguration()
+    this.saveConfigWithRetry()
       .pipe(
-        switchMap(() => this.confirmUpdate()),
+        switchMap((result) => {
+          // If user chose to proceed without backup, skip confirmation
+          if (result === SaveConfigFlowResult.ProceedWithoutBackup) {
+            return of(true);
+          }
+          // Otherwise show normal confirmation dialog
+          return this.confirmUpdate();
+        }),
         switchMap(() => this.update()),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
@@ -261,6 +285,106 @@ export class UpdateComponent implements OnInit {
       .afterClosed();
   }
 
+  private saveConfigWithRetry(retryWithSecretseed?: boolean): Observable<SaveConfigFlowResult> {
+    // If retrying with a specific secretseed setting, download directly
+    if (retryWithSecretseed !== undefined) {
+      return this.downloadConfig(retryWithSecretseed).pipe(
+        switchMap(() => {
+          // Download succeeded - show normal confirmation
+          return of(SaveConfigFlowResult.Confirmed);
+        }),
+        catchError((error: unknown) => {
+          // Download failed again - show retry dialog
+          return this.showRetryOrContinueDialog(error).pipe(
+            switchMap((action) => {
+              if (action === ConfigDownloadRetryAction.Retry) {
+                // Retry with same secretseed setting
+                return this.saveConfigWithRetry(retryWithSecretseed);
+              }
+              if (action === ConfigDownloadRetryAction.Continue) {
+                return of(SaveConfigFlowResult.ProceedWithoutBackup);
+              }
+              return EMPTY;
+            }),
+          );
+        }),
+      );
+    }
+
+    // Initial attempt - show dialog to user
+    return this.offerToSaveConfiguration().pipe(
+      switchMap((result: unknown) => {
+        // User dismissed dialog without making a choice - cancel entire process
+        if (result === undefined || result === null) {
+          return EMPTY;
+        }
+
+        // User chose "Do not save" - show normal confirmation
+        if (result === false) {
+          return of(SaveConfigFlowResult.Confirmed);
+        }
+
+        // Download succeeded - show normal confirmation
+        if (result === true) {
+          return of(SaveConfigFlowResult.Confirmed);
+        }
+
+        // Download failed (result is { success: false, error, secretseed })
+        // Show merged retry + confirmation dialog
+        const failureResult = result as { success: false; error: unknown; secretseed: boolean };
+        return this.showRetryOrContinueDialog(failureResult.error).pipe(
+          switchMap((action) => {
+            if (action === ConfigDownloadRetryAction.Retry) {
+              // Retry download directly with same secretseed setting
+              return this.saveConfigWithRetry(failureResult.secretseed);
+            }
+            if (action === ConfigDownloadRetryAction.Continue) {
+              // User chose "Continue Update" - skip normal confirmation
+              return of(SaveConfigFlowResult.ProceedWithoutBackup);
+            }
+            // Cancel - stop the chain
+            return EMPTY;
+          }),
+        );
+      }),
+    );
+  }
+
+  private downloadConfig(secretseed: boolean): Observable<unknown> {
+    return this.store$.pipe(
+      waitForSystemInfo,
+      this.loader.withLoader(),
+      switchMap((systemInfo) => {
+        const hostname = systemInfo.hostname.split('.')[0];
+        const date = this.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
+        let fileName = hostname + '-' + systemInfo.version + '-' + date;
+        let mimeType: string;
+
+        if (secretseed) {
+          mimeType = 'application/x-tar';
+          fileName += '.tar';
+        } else {
+          mimeType = 'application/x-sqlite3';
+          fileName += '.db';
+        }
+
+        return this.download.coreDownload({
+          fileName,
+          mimeType,
+          method: 'config.save',
+          arguments: [{ secretseed }],
+        });
+      }),
+    );
+  }
+
+  private showRetryOrContinueDialog(error: unknown): Observable<ConfigDownloadRetryAction> {
+    return this.matDialog.open(ConfigDownloadRetryDialog, {
+      data: { error },
+      disableClose: true, // Force user to choose an option
+    }).afterClosed();
+  }
+
   private confirmUpdate(): Observable<true> {
     return this.dialogService.confirm({
       title: this.translate.instant('Install Update?'),
@@ -272,7 +396,9 @@ export class UpdateComponent implements OnInit {
       hideCheckbox: true,
       buttonText: this.translate.instant('Install'),
     })
-      .pipe(filter(Boolean));
+      .pipe(
+        switchMap((confirmed) => (confirmed ? of(true) : EMPTY)),
+      ) as Observable<true>;
   }
 
   private update(): Observable<unknown> {

@@ -114,8 +114,9 @@ export class SaveConfigDialog {
         this.dialogRef.close(true);
       },
       error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-        this.dialogRef.close(false);
+        // Don't show error modal here - let parent component handle retry logic
+        // Include the secretseed checkbox state so parent can retry with same settings
+        this.dialogRef.close({ success: false, error, secretseed: this.exportSeedCheckbox.value });
       },
     });
   }
