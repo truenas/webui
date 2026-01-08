@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, map, of, tap, zip,
+  filter, finalize, map, of, tap, zip,
 } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -188,7 +188,7 @@ export class SystemSecurityFormComponent implements OnInit {
       tap((twoFactorConfig) => this.twoFactorConfig.set(twoFactorConfig)),
       map((twoFactorConfig): Partial<StigEnablementRequirements> => ({
         twoFactorAuthGloballyEnabled: twoFactorConfig.enabled,
-        twoFactorSshGloballyEnabled: twoFactorConfig.services.ssh,
+        twoFactorSshGloballyEnabled: twoFactorConfig.services ? twoFactorConfig.services.ssh : false,
       })),
     );
     const dockerServiceConfig$ = this.api.call('docker.status').pipe(
@@ -201,9 +201,9 @@ export class SystemSecurityFormComponent implements OnInit {
         const rootUser: User | undefined = userConfig.find((user) => user.username === 'root');
         const truenasAdminUser: User | undefined = userConfig.find((user) => user.username === 'truenas_admin');
         return {
-          // if either account is missing, then its password is technically disabled
-          rootPasswordDisabled: rootUser?.password_disabled || true,
-          adminPasswordDisabled: truenasAdminUser?.password_disabled || true,
+          // if either account is missing, then its password is technically disabled and the requirement is met
+          rootPasswordDisabled: rootUser ? rootUser.password_disabled : true,
+          adminPasswordDisabled: truenasAdminUser ? truenasAdminUser.password_disabled : true,
         };
       }),
     );
@@ -232,14 +232,19 @@ export class SystemSecurityFormComponent implements OnInit {
         ...userConfig,
         ...user2faConfig,
       })),
+      this.errorHandler.withErrorHandler(),
+      finalize(() => this.loadingStigRequirements.set(false)),
       untilDestroyed(this),
     );
 
     // then, for each property, check it and push a `MissingStigRequirement` to our internal list
     // when any of them are missing or false.
     combined$.subscribe((enablementRequirements) => {
+      const requirements: MissingStigRequirement[] = [];
+      const warnings: MissingStigRequirement[] = [];
+
       if (!enablementRequirements?.twoFactorAuthGloballyEnabled) {
-        this.missingStigRequirements().push({
+        requirements.push({
           message: 'Global Two-Factor Authentication must be enabled.',
           navigateTo: ['/system/advanced'],
           action: this.openGlobalTwoFactorForm.bind(this),
@@ -247,7 +252,7 @@ export class SystemSecurityFormComponent implements OnInit {
       }
 
       if (!enablementRequirements.twoFactorSshGloballyEnabled) {
-        this.missingStigRequirements().push({
+        requirements.push({
           message: 'SSH Two-Factor Authentication must be enabled.',
           navigateTo: ['/system/advanced'],
           action: this.openGlobalTwoFactorForm.bind(this),
@@ -255,27 +260,41 @@ export class SystemSecurityFormComponent implements OnInit {
       }
 
       if (!enablementRequirements.dockerServiceDisabled) {
-        this.missingStigRequirements().push({
+        requirements.push({
           message: 'The apps service must be disabled and the pool unset.',
           navigateTo: ['/apps'],
         });
       }
 
       if (!enablementRequirements.rootPasswordDisabled || !enablementRequirements.adminPasswordDisabled) {
-        this.missingStigRequirements().push({
+        requirements.push({
           message: 'The root user and the truenas_admin users must have their passwords disabled.',
           navigateTo: ['/credentials/users'],
         });
       }
 
       if (!enablementRequirements.allUsersHave2fa) {
-        this.missingStigWarnings().push({
+        warnings.push({
           message: 'All users must have 2FA enabled and setup.',
           navigateTo: ['/credentials/users'],
         });
       }
 
-      this.loadingStigRequirements.set(false);
+      this.missingStigRequirements.set(requirements);
+      this.missingStigWarnings.set(warnings);
+
+      // prevent saving the form if we have any STIG requirements unmet
+      if (requirements.length > 0) {
+        this.form.controls.enable_gpos_stig.setErrors({ stigRequirementsNotMet: true });
+      } else {
+        // and remove that validation error if there aren't any
+        const errors = this.form.controls.enable_gpos_stig.errors;
+        if (errors?.['stigRequirementsNotMet']) {
+          delete errors['stigRequirementsNotMet'];
+          const hasErrors = Object.keys(errors).length > 0;
+          this.form.controls.enable_gpos_stig.setErrors(hasErrors ? errors : null);
+        }
+      }
     });
   }
 
