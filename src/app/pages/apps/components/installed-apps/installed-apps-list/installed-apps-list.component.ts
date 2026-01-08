@@ -1,6 +1,8 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
-import { Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, inject,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -29,7 +31,6 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -100,7 +101,6 @@ export class InstalledAppsListComponent implements OnInit {
   private location = inject(Location);
   private appsStats = inject(AppsStatsService);
   private loader = inject(LoaderService);
-  private layoutService = inject(LayoutService);
 
   readonly appId = toSignal<string | undefined>(this.activatedRoute.params.pipe(map((params) => params['appId'])));
   readonly toggleShowMobileDetails = output<boolean>();
@@ -177,8 +177,9 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   viewDetails(app: App): void {
-    this.layoutService.navigatePreservingScroll(this.router, ['/apps/installed', app.metadata.train, app.id]);
-
+    // Use location.replaceState to update URL without triggering navigation
+    // This prevents router scroll behavior from resetting the scroll position
+    this.location.replaceState(`/apps/installed/${app.metadata.train}/${app.id}`);
     this.selectAppForDetails(app.id);
   }
 
