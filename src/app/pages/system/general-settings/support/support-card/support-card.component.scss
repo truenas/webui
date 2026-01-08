@@ -45,7 +45,7 @@ ix-save-debug-button.secondary-action:hover::ng-deep button {
 }
 
 .support-banner {
-  background-color: var(--alt-bg1);
+  background-color: var(--bg1);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -65,6 +65,15 @@ ix-save-debug-button.secondary-action:hover::ng-deep button {
   &.community {
     border-left: 3px solid var(--primary);
     margin: 1rem;
+  }
+
+  &.warning {
+    border-left: 3px solid var(--orange);
+
+    .banner-subheading {
+      color: var(--fg1);
+      opacity: 1;
+    }
   }
 
   .banner-text {

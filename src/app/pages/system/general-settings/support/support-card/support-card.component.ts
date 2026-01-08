@@ -88,6 +88,9 @@ export class SupportCardComponent implements OnInit {
   proactiveText = helptext.proactive.title;
   isProactiveSupportAvailable = signal(false);
   isProactiveSupportEnabled = signal(false);
+  isContractExpiringSoon = signal(false);
+
+  private readonly expirationWarningDays = 14;
 
   protected readonly isProductionControl = new FormControl(false, { nonNullable: true });
 
@@ -136,6 +139,10 @@ export class SupportCardComponent implements OnInit {
     const now = new Date(this.systemInfo.datetime.$date);
     const then = expDateConverted;
     licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
+
+    this.isContractExpiringSoon.set(
+      licenseInfo.daysLeftinContract >= 0 && licenseInfo.daysLeftinContract <= this.expirationWarningDays,
+    );
   }
 
   private daysTillExpiration(now: Date, then: Date): number {
