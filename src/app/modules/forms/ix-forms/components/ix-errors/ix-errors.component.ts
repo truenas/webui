@@ -122,6 +122,8 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
     });
 
     // Handle errors immediately if control is not in PENDING state.
+    // Skip marking as touched on initial display to avoid triggering
+    // side effects like auto-opening editable components.
     if (shouldHandleImmediately) {
       // Only show errors for untouched controls if the control has a value.
       // This handles edit forms with invalid data from API, while not showing
@@ -131,12 +133,12 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
 
       if (this.control().errors && hasValue) {
         this.showErrorsForUntouched = true;
-        this.handleErrors();
+        this.handleErrors({ skipMarkAsTouched: true });
       }
     }
   }
 
-  private handleErrors(): void {
+  private handleErrors(options: { skipMarkAsTouched?: boolean } = {}): void {
     const newErrors: (string | null)[] = Object.keys(this.control().errors || []).map((error) => {
       if (error === ixManualValidateError) {
         return null;
@@ -150,6 +152,11 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
     });
 
     this.messages = newErrors.filter((message) => !!message) as string[];
+
+    // Mark control as touched when it has errors, unless explicitly skipped
+    if (this.control().errors && !options.skipMarkAsTouched) {
+      this.control().markAllAsTouched();
+    }
 
     this.cdr.markForCheck();
 
