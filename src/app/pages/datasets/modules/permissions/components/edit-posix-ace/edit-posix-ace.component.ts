@@ -9,15 +9,13 @@ import {
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
-import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
@@ -29,14 +27,14 @@ import { UserService } from 'app/services/user.service';
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxSelectComponent,
-    IxComboboxComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     IxCheckboxListComponent,
     IxCheckboxComponent,
     TranslateModule,
   ],
 })
 export class EditPosixAceComponent implements OnInit, OnChanges {
-  private userService = inject(UserService);
   private store = inject(DatasetAclEditorStore);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
@@ -58,9 +56,6 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     user: helptextAcl.userTooltip,
     group: helptextAcl.groupTooltip,
   };
-
-  readonly userProvider = new UserComboboxProvider(this.userService);
-  readonly groupProvider = new GroupComboboxProvider(this.userService);
 
   get isUserTag(): boolean {
     return this.form.value.tag === PosixAclTag.User;
