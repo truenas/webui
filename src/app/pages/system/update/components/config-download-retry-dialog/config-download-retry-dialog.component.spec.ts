@@ -134,4 +134,21 @@ describe('ConfigDownloadRetryDialog', () => {
       });
     });
   });
+
+  describe('error message sanitization', () => {
+    it('does not display auth tokens or query parameters from error messages', () => {
+      // This test verifies the security fix: auth tokens should never appear in the displayed error message
+      const errorText = spectator.query('mat-dialog-content p strong')?.textContent;
+
+      // Ensure no sensitive data is displayed
+      expect(errorText).not.toContain('auth_token');
+      expect(errorText).not.toContain('SECRET');
+      expect(errorText).not.toContain('?');
+      expect(errorText).not.toContain('&');
+
+      // Error message should still be present
+      expect(errorText).toBeTruthy();
+      expect(errorText?.length).toBeGreaterThan(0);
+    });
+  });
 });

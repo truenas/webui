@@ -37,11 +37,31 @@ export class ConfigDownloadRetryDialog {
 
   protected errorMessage = computed(() => {
     const errorReport = this.errorParser.parseError(this.data.error);
-    if (Array.isArray(errorReport)) {
-      return errorReport[0]?.message || this.translate.instant('An unknown error occurred');
-    }
-    return errorReport?.message || this.translate.instant('An unknown error occurred');
+    const message = Array.isArray(errorReport)
+      ? errorReport[0]?.message
+      : errorReport?.message;
+
+    return this.sanitizeErrorMessage(message || this.translate.instant('An unknown error occurred'));
   });
+
+  /**
+   * Sanitizes error messages to remove sensitive information like auth tokens from URLs.
+   * Removes query parameters from URLs that appear in error messages.
+   */
+  private sanitizeErrorMessage(message: string): string {
+    if (!message) {
+      return this.translate.instant('An unknown error occurred');
+    }
+
+    // Remove URLs with query parameters (e.g., /_download/69?auth_token=...)
+    // Replace with just the path or a generic message
+    const sanitized = message.replace(
+      /for\s+[^\s:]*\?[^\s:]*/g,
+      'for download request',
+    );
+
+    return sanitized;
+  }
 
   onRetry(): void {
     this.dialogRef.close(ConfigDownloadRetryAction.Retry);
