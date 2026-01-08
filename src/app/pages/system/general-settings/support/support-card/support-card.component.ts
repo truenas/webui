@@ -3,7 +3,6 @@ import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -21,10 +20,6 @@ import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
-import {
-  IxSlideToggleComponent,
-} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -65,13 +60,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     ReactiveFormsModule,
     FormsModule,
     MatButton,
-    MatMenuTrigger,
-    IxIconComponent,
-    MatMenu,
-    MatMenuItem,
     MatTooltip,
     TranslateModule,
-    IxSlideToggleComponent,
     SaveDebugButtonComponent,
   ],
 })
@@ -94,10 +84,10 @@ export class SupportCardComponent implements OnInit {
   hasLicense = false;
   productImageSrc = signal<string | null>(null);
   licenseInfo: LicenseInfoInSupport | null = null;
-  links = [helptext.docHub, helptext.forums, helptext.licensing];
   ticketText = helptext.ticket;
   proactiveText = helptext.proactive.title;
   isProactiveSupportAvailable = signal(false);
+  isProactiveSupportEnabled = signal(false);
 
   protected readonly isProductionControl = new FormControl(false, { nonNullable: true });
 
@@ -110,13 +100,12 @@ export class SupportCardComponent implements OnInit {
       this.systemInfo = { ...systemInfo };
       this.systemInfo.memory = (systemInfo.physmem / GiB).toFixed(0) + ' GiB';
 
-      this.setupProductImage(systemInfo);
-
       if (systemInfo.license) {
         this.hasLicense = true;
         this.licenseInfo = { ...systemInfo.license };
         this.parseLicenseInfo(this.licenseInfo);
         this.checkProactiveSupportAvailability();
+        this.setupProductImage(systemInfo);
       }
       this.cdr.markForCheck();
     });
@@ -226,6 +215,22 @@ export class SupportCardComponent implements OnInit {
       )
       .subscribe((isAvailable) => {
         this.isProactiveSupportAvailable.set(isAvailable);
+        this.cdr.markForCheck();
+
+        if (isAvailable) {
+          this.checkProactiveSupportEnabled();
+        }
+      });
+  }
+
+  private checkProactiveSupportEnabled(): void {
+    this.api.call('support.is_available_and_enabled')
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe((isEnabled) => {
+        this.isProactiveSupportEnabled.set(isEnabled);
         this.cdr.markForCheck();
       });
   }

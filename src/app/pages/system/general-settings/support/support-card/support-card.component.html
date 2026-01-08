@@ -5,108 +5,119 @@
   <mat-toolbar-row class="title-bar">
     <h3>{{ 'Support' | translate }}</h3>
 
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      color="default"
-      ixTest="set-license"
-      [ixUiSearch]="searchableElements.elements.updateLicense"
-      (click)="updateLicense()"
-    >
-      {{ licenseButtonText | translate }}
-    </button>
+    <div class="header-actions">
+      <button
+        mat-button
+        class="secondary-action"
+        ixTest="file-ticket"
+        [ixUiSearch]="searchableElements.elements.fileTicket"
+        (click)="feedbackDialog()"
+      >
+        {{ ticketText | translate }}
+      </button>
+      <ix-save-debug-button class="secondary-action"></ix-save-debug-button>
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        color="default"
+        ixTest="set-license"
+        [ixUiSearch]="searchableElements.elements.updateLicense"
+        (click)="updateLicense()"
+      >
+        {{ licenseButtonText | translate }}
+      </button>
+    </div>
   </mat-toolbar-row>
 
   <mat-card-content>
-    <div class="container">
-      @if (productImageSrc()) {
-        <div
-          class="product-image"
-          [style.background-image]="'url(' + productImageSrc() + ')'"
-        ></div>
-      } @else {
-        <div class="product-image-placeholder">
-          <ix-icon name="ix-truenas-logo-mark" [fullSize]="true"></ix-icon>
+    @if (systemInfo) {
+      <!-- HARDWARE IMAGE (for licensed systems with known hardware) -->
+      @if (hasLicense && productImageSrc()) {
+        <div class="product-image-wrapper">
+          <div
+            class="product-image"
+            [style.background-image]="'url(' + productImageSrc() + ')'"
+          ></div>
         </div>
       }
 
-      @if (systemInfo) {
-        <div>
-          <ix-sys-info
-            [hasLicense]="hasLicense"
-            [systemInfo]="systemInfo"
-            [licenseInfo]="licenseInfo"
-          ></ix-sys-info>
-
-          <div class="links-wrapper">
-            @for (link of links; track link) {
-              <div class="links">
-                <div [innerHTML]="link | translate"></div>
-              </div>
-            }
-          </div>
-          @if (hasLicense) {
-            <div>
-              <ix-slide-toggle
-                *ixRequiresRoles="requiredRoles"
-                color="primary"
-                [formControl]="isProductionControl"
-                [label]="'This is a production system' | translate"
-              ></ix-slide-toggle>
+      <!-- SUPPORT BANNER (varies by tier and status) -->
+      @if (hasLicense) {
+        @if (isProactiveSupportAvailable() && !isProactiveSupportEnabled()) {
+          <!-- Silver/Gold: Proactive support available but not yet enabled -->
+          <div class="support-banner proactive">
+            <div class="banner-text">
+              <strong class="banner-heading">{{ 'Set up Proactive Support' | translate }}</strong>
+              <span class="banner-subheading">{{ 'Let the TrueNAS team monitor your system and contact you if issues are detected.' | translate }}</span>
             </div>
-          }
-
-          <!-- ACTION BUTTONS -->
-          <div class="actions button-group">
-            @if (hasLicense) {
-              <button
-                mat-button
-                color="default"
-                class="menu-toggle"
-                ixTest="get-support"
-                [matMenuTriggerFor]="menu"
-              >
-                <span>{{ 'Get Support' | translate }}</span>
-                <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
-              </button>
-              <mat-menu #menu="matMenu" overlapTrigger="false">
-                <button
-                  mat-menu-item
-                  ixTest="file-ticket"
-                  (click)="feedbackDialog()"
-                >
-                  <span>{{ ticketText | translate }}</span>
-                </button>
-                <button
-                  *ixRequiresRoles="[Role.SupportWrite]"
-                  id="proactiveSupport"
-                  mat-menu-item
-                  ixTest="proactive-support"
-                  [disabled]="!isProactiveSupportAvailable()"
-                  [attr.aria-disabled]="!isProactiveSupportAvailable()"
-                  [matTooltip]="!isProactiveSupportAvailable() ? ('Requires Silver or Gold support contract' | translate) : ''"
-                  [attr.aria-label]="!isProactiveSupportAvailable() ? ('Requires Silver or Gold support contract' | translate) : ''"
-                  (click)="openProactive()"
-                >
-                  <span>{{ proactiveText | translate }}</span>
-                </button>
-              </mat-menu>
-            } @else {
-              <button
-                mat-button
-                color="default"
-                ixTest="file-ticket"
-                [ixUiSearch]="searchableElements.elements.fileTicket"
-                (click)="feedbackDialog()"
-              >
-                {{ ticketText | translate }}
-              </button>
-            }
-
-            <ix-save-debug-button></ix-save-debug-button>
+            <button
+              *ixRequiresRoles="[Role.SupportWrite]"
+              mat-button
+              color="primary"
+              ixTest="proactive-support"
+              (click)="openProactive()"
+            >
+              {{ 'Enable' | translate }}
+            </button>
           </div>
+        }
+        @if (!isProactiveSupportAvailable()) {
+          <!-- Bronze: Support options -->
+          <div class="support-banner upsell">
+            <div class="banner-text">
+              <strong class="banner-heading">{{ 'Need help? Looking for support?' | translate }}</strong>
+            </div>
+            <a href="https://www.truenas.com/support/" target="_blank" rel="noopener noreferrer">
+              {{ 'Explore your options' | translate }}
+            </a>
+          </div>
+        }
+      } @else {
+        <!-- Community/Unlicensed: Forums -->
+        <div class="support-banner community">
+          <div class="banner-text">
+            <strong class="banner-heading">{{ 'Need help?' | translate }}</strong>
+            <span class="banner-subheading">{{ 'Get support and join discussions on our forums.' | translate }}</span>
+          </div>
+          <a href="https://forums.truenas.com/" target="_blank" rel="noopener noreferrer">
+            {{ 'Join our community' | translate }}
+          </a>
         </div>
       }
-    </div>
+
+      <!-- SYSTEM/LICENSE INFO -->
+      <ix-sys-info
+        [hasLicense]="hasLicense"
+        [systemInfo]="systemInfo"
+        [licenseInfo]="licenseInfo"
+        [productionControl]="hasLicense ? isProductionControl : null"
+        [isProactiveSupportEnabled]="isProactiveSupportEnabled()"
+        (editContacts)="openProactive()"
+      ></ix-sys-info>
+
+      <!-- LINKS -->
+      <div class="links-row">
+        <a
+          href="https://www.truenas.com/docs/hub/"
+          target="_blank"
+          rel="noopener noreferrer"
+          [matTooltip]="'Read and contribute to the open-source documentation.' | translate"
+        >{{ 'Documentation' | translate }}</a>
+        <span class="link-separator">•</span>
+        <a
+          href="https://forums.truenas.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          [matTooltip]="'Find answers from other users in the forums.' | translate"
+        >{{ 'Forums' | translate }}</a>
+        <span class="link-separator">•</span>
+        <a
+          href="https://www.ixsystems.com/support/truenas-arrays/"
+          target="_blank"
+          rel="noopener noreferrer"
+          [matTooltip]="'Learn more about enterprise-grade support.' | translate"
+        >{{ 'Licensing' | translate }}</a>
+      </div>
+    }
   </mat-card-content>
 </mat-card>

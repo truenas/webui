@@ -382,6 +382,27 @@
       "System",
       "General Settings",
       "Support",
+      "File Ticket"
+    ],
+    "synonyms": [
+      "Rate this page"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "file-ticket",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General Settings",
+      "Support",
       "License"
     ],
     "synonyms": [
@@ -399,27 +420,6 @@
     ],
     "routerLink": null,
     "anchor": "license",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General Settings",
-      "Support",
-      "File Ticket"
-    ],
-    "synonyms": [
-      "Rate this page"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "file-ticket",
     "triggerAnchor": null,
     "section": "ui"
   },
