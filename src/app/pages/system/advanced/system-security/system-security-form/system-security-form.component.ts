@@ -147,7 +147,7 @@ export class SystemSecurityFormComponent implements OnInit {
 
   private systemSecurityConfig = signal<SystemSecurityConfig>(this.slideInRef.getData());
   protected isStigEnabled = signal<boolean>(false);
-  protected loadingStigRequirements = signal<boolean>(false);
+  loadingStigRequirements = signal<boolean>(false);
   protected missingStigRequirements = signal<MissingStigRequirement[]>([]);
   protected missingStigWarnings = signal<MissingStigRequirement[]>([]);
   private twoFactorConfig = signal<GlobalTwoFactorConfig | null>(null);

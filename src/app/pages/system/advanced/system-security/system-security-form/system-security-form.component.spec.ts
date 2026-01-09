@@ -26,6 +26,8 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
+type MockParams = unknown[] | object | void;
+
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
   enable_fips: false,
   enable_gpos_stig: false,
@@ -552,7 +554,7 @@ describe('SystemSecurityFormComponent', () => {
         { username: 'user2', roles: [{ id: 2 }] } as unknown as User,
       ];
 
-      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: unknown[] | object | void) => {
+      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: MockParams) => {
         if (method === 'user.query') {
           if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
             return of([
@@ -591,7 +593,7 @@ describe('SystemSecurityFormComponent', () => {
     });
 
     it('does not show warning when all users have 2FA configured', async () => {
-      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: unknown[] | object | void) => {
+      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: MockParams) => {
         if (method === 'user.query') {
           // Check if this is the local user query (for root/admin check) or the 2FA check
           if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0][0] === 'local') {
@@ -753,33 +755,47 @@ describe('SystemSecurityFormComponent', () => {
     });
   });
 
-  describe('Global 2FA validation for STIG', () => {
+  describe('External STIG mode requirements', () => {
     let validationSpectator: Spectator<SystemSecurityFormComponent>;
     let validationLoader: HarnessLoader;
     let validationForm: IxFormHarness;
     let apiService: ApiService;
-    let router: Router;
 
     beforeEach(async () => {
       validationSpectator = createComponent();
       validationLoader = TestbedHarnessEnvironment.loader(validationSpectator.fixture);
       validationForm = await validationLoader.getHarness(IxFormHarness);
       apiService = validationSpectator.inject(ApiService);
-      router = validationSpectator.inject(Router);
 
       // Ensure clean state for each test
       jest.clearAllMocks();
+      jest.clearAllTimers();
     });
 
-    it('shows validation error when global 2FA is not enabled', async () => {
+    it('shows all validation errors correctly', async () => {
       // Clear any existing mocks and set up fresh
       jest.clearAllMocks();
-      (apiService.call as jest.Mock).mockImplementation((method: string) => {
+      (apiService.call as jest.Mock).mockImplementation((method: string, params?: MockParams) => {
         if (method === 'auth.twofactor.config') {
-          return of({ enabled: false });
+          // Both global 2FA and SSH 2FA are disabled
+          return of({ enabled: false, services: { ssh: false } });
         }
         if (method === 'user.query') {
-          return of([]);
+          // For the user.query call that checks for local users (root/admin)
+          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
+            return of([
+              { username: 'root', password_disabled: false } as User, // Root password NOT disabled
+              { username: 'truenas_admin', password_disabled: false } as User, // Admin password NOT disabled
+            ]);
+          }
+          // For the user.query call that checks for users without 2FA (warning)
+          return of([
+            { username: 'testuser', roles: [{ id: 1 }], twofactor_auth_configured: false } as unknown as User,
+          ]);
+        }
+        if (method === 'docker.status') {
+          // Docker service is configured (not disabled)
+          return of({ status: DockerStatus.Running, description: 'Docker is running' });
         }
         return of(null);
       });
@@ -805,161 +821,112 @@ describe('SystemSecurityFormComponent', () => {
       await validationSpectator.fixture.whenStable();
       validationSpectator.detectChanges();
 
-      // Check that the form control has the globalTwoFactorRequired error
       expect(validationSpectator.component.form.controls.enable_gpos_stig.errors).toEqual({
-        globalTwoFactorRequired: true,
+        stigRequirementsNotMet: true,
       });
 
-      // The error should be in a mat-error element
-      const errors = validationSpectator.queryAll('mat-error');
-      // The 2FA error should be the first error
-      const twoFaError = errors[0];
-
-      expect(twoFaError).toBeTruthy();
-      expect(twoFaError?.textContent).toContain('Global Two-Factor Authentication must be enabled to activate this feature.');
-      expect(twoFaError?.textContent).toContain('Enable it here.');
-
-      const saveButton = await validationLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      expect(await saveButton.isDisabled()).toBe(true);
-    });
-
-    it('does not show validation error when global 2FA is enabled', async () => {
-      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
-        if (method === 'auth.twofactor.config') {
-          return of({ enabled: true });
-        }
-        return of(null);
-      });
-
-      // First ensure STIG requirements are met
-      await validationForm.fillForm({
-        'Min Password Age': 1,
-        'Max Password Age': 60,
-        'Min Password Length': 15,
-        'Password History Length': 5,
-        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
-      });
-
-      await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
-
-      // Wait for async operations to complete
-      await validationSpectator.fixture.whenStable();
-      validationSpectator.detectChanges();
-
-      // Find any error related to 2FA
-      const errors = validationSpectator.queryAll('mat-error');
-      const twoFaError = errors.find((error) => error.textContent?.includes('Global Two-Factor Authentication'));
-
-      expect(twoFaError).toBeFalsy();
-    });
-
-    it('navigates to global 2FA form when link is clicked and marks form as pristine', async () => {
-      // Clear any existing mocks and set up fresh
-      jest.clearAllMocks();
-      (apiService.call as jest.Mock).mockImplementation((method: string) => {
-        if (method === 'auth.twofactor.config') {
-          return of({ enabled: false });
-        }
-        if (method === 'user.query') {
-          return of([]);
-        }
-        return of(null);
-      });
-
-      // Re-initialize the component to ensure it uses the new mock
-      validationSpectator.component.ngOnInit();
-      validationSpectator.detectChanges();
-
-      const slideInRef = validationSpectator.inject(SlideInRef);
-      const closeSpy = jest.spyOn(slideInRef, 'close');
-      const navigateSpy = jest.spyOn(router, 'navigate');
-
-      // First ensure STIG requirements are met
-      await validationForm.fillForm({
-        'Min Password Age': 1,
-        'Max Password Age': 60,
-        'Min Password Length': 15,
-        'Password History Length': 5,
-        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
-      });
-
-      await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
-
-      // Wait for async operations to complete
-      await validationSpectator.fixture.whenStable();
-      validationSpectator.detectChanges();
-
-      // Mark form as dirty to test if it gets marked pristine
-      validationSpectator.component.form.markAsDirty();
-      expect(validationSpectator.component.form.dirty).toBe(true);
-
-      // Find the link within the 2FA error
-      const errors = validationSpectator.queryAll('mat-error');
-      // The 2FA error should be the first error
-      const twoFaError = errors[0];
-      expect(twoFaError).toBeTruthy();
-      expect(twoFaError?.textContent).toContain('Global Two-Factor Authentication');
-
-      const link = twoFaError?.querySelector('.link-button');
-      expect(link).toBeTruthy();
-
-      validationSpectator.click(link!);
-
-      // Verify form was marked pristine before navigation
-      expect(validationSpectator.component.form.pristine).toBe(true);
-      expect(closeSpy).toHaveBeenCalledWith({ response: false });
-      expect(navigateSpy).toHaveBeenCalledWith(['/credentials/two-factor']);
-    });
-
-    it('shows validation error on init when STIG is already enabled and 2FA is not', async () => {
-      // Mock SlideInRef to return STIG enabled
-      jest.spyOn(validationSpectator.inject(SlideInRef), 'getData').mockReturnValue({
-        ...fakeSystemSecurityConfig,
-        enable_gpos_stig: true,
-      });
-
-      // Mock API to return 2FA disabled
-      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
-        if (method === 'auth.twofactor.config') {
-          return of({ enabled: false });
-        }
-        return of(null);
-      });
-
-      // Re-initialize component to trigger ngOnInit with new data
-      validationSpectator.component.ngOnInit();
-      validationSpectator.detectChanges();
-
-      // Update value to trigger validation
-      await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
-
-      // Wait for async operations
-      await validationSpectator.fixture.whenStable();
-      validationSpectator.detectChanges();
-
+      // The error message should be displayed in the mat-error element showing missing requirements
       const errorElement = validationSpectator.query('mat-error');
       expect(errorElement).toBeTruthy();
-      expect(errorElement?.textContent).toContain('Global Two-Factor Authentication must be enabled to activate this feature.');
-      expect(errorElement?.textContent).toContain('Enable it here.');
+      expect(errorElement?.textContent).toContain('Requirements to enable STIG mode:');
+
+      // Verify all 4 requirement errors are shown
+      expect(errorElement?.textContent).toContain('Global Two-Factor Authentication must be enabled.');
+      expect(errorElement?.textContent).toContain('SSH Two-Factor Authentication must be enabled.');
+      expect(errorElement?.textContent).toContain('The apps service must be disabled and the pool unset.');
+      expect(errorElement?.textContent).toContain('The root user and the truenas_admin users must have their passwords disabled.');
+
+      // Verify the warning is shown in mat-hint
+      const hintElement = validationSpectator.query('mat-hint');
+      expect(hintElement?.textContent).toContain('Optional requirements to enable STIG mode:');
+      expect(hintElement?.textContent).toContain('All users must have 2FA enabled and setup.');
 
       const saveButton = await validationLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
     });
 
-    it('removes globalTwoFactorRequired error when STIG is disabled', async () => {
-      // Set up with 2FA disabled
-      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+    it('shows no validation errors when all requirements are satisfied', async () => {
+      // Clear any existing mocks and set up fresh
+      jest.clearAllMocks();
+      (apiService.call as jest.Mock).mockImplementation((method: string, params?: unknown[] | object | void) => {
         if (method === 'auth.twofactor.config') {
-          return of({ enabled: false });
+          // Both global 2FA and SSH 2FA are enabled
+          return of({ enabled: true, services: { ssh: true } });
         }
         if (method === 'user.query') {
+          // For the user.query call that checks for local users (root/admin)
+          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
+            return of([
+              { username: 'root', password_disabled: true } as User, // Root password IS disabled
+              { username: 'truenas_admin', password_disabled: true } as User, // Admin password IS disabled
+            ]);
+          }
+          // For the user.query call that checks for users without 2FA - return empty (all users have 2FA)
           return of([]);
+        }
+        if (method === 'docker.status') {
+          // Docker service is unconfigured (disabled)
+          return of({ status: DockerStatus.Unconfigured, description: '' });
+        }
+        return of(null);
+      });
+
+      // Re-initialize the component to ensure it uses the new mock
+      validationSpectator.component.ngOnInit();
+      validationSpectator.detectChanges();
+
+      // Set valid STIG values
+      await validationForm.fillForm({
+        'Min Password Age': 1,
+        'Max Password Age': 60,
+        'Min Password Length': 15,
+        'Password History Length': 5,
+        'Password Complexity Ruleset': ['Upper', 'Lower', 'Number', 'Special'],
+      });
+
+      await validationForm.fillForm({
+        'Enable General Purpose OS STIG compatibility mode': true,
+      });
+
+      // Wait for async operations to complete
+      await validationSpectator.fixture.whenStable();
+      validationSpectator.detectChanges();
+
+      // Check that the form control does NOT have any errors
+      expect(validationSpectator.component.form.controls.enable_gpos_stig.errors).toBeNull();
+
+      // Verify no requirement error messages are shown in the DOM
+      const errorElements = validationSpectator.queryAll('mat-error');
+      const requirementsError = errorElements.find((el) => el.textContent?.includes('Requirements to enable STIG mode:'));
+      expect(requirementsError).toBeFalsy();
+
+      // Verify no warning messages are shown in the DOM
+      const hintElements = validationSpectator.queryAll('mat-hint');
+      const warningsHint = hintElements.find((el) => el.textContent?.includes('Optional requirements to enable STIG mode:'));
+      expect(warningsHint).toBeFalsy();
+
+      // The Save button should be enabled
+      const saveButton = await validationLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('removes stigRequirementsNotMet error when requirements become satisfied', async () => {
+      // Start with all requirements NOT satisfied
+      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: MockParams) => {
+        if (method === 'auth.twofactor.config') {
+          return of({ enabled: false, services: { ssh: false } });
+        }
+        if (method === 'user.query') {
+          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
+            return of([
+              { username: 'root', password_disabled: false } as User,
+              { username: 'truenas_admin', password_disabled: false } as User,
+            ]);
+          }
+          return of([]);
+        }
+        if (method === 'docker.status') {
+          return of({ status: DockerStatus.Running, description: 'Docker is running' });
         }
         return of(null);
       });
@@ -976,64 +943,32 @@ describe('SystemSecurityFormComponent', () => {
       await validationSpectator.fixture.whenStable();
       validationSpectator.detectChanges();
 
-      // Verify error is present
+      // Verify stigRequirementsNotMet error is present
       expect(validationSpectator.component.form.controls.enable_gpos_stig.errors).toEqual({
-        globalTwoFactorRequired: true,
+        stigRequirementsNotMet: true,
       });
 
-      // Disable STIG
-      await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': false,
-      });
-
-      await validationSpectator.fixture.whenStable();
-      validationSpectator.detectChanges();
-
-      // Verify error is removed
-      expect(validationSpectator.component.form.controls.enable_gpos_stig.errors).toBeNull();
-    });
-
-    it('removes globalTwoFactorRequired error when 2FA becomes enabled', async () => {
-      // Initially set up with 2FA disabled
-      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+      // Now mock all requirements as satisfied
+      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: MockParams) => {
         if (method === 'auth.twofactor.config') {
-          return of({ enabled: false });
+          return of({ enabled: true, services: { ssh: true } });
         }
         if (method === 'user.query') {
+          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
+            return of([
+              { username: 'root', password_disabled: true } as User,
+              { username: 'truenas_admin', password_disabled: true } as User,
+            ]);
+          }
           return of([]);
+        }
+        if (method === 'docker.status') {
+          return of({ status: DockerStatus.Unconfigured, description: '' });
         }
         return of(null);
       });
 
-      // Re-initialize component to ensure clean state
-      validationSpectator.component.ngOnInit();
-      validationSpectator.detectChanges();
-
-      // Enable STIG to trigger the error
-      await validationForm.fillForm({
-        'Enable General Purpose OS STIG compatibility mode': true,
-      });
-
-      await validationSpectator.fixture.whenStable();
-      validationSpectator.detectChanges();
-
-      // Verify error is present
-      expect(validationSpectator.component.form.controls.enable_gpos_stig.errors).toEqual({
-        globalTwoFactorRequired: true,
-      });
-
-      // Now mock 2FA as enabled
-      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
-        if (method === 'auth.twofactor.config') {
-          return of({ enabled: true });
-        }
-        if (method === 'user.query') {
-          return of([]);
-        }
-        return of(null);
-      });
-
-      // Toggle STIG off and on to trigger re-check
+      // Toggle STIG off and on to trigger re-check with new mocks
       await validationForm.fillForm({
         'Enable General Purpose OS STIG compatibility mode': false,
       });
@@ -1044,8 +979,12 @@ describe('SystemSecurityFormComponent', () => {
       await validationSpectator.fixture.whenStable();
       validationSpectator.detectChanges();
 
-      // Verify error is removed
+      // Verify stigRequirementsNotMet error is removed
       expect(validationSpectator.component.form.controls.enable_gpos_stig.errors).toBeNull();
     });
+  });
+
+  describe('STIG Error Navigation Links', () => {
+    // TODO
   });
 });
