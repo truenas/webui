@@ -26,8 +26,18 @@ Some common pitfalls to watch for:
 - Forgetting to take into account i18n or accessibility.
 - Writing tests that interact with methods that should be private or protected.
 
+## Translation Files (i18n)
 Sometimes PRs may contain changes to `src/assets/i18n/**`.
 Reordering of strings and addition/removal of keys corresponding to code changes are expected and normal.
+
+Translation extraction is fully automated (runs on build + weekly Monday automation).
+Skip reviewing `src/assets/i18n/**/*.json` files - they are auto-generated.
+
+Focus on i18n correctness in the code:
+- Verify proper use of T() markers and | translate pipes
+- Check that translation keys are meaningful and follow conventions
+- Ensure pluralization and interpolation use correct ICU MessageFormat syntax
+- Confirm new UI text is translatable (not hardcoded)
 
 Use enthusiastic and positive tone, you can use some emojis.
 
