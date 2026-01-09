@@ -25,6 +25,6 @@ import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
   ],
 })
 export class FibreChannelPortCardComponent {
-  readonly port = input.required<FibreChannelPort>();
+  readonly ports = input.required<FibreChannelPort[]>();
   readonly isLoading = input.required<boolean>();
 }

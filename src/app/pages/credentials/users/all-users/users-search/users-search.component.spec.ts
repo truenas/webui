@@ -1,31 +1,25 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { BehaviorSubject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { User } from 'app/interfaces/user.interface';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { AdvancedSearchHarness } from 'app/modules/forms/search-input/components/advanced-search/advanced-search.harness';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchInputHarness } from 'app/modules/forms/search-input/components/search-input/search-input.harness';
-import { AdvancedSearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { mockUserApiDataProvider } from 'app/pages/credentials/users/all-users/testing/mock-user-api-data-provider';
 import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-data-provider';
 import * as UsersSearchPresets from 'app/pages/credentials/users/all-users/users-search/users-search-presets';
 import { UsersSearchComponent } from 'app/pages/credentials/users/all-users/users-search/users-search.component';
 
-enum UserType {
-  Builtin = 'builtin',
-  Local = 'local',
-  Directory = 'directory',
-}
-
 describe('UsersSearchComponent', () => {
   let spectator: Spectator<UsersSearchComponent>;
   let loader: HarnessLoader;
-  let component: UsersSearchComponent;
   let mockDataProvider: jest.Mocked<UsersDataProvider>;
 
   const createComponent = createComponentFactory({
@@ -49,7 +43,7 @@ describe('UsersSearchComponent', () => {
       ...mockUserApiDataProvider,
       currentPage$: new BehaviorSubject([
         {
-          id: 1, username: 'root', builtin: true, local: false, full_name: 'Root User',
+          id: 1, username: 'root', builtin: true, local: true, full_name: 'Root User',
         } as User,
         {
           id: 2, username: 'localuser1', builtin: false, local: true, full_name: 'Local User 1',
@@ -58,10 +52,10 @@ describe('UsersSearchComponent', () => {
           id: 3, username: 'localuser2', builtin: false, local: true, full_name: 'Local User 2',
         } as User,
         {
-          id: 4, username: 'daemon', builtin: true, local: false, full_name: 'Daemon User',
+          id: 4, username: 'daemon', builtin: true, local: true, full_name: 'Daemon User',
         } as User,
         {
-          id: 5, username: 'www', builtin: true, local: false, full_name: 'Web Server User',
+          id: 5, username: 'www', builtin: true, local: true, full_name: 'Web Server User',
         } as User,
         {
           id: 6, username: 'aduser1', builtin: false, local: false, full_name: 'AD User 1',
@@ -79,33 +73,31 @@ describe('UsersSearchComponent', () => {
         dataProvider: mockDataProvider,
       },
     });
-    component = spectator.component;
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   describe('Basic Search', () => {
-    it('performs search with the correct value', async () => {
+    it('performs search with the correct value with both Local and Directory selected by default', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
       await searchInput.setValue('root');
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
       await button.click();
 
+      // With both Local and Directory selected, builtin=false OR local=false filters out builtin local users
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
-          ['local', '=', true],
-          ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+          ['OR', [['builtin', '=', false], ['local', '=', false]]],
           ['OR', [['username', '~', '(?i)root'], ['full_name', '~', '(?i)root']]],
         ],
         {},
       ]);
     });
 
-    it('searches with user type filters', async () => {
-      const searchInput = await loader.getHarness(SearchInputHarness);
+    it('searches with only Local user type selected', async () => {
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      await selectHarness.setValue(['Local']);
 
-      // Select builtin user type
-      (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
-        .onUserTypeChange([UserType.Builtin]);
+      const searchInput = await loader.getHarness(SearchInputHarness);
       await searchInput.setValue('test');
 
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
@@ -113,7 +105,8 @@ describe('UsersSearchComponent', () => {
 
       expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
         [
-          ['builtin', '=', true],
+          ['local', '=', true],
+          ['builtin', '=', false],
           ['OR', [['username', '~', '(?i)test'], ['full_name', '~', '(?i)test']]],
         ],
         {},
@@ -121,15 +114,18 @@ describe('UsersSearchComponent', () => {
     });
 
     it('converts * wildcard to .* in search pattern', async () => {
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      await selectHarness.setValue(['Local']);
+
       const searchInput = await loader.getHarness(SearchInputHarness);
       await searchInput.setValue('*user');
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
       await button.click();
 
-      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+      expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
         [
           ['local', '=', true],
-          ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+          ['builtin', '=', false],
           ['OR', [['username', '~', '(?i).*user'], ['full_name', '~', '(?i).*user']]],
         ],
         {},
@@ -137,15 +133,18 @@ describe('UsersSearchComponent', () => {
     });
 
     it('escapes regex special characters in search pattern', async () => {
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      await selectHarness.setValue(['Local']);
+
       const searchInput = await loader.getHarness(SearchInputHarness);
       await searchInput.setValue('(test)');
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
       await button.click();
 
-      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+      expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
         [
           ['local', '=', true],
-          ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+          ['builtin', '=', false],
           ['OR', [['username', '~', '(?i)\\(test\\)'], ['full_name', '~', '(?i)\\(test\\)']]],
         ],
         {},
@@ -167,60 +166,51 @@ describe('UsersSearchComponent', () => {
       expect(mockDataProvider.load).toHaveBeenCalled();
     });
 
-    it('updates builtin filter state correctly', async () => {
+    it('tracks builtin filter state in advanced mode', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+
       await searchInput.toggleMode();
       const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
 
-      // Apply builtin filter
+      // Apply builtin filter and verify API call
       await advancedModeHarness.setValue('"Built in" = true');
-      spectator.detectChanges();
+      await button.click();
 
-      // Component should track the builtin filter state
-      expect((component as unknown as { isBuiltinFilterActive: () => boolean }).isBuiltinFilterActive()).toBe(true);
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([[['builtin', '=', true]]]);
     });
   });
 
   describe('Active Directory Integration', () => {
-    it('shows Directory Services option when AD is enabled', () => {
-      const userTypeOptions = (component as unknown as { userTypeOptionsSignal: () => unknown[] })
-        .userTypeOptionsSignal();
-      expect(userTypeOptions).toContainEqual(
-        expect.objectContaining({ label: 'Directory Services', value: 'directory' }),
-      );
+    it('shows Directory Services option when AD is enabled', async () => {
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      const options = await selectHarness.getOptionLabels();
+
+      expect(options).toContain('Directory Services');
     });
 
-    it('generates correct presets when AD is enabled', () => {
-      const presets = (component as unknown as { userPresets: () => { label: string }[] }).userPresets();
-      const adPreset = presets.find((preset) => preset.label.includes('Active Directory'));
-      expect(adPreset).toBeDefined();
+    it('filters by directory users correctly', async () => {
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      await selectHarness.setValue(['Directory Services']);
+
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [['local', '=', false]],
+        {},
+      ]);
     });
 
-    it('updates AD filter state when local filter is applied', async () => {
+    it('updates local filter state when local filter is applied', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+
       await searchInput.toggleMode();
       const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
 
-      // Apply local filter (hide AD users)
+      // Apply local filter (hide AD users) and verify API call
       await advancedModeHarness.setValue('"Local" = true');
-      spectator.detectChanges();
+      await button.click();
 
-      expect(
-        (component as unknown as { isActiveDirectoryFilterActive: () => boolean }).isActiveDirectoryFilterActive(),
-      ).toBe(true);
-    });
-
-    it('filters by directory users correctly', () => {
-      (component as unknown as { onUserTypeChange: (types: UserType[]) => void })
-        .onUserTypeChange([UserType.Directory]);
-
-      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
-        [
-          ['local', '=', false],
-          ['builtin', '=', false],
-        ],
-        {},
-      ]);
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([[['local', '=', true]]]);
     });
   });
 
@@ -245,128 +235,116 @@ describe('UsersSearchComponent', () => {
           dataProvider: mockDataProvider,
         },
       });
-      component = spectator.component;
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('does not show Directory Services option when AD is disabled', () => {
-      const userTypeOptions = (component as unknown as { userTypeOptionsSignal: () => unknown[] })
-        .userTypeOptionsSignal();
-      expect(userTypeOptions).not.toContainEqual(
-        expect.objectContaining({ value: 'directory' }),
-      );
-    });
+    it('does not show Directory Services option when AD is disabled', async () => {
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      const options = await selectHarness.getOptionLabels();
 
-    it('does not include Active Directory preset when AD is disabled', () => {
-      const presets = (component as unknown as { userPresets: () => { label: string }[] }).userPresets();
-      const adPreset = presets.find((preset) => preset.label.includes('Active Directory'));
-      expect(adPreset).toBeUndefined();
+      expect(options).not.toContain('Directory Services');
+      expect(options).toContain('Local');
     });
   });
 
   describe('Filter Conflict Resolution', () => {
-    it('resolves conflicting builtin filters by keeping the latest', () => {
-      const mockQuery: AdvancedSearchQuery<User> = {
-        isBasicQuery: false,
-        filters: [
-          ['builtin', '=', true],
+    it('resolves conflicting builtin filters by keeping the latest when entered via advanced search', async () => {
+      const searchInput = await loader.getHarness(SearchInputHarness);
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+
+      await searchInput.toggleMode();
+      const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
+
+      // Enter query with conflicting builtin filters - latest (false) should be kept
+      await advancedModeHarness.setValue('"Built in" = true AND Username ~ "test" AND "Built in" = false');
+      await button.click();
+
+      // Verify API receives deduplicated filters with latest builtin value
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [
           ['username', '~', 'test'],
-          ['builtin', '=', false], // Conflicting filter
+          ['builtin', '=', false],
         ],
-      };
-
-      const result = (component as unknown as {
-        removeConflictingFilters: (query: AdvancedSearchQuery<User>) => AdvancedSearchQuery<User>;
-      }).removeConflictingFilters(mockQuery);
-
-      expect(result.filters).toEqual([
-        ['username', '~', 'test'],
-        ['builtin', '=', false], // Latest builtin filter kept
       ]);
     });
 
-    it('resolves conflicting local filters by keeping the latest', () => {
-      const mockQuery: AdvancedSearchQuery<User> = {
-        isBasicQuery: false,
-        filters: [
-          ['local', '=', false],
+    it('resolves conflicting local filters by keeping the latest when entered via advanced search', async () => {
+      const searchInput = await loader.getHarness(SearchInputHarness);
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+
+      await searchInput.toggleMode();
+      const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
+
+      // Enter query with conflicting local filters - latest (true) should be kept
+      await advancedModeHarness.setValue('"Local" = false AND Username ~ "test" AND "Local" = true');
+      await button.click();
+
+      // Verify API receives deduplicated filters with latest local value
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [
           ['username', '~', 'test'],
-          ['local', '=', true], // Conflicting filter
+          ['local', '=', true],
         ],
-      };
-
-      const result = (component as unknown as {
-        removeConflictingFilters: (query: AdvancedSearchQuery<User>) => AdvancedSearchQuery<User>;
-      }).removeConflictingFilters(mockQuery);
-
-      expect(result.filters).toEqual([
-        ['username', '~', 'test'],
-        ['local', '=', true], // Latest local filter kept
       ]);
     });
 
-    it('handles multiple filter types without conflicts', () => {
-      const mockQuery: AdvancedSearchQuery<User> = {
-        isBasicQuery: false,
-        filters: [
+    it('preserves multiple different filter types without conflicts', async () => {
+      const searchInput = await loader.getHarness(SearchInputHarness);
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+
+      await searchInput.toggleMode();
+      const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
+
+      // Enter query with different filter types (no conflicts)
+      await advancedModeHarness.setValue('"Built in" = true AND "Local" = false AND Username ~ "test"');
+      await button.click();
+
+      // Verify all filters are preserved
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [
+          ['username', '~', 'test'],
           ['builtin', '=', true],
           ['local', '=', false],
-          ['username', '~', 'test'],
         ],
-      };
-
-      const result = (component as unknown as {
-        removeConflictingFilters: (query: AdvancedSearchQuery<User>) => AdvancedSearchQuery<User>;
-      }).removeConflictingFilters(mockQuery);
-
-      expect(result.filters).toEqual([
-        ['username', '~', 'test'],
-        ['builtin', '=', true],
-        ['local', '=', false],
       ]);
     });
   });
 
   describe('Search Properties', () => {
-    it('generates correct search properties from user data', () => {
-      const users = [
-        {
-          id: 1,
-          username: 'root',
-          full_name: 'Root User',
-          email: 'root@test.com',
-          builtin: true,
-          local: false,
-          group: { id: 1 },
-          groups: [1, 2],
-          roles: ['READONLY_ADMIN'],
-        } as User,
-      ];
+    it('allows searching by various user properties in advanced mode', async () => {
+      const searchInput = await loader.getHarness(SearchInputHarness);
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
 
-      (component as unknown as { setSearchProperties: (users: User[]) => void }).setSearchProperties(users);
-      const properties = (component as unknown as { searchProperties: () => { property: string; label: string }[] })
-        .searchProperties();
+      await searchInput.toggleMode();
+      const advancedModeHarness = await (searchInput.getActiveModeHarness() as Promise<AdvancedSearchHarness>);
 
-      expect(properties).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ property: 'id', label: 'ID' }),
-          expect.objectContaining({ property: 'username', label: 'Username' }),
-          expect.objectContaining({ property: 'fullname', label: 'Full Name' }),
-          expect.objectContaining({ property: 'email', label: 'Email' }),
-          expect.objectContaining({ property: 'builtin', label: 'Built in' }),
-          expect.objectContaining({ property: 'local', label: 'Local' }),
-        ]),
-      );
-    });
-  });
+      // Test that Username property works (derived from user data)
+      await advancedModeHarness.setValue('Username = "root"');
+      await button.click();
 
-  describe('Default Presets', () => {
-    it('includes default presets', () => {
-      const presets = (component as unknown as { userPresets: () => { label: string }[] }).userPresets();
-      const presetLabels = presets.map((preset) => preset.label);
-      expect(presetLabels).toContain('Has API Access');
-      expect(presetLabels).toContain('Has SMB Access');
-      expect(presetLabels).toContain('Has Shell Access');
-      expect(presetLabels).toContain('Has SSH Access');
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [['username', '=', 'root']],
+      ]);
+
+      jest.clearAllMocks();
+
+      // Test that Built in property works
+      await advancedModeHarness.setValue('"Built in" = true');
+      await button.click();
+
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [['builtin', '=', true]],
+      ]);
+
+      jest.clearAllMocks();
+
+      // Test that Local property works
+      await advancedModeHarness.setValue('"Local" = false');
+      await button.click();
+
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [['local', '=', false]],
+      ]);
     });
   });
 
@@ -416,27 +394,20 @@ describe('UsersSearchComponent', () => {
   });
 
   describe('Search Mode Switching - Default States', () => {
-    it('shows default local users on page load, switches to all users in Advanced, then back to local users in Basic', async () => {
+    it('maintains consistent default filtering when switching between Basic and Advanced modes', async () => {
       const searchInput = await loader.getHarness(SearchInputHarness);
 
       // Verify component starts in Basic mode
       expect(await searchInput.isInAdvancedMode()).toBe(false);
 
-      // Component doesn't call setParams on initialization in test, so trigger user type change
-      (component as unknown as { onUserTypeChange: (types: string[]) => void })
-        .onUserTypeChange(['local']);
+      // Trigger search with default selection (Local + Directory)
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      await selectHarness.setValue(['Local', 'Directory Services']);
 
-      // Verify initial Basic mode applies local user filtering
+      // Verify initial Basic mode applies both Local and Directory user filtering
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
-          ['local', '=', true],
-          [
-            'OR',
-            [
-              ['builtin', '=', false],
-              ['username', '=', 'root'],
-            ],
-          ],
+          ['OR', [['builtin', '=', false], ['local', '=', false]]],
         ],
         {},
       ]);
@@ -448,8 +419,12 @@ describe('UsersSearchComponent', () => {
       await searchInput.toggleMode();
       expect(await searchInput.isInAdvancedMode()).toBe(true);
 
-      // Verify Advanced mode shows all users (no filtering applied)
-      expect(mockDataProvider.setParams).toHaveBeenCalledWith([]);
+      // Verify Advanced mode applies same default filtering as basic mode for consistency
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [
+          ['OR', [['builtin', '=', false], ['local', '=', false]]],
+        ],
+      ]);
       expect(mockDataProvider.load).toHaveBeenCalled();
 
       // Reset mock to track new calls
@@ -459,17 +434,10 @@ describe('UsersSearchComponent', () => {
       await searchInput.toggleMode();
       expect(await searchInput.isInAdvancedMode()).toBe(false);
 
-      // Verify Basic mode again applies local user filtering
+      // Verify Basic mode again applies default filtering
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
-          ['local', '=', true],
-          [
-            'OR',
-            [
-              ['builtin', '=', false],
-              ['username', '=', 'root'],
-            ],
-          ],
+          ['OR', [['builtin', '=', false], ['local', '=', false]]],
         ],
         {},
       ]);
@@ -478,6 +446,11 @@ describe('UsersSearchComponent', () => {
 
   describe('Search Mode Switching - Query Clearing', () => {
     it('clears search queries when switching modes and maintains correct default filtering', async () => {
+      // Select only Local for this test
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      await selectHarness.setValue(['Local']);
+      jest.clearAllMocks();
+
       const searchInput = await loader.getHarness(SearchInputHarness);
 
       // 1. Enter basic search query
@@ -489,7 +462,7 @@ describe('UsersSearchComponent', () => {
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
           ['local', '=', true],
-          ['OR', [['builtin', '=', false], ['username', '=', 'root']]],
+          ['builtin', '=', false],
           ['OR', [['username', '~', '(?i)localuser'], ['full_name', '~', '(?i)localuser']]],
         ],
         {},
@@ -501,9 +474,13 @@ describe('UsersSearchComponent', () => {
       // 2. Switch to Advanced mode
       await searchInput.toggleMode();
 
-      // Verify Advanced mode is active and shows all users (search input may have default query)
+      // Verify Advanced mode is active and applies default filtering for consistency
       expect(await searchInput.isInAdvancedMode()).toBe(true);
-      expect(mockDataProvider.setParams).toHaveBeenCalledWith([]);
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [
+          ['OR', [['builtin', '=', false], ['local', '=', false]]],
+        ],
+      ]);
       expect(mockDataProvider.load).toHaveBeenCalled();
 
       // Reset mock to track new calls
@@ -514,7 +491,7 @@ describe('UsersSearchComponent', () => {
       await advancedModeHarness.setValue('Username = "root"');
       await searchButton.click();
 
-      // Verify advanced filtering is applied (implementation will depend on the advanced search parsing)
+      // Verify advanced filtering is applied
       expect(mockDataProvider.setParams).toHaveBeenCalled();
 
       // Reset mock to track new calls
@@ -523,19 +500,117 @@ describe('UsersSearchComponent', () => {
       // 4. Switch back to Basic mode
       await searchInput.toggleMode();
 
-      // Verify back in Basic mode and default local users filtering is restored
+      // Verify back in Basic mode. Mode switching resets to defaults (Local + Directory)
+      // regardless of the previous selection (which was only Local at the start of this test)
       expect(await searchInput.isInAdvancedMode()).toBe(false);
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
-          ['local', '=', true],
-          [
-            'OR',
-            [
-              ['builtin', '=', false],
-              ['username', '=', 'root'],
-            ],
-          ],
+          ['OR', [['builtin', '=', false], ['local', '=', false]]],
         ],
+        {},
+      ]);
+    });
+  });
+
+  describe('Show Built-in Users Toggle', () => {
+    it('shows built-in users when toggle is enabled', async () => {
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      await selectHarness.setValue(['Local']);
+
+      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      await toggleHarness.check();
+
+      expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
+        [['local', '=', true]],
+        {},
+      ]);
+    });
+
+    it('disables built-in toggle when Local is not selected', async () => {
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      await selectHarness.setValue(['Directory Services']);
+
+      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      expect(await toggleHarness.isDisabled()).toBe(true);
+    });
+
+    it('enables built-in toggle when Local is selected', async () => {
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      await selectHarness.setValue(['Local']);
+
+      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      expect(await toggleHarness.isDisabled()).toBe(false);
+    });
+
+    it('unchecks toggle when Local is deselected', async () => {
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      await selectHarness.setValue(['Local']);
+
+      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      await toggleHarness.check();
+
+      // Deselect Local
+      await selectHarness.setValue(['Directory Services']);
+
+      expect(await toggleHarness.isChecked()).toBe(false);
+    });
+
+    it('maintains toggle state when searching', async () => {
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      await selectHarness.setValue(['Local']);
+
+      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      await toggleHarness.check();
+      jest.clearAllMocks();
+
+      // Perform a search
+      const searchInput = await loader.getHarness(SearchInputHarness);
+      await searchInput.setValue('test');
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Search' }));
+      await button.click();
+
+      // Verify toggle state is maintained and filter includes built-in users
+      expect(await toggleHarness.isChecked()).toBe(true);
+      expect(mockDataProvider.setParams).toHaveBeenCalledWith([
+        [
+          ['local', '=', true],
+          ['OR', [['username', '~', '(?i)test'], ['full_name', '~', '(?i)test']]],
+        ],
+        {},
+      ]);
+    });
+
+    it('resets toggle when switching from Basic to Advanced mode', async () => {
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      await selectHarness.setValue(['Local']);
+
+      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      await toggleHarness.check();
+
+      expect(await toggleHarness.isChecked()).toBe(true);
+
+      const searchInput = await loader.getHarness(SearchInputHarness);
+
+      // Switch to Advanced mode
+      await searchInput.toggleMode();
+
+      // Switch back to Basic mode - toggle should be reset
+      await searchInput.toggleMode();
+
+      const newToggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      expect(await newToggleHarness.isChecked()).toBe(false);
+    });
+
+    it('shows all users when both Local and Directory selected with toggle on', async () => {
+      const selectHarness = await loader.getHarness(IxSelectHarness.with({ label: 'Filter by Type' }));
+      await selectHarness.setValue(['Local', 'Directory Services']);
+
+      const toggleHarness = await loader.getHarness(MatSlideToggleHarness);
+      await toggleHarness.check();
+
+      // With built-in enabled and both types, no filter is needed - show all users
+      expect(mockDataProvider.setParams).toHaveBeenLastCalledWith([
+        [],
         {},
       ]);
     });

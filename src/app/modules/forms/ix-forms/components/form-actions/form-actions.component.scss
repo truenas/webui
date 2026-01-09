@@ -1,3 +1,5 @@
+@import 'scss-imports/variables';
+
 :host,
 :host-context(mat-dialog-container .ix-form-container) :host {
   display: flex;
@@ -20,5 +22,13 @@
 
   ::ng-deep > * {
     gap: 8px;
+  }
+}
+
+// buttons at the bottom of forms are cut off on certain mobile devices,
+// so we add some bottom padding to prevent that.
+@media (max-width: $breakpoint-sm) {
+  :host {
+    padding-bottom: max(10%, 5vh);
   }
 }

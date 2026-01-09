@@ -1,13 +1,14 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { DestroyRef, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject, combineLatest, Observable, of,
 } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { take, map, switchMap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -39,7 +40,6 @@ import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
 import { JobTab } from 'app/pages/jobs/job-tab.enum';
 import { jobsListElements } from 'app/pages/jobs/jobs-list.elements';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-jobs-list',
   templateUrl: './jobs-list.component.html',
@@ -69,6 +69,9 @@ export class JobsListComponent implements OnInit {
   private translate = inject(TranslateService);
   private store$ = inject<Store<JobSlice>>(Store);
   private cdr = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = jobsListElements;
 
@@ -127,11 +130,49 @@ export class JobsListComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.selectedJobs$.pipe(untilDestroyed(this)).subscribe((jobs) => {
+    const jobsTrigger$ = this.selectedJobs$.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    );
+
+    const queryTrigger$ = this.route.queryParams.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    );
+
+    // handle jobs changing and update our internal representation inside `this.jobs`
+    jobsTrigger$.subscribe((jobs) => {
       this.jobs = jobs;
       this.onListFiltered(this.searchQuery());
       this.setDefaultSort();
       this.cdr.markForCheck();
+    });
+
+    // handle query updates and expand rows according to URL params.
+    // we combine `queryTrigger$` with `jobsTrigger$` since, if we
+    // were to try and run `autoExpandRow` before `this.jobs` was populated, then
+    // nothing would happen. `combineLatest` is a neat way to ensure that BOTH observables have
+    // values before doing anything.
+    //
+    // the `take(1)` operator is there to ensure that `jobsTrigger$` only ever emits once,
+    // which will prevent job updates re-triggering row expansion.
+    combineLatest([jobsTrigger$.pipe(take(1)), queryTrigger$])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(([_, query]) => {
+        if (query.jobId) {
+          const jobId = Number(query.jobId);
+          if (!Number.isNaN(jobId)) {
+            this.autoExpandRow(jobId);
+          }
+        }
+
+        this.cdr.markForCheck();
+      });
+  }
+
+  protected onRowExpanded(job: Job): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { jobId: job.id },
+      queryParamsHandling: 'merge',
     });
   }
 
@@ -154,6 +195,15 @@ export class JobsListComponent implements OnInit {
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
     this.dataProvider.setFilter({ list: this.jobs, query, columnKeys: ['method', 'description'] });
+  }
+
+  private autoExpandRow(jobId: number): void {
+    const jobToExpand = this.jobs.find((job) => job.id === jobId);
+    if (jobToExpand) {
+      // set the expanded row and force a re-render
+      this.dataProvider.expandedRow = jobToExpand;
+      this.dataProvider.currentPage$.next(this.dataProvider.currentPage$.value);
+    }
   }
 
   private setDefaultSort(): void {
