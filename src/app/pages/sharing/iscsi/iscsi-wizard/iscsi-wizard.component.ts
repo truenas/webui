@@ -221,6 +221,14 @@ export class IscsiWizardComponent implements OnInit {
       } else {
         extentPayload.disk = value.disk;
       }
+
+      // Automatically set ro=true for ZFS snapshots (identified by '@' in disk path).
+      // Backend validation requires: if '@' in zvol_name and not data['ro'], raise error.
+      // This ensures snapshots are correctly marked as read-only without requiring
+      // users to manually configure this in the wizard UI.
+      // Note: This uses inline check pattern consistent with rest of codebase (no utility exists).
+      const isSnapshot = extentPayload.disk?.includes('@') ?? false;
+      extentPayload.ro = isSnapshot;
     }
     return extentPayload;
   }

@@ -15,6 +15,7 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -23,12 +24,14 @@ import { IscsiService } from 'app/services/iscsi.service';
 @Component({
   selector: 'ix-extent-wizard-step',
   templateUrl: './extent-wizard-step.component.html',
+  styleUrls: ['./extent-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,
     IxSelectComponent,
     IxExplorerComponent,
+    IxIconComponent,
     TranslateModule,
     ExplorerCreateDatasetComponent,
   ],
@@ -66,6 +69,11 @@ export class ExtentWizardStepComponent implements OnInit {
 
   get isNewZvol(): boolean {
     return this.form().enabled && this.form().value.disk === newOption;
+  }
+
+  get isSnapshot(): boolean {
+    const diskValue = this.form().value.disk;
+    return this.isDevice && !!diskValue && diskValue !== newOption && diskValue.includes('@');
   }
 
   ngOnInit(): void {
