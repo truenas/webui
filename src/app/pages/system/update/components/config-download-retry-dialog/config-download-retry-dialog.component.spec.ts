@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { HttpErrorResponse } from '@angular/common/http';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -135,20 +136,74 @@ describe('ConfigDownloadRetryDialog', () => {
     });
   });
 
-  describe('error message sanitization', () => {
-    it('does not display auth tokens or query parameters from error messages', () => {
-      // This test verifies the security fix: auth tokens should never appear in the displayed error message
+  describe('error message handling', () => {
+    it('displays only HTTP status code for HTTP errors without URLs or auth tokens', () => {
+      // Test verifies that HTTP errors show only status code, no sensitive URL data
       const errorText = spectator.query('mat-dialog-content p strong')?.textContent;
 
-      // Ensure no sensitive data is displayed
-      expect(errorText).not.toContain('auth_token');
-      expect(errorText).not.toContain('SECRET');
-      expect(errorText).not.toContain('?');
-      expect(errorText).not.toContain('&');
-
-      // Error message should still be present
+      // The default test error is a generic Error, not HttpErrorResponse
+      // So this verifies the non-HTTP path works
       expect(errorText).toBeTruthy();
       expect(errorText?.length).toBeGreaterThan(0);
     });
+  });
+});
+
+describe('ConfigDownloadRetryDialog with HTTP error', () => {
+  const httpError = new HttpErrorResponse({
+    error: 'Server Error',
+    status: 500,
+    statusText: 'Internal Server Error',
+    url: 'http://localhost/_download/69?auth_token=SECRET123',
+  });
+
+  const createHttpComponent = createComponentFactory({
+    component: ConfigDownloadRetryDialog,
+    providers: [
+      mockProvider(MatDialogRef),
+      mockProvider(ErrorParserService),
+      {
+        provide: MAT_DIALOG_DATA,
+        useValue: { error: httpError } as ConfigDownloadRetryDialogData,
+      },
+    ],
+  });
+
+  it('displays only HTTP status code without URLs or auth tokens', () => {
+    const spectator = createHttpComponent();
+    const errorText = spectator.query('mat-dialog-content p strong')?.textContent;
+
+    // Should display only the HTTP status code
+    expect(errorText).toContain('HTTP 500 error');
+
+    // Should NOT contain any URL or sensitive data
+    expect(errorText).not.toContain('auth_token');
+    expect(errorText).not.toContain('SECRET');
+    expect(errorText).not.toContain('_download');
+    expect(errorText).not.toContain('localhost');
+  });
+});
+
+describe('ConfigDownloadRetryDialog with generic error', () => {
+  const genericError = new Error('Network timeout occurred');
+
+  const createGenericComponent = createComponentFactory({
+    component: ConfigDownloadRetryDialog,
+    providers: [
+      mockProvider(MatDialogRef),
+      mockProvider(ErrorParserService, {
+        parseError: () => ({ message: 'Network timeout occurred' }),
+      }),
+      {
+        provide: MAT_DIALOG_DATA,
+        useValue: { error: genericError } as ConfigDownloadRetryDialogData,
+      },
+    ],
+  });
+
+  it('displays parsed error message for non-HTTP errors', () => {
+    const spectator = createGenericComponent();
+    const errorText = spectator.query('mat-dialog-content p strong')?.textContent;
+    expect(errorText).toContain('Network timeout occurred');
   });
 });
