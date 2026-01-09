@@ -5,11 +5,11 @@ import {
   MatDrawerMode, MatSidenav, MatSidenavContainer, MatSidenavContent,
 } from '@angular/material/sidenav';
 import { MatTooltip } from '@angular/material/tooltip';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { map } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { exploreNasEnterpriseLink } from 'app/constants/explore-nas-enterprise-link.constant';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { hashMessage } from 'app/helpers/hash-message';
@@ -17,6 +17,8 @@ import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LanguageService } from 'app/modules/language/language.service';
@@ -72,6 +74,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private languageService = inject(LanguageService);
   private sessionTimeoutService = inject(SessionTimeoutService);
   private sentryService = inject(SentryConfigurationService);
+  private router = inject(Router);
+  private searchDirectives = inject(UiSearchDirectivesService);
 
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
 
@@ -135,6 +139,58 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
       this.languageService.setLanguage(config.language);
     });
     this.listenForSidenavChanges();
+    this.setupGlobalHighlightHandler();
+  }
+
+  /**
+   * Global handler for pending UI highlights from alert navigation.
+   * Listens to router navigation events and automatically handles pending highlights
+   * after navigation completes and components have rendered.
+   */
+  private setupGlobalHighlightHandler(): void {
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      // Wait for components to render and register their directives
+      setTimeout(() => this.handlePendingHighlight(), searchDelayConst);
+    });
+  }
+
+  private handlePendingHighlight(): void {
+    const pendingElement = this.searchDirectives.pendingUiHighlightElement;
+    if (!pendingElement) {
+      return;
+    }
+
+    // Try to find the directive immediately
+    const directive = this.searchDirectives.get(pendingElement);
+
+    if (directive) {
+      directive.highlight(pendingElement);
+      this.searchDirectives.setPendingUiHighlightElement(null);
+    } else {
+      // Directive not found yet (table data still loading) - wait for it to be registered
+      const subscription = this.searchDirectives.directiveAdded$.pipe(
+        filter((added) => !!added),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        const foundDirective = this.searchDirectives.get(pendingElement);
+        if (foundDirective) {
+          foundDirective.highlight(pendingElement);
+          this.searchDirectives.setPendingUiHighlightElement(null);
+          subscription.unsubscribe();
+        }
+      });
+
+      // Set a timeout to clean up if directive is never found
+      setTimeout(() => {
+        if (this.searchDirectives.pendingUiHighlightElement === pendingElement) {
+          this.searchDirectives.setPendingUiHighlightElement(null);
+          subscription.unsubscribe();
+        }
+      }, 10000); // 10 second timeout
+    }
   }
 
   ngAfterViewInit(): void {
