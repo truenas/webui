@@ -1,4 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormBuilder,
@@ -11,7 +14,6 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, finalize, map, of, tap, zip,
@@ -76,7 +78,6 @@ interface MissingStigRequirement {
   action?: () => void;
 }
 
-@UntilDestroy()
 @Component({
   selector: 'ix-system-security-form',
   templateUrl: './system-security-form.component.html',
@@ -100,6 +101,7 @@ interface MissingStigRequirement {
   ],
 })
 export class SystemSecurityFormComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
@@ -173,9 +175,15 @@ export class SystemSecurityFormComponent implements OnInit {
    * have been retrieved from the API.
    */
   private setupStigRequirements(): void {
-    // bail early if stig mode is already enabled, since all requirements must already be satisfied
+    // bail early if stig mode is already enabled, since all requirements must already be satisfied.
     if (this.slideInRef.getData().enable_gpos_stig) {
       return;
+    }
+
+    // also, if we're already loading STIG requirements, then don't do anything since
+    // we don't want to make duplicate API calls while waiting on the last ones to finish.
+    if (this.loadingStigRequirements()) {
+      this.form.controls.enable_gpos_stig.setValue(!this.form.controls.enable_gpos_stig.value);
     }
 
     this.missingStigRequirements.set([]);
@@ -234,7 +242,7 @@ export class SystemSecurityFormComponent implements OnInit {
       })),
       this.errorHandler.withErrorHandler(),
       finalize(() => this.loadingStigRequirements.set(false)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
 
     // then, for each property, check it and push a `MissingStigRequirement` to our internal list
@@ -280,6 +288,13 @@ export class SystemSecurityFormComponent implements OnInit {
         });
       }
 
+      // ensure that the user hasn't quickly unchecked the button, since if they have,
+      // then we need to *not* apply any of the errors.
+      if (!this.form.controls.enable_gpos_stig.value) {
+        this.clearStigRequirementsError();
+        return;
+      }
+
       this.missingStigRequirements.set(requirements);
       this.missingStigWarnings.set(warnings);
 
@@ -287,15 +302,19 @@ export class SystemSecurityFormComponent implements OnInit {
       if (requirements.length > 0) {
         this.form.controls.enable_gpos_stig.setErrors({ stigRequirementsNotMet: true });
       } else {
-        // and remove that validation error if there aren't any
-        const errors = this.form.controls.enable_gpos_stig.errors;
-        if (errors?.['stigRequirementsNotMet']) {
-          delete errors['stigRequirementsNotMet'];
-          const hasErrors = Object.keys(errors).length > 0;
-          this.form.controls.enable_gpos_stig.setErrors(hasErrors ? errors : null);
-        }
+        this.clearStigRequirementsError();
       }
     });
+  }
+
+  private clearStigRequirementsError(): void {
+    // and remove that validation error if there aren't any
+    const errors = this.form.controls.enable_gpos_stig.errors;
+    if (errors?.['stigRequirementsNotMet']) {
+      delete errors['stigRequirementsNotMet'];
+      const hasErrors = Object.keys(errors).length > 0;
+      this.form.controls.enable_gpos_stig.setErrors(hasErrors ? errors : null);
+    }
   }
 
   private stigValidator(control: AbstractControl): ValidationErrors | null {
@@ -411,7 +430,7 @@ export class SystemSecurityFormComponent implements OnInit {
       ['password_disabled', '=', false],
       ['roles', '!=', []],
     ]] as QueryParams<User>).pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (users) => {
         if (users.length > 0) {
@@ -443,7 +462,7 @@ export class SystemSecurityFormComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter((result) => !!result),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       callback();
     });
@@ -466,7 +485,7 @@ export class SystemSecurityFormComponent implements OnInit {
       .afterClosed()
       .pipe(
         this.errorHandler.withErrorHandler(),
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         if (values.enable_gpos_stig) {
@@ -489,7 +508,7 @@ export class SystemSecurityFormComponent implements OnInit {
 
     this.form.controls.enable_gpos_stig.valueChanges
       .pipe(
-        untilDestroyed(this),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((stigEnabled) => {
         this.isStigEnabled.set(stigEnabled);
