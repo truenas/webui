@@ -1,11 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, flush } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { Observable, of, throwError } from 'rxjs';
+import { catchError, EMPTY, Observable, of, throwError } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -17,9 +18,11 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -548,6 +551,10 @@ describe('SystemSecurityFormComponent', () => {
       dialogService = warningSpectator.inject(DialogService);
     });
 
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
     it('shows warning dialog when users without 2FA exist', async () => {
       const usersWithoutTwoFa = [
         { username: 'user1', roles: [{ id: 1 }] } as unknown as User,
@@ -688,10 +695,29 @@ describe('SystemSecurityFormComponent', () => {
       })]);
     });
 
-    it('handles API error when checking users and invokes error handler', async () => {
+    it('handles API error when checking users and shows error modal', fakeAsync(async () => {
       const error = new Error('API Error');
       const errorHandler = warningSpectator.inject(ErrorHandlerService);
-      const errorHandlerSpy = jest.spyOn(errorHandler, 'withErrorHandler');
+
+      // Mock showErrorModal to verify it's called with the error and prevent dialog from opening
+      const showErrorModalSpy = jest.spyOn(errorHandler, 'showErrorModal').mockReturnValue(EMPTY);
+
+      // We need to mock withErrorHandler to ensure it calls showErrorModal with the error
+      // Unfortunately, Jest's type inference for generic methods requires this type assertion
+      const errorHandlerSpy = jest.spyOn(errorHandler, 'withErrorHandler') as unknown as jest.SpyInstance<
+        ReturnType<ErrorHandlerService['withErrorHandler']>,
+        []
+      >;
+      errorHandlerSpy.mockImplementation(() => {
+        return (source$: Observable<unknown>) => {
+          return source$.pipe(
+            catchError((err: unknown) => {
+              errorHandler.showErrorModal(err);
+              return EMPTY;
+            }),
+          );
+        };
+      });
 
       jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
         if (method === 'user.query') {
@@ -714,10 +740,13 @@ describe('SystemSecurityFormComponent', () => {
       const saveButton = await warningLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      // Verify error handler was invoked
-      expect(errorHandlerSpy).toHaveBeenCalled();
+      flush();
+
+      // Verify error modal was shown with the error
+      expect(showErrorModalSpy).toHaveBeenCalledWith(error);
+      // Verify save was not attempted
       expect(apiService.job).not.toHaveBeenCalled();
-    });
+    }));
 
     it('does not check users when disabling STIG', async () => {
       // Mock the component to have STIG enabled initially
@@ -759,49 +788,70 @@ describe('SystemSecurityFormComponent', () => {
     let validationSpectator: Spectator<SystemSecurityFormComponent>;
     let validationLoader: HarnessLoader;
     let validationForm: IxFormHarness;
-    let apiService: ApiService;
 
-    beforeEach(async () => {
-      validationSpectator = createComponent();
-      validationLoader = TestbedHarnessEnvironment.loader(validationSpectator.fixture);
-      validationForm = await validationLoader.getHarness(IxFormHarness);
-      apiService = validationSpectator.inject(ApiService);
-
-      // Ensure clean state for each test
-      jest.clearAllMocks();
-      jest.clearAllTimers();
+    // Minimal factory without pre-configured ApiService mocks
+    const createValidationComponent = createComponentFactory({
+      component: SystemSecurityFormComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockProvider(SlideInRef, {
+          close: jest.fn(),
+          getData: jest.fn(() => fakeSystemSecurityConfig),
+          requireConfirmationWhen: jest.fn(),
+        }),
+        mockProvider(ErrorHandlerService, {
+          withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$),
+        }),
+        mockProvider(Router, {
+          navigate: jest.fn(),
+        }),
+        mockAuth(),
+        // ApiService mock will be set up in each individual test
+        mockProvider(ApiService, {
+          call: jest.fn(() => of(null)),
+          job: jest.fn(() => fakeSuccessfulJob()),
+        }),
+      ],
     });
 
     it('shows all validation errors correctly', async () => {
-      // Clear any existing mocks and set up fresh
-      jest.clearAllMocks();
-      (apiService.call as jest.Mock).mockImplementation((method: string, params?: MockParams) => {
-        if (method === 'auth.twofactor.config') {
-          // Both global 2FA and SSH 2FA are disabled
-          return of({ enabled: false, services: { ssh: false } });
-        }
-        if (method === 'user.query') {
-          // For the user.query call that checks for local users (root/admin)
-          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
+      // Set up mocks BEFORE creating component
+      const apiServiceMock = {
+        call: jest.fn((method: string, params?: MockParams) => {
+          if (method === 'auth.twofactor.config') {
+            // Both global 2FA and SSH 2FA are disabled
+            return of({ enabled: false, services: { ssh: false } });
+          }
+          if (method === 'user.query') {
+            // For the user.query call that checks for local users (root/admin)
+            if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
+              return of([
+                { username: 'root', password_disabled: false } as User, // Root password NOT disabled
+                { username: 'truenas_admin', password_disabled: false } as User, // Admin password NOT disabled
+              ]);
+            }
+            // For the user.query call that checks for users without 2FA (warning)
             return of([
-              { username: 'root', password_disabled: false } as User, // Root password NOT disabled
-              { username: 'truenas_admin', password_disabled: false } as User, // Admin password NOT disabled
+              { username: 'testuser', roles: [{ id: 1 }], twofactor_auth_configured: false } as unknown as User,
             ]);
           }
-          // For the user.query call that checks for users without 2FA (warning)
-          return of([
-            { username: 'testuser', roles: [{ id: 1 }], twofactor_auth_configured: false } as unknown as User,
-          ]);
-        }
-        if (method === 'docker.status') {
-          // Docker service is configured (not disabled)
-          return of({ status: DockerStatus.Running, description: 'Docker is running' });
-        }
-        return of(null);
-      });
+          if (method === 'docker.status') {
+            // Docker service is configured (not disabled)
+            return of({ status: DockerStatus.Running, description: 'Docker is running' });
+          }
+          return of(null);
+        }),
+        job: jest.fn(() => fakeSuccessfulJob()),
+      };
 
-      // Re-initialize the component to ensure it uses the new mock
-      validationSpectator.component.ngOnInit();
+      // Create component with specific mocks
+      validationSpectator = createValidationComponent({
+        providers: [
+          mockProvider(ApiService, apiServiceMock),
+        ],
+      });
+      validationLoader = TestbedHarnessEnvironment.loader(validationSpectator.fixture);
+      validationForm = await validationLoader.getHarness(IxFormHarness);
       validationSpectator.detectChanges();
 
       // First ensure STIG requirements are met
@@ -846,33 +896,41 @@ describe('SystemSecurityFormComponent', () => {
     });
 
     it('shows no validation errors when all requirements are satisfied', async () => {
-      // Clear any existing mocks and set up fresh
-      jest.clearAllMocks();
-      (apiService.call as jest.Mock).mockImplementation((method: string, params?: unknown[] | object | void) => {
-        if (method === 'auth.twofactor.config') {
-          // Both global 2FA and SSH 2FA are enabled
-          return of({ enabled: true, services: { ssh: true } });
-        }
-        if (method === 'user.query') {
-          // For the user.query call that checks for local users (root/admin)
-          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
-            return of([
-              { username: 'root', password_disabled: true } as User, // Root password IS disabled
-              { username: 'truenas_admin', password_disabled: true } as User, // Admin password IS disabled
-            ]);
+      // Set up mocks BEFORE creating component
+      const apiServiceMock = {
+        call: jest.fn((method: string, params?: MockParams) => {
+          if (method === 'auth.twofactor.config') {
+            // Both global 2FA and SSH 2FA are enabled
+            return of({ enabled: true, services: { ssh: true } });
           }
-          // For the user.query call that checks for users without 2FA - return empty (all users have 2FA)
-          return of([]);
-        }
-        if (method === 'docker.status') {
-          // Docker service is unconfigured (disabled)
-          return of({ status: DockerStatus.Unconfigured, description: '' });
-        }
-        return of(null);
-      });
+          if (method === 'user.query') {
+            // For the user.query call that checks for local users (root/admin)
+            if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
+              return of([
+                { username: 'root', password_disabled: true } as User, // Root password IS disabled
+                { username: 'truenas_admin', password_disabled: true } as User, // Admin password IS disabled
+              ]);
+            }
+            // For the user.query call that checks for users without 2FA - return empty (all users have 2FA)
+            return of([]);
+          }
+          if (method === 'docker.status') {
+            // Docker service is unconfigured (disabled)
+            return of({ status: DockerStatus.Unconfigured, description: '' });
+          }
+          return of(null);
+        }),
+        job: jest.fn(() => fakeSuccessfulJob()),
+      };
 
-      // Re-initialize the component to ensure it uses the new mock
-      validationSpectator.component.ngOnInit();
+      // Create component with specific mocks
+      validationSpectator = createValidationComponent({
+        providers: [
+          mockProvider(ApiService, apiServiceMock),
+        ],
+      });
+      validationLoader = TestbedHarnessEnvironment.loader(validationSpectator.fixture);
+      validationForm = await validationLoader.getHarness(IxFormHarness);
       validationSpectator.detectChanges();
 
       // Set valid STIG values
@@ -912,27 +970,36 @@ describe('SystemSecurityFormComponent', () => {
 
     it('removes stigRequirementsNotMet error when requirements become satisfied', async () => {
       // Start with all requirements NOT satisfied
-      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: MockParams) => {
-        if (method === 'auth.twofactor.config') {
-          return of({ enabled: false, services: { ssh: false } });
-        }
-        if (method === 'user.query') {
-          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
-            return of([
-              { username: 'root', password_disabled: false } as User,
-              { username: 'truenas_admin', password_disabled: false } as User,
-            ]);
+      const apiServiceMock = {
+        call: jest.fn((method: string, params?: MockParams) => {
+          if (method === 'auth.twofactor.config') {
+            return of({ enabled: false, services: { ssh: false } });
           }
-          return of([]);
-        }
-        if (method === 'docker.status') {
-          return of({ status: DockerStatus.Running, description: 'Docker is running' });
-        }
-        return of(null);
-      });
+          if (method === 'user.query') {
+            if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
+              return of([
+                { username: 'root', password_disabled: false } as User,
+                { username: 'truenas_admin', password_disabled: false } as User,
+              ]);
+            }
+            return of([]);
+          }
+          if (method === 'docker.status') {
+            return of({ status: DockerStatus.Running, description: 'Docker is running' });
+          }
+          return of(null);
+        }),
+        job: jest.fn(() => fakeSuccessfulJob()),
+      };
 
-      // Re-initialize component to ensure clean state
-      validationSpectator.component.ngOnInit();
+      // Create component with specific mocks
+      validationSpectator = createValidationComponent({
+        providers: [
+          mockProvider(ApiService, apiServiceMock),
+        ],
+      });
+      validationLoader = TestbedHarnessEnvironment.loader(validationSpectator.fixture);
+      validationForm = await validationLoader.getHarness(IxFormHarness);
       validationSpectator.detectChanges();
 
       // Enable STIG to trigger the error
@@ -949,7 +1016,7 @@ describe('SystemSecurityFormComponent', () => {
       });
 
       // Now mock all requirements as satisfied
-      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: MockParams) => {
+      apiServiceMock.call.mockImplementation((method: string, params?: MockParams) => {
         if (method === 'auth.twofactor.config') {
           return of({ enabled: true, services: { ssh: true } });
         }
@@ -985,6 +1052,135 @@ describe('SystemSecurityFormComponent', () => {
   });
 
   describe('STIG Error Navigation Links', () => {
-    // TODO
+    // Component factory with custom ApiService mock that returns disabled 2FA config
+    // and users with passwords enabled (to trigger root/admin password requirement)
+    const createTwoFactorTestComponent = createComponentFactory({
+      component: SystemSecurityFormComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockProvider(SlideInRef, {
+          close: jest.fn(),
+          getData: jest.fn(() => fakeSystemSecurityConfig),
+          requireConfirmationWhen: jest.fn(),
+        }),
+        mockProvider(ErrorHandlerService, {
+          withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$),
+        }),
+        mockProvider(Router, {
+          navigate: jest.fn(),
+        }),
+        mockAuth(),
+        mockProvider(ApiService, {
+          call: jest.fn((method: string, params?: unknown) => {
+            if (method === 'auth.twofactor.config') {
+              return of({ enabled: false, services: { ssh: false } });
+            }
+            if (method === 'user.query') {
+              // Check if it's the call for local users (first call in setupStigRequirements)
+              if (Array.isArray(params) && params[0]?.[0]?.[0] === 'local') {
+                return of([
+                  { username: 'root', password_disabled: false } as User,
+                  { username: 'truenas_admin', password_disabled: false } as User,
+                ]);
+              }
+              // For the 2FA check call, return empty array
+              return of([]);
+            }
+            if (method === 'docker.status') {
+              return of({ status: DockerStatus.Unconfigured });
+            }
+            return of(null);
+          }),
+          job: jest.fn(() => fakeSuccessfulJob()),
+        }),
+      ],
+    });
+
+    it('navigates to Users page when clicking Configure for root/admin password requirement', async () => {
+      const navigationSpectator = createTwoFactorTestComponent();
+      const router = navigationSpectator.inject(Router);
+      const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+      const closeSlideInSpy = jest.spyOn(navigationSpectator.inject(SlideInRef), 'close');
+
+      // Trigger setupStigRequirements - should show root/admin password requirement
+      navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
+      navigationSpectator.detectChanges();
+      await navigationSpectator.fixture.whenStable();
+
+      // Find the Configure button for the root/admin password requirement
+      const errorMessages = navigationSpectator.queryAll('mat-error li');
+      const passwordError = errorMessages.find((el) => el.textContent.includes('root user') && el.textContent.includes('truenas_admin'));
+      expect(passwordError).toBeTruthy();
+
+      const configureButton = passwordError.querySelector('.link-button') as HTMLElement;
+      expect(configureButton).toBeTruthy();
+
+      // Click the Configure button
+      configureButton.click();
+
+      expect(closeSlideInSpy).toHaveBeenCalledWith({ response: false });
+      expect(navigateSpy).toHaveBeenCalledWith(['/credentials/users']);
+    });
+
+    it('navigates to Advanced Settings and opens Global Two-Factor Auth form when clicking Configure', async () => {
+      const navigationSpectator = createTwoFactorTestComponent();
+      const router = navigationSpectator.inject(Router);
+      const slideIn = navigationSpectator.inject(SlideIn);
+      const slideInOpenSpy = jest.spyOn(slideIn, 'open');
+      const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+      const closeSlideInSpy = jest.spyOn(navigationSpectator.inject(SlideInRef), 'close');
+
+      // Trigger setupStigRequirements - should show "Global Two-Factor Authentication" requirement
+      navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
+      navigationSpectator.detectChanges();
+      await navigationSpectator.fixture.whenStable();
+
+      // Find the Configure button for the 2FA requirement
+      const errorMessages = navigationSpectator.queryAll('mat-error li');
+      const twoFactorError = errorMessages.find((el) => el.textContent.includes('Global Two-Factor Authentication'));
+      expect(twoFactorError).toBeTruthy();
+
+      const configureButton = twoFactorError.querySelector('.link-button') as HTMLElement;
+      expect(configureButton).toBeTruthy();
+
+      // Click the Configure button
+      configureButton.click();
+
+      // Verify navigation was initiated
+      expect(closeSlideInSpy).toHaveBeenCalledWith({ response: false });
+      expect(navigateSpy).toHaveBeenCalledWith(['/system/advanced']);
+
+      // Wait for navigation promise to resolve and action to be called
+      await navigationSpectator.fixture.whenStable();
+
+      // Verify the Global 2FA form was opened after navigation
+      expect(slideInOpenSpy).toHaveBeenCalledWith(
+        GlobalTwoFactorAuthFormComponent,
+        { data: { enabled: false, services: { ssh: false } } },
+      );
+    });
+
+    it('marks form as pristine before navigating to avoid unsaved changes dialog', async () => {
+      const navigationSpectator = createTwoFactorTestComponent();
+      jest.spyOn(navigationSpectator.inject(Router), 'navigate').mockResolvedValue(true);
+
+      // Trigger setupStigRequirements
+      navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
+      navigationSpectator.detectChanges();
+      await navigationSpectator.fixture.whenStable();
+
+      // Mark form as dirty
+      navigationSpectator.component.form.markAsDirty();
+      expect(navigationSpectator.component.form.pristine).toBe(false);
+
+      // Find any Configure button and click it
+      const configureButton = navigationSpectator.query('.link-button') as HTMLElement;
+      expect(configureButton).toBeTruthy();
+
+      configureButton.click();
+
+      // Form should be marked as pristine before navigation
+      expect(navigationSpectator.component.form.pristine).toBe(true);
+    });
   });
 });
