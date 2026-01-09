@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { DatePipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,6 +16,7 @@ import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import {
   IxSlideToggleComponent,
@@ -47,6 +49,9 @@ describe('SupportCardComponent', () => {
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
       mockProvider(SlideIn),
+      mockProvider(DatePipe, {
+        transform: jest.fn((value: string) => value),
+      }),
       mockApi([
         mockCall('truenas.is_production', true),
         mockJob('truenas.set_production', fakeSuccessfulJob()),
@@ -220,7 +225,7 @@ describe('SupportCardComponent', () => {
         const fileTicketButton = await loader.getHarness(MatButtonHarness.with({ text: 'File Ticket' }));
         await fileTicketButton.click();
 
-        expect(matDialog.open).toHaveBeenCalledWith(expect.anything(), { data: FeedbackType.Bug });
+        expect(matDialog.open).toHaveBeenCalledWith(FeedbackDialog, { data: FeedbackType.Bug });
       });
 
       it('opens LicenseComponent when Update License button is clicked', async () => {

@@ -48,7 +48,12 @@
             <strong class="banner-heading">{{ 'Your support contract expires in {n, plural, one {# day} other {# days}}' | translate: { n: licenseInfo.daysLeftinContract } }}</strong>
             <span class="banner-subheading">{{ 'You will be unable to contact support after {date}. Contact your account team to renew.' | translate: { date: licenseInfo.expiration_date } }}</span>
           </div>
-          <a href="https://www.truenas.com/contact-us/" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://www.truenas.com/contact-us/"
+            target="_blank"
+            rel="noopener noreferrer"
+            [attr.aria-label]="'Contact us about renewing your support contract (opens in new window)' | translate"
+          >
             {{ 'Contact Us' | translate }}
           </a>
         </div>
@@ -80,7 +85,12 @@
             <div class="banner-text">
               <strong class="banner-heading">{{ 'Need help? Looking for support?' | translate }}</strong>
             </div>
-            <a href="https://www.truenas.com/support/" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://www.truenas.com/support/"
+              target="_blank"
+              rel="noopener noreferrer"
+              [attr.aria-label]="'Explore TrueNAS support options (opens in new window)' | translate"
+            >
               {{ 'Explore your options' | translate }}
             </a>
           </div>
@@ -92,7 +102,12 @@
             <strong class="banner-heading">{{ 'Need help?' | translate }}</strong>
             <span class="banner-subheading">{{ 'Get support and join discussions on our forums.' | translate }}</span>
           </div>
-          <a href="https://forums.truenas.com/" target="_blank" rel="noopener noreferrer">
+          <a
+            href="https://forums.truenas.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            [attr.aria-label]="'Join TrueNAS community forums (opens in new window)' | translate"
+          >
             {{ 'Join our community' | translate }}
           </a>
         </div>
@@ -115,6 +130,7 @@
           target="_blank"
           rel="noopener noreferrer"
           [matTooltip]="'Read and contribute to the open-source documentation.' | translate"
+          [attr.aria-label]="'TrueNAS documentation (opens in new window)' | translate"
         >{{ 'Documentation' | translate }}</a>
         <span class="link-separator">•</span>
         <a
@@ -122,6 +138,7 @@
           target="_blank"
           rel="noopener noreferrer"
           [matTooltip]="'Find answers from other users in the forums.' | translate"
+          [attr.aria-label]="'TrueNAS forums (opens in new window)' | translate"
         >{{ 'Forums' | translate }}</a>
         <span class="link-separator">•</span>
         <a
@@ -129,6 +146,7 @@
           target="_blank"
           rel="noopener noreferrer"
           [matTooltip]="'Learn more about enterprise-grade support.' | translate"
+          [attr.aria-label]="'TrueNAS licensing information (opens in new window)' | translate"
         >{{ 'Licensing' | translate }}</a>
       </div>
     }

@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
@@ -77,6 +78,7 @@ export class SupportCardComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private readonly destroyRef = inject(DestroyRef);
+  private datePipe = inject(DatePipe);
 
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly Role = Role;
@@ -131,7 +133,7 @@ export class SupportCardComponent implements OnInit {
       licenseInfo.featuresString = licenseInfo.features.join(', ');
     }
     const expDateConverted = new Date(licenseInfo.contract_end.$value);
-    licenseInfo.expiration_date = licenseInfo.contract_end.$value;
+    licenseInfo.expiration_date = this.datePipe.transform(licenseInfo.contract_end.$value, 'mediumDate');
 
     if (licenseInfo.addhw_detail.length === 0) {
       licenseInfo.add_hardware = 'NONE';
