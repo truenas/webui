@@ -32,7 +32,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SaveConfigDialog,
+  SaveConfigDialogFailure,
   SaveConfigDialogMessages,
+  SaveConfigDialogResult,
 } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
 import {
   ConfigDownloadRetryDialog,
@@ -274,14 +276,17 @@ export class UpdateComponent implements OnInit {
       });
   }
 
-  private offerToSaveConfiguration(): Observable<unknown> {
-    return this.matDialog.open(SaveConfigDialog, {
-      data: {
-        title: this.translate.instant('Save configuration settings from this machine before updating?'),
-        saveButton: this.translate.instant('Save Configuration'),
-        cancelButton: this.translate.instant('Do not save'),
-      } as Partial<SaveConfigDialogMessages>,
-    })
+  private offerToSaveConfiguration(): Observable<SaveConfigDialogResult> {
+    return this.matDialog.open<SaveConfigDialog, Partial<SaveConfigDialogMessages>, SaveConfigDialogResult>(
+      SaveConfigDialog,
+      {
+        data: {
+          title: this.translate.instant('Save configuration settings from this machine before updating?'),
+          saveButton: this.translate.instant('Save Configuration'),
+          cancelButton: this.translate.instant('Do not save'),
+        } as Partial<SaveConfigDialogMessages>,
+      },
+    )
       .afterClosed();
   }
 
@@ -313,7 +318,7 @@ export class UpdateComponent implements OnInit {
 
     // Initial attempt - show dialog to user
     return this.offerToSaveConfiguration().pipe(
-      switchMap((result: unknown) => {
+      switchMap((result: SaveConfigDialogResult) => {
         // User dismissed dialog without making a choice - cancel entire process
         if (result === undefined || result === null) {
           return EMPTY;
@@ -331,7 +336,7 @@ export class UpdateComponent implements OnInit {
 
         // Download failed (result is { success: false, error, secretseed })
         // Show merged retry + confirmation dialog
-        const failureResult = result as { success: false; error: unknown; secretseed: boolean };
+        const failureResult = result as SaveConfigDialogFailure;
         return this.showRetryOrContinueDialog(failureResult.error).pipe(
           switchMap((action) => {
             if (action === ConfigDownloadRetryAction.Retry) {

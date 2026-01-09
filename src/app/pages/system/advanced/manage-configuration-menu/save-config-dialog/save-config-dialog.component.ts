@@ -29,6 +29,14 @@ export interface SaveConfigDialogMessages {
   cancelButton: string;
 }
 
+export interface SaveConfigDialogFailure {
+  success: false;
+  error: unknown;
+  secretseed: boolean;
+}
+
+export type SaveConfigDialogResult = true | false | SaveConfigDialogFailure | undefined;
+
 @UntilDestroy()
 @Component({
   selector: 'ix-save-config-dialog',
@@ -56,7 +64,7 @@ export class SaveConfigDialog {
   private download = inject(DownloadService);
   private loader = inject(LoaderService);
   private datePipe = inject(DatePipe);
-  private dialogRef = inject<MatDialogRef<SaveConfigDialog>>(MatDialogRef);
+  private dialogRef = inject<MatDialogRef<SaveConfigDialog, SaveConfigDialogResult>>(MatDialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
 
