@@ -29,6 +29,14 @@ export interface SaveConfigDialogMessages {
   cancelButton: string;
 }
 
+export interface SaveConfigDialogFailure {
+  success: false;
+  error: unknown;
+  secretseed: boolean;
+}
+
+export type SaveConfigDialogResult = true | false | SaveConfigDialogFailure | undefined;
+
 @UntilDestroy()
 @Component({
   selector: 'ix-save-config-dialog',
@@ -56,7 +64,7 @@ export class SaveConfigDialog {
   private download = inject(DownloadService);
   private loader = inject(LoaderService);
   private datePipe = inject(DatePipe);
-  private dialogRef = inject<MatDialogRef<SaveConfigDialog>>(MatDialogRef);
+  private dialogRef = inject<MatDialogRef<SaveConfigDialog, SaveConfigDialogResult>>(MatDialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
 
@@ -114,8 +122,9 @@ export class SaveConfigDialog {
         this.dialogRef.close(true);
       },
       error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-        this.dialogRef.close(false);
+        // Don't show error modal here - let parent component handle retry logic
+        // Include the secretseed checkbox state so parent can retry with same settings
+        this.dialogRef.close({ success: false, error, secretseed: this.exportSeedCheckbox.value });
       },
     });
   }
