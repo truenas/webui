@@ -13,7 +13,6 @@ import { Role } from 'app/enums/role.enum';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeRole } from 'app/interfaces/privilege.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -116,9 +115,6 @@ describe('PrivilegeFormComponent', () => {
         } as DirectoryServicesStatus),
       ]),
       mockProvider(SlideInRef, slideInRef),
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-      }),
       mockProvider(UserService, {
         groupQueryDsCache: jest.fn(() => of([])),
       }),
@@ -450,7 +446,7 @@ describe('PrivilegeFormComponent', () => {
     });
   });
 
-  describe('directory services authentication checkbox', () => {
+  describe('directory services authentication button', () => {
     it('should call directoryservices.status when DS groups are added and DS is enabled', fakeAsync(() => {
       spectator = createComponent({
         providers: [
@@ -503,7 +499,7 @@ describe('PrivilegeFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('directoryservices.status');
     }));
 
-    it('should NOT show checkbox when DS groups are added but Directory Services are disabled', fakeAsync(() => {
+    it('should NOT show button when DS groups are added but Directory Services are disabled', fakeAsync(() => {
       spectator = createComponent({
         providers: [
           mockApi([
@@ -550,12 +546,12 @@ describe('PrivilegeFormComponent', () => {
 
       expect(api.call).toHaveBeenCalledWith('directoryservices.status');
 
-      // Checkbox should NOT be visible since DS is disabled
-      const checkbox = spectator.query('ix-checkbox[formControlName="enable_ds_auth"]');
-      expect(checkbox).toBeFalsy();
+      // Button should NOT be visible since DS is disabled
+      const button = spectator.query('button[ixTest="enable-ds-auth"]');
+      expect(button).toBeFalsy();
     }));
 
-    it('should NOT show checkbox when ds_auth is already enabled', fakeAsync(() => {
+    it('should NOT show button when ds_auth is already enabled', fakeAsync(() => {
       spectator = createComponent({
         providers: [
           mockApi([
@@ -604,12 +600,12 @@ describe('PrivilegeFormComponent', () => {
       flush();
       spectator.detectChanges();
 
-      // Should not show checkbox since ds_auth is already enabled
-      const checkbox = spectator.query('ix-checkbox[formControlName="enable_ds_auth"]');
-      expect(checkbox).toBeFalsy();
+      // Should not show button since ds_auth is already enabled
+      const button = spectator.query('button[ixTest="enable-ds-auth"]');
+      expect(button).toBeFalsy();
     }));
 
-    it('should NOT show checkbox in non-enterprise mode', fakeAsync(() => {
+    it('should NOT show button in non-enterprise mode', fakeAsync(() => {
       spectator = createComponent({
         providers: [
           mockApi([
@@ -653,9 +649,72 @@ describe('PrivilegeFormComponent', () => {
       flush();
       spectator.detectChanges();
 
-      // Should not show checkbox in non-enterprise mode
-      const checkbox = spectator.query('ix-checkbox[formControlName="enable_ds_auth"]');
-      expect(checkbox).toBeFalsy();
+      // Should not show button in non-enterprise mode
+      const button = spectator.query('button[ixTest="enable-ds-auth"]');
+      expect(button).toBeFalsy();
+    }));
+
+    it('should show button and enable ds_auth when clicked', fakeAsync(() => {
+      spectator = createComponent({
+        providers: [
+          provideMockStore({
+            selectors: [
+              {
+                selector: selectIsEnterprise,
+                value: true,
+              },
+              {
+                selector: selectGeneralConfig,
+                value: {
+                  ds_auth: false,
+                },
+              },
+            ],
+          }),
+          mockProvider(UserService, {
+            groupQueryDsCache: jest.fn(() => of([])),
+          }),
+          mockAuth(),
+        ],
+      });
+
+      api = spectator.inject(ApiService);
+
+      // Wait for ngOnInit to complete
+      flush();
+      spectator.detectChanges();
+
+      // Manually set DS status to Healthy with type (since factory mock doesn't include type)
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['dsStatus'].set({
+        type: 'ACTIVEDIRECTORY',
+        status: DirectoryServiceStatus.Healthy,
+      } as DirectoryServicesStatus);
+
+      // Trigger DS groups being added
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({
+        ds_groups: ['AD\\Domain Admins'],
+      });
+
+      flush();
+      spectator.detectChanges();
+
+      // Button should be visible
+      const button = spectator.query('button[ixTest="enable-ds-auth"]');
+      expect(button).toBeTruthy();
+
+      // Click the button
+      spectator.click(button);
+      flush();
+
+      // Should have called the API to enable ds_auth
+      expect(api.call).toHaveBeenCalledWith('system.general.update', [{ ds_auth: true }]);
+
+      // Button should be hidden after enabling
+      spectator.detectChanges();
+      const buttonAfter = spectator.query('button[ixTest="enable-ds-auth"]');
+      expect(buttonAfter).toBeFalsy();
     }));
   });
 });

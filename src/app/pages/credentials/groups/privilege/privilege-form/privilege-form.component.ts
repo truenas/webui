@@ -75,7 +75,8 @@ export class PrivilegeFormComponent implements OnInit {
   private readonly GROUP_QUERY_LIMIT = 50;
 
   protected isLoading = signal(false);
-  protected showDsAuthCheckbox = signal(false);
+  protected showDsAuthButton = signal(false);
+  protected isEnablingDsAuth = signal(false);
   protected dsAuthEnabled = signal(false);
   private dsStatus = signal<DirectoryServicesStatus | null>(null);
 
@@ -85,7 +86,6 @@ export class PrivilegeFormComponent implements OnInit {
     ds_groups: [[] as string[]],
     web_shell: [false],
     roles: [[] as Role[]],
-    enable_ds_auth: [false],
   });
 
   protected readonly helptext = helptextPrivilege;
@@ -209,11 +209,11 @@ export class PrivilegeFormComponent implements OnInit {
       this.dsStatus.set(status);
     });
 
-    // Watch for DS groups being added and show inline checkbox if needed
+    // Watch for DS groups being added and show inline button if needed
     this.form.controls.ds_groups.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((dsGroups) => {
-      this.updateDsAuthCheckboxVisibility(dsGroups);
+      this.updateDsAuthButtonVisibility(dsGroups);
     });
   }
 
@@ -228,35 +228,60 @@ export class PrivilegeFormComponent implements OnInit {
   }
 
   /**
-   * Updates the visibility of the ds_auth checkbox based on:
+   * Updates the visibility of the ds_auth button based on:
    * - Whether DS groups are present
    * - Whether DS is actually enabled (cached from init)
    * - Whether ds_auth is currently disabled
    * - Enterprise mode
    */
-  private updateDsAuthCheckboxVisibility(dsGroups: string[]): void {
-    // Hide checkbox if no DS groups
+  private updateDsAuthButtonVisibility(dsGroups: string[]): void {
+    // Hide button if no DS groups
     if (!dsGroups?.length) {
-      this.showDsAuthCheckbox.set(false);
+      this.showDsAuthButton.set(false);
       return;
     }
 
-    // Hide checkbox in non-enterprise mode
+    // Hide button in non-enterprise mode
     if (!this.isEnterprise()) {
-      this.showDsAuthCheckbox.set(false);
+      this.showDsAuthButton.set(false);
       return;
     }
 
-    // Hide checkbox if ds_auth is already enabled
+    // Hide button if ds_auth is already enabled
     if (this.dsAuthEnabled()) {
-      this.showDsAuthCheckbox.set(false);
+      this.showDsAuthButton.set(false);
       return;
     }
 
     // Check if Directory Services are actually enabled (using cached status)
     const status = this.dsStatus();
-    const shouldShow = status?.type && status.status !== DirectoryServiceStatus.Disabled;
-    this.showDsAuthCheckbox.set(shouldShow);
+    const shouldShow = Boolean(status?.type && status.status !== DirectoryServiceStatus.Disabled);
+    this.showDsAuthButton.set(shouldShow);
+  }
+
+  /**
+   * Enables DS authentication immediately when the button is clicked.
+   * This is a separate operation from saving the privilege.
+   */
+  enableDsAuth(): void {
+    this.isEnablingDsAuth.set(true);
+
+    this.api.call('system.general.update', [{ ds_auth: true }]).pipe(
+      finalize(() => {
+        this.isEnablingDsAuth.set(false);
+        this.store$.dispatch(generalConfigUpdated());
+      }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: () => {
+        // Update local state to hide the button
+        this.dsAuthEnabled.set(true);
+        this.showDsAuthButton.set(false);
+      },
+      error: (error: unknown) => {
+        this.errorHandler.handleValidationErrors(error, this.form);
+      },
+    });
   }
 
   onSubmit(): void {
@@ -276,14 +301,6 @@ export class PrivilegeFormComponent implements OnInit {
         return this.existingPrivilege
           ? this.api.call('privilege.update', [this.existingPrivilege.id, values])
           : this.api.call('privilege.create', [values]);
-      }),
-      switchMap(() => {
-        // If ds_auth checkbox was shown and checked, enable ds_auth
-        if (this.showDsAuthCheckbox() && this.form.value.enable_ds_auth) {
-          return this.api.call('system.general.update', [{ ds_auth: true }])
-            .pipe(finalize(() => this.store$.dispatch(generalConfigUpdated())));
-        }
-        return of(null);
       }),
       finalize(() => this.isLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
