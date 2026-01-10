@@ -6,7 +6,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  finalize, forkJoin, map, Observable, of, tap,
+  BehaviorSubject, finalize, forkJoin, map, Observable, of, tap,
 } from 'rxjs';
 import {
   specialVdevDefaultThreshold,
@@ -27,6 +27,7 @@ import { Role } from 'app/enums/role.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
@@ -132,6 +133,7 @@ export class ZvolFormComponent implements OnInit {
   private originalReadonlyValue: string;
   private inheritedReadonlyValue: string;
   protected volsizeReadonlyWarning: string | null = null;
+  private originalVolsize: number | null = null;
 
   form = this.formBuilder.group({
     name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
@@ -167,21 +169,8 @@ export class ZvolFormComponent implements OnInit {
   });
 
   syncOptions: Option[] = mapToOptions(datasetSyncLabels, this.translate);
-
-  protected compressionOptions: Option[] = [
-    { label: this.translate.instant('Off'), value: 'OFF' },
-    { label: this.translate.instant('lz4 (recommended)'), value: 'LZ4' },
-    { label: this.translate.instant('zstd (default level, 3)'), value: 'ZSTD' },
-    { label: this.translate.instant('zstd-5 (slow)'), value: 'ZSTD-5' },
-    { label: this.translate.instant('zstd-7 (very slow)'), value: 'ZSTD-7' },
-    { label: this.translate.instant('zstd-fast (default level, 1)'), value: 'ZSTD-FAST' },
-    { label: this.translate.instant('gzip (default level, 6)'), value: 'GZIP' },
-    { label: this.translate.instant('gzip-1 (fastest)'), value: 'GZIP-1' },
-    { label: this.translate.instant('gzip-9 (maximum, slow)'), value: 'GZIP-9' },
-    { label: this.translate.instant('zle (runs of zeros)'), value: 'ZLE' },
-    { label: this.translate.instant('lzjb (legacy, not recommended)'), value: 'LZJB' },
-  ];
-
+  protected compressionOptions: Option[] = [];
+  protected compressionOptions$ = new BehaviorSubject<Option[]>([]);
   protected deduplicationOptions: Option[] = mapToOptions(deduplicationSettingLabels, this.translate);
   protected snapdevOptions: Option[] = mapToOptions(datasetSnapdevLabels, this.translate);
   protected readonlyOptions: Option[] = mapToOptions(onOffLabels, this.translate);
@@ -205,7 +194,6 @@ export class ZvolFormComponent implements OnInit {
   ];
 
   readonly syncOptions$ = of(this.syncOptions);
-  readonly compressionOptions$ = of(this.compressionOptions);
   readonly deduplicationOptions$ = of(this.deduplicationOptions);
   readonly readonlyOptions$ = of(this.readonlyOptions);
   readonly volblocksizeOptions$ = of(this.volblocksizeOptions);
@@ -262,13 +250,16 @@ export class ZvolFormComponent implements OnInit {
     forkJoin([
       this.api.call('pool.dataset.query', [[['id', '=', this.parentOrZvolId]]]),
       this.loadRecommendedBlocksize(),
+      this.api.call('pool.dataset.compression_choices').pipe(choicesToOptions()),
     ])
       .pipe(
         finalize(() => this.isLoading.set(false)),
         this.errorHandler.withErrorHandler(),
         untilDestroyed(this),
       ).subscribe({
-        next: ([parents]) => {
+        next: ([parents, , compressionOptions]) => {
+          this.compressionOptions = compressionOptions;
+          this.compressionOptions$.next(compressionOptions);
           const parentOrZvol = parents[0];
           if (parentOrZvol.encrypted) {
             this.form.controls.encryption.setValue(true);
@@ -321,6 +312,8 @@ export class ZvolFormComponent implements OnInit {
     const comments = getUserProperty<string>(parent, 'comments');
     this.form.controls.comments.setValue(comments?.value || '');
 
+    // Store original volsize to avoid precision loss from formatting/parsing
+    this.originalVolsize = parent.volsize.parsed;
     this.form.controls.volsize.setValue(parent.volsize.rawvalue);
 
     // Handle special_small_block_size
@@ -397,6 +390,7 @@ export class ZvolFormComponent implements OnInit {
     const inheritLabel = this.translate.instant('Inherit');
     this.syncOptions.unshift({ label: `${inheritLabel} (${parent.sync.rawvalue})`, value: inherit });
     this.compressionOptions.unshift({ label: `${inheritLabel} (${parent.compression.rawvalue})`, value: inherit });
+    this.compressionOptions$.next(this.compressionOptions);
     this.deduplicationOptions.unshift({ label: `${inheritLabel} (${parent.deduplication.rawvalue})`, value: inherit });
     this.volblocksizeOptions.unshift({ label: inheritLabel, value: inherit });
     this.snapdevOptions.unshift({ label: `${inheritLabel} (${parent.snapdev.rawvalue})`, value: inherit });
@@ -433,6 +427,7 @@ export class ZvolFormComponent implements OnInit {
     } else {
       this.compressionOptions.unshift({ label: `${inheritLabel} (${parentDataset[0].compression.rawvalue})`, value: inherit });
     }
+    this.compressionOptions$.next(this.compressionOptions);
 
     if (parent.compression.source === ZfsPropertySource.Inherited) {
       this.form.controls.compression.setValue(inherit);
@@ -653,7 +648,9 @@ export class ZvolFormComponent implements OnInit {
       }
 
       data.volsize = data.volsize as number;
-      data.volsize = data.volsize + (volblocksizeIntegerValue - data.volsize % volblocksizeIntegerValue);
+      if (data.volsize % volblocksizeIntegerValue !== 0) {
+        data.volsize = data.volsize + (volblocksizeIntegerValue - data.volsize % volblocksizeIntegerValue);
+      }
     } else {
       delete data.volblocksize;
     }
@@ -759,10 +756,25 @@ export class ZvolFormComponent implements OnInit {
           } else {
             volblocksizeIntegerValue = volblocksizeIntegerValue * 1024;
           }
-          data.volsize = Number(data.volsize);
-          if (data.volsize && data.volsize % volblocksizeIntegerValue !== 0) {
-            data.volsize = data.volsize + (volblocksizeIntegerValue - data.volsize % volblocksizeIntegerValue);
+
+          const parsedVolsize = Number(data.volsize);
+
+          // Check if volsize was actually changed by comparing with original
+          // Account for small rounding differences from formatter (< 0.1% difference)
+          const hasVolumeChanged = this.originalVolsize === null
+            || Math.abs(parsedVolsize - this.originalVolsize) / this.originalVolsize > 0.001;
+
+          if (hasVolumeChanged) {
+            // User changed the size, use the parsed value and round to block size
+            data.volsize = parsedVolsize;
+            if (data.volsize && data.volsize % volblocksizeIntegerValue !== 0) {
+              data.volsize = data.volsize + (volblocksizeIntegerValue - data.volsize % volblocksizeIntegerValue);
+            }
+          } else {
+            // User didn't change the size, use the original value to avoid precision loss
+            data.volsize = this.originalVolsize;
           }
+
           let roundedVolSize = datasets[0].volsize.parsed;
 
           if (datasets[0].volsize.parsed % volblocksizeIntegerValue !== 0) {

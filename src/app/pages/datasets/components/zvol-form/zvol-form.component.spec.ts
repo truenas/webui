@@ -134,6 +134,19 @@ describe('ZvolFormComponent', () => {
           'AES-192-GCM': 'AES-192-GCM',
           'AES-256-GCM': 'AES-256-GCM',
         }),
+        mockCall('pool.dataset.compression_choices', {
+          OFF: 'Off',
+          LZ4: 'lz4 (recommended)',
+          GZIP: 'gzip (default level, 6)',
+          'GZIP-1': 'gzip-1 (fastest)',
+          'GZIP-9': 'gzip-9 (maximum, slow)',
+          ZSTD: 'zstd (default level, 3)',
+          'ZSTD-5': 'zstd-5 (slow)',
+          'ZSTD-7': 'zstd-7 (very slow)',
+          'ZSTD-FAST': 'zstd-fast (default level, 1)',
+          ZLE: 'zle (runs of zeros)',
+          LZJB: 'lzjb (legacy, not recommended)',
+        }),
       ]),
       mockProvider(DialogService),
       mockProvider(SlideInRef, slideInRef),
@@ -152,6 +165,7 @@ describe('ZvolFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
       form = await loader.getHarness(IxFormHarness);
       mainDetails = await loader.getHarness(DetailsTableHarness);
     });
@@ -189,7 +203,7 @@ describe('ZvolFormComponent', () => {
         name: 'parentId/new zvol',
         comments: 'comments text',
         compression: 'LZ4',
-        volsize: 2147500032,
+        volsize: 2147483648,
         force_size: false,
         sync: DatasetSync.Standard,
         deduplication: DeduplicationSetting.Verify,
@@ -251,6 +265,19 @@ describe('ZvolFormComponent', () => {
             'AES-128-GCM': 'AES-128-GCM',
             'AES-192-GCM': 'AES-192-GCM',
             'AES-256-GCM': 'AES-256-GCM',
+          }),
+          mockCall('pool.dataset.compression_choices', {
+            OFF: 'Off',
+            LZ4: 'lz4 (recommended)',
+            GZIP: 'gzip (default level, 6)',
+            'GZIP-1': 'gzip-1 (fastest)',
+            'GZIP-9': 'gzip-9 (maximum, slow)',
+            ZSTD: 'zstd (default level, 3)',
+            'ZSTD-5': 'zstd-5 (slow)',
+            'ZSTD-7': 'zstd-7 (very slow)',
+            'ZSTD-FAST': 'zstd-fast (default level, 1)',
+            ZLE: 'zle (runs of zeros)',
+            LZJB: 'lzjb (legacy, not recommended)',
           }),
         ]),
         mockProvider(DialogService),
@@ -364,6 +391,21 @@ describe('ZvolFormComponent', () => {
               }
               if (method === 'pool.dataset.recommended_zvol_blocksize') {
                 return of('16K');
+              }
+              if (method === 'pool.dataset.compression_choices') {
+                return of({
+                  OFF: 'Off',
+                  LZ4: 'lz4 (recommended)',
+                  GZIP: 'gzip (default level, 6)',
+                  'GZIP-1': 'gzip-1 (fastest)',
+                  'GZIP-9': 'gzip-9 (maximum, slow)',
+                  ZSTD: 'zstd (default level, 3)',
+                  'ZSTD-5': 'zstd-5 (slow)',
+                  'ZSTD-7': 'zstd-7 (very slow)',
+                  'ZSTD-FAST': 'zstd-fast (default level, 1)',
+                  ZLE: 'zle (runs of zeros)',
+                  LZJB: 'lzjb (legacy, not recommended)',
+                });
               }
               return of(null);
             }),
