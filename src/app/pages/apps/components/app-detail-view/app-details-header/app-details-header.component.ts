@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import createDOMPurify from 'dompurify';
 import type { DOMPurify as DOMPurifyType } from 'dompurify';
@@ -22,6 +23,7 @@ import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-
     AppCardLogoComponent,
     CleanLinkPipe,
     TestDirective,
+    MatTooltip,
     NgxSkeletonLoaderModule,
     InstalledAppBadgeComponent,
     OrNotAvailablePipe,

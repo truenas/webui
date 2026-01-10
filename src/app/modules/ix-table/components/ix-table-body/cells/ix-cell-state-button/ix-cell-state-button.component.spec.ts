@@ -13,6 +13,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxCellStateButtonComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { FailedJobError } from 'app/services/errors/error.classes';
 
 interface TestTableData {
   state: JobState;
@@ -119,5 +121,26 @@ describe('IxCellStateButtonComponent', () => {
   it('gets aria label correctly', () => {
     const button = spectator.query('button')!;
     expect(button.getAttribute('aria-label')).toBe('Label 1 Label 2');
+  });
+
+  it('calls showErrorModal when storing a failed job', async () => {
+    const job = {
+      id: 123456,
+      logs_excerpt: 'failed',
+      state: JobState.Failed,
+      error: 'failed',
+    };
+
+    spectator.component.setRow({
+      state: job.state,
+      job,
+      warnings: [{}, {}],
+    } as TestTableData);
+
+    const button = await loader.getHarness(MatButtonHarness);
+    await button.click();
+
+    const expectedError = new FailedJobError(job as Job);
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(expectedError);
   });
 });
