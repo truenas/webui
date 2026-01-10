@@ -1,48 +1,60 @@
 @let license = licenseInfo();
 @if (hasLicense() && license) {
-  <div
-    class="sys-license-wrapper"
-  >
-    <div class="sys-info-row">
-      <span class="label">{{ 'Features' | translate }}:</span>
-      <span class="value">{{ license.features.join(', ') }}</span>
-    </div>
-    <div class="sys-info-row">
+  <mat-list>
+    <mat-list-item>
       <span class="label">{{ 'Contract Type' | translate }}:</span>
       <span class="value">{{ getLabelForContractType(license.contract_type) }}</span>
-    </div>
-    <div class="sys-info-row">
+    </mat-list-item>
+    <mat-list-item>
       <span class="label">{{ 'Expiration Date' | translate }}:</span>
-      <span class="value">{{ license.expiration_date }}
+      <span class="value">
+        {{ license.expiration_date }}
         @if (license.daysLeftinContract > 0) {
-          <span>
-            ({{ 'expires in {n, plural, one {# day} other {# days} }' | translate: { n: license.daysLeftinContract } }})
-          </span>
+          ({{ 'expires in {n, plural, one {# day} other {# days} }' | translate: { n: license.daysLeftinContract } }})
         }
         @if (license.daysLeftinContract === 0) {
-          <span>
-            ( {{ 'EXPIRES TODAY' | translate }} )
-          </span>
+          ({{ 'EXPIRES TODAY' | translate }})
         }
         @if (license.daysLeftinContract < 0) {
-          <span>
-            ( {{ 'EXPIRED' | translate }} )
-          </span>
+          ({{ 'EXPIRED' | translate }})
         }
       </span>
-    </div>
-    <div class="sys-info-row">
+    </mat-list-item>
+    @if (isProactiveSupportEnabled()) {
+      <mat-list-item class="proactive-status">
+        <span class="label">{{ 'Proactive Support' | translate }}:</span>
+        <span class="value">{{ 'Enabled' | translate }}</span>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          class="edit-contacts-btn"
+          (click)="editContacts.emit()"
+        >
+          {{ 'Manage' | translate }}
+        </button>
+      </mat-list-item>
+    }
+    <mat-list-item class="model-row">
       <span class="label">{{ 'Model' | translate }}:</span>
       <span class="value">{{ license.model || systemInfo().model }}</span>
-    </div>
+      @if (productionControl()) {
+        <ix-slide-toggle
+          *ixRequiresRoles="requiredRoles"
+          class="production-toggle"
+          color="primary"
+          [formControl]="productionControl()"
+          [label]="'This is a production system' | translate"
+        ></ix-slide-toggle>
+      }
+    </mat-list-item>
     @if (systemInfo().system_serial) {
-      <div class="sys-info-row">
+      <mat-list-item>
         <span class="label">{{ 'System Serial' | translate }}:</span>
         <span class="value">{{ systemInfo().system_serial }}</span>
-      </div>
+      </mat-list-item>
     }
     @if (license.system_serial || license.system_serial_ha) {
-      <div class="sys-info-row">
+      <mat-list-item>
         <span class="label">{{ 'Licensed Serials' | translate }}:</span>
         <span class="value">
           @if (license.system_serial) {
@@ -55,43 +67,46 @@
             <span>{{ license.system_serial_ha }}</span>
           }
         </span>
-      </div>
+      </mat-list-item>
     }
+    <mat-list-item>
+      <span class="label">{{ 'Features' | translate }}:</span>
+      <span class="value">{{ license.features.length ? license.features.join(', ') : 'NONE' }}</span>
+    </mat-list-item>
     @if (license.add_hardware) {
-      <div class="sys-info-row">
+      <mat-list-item>
         <span class="label">{{ 'Additional Hardware' | translate }}:</span>
         <span class="value">{{ license.add_hardware }}</span>
-      </div>
+      </mat-list-item>
     }
-  </div>
+  </mat-list>
 } @else {
-  <div class="sys-info-wrapper">
-    <div class="sys-info-row">
+  <mat-list>
+    <mat-list-item>
       <span class="label">{{ 'OS Version' | translate }}:</span>
       <span class="value">{{ systemInfo().version }}</span>
-    </div>
-    <div class="sys-info-row">
+    </mat-list-item>
+    <mat-list-item>
       <span class="label">{{ 'Product' | translate }}:</span>
       <span class="value">{{ systemInfo().system_product }}</span>
-    </div>
+    </mat-list-item>
     @if (systemInfo().model) {
-      <div class="sys-info-row">
+      <mat-list-item>
         <span class="label">{{ 'Model' | translate }}:</span>
         <span class="value">{{ systemInfo().model }}</span>
-      </div>
+      </mat-list-item>
     }
     @if (systemInfo().memory) {
-      <div class="sys-info-row">
+      <mat-list-item>
         <span class="label">{{ 'Memory' | translate }}:</span>
         <span class="value">{{ systemInfo().memory }}</span>
-      </div>
+      </mat-list-item>
     }
     @if (systemInfo().system_serial) {
-      <div class="fn-sys-info-row">
+      <mat-list-item>
         <span class="label">{{ 'System Serial' | translate }}:</span>
         <span class="value">{{ systemInfo().system_serial }}</span>
-      </div>
+      </mat-list-item>
     }
-  </div>
+  </mat-list>
 }
-
