@@ -5,8 +5,10 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import ipRegex from 'ip-regex';
 import { AppState } from 'app/enums/app-state.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { WINDOW } from 'app/helpers/window.helper';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -42,6 +44,7 @@ export class AppControlsComponent {
   private appService = inject(ApplicationsService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
+  private window = inject<Window>(WINDOW);
 
   app = input.required<LoadingState<App>>();
   appState = AppState;
@@ -77,6 +80,19 @@ export class AppControlsComponent {
   }
 
   openPortal(url: string): void {
-    this.redirect.openWindow(url);
+    try {
+      const portalUrl = new URL(url);
+
+      if (portalUrl.hostname === '0.0.0.0') {
+        const hostname = this.window.location.hostname.replace(/^\[|\]$/g, '');
+        const isIpv6 = ipRegex.v6().test(hostname);
+        portalUrl.hostname = isIpv6 ? `[${hostname}]` : hostname;
+      }
+
+      this.redirect.openWindow(portalUrl.href);
+    } catch (error: unknown) {
+      console.error('Invalid portal URL:', url, error);
+      this.redirect.openWindow(url);
+    }
   }
 }
