@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { TnIconComponent } from '@ixsystems/truenas-ui';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -11,7 +12,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { powerMenuElements } from 'app/modules/layout/topbar/power-menu/power-menu.elements';
 import { RebootOrShutdownDialog } from 'app/modules/layout/topbar/reboot-or-shutdown-dialog/reboot-or-shutdown-dialog.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -25,7 +25,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatIconButton,
     MatTooltip,
     MatMenuTrigger,
-    IxIconComponent,
+    TnIconComponent,
     MatMenu,
     MatMenuItem,
     TranslateModule,

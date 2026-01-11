@@ -2652,6 +2652,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ixsystems/truenas-ui@npm:0.1.1":
+  version: 0.1.1
+  resolution: "@ixsystems/truenas-ui@npm:0.1.1::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40ixsystems%2Ftruenas-ui%2F0.1.1%2F0c34eb2bec47475479966980abd851b63b083585"
+  dependencies:
+    "@material-design-icons/svg": "npm:~0.14.13"
+    "@mdi/svg": "npm:~7.4.47"
+    "@types/svg-sprite": "npm:~0.0.39"
+    "@types/vinyl": "npm:~2.0.12"
+    cheerio: "npm:~1.0.0"
+    svg-sprite: "npm:~2.0.4"
+    tslib: "npm:^2.3.0"
+    tsx: "npm:~4.19.1"
+    vinyl: "npm:~3.0.0"
+  peerDependencies:
+    "@angular/cdk": ^19.2.7
+    "@angular/common": ^19.1.0
+    "@angular/core": ^19.1.0
+    "@mdi/angular-material": ^7.2.96
+    "@mdi/js": ^7.4.47
+  bin:
+    truenas-icons: scripts/icon-sprite/cli.js
+  checksum: 10/72bcb774b314145f3414b337b0b92f790dca3b1d8e2664235f91cdc92b3fb54ca6cf64d4893b333b416d27c08a24d200d872f0687742d91a125ded6abd70a906
+  languageName: node
+  linkType: hard
+
 "@jest/console@npm:30.2.0":
   version: 30.2.0
   resolution: "@jest/console@npm:30.2.0"
@@ -3592,6 +3617,13 @@ __metadata:
   version: 0.14.15
   resolution: "@material-design-icons/svg@npm:0.14.15"
   checksum: 10/bba04aae11b4d1667d6bc7dfa4331141a7f94484aa30ebc8d2ab411a67cf83e7d09e656d51027a0d829852824ef4b91dfccc4476945a76c95908c06148c14038
+  languageName: node
+  linkType: hard
+
+"@mdi/js@npm:~7.4.47":
+  version: 7.4.47
+  resolution: "@mdi/js@npm:7.4.47"
+  checksum: 10/c1a8fc82f23030bccc0cf324b13b73a0034d06140e79f8bc7b0e4e59275624c470e5ca6524d6141ad8c4fe3ad0f314c7af99afb3e38df163eb50d3b13b9eab17
   languageName: node
   linkType: hard
 
@@ -17951,11 +17983,13 @@ __metadata:
     "@eslint/compat": "npm:~1.2.1"
     "@eslint/eslintrc": "npm:~3.1.0"
     "@eslint/js": "npm:~9.13.0"
+    "@ixsystems/truenas-ui": "npm:0.1.1"
     "@lezer/common": "npm:~1.2.1"
     "@lezer/generator": "npm:~1.7.1"
     "@lezer/lr": "npm:~1.4.2"
     "@markuplint/ml-core": "npm:~4.13.1"
     "@material-design-icons/svg": "npm:~0.14.13"
+    "@mdi/js": "npm:~7.4.47"
     "@mdi/svg": "npm:~7.4.47"
     "@messageformat/core": "npm:~3.3.0"
     "@ngneat/reactive-forms": "npm:~5.0.2"

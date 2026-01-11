@@ -36,7 +36,7 @@ describe('ResilveringIndicatorComponent', () => {
   });
 
   it('shows resilvering icon when there is an unfinished scan of Resilver type', () => {
-    expect(spectator.query('button ix-icon.spin')).toBeTruthy();
+    expect(spectator.query('button tn-icon.spin')).toBeTruthy();
   });
 
   it('opens resilver progress dialog when icon is pressed', () => {

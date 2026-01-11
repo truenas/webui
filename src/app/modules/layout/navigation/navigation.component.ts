@@ -3,10 +3,10 @@ import { ChangeDetectionStrategy, Component, input, output, inject } from '@angu
 import { MatNavList, MatListItem } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLinkActive, RouterLink } from '@angular/router';
+import { TnIconComponent } from '@ixsystems/truenas-ui';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { MenuItem, MenuItemType, SubMenuItem } from 'app/interfaces/menu-item.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 
@@ -22,7 +22,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
     RouterLinkActive,
     RouterLink,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     AsyncPipe,
     TranslateModule,
     TestDirective,

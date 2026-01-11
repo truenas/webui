@@ -5,7 +5,7 @@ import { WebUiEnvironment, environmentVersion, remote } from './environment.inte
 export const environment: WebUiEnvironment = {
   environmentVersion,
   remote,
-  buildYear: 2025,
+  buildYear: 2026,
   production: true,
   sentryPublicDsn,
   debugPanel: {
