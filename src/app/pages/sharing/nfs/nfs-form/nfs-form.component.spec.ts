@@ -93,6 +93,8 @@ describe('NfsFormComponent', () => {
           { group: 'sys' },
           { group: 'operator' },
         ]),
+        getUserByName: (username: string) => of({ username } as { username: string }),
+        getGroupByName: (groupName: string) => of({ group: groupName }),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

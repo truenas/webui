@@ -12,6 +12,7 @@
     <input
       #ixInput
       matInput
+      autocomplete="chrome-off"
       [value]="selectedOption?.label || textContent"
       [placeholder]="allowCustomValue() ? ('Search or enter value' | translate) : ('Search' | translate)"
       [disabled]="isDisabled"

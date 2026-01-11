@@ -17,17 +17,16 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
 import { SmbConfigUpdate, smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
-import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-group-combobox/ix-group-combobox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -37,7 +36,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { UserService } from 'app/services/user.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -60,7 +58,8 @@ interface BindIp {
     IxChipsComponent,
     IxCheckboxComponent,
     IxSelectComponent,
-    IxComboboxComponent,
+    IxUserComboboxComponent,
+    IxGroupComboboxComponent,
     IxListComponent,
     IxListItemComponent,
     FormActionsComponent,
@@ -76,7 +75,6 @@ export class ServiceSmbComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private userService = inject(UserService);
   private validatorsService = inject(IxValidatorsService);
   private snackbar = inject(SnackbarService);
   private truenasConnectService = inject(TruenasConnectService);
@@ -196,8 +194,6 @@ export class ServiceSmbComponent implements OnInit {
   };
 
   readonly unixCharsetOptions$ = this.api.call('smb.unixcharset_choices').pipe(choicesToOptions());
-  readonly guestAccountProvider = new UserComboboxProvider(this.userService);
-  readonly adminGroupProvider = new GroupComboboxProvider(this.userService);
 
   readonly bindIpAddressOptions$ = combineLatest([
     this.api.call('smb.bindip_choices').pipe(choicesToOptions()),

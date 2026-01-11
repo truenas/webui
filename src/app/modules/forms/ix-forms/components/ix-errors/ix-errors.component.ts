@@ -153,12 +153,17 @@ export class IxErrorsComponent implements OnChanges, OnDestroy {
 
     this.messages = newErrors.filter((message) => !!message) as string[];
 
+    // Mark control as touched when it has errors, unless explicitly skipped
     if (this.control().errors && !options.skipMarkAsTouched) {
       this.control().markAllAsTouched();
     }
 
     this.cdr.markForCheck();
-    this.announceErrors();
+
+    // Only announce errors if the control has been touched, is dirty, or we're showing errors for untouched controls
+    if (this.control().touched || this.control().dirty || this.showErrorsForUntouched) {
+      this.announceErrors();
+    }
   }
 
   /**
