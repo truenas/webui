@@ -266,7 +266,9 @@ describe('IxChipsComponent', () => {
       expect(spectator.component.values).toEqual(initialValues);
 
       // case: remove chip
-      spectator.component.onRemove('operator');
+      const chips = await matChipList.getRows();
+      const removeBtn = await chips[0].getRemoveButton();
+      await removeBtn.click();
 
       expect(formControl.value).toEqual(initialValues);
       expect(spectator.component.values).toEqual(initialValues);
