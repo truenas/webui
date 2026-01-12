@@ -1,3 +1,4 @@
+// cspell:ignore ngneat snapshottask
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -374,6 +375,49 @@ describe('ZvolFormComponent', () => {
       }]);
 
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+
+    it('treats size change above 0.1% threshold as a change requiring alignment', async () => {
+      // Set up a zvol with original size of 1 GiB (1073741824 bytes)
+      (spectator.component as unknown as { originalVolsize: number }).originalVolsize = 1073741824;
+
+      // Change size to 1.002 GiB (1075890585 bytes) - just above 0.1% threshold
+      await form.fillForm({
+        Size: '1.002 GiB',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.update');
+
+      expect(updateCall).toBeDefined();
+      // The size should be included in the payload and aligned to block size
+      expect(updateCall[1][1].volsize).toBeDefined();
+      // Should be aligned to 64K block size: 1075890585 + (65536 - 1075890585 % 65536) = 1075904512
+      expect(updateCall[1][1].volsize).toBe(1075904512);
+    });
+
+    it('preserves original size when change is below 0.1% threshold', async () => {
+      // Set up a zvol with original size of 1 GiB (1073741824 bytes)
+      (spectator.component as unknown as { originalVolsize: number }).originalVolsize = 1073741824;
+
+      // Change size to 1.0001 GiB (1073848893 bytes) - below 0.1% threshold
+      // This simulates formatter precision causing small rounding
+      await form.fillForm({
+        Size: '1.0001 GiB',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
+        .find(([method]) => method === 'pool.dataset.update');
+
+      expect(updateCall).toBeDefined();
+      // Should use original volsize to avoid precision loss
+      expect(updateCall[1][1].volsize).toBe(1073741824);
     });
   });
 

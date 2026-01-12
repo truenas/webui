@@ -1,3 +1,4 @@
+// cspell:ignore zvol zvols volsize volblocksize snapdev Snapdev Vdev helptext ngneat rawvalue pbkdf
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal, inject } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -6,7 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, finalize, forkJoin, map, Observable, of, tap,
+  finalize, forkJoin, map, Observable, of, tap,
 } from 'rxjs';
 import {
   specialVdevDefaultThreshold,
@@ -170,7 +171,7 @@ export class ZvolFormComponent implements OnInit {
 
   syncOptions: Option[] = mapToOptions(datasetSyncLabels, this.translate);
   protected compressionOptions: Option[] = [];
-  protected compressionOptions$ = new BehaviorSubject<Option[]>([]);
+  protected compressionOptions$: Observable<Option[]> = of([]);
   protected deduplicationOptions: Option[] = mapToOptions(deduplicationSettingLabels, this.translate);
   protected snapdevOptions: Option[] = mapToOptions(datasetSnapdevLabels, this.translate);
   protected readonlyOptions: Option[] = mapToOptions(onOffLabels, this.translate);
@@ -259,7 +260,7 @@ export class ZvolFormComponent implements OnInit {
       ).subscribe({
         next: ([parents, , compressionOptions]) => {
           this.compressionOptions = compressionOptions;
-          this.compressionOptions$.next(compressionOptions);
+          this.compressionOptions$ = of(compressionOptions);
           const parentOrZvol = parents[0];
           if (parentOrZvol.encrypted) {
             this.form.controls.encryption.setValue(true);
@@ -296,7 +297,7 @@ export class ZvolFormComponent implements OnInit {
                 this.inheritCompression(parentOrZvol, parentDataset);
                 this.inheritDeduplication(parentOrZvol, parentDataset);
                 this.inheritSnapdev(parentOrZvol, parentDataset);
-                this.inheritSpecialSmallBlockSize(parentOrZvol, parentDataset);
+                this.inheritSpecialSmallBlockSize(parentDataset);
 
                 this.cdr.markForCheck();
               },
@@ -390,7 +391,7 @@ export class ZvolFormComponent implements OnInit {
     const inheritLabel = this.translate.instant('Inherit');
     this.syncOptions.unshift({ label: `${inheritLabel} (${parent.sync.rawvalue})`, value: inherit });
     this.compressionOptions.unshift({ label: `${inheritLabel} (${parent.compression.rawvalue})`, value: inherit });
-    this.compressionOptions$.next(this.compressionOptions);
+    this.compressionOptions$ = of(this.compressionOptions);
     this.deduplicationOptions.unshift({ label: `${inheritLabel} (${parent.deduplication.rawvalue})`, value: inherit });
     this.volblocksizeOptions.unshift({ label: inheritLabel, value: inherit });
     this.snapdevOptions.unshift({ label: `${inheritLabel} (${parent.snapdev.rawvalue})`, value: inherit });
@@ -427,7 +428,7 @@ export class ZvolFormComponent implements OnInit {
     } else {
       this.compressionOptions.unshift({ label: `${inheritLabel} (${parentDataset[0].compression.rawvalue})`, value: inherit });
     }
-    this.compressionOptions$.next(this.compressionOptions);
+    this.compressionOptions$ = of(this.compressionOptions);
 
     if (parent.compression.source === ZfsPropertySource.Inherited) {
       this.form.controls.compression.setValue(inherit);
@@ -464,7 +465,7 @@ export class ZvolFormComponent implements OnInit {
     }
   }
 
-  private inheritSpecialSmallBlockSize(parent: Dataset, parentDataset: Dataset[]): void {
+  private inheritSpecialSmallBlockSize(parentDataset: Dataset[]): void {
     const inheritLabel = this.translate.instant('Inherit');
     if (parentDataset[0].special_small_block_size) {
       const sizeInBytes = this.formatter.convertHumanStringToNum(parentDataset[0].special_small_block_size.value);
@@ -647,10 +648,7 @@ export class ZvolFormComponent implements OnInit {
         volblocksizeIntegerValue = volblocksizeIntegerValue * 1024;
       }
 
-      data.volsize = data.volsize as number;
-      if (data.volsize % volblocksizeIntegerValue !== 0) {
-        data.volsize = data.volsize + (volblocksizeIntegerValue - data.volsize % volblocksizeIntegerValue);
-      }
+      data.volsize = this.alignVolsizeToBlocksize(data.volsize as number, volblocksizeIntegerValue);
     } else {
       delete data.volblocksize;
     }
@@ -766,10 +764,7 @@ export class ZvolFormComponent implements OnInit {
 
           if (hasVolumeChanged) {
             // User changed the size, use the parsed value and round to block size
-            data.volsize = parsedVolsize;
-            if (data.volsize && data.volsize % volblocksizeIntegerValue !== 0) {
-              data.volsize = data.volsize + (volblocksizeIntegerValue - data.volsize % volblocksizeIntegerValue);
-            }
+            data.volsize = this.alignVolsizeToBlocksize(parsedVolsize, volblocksizeIntegerValue);
           } else {
             // User didn't change the size, use the original value to avoid precision loss
             data.volsize = this.originalVolsize;
@@ -918,5 +913,12 @@ export class ZvolFormComponent implements OnInit {
       this.form.patchValue({ special_small_block_size_custom: specialVdevDefaultThreshold });
     }
     this.cdr.markForCheck();
+  }
+
+  private alignVolsizeToBlocksize(volsize: number, blocksize: number): number {
+    if (volsize % blocksize !== 0) {
+      return volsize + (blocksize - volsize % blocksize);
+    }
+    return volsize;
   }
 }
