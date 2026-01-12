@@ -98,11 +98,22 @@ describe('SnapshotTaskListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(ApiService, {
-        call: jest.fn().mockReturnValue(of(snapshotTasksList)),
+        call: jest.fn((method) => {
+          if (method === 'pool.snapshottask.query') {
+            return of(snapshotTasksList);
+          }
+          if (method === 'pool.snapshottask.update_will_change_retention_for') {
+            return of({});
+          }
+          if (method === 'pool.snapshottask.delete') {
+            return of(true);
+          }
+          return of(null);
+        }),
         subscribe: jest.fn().mockReturnValue(event$),
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -177,9 +188,11 @@ describe('SnapshotTaskListComponent', () => {
       message: 'Delete Periodic Snapshot Task <b>"m60pool/manual-2024-02-05_11-19-clone - auto-%Y-%m-%d_%H-%M"</b>?',
       buttonColor: 'warn',
       buttonText: 'Delete',
+      secondaryCheckbox: false,
+      secondaryCheckboxText: 'Keep snapshots with their original retention period',
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, false]);
   });
 
   it('reloads the data provider when an event is received from pool.snapshottask.query', () => {

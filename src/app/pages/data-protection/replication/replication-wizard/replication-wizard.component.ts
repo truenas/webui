@@ -111,7 +111,7 @@ export class ReplicationWizardComponent {
     });
 
     this.createdSnapshotTasks.forEach((task) => {
-      requests.push(this.api.call('pool.snapshottask.delete', [task.id]));
+      requests.push(this.api.call('pool.snapshottask.delete', [task.id, false]));
     });
 
     if (requests.length) {

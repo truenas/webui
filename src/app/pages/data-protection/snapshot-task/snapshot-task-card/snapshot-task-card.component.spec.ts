@@ -98,10 +98,11 @@ describe('SnapshotTaskCardComponent', () => {
         mockCall('pool.snapshottask.query', snapshotTasks),
         mockCall('pool.snapshottask.delete'),
         mockCall('pool.snapshottask.update'),
+        mockCall('pool.snapshottask.update_will_change_retention_for', {}),
         mockCall('cronjob.run'),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -166,9 +167,11 @@ describe('SnapshotTaskCardComponent', () => {
       message: 'Delete Periodic Snapshot Task <b>"APPS/test2 - auto-%Y-%m-%d_%H-%M"</b>?',
       buttonText: 'Delete',
       buttonColor: 'warn',
+      secondaryCheckbox: false, // No snapshots in mock
+      secondaryCheckboxText: 'Keep snapshots with their original retention period',
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, false]);
   });
 
   it('updates Snapshot Task Enabled status once mat-toggle is updated', async () => {

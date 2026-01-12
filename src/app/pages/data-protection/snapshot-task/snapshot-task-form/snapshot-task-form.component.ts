@@ -91,7 +91,7 @@ export class SnapshotTaskFormComponent implements OnInit {
     end: ['23:59', Validators.required],
     allow_empty: [true],
     enabled: [true],
-    fixate_removal_date: [true],
+    fixate_removal_date: [false],
   });
 
   protected isLoading = signal(false);

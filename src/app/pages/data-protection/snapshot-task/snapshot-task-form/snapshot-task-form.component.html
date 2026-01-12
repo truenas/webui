@@ -93,7 +93,7 @@
               [label]="labels.enabled | translate"
             ></ix-checkbox>
 
-            @if (!isNew && true) {
+            @if (!isNew && affectedSnapshots().length > 0) {
               <div class="retention-warning">
                 <p class="warning-text">
                   {{ 'Warning: This change will affect the retention of' | translate }}
