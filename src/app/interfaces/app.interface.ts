@@ -272,6 +272,7 @@ export interface AppMetadata {
   app_version: string;
   capabilities: Capability[];
   categories: string[];
+  changelog_url?: string;
   description: string;
   home: string;
   host_mounts: HostMount[];

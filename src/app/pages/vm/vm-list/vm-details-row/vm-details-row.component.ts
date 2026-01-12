@@ -59,7 +59,7 @@ export class VirtualMachineDetailsRowComponent {
   readonly showDisplayButton = computed(() => this.vmStateInfo().isRunning && this.vm().display_available);
 
   protected doStart(): void {
-    this.vmService.doStart(this.vm()).pipe(
+    this.vmService.doStartResume(this.vm()).pipe(
       untilDestroyed(this),
     ).subscribe();
   }

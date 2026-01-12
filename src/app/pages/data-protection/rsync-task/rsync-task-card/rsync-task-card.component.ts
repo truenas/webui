@@ -232,7 +232,14 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   private transformRsyncTasks(rsyncTasks: RsyncTaskUi[]): RsyncTaskUi[] {
-    return rsyncTasks.map((task: RsyncTaskUi) => {
+    return rsyncTasks.map((rsyncTask: RsyncTaskUi) => {
+      // make sure we deep-copy `state` and `job` so we aren't overriding the originals
+      // when we mutate `task`.
+      const task: RsyncTaskUi = {
+        ...rsyncTask,
+        state: { ...rsyncTask.state },
+        job: { ...rsyncTask.job },
+      };
       if (task.job === null) {
         task.state = { state: task.locked ? TaskState.Locked : TaskState.Pending };
       } else {

@@ -236,7 +236,7 @@ describe('SmbFormComponent', () => {
       );
     });
 
-    it('should show restart dialog when save is clicked under certain conditions', async () => {
+    it('should show restart dialog when save is clicked with any changes', async () => {
       mockStore$.overrideSelector(selectServices, [{
         id: 4,
         service: ServiceName.Cifs,
@@ -246,26 +246,40 @@ describe('SmbFormComponent', () => {
 
       await form.fillForm({
         Path: '/mnt/pool123/new',
-        'Time Machine': false,
-        'Hosts Allow': 'host1',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RestartSmbDialog, {
-        data: {
-          timemachine: false,
-          homeshare: false,
-          path: true,
-          hosts: true,
-          isNew: false,
-        },
-      });
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RestartSmbDialog);
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         helptextSharingSmb.restartedSmbDialog.message,
       );
+    });
+
+    it('should not restart service when user clicks No in restart dialog', async () => {
+      const matDialog = spectator.inject(MatDialog);
+      matDialog.open = jest.fn(() => ({
+        afterClosed: () => of(false),
+      })) as unknown as typeof matDialog.open;
+
+      mockStore$.overrideSelector(selectServices, [{
+        id: 4,
+        service: ServiceName.Cifs,
+        enable: true,
+        state: ServiceStatus.Running,
+      } as Service]);
+
+      await form.fillForm({
+        Path: '/mnt/pool123/new',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(matDialog.open).toHaveBeenCalledWith(RestartSmbDialog);
+      expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
     });
 
     it('should show strip acl warning if acl is trivial when path changes', async () => {
@@ -313,6 +327,8 @@ describe('SmbFormComponent', () => {
         },
         options: {
           aapl_name_mangling: true,
+          hostsallow: [],
+          hostsdeny: [],
         },
       }]);
     });
@@ -337,6 +353,8 @@ describe('SmbFormComponent', () => {
             auto_snapshot: true,
             auto_dataset_creation: true,
             dataset_naming_schema: '%u',
+            hostsallow: [],
+            hostsdeny: [],
           },
         }),
       ]);
@@ -354,6 +372,8 @@ describe('SmbFormComponent', () => {
           purpose: SmbSharePurpose.MultiProtocolShare,
           options: {
             aapl_name_mangling: true,
+            hostsallow: [],
+            hostsdeny: [],
           },
         }),
       ]);
@@ -373,6 +393,8 @@ describe('SmbFormComponent', () => {
           options: {
             grace_period: 900,
             aapl_name_mangling: true,
+            hostsallow: [],
+            hostsdeny: [],
           },
         }),
       ]);
@@ -394,6 +416,8 @@ describe('SmbFormComponent', () => {
             dataset_naming_schema: '%u',
             auto_quota: 20,
             aapl_name_mangling: true,
+            hostsallow: [],
+            hostsdeny: [],
           },
         }),
       ]);
@@ -425,7 +449,10 @@ describe('SmbFormComponent', () => {
       expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
         expect.objectContaining({
           purpose: SmbSharePurpose.VeeamRepositoryShare,
-          options: {},
+          options: {
+            hostsallow: [],
+            hostsdeny: [],
+          },
         }),
       ]);
     });
@@ -453,7 +480,28 @@ describe('SmbFormComponent', () => {
           },
           options: {
             aapl_name_mangling: true,
+            hostsallow: [],
+            hostsdeny: [],
           },
+        }),
+      ]);
+    });
+
+    it('sends hosts allow and deny values when specified', async () => {
+      await submitForm({
+        ...commonValues,
+        Purpose: 'Default Share',
+        'Hosts Allow': ['192.168.1.0/24', '10.0.0.1'],
+        'Hosts Deny': ['172.16.0.0/16'],
+      });
+
+      expect(api.call).toHaveBeenLastCalledWith('sharing.smb.create', [
+        expect.objectContaining({
+          purpose: SmbSharePurpose.DefaultShare,
+          options: expect.objectContaining({
+            hostsallow: ['192.168.1.0/24', '10.0.0.1'],
+            hostsdeny: ['172.16.0.0/16'],
+          }),
         }),
       ]);
     });
@@ -480,6 +528,8 @@ describe('SmbFormComponent', () => {
         'Browsable to Network Clients': true,
         'Access Based Share Enumeration': true,
         'Enable Logging': false,
+        'Hosts Allow': [],
+        'Hosts Deny': [],
 
         'Use Apple-style Character Encoding': true,
       });
@@ -617,6 +667,8 @@ describe('SmbFormComponent', () => {
         'Export Read Only',
         'Browsable to Network Clients',
         'Access Based Share Enumeration',
+        'Hosts Allow',
+        'Hosts Deny',
         'Enable Logging',
         'Use Apple-style Character Encoding',
       ]);
@@ -827,99 +879,6 @@ describe('SmbFormComponent', () => {
     });
   });
 
-  describe('Time Machine share detection improvements', () => {
-    it('should detect new Time Machine share by purpose', async () => {
-      await setupTest();
-
-      await form.fillForm({
-        Purpose: 'Time Machine Share',
-      });
-
-      expect(spectator.component.isNewTimeMachineShare).toBe(true);
-    });
-
-    it('should detect new Time Machine share by field when purpose supports it', async () => {
-      await setupTest({
-        purpose: SmbSharePurpose.LegacyShare,
-      });
-
-      await form.fillForm({
-        Purpose: 'Legacy Share',
-        'Time Machine': true,
-      });
-
-      expect(spectator.component.isNewTimeMachineShare).toBe(true);
-    });
-
-    it('should not detect Time Machine for non-supporting purpose', async () => {
-      await setupTest();
-
-      await form.fillForm({
-        Purpose: 'Default Share',
-      });
-
-      expect(spectator.component.isNewTimeMachineShare).toBe(false);
-    });
-
-    it('should detect change in Time Machine functionality for existing share', async () => {
-      const spectator2 = createComponent({
-        providers: [
-          mockProvider(SlideInRef, {
-            ...slideInRef,
-            getData: () => ({
-              existingSmbShare: {
-                ...existingShare,
-                purpose: SmbSharePurpose.LegacyShare,
-                options: { timemachine: false } as LegacySmbShareOptions,
-              },
-            }),
-          }),
-        ],
-      });
-      const loader2 = TestbedHarnessEnvironment.loader(spectator2.fixture);
-      const form2 = await loader2.getHarness(IxFormHarness);
-
-      const advancedButton = await loader2.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
-      await advancedButton.click();
-
-      await form2.fillForm({
-        Purpose: 'Time Machine Share',
-      });
-
-      expect(spectator2.component.isNewTimeMachineShare).toBe(true);
-    });
-  });
-
-  describe('Path change detection with trailing slashes', () => {
-    it('should normalize trailing slashes when detecting path changes', async () => {
-      await setupTest({
-        path: '/mnt/pool123/ds222/',
-      });
-
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
-
-      // Set path without trailing slash - should not be considered a change
-      await pathControl.setValue('/mnt/pool123/ds222');
-      expect(spectator.component.wasPathChanged).toBe(false);
-
-      // Set different path - should be considered a change
-      await pathControl.setValue('/mnt/pool123/ds223');
-      expect(spectator.component.wasPathChanged).toBe(true);
-
-      // Set same path with trailing slash - should not be considered a change
-      await pathControl.setValue('/mnt/pool123/ds222/');
-      expect(spectator.component.wasPathChanged).toBe(false);
-    });
-
-    it('should handle empty paths correctly', async () => {
-      await setupTest(); // No existing share
-
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
-      await pathControl.setValue('/mnt/pool123/new');
-
-      expect(spectator.component.wasPathChanged).toBe(false);
-    });
-  });
 
   describe('ACL strip warning scope', () => {
     it('should show ACL strip warning only for Legacy shares', async () => {

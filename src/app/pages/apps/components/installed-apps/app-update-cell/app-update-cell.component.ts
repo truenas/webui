@@ -22,10 +22,16 @@ export class AppUpdateCellComponent {
     return ['update', this.showIcon() ? 'has-icon' : 'has-cell'];
   }
 
-  protected getVersionMsg(version: string): string {
-    return this.translate.instant(
-      '{version} is available!',
-      { version: version || 'Update' },
-    );
+  protected getVersionMsg(): string {
+    const app = this.app();
+    const catalogVersion = `${app.version} → ${app.latest_version}`;
+    const appVersion = `${app.metadata.app_version} → ${app.human_version}`;
+
+    // Using line breaks for tooltip - Angular Material tooltips support this
+    const updateAvailable = this.translate.instant('Update available');
+    const catalog = this.translate.instant('Catalog');
+    const appLabel = this.translate.instant('App');
+
+    return `${updateAvailable}\n${catalog}: ${catalogVersion}\n${appLabel}: ${appVersion}`;
   }
 }

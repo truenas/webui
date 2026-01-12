@@ -39,6 +39,7 @@
     [columns]="columns"
     [dataProvider]="dataProvider"
     [isLoading]="!!(isLoading$ | async)"
+    (expanded)="onRowExpanded($event)"
   >
     <ng-template
       let-job

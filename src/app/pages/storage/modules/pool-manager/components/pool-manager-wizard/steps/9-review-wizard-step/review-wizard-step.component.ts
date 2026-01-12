@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output, inject,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -11,6 +13,7 @@ import { Role } from 'app/enums/role.enum';
 import { VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -45,6 +48,7 @@ import {
     MapValuePipe,
     AsyncPipe,
     TopologyCategoryDescriptionPipe,
+    FormActionsComponent,
   ],
 })
 export class ReviewWizardStepComponent implements OnInit {
@@ -74,8 +78,8 @@ export class ReviewWizardStepComponent implements OnInit {
 
   get showStartOver(): boolean {
     return Boolean(
-      this.state.name
-      || this.state.encryptionType !== EncryptionType.None
+      this.state?.name
+      || this.state?.encryptionType !== EncryptionType.None
       || this.nonEmptyTopologyCategories?.length,
     );
   }

@@ -114,34 +114,29 @@ export const helptextSharingSmb = {
   ),
 
   hostsallowLabel: T('Hosts Allow'),
-  hostsAllowTooltip: T('Enter a list of allowed hostnames or IP addresses.\
-    Separate entries by pressing <code>Enter</code>. A more detailed description \
-    with examples can be found \
-    <a href="https://wiki.samba.org/index.php/1.4_Samba_Security" target="_blank">here</a>. <br><br> \
-    If neither *Hosts Allow* or *Hosts Deny* contains \
-    an entry, then SMB share access is allowed for any host. <br><br> \
-    If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow \
-    hosts on the *Hosts Allow* list. <br><br> \
-    If there is a *Hosts Deny* list but no *Hosts Allow* list, then allow all \
-    hosts that are not on the *Hosts Deny* list. <br><br> \
-    If there is both a *Hosts Allow* and *Hosts Deny* list, then allow all hosts \
-    that are on the *Hosts Allow* list. <br><br> \
-    If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* list, \
-    then allow it.'),
+  hostsAllowTooltip: T('A list of IP addresses or subnets that are allowed to access the SMB share. \
+Separate entries by pressing <code>Enter</code>. The EXCEPT keyword may be used to limit a wildcard list. \
+<br><br><b>Note:</b> Hostname lookups are disabled on the SMB server for performance reasons. \
+<br><br><b>Examples:</b><br> \
+• Single IPs: <code>192.168.0.200</code>, <code>150.203.</code><br> \
+• CIDR notation: <code>150.203.15.0/255.255.255.0</code><br> \
+• EXCEPT syntax: <code>150.203. EXCEPT 150.203.6.66</code> \
+<br><br><b>Behavior:</b><br> \
+• If neither <i>Hosts Allow</i> nor <i>Hosts Deny</i> contains an entry, SMB share access is allowed for any host.<br> \
+• If there is a <i>Hosts Allow</i> list but no <i>Hosts Deny</i> list, only allow hosts on the <i>Hosts Allow</i> list.<br> \
+• If there is both a <i>Hosts Allow</i> and <i>Hosts Deny</i> list, allow all hosts on the <i>Hosts Allow</i> list.<br> \
+• Hosts not on either list are allowed.'),
   hostsdenyLabel: T('Hosts Deny'),
   hostsdenyTooltip: T(
-    'Enter a list of denied hostnames or IP addresses.\
- Separate entries by pressing <code>Enter</code>. \
- If neither *Hosts Allow* or *Hosts Deny* contains \
- an entry, then SMB share access is allowed for any host. <br><br> \
- If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow \
- hosts on the *Hosts Allow* list. <br><br> \
- If there is a *Hosts Deny* list but no *Hosts Allow* list, then allow all \
- hosts that are not on the *Hosts Deny* list. <br><br> \
- If there is both a *Hosts Allow* and *Hosts Deny* list, then allow all hosts \
- that are on the *Hosts Allow* list. <br><br> \
- If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* list, \
- then allow it.',
+    'A list of IP addresses or subnets that are not allowed to access the SMB share. \
+Separate entries by pressing <code>Enter</code>. The keyword <code>ALL</code> or the netmask \
+<code>0.0.0.0/0</code> may be used to deny all by default. \
+<br><br><b>Examples:</b><br> \
+• Partial IPs: <code>150.203.4.</code><br> \
+• Deny all: <code>ALL</code> or <code>0.0.0.0/0</code> \
+<br><br><b>Behavior:</b><br> \
+• If there is a <i>Hosts Deny</i> list but no <i>Hosts Allow</i> list, allow all hosts not on the <i>Hosts Deny</i> list.<br> \
+• If there is both a <i>Hosts Allow</i> and <i>Hosts Deny</i> list, the <i>Hosts Allow</i> list takes precedence.',
   ),
 
   shadowcopyLabel: T('Enable Shadow Copies'),
@@ -241,8 +236,17 @@ export const helptextSharingSmb = {
 After the grace period is up, the share will become read-only. \
 Must be between 60 seconds (1 minute) and 15552000 seconds (180 days).'),
 
-  restartPt1: T(
-    'The following changes to this SMB Share require the SMB Service to be restarted before they can take effect.',
+  restartMessage: T(
+    'Changes to the SMB share configuration may not fully apply to existing SMB client sessions until the SMB service restarts.',
   ),
-  restartPt2: T('Would you like to restart the SMB Service?'),
+  restartPrompt: T('Do you want to restart the SMB service now?'),
+  restartCaution: T('CAUTION: Restarting the SMB service causes a short service interruption for all connected SMB clients.'),
+  restartLearnMore: T(
+    'SMB clients maintain persistent connections to the server. When share settings change, connected clients may continue using cached configurations until they reconnect. Restarting the SMB service forces all clients to disconnect and reconnect, ensuring they receive the updated share configuration immediately.',
+  ),
+  restartLearnMoreExamples: T('Examples of changes that benefit from a restart include:'),
+  restartExampleTimeMachine: T('Time Machine settings - changes how the SMB server advertises itself to clients.'),
+  restartExampleHostsAllowDeny: T('Hosts Allow/Deny - more restrictive settings may not deny access to currently connected clients until they reconnect.'),
+  restartExamplePath: T('Path changes - clients will not see this change until they negotiate a new session.'),
+  restartLearnMoreOtherCases: T('Other configuration changes may also benefit from a restart.'),
 };
