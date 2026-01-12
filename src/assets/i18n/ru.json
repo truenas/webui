@@ -24,6 +24,8 @@
   "Select which physical port will host the new NPIV virtual port": "",
   "SMB clients maintain persistent connections to the server. When share settings change, connected clients may continue using cached configurations until they reconnect. Restarting the SMB service forces all clients to disconnect and reconnect, ensuring they receive the updated share configuration immediately.": "",
   "Time Machine settings - changes how the SMB server advertises itself to clients.": "",
+  "TrueNAS Catalog Version": "",
+  "Upstream Application Version": "",
   "Use existing port": "",
   "View Upstream Release Notes": "",
   "View Upstream Release Notes (opens in new window)": "",
