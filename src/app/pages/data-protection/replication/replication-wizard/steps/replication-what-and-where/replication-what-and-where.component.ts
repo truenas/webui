@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output, inject } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -6,6 +5,7 @@ import { MatStepperNext } from '@angular/material/stepper';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { format } from 'date-fns';
 import {
   debounceTime, map, merge, Observable, of, switchMap,
 } from 'rxjs';
@@ -39,6 +39,7 @@ import {
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { namingSchemaValidator } from 'app/modules/forms/ix-forms/validators/naming-schema-validation/naming-schema-validation';
 import { regexValidator } from 'app/modules/forms/ix-forms/validators/regex-validation/regex-validation';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -56,7 +57,7 @@ import { ReplicationService } from 'app/services/replication.service';
   templateUrl: './replication-what-and-where.component.html',
   styleUrls: ['./replication-what-and-where.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ReplicationService, DatePipe, KeychainCredentialService],
+  providers: [ReplicationService, KeychainCredentialService],
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,
@@ -76,7 +77,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   private formBuilder = inject(FormBuilder);
   private replicationService = inject(ReplicationService);
   private keychainCredentials = inject(KeychainCredentialService);
-  private datePipe = inject(DatePipe);
+  private localeService = inject(LocaleService);
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
   private datasetService = inject(DatasetService);
@@ -508,7 +509,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
             if (task.transport !== TransportMode.Legacy) {
               const exp = task.state?.datetime
                 ? this.translate.instant('last run {date}', {
-                    date: this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy'),
+                    date: format(new Date(task.state.datetime.$date), this.localeService.dateFormat()),
                   })
                 : this.translate.instant('never ran');
               const label = `${task.name} (${exp})`;
