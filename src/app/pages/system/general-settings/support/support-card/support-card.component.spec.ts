@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { DatePipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,6 +20,7 @@ import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface
 import {
   IxSlideToggleComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
@@ -49,8 +49,8 @@ describe('SupportCardComponent', () => {
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
       mockProvider(SlideIn),
-      mockProvider(DatePipe, {
-        transform: jest.fn((value: string) => value),
+      mockProvider(LocaleService, {
+        getPreferredDateFormat: jest.fn(() => 'yyyy-MM-dd'),
       }),
       mockApi([
         mockCall('truenas.is_production', true),

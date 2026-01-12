@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
@@ -11,6 +10,7 @@ import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { format } from 'date-fns-tz';
 import { isObject } from 'lodash-es';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
@@ -23,6 +23,7 @@ import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -78,7 +79,7 @@ export class SupportCardComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private readonly destroyRef = inject(DestroyRef);
-  private datePipe = inject(DatePipe);
+  private localeService = inject(LocaleService);
 
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly Role = Role;
@@ -133,7 +134,8 @@ export class SupportCardComponent implements OnInit {
       licenseInfo.featuresString = licenseInfo.features.join(', ');
     }
     const expDateConverted = new Date(licenseInfo.contract_end.$value);
-    licenseInfo.expiration_date = this.datePipe.transform(licenseInfo.contract_end.$value, 'mediumDate');
+    const userDateFormat = this.localeService.getPreferredDateFormat();
+    licenseInfo.expiration_date = format(expDateConverted, userDateFormat);
 
     if (licenseInfo.addhw_detail.length === 0) {
       licenseInfo.add_hardware = 'NONE';
