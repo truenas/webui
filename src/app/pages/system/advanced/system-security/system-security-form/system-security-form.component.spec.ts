@@ -13,6 +13,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
+import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -84,6 +85,9 @@ describe('SystemSecurityFormComponent', () => {
           }
           if (method === 'docker.status') {
             return of({ status: DockerStatus.Unconfigured } as { status: DockerStatus });
+          }
+          if (method === 'auth.sessions') {
+            return of([{ current: true, credentials: CredentialType.TwoFactor }]);
           }
           return of(null);
         }),
@@ -577,6 +581,9 @@ describe('SystemSecurityFormComponent', () => {
         if (method === 'docker.status') {
           return of({ status: DockerStatus.Unconfigured, description: '' });
         }
+        if (method === 'auth.sessions') {
+          return of([{ current: true, credentials: CredentialType.TwoFactor }]);
+        }
         return of(null);
       });
 
@@ -618,6 +625,9 @@ describe('SystemSecurityFormComponent', () => {
         if (method === 'docker.status') {
           return of({ status: DockerStatus.Unconfigured, description: '' });
         }
+        if (method === 'auth.sessions') {
+          return of([{ current: true, credentials: CredentialType.TwoFactor }]);
+        }
         return of(null);
       });
 
@@ -638,8 +648,14 @@ describe('SystemSecurityFormComponent', () => {
     it('cancels STIG enablement when user cancels warning dialog', async () => {
       const usersWithoutTwoFa = [{ username: 'user1', roles: [{ id: 1 }] } as unknown as User];
 
-      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: MockParams) => {
         if (method === 'user.query') {
+          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
+            return of([
+              { username: 'root', password_disabled: true } as User,
+              { username: 'truenas_admin', password_disabled: true } as User,
+            ]);
+          }
           return of(usersWithoutTwoFa);
         }
         if (method === 'auth.twofactor.config') {
@@ -647,6 +663,9 @@ describe('SystemSecurityFormComponent', () => {
         }
         if (method === 'docker.status') {
           return of({ status: DockerStatus.Unconfigured });
+        }
+        if (method === 'auth.sessions') {
+          return of([{ current: true, credentials: CredentialType.TwoFactor }]);
         }
         return of(null);
       });
@@ -667,8 +686,14 @@ describe('SystemSecurityFormComponent', () => {
     it('proceeds with save when user confirms warning dialog', async () => {
       const usersWithoutTwoFa = [{ username: 'user1', roles: [{ id: 1 }] } as unknown as User];
 
-      jest.spyOn(apiService, 'call').mockImplementation((method: string) => {
+      jest.spyOn(apiService, 'call').mockImplementation((method: string, params?: MockParams) => {
         if (method === 'user.query') {
+          if (Array.isArray(params) && params[0] && Array.isArray(params[0]) && params[0][0]?.[0] === 'local') {
+            return of([
+              { username: 'root', password_disabled: true } as User,
+              { username: 'truenas_admin', password_disabled: true } as User,
+            ]);
+          }
           return of(usersWithoutTwoFa);
         }
         if (method === 'auth.twofactor.config') {
@@ -676,6 +701,9 @@ describe('SystemSecurityFormComponent', () => {
         }
         if (method === 'docker.status') {
           return of({ status: DockerStatus.Unconfigured });
+        }
+        if (method === 'auth.sessions') {
+          return of([{ current: true, credentials: CredentialType.TwoFactor }]);
         }
         return of(null);
       });
@@ -839,6 +867,10 @@ describe('SystemSecurityFormComponent', () => {
             // Docker service is configured (not disabled)
             return of({ status: DockerStatus.Running, description: 'Docker is running' });
           }
+          if (method === 'auth.sessions') {
+            // Current user is NOT logged in with 2FA (credentials is not TwoFactor)
+            return of([{ current: true, credentials: CredentialType.LoginPassword }]);
+          }
           return of(null);
         }),
         job: jest.fn(() => fakeSuccessfulJob()),
@@ -880,11 +912,12 @@ describe('SystemSecurityFormComponent', () => {
       expect(errorElement).toBeTruthy();
       expect(errorElement?.textContent).toContain('Requirements to enable STIG mode:');
 
-      // Verify all 4 requirement errors are shown
+      // Verify all 5 requirement errors are shown
       expect(errorElement?.textContent).toContain('Global Two-Factor Authentication must be enabled.');
       expect(errorElement?.textContent).toContain('SSH Two-Factor Authentication must be enabled.');
       expect(errorElement?.textContent).toContain('The apps service must be disabled and the pool unset.');
       expect(errorElement?.textContent).toContain('The root user and the truenas_admin users must have their passwords disabled.');
+      expect(errorElement?.textContent).toContain('The current user must be logged in with 2FA.');
 
       // Verify the warning is shown in mat-hint
       const hintElement = validationSpectator.query('mat-hint');
@@ -917,6 +950,10 @@ describe('SystemSecurityFormComponent', () => {
           if (method === 'docker.status') {
             // Docker service is unconfigured (disabled)
             return of({ status: DockerStatus.Unconfigured, description: '' });
+          }
+          if (method === 'auth.sessions') {
+            // Current user IS logged in with 2FA
+            return of([{ current: true, credentials: CredentialType.TwoFactor }]);
           }
           return of(null);
         }),
@@ -987,6 +1024,9 @@ describe('SystemSecurityFormComponent', () => {
           if (method === 'docker.status') {
             return of({ status: DockerStatus.Running, description: 'Docker is running' });
           }
+          if (method === 'auth.sessions') {
+            return of([{ current: true, credentials: CredentialType.LoginPassword }]);
+          }
           return of(null);
         }),
         job: jest.fn(() => fakeSuccessfulJob()),
@@ -1031,6 +1071,9 @@ describe('SystemSecurityFormComponent', () => {
         }
         if (method === 'docker.status') {
           return of({ status: DockerStatus.Unconfigured, description: '' });
+        }
+        if (method === 'auth.sessions') {
+          return of([{ current: true, credentials: CredentialType.TwoFactor }]);
         }
         return of(null);
       });
@@ -1088,6 +1131,9 @@ describe('SystemSecurityFormComponent', () => {
             }
             if (method === 'docker.status') {
               return of({ status: DockerStatus.Unconfigured });
+            }
+            if (method === 'auth.sessions') {
+              return of([{ current: true, credentials: CredentialType.LoginPassword }]);
             }
             return of(null);
           }),

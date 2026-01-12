@@ -24,6 +24,8 @@ import { DockerStatus } from 'app/enums/docker-status.enum';
 import { PasswordComplexityRuleset, passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { AuthSession } from 'app/interfaces/auth-session.interface';
+import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
@@ -57,11 +59,17 @@ interface StigEnablementRequirements {
   rootPasswordDisabled: boolean;
   /** the truenas_admin user's password must be disabled */
   adminPasswordDisabled: boolean;
-  /** all users must have 2FA required in order to access the truenas webUI.
+  /**
+   * all users must have 2FA required in order to access the truenas webUI.
    * this is not a hard requirement, but all users that don't have 2FA enabled
    * will be unable to access the webUI after STIG mode is enabled.
    */
   allUsersHave2fa: boolean;
+  /**
+   * the currently logged-in user must have logged in with 2FA. so in the case where they've
+   * just enabled it but haven't re-logged in, STIG mode can't be enabled.
+   */
+  currentUserIs2fa: boolean;
 }
 
 /**
@@ -227,6 +235,12 @@ export class SystemSecurityFormComponent implements OnInit {
         allUsersHave2fa: user2faConfig.length === 0,
       })),
     );
+    const userAuthDetails$ = this.api.call('auth.sessions').pipe(
+      map((sessionsList): AuthSession | undefined => sessionsList.find((session) => session.current)),
+      map((me): Partial<StigEnablementRequirements> => ({
+        currentUserIs2fa: me?.credentials === CredentialType.TwoFactor,
+      })),
+    );
 
     // and combine all that data into one big `StigEnablementRequirements` structure
     const combined$ = zip(
@@ -234,13 +248,14 @@ export class SystemSecurityFormComponent implements OnInit {
       dockerServiceConfig$,
       userConfig$,
       user2faConfig$,
+      userAuthDetails$,
     ).pipe(
-      map(([twoFactorConfig, dockerConfig, userConfig, user2faConfig]): Partial<StigEnablementRequirements> => ({
-        ...twoFactorConfig,
-        ...dockerConfig,
-        ...userConfig,
-        ...user2faConfig,
-      })),
+      map((details: Partial<StigEnablementRequirements>[]): Partial<StigEnablementRequirements> => {
+        // merge all details into one big `StigEnablementRequirements`
+        const result = {};
+        details.forEach((detail) => Object.assign(result, detail));
+        return result;
+      }),
       this.errorHandler.withErrorHandler(),
       finalize(() => this.loadingStigRequirements.set(false)),
       takeUntilDestroyed(this.destroyRef),
@@ -279,6 +294,13 @@ export class SystemSecurityFormComponent implements OnInit {
         requirements.push({
           message: 'The root user and the truenas_admin users must have their passwords disabled.',
           navigateTo: ['/credentials/users'],
+        });
+      }
+
+      if (!enablementRequirements.currentUserIs2fa) {
+        requirements.push({
+          message: 'The current user must be logged in with 2FA.',
+          navigateTo: ['/two-factor-auth'],
         });
       }
 
