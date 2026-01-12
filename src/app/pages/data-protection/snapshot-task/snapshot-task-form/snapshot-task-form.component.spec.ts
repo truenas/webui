@@ -190,7 +190,7 @@ describe('SnapshotTaskComponent', () => {
           enabled: false,
           exclude: ['root'],
           recursive: false,
-          fixate_removal_date: true,
+          fixate_removal_date: false,
           schedule: {
             dom: '*',
             dow: '*',
@@ -203,7 +203,7 @@ describe('SnapshotTaskComponent', () => {
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
 
-    it('does not include fixate_removal_date when no snapshots are affected', async () => {
+    it('includes fixate_removal_date as false when no snapshots are affected', async () => {
       const apiService = spectator.inject(ApiService);
 
       await form.fillForm({
@@ -216,7 +216,7 @@ describe('SnapshotTaskComponent', () => {
       expect(apiService.call).toHaveBeenCalledWith('pool.snapshottask.update', [
         1,
         expect.objectContaining({
-          fixate_removal_date: true,
+          fixate_removal_date: false,
         }),
       ]);
     });
