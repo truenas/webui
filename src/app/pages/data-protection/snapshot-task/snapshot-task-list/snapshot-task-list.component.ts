@@ -255,19 +255,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   private checkTaskHasSnapshots(task: PeriodicSnapshotTaskUi): Observable<boolean> {
-    const currentParams = {
-      dataset: task.dataset,
-      recursive: task.recursive,
-      exclude: task.exclude,
-      lifetime_value: task.lifetime_value,
-      lifetime_unit: task.lifetime_unit,
-      naming_schema: task.naming_schema,
-      schedule: task.schedule,
-      allow_empty: task.allow_empty,
-      enabled: task.enabled,
-    };
-
-    return this.api.call('pool.snapshottask.update_will_change_retention_for', [task.id, currentParams]).pipe(
+    return this.api.call('pool.snapshottask.delete_will_change_retention_for', [task.id]).pipe(
       map((affectedSnapshots) => {
         const allSnapshots = Object.values(affectedSnapshots).flat();
         return allSnapshots.length > 0;

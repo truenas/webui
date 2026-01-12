@@ -731,6 +731,7 @@ export interface ApiCallDirectory {
   'pool.scrub.update': { params: [id: number, params: CreateScrubTask]; response: ScrubTask };
   'pool.snapshottask.create': { params: [PeriodicSnapshotTaskCreate]; response: PeriodicSnapshotTask };
   'pool.snapshottask.delete': { params: [id: number, fixate_removal_date?: boolean]; response: boolean };
+  'pool.snapshottask.delete_will_change_retention_for': { params: [id: number]; response: Record<string, string[]> };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
   'pool.snapshottask.update': { params: [id: number, update: PeriodicSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
   'pool.snapshottask.update_will_change_retention_for': { params: [id: number, update: PeriodicSnapshotTaskUpdate]; response: Record<string, string[]> };

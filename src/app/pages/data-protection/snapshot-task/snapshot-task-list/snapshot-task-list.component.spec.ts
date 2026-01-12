@@ -102,7 +102,7 @@ describe('SnapshotTaskListComponent', () => {
           if (method === 'pool.snapshottask.query') {
             return of(snapshotTasksList);
           }
-          if (method === 'pool.snapshottask.update_will_change_retention_for') {
+          if (method === 'pool.snapshottask.delete_will_change_retention_for') {
             return of({});
           }
           if (method === 'pool.snapshottask.delete') {

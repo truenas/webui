@@ -98,7 +98,7 @@ describe('SnapshotTaskCardComponent', () => {
         mockCall('pool.snapshottask.query', snapshotTasks),
         mockCall('pool.snapshottask.delete'),
         mockCall('pool.snapshottask.update'),
-        mockCall('pool.snapshottask.update_will_change_retention_for', {}),
+        mockCall('pool.snapshottask.delete_will_change_retention_for', {}),
         mockCall('cronjob.run'),
       ]),
       mockProvider(DialogService, {
