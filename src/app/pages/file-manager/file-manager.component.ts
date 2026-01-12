@@ -10,27 +10,34 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-file-manager',
   standalone: true,
   imports: [
     MatButtonModule,
+    MatDividerModule,
     MatToolbarModule,
     MatListModule,
     MatMenuModule,
@@ -47,12 +54,15 @@ import { UploadService } from 'app/services/upload.service';
 })
 export class FileManagerComponent implements OnInit {
   @ViewChild('fileInput') fileInput: ElementRef<HTMLInputElement>;
+  @ViewChild('contextMenuTrigger') contextMenuTrigger: MatMenuTrigger;
 
   private api = inject(ApiService);
   private uploadService = inject(UploadService);
   private downloadService = inject(DownloadService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
+  private dialogService = inject(DialogService);
+  private errorHandler = inject(ErrorHandlerService);
 
   // Current path
   currentPath = signal<string>('/mnt');
@@ -104,6 +114,12 @@ export class FileManagerComponent implements OnInit {
 
   // Download state
   isDownloading = signal<boolean>(false);
+
+  // Context menu item
+  contextMenuItem = signal<FileRecord | null>(null);
+
+  // Context menu position
+  contextMenuPosition = { x: 0, y: 0 };
 
   // Check if any file (non-directory) is selected
   hasFileSelected = computed(() => {
@@ -375,6 +391,149 @@ export class FileManagerComponent implements OnInit {
         this.downloadFile(item);
       }
     }
+  }
+
+  onContextMenu(event: MouseEvent, item: FileRecord): void {
+    event.preventDefault();
+    this.contextMenuItem.set(item);
+    if (!this.isSelected(item)) {
+      this.selectedItems.set(new Set([item.path]));
+    }
+    this.contextMenuPosition.x = event.clientX;
+    this.contextMenuPosition.y = event.clientY;
+    this.contextMenuTrigger.openMenu();
+  }
+
+  renameSelected(): void {
+    if (this.selectedItems().size !== 1) return;
+
+    const selectedPath = Array.from(this.selectedItems())[0];
+    const item = this.items().find((i) => i.path === selectedPath);
+    if (item) {
+      this.renameItem(item);
+    }
+  }
+
+  renameItem(item: FileRecord): void {
+    const currentName = item.name;
+    const newName = prompt(this.translate.instant('Enter new name:'), currentName);
+
+    if (!newName || newName === currentName) return;
+
+    const parentPath = item.path.substring(0, item.path.lastIndexOf('/'));
+    const newPath = `${parentPath}/${newName}`;
+
+    this.api.call('filesystem.rename', [{ src: item.path, dst: newPath }])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.snackbar.success(this.translate.instant('Renamed successfully'));
+          this.loadDirectory(this.currentPath());
+        },
+        error: (error: unknown) => {
+          this.errorHandler.showErrorModal(error);
+        },
+      });
+  }
+
+  copySelected(): void {
+    if (this.selectedItems().size === 0) return;
+
+    const selectedPath = Array.from(this.selectedItems())[0];
+    const item = this.items().find((i) => i.path === selectedPath);
+    if (item) {
+      this.copyItem(item);
+    }
+  }
+
+  copyItem(item: FileRecord): void {
+    const defaultName = `${item.name}_copy`;
+    const newName = prompt(this.translate.instant('Enter name for the copy:'), defaultName);
+
+    if (!newName) return;
+
+    const parentPath = item.path.substring(0, item.path.lastIndexOf('/'));
+    const newPath = `${parentPath}/${newName}`;
+
+    this.dialogService.jobDialog(
+      this.api.job('filesystem.copy', [{ src: item.path, dst: newPath }]),
+      { title: this.translate.instant('Copying...') },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Copied successfully'));
+        this.loadDirectory(this.currentPath());
+      });
+  }
+
+  deleteSelected(): void {
+    if (this.selectedItems().size === 0) return;
+
+    const selectedPaths = Array.from(this.selectedItems());
+    const itemsToDelete = this.items().filter((i) => selectedPaths.includes(i.path));
+
+    if (itemsToDelete.length === 0) return;
+
+    const hasDirectories = itemsToDelete.some((i) => i.type === FileType.Directory);
+    const message = itemsToDelete.length === 1
+      ? this.translate.instant('Are you sure you want to delete "{name}"?', { name: itemsToDelete[0].name })
+      : this.translate.instant('Are you sure you want to delete {count} items?', { count: itemsToDelete.length });
+
+    this.dialogService.confirm({
+      title: this.translate.instant('Delete'),
+      message,
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
+    })
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.performDelete(itemsToDelete, hasDirectories);
+      });
+  }
+
+  deleteItem(item: FileRecord): void {
+    const isDirectory = item.type === FileType.Directory;
+    const message = this.translate.instant('Are you sure you want to delete "{name}"?', { name: item.name });
+
+    this.dialogService.confirm({
+      title: this.translate.instant('Delete'),
+      message,
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
+    })
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.performDelete([item], isDirectory);
+      });
+  }
+
+  private performDelete(items: FileRecord[], recursive: boolean): void {
+    const deletePromises = items.map((item) => {
+      return this.api.call('filesystem.delete', [{
+        path: item.path,
+        options: { recursive },
+      }]).toPromise();
+    });
+
+    Promise.all(deletePromises)
+      .then(() => {
+        this.snackbar.success(this.translate.instant('Deleted successfully'));
+        this.selectedItems.set(new Set());
+        this.loadDirectory(this.currentPath());
+      })
+      .catch((error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+      });
   }
 
   private getMimeType(filename: string): string {

@@ -53,6 +53,24 @@
         <ix-icon name="mdi-download"></ix-icon>
       </button>
       <button mat-icon-button
+              (click)="renameSelected()"
+              [disabled]="selectedItems().size !== 1"
+              [matTooltip]="'Rename' | translate">
+        <ix-icon name="mdi-pencil"></ix-icon>
+      </button>
+      <button mat-icon-button
+              (click)="copySelected()"
+              [disabled]="selectedItems().size === 0"
+              [matTooltip]="'Copy' | translate">
+        <ix-icon name="mdi-content-copy"></ix-icon>
+      </button>
+      <button mat-icon-button
+              (click)="deleteSelected()"
+              [disabled]="selectedItems().size === 0"
+              [matTooltip]="'Delete' | translate">
+        <ix-icon name="mdi-delete"></ix-icon>
+      </button>
+      <button mat-icon-button
               (click)="toggleViewMode()"
               [matTooltip]="viewMode() === 'grid' ? ('Switch to List View' | translate) : ('Switch to Grid View' | translate)">
         <ix-icon [name]="viewMode() === 'grid' ? 'mdi-format-list-text' : 'mdi-view-dashboard'"></ix-icon>
@@ -108,7 +126,8 @@
                 <div class="file-item"
                      [class.selected]="isSelected(item)"
                      (click)="onItemClick(item, $event)"
-                     (dblclick)="onItemDoubleClick(item)">
+                     (dblclick)="onItemDoubleClick(item)"
+                     (contextmenu)="onContextMenu($event, item)">
                   <ix-icon [name]="getFileIcon(item)"
                            [class]="getFileIconClass(item)"></ix-icon>
                   <span class="file-name">{{ item.name }}</span>
@@ -126,7 +145,8 @@
                 <div class="list-item"
                      [class.selected]="isSelected(item)"
                      (click)="onItemClick(item, $event)"
-                     (dblclick)="onItemDoubleClick(item)">
+                     (dblclick)="onItemDoubleClick(item)"
+                     (contextmenu)="onContextMenu($event, item)">
                   <span class="col-name">
                     <ix-icon [name]="getFileIcon(item)"
                              [class]="getFileIconClass(item)"></ix-icon>
@@ -152,3 +172,35 @@
     }
   </div>
 </div>
+
+<!-- Hidden Context Menu Trigger -->
+<div class="context-menu-trigger"
+     [style.left.px]="contextMenuPosition.x"
+     [style.top.px]="contextMenuPosition.y"
+     [matMenuTriggerFor]="contextMenu"
+     #contextMenuTrigger="matMenuTrigger"></div>
+
+<!-- Context Menu -->
+<mat-menu #contextMenu="matMenu">
+  @if (contextMenuItem()) {
+    @if (!isDirectory(contextMenuItem()!)) {
+      <button mat-menu-item (click)="downloadFile(contextMenuItem()!)">
+        <ix-icon name="mdi-download"></ix-icon>
+        <span>{{ 'Download' | translate }}</span>
+      </button>
+    }
+    <button mat-menu-item (click)="renameItem(contextMenuItem()!)">
+      <ix-icon name="mdi-pencil"></ix-icon>
+      <span>{{ 'Rename' | translate }}</span>
+    </button>
+    <button mat-menu-item (click)="copyItem(contextMenuItem()!)">
+      <ix-icon name="mdi-content-copy"></ix-icon>
+      <span>{{ 'Copy' | translate }}</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="deleteItem(contextMenuItem()!)" class="danger-item">
+      <ix-icon name="mdi-delete"></ix-icon>
+      <span>{{ 'Delete' | translate }}</span>
+    </button>
+  }
+</mat-menu>

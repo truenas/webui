@@ -328,3 +328,48 @@
     margin: 0 8px;
   }
 }
+
+// Icon colors for file types
+.icon-folder {
+  color: var(--primary) !important;
+}
+
+.icon-image {
+  color: #e91e63 !important;
+}
+
+.icon-video {
+  color: #9c27b0 !important;
+}
+
+.icon-audio {
+  color: #673ab7 !important;
+}
+
+.icon-archive {
+  color: #ff9800 !important;
+}
+
+.icon-document {
+  color: #2196f3 !important;
+}
+
+.icon-spreadsheet {
+  color: #4caf50 !important;
+}
+
+.icon-code {
+  color: #00bcd4 !important;
+}
+
+.icon-file {
+  color: var(--fg2);
+}
+
+// Hidden context menu trigger
+.context-menu-trigger {
+  position: fixed;
+  visibility: hidden;
+  width: 1px;
+  height: 1px;
+}
