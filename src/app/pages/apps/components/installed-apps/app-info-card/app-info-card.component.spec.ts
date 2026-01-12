@@ -10,6 +10,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockJob, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { WINDOW } from 'app/helpers/window.helper';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -64,9 +65,19 @@ describe('AppInfoCardComponent', () => {
     afterClosed: () => of(true),
   } as unknown as MatDialogRef<AppUpdateDialog>;
 
+  const mockWindow = {
+    location: {
+      hostname: 'localhost',
+    },
+  } as Window;
+
   const createComponent = createComponentFactory({
     component: AppInfoCardComponent,
     providers: [
+      {
+        provide: WINDOW,
+        useValue: mockWindow,
+      },
       mockProvider(ApplicationsService, {
         getAppUpgradeSummary: jest.fn(() => of(upgradeSummary)),
         checkIfAppIxVolumeExists: jest.fn(() => of(true)),
@@ -303,5 +314,49 @@ describe('AppInfoCardComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppRollbackModalComponent, {
       data: fakeApp,
     });
+  });
+
+  it('handles malformed URLs gracefully', () => {
+    setupTest({
+      ...fakeApp,
+      portals: {
+        'Web UI': 'not-a-valid-url',
+      },
+    });
+
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+    spectator.component.openPortalLink(spectator.component.app(), 'Web UI');
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Invalid portal URL:',
+      'not-a-valid-url',
+      expect.objectContaining({ message: expect.stringContaining('Invalid URL') }),
+    );
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('not-a-valid-url');
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('handles relative URLs gracefully', () => {
+    setupTest({
+      ...fakeApp,
+      portals: {
+        'Web UI': '/relative/path',
+      },
+    });
+
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+    spectator.component.openPortalLink(spectator.component.app(), 'Web UI');
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Invalid portal URL:',
+      '/relative/path',
+      expect.objectContaining({ message: expect.stringContaining('Invalid URL') }),
+    );
+    expect(spectator.inject(RedirectService).openWindow).toHaveBeenCalledWith('/relative/path');
+
+    consoleErrorSpy.mockRestore();
   });
 });
