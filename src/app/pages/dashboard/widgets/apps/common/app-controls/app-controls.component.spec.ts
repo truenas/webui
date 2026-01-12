@@ -7,6 +7,7 @@ import { of, Observable } from 'rxjs';
 import { mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -37,10 +38,20 @@ describe('AppControlsComponent', () => {
     },
   } as App;
 
+  const mockWindow = {
+    location: {
+      hostname: 'localhost',
+    },
+  } as Window;
+
   const createComponent = createComponentFactory({
     component: AppControlsComponent,
     declarations: [],
     providers: [
+      {
+        provide: WINDOW,
+        useValue: mockWindow,
+      },
       mockProvider(RedirectService, {
         openWindow: jest.fn(),
       }),
@@ -80,7 +91,7 @@ describe('AppControlsComponent', () => {
     const portalButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-web' }));
     await portalButton.click();
 
-    expect(redirectSpy).toHaveBeenCalledWith('http://test.com');
+    expect(redirectSpy).toHaveBeenCalledWith('http://test.com/');
   });
 
   it('should open portal menu and show other portals', async () => {
@@ -93,7 +104,7 @@ describe('AppControlsComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Other UI' });
 
-    expect(redirectSpy).toHaveBeenCalledWith('https://other.example.com');
+    expect(redirectSpy).toHaveBeenCalledWith('https://other.example.com/');
   });
 
   it('should call openPortal with correct url when menu item clicked', () => {
@@ -132,5 +143,77 @@ describe('AppControlsComponent', () => {
     await appButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'installed', app.metadata.train, app.id]);
+  });
+
+  it('replaces 0.0.0.0 hostname with current window hostname', async () => {
+    const appWith0000 = {
+      ...app,
+      portals: {
+        'Web UI': 'http://0.0.0.0:8000/ui?q=ui#yes',
+      },
+    } as App;
+
+    spectator.setInput('app', {
+      isLoading: false,
+      error: null,
+      value: appWith0000,
+    } as LoadingState<App>);
+    spectator.detectChanges();
+
+    const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
+    const portalButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-web' }));
+    await portalButton.click();
+
+    expect(redirectSpy).toHaveBeenCalledWith('http://localhost:8000/ui?q=ui#yes');
+  });
+
+  it('handles malformed URLs gracefully', () => {
+    const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+    spectator.component.openPortal('not-a-valid-url');
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Invalid portal URL:',
+      'not-a-valid-url',
+      expect.objectContaining({ message: expect.stringContaining('Invalid URL') }),
+    );
+    expect(redirectSpy).toHaveBeenCalledWith('not-a-valid-url');
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('handles relative URLs gracefully', () => {
+    const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+    spectator.component.openPortal('/relative/path');
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Invalid portal URL:',
+      '/relative/path',
+      expect.objectContaining({ message: expect.stringContaining('Invalid URL') }),
+    );
+    expect(redirectSpy).toHaveBeenCalledWith('/relative/path');
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('strips existing brackets from IPv6 addresses when replacing 0.0.0.0', () => {
+    mockWindow.location.hostname = '[::1]';
+
+    const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
+    spectator.component.openPortal('http://0.0.0.0:8000/ui');
+
+    expect(redirectSpy).toHaveBeenCalledWith('http://[::1]:8000/ui');
+  });
+
+  it('handles IPv6 addresses without existing brackets when replacing 0.0.0.0', () => {
+    mockWindow.location.hostname = '2001:db8::1';
+
+    const redirectSpy = jest.spyOn(spectator.inject(RedirectService), 'openWindow');
+    spectator.component.openPortal('http://0.0.0.0:9000/admin');
+
+    expect(redirectSpy).toHaveBeenCalledWith('http://[2001:db8::1]:9000/admin');
   });
 });
