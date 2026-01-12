@@ -108,14 +108,16 @@ export class DiskBulkEditComponent {
     }
 
     this.form.patchValue({ ...setForm });
-    this.form.controls.disknames.disable();
   }
 
   private prepareDataSubmit(): [id: string, update: DiskUpdate][] {
     const data = { ...this.form.value };
 
     Object.keys(data).forEach((key) => {
-      if (data[key as keyof typeof data] === null) {
+      const tKey = key as keyof typeof data;
+      // delete null values and also remove the `disknames` param since the API doesn't take it.
+      // the `disknames` form only exists to display information to the user.
+      if (data[tKey] === null || tKey === 'disknames') {
         delete data[key as keyof typeof data];
       }
     });

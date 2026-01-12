@@ -63,6 +63,12 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   readonly required = input<boolean>(false);
   readonly allowNewEntries = input(true);
   /**
+   * When true, prevents adding or removing chips while keeping the component visually enabled.
+   * Also changes the `X` button to a filled in circle so as not to confuse users.
+   * Unlike disabled state, this preserves full chip styling and only blocks modifications.
+   */
+  readonly readonly = input(false);
+  /**
    * A function that provides the options for the autocomplete dropdown.
    * This function is called when the user types into the input field,
    * and it should return an Observable that emits an array of options.
@@ -143,6 +149,9 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   onRemove(itemToRemove: string): void {
+    if (this.readonly() || this.isDisabled) {
+      return;
+    }
     if (this.resolveValue() && this.resolvedOptions?.length) {
       itemToRemove = String(this.resolvedOptions.find((option) => option.label === itemToRemove)?.value);
     }
@@ -151,6 +160,9 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   onAdd(value: string, fromAutocomplete = false): void {
+    if (this.readonly() || this.isDisabled) {
+      return;
+    }
     let newValue = (value || '')?.trim();
     if (!newValue || this.values.includes(newValue)) {
       return;

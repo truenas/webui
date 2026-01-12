@@ -10,6 +10,7 @@
       <ix-fieldset [title]="helptextBulkEdit.title | translate">
         <ix-chips
           formControlName="disknames"
+          [readonly]="true"
           [label]="'Disks to be edited:' | translate"
           [tooltip]="helptextBulkEdit.disks.tooltip | translate"
         ></ix-chips>

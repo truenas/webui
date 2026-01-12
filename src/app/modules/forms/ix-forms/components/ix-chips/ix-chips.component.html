@@ -19,13 +19,15 @@
       <mat-chip-row
         class="chip"
         [disabled]="false"
-        [removable]="!isDisabled"
+        [removable]="!isDisabled && !readonly()"
         [attr.aria-label]="chipLabel"
         (removed)="onRemove(chipLabel)"
       >
         {{ chipLabel }}
-        @if (!isDisabled) {
+        @if (!isDisabled && !readonly()) {
           <ix-icon name="cancel" matChipRemove></ix-icon>
+        } @else if (readonly()) {
+          <ix-icon name="mdi-circle" matChipRemove></ix-icon>
         }
       </mat-chip-row>
     }
@@ -34,7 +36,7 @@
       #chipInput
       [placeholder]="placeholder()"
       [ixTest]="controlDirective.name"
-      [disabled]="isDisabled"
+      [disabled]="isDisabled || readonly()"
       [matAutocomplete]="auto"
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
