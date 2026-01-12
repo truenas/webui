@@ -191,7 +191,6 @@ export class SystemSecurityFormComponent implements OnInit {
     // also, if we're already loading STIG requirements, then don't do anything since
     // we don't want to make duplicate API calls while waiting on the last ones to finish.
     if (this.loadingStigRequirements()) {
-      this.form.controls.enable_gpos_stig.setValue(!this.form.controls.enable_gpos_stig.value);
       return;
     }
 
