@@ -345,7 +345,7 @@ export class ReplicationListComponent implements OnInit {
 
     // Reapply the current filter to preserve search state while updating the task
     this.dataProvider.setFilter({
-      query: this.filterString,
+      query: this.searchQuery(),
       columnKeys: ['name'],
       list: this.replicationTasks,
     });
