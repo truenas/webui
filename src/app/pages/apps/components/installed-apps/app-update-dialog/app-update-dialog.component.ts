@@ -16,6 +16,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { formatVersionLabel } from 'app/pages/apps/utils/version-formatting.utils';
 
 interface Version {
   latest_version: string;
@@ -95,4 +96,6 @@ export class AppUpdateDialog {
   originalOrder(): number {
     return 0;
   }
+
+  getVersionLabel = formatVersionLabel;
 }

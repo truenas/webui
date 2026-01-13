@@ -29,6 +29,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { formatVersionLabel } from 'app/pages/apps/utils/version-formatting.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @UntilDestroy()
@@ -137,7 +138,7 @@ export class AppBulkUpdateComponent {
       .subscribe({
         next: (summary) => {
           const availableOptions = summary.available_versions_for_upgrade?.map((item) => {
-            return { value: item.version, label: item.version } as Option;
+            return { value: item.version, label: formatVersionLabel(item.version, item.human_version) } as Option;
           }) || [];
           this.upgradeSummaryMap.set(name, summary);
           this.optionsMap.set(name, of(availableOptions));

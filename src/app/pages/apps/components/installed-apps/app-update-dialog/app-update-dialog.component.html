@@ -43,7 +43,7 @@
                 [value]="option.key"
                 [ixTest]="['versions', option.value.latest_human_version]"
               >
-                {{ option.value.latest_human_version }}
+                {{ getVersionLabel(option.key, option.value.latest_human_version) }}
               </mat-option>
             }
           </mat-select>

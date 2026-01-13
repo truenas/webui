@@ -62,6 +62,7 @@ import { DockerHubRateInfoDialog } from 'app/pages/apps/components/dockerhub-rat
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
+import { formatVersionLabel } from 'app/pages/apps/utils/version-formatting.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
@@ -394,7 +395,14 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           type: DynamicFormSchemaType.Select,
           title: helptextApps.appWizard.nameGroup.version,
           required: true,
-          options: of(versionKeys.map((version) => ({ value: version, label: version }))),
+          options: of(versionKeys.map((version) => {
+            const versionInfo = this.catalogApp.versions[version];
+            const humanVersion = versionInfo.metadata?.app_version || versionInfo.human_version;
+            return {
+              value: version,
+              label: formatVersionLabel(version, humanVersion),
+            };
+          })),
           hidden: hideVersion,
         },
       ],
