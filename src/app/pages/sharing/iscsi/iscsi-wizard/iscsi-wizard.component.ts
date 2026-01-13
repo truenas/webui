@@ -197,7 +197,7 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   get extentPayload(): IscsiExtentUpdate {
-    const value = this.form.value.extent;
+    const value = this.form.getRawValue().extent;
     const blocksizeDefault = 512;
     const blocksizeModernos = 4096;
     const extentPayload = {

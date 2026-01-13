@@ -412,6 +412,7 @@ describe('IscsiWizardComponent', () => {
       extentGroup.controls.disk.setValue('zvol/tank/my-zvol@snapshot1');
       extentGroup.controls.usefor.setValue(IscsiExtentUsefor.Vmware);
       extentGroup.controls.product_id.setValue('');
+      extentGroup.controls.ro.setValue(true);
 
       const payload = spectator.component.extentPayload;
 
@@ -452,6 +453,7 @@ describe('IscsiWizardComponent', () => {
       const extentGroup = spectator.component.form.controls.extent;
       extentGroup.controls.type.setValue(IscsiExtentType.Disk);
       extentGroup.controls.disk.setValue('zvol/tank/my-zvol@snapshot1');
+      extentGroup.controls.ro.setValue(true);
 
       const payload = spectator.component.extentPayload;
 
