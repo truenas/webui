@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  OnDestroy,
   signal,
   computed,
   inject,
@@ -10,6 +11,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
@@ -19,9 +21,12 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { firstValueFrom, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
+import { UsbDrive } from 'app/interfaces/usb-drive.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -30,6 +35,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
+import { InputDialogComponent, InputDialogConfig } from './input-dialog/input-dialog.component';
 
 @UntilDestroy()
 @Component({
@@ -52,17 +58,20 @@ import { UploadService } from 'app/services/upload.service';
   styleUrls: ['./file-manager.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FileManagerComponent implements OnInit {
+export class FileManagerComponent implements OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput: ElementRef<HTMLInputElement>;
   @ViewChild('contextMenuTrigger') contextMenuTrigger: MatMenuTrigger;
 
   private api = inject(ApiService);
+  private matDialog = inject(MatDialog);
   private uploadService = inject(UploadService);
   private downloadService = inject(DownloadService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
+
+  private destroy$ = new Subject<void>();
 
   // Current path
   currentPath = signal<string>('/mnt');
@@ -87,7 +96,7 @@ export class FileManagerComponent implements OnInit {
   breadcrumbs = computed(() => {
     const path = this.currentPath();
     const segments = path.split('/').filter(Boolean);
-    const result: { name: string; path: string }[] = [{ name: 'Root', path: '/' }];
+    const result: { name: string; path: string }[] = [];
 
     let currentPath = '';
     for (const segment of segments) {
@@ -131,8 +140,48 @@ export class FileManagerComponent implements OnInit {
     });
   });
 
+  // USB drives
+  usbDrives = signal<UsbDrive[]>([]);
+  isLoadingUsbDrives = signal<boolean>(false);
+
+  // Mounted USB drives (partitions with mountpoints)
+  mountedUsbDrives = computed(() => {
+    const drives = this.usbDrives();
+    const mounted: { drive: UsbDrive; partition?: { name: string; mountpoint: string; label: string | null } }[] = [];
+
+    for (const drive of drives) {
+      if (drive.partitions && drive.partitions.length > 0) {
+        // Drive has partitions, check each for mountpoint
+        for (const partition of drive.partitions) {
+          if (partition.mountpoint) {
+            mounted.push({
+              drive,
+              partition: {
+                name: partition.name,
+                mountpoint: partition.mountpoint,
+                label: partition.label,
+              },
+            });
+          }
+        }
+      } else if (drive.mountpoint) {
+        // Drive itself is mounted (no partitions)
+        mounted.push({ drive });
+      }
+    }
+
+    return mounted;
+  });
+
   ngOnInit(): void {
     this.loadDirectory(this.currentPath());
+    this.loadUsbDrives();
+    this.subscribeToUsbDriveEvents();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadDirectory(path: string): void {
@@ -416,23 +465,37 @@ export class FileManagerComponent implements OnInit {
 
   renameItem(item: FileRecord): void {
     const currentName = item.name;
-    const newName = prompt(this.translate.instant('Enter new name:'), currentName);
 
-    if (!newName || newName === currentName) return;
+    this.matDialog.open(InputDialogComponent, {
+      data: {
+        title: 'Rename',
+        message: 'Enter new name:',
+        inputLabel: 'Name',
+        value: currentName,
+        confirmText: 'Rename',
+      } as InputDialogConfig,
+      width: '400px',
+    })
+      .afterClosed()
+      .pipe(
+        filter((newName: string | null) => !!newName && newName !== currentName),
+        untilDestroyed(this),
+      )
+      .subscribe((newName: string) => {
+        const parentPath = item.path.substring(0, item.path.lastIndexOf('/'));
+        const newPath = `${parentPath}/${newName}`;
 
-    const parentPath = item.path.substring(0, item.path.lastIndexOf('/'));
-    const newPath = `${parentPath}/${newName}`;
-
-    this.api.call('filesystem.rename', [{ src: item.path, dst: newPath }])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.snackbar.success(this.translate.instant('Renamed successfully'));
-          this.loadDirectory(this.currentPath());
-        },
-        error: (error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-        },
+        this.api.call('filesystem.rename', [{ src: item.path, dst: newPath }])
+          .pipe(untilDestroyed(this))
+          .subscribe({
+            next: () => {
+              this.snackbar.success(this.translate.instant('Renamed successfully'));
+              this.loadDirectory(this.currentPath());
+            },
+            error: (error: unknown) => {
+              this.errorHandler.showErrorModal(error);
+            },
+          });
       });
   }
 
@@ -448,25 +511,39 @@ export class FileManagerComponent implements OnInit {
 
   copyItem(item: FileRecord): void {
     const defaultName = `${item.name}_copy`;
-    const newName = prompt(this.translate.instant('Enter name for the copy:'), defaultName);
 
-    if (!newName) return;
-
-    const parentPath = item.path.substring(0, item.path.lastIndexOf('/'));
-    const newPath = `${parentPath}/${newName}`;
-
-    this.dialogService.jobDialog(
-      this.api.job('filesystem.copy', [{ src: item.path, dst: newPath }]),
-      { title: this.translate.instant('Copying...') },
-    )
+    this.matDialog.open(InputDialogComponent, {
+      data: {
+        title: 'Copy',
+        message: 'Enter name for the copy:',
+        inputLabel: 'Name',
+        value: defaultName,
+        confirmText: 'Copy',
+      } as InputDialogConfig,
+      width: '400px',
+    })
       .afterClosed()
       .pipe(
-        this.errorHandler.withErrorHandler(),
+        filter((newName: string | null) => !!newName),
         untilDestroyed(this),
       )
-      .subscribe(() => {
-        this.snackbar.success(this.translate.instant('Copied successfully'));
-        this.loadDirectory(this.currentPath());
+      .subscribe((newName: string) => {
+        const parentPath = item.path.substring(0, item.path.lastIndexOf('/'));
+        const newPath = `${parentPath}/${newName}`;
+
+        this.dialogService.jobDialog(
+          this.api.job('filesystem.copy', [{ src: item.path, dst: newPath }]),
+          { title: this.translate.instant('Copying...') },
+        )
+          .afterClosed()
+          .pipe(
+            this.errorHandler.withErrorHandler(),
+            untilDestroyed(this),
+          )
+          .subscribe(() => {
+            this.snackbar.success(this.translate.instant('Copied successfully'));
+            this.loadDirectory(this.currentPath());
+          });
       });
   }
 
@@ -519,10 +596,10 @@ export class FileManagerComponent implements OnInit {
 
   private performDelete(items: FileRecord[], recursive: boolean): void {
     const deletePromises = items.map((item) => {
-      return this.api.call('filesystem.delete', [{
+      return firstValueFrom(this.api.call('filesystem.delete', [{
         path: item.path,
         options: { recursive },
-      }]).toPromise();
+      }]));
     });
 
     Promise.all(deletePromises)
@@ -534,6 +611,105 @@ export class FileManagerComponent implements OnInit {
       .catch((error: unknown) => {
         this.errorHandler.showErrorModal(error);
       });
+  }
+
+  loadUsbDrives(): void {
+    this.isLoadingUsbDrives.set(true);
+
+    this.api.call('usb.drive.query')
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (drives) => {
+          this.usbDrives.set(drives);
+          this.isLoadingUsbDrives.set(false);
+        },
+        error: (error: unknown) => {
+          console.error('Failed to load USB drives:', error);
+          this.usbDrives.set([]);
+          this.isLoadingUsbDrives.set(false);
+        },
+      });
+  }
+
+  subscribeToUsbDriveEvents(): void {
+    this.api.subscribe('usb.drive.query')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((event) => {
+        if (event.msg === CollectionChangeType.Added) {
+          const newDrive = event.fields;
+          this.usbDrives.update((drives) => [...drives, newDrive]);
+        } else if (event.msg === CollectionChangeType.Changed) {
+          const updatedDrive = event.fields;
+          this.usbDrives.update((drives) => {
+            return drives.map((drive) => (drive.id === updatedDrive.id ? updatedDrive : drive));
+          });
+        } else if (event.msg === CollectionChangeType.Removed) {
+          const removedId = event.id;
+          this.usbDrives.update((drives) => drives.filter((drive) => drive.id !== removedId));
+          // If we're currently viewing the removed drive's path, navigate away
+          const currentPath = this.currentPath();
+          if (currentPath.startsWith('/mnt/.usb')) {
+            this.navigateTo('/mnt');
+          }
+        }
+      });
+  }
+
+  navigateToUsbDrive(mountpoint: string): void {
+    this.navigateTo(mountpoint);
+  }
+
+  ejectUsbDrive(drive: UsbDrive, event: MouseEvent): void {
+    event.stopPropagation();
+
+    const driveName = this.getUsbDriveDisplayName(drive);
+
+    this.dialogService.confirm({
+      title: this.translate.instant('Eject USB Drive'),
+      message: this.translate.instant('Are you sure you want to safely eject "{name}"?', { name: driveName }),
+      buttonText: this.translate.instant('Eject'),
+    })
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.api.call('usb.drive.eject', [{ id: drive.id }])
+          .pipe(untilDestroyed(this))
+          .subscribe({
+            next: () => {
+              this.snackbar.success(this.translate.instant('USB drive ejected safely'));
+              // If we're currently viewing this drive, navigate away
+              const currentPath = this.currentPath();
+              const driveMountpoint = drive.mountpoint;
+              if (driveMountpoint && currentPath.startsWith(driveMountpoint)) {
+                this.navigateTo('/mnt');
+              }
+            },
+            error: (error: unknown) => {
+              this.errorHandler.showErrorModal(error);
+            },
+          });
+      });
+  }
+
+  getUsbDriveDisplayName(
+    drive: UsbDrive,
+    partition?: { name: string; mountpoint: string; label: string | null },
+  ): string {
+    if (partition?.label) {
+      return partition.label;
+    }
+    if (drive.label) {
+      return drive.label;
+    }
+    if (drive.model) {
+      return drive.model;
+    }
+    if (partition?.name) {
+      return partition.name;
+    }
+    return drive.name;
   }
 
   private getMimeType(filename: string): string {

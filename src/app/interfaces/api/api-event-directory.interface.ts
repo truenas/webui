@@ -20,6 +20,7 @@ import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { UsbDrive } from 'app/interfaces/usb-drive.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
@@ -56,4 +57,5 @@ export interface ApiEventDirectory {
   'pool.snapshot.query': { response: ZfsSnapshot };
   'pool.snapshottask.query': { response: PeriodicSnapshotTask };
   'directoryservices.status': { response: DirectoryServicesStatus };
+  'usb.drive.query': { response: UsbDrive };
 }

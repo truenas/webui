@@ -4,30 +4,30 @@
   <!-- Toolbar -->
   <div class="toolbar">
     <div class="navigation-buttons">
-      <button mat-icon-button
-              [disabled]="!canGoBack()"
-              (click)="goBack()"
-              matTooltip="Go Back">
+      <button
+        mat-icon-button
+        matTooltip="Go Back"
+        [disabled]="!canGoBack()"
+        (click)="goBack()"
+      >
         <ix-icon name="mdi-arrow-left"></ix-icon>
       </button>
-      <button mat-icon-button
-              [disabled]="!canGoForward()"
-              (click)="goForward()"
-              matTooltip="Go Forward">
+      <button
+        mat-icon-button
+        matTooltip="Go Forward"
+        [disabled]="!canGoForward()"
+        (click)="goForward()"
+      >
         <ix-icon name="mdi-arrow-right"></ix-icon>
-      </button>
-      <button mat-icon-button
-              [disabled]="!hasParent()"
-              (click)="goUp()"
-              matTooltip="Go to Parent Directory">
-        <ix-icon name="mdi-arrow-up"></ix-icon>
       </button>
     </div>
 
     <div class="breadcrumb">
       @for (crumb of breadcrumbs(); track crumb.path; let last = $last) {
         @if (!last) {
-          <span class="crumb" (click)="navigateTo(crumb.path)">{{ crumb.name }}</span>
+          <span class="crumb" (click)="navigateTo(crumb.path)">{{
+            crumb.name
+          }}</span>
           <ix-icon name="mdi-chevron-right" class="separator"></ix-icon>
         } @else {
           <span class="crumb current">{{ crumb.name }}</span>
@@ -36,48 +36,45 @@
     </div>
 
     <div class="toolbar-actions">
-      <input type="file"
-             #fileInput
-             hidden
-             (change)="onFileSelected($event)">
-      <button mat-icon-button
-              (click)="triggerUpload()"
-              [disabled]="isUploading()"
-              [matTooltip]="'Upload File' | translate">
+      <input #fileInput type="file" hidden (change)="onFileSelected($event)" />
+      <button
+        mat-icon-button
+        [disabled]="isUploading()"
+        [matTooltip]="'Upload File' | translate"
+        (click)="triggerUpload()"
+      >
         <ix-icon name="mdi-upload"></ix-icon>
       </button>
-      <button mat-icon-button
-              (click)="downloadSelectedFiles()"
-              [disabled]="!hasFileSelected() || isDownloading()"
-              [matTooltip]="'Download Selected' | translate">
+      <button
+        mat-icon-button
+        [disabled]="!hasFileSelected() || isDownloading()"
+        [matTooltip]="'Download Selected' | translate"
+        (click)="downloadSelectedFiles()"
+      >
         <ix-icon name="mdi-download"></ix-icon>
       </button>
-      <button mat-icon-button
-              (click)="renameSelected()"
-              [disabled]="selectedItems().size !== 1"
-              [matTooltip]="'Rename' | translate">
-        <ix-icon name="mdi-pencil"></ix-icon>
+      <button
+        mat-icon-button
+        [matTooltip]="
+          viewMode() === 'grid'
+            ? ('Switch to List View' | translate)
+            : ('Switch to Grid View' | translate)
+        "
+        (click)="toggleViewMode()"
+      >
+        <ix-icon
+          [name]="
+            viewMode() === 'grid'
+              ? 'mdi-format-list-text'
+              : 'mdi-view-dashboard'
+          "
+        ></ix-icon>
       </button>
-      <button mat-icon-button
-              (click)="copySelected()"
-              [disabled]="selectedItems().size === 0"
-              [matTooltip]="'Copy' | translate">
-        <ix-icon name="mdi-content-copy"></ix-icon>
-      </button>
-      <button mat-icon-button
-              (click)="deleteSelected()"
-              [disabled]="selectedItems().size === 0"
-              [matTooltip]="'Delete' | translate">
-        <ix-icon name="mdi-delete"></ix-icon>
-      </button>
-      <button mat-icon-button
-              (click)="toggleViewMode()"
-              [matTooltip]="viewMode() === 'grid' ? ('Switch to List View' | translate) : ('Switch to Grid View' | translate)">
-        <ix-icon [name]="viewMode() === 'grid' ? 'mdi-format-list-text' : 'mdi-view-dashboard'"></ix-icon>
-      </button>
-      <button mat-icon-button
-              (click)="loadDirectory(currentPath())"
-              [matTooltip]="'Refresh' | translate">
+      <button
+        mat-icon-button
+        [matTooltip]="'Refresh' | translate"
+        (click)="loadDirectory(currentPath())"
+      >
         <ix-icon name="refresh"></ix-icon>
       </button>
     </div>
@@ -86,8 +83,13 @@
   <!-- Upload Progress Bar -->
   @if (isUploading()) {
     <div class="upload-progress">
-      <span class="upload-filename">{{ 'Uploading' | translate }}: {{ uploadFileName() }}</span>
-      <mat-progress-bar mode="determinate" [value]="uploadProgress()"></mat-progress-bar>
+      <span class="upload-filename"
+        >{{ "Uploading" | translate }}: {{ uploadFileName() }}</span
+      >
+      <mat-progress-bar
+        mode="determinate"
+        [value]="uploadProgress()"
+      ></mat-progress-bar>
       <span class="upload-percent">{{ uploadProgress() }}%</span>
     </div>
   }
@@ -97,13 +99,69 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <div class="sidebar-section">
-        <div class="section-title">Favorites</div>
+        <div class="section-title">{{ "Favorites" | translate }}</div>
         <mat-nav-list>
           <a mat-list-item (click)="navigateTo('/mnt')">
             <ix-icon name="mdi-folder" matListItemIcon></ix-icon>
-            <span matListItemTitle>Home</span>
+            <span matListItemTitle>{{ "Home" | translate }}</span>
           </a>
         </mat-nav-list>
+      </div>
+
+      <!-- USB Drives Section -->
+      <div class="sidebar-section usb-drives-section">
+        <div class="section-title">
+          {{ "Locations" | translate }}
+          @if (isLoadingUsbDrives()) {
+            <mat-spinner diameter="14" class="loading-spinner"></mat-spinner>
+          }
+        </div>
+        @if (mountedUsbDrives().length > 0) {
+          <mat-nav-list>
+            @for (
+              mounted of mountedUsbDrives();
+              track mounted.partition?.name || mounted.drive.id
+            ) {
+              <a
+                mat-list-item
+                class="usb-drive-item"
+                [class.active]="
+                  currentPath().startsWith(
+                    mounted.partition?.mountpoint ||
+                      mounted.drive.mountpoint ||
+                      ''
+                  )
+                "
+                (click)="
+                  navigateToUsbDrive(
+                    mounted.partition?.mountpoint || mounted.drive.mountpoint!
+                  )
+                "
+              >
+                <ix-icon
+                  name="mdi-usb-flash-drive"
+                  matListItemIcon
+                  class="usb-icon"
+                ></ix-icon>
+                <span matListItemTitle class="usb-drive-name">
+                  {{ getUsbDriveDisplayName(mounted.drive, mounted.partition) }}
+                </span>
+                <button
+                  mat-icon-button
+                  class="eject-button"
+                  [matTooltip]="'Safely Eject' | translate"
+                  (click)="ejectUsbDrive(mounted.drive, $event)"
+                >
+                  <ix-icon name="mdi-eject"></ix-icon>
+                </button>
+              </a>
+            }
+          </mat-nav-list>
+        } @else {
+          <div class="no-usb-drives">
+            <span>{{ "No USB drives connected" | translate }}</span>
+          </div>
+        }
       </div>
     </div>
 
@@ -117,19 +175,23 @@
         @if (items().length === 0) {
           <div class="empty-state">
             <ix-icon name="mdi-folder-open" class="empty-icon"></ix-icon>
-            <p>{{ 'This folder is empty' | translate }}</p>
+            <p>{{ "This folder is empty" | translate }}</p>
           </div>
         } @else {
-          @if (viewMode() === 'grid') {
+          @if (viewMode() === "grid") {
             <div class="file-grid">
               @for (item of items(); track item.path) {
-                <div class="file-item"
-                     [class.selected]="isSelected(item)"
-                     (click)="onItemClick(item, $event)"
-                     (dblclick)="onItemDoubleClick(item)"
-                     (contextmenu)="onContextMenu($event, item)">
-                  <ix-icon [name]="getFileIcon(item)"
-                           [class]="getFileIconClass(item)"></ix-icon>
+                <div
+                  class="file-item"
+                  [class.selected]="isSelected(item)"
+                  (click)="onItemClick(item, $event)"
+                  (dblclick)="onItemDoubleClick(item)"
+                  (contextmenu)="onContextMenu($event, item)"
+                >
+                  <ix-icon
+                    [name]="getFileIcon(item)"
+                    [class]="getFileIconClass(item)"
+                  ></ix-icon>
                   <span class="file-name">{{ item.name }}</span>
                 </div>
               }
@@ -142,17 +204,23 @@
                 <span class="col-type">Type</span>
               </div>
               @for (item of items(); track item.path) {
-                <div class="list-item"
-                     [class.selected]="isSelected(item)"
-                     (click)="onItemClick(item, $event)"
-                     (dblclick)="onItemDoubleClick(item)"
-                     (contextmenu)="onContextMenu($event, item)">
+                <div
+                  class="list-item"
+                  [class.selected]="isSelected(item)"
+                  (click)="onItemClick(item, $event)"
+                  (dblclick)="onItemDoubleClick(item)"
+                  (contextmenu)="onContextMenu($event, item)"
+                >
                   <span class="col-name">
-                    <ix-icon [name]="getFileIcon(item)"
-                             [class]="getFileIconClass(item)"></ix-icon>
+                    <ix-icon
+                      [name]="getFileIcon(item)"
+                      [class]="getFileIconClass(item)"
+                    ></ix-icon>
                     {{ item.name }}
                   </span>
-                  <span class="col-size">{{ isDirectory(item) ? '-' : formatSize(item.size) }}</span>
+                  <span class="col-size">{{
+                    isDirectory(item) ? "-" : formatSize(item.size)
+                  }}</span>
                   <span class="col-type">{{ item.type }}</span>
                 </div>
               }
@@ -174,11 +242,13 @@
 </div>
 
 <!-- Hidden Context Menu Trigger -->
-<div class="context-menu-trigger"
-     [style.left.px]="contextMenuPosition.x"
-     [style.top.px]="contextMenuPosition.y"
-     [matMenuTriggerFor]="contextMenu"
-     #contextMenuTrigger="matMenuTrigger"></div>
+<div
+  #contextMenuTrigger="matMenuTrigger"
+  class="context-menu-trigger"
+  [style.left.px]="contextMenuPosition.x"
+  [style.top.px]="contextMenuPosition.y"
+  [matMenuTriggerFor]="contextMenu"
+></div>
 
 <!-- Context Menu -->
 <mat-menu #contextMenu="matMenu">
@@ -186,21 +256,25 @@
     @if (!isDirectory(contextMenuItem()!)) {
       <button mat-menu-item (click)="downloadFile(contextMenuItem()!)">
         <ix-icon name="mdi-download"></ix-icon>
-        <span>{{ 'Download' | translate }}</span>
+        <span>{{ "Download" | translate }}</span>
       </button>
     }
     <button mat-menu-item (click)="renameItem(contextMenuItem()!)">
       <ix-icon name="mdi-pencil"></ix-icon>
-      <span>{{ 'Rename' | translate }}</span>
+      <span>{{ "Rename" | translate }}</span>
     </button>
     <button mat-menu-item (click)="copyItem(contextMenuItem()!)">
       <ix-icon name="mdi-content-copy"></ix-icon>
-      <span>{{ 'Copy' | translate }}</span>
+      <span>{{ "Copy" | translate }}</span>
     </button>
     <mat-divider></mat-divider>
-    <button mat-menu-item (click)="deleteItem(contextMenuItem()!)" class="danger-item">
+    <button
+      mat-menu-item
+      class="danger-item"
+      (click)="deleteItem(contextMenuItem()!)"
+    >
       <ix-icon name="mdi-delete"></ix-icon>
-      <span>{{ 'Delete' | translate }}</span>
+      <span>{{ "Delete" | translate }}</span>
     </button>
   }
 </mat-menu>

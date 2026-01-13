@@ -1,5 +1,59 @@
 @import 'scss-imports/variables';
 
+// =============================================================================
+// Modern Minimal Design System
+// =============================================================================
+
+// Color Palette
+$fm-bg-canvas: #f8fafc;
+$fm-bg-surface: #ffffff;
+$fm-bg-surface-hover: #f1f5f9;
+$fm-bg-surface-selected: rgba(59, 130, 246, 0.08);
+
+$fm-border-subtle: rgba(0, 0, 0, 0.06);
+$fm-border-default: rgba(0, 0, 0, 0.10);
+
+$fm-text-primary: #1e293b;
+$fm-text-secondary: #64748b;
+$fm-text-tertiary: #94a3b8;
+
+// File Type Icon Colors (softer palette)
+$fm-icon-folder: #3b82f6;
+$fm-icon-image: #ec4899;
+$fm-icon-video: #8b5cf6;
+$fm-icon-audio: #6366f1;
+$fm-icon-archive: #f59e0b;
+$fm-icon-document: #3b82f6;
+$fm-icon-spreadsheet: #10b981;
+$fm-icon-code: #06b6d4;
+$fm-icon-default: #94a3b8;
+
+// Typography Scale
+$fm-font-size-xs: 11px;
+$fm-font-size-sm: 12px;
+$fm-font-size-base: 13px;
+$fm-font-size-md: 14px;
+
+$fm-font-weight-regular: 400;
+$fm-font-weight-medium: 500;
+$fm-font-weight-semibold: 600;
+
+// Spacing Scale (8px base)
+$fm-space-1: 4px;
+$fm-space-2: 8px;
+$fm-space-3: 12px;
+$fm-space-4: 16px;
+$fm-space-5: 20px;
+$fm-space-6: 24px;
+
+// Transitions
+$fm-transition-fast: 150ms ease;
+$fm-transition-normal: 200ms ease;
+
+// =============================================================================
+// Component Styles
+// =============================================================================
+
 :host {
   display: flex;
   flex-direction: column;
@@ -10,29 +64,60 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  background-color: var(--bg);
-  border-radius: 8px;
+  background-color: $fm-bg-surface;
+  border-radius: 16px;
+  border: 1px solid $fm-border-subtle;
   overflow: hidden;
-  margin: 16px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+  margin: $fm-space-5;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
+// =============================================================================
 // Toolbar
+// =============================================================================
+
 .toolbar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 16px;
-  background-color: var(--alt-bg1);
-  border-bottom: 1px solid var(--lines);
+  gap: $fm-space-4;
+  padding: $fm-space-3 $fm-space-5;
+  min-height: 56px;
+  background-color: $fm-bg-surface;
+  border-bottom: 1px solid $fm-border-subtle;
 
   .navigation-buttons {
     display: flex;
-    gap: 4px;
+    gap: $fm-space-1;
+    padding: $fm-space-1;
+    background: $fm-bg-canvas;
+    border-radius: 10px;
 
     button {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      transition:
+        background-color $fm-transition-fast,
+        transform $fm-transition-fast;
+
+      &:hover:not(:disabled) {
+        background-color: $fm-bg-surface-hover;
+        transform: translateY(-1px);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
       &:disabled {
-        opacity: 0.4;
+        opacity: 0.35;
+      }
+
+      ix-icon {
+        font-size: 18px;
+        color: $fm-text-secondary;
       }
     }
   }
@@ -41,26 +126,35 @@
     display: flex;
     align-items: center;
     flex: 1;
-    gap: 4px;
-    font-size: 14px;
+    gap: $fm-space-1;
+    font-size: $fm-font-size-md;
     overflow-x: auto;
     white-space: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     .crumb {
-      color: var(--primary);
+      color: $fm-text-secondary;
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 4px;
-      transition: background-color 0.2s;
+      padding: $fm-space-1 $fm-space-2;
+      border-radius: 6px;
+      transition:
+        background-color $fm-transition-fast,
+        color $fm-transition-fast;
 
       &:hover {
-        background-color: var(--alt-bg2);
+        background-color: $fm-bg-surface-hover;
+        color: $fm-text-primary;
       }
 
       &.current {
-        color: var(--fg1);
+        color: $fm-text-primary;
+        font-weight: $fm-font-weight-medium;
         cursor: default;
-        font-weight: 500;
 
         &:hover {
           background-color: transparent;
@@ -69,29 +163,63 @@
     }
 
     .separator {
-      color: var(--fg2);
-      font-size: 16px;
+      color: $fm-text-tertiary;
+      font-size: 14px;
+      flex-shrink: 0;
     }
   }
 
   .toolbar-actions {
     display: flex;
-    gap: 4px;
+    gap: $fm-space-1;
+    padding: $fm-space-1;
+    background: $fm-bg-canvas;
+    border-radius: 10px;
+
+    button {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      transition:
+        background-color $fm-transition-fast,
+        transform $fm-transition-fast;
+
+      &:hover:not(:disabled) {
+        background-color: $fm-bg-surface-hover;
+        transform: translateY(-1px);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      &:disabled {
+        opacity: 0.35;
+      }
+
+      ix-icon {
+        font-size: 18px;
+        color: $fm-text-secondary;
+      }
+    }
   }
 }
 
+// =============================================================================
 // Upload Progress
+// =============================================================================
+
 .upload-progress {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 16px;
-  background-color: var(--alt-bg2);
-  border-bottom: 1px solid var(--lines);
+  gap: $fm-space-3;
+  padding: $fm-space-2 $fm-space-5;
+  background-color: $fm-bg-canvas;
+  border-bottom: 1px solid $fm-border-subtle;
 
   .upload-filename {
-    font-size: 13px;
-    color: var(--fg1);
+    font-size: $fm-font-size-base;
+    color: $fm-text-primary;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -100,71 +228,210 @@
 
   mat-progress-bar {
     flex: 1;
+    border-radius: 4px;
+    overflow: hidden;
   }
 
   .upload-percent {
-    font-size: 13px;
-    color: var(--fg2);
+    font-size: $fm-font-size-sm;
+    font-weight: $fm-font-weight-medium;
+    color: $fm-text-secondary;
     min-width: 40px;
     text-align: right;
+    font-variant-numeric: tabular-nums;
   }
 }
 
+// =============================================================================
 // Content Area
+// =============================================================================
+
 .content-area {
   display: flex;
   flex: 1;
   overflow: hidden;
 }
 
+// =============================================================================
 // Sidebar
+// =============================================================================
+
 .sidebar {
-  width: 200px;
-  background-color: var(--alt-bg1);
-  border-right: 1px solid var(--lines);
+  width: 220px;
+  background-color: $fm-bg-canvas;
+  border-right: 1px solid $fm-border-subtle;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: $fm-border-default transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $fm-border-default;
+    border-radius: 3px;
+  }
 
   .sidebar-section {
-    padding: 8px 0;
+    padding: $fm-space-3 0;
 
     .section-title {
-      padding: 8px 16px;
-      font-size: 11px;
-      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: $fm-space-2;
+      padding: $fm-space-2 $fm-space-5;
+      margin-bottom: $fm-space-1;
+      font-size: $fm-font-size-xs;
+      font-weight: $fm-font-weight-semibold;
       text-transform: uppercase;
-      color: var(--fg2);
-      letter-spacing: 0.5px;
+      color: $fm-text-tertiary;
+      letter-spacing: 0.05em;
+
+      .section-icon {
+        font-size: 14px;
+        opacity: 0.7;
+      }
+
+      .loading-spinner {
+        margin-left: auto;
+      }
     }
 
     mat-nav-list {
-      padding: 0;
+      padding: 0 $fm-space-2;
 
       a {
-        height: 36px;
-        padding: 0 16px;
+        height: 40px;
+        padding: 0 $fm-space-4;
+        border-radius: 8px;
+        margin-bottom: $fm-space-1;
+        transition:
+          background-color $fm-transition-fast,
+          padding-left $fm-transition-normal;
+
+        &:hover {
+          background-color: $fm-bg-surface-hover;
+          padding-left: calc($fm-space-4 + 4px);
+        }
 
         ix-icon {
-          color: var(--primary);
+          color: $fm-icon-folder;
           font-size: 20px;
+          margin-right: $fm-space-3;
+        }
+
+        span[matListItemTitle] {
+          font-size: $fm-font-size-base;
+          font-weight: $fm-font-weight-regular;
+          color: $fm-text-primary;
         }
       }
     }
   }
+
+  // USB Drives Section
+  .usb-drives-section {
+    border-top: 1px solid $fm-border-subtle;
+
+    .usb-drive-item {
+      position: relative;
+      padding-right: 40px;
+
+      .usb-icon {
+        color: $fm-text-secondary;
+        transition: color $fm-transition-fast;
+      }
+
+      .usb-drive-name {
+        font-size: $fm-font-size-base;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .eject-button {
+        position: absolute;
+        right: $fm-space-2;
+        width: 28px;
+        height: 28px;
+        opacity: 0;
+        transition:
+          opacity $fm-transition-fast,
+          transform $fm-transition-fast;
+
+        ix-icon {
+          font-size: 16px;
+          color: $fm-text-secondary;
+        }
+
+        &:hover {
+          transform: scale(1.1);
+
+          ix-icon {
+            color: $fm-text-primary;
+          }
+        }
+      }
+
+      &:hover {
+        .eject-button {
+          opacity: 1;
+        }
+      }
+
+      &.active {
+        background-color: $fm-bg-surface-selected;
+
+        .usb-icon {
+          color: $fm-icon-folder;
+        }
+
+        .eject-button {
+          opacity: 1;
+        }
+      }
+    }
+
+    .no-usb-drives {
+      padding: $fm-space-4 $fm-space-5;
+      font-size: $fm-font-size-sm;
+      color: $fm-text-tertiary;
+      text-align: center;
+    }
+  }
 }
 
+// =============================================================================
 // Files Area
+// =============================================================================
+
 .files-area {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  padding: $fm-space-5;
   position: relative;
+  background-color: $fm-bg-surface;
 }
 
 .loading-overlay {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
+  gap: $fm-space-4;
+
+  .loading-text {
+    font-size: $fm-font-size-sm;
+    color: $fm-text-secondary;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
 .empty-state {
@@ -173,111 +440,175 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: var(--fg2);
+  padding: $fm-space-6;
+  text-align: center;
+  animation: fadeIn 400ms ease;
+
+  .empty-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 120px;
+    margin-bottom: $fm-space-6;
+    background: $fm-bg-canvas;
+    border-radius: 24px;
+  }
 
   .empty-icon {
-    font-size: 64px;
-    margin-bottom: 16px;
-    opacity: 0.5;
+    font-size: 56px;
+    color: $fm-text-tertiary;
+    opacity: 0.6;
   }
 
   p {
-    font-size: 16px;
+    font-size: $fm-font-size-md;
+    color: $fm-text-secondary;
+    margin: 0;
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =============================================================================
 // Grid View
+// =============================================================================
+
 .file-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: $fm-space-5;
 }
 
 .file-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px 8px;
-  border-radius: 8px;
+  padding: $fm-space-4 $fm-space-3;
+  border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.2s;
   text-align: center;
+  min-height: 110px;
+  transition:
+    background-color $fm-transition-fast,
+    transform $fm-transition-normal,
+    box-shadow $fm-transition-normal;
 
   &:hover {
-    background-color: var(--alt-bg2);
+    background-color: $fm-bg-surface-hover;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 
   &.selected {
-    background-color: var(--primary);
-    color: var(--primary-txt);
+    background-color: $fm-bg-surface-selected;
+    box-shadow: inset 0 0 0 2px $fm-icon-folder;
 
-    ix-icon {
-      color: var(--primary-txt);
+    .file-name {
+      color: $fm-icon-folder;
+      font-weight: $fm-font-weight-medium;
     }
   }
 
   ix-icon {
-    font-size: 48px;
-    margin-bottom: 8px;
-    color: var(--fg2);
+    font-size: 56px;
+    margin-bottom: $fm-space-3;
+    color: $fm-text-secondary;
+    transition: transform $fm-transition-normal;
 
     &.folder-icon {
-      color: var(--primary);
+      color: $fm-icon-folder;
     }
   }
 
+  &:hover ix-icon {
+    transform: scale(1.05);
+  }
+
   .file-name {
-    font-size: 12px;
+    font-size: $fm-font-size-sm;
+    font-weight: $fm-font-weight-regular;
+    color: $fm-text-primary;
     word-break: break-word;
     max-width: 100%;
     line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }
 
+// =============================================================================
 // List View
+// =============================================================================
+
 .file-list {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .list-header {
   display: flex;
-  padding: 8px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--fg2);
-  border-bottom: 1px solid var(--lines);
+  align-items: center;
+  padding: $fm-space-2 $fm-space-4;
+  font-size: $fm-font-size-xs;
+  font-weight: $fm-font-weight-semibold;
+  color: $fm-text-tertiary;
+  border-bottom: 1px solid $fm-border-default;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
+  position: sticky;
+  top: 0;
+  background: $fm-bg-surface;
+  z-index: 1;
 }
 
 .list-item {
   display: flex;
-  padding: 8px 12px;
-  border-radius: 4px;
+  align-items: center;
+  padding: $fm-space-2 $fm-space-4;
+  border-radius: 8px;
+  margin: 0 $fm-space-2;
+  min-height: 44px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color $fm-transition-fast;
 
   &:hover {
-    background-color: var(--alt-bg2);
+    background-color: $fm-bg-surface-hover;
   }
 
   &.selected {
-    background-color: var(--primary);
-    color: var(--primary-txt);
+    background-color: $fm-bg-surface-selected;
 
-    ix-icon {
-      color: var(--primary-txt);
+    .col-name {
+      color: $fm-icon-folder;
+      font-weight: $fm-font-weight-medium;
     }
   }
 
   ix-icon {
-    font-size: 20px;
-    margin-right: 8px;
-    color: var(--fg2);
+    font-size: 22px;
+    margin-right: $fm-space-3;
+    color: $fm-text-secondary;
+    flex-shrink: 0;
 
     &.folder-icon {
-      color: var(--primary);
+      color: $fm-icon-folder;
     }
   }
 }
@@ -290,86 +621,148 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: $fm-text-primary;
+  font-size: $fm-font-size-base;
 }
 
 .col-size {
-  flex: 1;
+  flex: 0 0 100px;
   text-align: right;
-  font-size: 13px;
-  color: var(--fg2);
+  font-size: $fm-font-size-sm;
+  color: $fm-text-secondary;
+  font-variant-numeric: tabular-nums;
 }
 
 .col-type {
-  flex: 1.5;
+  flex: 0 0 120px;
   text-align: right;
-  font-size: 13px;
-  color: var(--fg2);
+  font-size: $fm-font-size-sm;
+  color: $fm-text-secondary;
+  text-transform: capitalize;
 }
 
 .list-item.selected {
-
   .col-size,
   .col-type {
-    color: var(--primary-txt);
+    color: $fm-text-secondary;
   }
 }
 
+// =============================================================================
 // Status Bar
+// =============================================================================
+
 .status-bar {
   display: flex;
   align-items: center;
-  padding: 8px 16px;
-  font-size: 12px;
-  color: var(--fg2);
-  background-color: var(--alt-bg1);
-  border-top: 1px solid var(--lines);
+  padding: $fm-space-2 $fm-space-5;
+  min-height: 36px;
+  font-size: $fm-font-size-xs;
+  color: $fm-text-secondary;
+  background-color: $fm-bg-canvas;
+  border-top: 1px solid $fm-border-subtle;
 
   .separator {
-    margin: 0 8px;
+    margin: 0 $fm-space-2;
+    color: $fm-text-tertiary;
   }
 }
 
-// Icon colors for file types
+// =============================================================================
+// Icon Colors (Softer Palette)
+// =============================================================================
+
 .icon-folder {
-  color: var(--primary) !important;
+  color: $fm-icon-folder !important;
 }
 
 .icon-image {
-  color: #e91e63 !important;
+  color: $fm-icon-image !important;
 }
 
 .icon-video {
-  color: #9c27b0 !important;
+  color: $fm-icon-video !important;
 }
 
 .icon-audio {
-  color: #673ab7 !important;
+  color: $fm-icon-audio !important;
 }
 
 .icon-archive {
-  color: #ff9800 !important;
+  color: $fm-icon-archive !important;
 }
 
 .icon-document {
-  color: #2196f3 !important;
+  color: $fm-icon-document !important;
 }
 
 .icon-spreadsheet {
-  color: #4caf50 !important;
+  color: $fm-icon-spreadsheet !important;
 }
 
 .icon-code {
-  color: #00bcd4 !important;
+  color: $fm-icon-code !important;
 }
 
 .icon-file {
-  color: var(--fg2);
+  color: $fm-icon-default !important;
 }
 
-// Hidden context menu trigger
+// =============================================================================
+// Context Menu Trigger
+// =============================================================================
+
 .context-menu-trigger {
   position: fixed;
   visibility: hidden;
   width: 1px;
   height: 1px;
+}
+
+// =============================================================================
+// Context Menu Styling
+// =============================================================================
+
+::ng-deep .mat-mdc-menu-panel {
+  border-radius: 12px !important;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.05),
+    0 10px 20px rgba(0, 0, 0, 0.08) !important;
+
+  .mat-mdc-menu-content {
+    padding: $fm-space-2 !important;
+  }
+
+  .mat-mdc-menu-item {
+    min-height: 40px;
+    border-radius: 8px;
+    margin: 2px 0;
+    padding: 0 $fm-space-3;
+
+    ix-icon {
+      margin-right: $fm-space-3;
+      font-size: 18px;
+      color: $fm-text-secondary;
+    }
+
+    span {
+      font-size: $fm-font-size-base;
+    }
+
+    &:hover {
+      background-color: $fm-bg-surface-hover;
+    }
+
+    &.danger-item {
+      color: #ef4444;
+
+      ix-icon {
+        color: #ef4444;
+      }
+
+      &:hover {
+        background-color: rgba(239, 68, 68, 0.08);
+      }
+    }
+  }
 }

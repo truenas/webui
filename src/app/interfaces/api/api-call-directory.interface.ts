@@ -291,6 +291,7 @@ import {
 import {
   WebShareConfig, WebShareConfigUpdate, WebShare, WebShareUpdate,
 } from 'app/interfaces/webshare-config.interface';
+import { UsbDrive } from 'app/interfaces/usb-drive.interface';
 import {
   CloneZfsSnapshot,
   CreateZfsSnapshot,
@@ -990,6 +991,12 @@ export interface ApiCallDirectory {
   // WebShare
   'webshare.config': { params: void; response: WebShareConfig };
   'webshare.update': { params: [WebShareConfigUpdate]; response: WebShareConfig };
+
+  // USB Drive
+  'usb.drive.query': { params: void; response: UsbDrive[] };
+  'usb.drive.mount': { params: [{ id: string }]; response: string };
+  'usb.drive.unmount': { params: [{ id: string; force?: boolean }]; response: boolean };
+  'usb.drive.eject': { params: [{ id: string }]; response: boolean };
 
   // ZFS
   'pool.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
