@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, inject, input,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { AlertNavBadgeService } from 'app/modules/alerts/services/alert-nav-badge.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -21,6 +21,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 })
 export class CardAlertBadgeComponent {
   private alertNavBadgeService = inject(AlertNavBadgeService);
+  private translate = inject(TranslateService);
 
   protected readonly AlertBadgeType = AlertBadgeType;
 
@@ -53,13 +54,22 @@ export class CardAlertBadgeComponent {
 
     const parts: string[] = [];
     if (counts.critical > 0) {
-      parts.push(counts.critical === 1 ? '1 critical alert' : `${counts.critical} critical alerts`);
+      parts.push(this.translate.instant(
+        '{count, plural, =1 {1 critical alert} other {# critical alerts}}',
+        { count: counts.critical },
+      ));
     }
     if (counts.warning > 0) {
-      parts.push(counts.warning === 1 ? '1 warning' : `${counts.warning} warnings`);
+      parts.push(this.translate.instant(
+        '{count, plural, =1 {1 warning} other {# warnings}}',
+        { count: counts.warning },
+      ));
     }
     if (counts.info > 0) {
-      parts.push(counts.info === 1 ? '1 info alert' : `${counts.info} info alerts`);
+      parts.push(this.translate.instant(
+        '{count, plural, =1 {1 info alert} other {# info alerts}}',
+        { count: counts.info },
+      ));
     }
 
     return parts.join(', ');

@@ -11,6 +11,7 @@ import {
   isConditionalEnhancement,
   resolveConditionalEnhancement,
 } from 'app/interfaces/smart-alert.interface';
+import { routePlaceholders } from 'app/modules/alerts/constants/route-placeholders.const';
 import { isBootPoolAlert } from 'app/modules/alerts/utils/boot-pool.utils';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
@@ -194,12 +195,19 @@ export const smartAlertRegistry: SmartAlertConfig = {
       contextualHelp: 'Storage pool health is critical for data integrity. Investigate and resolve pool issues immediately to prevent data loss.',
       detailedHelp: 'Common pool issues include: degraded pools (missing/failed drives), scrub errors, capacity warnings, and replication problems.',
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/managepoolsscale/',
+      extractApiParams: (alert: { args: unknown }) => {
+        // Extract pool ID from alert args for dynamic routing to VDEVs page
+        if (alert.args && typeof alert.args === 'object' && 'id' in alert.args) {
+          return { poolId: (alert.args as { id: number }).id };
+        }
+        return undefined;
+      },
       actions: [
         {
-          label: 'View Storage',
+          label: 'View VDEVs',
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-database'),
-          route: ['/storage'],
+          route: ['/storage', routePlaceholders.poolId, 'vdevs'],
           primary: true,
         },
         {
@@ -1230,11 +1238,18 @@ export const smartAlertRegistry: SmartAlertConfig = {
     VolumeStatus: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
+      extractApiParams: (alert: { args: unknown }) => {
+        // Extract pool ID from alert args for dynamic routing to VDEVs page
+        if (alert.args && typeof alert.args === 'object' && 'id' in alert.args) {
+          return { poolId: (alert.args as { id: number }).id };
+        }
+        return undefined;
+      },
       actions: [{
-        label: 'Go to Storage',
+        label: 'View VDEVs',
         type: SmartAlertActionType.Navigate,
         icon: iconMarker('dns'),
-        route: ['/storage'],
+        route: ['/storage', routePlaceholders.poolId, 'vdevs'],
         primary: true,
       }],
     },

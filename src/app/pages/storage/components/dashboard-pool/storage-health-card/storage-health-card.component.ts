@@ -107,27 +107,27 @@ export class StorageHealthCardComponent implements OnChanges {
   protected readonly isScrub = computed(() => this.scan()?.function === PoolScanFunction.Scrub);
 
   protected iconType = computed(() => {
-    if (!this.pool().healthy) {
-      return PoolCardIconType.Error;
-    }
     if (this.pool().status === PoolStatus.Degraded) {
       return PoolCardIconType.Warn;
     }
     if (this.pool().status === PoolStatus.Faulted) {
       return PoolCardIconType.Faulted;
     }
+    if (!this.pool().healthy) {
+      return PoolCardIconType.Error;
+    }
     return PoolCardIconType.Safe;
   });
 
   protected iconTooltip = computed(() => {
-    if (!this.pool().healthy) {
-      return this.translate.instant('Pool is not healthy');
-    }
     if (this.pool().status === PoolStatus.Degraded) {
       return this.translate.instant('Pool status is {status}', { status: this.pool().status });
     }
     if (this.pool().status === PoolStatus.Faulted) {
       return this.translate.instant('Pool status is {status}', { status: this.pool().status });
+    }
+    if (!this.pool().healthy) {
+      return this.translate.instant('Pool is not healthy');
     }
     return this.translate.instant('Everything is fine');
   });

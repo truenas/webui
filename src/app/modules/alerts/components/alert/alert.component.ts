@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, HostBinding, input, OnChanges, signal, ViewChild, inject } from '@angular/core';
+import { afterNextRender, AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, HostBinding, input, OnChanges, signal, ViewChild, inject } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -62,6 +62,13 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   readonly isHaLicensed = input<boolean>();
   readonly showActions = input<boolean>(true);
 
+  constructor() {
+    // Use afterNextRender to ensure DOM is ready before measuring
+    afterNextRender(() => {
+      this.checkIfExpandable();
+    });
+  }
+
   /**
    * Indicates if this alert has multiple instances (duplicates)
    */
@@ -111,7 +118,14 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const alertMessageElement = this.alertMessage.nativeElement;
+    this.checkIfExpandable();
+  }
+
+  private checkIfExpandable(): void {
+    const alertMessageElement = this.alertMessage?.nativeElement;
+    if (!alertMessageElement) {
+      return;
+    }
     this.isExpandable.set(alertMessageElement.scrollHeight > alertMessageElement.offsetHeight);
   }
 

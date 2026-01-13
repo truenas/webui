@@ -2,12 +2,12 @@ import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
+import { distinctUntilChanged, filter, switchMap, tap } from 'rxjs';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { EnhancedAlert, SmartAlertAction, SmartAlertActionType } from 'app/interfaces/smart-alert.interface';
+import { isRoutePlaceholder, routePlaceholders } from 'app/modules/alerts/constants/route-placeholders.const';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
@@ -15,6 +15,16 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { getAlertEnhancement } from './alert-enhancement.registry';
+
+/**
+ * Time to wait before attempting to highlight an element after navigation (milliseconds)
+ */
+const highlightDelayMs = searchDelayConst * 2;
+
+/**
+ * Maximum time to wait for a highlight directive to be registered before giving up (milliseconds)
+ */
+const highlightTimeoutMs = 10000;
 
 @Injectable({
   providedIn: 'root',
@@ -73,6 +83,39 @@ export class SmartAlertService {
       // Inject extracted fragment for navigation actions
       if (action.type === SmartAlertActionType.Navigate && extractedFragment && !action.fragment) {
         enhancedAction = { ...enhancedAction, fragment: extractedFragment };
+      }
+
+      // Replace route placeholders with extracted params for navigation actions
+      if (action.type === SmartAlertActionType.Navigate && extractedApiParams !== undefined && action.route) {
+        const updatedRoute = action.route.map((segment) => {
+          // Check if segment is a placeholder and replace with extracted value
+          if (isRoutePlaceholder(segment)) {
+            // If extractedApiParams is an object, look up the key by placeholder value
+            if (typeof extractedApiParams === 'object' && extractedApiParams !== null) {
+              const key = Object.keys(routePlaceholders).find(
+                (placeholderKey) => routePlaceholders[placeholderKey as keyof typeof routePlaceholders] === segment,
+              );
+              if (key && key in extractedApiParams) {
+                return String((extractedApiParams as Record<string, unknown>)[key]);
+              }
+              console.warn(`Missing placeholder value for ${segment} in extractedApiParams:`, extractedApiParams);
+              return segment; // Return placeholder unchanged if key not found
+            }
+            // If extractedApiParams is a primitive, use it directly (backward compatibility)
+            return String(extractedApiParams);
+          }
+          return segment;
+        });
+
+        // Check if any placeholders remain unreplaced
+        const hasUnreplacedPlaceholders = updatedRoute.some(isRoutePlaceholder);
+        if (hasUnreplacedPlaceholders) {
+          console.warn('Route has unreplaced placeholders, falling back to related menu path:', updatedRoute);
+          // Don't set the route - the action will be filtered out or use relatedMenuPath
+          enhancedAction = { ...enhancedAction, route: undefined };
+        } else {
+          enhancedAction = { ...enhancedAction, route: updatedRoute };
+        }
       }
 
       // Inject extracted API params for API call actions
@@ -135,25 +178,24 @@ export class SmartAlertService {
                     this.searchDirectives.setPendingUiHighlightElement(null);
                   } else {
                     // Wait for directive to be registered
-                    let cleanupTimer: number | undefined;
+                    let cleanupTimer: ReturnType<typeof setTimeout>;
+
                     const subscription = this.searchDirectives.directiveAdded$.subscribe(() => {
                       const foundDirective = this.searchDirectives.get(pendingElement);
                       if (foundDirective) {
                         foundDirective.highlight(pendingElement);
                         this.searchDirectives.setPendingUiHighlightElement(null);
-                        if (cleanupTimer !== undefined) {
-                          clearTimeout(cleanupTimer);
-                        }
+                        clearTimeout(cleanupTimer);
                         subscription.unsubscribe();
                       }
                     });
 
-                    // Cleanup after 10 seconds if directive never appears
+                    // Cleanup after timeout if directive never appears
                     cleanupTimer = setTimeout(() => {
                       subscription.unsubscribe();
-                    }, 10000) as unknown as number;
+                    }, highlightTimeoutMs);
                   }
-                }, searchDelayConst * 2);
+                }, highlightDelayMs);
                 return;
               }
             }
@@ -198,10 +240,6 @@ export class SmartAlertService {
     const confirmationMessage = this.translate.instant('Run «{name}» now?', { name: taskName });
     const relatedRoute = this.getRelatedRouteForAlert(alert);
 
-    // Track which notifications we've shown to prevent duplicates
-    let hasShownStarted = false;
-    let hasShownCompleted = false;
-
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
       message: confirmationMessage,
@@ -220,50 +258,30 @@ export class SmartAlertService {
         // Cast apiMethod to any to avoid TypeScript error with dynamic method names
         // The method names are validated at registry definition time, so this is safe
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return this.api.job(action.apiMethod as any, [taskId]);
+        return this.api.job(action.apiMethod as any, [taskId]).pipe(
+          distinctUntilChanged((prev, curr) => prev.state === curr.state),
+          tap((job) => {
+            if (job.state === JobState.Running) {
+              this.snackbar.success(
+                this.translate.instant('Task «{name}» has started.', { name: taskName }),
+              );
+              this.refreshPageIfOnTaskRoute(relatedRoute);
+            } else if (job.state === JobState.Success) {
+              this.snackbar.success(
+                this.translate.instant('Task «{name}» completed successfully.', { name: taskName }),
+              );
+              this.refreshPageIfOnTaskRoute(relatedRoute);
+            } else if (job.state === JobState.Failed || job.state === JobState.Aborted) {
+              this.snackbar.error(
+                this.translate.instant('Task «{name}» failed.', { name: taskName }),
+              );
+              this.refreshPageIfOnTaskRoute(relatedRoute);
+            }
+          }),
+        );
       }),
-    ).subscribe({
-      next: (job: Job) => {
-        // Show "started" notification only once when job first enters Running state
-        if (job.state === JobState.Running && !hasShownStarted) {
-          hasShownStarted = true;
-          this.snackbar.success(
-            this.translate.instant('Task «{name}» has started.', { name: taskName }),
-          );
-          // Refresh the page immediately when task starts so user sees the running state
-          this.refreshPageIfOnTaskRoute(relatedRoute);
-        } else if (job.state === JobState.Success && !hasShownCompleted) {
-          // Show "completed" notification only once when job finishes successfully
-          hasShownCompleted = true;
-          this.snackbar.success(
-            this.translate.instant('Task «{name}» completed successfully.', { name: taskName }),
-          );
-          // Refresh the page again on completion to show final state
-          this.refreshPageIfOnTaskRoute(relatedRoute);
-        } else if ((job.state === JobState.Failed || job.state === JobState.Aborted) && !hasShownCompleted) {
-          // Handle jobs that fail or are aborted without showing started notification
-          hasShownCompleted = true;
-          if (!hasShownStarted) {
-            // Job failed before we could show "started", just show failure
-            this.snackbar.error(
-              this.translate.instant('Task «{name}» failed to start.', { name: taskName }),
-            );
-          } else {
-            // Job started but then failed
-            this.snackbar.error(
-              this.translate.instant('Task «{name}» failed.', { name: taskName }),
-            );
-          }
-          // Refresh the page to show the failed state
-          this.refreshPageIfOnTaskRoute(relatedRoute);
-        }
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-        // Also refresh on error in case the task was started
-        this.refreshPageIfOnTaskRoute(relatedRoute);
-      },
-    });
+      this.errorHandler.withErrorHandler(),
+    ).subscribe();
   }
 
   /**
@@ -340,50 +358,63 @@ export class SmartAlertService {
 
   /**
    * Gets count of alerts by menu path for navigation badges
-   * Counts alerts for both the specific path and all parent paths
+   * Counts unique alert types (by key) for both the specific path and all parent paths
    * Example: alert with path ['data-protection', 'cloud-backup']
    * increments counts for both 'data-protection' and 'data-protection.cloud-backup'
+   *
+   * Deduplicates alerts by key to show the number of unique issues, not total instances.
+   * For example, if there are 2 instances of the same alert, it counts as 1.
    */
   getAlertCountsByMenuPath(
     alerts: (Alert & EnhancedAlert)[],
   ): Map<string, { critical: number; warning: number; info: number }> {
     const counts = new Map<string, { critical: number; warning: number; info: number }>();
 
+    // First, deduplicate alerts by key - keep the most recent instance of each
+    const uniqueAlertsByKey = new Map<string, Alert & EnhancedAlert>();
     alerts
       .filter((alert) => !alert.dismissed && alert.relatedMenuPath)
       .forEach((alert) => {
-        const menuPath = alert.relatedMenuPath;
-        if (!menuPath) return;
-
-        const isCritical = [
-          AlertLevel.Critical,
-          AlertLevel.Alert,
-          AlertLevel.Emergency,
-          AlertLevel.Error,
-        ].includes(alert.level);
-        const isWarning = [AlertLevel.Warning].includes(alert.level);
-        const isInfo = [AlertLevel.Info, AlertLevel.Notice].includes(alert.level);
-
-        // Count for each path segment and all parent paths
-        // Example: ['data-protection', 'cloud-backup'] creates entries for:
-        // - 'data-protection'
-        // - 'data-protection.cloud-backup'
-        for (let i = 1; i <= menuPath.length; i++) {
-          const pathSegments = menuPath.slice(0, i);
-          const path = pathSegments.join('.');
-          const current = counts.get(path) || { critical: 0, warning: 0, info: 0 };
-
-          if (isCritical) {
-            current.critical++;
-          } else if (isWarning) {
-            current.warning++;
-          } else if (isInfo) {
-            current.info++;
-          }
-
-          counts.set(path, current);
+        const existing = uniqueAlertsByKey.get(alert.key);
+        if (!existing || (alert.datetime?.$date || 0) > (existing.datetime?.$date || 0)) {
+          uniqueAlertsByKey.set(alert.key, alert);
         }
       });
+
+    // Now count unique alerts by path
+    uniqueAlertsByKey.forEach((alert) => {
+      const menuPath = alert.relatedMenuPath;
+      if (!menuPath) return;
+
+      const isCritical = [
+        AlertLevel.Critical,
+        AlertLevel.Alert,
+        AlertLevel.Emergency,
+        AlertLevel.Error,
+      ].includes(alert.level);
+      const isWarning = [AlertLevel.Warning].includes(alert.level);
+      const isInfo = [AlertLevel.Info, AlertLevel.Notice].includes(alert.level);
+
+      // Count for each path segment and all parent paths
+      // Example: ['data-protection', 'cloud-backup'] creates entries for:
+      // - 'data-protection'
+      // - 'data-protection.cloud-backup'
+      for (let i = 1; i <= menuPath.length; i++) {
+        const pathSegments = menuPath.slice(0, i);
+        const path = pathSegments.join('.');
+        const current = counts.get(path) || { critical: 0, warning: 0, info: 0 };
+
+        if (isCritical) {
+          current.critical++;
+        } else if (isWarning) {
+          current.warning++;
+        } else if (isInfo) {
+          current.info++;
+        }
+
+        counts.set(path, current);
+      }
+    });
 
     return counts;
   }
