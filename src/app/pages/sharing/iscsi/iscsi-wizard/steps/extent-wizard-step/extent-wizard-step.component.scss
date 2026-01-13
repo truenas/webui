@@ -1,16 +1,3 @@
-.columns {
-  display: flex;
-
-  .column {
-    flex: 1;
-    margin-right: 16px;
-
-    &:last-of-type {
-      margin-right: 0;
-    }
-  }
-}
-
 .snapshot-info-box {
   background-color: var(--alt-bg1);
   border: 1px solid var(--lines);
