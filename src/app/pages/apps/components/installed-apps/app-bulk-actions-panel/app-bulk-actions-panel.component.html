@@ -18,6 +18,7 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-button
+      ixTest="start-selected"
       [disabled]="isBulkStartDisabled()"
       (click)="bulkStart.emit()"
     >
@@ -26,6 +27,7 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-button
+      ixTest="stop-selected"
       [disabled]="isBulkStopDisabled()"
       (click)="bulkStop.emit()"
     >
@@ -34,6 +36,7 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-button
+      ixTest="update-selected"
       [disabled]="isBulkUpdateDisabled()"
       (click)="bulkUpdate.emit()"
     >
@@ -42,6 +45,7 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-button
+      ixTest="delete-selected"
       color="warn"
       (click)="bulkDelete.emit()"
     >

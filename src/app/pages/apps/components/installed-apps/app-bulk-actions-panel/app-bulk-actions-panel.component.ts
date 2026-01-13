@@ -10,6 +10,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { App } from 'app/interfaces/app.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   selector: 'ix-app-bulk-actions-panel',
@@ -25,6 +26,7 @@ import { App } from 'app/interfaces/app.interface';
     MatButton,
     TranslateModule,
     RequiresRolesDirective,
+    TestDirective,
   ],
 })
 export class AppBulkActionsPanelComponent {
