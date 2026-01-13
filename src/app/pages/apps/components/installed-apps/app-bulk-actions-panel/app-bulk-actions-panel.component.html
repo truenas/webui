@@ -1,0 +1,51 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Multi-select Mode' | translate }}</h3>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="selected-apps">
+      <h4>{{ 'Selected Applications' | translate }}</h4>
+      <ul>
+        @for (app of checkedApps(); track app.id) {
+          <li>{{ app.name }}</li>
+        }
+      </ul>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      [disabled]="isBulkStartDisabled()"
+      (click)="bulkStart.emit()"
+    >
+      {{ 'Start All Selected' | translate }}
+    </button>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      [disabled]="isBulkStopDisabled()"
+      (click)="bulkStop.emit()"
+    >
+      {{ 'Stop All Selected' | translate }}
+    </button>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      [disabled]="isBulkUpdateDisabled()"
+      (click)="bulkUpdate.emit()"
+    >
+      {{ 'Update All Selected' | translate }}
+    </button>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      color="warn"
+      (click)="bulkDelete.emit()"
+    >
+      {{ 'Delete All Selected' | translate }}
+    </button>
+  </mat-card-actions>
+</mat-card>

@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AsyncPipe, Location } from '@angular/common';
 import {
-  Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, inject,
+  Component, ChangeDetectionStrategy, output, OnInit, ChangeDetectorRef, inject, input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -67,7 +67,6 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
   styleUrls: ['./installed-apps-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    InstalledAppsListBulkActionsComponent,
     FakeProgressBarComponent,
     BasicSearchComponent,
     IxIconComponent,
@@ -81,6 +80,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     MatTooltip,
     TestDirective,
     TranslateModule,
+    InstalledAppsListBulkActionsComponent,
   ],
 })
 
@@ -103,6 +103,7 @@ export class InstalledAppsListComponent implements OnInit {
   private loader = inject(LoaderService);
 
   readonly appId = toSignal<string | undefined>(this.activatedRoute.params.pipe(map((params) => params['appId'])));
+  readonly isMobileView = input<boolean>(false);
   readonly toggleShowMobileDetails = output<boolean>();
 
   protected readonly searchableElements = installedAppsElements;
@@ -177,6 +178,9 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   viewDetails(app: App): void {
+    if (this.hasCheckedApps) {
+      return;
+    }
     // Use location.replaceState to update URL without triggering navigation
     // This prevents router scroll behavior from resetting the scroll position
     this.location.replaceState(`/apps/installed/${app.metadata.train}/${app.id}`);
@@ -194,9 +198,21 @@ export class InstalledAppsListComponent implements OnInit {
   toggleAppsChecked(checked: boolean): void {
     if (checked) {
       this.filteredApps.forEach((app) => this.selection.select(app.id));
+      this.selectedApp = undefined;
+      this.location.replaceState('/apps/installed');
     } else {
       this.selection.clear();
     }
+    this.cdr.markForCheck();
+  }
+
+  onCheckboxChange(appId: string): void {
+    this.selection.toggle(appId);
+    if (this.hasCheckedApps) {
+      this.selectedApp = undefined;
+      this.location.replaceState('/apps/installed');
+    }
+    this.cdr.markForCheck();
   }
 
   private showLoadStatus(

@@ -1,0 +1,45 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+  margin: 0;
+}
+
+.selected-apps {
+  h4 {
+    color: var(--fg2);
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      color: var(--fg1);
+      padding: 4px 0;
+
+      &::before {
+        color: var(--fg1);
+        content: '•';
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+.card mat-card-actions {
+  border-top: 1px solid var(--lines);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 16px;
+
+  button {
+    width: 100%;
+  }
+}

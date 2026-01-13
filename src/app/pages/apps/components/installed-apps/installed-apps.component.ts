@@ -14,6 +14,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AppBulkActionsPanelComponent } from 'app/pages/apps/components/installed-apps/app-bulk-actions-panel/app-bulk-actions-panel.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/docker-status/docker-status.component';
@@ -36,6 +37,7 @@ import { InstalledAppsListComponent } from 'app/pages/apps/components/installed-
     AppSettingsButtonComponent,
     RouterLink,
     MatAnchor,
+    AppBulkActionsPanelComponent,
     AppDetailsPanelComponent,
     MasterDetailViewComponent,
     InstalledAppsListComponent,

@@ -26,7 +26,6 @@ import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app
 import { AppBulkUpdateComponent } from 'app/pages/apps/components/installed-apps/app-bulk-update/app-bulk-update.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
-import { InstalledAppsListBulkActionsComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list-bulk-actions/installed-apps-list-bulk-actions.component';
 import { InstalledAppsListComponent } from 'app/pages/apps/components/installed-apps/installed-apps-list/installed-apps-list.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
@@ -190,7 +189,7 @@ describe('InstalledAppsListComponent', () => {
   it('starts several applications', async () => {
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
-    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStart.emit();
+    spectator.component.onBulkStart();
 
     expect(applicationsService.startApplication).toHaveBeenCalledWith('test-app-2');
   });
@@ -198,7 +197,7 @@ describe('InstalledAppsListComponent', () => {
   it('stops several applications', async () => {
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
-    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStop.emit();
+    spectator.component.onBulkStop();
 
     expect(applicationsService.stopApplication).toHaveBeenCalledWith('test-app-1');
   });
@@ -206,7 +205,7 @@ describe('InstalledAppsListComponent', () => {
   it('updates several applications', async () => {
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
-    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpdate.emit();
+    spectator.component.onBulkUpdate();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, { data: apps });
   });
@@ -218,7 +217,7 @@ describe('InstalledAppsListComponent', () => {
 
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
-    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkDelete.emit();
+    spectator.component.onBulkDelete();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppDeleteDialog, {
       data: {

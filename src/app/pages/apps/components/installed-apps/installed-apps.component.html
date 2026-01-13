@@ -33,27 +33,39 @@
 
 <ix-master-detail-view
   #masterDetailView="masterDetailViewContext"
-  [showDetails]="masterList.isSelectedAppVisible"
-  [selectedItem]="selectedApp"
+  [showDetails]="masterList.isSelectedAppVisible || masterList.hasCheckedApps"
+  [selectedItem]="selectedApp || masterList.checkedApps[0]"
 >
   <ix-installed-apps-list
     #masterList
     master
+    [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-installed-apps-list>
 
   @if (masterDetailView.isMobileView()) {
     <ng-container detail-header>
-      {{ 'Details for' | translate }}
-      {{ selectedApp?.name }}
+      @if (masterList.hasCheckedApps) {
+        {{ 'Bulk Actions' | translate }}
+      } @else {
+        {{ 'Details for' | translate }}
+        {{ selectedApp?.name }}
+      }
     </ng-container>
   }
 
   <ng-container detail>
-    @if (selectedApp) {
+    @if (masterList.hasCheckedApps && !masterDetailView.isMobileView()) {
+      <ix-app-bulk-actions-panel
+        [checkedApps]="masterList.checkedApps"
+        (bulkStart)="masterList.onBulkStart()"
+        (bulkStop)="masterList.onBulkStop()"
+        (bulkUpdate)="masterList.onBulkUpdate()"
+        (bulkDelete)="masterList.onBulkDelete()"
+      ></ix-app-bulk-actions-panel>
+    } @else if (selectedApp) {
       <ix-app-details-panel
         [app]="selectedApp"
-        [class.detail-disabled]="masterList.hasCheckedApps"
         (startApp)="start(selectedApp.name)"
         (stopApp)="stop(selectedApp.name)"
         (closeMobileDetails)="masterDetailView.toggleShowMobileDetails(false)"
