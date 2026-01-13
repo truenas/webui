@@ -1,5 +1,4 @@
 export enum SmbInfoLevel {
-  AuthLog = 'AUTH_LOG',
   All = 'ALL',
   Sessions = 'SESSIONS',
   Shares = 'SHARES',
