@@ -255,9 +255,7 @@ export class SystemSecurityFormComponent implements OnInit {
     ).pipe(
       map((details: Partial<StigEnablementRequirements>[]): Partial<StigEnablementRequirements> => {
         // merge all details into one big `StigEnablementRequirements`
-        const result = {};
-        details.forEach((detail) => Object.assign(result, detail));
-        return result;
+        return details.reduce((acc, detail) => ({ ...acc, ...detail }), {} as StigEnablementRequirements);
       }),
       this.errorHandler.withErrorHandler(),
       finalize(() => this.loadingStigRequirements.set(false)),
