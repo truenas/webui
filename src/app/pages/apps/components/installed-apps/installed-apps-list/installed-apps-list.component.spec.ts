@@ -268,4 +268,27 @@ describe('InstalledAppsListComponent', () => {
     expect(component.dataSource).toHaveLength(1);
     expect(component.dataSource[0].name).toBe('new-app');
   });
+
+  it('clears detail selection when entering bulk mode via checkbox', async () => {
+    spectator.click(spectator.query('ix-app-row')!);
+    expect(spectator.component.selectedApp).toEqual(apps[0]);
+
+    const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
+    await selectAll.check();
+
+    expect(spectator.component.selectedApp).toBeUndefined();
+  });
+
+  it('does not open details when clicking a row while in bulk mode', async () => {
+    const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
+    await selectAll.check();
+
+    const locationSpy = jest.spyOn(spectator.inject(Location), 'replaceState');
+    locationSpy.mockClear();
+
+    spectator.click(spectator.queryAll('ix-app-row')[1]!);
+
+    expect(spectator.component.selectedApp).toBeUndefined();
+    expect(locationSpy).not.toHaveBeenCalledWith(expect.stringContaining('ix-test-app-2'));
+  });
 });
