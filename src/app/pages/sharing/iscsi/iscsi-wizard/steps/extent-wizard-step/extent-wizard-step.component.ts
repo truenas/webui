@@ -96,26 +96,21 @@ export class ExtentWizardStepComponent implements OnInit {
       }
     });
 
-    this.form().controls.disk.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((zvol) => {
-      if (zvol === newOption) {
+    this.form().controls.disk.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((diskValue) => {
+      // Handle dataset/volsize for "Create New" zvol
+      if (diskValue === newOption) {
         this.form().controls.dataset.enable();
         this.form().controls.volsize.enable();
       } else {
         this.form().controls.dataset.disable();
         this.form().controls.volsize.disable();
       }
-    });
 
-    // Handle snapshot selection - auto-set ro=true and disable checkbox
-    this.form().controls.disk.valueChanges.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((diskValue: string) => {
+      // Handle snapshot selection - auto-set ro=true and disable checkbox
       if (diskValue?.includes('@')) {
-        // Snapshot selected - must be read-only
         this.form().controls.ro.setValue(true);
         this.form().controls.ro.disable();
       } else if (diskValue !== newOption) {
-        // Regular device - allow ro to be toggled
         this.form().controls.ro.enable();
       }
     });
