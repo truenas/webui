@@ -53,4 +53,35 @@ describe('BasicSearchComponent', () => {
       expect(spectator.component.switchToAdvanced.emit).toHaveBeenCalled();
     });
   });
+
+  describe('accessibility', () => {
+    it('should have proper accessibility attributes on clear button', async () => {
+      await searchHarness.setValue('test');
+      spectator.detectChanges();
+
+      const clearButton = spectator.query('[ixTest="clear-search"]');
+      expect(clearButton).toExist();
+      expect(clearButton.getAttribute('role')).toBe('button');
+      expect(clearButton.getAttribute('aria-label')).toBe('Clear search');
+      expect(clearButton.getAttribute('tabindex')).toBe('0');
+    });
+
+    it('should hide clear button when search is empty', () => {
+      const clearButton = spectator.query('[ixTest="clear-search"]');
+      expect(clearButton).not.toExist();
+    });
+
+    it('should support keyboard interaction on clear button', async () => {
+      await searchHarness.setValue('test');
+      spectator.detectChanges();
+
+      const clearButton = spectator.query('[ixTest="clear-search"]');
+      expect(clearButton).toExist();
+
+      clearButton.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+      spectator.detectChanges();
+
+      expect(await searchHarness.getValue()).toBe('');
+    });
+  });
 });

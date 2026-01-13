@@ -1,6 +1,17 @@
 @if (!inCard()) {
   <ix-page-header>
     <ix-basic-search [query]="searchQuery()" (queryChange)="onListFiltered($event)"></ix-basic-search>
+    @if (isActiveDirectoryEnabled()) {
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        ixTest="sync-kerberos-keytab"
+        [ixUiSearch]="searchableElements.elements.sync"
+        (click)="syncKeytab()"
+      >
+        {{ 'Sync' | translate }}
+      </button>
+    }
     <button
       *ixRequiresRoles="requiredRoles"
       mat-button
@@ -29,6 +40,16 @@
         ></ix-icon>
       </div>
       <div class="action">
+        @if (isActiveDirectoryEnabled()) {
+          <button
+            *ixRequiresRoles="requiredRoles"
+            mat-button
+            ixTest="sync-kerberos-keytab"
+            (click)="syncKeytab()"
+          >
+            {{ 'Sync' | translate }}
+          </button>
+        }
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button

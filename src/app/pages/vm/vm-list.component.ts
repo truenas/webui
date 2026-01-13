@@ -345,7 +345,7 @@ export class VmListComponent implements OnInit {
       });
     } else if (vm.status.state !== VmState.Running && checked) {
       // User wants to start a stopped VM - start directly
-      this.vmService.doStart(vm).pipe(
+      this.vmService.doStartResume(vm).pipe(
         take(1),
         untilDestroyed(this),
       ).subscribe((success: boolean) => {

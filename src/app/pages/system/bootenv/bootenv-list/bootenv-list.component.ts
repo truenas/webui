@@ -160,14 +160,14 @@ export class BootEnvironmentListComponent implements OnInit {
           onClick: (row) => this.doActivate(row),
         },
         {
-          iconName: iconMarker('bookmark'),
+          iconName: iconMarker('bookmark_border'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Keep'),
           hidden: (row) => of(row.keep),
           onClick: (row) => this.toggleKeep(row),
         },
         {
-          iconName: iconMarker('bookmark_border'),
+          iconName: iconMarker('bookmark'),
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Unkeep'),
           hidden: (row) => of(!row.keep),

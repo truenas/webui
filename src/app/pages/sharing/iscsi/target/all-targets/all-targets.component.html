@@ -5,7 +5,7 @@
   #masterDetailView="masterDetailViewContext"
   [selectedItem]="target"
   [showDetails]="showDetails"
-  (mobileDetailsClosed)="dataProvider.expandedRow = null"
+  (mobileDetailsClosed)="onMobileDetailsClosed()"
 >
   <ix-iscsi-target-list
     #masterList

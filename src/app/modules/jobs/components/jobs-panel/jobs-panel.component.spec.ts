@@ -191,9 +191,14 @@ describe('JobsPanelComponent', () => {
     spectator.click(byText('replication.run'));
 
     expect(spectator.inject(DialogService).error).toHaveBeenCalledWith({
-      message: 'Some error',
+      message: '<pre>Some error</pre>',
       title: 'FAILED',
       stackTrack: undefined,
+      actions: [{
+        label: 'View Details',
+        params: { jobId: failedJob.id },
+        route: '/jobs',
+      }],
     });
   });
 

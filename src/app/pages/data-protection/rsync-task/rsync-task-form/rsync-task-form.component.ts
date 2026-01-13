@@ -16,6 +16,7 @@ import { newOption } from 'app/interfaces/option.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
@@ -60,6 +61,7 @@ import { UserService } from 'app/services/user.service';
     IxCheckboxComponent,
     SchedulerComponent,
     IxChipsComponent,
+    FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,

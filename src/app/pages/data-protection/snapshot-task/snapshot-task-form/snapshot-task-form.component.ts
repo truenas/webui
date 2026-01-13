@@ -14,6 +14,7 @@ import {
   PeriodicSnapshotTaskCreate,
   PeriodicSnapshotTaskUpdate,
 } from 'app/interfaces/periodic-snapshot-task.interface';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -53,6 +54,7 @@ import { TaskService } from 'app/services/task.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    FormActionsComponent,
   ],
 })
 export class SnapshotTaskFormComponent implements OnInit {

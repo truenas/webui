@@ -73,5 +73,6 @@ export interface CloudSyncListDirectoryParams {
 export interface CloudSyncDirectoryListing {
   Name: string;
   IsDir: boolean;
-  Decrypted: boolean;
+  // The decrypted name of the file or directory
+  Decrypted?: string;
 }

@@ -16,6 +16,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -71,7 +72,7 @@ const tasks = [{
   logging_level: null,
   name: 'pewl - pewl',
   state: {
-    state: JobState.Hold,
+    state: TaskState.Hold,
     datetime: {
       $date: new Date().getTime() - 50000,
     },

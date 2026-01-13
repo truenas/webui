@@ -9,6 +9,7 @@ export interface DatasetAclEditorState {
   stat: FileSystemStat | null;
   selectedAceIndex: number | null;
   acesWithError: number[]; // Indices
+  returnUrl: string | null;
 }
 
 export interface AclSaveFormParams {

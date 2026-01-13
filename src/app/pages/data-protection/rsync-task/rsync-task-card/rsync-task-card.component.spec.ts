@@ -13,7 +13,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
-import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -47,7 +46,7 @@ describe('RsyncTaskCardComponent', () => {
       delayupdates: true,
       job: {
         id: 1,
-        state: JobState.Finished,
+        state: JobState.Failed,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
@@ -64,7 +63,7 @@ describe('RsyncTaskCardComponent', () => {
       state: {
         state: 'FAILED',
       },
-    } as RsyncTaskUi,
+    } as unknown as RsyncTaskUi,
   ];
 
   const createComponent = createComponentFactory({
@@ -77,13 +76,7 @@ describe('RsyncTaskCardComponent', () => {
         selectors: [
           {
             selector: selectJobs,
-            value: [{
-              id: 1,
-              state: 'FINISHED',
-              time_finished: {
-                $date: new Date().getTime() - 50000,
-              },
-            } as Job],
+            value: rsyncTasks.map((task) => task.job),
           },
           {
             selector: selectSystemConfigState,
@@ -123,7 +116,7 @@ describe('RsyncTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Path', 'Remote Host', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['/mnt/APPS', 'asd', 'Every hour, every day', 'Disabled', '1 min. ago', '', 'Finished', ''],
+      ['/mnt/APPS', 'asd', 'Every hour, every day', 'Disabled', '1 min. ago', '', 'Failed', ''],
     ];
 
     const cells = await table.getCellTexts();

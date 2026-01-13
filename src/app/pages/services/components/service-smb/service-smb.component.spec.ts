@@ -12,6 +12,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { SmbConfig, smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
+import { SmbShare, SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -26,6 +27,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UserService } from 'app/services/user.service';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('ServiceSmbComponent', () => {
@@ -74,7 +76,9 @@ describe('ServiceSmbComponent', () => {
           next_rid: 0,
           encryption: SmbEncryption.Negotiate,
           search_protocols: [smbSearchSpotlight],
+          stateful_failover: false,
         } as SmbConfig),
+        mockCall('sharing.smb.query', [] as SmbShare[]),
         mockCall('smb.unixcharset_choices', {
           'UTF-8': 'UTF-8',
           'UTF-16': 'UTF-16',
@@ -113,6 +117,7 @@ describe('ServiceSmbComponent', () => {
       provideMockStore({
         selectors: [
           { selector: selectIsEnterprise, value: false },
+          { selector: selectIsHaLicensed, value: false },
         ],
       }),
     ],
@@ -198,11 +203,15 @@ describe('ServiceSmbComponent', () => {
       next_rid: 0,
       encryption: SmbEncryption.Negotiate,
       search_protocols: [],
+      stateful_failover: false,
     } as SmbConfig;
 
     jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method: string) => {
       if (method === 'smb.config') {
         return of(smbConfigMock);
+      }
+      if (method === 'sharing.smb.query') {
+        return of([] as SmbShare[]);
       }
       return of(null);
     });
@@ -260,6 +269,7 @@ describe('ServiceSmbComponent', () => {
       unixcharset: 'UTF-8',
       encryption: SmbEncryption.Negotiate,
       search_protocols: [smbSearchSpotlight],
+      stateful_failover: false,
     }]);
   });
 
@@ -321,6 +331,7 @@ describe('ServiceSmbComponent', () => {
       unixcharset: 'UTF-16',
       encryption: SmbEncryption.Default,
       search_protocols: [],
+      stateful_failover: false,
     }]);
   });
 
@@ -564,6 +575,138 @@ describe('ServiceSmbComponent', () => {
 
       const notice = spectator.query('.truenas-connect-notice');
       expect(notice).toBeTruthy();
+    });
+  });
+
+  describe('Stateful Failover validation', () => {
+    it('should not show Stateful Failover checkbox when HA is not licensed', async () => {
+      store$.overrideSelector(selectIsHaLicensed, false);
+      store$.refreshState();
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const statefulFailoverCheckbox = spectator.query('[formControlName="stateful_failover"]');
+      expect(statefulFailoverCheckbox).toBeFalsy();
+    });
+
+    it('should show and enable Stateful Failover checkbox when HA is licensed with no incompatible shares and SMB1 disabled', async () => {
+      store$.overrideSelector(selectIsHaLicensed, true);
+      store$.refreshState();
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const statefulFailoverCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="stateful_failover"]' }));
+      expect(await statefulFailoverCheckbox.isDisabled()).toBe(false);
+    });
+
+    it('should disable Stateful Failover checkbox when there are incompatible shares', async () => {
+      store$.overrideSelector(selectIsHaLicensed, true);
+      store$.refreshState();
+
+      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method: string) => {
+        if (method === 'sharing.smb.query') {
+          return of([{ purpose: SmbSharePurpose.MultiProtocolShare }] as SmbShare[]);
+        }
+        if (method === 'smb.config') {
+          return of({
+            netbiosname: 'truenas',
+            workgroup: 'WORKGROUP',
+            description: '',
+            enable_smb1: false,
+            bindip: [],
+            encryption: SmbEncryption.Negotiate,
+            search_protocols: [],
+            stateful_failover: false,
+          } as SmbConfig);
+        }
+        return of(null);
+      });
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const statefulFailoverCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="stateful_failover"]' }));
+      expect(await statefulFailoverCheckbox.isDisabled()).toBe(true);
+    });
+
+    it('should disable Stateful Failover checkbox when SMB1 is enabled', async () => {
+      store$.overrideSelector(selectIsHaLicensed, true);
+      store$.refreshState();
+
+      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method: string) => {
+        if (method === 'sharing.smb.query') {
+          return of([] as SmbShare[]);
+        }
+        if (method === 'smb.config') {
+          return of({
+            netbiosname: 'truenas',
+            workgroup: 'WORKGROUP',
+            description: '',
+            enable_smb1: true,
+            bindip: [],
+            encryption: SmbEncryption.Negotiate,
+            search_protocols: [],
+            stateful_failover: false,
+          } as SmbConfig);
+        }
+        return of(null);
+      });
+
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      const statefulFailoverCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="stateful_failover"]' }));
+      expect(await statefulFailoverCheckbox.isDisabled()).toBe(true);
+    });
+
+    it('should re-enable Stateful Failover checkbox when SMB1 is toggled off', async () => {
+      store$.overrideSelector(selectIsHaLicensed, true);
+      store$.refreshState();
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
+      await advancedButton.click();
+
+      // Initially enabled (no incompatible shares, SMB1 disabled)
+      const statefulFailoverCheckbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="stateful_failover"]' }));
+      expect(await statefulFailoverCheckbox.isDisabled()).toBe(false);
+
+      // Enable SMB1
+      const smb1Checkbox = await loader.getHarness(IxCheckboxHarness.with({ selector: '[formControlName="enable_smb1"]' }));
+      await smb1Checkbox.toggle();
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Should be disabled now
+      expect(await statefulFailoverCheckbox.isDisabled()).toBe(true);
+
+      // Disable SMB1
+      await smb1Checkbox.toggle();
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      // Should be enabled again
+      expect(await statefulFailoverCheckbox.isDisabled()).toBe(false);
     });
   });
 });

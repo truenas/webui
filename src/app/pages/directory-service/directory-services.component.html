@@ -42,7 +42,7 @@
   @if (expansionPanel.expanded) {
     <div class="advanced-settings-cards">
       <ix-kerberos-realms-list [paginator]="false" [inCard]="true"></ix-kerberos-realms-list>
-      <ix-kerberos-keytabs-list [paginator]="false" [inCard]="true"></ix-kerberos-keytabs-list>
+      <ix-kerberos-keytabs-list [paginator]="false" [inCard]="true" [showSyncButton]="isActiveDirectoryEnabled"></ix-kerberos-keytabs-list>
     </div>
   }
 </cdk-accordion-item>

@@ -52,4 +52,22 @@ describe('TopologyCategoryDescriptionPipe', () => {
       vdevs: [[{}], [{}]],
     } as PoolManagerTopologyCategory, false)).toBe('3 × 2 GiB (HDD)');
   });
+
+  it('returns VDEVs count when disk info is not available (e.g., manually selected spares)', () => {
+    expect(spectator.service.transform({
+      diskSize: null,
+      diskType: null,
+      width: null,
+      vdevs: [[{}, {}], [{}]],
+    } as PoolManagerTopologyCategory, true, true)).toBe('Manual layout | 2 VDEVs');
+  });
+
+  it('returns single VDEV when only one VDEV exists', () => {
+    expect(spectator.service.transform({
+      diskSize: null,
+      diskType: null,
+      width: null,
+      vdevs: [[{}]],
+    } as PoolManagerTopologyCategory, true, true)).toBe('Manual layout | 1 VDEVs');
+  });
 });

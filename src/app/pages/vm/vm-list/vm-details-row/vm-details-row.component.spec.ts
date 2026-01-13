@@ -55,7 +55,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
       mockProvider(VmService, {
         hasVirtualizationSupport$: of(true),
         downloadLogs: jest.fn(() => of(fakeFile('test.log'))),
-        doStart: jest.fn(() => of()),
+        doStartResume: jest.fn(() => of()),
         doStop: jest.fn(() => of()),
         doRestart: jest.fn(() => of()),
         doPowerOff: jest.fn(() => of()),
@@ -142,7 +142,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
 
     await startButton.click();
 
-    expect(spectator.inject(VmService).doStart).toHaveBeenCalledWith(stoppedVirtualMachine);
+    expect(spectator.inject(VmService).doStartResume).toHaveBeenCalledWith(stoppedVirtualMachine);
   });
 
   it('should call service to restart the VM', async () => {
@@ -199,7 +199,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
       const resumeButton = await loader.getHarness(MatButtonHarness.with({ text: /Resume/ }));
       await resumeButton.click();
 
-      expect(spectator.inject(VmService).doStart).toHaveBeenCalledWith(suspendedVirtualMachine);
+      expect(spectator.inject(VmService).doStartResume).toHaveBeenCalledWith(suspendedVirtualMachine);
     });
 
     it('should not show Stop or Restart buttons for suspended VM', async () => {

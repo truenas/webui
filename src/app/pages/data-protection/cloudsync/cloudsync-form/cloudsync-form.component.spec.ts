@@ -8,8 +8,8 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
-import { JobState } from 'app/enums/job-state.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
@@ -77,7 +77,7 @@ describe('CloudSyncFormComponent', () => {
     credential: 'test2',
     next_run_time: 'Disabled',
     next_run: 'Disabled',
-    state: { state: JobState.Pending },
+    state: { state: TaskState.Pending },
   } as CloudSyncTaskUi;
 
   const existingTask2 = {

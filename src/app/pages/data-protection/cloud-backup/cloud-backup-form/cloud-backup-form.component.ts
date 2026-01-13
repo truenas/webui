@@ -234,7 +234,7 @@ export class CloudBackupFormComponent implements OnInit {
             if (file.IsDir) {
               nodes.push({
                 path: `${data.attributes.folder}/${file.Name}`.replace(/\/+/g, '/'),
-                name: file.Name,
+                name: file.Decrypted ? file.Decrypted : file.Name,
                 type: ExplorerNodeType.Directory,
                 hasChildren: true,
               });

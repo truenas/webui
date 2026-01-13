@@ -129,10 +129,10 @@ describe('AlertComponent', () => {
     expect(link).toExist();
 
     const alertLinkService = spectator.inject(AlertLinkService);
-    jest.spyOn(alertLinkService, 'openLink').mockImplementation();
+    jest.spyOn(alertLinkService, 'openLinkForAlert').mockImplementation();
     spectator.click(link);
 
-    expect(alertLinkService.openLink).toHaveBeenCalledWith(AlertClassName.ApiKeyRevoked);
+    expect(alertLinkService.openLinkForAlert).toHaveBeenCalledWith(dummyAlert);
   });
 
   it('reopens a dismissed alert when Re-open link is pressed', async () => {

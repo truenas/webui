@@ -10,7 +10,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   Observable, Subscription, map,
 } from 'rxjs';
-import { JobState } from 'app/enums/job-state.enum';
+import { DisplayableState, JobState } from 'app/enums/job-state.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -100,13 +101,14 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
   }
 
   get isJobStateDeterminate(): boolean {
-    return [
+    const terminalStates: DisplayableState[] = [
       JobState.Aborted,
-      JobState.Error,
+      TaskState.Error,
       JobState.Failed,
-      JobState.Finished,
+      TaskState.Finished,
       JobState.Success,
-    ].includes(this.job?.state) || this.isJobRunning;
+    ];
+    return terminalStates.includes(this.job?.state as DisplayableState) || this.isJobRunning;
   }
 
   ngOnInit(): void {

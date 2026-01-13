@@ -107,6 +107,9 @@ export class DatasetAclEditorComponent implements OnInit {
     this.datasetPath = this.route.snapshot.queryParamMap.get('path');
     this.store.loadAcl(this.datasetPath);
 
+    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+    this.store.setState((state) => ({ ...state, returnUrl }));
+
     this.store.state$
       .pipe(untilDestroyed(this))
       .subscribe((state) => {
@@ -151,7 +154,9 @@ export class DatasetAclEditorComponent implements OnInit {
           return;
         }
 
-        this.router.navigate(['/datasets', this.datasetPath]);
+        const returnUrl = this.store.state().returnUrl;
+        const returnRoute = returnUrl ? [returnUrl] : ['/datasets', this.datasetPath];
+        this.router.navigate(returnRoute);
       });
   }
 

@@ -395,5 +395,31 @@ describe('AuthSectionComponent', () => {
       // This validates the fix for the reported bug https://ixsystems.atlassian.net/browse/NAS-138307
       expect(spectator.component.form.hasError('ssh_password_enabled')).toBe(false);
     });
+
+    it('clears SSH key and password fields when SSH access is disabled', async () => {
+      // Setup initial state with SSH access enabled
+      spectator.setInput('homeDirectory', '/mnt/tank/user');
+      spectator.setInput('shell', '/usr/bin/bash');
+      spectator.detectChanges();
+
+      // Set SSH key and enable SSH password login
+      await form.fillForm({
+        Password: 'test-password',
+        'Confirm Password': 'test-password',
+        'Public SSH Key': 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...',
+        'Allow SSH Login with Password (not recommended)': true,
+      });
+
+      expect(spectator.component.form.value.sshpubkey).toBe('ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ...');
+      expect(spectator.component.form.value.ssh_password_enabled).toBe(true);
+
+      // Disable SSH access (simulating unchecking SSH Access checkbox in allowed-access-section)
+      sshAccess.set(false);
+      spectator.detectChanges();
+
+      // Both SSH fields should be cleared
+      expect(spectator.component.form.value.sshpubkey).toBe('');
+      expect(spectator.component.form.value.ssh_password_enabled).toBe(false);
+    });
   });
 });

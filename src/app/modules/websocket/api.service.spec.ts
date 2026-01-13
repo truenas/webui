@@ -28,7 +28,7 @@ describe('ApiService', () => {
 
   const jobUpdate = {
     method: 'boot.attach',
-    state: JobState.Finished,
+    state: JobState.Success,
     time_finished: {
       $date: 123456789,
     },

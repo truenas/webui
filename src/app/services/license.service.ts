@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, shareReplay, of, catchError } from 'rxjs';
+import { combineLatest, shareReplay } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
-import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -22,6 +22,7 @@ import {
 export class LicenseService {
   private store$ = inject<Store<AppState>>(Store);
   private api = inject(ApiService);
+  private truenasConnectService = inject(TruenasConnectService);
 
   hasFailover$ = this.store$.select(selectIsHaLicensed);
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
@@ -75,14 +76,6 @@ export class LicenseService {
     [isEnterprise, licenseFeatures]: [boolean, LicenseFeature[]],
   ) => !isEnterprise || licenseFeatures.includes(LicenseFeature.Jails)));
 
-  private readonly truenasConnectConfig$ = this.api.call('tn_connect.config').pipe(
-    catchError((error: unknown) => {
-      console.warn('Failed to check TrueNAS Connect status. Assuming not configured.', error);
-      return of({ enabled: false, status: TruenasConnectStatus.Disabled } as TruenasConnectConfig);
-    }),
-    shareReplay({ bufferSize: 1, refCount: false }),
-  );
-
   /**
    * Check if the system is configured with TrueNAS Connect.
    * This is used to determine if WebShare and other TrueNAS Connect features are available.
@@ -91,8 +84,8 @@ export class LicenseService {
    * - The system might still be in intermediate states (e.g., CertGenerationInProgress)
    * - Only `status === Configured` means TrueNAS Connect is fully operational
    */
-  readonly hasTruenasConnect$ = this.truenasConnectConfig$.pipe(
-    map((connectConfig) => connectConfig.status === TruenasConnectStatus.Configured),
+  readonly hasTruenasConnect$ = this.truenasConnectService.config$.pipe(
+    map((config) => config?.status === TruenasConnectStatus.Configured),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 }

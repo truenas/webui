@@ -37,6 +37,12 @@ describe('UserAccessCellComponent', () => {
     expect(await loader.getHarness(IxIconHarness.with({ name: 'ix-smb-share' }))).toBeTruthy();
   });
 
+  it('checks WebShare icon', async () => {
+    setupTest({ ...mockUser, webshare: true });
+
+    expect(await loader.getHarness(IxIconHarness.with({ name: 'ix-webshare' }))).toBeTruthy();
+  });
+
   it('checks ssh icon', async () => {
     setupTest({ ...mockUser, ssh_password_enabled: true });
 
@@ -53,12 +59,13 @@ describe('UserAccessCellComponent', () => {
     setupTest({
       ...mockUser,
       smb: true,
+      webshare: true,
       ssh_password_enabled: true,
       api_keys: [1, 2],
       roles: [Role.FullAdmin],
     });
 
-    expect(spectator.queryAll('ix-icon')).toHaveLength(4);
+    expect(spectator.queryAll('ix-icon')).toHaveLength(5);
     expect(spectator.query('span')!.textContent).toBe('Full Admin');
   });
 });

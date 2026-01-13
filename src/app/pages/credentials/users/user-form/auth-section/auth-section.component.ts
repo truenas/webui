@@ -118,7 +118,10 @@ export class AuthSectionComponent implements OnInit {
 
     effect(() => {
       if (!this.sshAccess()) {
-        this.form.patchValue({ ssh_password_enabled: false });
+        this.form.patchValue({
+          ssh_password_enabled: false,
+          sshpubkey: '',
+        });
         this.form.controls.password_disabled.enable({ emitEvent: false });
       } else if (this.form.value.password_disabled) {
         // If SSH access is enabled but password is disabled, SSH password authentication should be false

@@ -9,7 +9,6 @@ import {
   usersLoaded,
   usersNotLoaded,
 } from 'app/pages/credentials/users/store/user.actions';
-import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 
 export interface UsersState extends EntityState<User> {
   isLoading: boolean;
@@ -29,7 +28,6 @@ export const usersInitialState: UsersState = adapter.getInitialState({
 export const userReducer = createReducer(
   usersInitialState,
 
-  on(builtinUsersToggled, (state) => ({ ...state, isLoading: true, error: null as string | null })),
   on(userPageEntered, (state) => ({ ...state, isLoading: true, error: null as string | null })),
   on(usersLoaded, (state, { users }) => adapter.setAll(users, { ...state, isLoading: false })),
   on(usersNotLoaded, (state, { error }) => ({ ...state, error, isLoading: false })),

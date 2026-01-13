@@ -11,6 +11,7 @@ import { Observable, Subject, of } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
+import { generateUuid } from 'app/helpers/uuid.helper';
 import { RadioOption, SelectOption } from 'app/interfaces/option.interface';
 import { SimpleComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -302,7 +303,7 @@ export class MockConfigFormComponent implements OnInit, OnDestroy {
     }
 
     const mockConfig: MockConfig = {
-      id: configValue?.id || crypto.randomUUID(),
+      id: configValue?.id || generateUuid(),
       enabled: configValue?.enabled ?? true,
       methodName: formValue.methodName ?? '',
       messagePattern: formValue.messagePattern || undefined,

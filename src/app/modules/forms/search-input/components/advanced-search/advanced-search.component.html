@@ -31,14 +31,16 @@
 
   <span
     class="reset-icon reset-input"
+    role="button"
+    tabindex="0"
+    ixTest="clear-search"
     [class.hidden]="!editorHasValue"
-    (click)="onResetInput()" 
+    [attr.aria-label]="'Clear search' | translate"
+    [matTooltip]="'Clear search' | translate"
+    (click)="onResetInput()"
+    (keydown.enter)="$event.preventDefault(); onResetInput()"
   >
-    <ix-icon
-      name="mdi-close-circle"
-      tabindex="0"
-      (keydown.enter)="$event.preventDefault(); onResetInput()"
-    ></ix-icon>
+    <ix-icon name="mdi-close-circle"></ix-icon>
   </span>
 </div>
 

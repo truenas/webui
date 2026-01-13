@@ -11,8 +11,8 @@ import { rsyncTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -164,7 +164,7 @@ export class RsyncTaskListComponent implements OnInit {
       title: this.translate.instant('Status'),
       getValue: (row) => {
         if (!row.job) {
-          return row.locked ? JobState.Locked : JobState.Pending;
+          return row.locked ? TaskState.Locked : TaskState.Pending;
         }
 
         return row.job.state;

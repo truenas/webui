@@ -2,7 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY } from 'rxjs';
-import { filter, map, mergeMap, switchMap } from 'rxjs/operators';
+import {
+  filter, map, mergeMap, switchMap, withLatestFrom,
+} from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
@@ -13,7 +15,7 @@ import {
   haSettingsUpdated,
   haStatusLoaded,
 } from './ha-info.actions';
-import { selectIsHaLicensed } from './ha-info.selectors';
+import { selectHaInfoState, selectIsHaLicensed } from './ha-info.selectors';
 
 @Injectable()
 export class HaInfoEffects {
@@ -24,6 +26,8 @@ export class HaInfoEffects {
 
   loadFailoverLicensedStatus = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
+    withLatestFrom(this.store$.select(selectHaInfoState)),
+    filter(([, haInfoState]) => haInfoState.isHaLicensed === null),
     mergeMap(() => {
       return this.api.call('failover.licensed').pipe(
         map((isHaLicensed) => {

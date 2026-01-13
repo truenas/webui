@@ -6,6 +6,7 @@ import {
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -14,6 +15,7 @@ export interface FailoverValidationResult {
   success: boolean;
   error?: string;
   errorType?: FailoverErrorType;
+  isHaLicensed: boolean;
 }
 
 export enum FailoverErrorType {
@@ -72,10 +74,10 @@ export class FailoverValidationService {
       switchMap((isLicensed) => {
         if (!isLicensed) {
           // No failover license, validation passes
-          return of({ success: true });
+          return of({ success: true, isHaLicensed: false });
         }
 
-        // Check failover status
+        // Check failover status (isHaLicensed is always true in this branch)
         return this.checkFailoverStatus();
       }),
       catchError((error: unknown) => this.handleApiError(error, 'check')),
@@ -87,12 +89,13 @@ export class FailoverValidationService {
       switchMap((status) => {
         // SINGLE status means no failover is configured, proceed as normal
         if (status === FailoverStatus.Single) {
-          return of({ success: true });
+          return of({ success: true, isHaLicensed: true });
         }
 
         if (status !== FailoverStatus.Master) {
           return of({
             success: false,
+            isHaLicensed: true,
             error: this.translate.instant(
               'TrueNAS High Availability is in an inconsistent state. Please try again in a few minutes and contact the system administrator if the problem persists.',
             ),
@@ -103,7 +106,7 @@ export class FailoverValidationService {
         // Status is MASTER, check for ongoing failover
         return this.checkFailoverDisabledReasons();
       }),
-      catchError((error: unknown) => this.handleApiError(error, 'status')),
+      catchError((error: unknown) => this.handleApiError(error, 'status', true)),
     );
   }
 
@@ -117,9 +120,9 @@ export class FailoverValidationService {
         }
 
         // All checks passed
-        return of({ success: true });
+        return of({ success: true, isHaLicensed: true });
       }),
-      catchError((error: unknown) => this.handleApiError(error, 'reasons')),
+      catchError((error: unknown) => this.handleApiError(error, 'reasons', true)),
     );
   }
 
@@ -130,9 +133,9 @@ export class FailoverValidationService {
     const terminalStates = [
       JobState.Success,
       JobState.Failed,
-      JobState.Error,
+      TaskState.Error,
       JobState.Aborted,
-      JobState.Finished,
+      TaskState.Finished,
     ];
 
     return this.api.subscribe('core.get_jobs').pipe(
@@ -147,7 +150,7 @@ export class FailoverValidationService {
         const job = event.fields as Job;
 
         if (job.state === JobState.Success) {
-          return of({ success: true });
+          return of({ success: true, isHaLicensed: true });
         }
 
         // Handle all failure terminal states
@@ -162,11 +165,12 @@ export class FailoverValidationService {
 
         return of({
           success: false,
+          isHaLicensed: true,
           error: errorMessage,
           errorType: FailoverErrorType.FailoverFailed,
         });
       }),
-      catchError((error: unknown) => this.handleApiError(error, 'operation')),
+      catchError((error: unknown) => this.handleApiError(error, 'operation', true)),
       finalize(() => {
         // Always clean up loader, even if component is destroyed
         if (this.activeLoader) {
@@ -177,12 +181,14 @@ export class FailoverValidationService {
     );
   }
 
-  protected handleApiError(error: unknown, context: string): Observable<FailoverValidationResult> {
+  protected handleApiError(error: unknown, context: string, isHaLicensed = false):
+  Observable<FailoverValidationResult> {
     const errorType = (error as Error).name === 'TimeoutError' ? FailoverErrorType.Timeout : FailoverErrorType.ApiError;
     return of({
       success: false,
       error: this.getErrorMessage(errorType, context),
       errorType,
+      isHaLicensed,
     });
   }
 }

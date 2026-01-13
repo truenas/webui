@@ -184,7 +184,7 @@ export class CloudBackupCardComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
-        if (job.state === JobState.Success || job.state === JobState.Finished) {
+        if (job.state === JobState.Success) {
           this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» completed successfully.', { name: row.description }));
         }
         this.updateRowJob(row, job);

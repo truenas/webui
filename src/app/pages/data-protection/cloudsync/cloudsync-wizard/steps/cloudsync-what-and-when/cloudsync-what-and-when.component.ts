@@ -564,7 +564,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
             if (file.IsDir) {
               nodes.push({
                 path: `${String(data.attributes.folder)}/${file.Name}`.replace(/\/+/g, '/'),
-                name: file.Name,
+                name: file.Decrypted ? file.Decrypted : file.Name,
                 type: ExplorerNodeType.Directory,
                 hasChildren: true,
               });

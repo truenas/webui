@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, OnChanges, inject, computed } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input, OnChanges, inject, computed,
+} from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -39,6 +41,7 @@ import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-st
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { DiskHealthCardComponent } from './disk-health-card/disk-health-card.component';
 import { PoolUsageCardComponent } from './pool-usage-card/pool-usage-card.component';
+import { SedLockedWarningComponent } from './sed-locked-warning/sed-locked-warning.component';
 import { StorageHealthCardComponent } from './storage-health-card/storage-health-card.component';
 
 @UntilDestroy()
@@ -66,6 +69,7 @@ import { StorageHealthCardComponent } from './storage-health-card/storage-health
     MatCard,
     MatCardContent,
     TranslateModule,
+    SedLockedWarningComponent,
   ],
 })
 export class DashboardPoolComponent implements OnChanges {
@@ -88,6 +92,13 @@ export class DashboardPoolComponent implements OnChanges {
   protected readonly searchableElements = dashboardPoolElements;
   protected isOnline = computed(() => {
     return this.pool().status === PoolStatus.Online;
+  });
+
+  protected isSedLocked = computed(() => {
+    const pool = this.pool();
+    return pool?.status === PoolStatus.Offline
+      && pool?.all_sed === true
+      && pool?.status_code === 'SED_LOCKED_DISKS';
   });
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -161,6 +172,10 @@ export class DashboardPoolComponent implements OnChanges {
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.store.loadDashboard());
+  }
+
+  onImportSuccess(): void {
+    this.store.loadDashboard();
   }
 
   counter(i: number): number[] {

@@ -25,6 +25,7 @@ export class SearchInputComponent<T> implements OnChanges {
   readonly filterPresets = input<FilterPreset<T>[]>([]);
   readonly query = model.required<SearchQuery<T>>();
   readonly advancedSearchPlaceholder = input<string>('');
+  readonly basicSearchPlaceholder = input<string>('');
 
   readonly queryChange = output<SearchQuery<T>>();
   readonly runSearch = output();

@@ -37,31 +37,29 @@ describe('AllCloudBackupsComponent', () => {
       id: 1,
       description: 'UA',
       path: '/mnt/nmnmn',
-      pre_script: 'your_pre_script',
       snapshot: false,
       enabled: false,
       job: {
-        state: JobState.Finished,
+        state: JobState.Success,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
       },
-    },
+    } as unknown as CloudBackup,
     {
       id: 2,
       description: 'UAH',
       path: '/mnt/hahah',
-      pre_script: 'your_pre_script',
       snapshot: false,
       enabled: true,
       job: {
-        state: JobState.Finished,
+        state: JobState.Success,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
       },
-    },
-  ] as CloudBackup[];
+    } as unknown as CloudBackup,
+  ];
 
   const createComponent = createComponentFactory({
     component: AllCloudBackupsComponent,
@@ -101,7 +99,7 @@ describe('AllCloudBackupsComponent', () => {
           {
             selector: selectJobs,
             value: [{
-              state: JobState.Finished,
+              state: JobState.Success,
               time_finished: {
                 $date: new Date().getTime() - 50000,
               },
@@ -147,8 +145,8 @@ describe('AllCloudBackupsComponent', () => {
     it('should show table rows', async () => {
       const expectedRows = [
         ['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', ''],
-        ['UA', '', 'No', 'Finished', '1 min. ago', ''],
-        ['UAH', '', 'No', 'Finished', '1 min. ago', ''],
+        ['UA', '', 'No', 'Completed', '1 min. ago', ''],
+        ['UAH', '', 'No', 'Completed', '1 min. ago', ''],
       ];
       const cells = await table.getCellTexts();
       expect(cells).toEqual(expectedRows);

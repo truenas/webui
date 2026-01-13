@@ -1,3 +1,4 @@
+import { Params } from '@angular/router';
 import { Job } from 'app/interfaces/job.interface';
 
 export const traceDetailLabel = 'Trace';
@@ -5,6 +6,7 @@ export const traceDetailLabel = 'Trace';
 export interface ErrorReportAction {
   label: string;
   route?: string;
+  params?: Params;
   action?: () => void;
 }
 

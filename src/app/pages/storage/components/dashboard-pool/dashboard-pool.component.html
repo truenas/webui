@@ -61,6 +61,13 @@
       </div>
     </div>
 
+    @if (isSedLocked()) {
+      <ix-sed-locked-warning
+        [pool]="pool()"
+        (importSuccess)="onImportSuccess()"
+      ></ix-sed-locked-warning>
+    }
+
     <div class="grid grid-cols-2 gap-4">
       <ix-vdevs-card
         [poolState]="pool()"

@@ -23,6 +23,9 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  FcMpioInfoBannerComponent,
+} from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-mpio-info-banner/fc-mpio-info-banner.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -64,6 +67,7 @@ describe('TargetFormComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxIpInputWithNetmaskComponent,
+      FcMpioInfoBannerComponent,
     ],
     providers: [
       provideMockStore({
@@ -82,11 +86,13 @@ describe('TargetFormComponent', () => {
       mockProvider(SlideIn),
       mockProvider(DialogService),
       mockProvider(FibreChannelService, {
-        loadTargetPort: jest.fn(() => of(null)),
-        linkFiberChannelToTarget: jest.fn(() => of(null)),
+        loadTargetPorts: jest.fn(() => of([])),
+        linkFiberChannelPortsToTarget: jest.fn(() => of(null)),
+        validatePhysicalPortUniqueness: jest.fn(() => ({ valid: true, duplicates: [] as string[] })),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockApi([
+        mockCall('tn_connect.config'),
         mockCall('fc.fc_host.query', []),
         mockCall('fcport.port_choices', {}),
         mockCall('iscsi.target.create'),
@@ -142,12 +148,16 @@ describe('TargetFormComponent', () => {
     });
 
     it('add new target when form is submitted', async () => {
+      // Click Add buttons to create FormArray items:
+      // addButtons[0] = Add button for groups (click twice for 2 groups)
+      // addButtons[1] = Add button for auth_networks (click twice for 2 networks)
       const addButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Add' }));
       await addButtons[0].click();
       await addButtons[0].click();
       await addButtons[1].click();
       await addButtons[1].click();
 
+      // Use patchValue to set nested FormArray values (simpler than harness for complex nested structures)
       spectator.component.form.patchValue({
         name: 'name_new',
         alias: 'alias_new',
@@ -244,10 +254,9 @@ describe('TargetFormComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(FibreChannelService).linkFiberChannelToTarget).toHaveBeenCalledWith(
+      expect(spectator.inject(FibreChannelService).linkFiberChannelPortsToTarget).toHaveBeenCalledWith(
         123,
-        null,
-        undefined,
+        [],
       );
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
@@ -261,8 +270,8 @@ describe('TargetFormComponent', () => {
       spectator.component.initiators$.subscribe((options) => initiator = options);
       spectator.component.auths$.subscribe((options) => auth = options);
 
-      expect(api.call).toHaveBeenNthCalledWith(1, 'fc.capable');
-      expect(api.call).toHaveBeenNthCalledWith(2, 'tn_connect.config');
+      expect(api.call).toHaveBeenNthCalledWith(1, 'tn_connect.config');
+      expect(api.call).toHaveBeenNthCalledWith(2, 'fc.capable');
       expect(api.call).toHaveBeenNthCalledWith(3, 'iscsi.portal.query', []);
       expect(api.call).toHaveBeenNthCalledWith(4, 'iscsi.initiator.query', []);
       expect(api.call).toHaveBeenNthCalledWith(5, 'iscsi.auth.query', []);
@@ -289,12 +298,6 @@ describe('TargetFormComponent', () => {
   describe('validation error handling', () => {
     beforeEach(async () => {
       spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      form = await loader.getHarness(IxFormHarness);
-    });
-
-    beforeEach(async () => {
-      spectator = createComponent();
       api = spectator.inject(ApiService);
       jest.spyOn(api, 'call').mockImplementation((method) => {
         if (method === 'iscsi.target.validate_name') {
@@ -313,6 +316,24 @@ describe('TargetFormComponent', () => {
 
       const nameControl = await loader.getHarness(IxInputHarness.with({ label: 'Target Name' }));
       expect(await nameControl.getErrorText()).toBe('Target with this name already exists');
+    });
+  });
+
+  describe('MPIO info banner conditional display', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('should not display banner when there are 0 FC ports', async () => {
+      await form.fillForm({
+        Mode: 'Fibre Channel',
+      });
+      spectator.detectChanges();
+
+      const banner = spectator.query('ix-fc-mpio-info-banner');
+      expect(banner).not.toExist();
     });
   });
 });

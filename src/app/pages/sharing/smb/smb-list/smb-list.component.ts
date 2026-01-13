@@ -181,6 +181,7 @@ export class SmbListComponent implements OnInit {
               this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
                 queryParams: {
                   path: row.path,
+                  returnUrl: this.router.url,
                 },
               });
             }

@@ -12,7 +12,6 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { isEqual } from 'lodash-es';
 import {
   endWith, forkJoin, Observable, of,
 } from 'rxjs';
@@ -186,74 +185,8 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   protected purposeOptions$: Observable<SelectOption<SmbSharePurpose>[]>;
 
-  get hasAddedAllowDenyHosts(): boolean {
-    const hostsAllow = this.form.controls.hostsallow.value ?? [];
-    const hostsDeny = this.form.controls.hostsdeny.value ?? [];
-
-    const hasHosts = hostsAllow.length > 0 || hostsDeny.length > 0;
-
-    return (this.isNew && hasHosts) || (!this.isNew && this.hasHostAllowDenyChanged(hostsAllow, hostsDeny));
-  }
-
-  private hasHostAllowDenyChanged(hostsAllow: string[], hostsDeny: string[]): boolean {
-    if (!this.existingSmbShare) {
-      return false;
-    }
-
-    const existingShareOptions = this.existingSmbShare.options as LegacySmbShareOptions;
-    const existingAllow = existingShareOptions.hostsallow ?? [];
-    const existingDeny = existingShareOptions.hostsdeny ?? [];
-
-    return !isEqual(existingAllow, hostsAllow) || !isEqual(existingDeny, hostsDeny);
-  }
-
   get isRestartRequired(): boolean {
-    return this.isNewTimeMachineShare || this.isNewHomeShare || this.wasPathChanged || this.hasAddedAllowDenyHosts;
-  }
-
-  private isFieldEnabledForPurpose(fieldName: string, purpose: SmbSharePurpose): boolean {
-    return presetEnabledFields[purpose]?.includes(fieldName as never) ?? false;
-  }
-
-  get isNewTimeMachineShare(): boolean {
-    const currentPurpose = this.form.controls.purpose.value;
-
-    // For new shares, check if Time Machine will be enabled
-    if (this.isNew) {
-      // Time Machine is enabled if purpose is TimeMachineShare OR if timemachine field is enabled and checked
-      const isTimeMachinePurpose = currentPurpose === SmbSharePurpose.TimeMachineShare;
-      const hasTimeMachineField = this.isFieldEnabledForPurpose('timemachine', currentPurpose) && this.form.controls.timemachine.value;
-      return isTimeMachinePurpose || hasTimeMachineField;
-    }
-
-    // For existing shares, only trigger restart if Time Machine functionality actually changes
-    const existingTimeMachine = (this.existingSmbShare?.options as LegacySmbShareOptions)?.timemachine;
-    const existingIsTimeMachine = this.existingSmbShare?.purpose === SmbSharePurpose.TimeMachineShare
-      || !!existingTimeMachine;
-
-    const hasCurrentTimeMachineField = this.isFieldEnabledForPurpose('timemachine', currentPurpose) && this.form.controls.timemachine.value;
-    const currentIsTimeMachine = currentPurpose === SmbSharePurpose.TimeMachineShare || hasCurrentTimeMachineField;
-
-    return existingIsTimeMachine !== currentIsTimeMachine;
-  }
-
-  get isNewHomeShare(): boolean {
-    const homeShare = this.form.controls.home.value;
-    const existingHomeShare = (this.existingSmbShare?.options as LegacySmbShareOptions)?.home;
-
-    return typeof homeShare === 'boolean'
-      && ((this.isNew && homeShare) || (typeof existingHomeShare === 'boolean' && homeShare !== existingHomeShare));
-  }
-
-  get wasPathChanged(): boolean {
-    if (this.isNew || !this.existingSmbShare?.path) {
-      return false;
-    }
-
-    const currentPath = this.form.controls.path.value?.replace(/\/$/, '') || '';
-    const existingPath = this.existingSmbShare.path.replace(/\/$/, '') || '';
-
-    return currentPath !== existingPath;
+    return this.isNew || this.form.dirty;
   }
 
   protected rootNodes = signal<ExplorerNodeData[]>([]);
@@ -805,15 +738,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       map((service) => service.state === ServiceStatus.Running),
       switchMap((isRunning) => {
         if (isRunning && this.isRestartRequired) {
-          return this.matDialog.open(RestartSmbDialog, {
-            data: {
-              timemachine: this.isNewTimeMachineShare,
-              homeshare: this.isNewHomeShare,
-              path: this.wasPathChanged,
-              hosts: this.hasAddedAllowDenyHosts,
-              isNew: this.isNew,
-            },
-          }).afterClosed();
+          return this.matDialog.open(RestartSmbDialog).afterClosed();
         }
         return of(false);
       }),

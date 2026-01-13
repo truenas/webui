@@ -8,8 +8,8 @@ import { MockComponent, MockPipe } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
-import { JobState } from 'app/enums/job-state.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { PeriodicSnapshotTaskUi, PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
@@ -67,7 +67,7 @@ describe('SnapshotTaskListComponent', () => {
       },
       vmware_sync: false,
       state: {
-        state: JobState.Pending,
+        state: TaskState.Pending,
       },
     } as PeriodicSnapshotTaskUi,
   ];
@@ -192,7 +192,7 @@ describe('SnapshotTaskListComponent', () => {
       collection: 'pool.snapshottask.query',
       id: snapshotTasksList[0].id,
       msg: CollectionChangeType.Changed,
-      fields: { state: { state: JobState.Finished } } as PeriodicSnapshotTask,
+      fields: { state: { state: TaskState.Finished } } as PeriodicSnapshotTask,
     });
 
     expect(spectator.component.dataProvider.load).toHaveBeenCalled();

@@ -18,7 +18,7 @@ import {
   haStatusLoaded,
 } from 'app/store/ha-info/ha-info.actions';
 import { HaInfoEffects } from 'app/store/ha-info/ha-info.effects';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectHaInfoState, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
 describe('HaInfoEffects', () => {
@@ -41,6 +41,7 @@ describe('HaInfoEffects', () => {
       provideMockStore({
         selectors: [
           { selector: selectIsHaLicensed, value: true },
+          { selector: selectHaInfoState, value: { isHaLicensed: null, haStatus: null } },
         ],
       }),
       mockApi([
@@ -83,6 +84,40 @@ describe('HaInfoEffects', () => {
           expect(err).toEqual(error);
         },
       });
+    });
+
+    it('should skip API call when license status is already loaded as true', () => {
+      store$.overrideSelector(selectHaInfoState, { isHaLicensed: true, haStatus: null });
+      store$.refreshState();
+
+      actions$.next(adminUiInitialized());
+
+      let emitted = false;
+      const subscription = spectator.service.loadFailoverLicensedStatus.subscribe(() => {
+        emitted = true;
+      });
+
+      // Effect should not emit because license status is already loaded
+      expect(emitted).toBe(false);
+      expect(api.call).not.toHaveBeenCalledWith('failover.licensed');
+      subscription.unsubscribe();
+    });
+
+    it('should skip API call when license status is already loaded as false', () => {
+      store$.overrideSelector(selectHaInfoState, { isHaLicensed: false, haStatus: null });
+      store$.refreshState();
+
+      actions$.next(adminUiInitialized());
+
+      let emitted = false;
+      const subscription = spectator.service.loadFailoverLicensedStatus.subscribe(() => {
+        emitted = true;
+      });
+
+      // Effect should not emit because license status is already loaded (even as false)
+      expect(emitted).toBe(false);
+      expect(api.call).not.toHaveBeenCalledWith('failover.licensed');
+      subscription.unsubscribe();
     });
   });
 

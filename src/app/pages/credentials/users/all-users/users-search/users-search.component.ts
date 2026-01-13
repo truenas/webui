@@ -1,19 +1,22 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, input, signal, OnInit, inject, computed, effect,
+  ChangeDetectionStrategy, Component, input, signal, OnInit, inject, computed, DestroyRef,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of, map } from 'rxjs';
+import { isEqual } from 'lodash-es';
+import {
+  Subject, of, map, debounceTime, catchError,
+} from 'rxjs';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
-import { ParamsBuilder, ParamsBuilderGroup } from 'app/helpers/params-builder/params-builder.class';
 import { DirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
-import { FilterPreset, QueryFilters, QueryFilter } from 'app/interfaces/query-api.interface';
+import { QueryFilters, QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
@@ -24,17 +27,13 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { UsersDataProvider } from 'app/pages/credentials/users/all-users/users-data-provider';
-import { getDefaultPresets, getBuiltinTogglePreset, getActiveDirectoryTogglePreset } from './users-search-presets';
+import {
+  getDefaultPresets, getBuiltinTogglePreset, getActiveDirectoryTogglePreset,
+  UserType, buildUserTypeFilters, getDefaultUserTypeFilters,
+} from './users-search-presets';
 
 const searchDebounceTime = 250;
 
-enum UserType {
-  Builtin = 'builtin',
-  Local = 'local',
-  Directory = 'directory',
-}
-
-@UntilDestroy()
 @Component({
   selector: 'ix-users-search',
   templateUrl: './users-search.component.html',
@@ -44,6 +43,8 @@ enum UserType {
   imports: [
     FakeProgressBarComponent,
     MatButton,
+    MatSlideToggle,
+    MatTooltip,
     AsyncPipe,
     FormsModule,
     SearchInputComponent,
@@ -67,15 +68,71 @@ export class UsersSearchComponent implements OnInit {
 
   protected readonly searchProperties = signal<SearchProperty<User>[]>([]);
 
-  protected selectedUserTypes: UserType[] = [UserType.Local];
+  protected readonly selectedUserTypes = signal<UserType[]>([UserType.Local, UserType.Directory]);
 
-  protected readonly userPresets = signal<FilterPreset<User>[]>([]);
-  private readonly isBuiltinFilterActive = signal<boolean>(false);
-  private readonly isActiveDirectoryFilterActive = signal<boolean>(false);
+  protected readonly showBuiltinUsers = signal<boolean>(false);
 
-  private readonly userTypeOptionsSignal = computed(() => {
+  /**
+   * Computed signal that checks if builtin=true filter is active in advanced search.
+   * Derived directly from searchQuery to avoid manual synchronization.
+   */
+  private readonly isBuiltinFilterActive = computed(() => {
+    const query = this.searchQuery();
+    if (query.isBasicQuery) return false;
+    return (query as AdvancedSearchQuery<User>).filters.some(
+      (filterItem) => Array.isArray(filterItem)
+        && filterItem.length === 3
+        && filterItem[0] === 'builtin'
+        && filterItem[1] === '='
+        && filterItem[2] === true,
+    );
+  });
+
+  /**
+   * Computed signal that checks if local=true filter is active in advanced search.
+   * Derived directly from searchQuery to avoid manual synchronization.
+   */
+  private readonly isLocalFilterActive = computed(() => {
+    const query = this.searchQuery();
+    if (query.isBasicQuery) return false;
+    return (query as AdvancedSearchQuery<User>).filters.some(
+      (filterItem) => Array.isArray(filterItem)
+        && filterItem.length === 3
+        && filterItem[0] === 'local'
+        && filterItem[1] === '='
+        && filterItem[2] === true,
+    );
+  });
+
+  /**
+   * Computed signal for user presets based on current filter state.
+   */
+  protected readonly userPresets = computed(() => {
+    const presets = getDefaultPresets().map((preset) => ({
+      ...preset,
+      label: this.translate.instant(preset.label),
+    }));
+
+    const builtinPreset = getBuiltinTogglePreset(this.isBuiltinFilterActive());
+    presets.push({
+      ...builtinPreset,
+      label: this.translate.instant(builtinPreset.label),
+    });
+
+    const isAdEnabled = this.isActiveDirectoryEnabled();
+    if (isAdEnabled) {
+      const adPreset = getActiveDirectoryTogglePreset(this.isLocalFilterActive());
+      presets.push({
+        ...adPreset,
+        label: this.translate.instant(adPreset.label),
+      });
+    }
+
+    return presets;
+  });
+
+  private readonly userTypeOptions = computed(() => {
     const options: SelectOption[] = [
-      { label: this.translate.instant('Built-In'), value: UserType.Builtin },
       { label: this.translate.instant('Local'), value: UserType.Local },
     ];
 
@@ -86,29 +143,43 @@ export class UsersSearchComponent implements OnInit {
     return options;
   });
 
-  protected readonly userTypeOptions$ = toObservable(this.userTypeOptionsSignal);
+  protected readonly isBuiltinCheckboxEnabled = computed(() => {
+    return this.selectedUserTypes().includes(UserType.Local);
+  });
+
+  protected readonly builtinToggleTooltip = computed(() => {
+    if (!this.isBuiltinCheckboxEnabled()) {
+      return this.translate.instant('Available only when Local users are selected');
+    }
+    return '';
+  });
+
+  // Observable required by ix-select component
+  protected readonly userTypeOptions$ = toObservable(this.userTypeOptions);
 
   private readonly api = inject(ApiService);
-  private readonly isActiveDirectoryEnabled = toSignal(this.api.call('directoryservices.status').pipe(
-    map((state: DirectoryServicesStatus) => state.status !== DirectoryServiceStatus.Disabled),
-  ));
+  private readonly isActiveDirectoryEnabled = toSignal(
+    this.api.call('directoryservices.status').pipe(
+      map((state: DirectoryServicesStatus) => state.status !== DirectoryServiceStatus.Disabled),
+      catchError(() => of(false)),
+    ),
+    { initialValue: false },
+  );
 
   private lastProcessedQuery = signal<SearchQuery<User> | null>(null);
-
-  constructor() {
-    this.updateBuiltinActiveState();
-
-    effect(() => {
-      const isAdEnabled = this.isActiveDirectoryEnabled();
-      if (isAdEnabled !== undefined) {
-        this.updateUserPresets();
-      }
-    });
-  }
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly advancedSearchSubject$ = new Subject<SearchQuery<User>>();
 
   ngOnInit(): void {
-    this.updateBuiltinActiveState();
     this.setSearchProperties(this.dataProvider().currentPage$.getValue());
+    this.setupAdvancedSearchDebounce();
+  }
+
+  private setupAdvancedSearchDebounce(): void {
+    this.advancedSearchSubject$.pipe(
+      debounceTime(searchDebounceTime),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((query) => this.onSearch(query));
   }
 
   private setSearchProperties(users: User[]): void {
@@ -199,25 +270,25 @@ export class UsersSearchComponent implements OnInit {
       return;
     }
 
-    this.searchQuery.set(query);
+    // Update signal only if changed to avoid unnecessary rerenders
+    // For advanced queries, signal is already updated in onQueryChange
+    if (!this.queriesEqual(this.searchQuery(), query)) {
+      this.searchQuery.set(query);
+    }
 
     if (query.isBasicQuery) {
-      let params = new ParamsBuilder<User>();
+      const selectedTypes = this.selectedUserTypes();
+      const typeFilters = buildUserTypeFilters(selectedTypes, this.showBuiltinUsers());
 
-      const selectedTypes = this.selectedUserTypes;
-      if (selectedTypes.length > 0 && selectedTypes.length < this.userTypeOptionsSignal().length) {
-        params = this.addUserTypeFilters(params, selectedTypes);
-      }
+      let filters: QueryFilters<User> = [...typeFilters];
 
       if (query.query) {
         const pattern = this.convertToRegexPattern(query.query);
         const term = `(?i)${pattern}`;
-        params = params.andGroup((group) => {
-          group.filter('username', '~', term).orFilter('full_name', '~', term);
-        });
+        filters = [...filters, ['OR', [['username', '~', term], ['full_name', '~', term]]] as QueryFilters<User>[number]];
       }
 
-      this.dataProvider().setParams(params.getParams());
+      this.dataProvider().setParams([filters, {}]);
     } else {
       const advancedFilters = (query as AdvancedSearchQuery<User>).filters;
       this.dataProvider().setParams([advancedFilters]);
@@ -227,7 +298,15 @@ export class UsersSearchComponent implements OnInit {
   }
 
   protected onUserTypeChange(selectedTypes: UserType[]): void {
-    this.selectedUserTypes = selectedTypes;
+    this.selectedUserTypes.set(selectedTypes);
+    if (!selectedTypes.includes(UserType.Local)) {
+      this.showBuiltinUsers.set(false);
+    }
+    this.onSearch(this.searchQuery());
+  }
+
+  protected onShowBuiltinChange(showBuiltin: boolean): void {
+    this.showBuiltinUsers.set(showBuiltin);
     this.onSearch(this.searchQuery());
   }
 
@@ -246,20 +325,7 @@ export class UsersSearchComponent implements OnInit {
   }
 
   private filtersEqual(filters1: QueryFilters<User>, filters2: QueryFilters<User>): boolean {
-    if (filters1.length !== filters2.length) {
-      return false;
-    }
-
-    return filters1.every((filter1, index) => {
-      const filter2 = filters2[index];
-
-      if (Array.isArray(filter1) && Array.isArray(filter2)) {
-        return filter1.length === filter2.length
-          && filter1.every((item, i) => item === filter2[i]);
-      }
-
-      return filter1 === filter2;
-    });
+    return isEqual(filters1, filters2);
   }
 
   private convertToRegexPattern(term: string): string {
@@ -267,74 +333,6 @@ export class UsersSearchComponent implements OnInit {
     const escaped = term.replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&');
     // Convert * to .* for wildcard support
     return escaped.replace(/\*/g, '.*');
-  }
-
-  private addUserTypeFilters(params: ParamsBuilder<User>, selectedTypes: UserType[]): ParamsBuilder<User> {
-    if (selectedTypes.length === 1) {
-      const [type] = selectedTypes;
-      return this.applySingleUserTypeFilter(params, type);
-    }
-
-    if (selectedTypes.length > 1) {
-      return params.andGroup((group: ParamsBuilderGroup<User>) => {
-        selectedTypes.forEach((type, index) => {
-          this.applyUserTypeToGroup(group, type, index === 0);
-        });
-      });
-    }
-
-    return params;
-  }
-
-  private applySingleUserTypeFilter(params: ParamsBuilder<User>, type: UserType): ParamsBuilder<User> {
-    switch (type) {
-      case UserType.Builtin:
-        return params.andFilter('builtin', '=', true);
-      case UserType.Local:
-        return params.andFilter('local', '=', true).andGroup((group) => {
-          group.filter('builtin', '=', false).orFilter('username', '=', 'root');
-        });
-      case UserType.Directory:
-        return params.andFilter('local', '=', false).andFilter('builtin', '=', false);
-      default:
-        return params;
-    }
-  }
-
-  private applyUserTypeToGroup(group: ParamsBuilderGroup<User>, type: UserType, isFirst: boolean): void {
-    switch (type) {
-      case UserType.Builtin:
-        if (isFirst) {
-          group.filter('builtin', '=', true);
-        } else {
-          group.orFilter('builtin', '=', true);
-        }
-        break;
-      case UserType.Local:
-        if (isFirst) {
-          group.filter('local', '=', true).andGroup((subGroup: ParamsBuilderGroup<User>) => {
-            subGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
-          });
-        } else {
-          group.orGroup((subGroup: ParamsBuilderGroup<User>) => {
-            subGroup.filter('local', '=', true).andGroup((innerGroup: ParamsBuilderGroup<User>) => {
-              innerGroup.filter('builtin', '=', false).orFilter('username', '=', 'root');
-            });
-          });
-        }
-        break;
-      case UserType.Directory:
-        if (isFirst) {
-          group.group((subGroup: ParamsBuilderGroup<User>) => {
-            subGroup.filter('local', '=', false).andFilter('builtin', '=', false);
-          });
-        } else {
-          group.orGroup((subGroup: ParamsBuilderGroup<User>) => {
-            subGroup.filter('local', '=', false).andFilter('builtin', '=', false);
-          });
-        }
-        break;
-    }
   }
 
   protected onQueryChange(query: SearchQuery<User>): void {
@@ -351,7 +349,6 @@ export class UsersSearchComponent implements OnInit {
 
       this.searchQuery.set(emptyQuery);
       this.resetToModeDefaults(targetMode);
-      this.updateBuiltinActiveState();
       return; // Exit early since resetToModeDefaults handles the filtering
     }
 
@@ -359,17 +356,18 @@ export class UsersSearchComponent implements OnInit {
       const originalQuery = query as AdvancedSearchQuery<User>;
       query = this.removeConflictingFilters(originalQuery);
 
+      // Update signal immediately so computed signals see current state
+      this.searchQuery.set(query);
+
       const lastQuery = this.lastProcessedQuery();
       if (!this.queriesEqual(lastQuery, query)) {
         this.lastProcessedQuery.set(query);
-        setTimeout(() => {
-          this.onSearch(query);
-        }, searchDebounceTime);
+        this.advancedSearchSubject$.next(query);
       }
+      return;
     }
 
     this.searchQuery.set(query);
-    this.updateBuiltinActiveState();
   }
 
   private removeConflictingFilters(query: AdvancedSearchQuery<User>): AdvancedSearchQuery<User> {
@@ -406,66 +404,18 @@ export class UsersSearchComponent implements OnInit {
     };
   }
 
-  private updateBuiltinActiveState(): void {
-    const currentQuery = this.searchQuery();
-    let hasBuiltinTrue = false;
-    let hasLocalTrue = false;
-
-    if (!currentQuery.isBasicQuery) {
-      const advancedQuery = currentQuery as AdvancedSearchQuery<User>;
-      advancedQuery.filters.forEach((filterItem) => {
-        if (Array.isArray(filterItem) && filterItem.length === 3) {
-          const [property, operator, value] = filterItem;
-          if (property === 'builtin' && operator === '=' && value === true) {
-            hasBuiltinTrue = true;
-          }
-          if (property === 'local' && operator === '=' && value === true) {
-            hasLocalTrue = true;
-          }
-        }
-      });
-    }
-
-    this.isBuiltinFilterActive.set(hasBuiltinTrue);
-    this.isActiveDirectoryFilterActive.set(hasLocalTrue);
-    this.updateUserPresets();
-  }
-
-  private updateUserPresets(): void {
-    const presets = getDefaultPresets().map((preset) => ({
-      ...preset,
-      label: this.translate.instant(preset.label),
-    }));
-
-    const isBuiltinActive = this.isBuiltinFilterActive();
-    const builtinPreset = getBuiltinTogglePreset(isBuiltinActive);
-    presets.push({
-      ...builtinPreset,
-      label: this.translate.instant(builtinPreset.label),
-    });
-
-    const isAdEnabled = this.isActiveDirectoryEnabled();
-    if (isAdEnabled) {
-      const isActiveDirectoryActive = this.isActiveDirectoryFilterActive();
-      const adPreset = getActiveDirectoryTogglePreset(isActiveDirectoryActive);
-      presets.push({
-        ...adPreset,
-        label: this.translate.instant(adPreset.label),
-      });
-    }
-
-    this.userPresets.set(presets);
-  }
-
   private resetToModeDefaults(targetMode: 'basic' | 'advanced'): void {
     if (targetMode === 'basic') {
-      // Basic mode: show local users + root only
+      // Basic mode: show local and directory users by default
       this.dataProvider().setParams([]);
-      this.selectedUserTypes = [UserType.Local];
-      this.onUserTypeChange(this.selectedUserTypes);
+      this.selectedUserTypes.set([UserType.Local, UserType.Directory]);
+      this.showBuiltinUsers.set(false);
+      this.onUserTypeChange(this.selectedUserTypes());
     } else {
-      // Advanced mode: show ALL users (no filtering)
-      this.dataProvider().setParams([]);
+      // Advanced mode: apply same default filters as basic mode for consistency
+      // This ensures switching modes doesn't change results without user input
+      const defaultFilters = getDefaultUserTypeFilters();
+      this.dataProvider().setParams([defaultFilters]);
       this.dataProvider().load();
     }
   }

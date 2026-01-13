@@ -163,13 +163,13 @@ export class CloudBackupListComponent {
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
-        if (job.state === JobState.Success || job.state === JobState.Finished) {
+        if (job.state === JobState.Success) {
           this.snackbar.success(this.translate.instant('Cloud Backup Task «{name}» completed successfully.', { name: row.description }));
         }
         this.updateRowJob(row, job);
         // Update expanded row to call child ngOnChanges method & update snapshots list
         if (
-          (job.state === JobState.Success || job.state === JobState.Finished)
+          (job.state === JobState.Success)
           && this.dataProvider().expandedRow?.id === row.id
         ) {
           this.dataProvider().expandedRow = { ...row };

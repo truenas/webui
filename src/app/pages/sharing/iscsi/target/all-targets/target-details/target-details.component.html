@@ -7,11 +7,11 @@
 
     @if (hasFibreCards()) {
       <ix-fibre-channel-port-card
-        [port]="targetPort()"
+        [ports]="targetPorts()"
         [isLoading]="isLoading()"
       ></ix-fibre-channel-port-card>
 
-      @if (targetPort()) {
+      @if (targetPorts().length > 0) {
         <ix-fibre-channel-connections-card [connections]="connections()"></ix-fibre-channel-connections-card>
       }
     }

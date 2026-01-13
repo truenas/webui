@@ -76,6 +76,15 @@
         width: 14px;
       }
     }
+
+    .version {
+      .catalog-version {
+        color: var(--fg2);
+        font-size: 0.85em;
+        margin-left: 4px;
+        opacity: 0.8;
+      }
+    }
   }
 
   .description {

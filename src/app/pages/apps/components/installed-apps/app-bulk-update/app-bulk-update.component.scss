@@ -27,6 +27,10 @@
     padding-top: 16px;
   }
 
+  .app-name-text {
+    font-weight: 500;
+  }
+
   .version {
     align-items: center;
     display: flex;
@@ -105,6 +109,12 @@
     }
   }
 
+  .app-version {
+    color: var(--fg2);
+    margin-left: 8px;
+    opacity: 0.7;
+  }
+
   .logo {
     background-position: center;
     background-repeat: no-repeat;
@@ -120,6 +130,70 @@
       height: 100%;
       object-fit: contain;
       width: 100%;
+    }
+  }
+
+  .version-info {
+    background: var(--bg2);
+    border-radius: 4px;
+    margin: 8px 0 16px;
+    padding: 12px 16px;
+
+    .version-row {
+      align-items: center;
+      display: flex;
+      margin: 8px 0;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .version-label {
+      font-weight: 500;
+      min-width: 110px;
+    }
+
+    .version-value {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+
+      ix-icon {
+        color: var(--primary);
+      }
+    }
+  }
+
+  .changelog-link {
+    align-items: center;
+    display: flex;
+    margin: 8px 0;
+    padding: 8px 0;
+
+    .changelog-label {
+      font-weight: 500;
+      margin-right: 8px;
+    }
+
+    .changelog-url {
+      align-items: center;
+      color: var(--primary);
+      display: flex;
+      gap: 6px;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+
+      ix-icon {
+        font-size: 16px;
+      }
     }
   }
 }

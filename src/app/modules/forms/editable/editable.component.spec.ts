@@ -44,6 +44,7 @@ describe('EditableComponent', () => {
           [emptyValue]="emptyValue"
           [readonly]="readonly"
           [disabled]="disabled"
+          [autoFocus]="autoFocus"
         >
           <div view>
             {{ nameControl.value }}
@@ -60,6 +61,7 @@ describe('EditableComponent', () => {
           readonly: false,
           disabled: false,
           emptyValue: 'Not Set',
+          autoFocus: true,
         },
       },
     );
@@ -124,6 +126,16 @@ describe('EditableComponent', () => {
 
       const input = await editable.getHarness(IxInputHarness);
       expect(await (await input.getMatInputHarness()).isFocused()).toBe(true);
+    }));
+
+    it('does not focus on the first focusable element when autoFocus is false', fakeAsync(async () => {
+      spectator.setHostInput({ autoFocus: false });
+
+      await editable.open();
+      tick();
+
+      const input = await editable.getHarness(IxInputHarness);
+      expect(await (await input.getMatInputHarness()).isFocused()).toBe(false);
     }));
 
     it('scrolls edit slot into view when opening', fakeAsync(async () => {

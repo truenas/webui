@@ -8,6 +8,7 @@ import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-dat
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { TaskState } from 'app/enums/task-state.enum';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
@@ -26,33 +27,33 @@ const replicationTasks = [
     id: 1,
     direction: Direction.Push,
     state: {
-      state: JobState.Failed,
+      state: TaskState.Error,
       datetime: {
         $date: currentDatetime.getTime() - 50000,
       },
     },
-  },
+  } as ReplicationTask,
   {
     id: 2,
     direction: Direction.Push,
     state: {
-      state: JobState.Failed,
+      state: TaskState.Error,
       datetime: {
         $date: currentDatetime.getTime() - 50000,
       },
     },
-  },
+  } as ReplicationTask,
   {
     id: 3,
     direction: Direction.Pull,
     state: {
-      state: JobState.Failed,
+      state: TaskState.Error,
       datetime: {
         $date: currentDatetime.getTime() - 50000,
       },
     },
-  },
-] as ReplicationTask[];
+  } as ReplicationTask,
+];
 
 const rsyncTasks = [
   {
@@ -219,10 +220,10 @@ describe('WidgetBackupComponent', () => {
                 id: 1,
                 direction: Direction.Pull,
                 state: {
-                  state: JobState.Success,
+                  state: TaskState.Finished,
                   datetime: { $date: currentDatetime.getTime() - 50000 },
                 },
-              }] as ReplicationTask[],
+              } as ReplicationTask],
               [{
                 id: 1,
                 direction: Direction.Push,

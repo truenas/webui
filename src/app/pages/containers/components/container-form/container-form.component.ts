@@ -435,7 +435,6 @@ export class ContainerFormComponent implements OnInit {
     const form = this.form.getRawValue();
 
     const payload: CreateContainer = {
-      uuid: crypto.randomUUID(),
       name: form.name,
       pool: (this.hasPreferredPool() && form.use_preferred_pool) ? '' : form.pool,
       image: this.parseImageField(form.image),

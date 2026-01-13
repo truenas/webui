@@ -40,9 +40,8 @@ export const helptextInterfacesForm = {
  remains active if a Controller failover occurs.'),
   },
   vlan: {
-    parentInterfaceTooltip: T('Select the VLAN Parent Interface. Usually an Ethernet\
- card connected to a switch port configured for the VLAN. New link\
- aggregations are not available until the system is restarted.'),
+    parentInterfaceTooltip: T('Select the VLAN Parent Interface.\
+  This interface must be connected to a switch port that has also been configured for the VLAN.'),
     tagTooltip: T('Enter the numeric tag configured in the switched network.'),
     priorityCodePointTooltip: T('Select the Class of Service. The available 802.1p\
  Class of Service ranges from <i>Best effort (default)</i> \

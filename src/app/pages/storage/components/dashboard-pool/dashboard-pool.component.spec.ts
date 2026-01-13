@@ -25,6 +25,9 @@ import {
   PoolUsageCardComponent,
 } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
 import {
+  SedLockedWarningComponent,
+} from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/sed-locked-warning.component';
+import {
   AutotrimDialog,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/autotrim-dialog/autotrim-dialog.component';
 import { StorageHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/storage-health-card/storage-health-card.component';
@@ -40,6 +43,7 @@ describe('DashboardPoolComponent', () => {
     name: 'deadpool',
     id: 4,
     status: PoolStatus.Online,
+    all_sed: false,
   } as Pool;
   const createComponent = createComponentFactory({
     component: DashboardPoolComponent,
@@ -49,6 +53,7 @@ describe('DashboardPoolComponent', () => {
       MockComponent(PoolUsageCardComponent),
       MockComponent(DiskHealthCardComponent),
       MockComponent(VDevsCardComponent),
+      MockComponent(SedLockedWarningComponent),
     ],
     providers: [
       mockProvider(MatDialog, {
@@ -156,5 +161,38 @@ describe('DashboardPoolComponent', () => {
     const card = spectator.query(DiskHealthCardComponent)!;
     expect(card).toBeTruthy();
     expect(card.poolState).toBe(pool);
+  });
+
+  it('does not show SED locked warning for online pool', () => {
+    const warning = spectator.query(SedLockedWarningComponent);
+    expect(warning).toBeFalsy();
+  });
+
+  it('shows SED locked warning when pool is offline with SED locked disks', () => {
+    spectator.setInput('pool', {
+      ...pool,
+      status: PoolStatus.Offline,
+      all_sed: true,
+      status_code: 'SED_LOCKED_DISKS',
+    });
+    spectator.detectChanges();
+
+    const warning = spectator.query(SedLockedWarningComponent);
+    expect(warning).toBeTruthy();
+  });
+
+  it('reloads dashboard when import success is triggered from SED warning', () => {
+    spectator.setInput('pool', {
+      ...pool,
+      status: PoolStatus.Offline,
+      all_sed: true,
+      status_code: 'SED_LOCKED_DISKS',
+    });
+    spectator.detectChanges();
+
+    const warning = spectator.query(SedLockedWarningComponent);
+    warning.importSuccess.emit();
+
+    expect(spectator.inject(PoolsDashboardStore).loadDashboard).toHaveBeenCalled();
   });
 });

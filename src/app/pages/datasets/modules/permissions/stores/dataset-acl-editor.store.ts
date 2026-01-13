@@ -34,6 +34,7 @@ const initialState: DatasetAclEditorState = {
   stat: null,
   selectedAceIndex: 0,
   acesWithError: [],
+  returnUrl: null,
 };
 
 @Injectable({
@@ -251,8 +252,11 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       .pipe(
         this.errorHandler.withErrorHandler(),
         tap(() => {
-          const url = ['datasets', this.get()?.mountpoint?.replace(`${mntPath}/`, '')];
-          this.router.navigate(url);
+          const returnUrl = this.state().returnUrl;
+          const returnRoute = returnUrl
+            ? [returnUrl]
+            : ['datasets', this.get()?.mountpoint?.replace(`${mntPath}/`, '')];
+          this.router.navigate(returnRoute);
         }),
       );
   }

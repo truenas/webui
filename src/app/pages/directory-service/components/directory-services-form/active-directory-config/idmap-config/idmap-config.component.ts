@@ -10,7 +10,7 @@ import { of, tap } from 'rxjs';
 import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-services.enum';
 import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
-import { domainIdmapTypeOptions, PrimaryDomainIdmap } from 'app/interfaces/active-directory-config.interface';
+import { DomainIdmap, domainIdmapTypeOptions, PrimaryDomainIdmap } from 'app/interfaces/active-directory-config.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -126,31 +126,46 @@ export class IdmapConfigComponent implements OnInit {
       }
     });
 
-    const createRequiredControl = <T>(initial: T): FormControl => new FormControl(initial, Validators.required);
-
     if (type === IdmapBackend.Ad) {
-      idmapFg.addControl('schema_mode', createRequiredControl(null as ActiveDirectorySchemaMode));
-      idmapFg.addControl('unix_primary_group', createRequiredControl(false));
-      idmapFg.addControl('unix_nss_info', createRequiredControl(false));
+      const adInput = this.getInputAs(IdmapBackend.Ad);
+      idmapFg.addControl('schema_mode', new FormControl(adInput?.schema_mode ?? null, Validators.required));
+      idmapFg.addControl('unix_primary_group', new FormControl(adInput?.unix_primary_group ?? false, Validators.required));
+      idmapFg.addControl('unix_nss_info', new FormControl(adInput?.unix_nss_info ?? false, Validators.required));
     } else if (type === IdmapBackend.Rfc2307 || type === IdmapBackend.Ldap) {
-      idmapFg.addControl('ldap_url', createRequiredControl(null as string));
-      idmapFg.addControl('ldap_user_dn', createRequiredControl(null as string));
-      idmapFg.addControl('ldap_user_dn_password', createRequiredControl(null as string));
-      idmapFg.addControl('validate_certificates', createRequiredControl(false));
+      const ldapInput = this.getInputAs(IdmapBackend.Ldap);
+      const rfc2307Input = this.getInputAs(IdmapBackend.Rfc2307);
+
+      idmapFg.addControl('ldap_url', new FormControl(ldapInput?.ldap_url ?? rfc2307Input?.ldap_url ?? null, Validators.required));
+      idmapFg.addControl('ldap_user_dn', new FormControl(ldapInput?.ldap_user_dn ?? rfc2307Input?.ldap_user_dn ?? null, Validators.required));
+      idmapFg.addControl('ldap_user_dn_password', new FormControl(ldapInput?.ldap_user_dn_password ?? rfc2307Input?.ldap_user_dn_password ?? null, Validators.required));
+      idmapFg.addControl('validate_certificates', new FormControl(ldapInput?.validate_certificates ?? rfc2307Input?.validate_certificates ?? false, Validators.required));
 
       if (type === IdmapBackend.Rfc2307) {
-        idmapFg.addControl('bind_path_user', createRequiredControl(null as string));
-        idmapFg.addControl('bind_path_group', createRequiredControl(null as string));
-        idmapFg.addControl('user_cn', createRequiredControl(false));
-        idmapFg.addControl('ldap_realm', createRequiredControl(false));
+        idmapFg.addControl('bind_path_user', new FormControl(rfc2307Input?.bind_path_user ?? null, Validators.required));
+        idmapFg.addControl('bind_path_group', new FormControl(rfc2307Input?.bind_path_group ?? null, Validators.required));
+        idmapFg.addControl('user_cn', new FormControl(rfc2307Input?.user_cn ?? false, Validators.required));
+        idmapFg.addControl('ldap_realm', new FormControl(rfc2307Input?.ldap_realm ?? false, Validators.required));
       }
 
       if (type === IdmapBackend.Ldap) {
-        idmapFg.addControl('ldap_base_dn', createRequiredControl(null as string));
-        idmapFg.addControl('readonly', createRequiredControl(false));
+        idmapFg.addControl('ldap_base_dn', new FormControl(ldapInput?.ldap_base_dn ?? null, Validators.required));
+        idmapFg.addControl('readonly', new FormControl(ldapInput?.readonly ?? false, Validators.required));
       }
     } else if (type === IdmapBackend.Rid) {
-      idmapFg.addControl('sssd_compat', new FormControl(false));
+      const ridInput = this.getInputAs(IdmapBackend.Rid);
+      idmapFg.addControl('sssd_compat', new FormControl(ridInput?.sssd_compat ?? false));
     }
+  }
+
+  /**
+   * Returns the input idmap_domain typed as the specified backend, or undefined if it doesn't match.
+   */
+  private getInputAs<T extends IdmapBackend>(
+    backend: T,
+  ): Extract<DomainIdmap, { idmap_backend: T }> | undefined {
+    const domain = this.idmap()?.idmap_domain;
+    return domain?.idmap_backend === backend
+      ? domain as Extract<DomainIdmap, { idmap_backend: T }>
+      : undefined;
   }
 }

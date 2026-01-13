@@ -172,7 +172,7 @@ describe('AuditComponent', () => {
       );
     });
 
-    it('searches by event and username when basic search is used', () => {
+    it('searches by username when basic search term does not match any event', () => {
       const search = spectator.query(SearchInputComponent)!;
       search.query.set({
         isBasicQuery: true,
@@ -184,7 +184,7 @@ describe('AuditComponent', () => {
       expect(api.call).toHaveBeenLastCalledWith(
         'audit.query',
         [{
-          'query-filters': [['OR', [['event', '~', '(?i)search'], ['username', '~', '(?i)search']]]],
+          'query-filters': [['username', '~', 'search']],
           'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
           services: ['MIDDLEWARE'],
           remote_controller: false,
@@ -280,7 +280,7 @@ describe('AuditComponent', () => {
       );
     });
 
-    it('includes both event and username in filters for basic search', () => {
+    it('escapes special characters in basic search', () => {
       const search = spectator.query(SearchInputComponent)!;
       search.query.set({
         isBasicQuery: true,
@@ -292,7 +292,27 @@ describe('AuditComponent', () => {
       expect(api.call).toHaveBeenLastCalledWith(
         'audit.query',
         [{
-          'query-filters': [['OR', [['event', '~', '(?i)test-query'], ['username', '~', '(?i)test-query']]]],
+          'query-filters': [['username', '~', 'test\\-query']],
+          'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
+          services: ['MIDDLEWARE'],
+          remote_controller: false,
+        }],
+      );
+    });
+
+    it('searches by event only when basic search term matches an event', () => {
+      const search = spectator.query(SearchInputComponent)!;
+      search.query.set({
+        isBasicQuery: true,
+        query: 'method',
+      });
+
+      search.runSearch.emit();
+
+      expect(api.call).toHaveBeenLastCalledWith(
+        'audit.query',
+        [{
+          'query-filters': [['event', '~', 'METHOD_CALL']],
           'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
           services: ['MIDDLEWARE'],
           remote_controller: false,

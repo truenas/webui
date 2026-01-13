@@ -71,5 +71,5 @@ export class IxCellActionsWithMenuComponent<T> extends ColumnComponent<T> {
 export function actionsWithMenuColumn<T>(
   options: Partial<IxCellActionsWithMenuComponent<T>>,
 ): Column<T, IxCellActionsWithMenuComponent<T>> {
-  return { type: IxCellActionsWithMenuComponent, ...options };
+  return { type: IxCellActionsWithMenuComponent, disableSorting: true, ...options };
 }

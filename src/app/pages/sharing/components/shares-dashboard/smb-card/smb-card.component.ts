@@ -215,9 +215,11 @@ export class SmbCardComponent implements OnInit {
     if (row.locked) {
       this.showLockedPathDialog(row.path);
     } else {
+      const returnUrl = this.router.url;
       this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
         queryParams: {
           path: row.path,
+          returnUrl,
         },
       });
     }

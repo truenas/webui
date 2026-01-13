@@ -81,7 +81,7 @@ export class AlertComponent implements OnChanges, AfterViewInit {
     return this.translate.instant(levelLabel);
   });
 
-  readonly link = computed(() => this.alertLink.getLink(this.alert().klass));
+  readonly link = computed(() => this.alertLink.getLinkForAlert(this.alert()));
 
   ngOnChanges(): void {
     this.setStyles();
@@ -105,7 +105,7 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   }
 
   openLink(): void {
-    this.alertLink.openLink(this.alert().klass);
+    this.alertLink.openLinkForAlert(this.alert());
     this.store$.dispatch(alertPanelClosed());
   }
 

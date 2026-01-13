@@ -6,14 +6,6 @@ import { MockConfig, MockEvent } from 'app/modules/websocket-debug-panel/interfa
 import * as WebSocketDebugActions from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { MockConfigFormComponent } from './mock-config-form.component';
 
-// Mock crypto.randomUUID globally
-if (!global.crypto) {
-  global.crypto = {} as Crypto;
-}
-if (!global.crypto.randomUUID) {
-  global.crypto.randomUUID = jest.fn().mockImplementation(() => `test-uuid-${Math.random()}`);
-}
-
 describe('MockConfigFormComponent', () => {
   let spectator: Spectator<MockConfigFormComponent>;
   let store$: MockStore;

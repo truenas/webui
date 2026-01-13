@@ -56,4 +56,5 @@ export const helptextServiceSmb = {
   bindipTooltip: T('Static IP addresses which SMB listens on for connections. \
  Leaving all unselected defaults to listening on all active interfaces.'),
   spotlightSearchTooltip: T('Enable to allow macOS clients to use Spotlight to quickly search for file contents on SMB shares.'),
+  statefulFailoverTooltip: T('Enterprise feature to ensure SMB state consistency across HA failover events. This feature is incompatible with Multi-Protocol and Legacy share purposes, and with SMB1 support.'),
 };
