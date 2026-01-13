@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>{{ 'Configuration Download Failed - Continue with Update?' | translate }}</h2>
+
+<mat-dialog-content>
+  <p><strong>{{ errorMessage() }}</strong></p>
+  <p>
+    {{ 'The configuration file contains important system passwords and settings.' | translate }}
+    {{ 'Without this backup, you won\'t be able to restore your configuration if the update fails.' | translate }}
+  </p>
+
+  <ix-checkbox
+    [formControl]="acknowledgeRiskCheckbox"
+    [label]="'I understand the risks and want to proceed without a configuration backup' | translate"
+  ></ix-checkbox>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">
+    {{ 'Cancel Update' | translate }}
+  </button>
+  <button mat-button (click)="onRetry()">
+    {{ 'Try Download Again' | translate }}
+  </button>
+  <button
+    mat-button
+    color="warn"
+    [disabled]="!acknowledgeRiskCheckbox.value"
+    (click)="onContinue()"
+  >
+    {{ 'Continue Update' | translate }}
+  </button>
+</mat-dialog-actions>
