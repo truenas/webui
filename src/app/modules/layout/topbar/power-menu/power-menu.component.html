@@ -7,7 +7,7 @@
   [matMenuTriggerFor]="powerMenu"
   [ixUiSearch]="searchableElements.elements.powerMenu"
 >
-  <ix-icon name="power_settings_new"></ix-icon>
+  <tn-icon size="lg" name="power" library="mdi"></tn-icon>
 </button>
 <mat-menu #powerMenu="matMenu">
   <button
@@ -18,7 +18,7 @@
     [ixUiSearch]="searchableElements.elements.restart"
     (click)="onReboot()"
   >
-    <ix-icon name="replay"></ix-icon>
+    <tn-icon size="lg" name="refresh" library="mdi"></tn-icon>
     {{ 'Restart' | translate }}
   </button>
 
@@ -30,7 +30,7 @@
     [ixUiSearch]="searchableElements.elements.shutDown"
     (click)="onShutdown()"
   >
-    <ix-icon name="power_settings_new"></ix-icon>
+    <tn-icon size="lg" name="power" library="mdi"></tn-icon>
     {{ 'Shut Down' | translate }}
   </button>
 </mat-menu>

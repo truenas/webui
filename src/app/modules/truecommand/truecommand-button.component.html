@@ -7,10 +7,11 @@
     [matTooltip]="tooltips.connectingToTruecommand | translate"
     (click)="stopTrueCommandConnecting()"
   >
-    <ix-icon
+    <tn-icon
+      size="lg"
       class="truecommand-button-connecting-animation"
-      name="ix-truecommand-logo-mark"
-    ></ix-icon>
+      name="tn-truecommand-logo-mark"
+    ></tn-icon>
   </button>
 }
 
@@ -26,6 +27,6 @@
     [ixUiSearch]="searchableElements.elements.trueCommand"
     (click)="handleClick()"
   >
-    <ix-icon name="ix-truecommand-logo-mark"></ix-icon>
+    <tn-icon size="lg" name="tn-truecommand-logo-mark"></tn-icon>
   </button>
 }

@@ -4,6 +4,7 @@ import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTooltip } from '@angular/material/tooltip';
+import { TnIconComponent } from '@ixsystems/truenas-ui';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { isObject } from 'lodash-es';
@@ -12,7 +13,6 @@ import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -38,7 +38,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     MatIconButton,
     TestDirective,
     MatTooltip,
-    IxIconComponent,
+    TnIconComponent,
     MatBadge,
     NgClass,
     UiSearchDirective,
