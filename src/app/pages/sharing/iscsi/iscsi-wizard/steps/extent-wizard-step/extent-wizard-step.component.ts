@@ -8,6 +8,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption } from 'app/interfaces/option.interface';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
@@ -32,6 +33,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     IxSelectComponent,
     IxExplorerComponent,
     IxIconComponent,
+    IxCheckboxComponent,
     TranslateModule,
     ExplorerCreateDatasetComponent,
   ],
@@ -99,6 +101,18 @@ export class ExtentWizardStepComponent implements OnInit {
       } else {
         this.form().controls.dataset.disable();
         this.form().controls.volsize.disable();
+      }
+    });
+
+    // Handle snapshot selection - auto-set ro=true and disable checkbox
+    this.form().controls.disk.valueChanges.pipe(untilDestroyed(this)).subscribe((diskValue: string) => {
+      if (diskValue?.includes('@')) {
+        // Snapshot selected - must be read-only
+        this.form().controls.ro.setValue(true);
+        this.form().controls.ro.disable();
+      } else if (diskValue !== newOption) {
+        // Regular device - allow ro to be toggled
+        this.form().controls.ro.enable();
       }
     });
   }

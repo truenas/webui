@@ -70,6 +70,11 @@
       [required]="true"
     ></ix-input>
   }
+  <ix-checkbox
+    formControlName="ro"
+    [label]="helptextSharingIscsi.extent.readOnlyLabel | translate"
+    [tooltip]="helptextSharingIscsi.extent.readOnlyTooltip | translate"
+  ></ix-checkbox>
   <ix-select
     formControlName="usefor"
     [label]="helptextSharingIscsi.useforLabel | translate"
