@@ -332,7 +332,7 @@ export class ReplicationListComponent implements OnInit {
   }
 
   private updateRowStateAndJob(row: ReplicationTask, state: JobState, job: Job | undefined): void {
-    this.dataProvider.setRows(this.replicationTasks.map((task) => {
+    this.replicationTasks = this.replicationTasks.map((task) => {
       if (task.id === row.id) {
         return {
           ...task,
@@ -341,6 +341,13 @@ export class ReplicationListComponent implements OnInit {
         };
       }
       return task;
-    }));
+    });
+
+    // Reapply the current filter to preserve search state while updating the task
+    this.dataProvider.setFilter({
+      query: this.filterString,
+      columnKeys: ['name'],
+      list: this.replicationTasks,
+    });
   }
 }
