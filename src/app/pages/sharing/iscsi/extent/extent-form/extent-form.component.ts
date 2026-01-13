@@ -196,12 +196,16 @@ export class ExtentFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
+    // Use getRawValue to include disabled fields like 'ro' when a snapshot is selected
     const values = {
-      ...this.form.value,
+      ...this.form.getRawValue(),
     } as IscsiExtentUpdate;
 
     if (values.type === IscsiExtentType.Disk) {
       values.path = values.disk;
+      delete values.filesize;
+    } else {
+      delete values.disk;
     }
 
     if (values.type === IscsiExtentType.File && Number(values.filesize) !== 0) {
