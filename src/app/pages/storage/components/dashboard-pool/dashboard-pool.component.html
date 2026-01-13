@@ -1,5 +1,5 @@
 @if (!isLoading()) {
-  <div>
+  <div class="pool-container">
     <div class="pool-header">
       <h2 class="pool-name">{{ pool()?.name }}</h2>
       <div class="pool-actions">
@@ -16,6 +16,17 @@
         }
 
         <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          color="accent"
+          [ixTest]="['disconnect', pool()?.name]"
+          [ixUiSearch]="searchableElements.elements.disconnect"
+          (click)="onDisconnect()"
+        >
+          {{ 'Disconnect' | translate }}
+        </button>
+
+        <button
           mat-icon-button
           [matTooltip]="'Advanced Actions' | translate"
           [attr.aria-label]="'Advanced Actions' | translate"
@@ -23,17 +34,6 @@
           [ixTest]="['advanced-actions', pool()?.name]"
         >
           <ix-icon name="more_vert"></ix-icon>
-        </button>
-
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          color="warn"
-          [ixTest]="['disconnect', pool()?.name]"
-          [ixUiSearch]="searchableElements.elements.disconnect"
-          (click)="onDisconnect()"
-        >
-          {{ 'Disconnect' | translate }}
         </button>
 
         <mat-menu #advancedMenu="matMenu">
@@ -106,4 +106,3 @@
     </div>
   </div>
 }
-
