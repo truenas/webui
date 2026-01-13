@@ -55,7 +55,15 @@
               <li class="stig-info">
                 {{ requirement.message }}
                 @if (requirement.navigateTo || requirement.action) {
-                  <span class="link-button" (click)="handleRequirementAction(requirement)">{{ 'Configure' | translate }}</span>
+                  <span
+                    class="link-button"
+                    role="button"
+                    tabindex="0"
+                    [attr.aria-label]="'Configure: ' + requirement.message"
+                    (click)="handleRequirementAction(requirement)"
+                    (keydown.enter)="handleRequirementAction(requirement)"
+                    (keydown.space)="handleRequirementAction(requirement)"
+                  >{{ 'Configure' | translate }}</span>
                 }
               </li>
             }
