@@ -13,17 +13,18 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, finalize, map, of, tap, zip,
 } from 'rxjs';
 import { stigPasswordRequirements } from 'app/constants/stig-password-requirements.constants';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { PasswordComplexityRuleset, passwordComplexityRulesetLabels } from 'app/enums/password-complexity-ruleset.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { WINDOW } from 'app/helpers/window.helper';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -82,7 +83,9 @@ interface MissingStigRequirement {
   message: string;
   /** route to navgiate to when clicking the configure button. */
   navigateTo?: string[];
-  /** function to execute when clicking the configure button. */
+  /** element to highlight when navigating */
+  highlightElement?: string;
+  /** the action to perform upon navigation */
   action?: () => void;
 }
 
@@ -117,8 +120,9 @@ export class SystemSecurityFormComponent implements OnInit {
   private api = inject(ApiService);
   private authService = inject(AuthService);
   private errorHandler = inject(ErrorHandlerService);
-  private router = inject(Router);
   private slideIn = inject(SlideIn);
+  private navigateAndHighlightService = inject(NavigateAndHighlightService);
+  private window = inject<Window>(WINDOW);
   slideInRef = inject<SlideInRef<SystemSecurityConfig, boolean>>(SlideInRef);
 
   protected readonly stigRequirements = stigPasswordRequirements;
@@ -269,16 +273,14 @@ export class SystemSecurityFormComponent implements OnInit {
       if (!enablementRequirements?.twoFactorAuthGloballyEnabled) {
         requirements.push({
           message: 'Global Two-Factor Authentication must be enabled.',
-          navigateTo: ['/system/advanced'],
-          action: this.openGlobalTwoFactorForm.bind(this),
+          action: this.openGlobalTwoFactorForm.bind(this, 'global'),
         });
       }
 
       if (!enablementRequirements.twoFactorSshGloballyEnabled) {
         requirements.push({
           message: 'SSH Two-Factor Authentication must be enabled.',
-          navigateTo: ['/system/advanced'],
-          action: this.openGlobalTwoFactorForm.bind(this),
+          action: this.openGlobalTwoFactorForm.bind(this, 'ssh'),
         });
       }
 
@@ -286,6 +288,7 @@ export class SystemSecurityFormComponent implements OnInit {
         requirements.push({
           message: 'The apps service must be disabled and the pool unset.',
           navigateTo: ['/apps'],
+          highlightElement: 'app-settings',
         });
       }
 
@@ -599,20 +602,26 @@ export class SystemSecurityFormComponent implements OnInit {
     this.slideInRef.close({ response: false });
 
     if (requirement.navigateTo) {
-      this.router.navigate(requirement.navigateTo).then(() => {
-        if (requirement.action) {
-          requirement.action();
-        }
-      });
+      this.navigateAndHighlightService.navigateAndHighlight(requirement.navigateTo, requirement?.highlightElement);
     } else if (requirement.action) {
       requirement.action();
     }
   }
 
-  private openGlobalTwoFactorForm(): void {
+  private openGlobalTwoFactorForm(highlight: 'global' | 'ssh'): void {
     const config = this.twoFactorConfig();
     if (config) {
+      const elementName = highlight === 'global' ? 'enable-2fa-global' : 'enable-2fa-ssh';
       this.slideIn.open(GlobalTwoFactorAuthFormComponent, { data: config });
+
+      // wait a moment for the slidein animation to complete before highlighting anything
+      // so the blue highlight box won't be off-center.
+      setTimeout(() => {
+        const htmlElement = this.window.document.getElementById(elementName);
+        if (htmlElement) {
+          this.navigateAndHighlightService.scrollIntoView(htmlElement);
+        }
+      }, 500);
     }
   }
 }

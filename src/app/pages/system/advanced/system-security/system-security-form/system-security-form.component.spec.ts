@@ -11,6 +11,7 @@ import { stigPasswordRequirements } from 'app/constants/stig-password-requiremen
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
@@ -1106,11 +1107,18 @@ describe('SystemSecurityFormComponent', () => {
           getData: jest.fn(() => fakeSystemSecurityConfig),
           requireConfirmationWhen: jest.fn(),
         }),
+        mockProvider(SlideIn, {
+          open: jest.fn(),
+        }),
+        mockProvider(NavigateAndHighlightService, {
+          navigateAndHighlight: jest.fn(),
+          scrollIntoView: jest.fn(),
+        }),
         mockProvider(ErrorHandlerService, {
           withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$),
         }),
         mockProvider(Router, {
-          navigate: jest.fn(),
+          navigate: jest.fn(() => Promise.resolve()),
         }),
         mockAuth(),
         mockProvider(ApiService, {
@@ -1144,8 +1152,8 @@ describe('SystemSecurityFormComponent', () => {
 
     it('navigates to Users page when clicking Configure for root/admin password requirement', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
-      const router = navigationSpectator.inject(Router);
-      const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
+      const navHighlight = navigationSpectator.inject(NavigateAndHighlightService);
+      const navigateSpy = jest.spyOn(navHighlight, 'navigateAndHighlight');
       const closeSlideInSpy = jest.spyOn(navigationSpectator.inject(SlideInRef), 'close');
 
       // Trigger setupStigRequirements - should show root/admin password requirement
@@ -1165,15 +1173,13 @@ describe('SystemSecurityFormComponent', () => {
       configureButton.click();
 
       expect(closeSlideInSpy).toHaveBeenCalledWith({ response: false });
-      expect(navigateSpy).toHaveBeenCalledWith(['/credentials/users']);
+      expect(navigateSpy).toHaveBeenCalledWith(['/credentials/users'], undefined);
     });
 
     it('navigates to Advanced Settings and opens Global Two-Factor Auth form when clicking Configure', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
-      const router = navigationSpectator.inject(Router);
       const slideIn = navigationSpectator.inject(SlideIn);
       const slideInOpenSpy = jest.spyOn(slideIn, 'open');
-      const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
       const closeSlideInSpy = jest.spyOn(navigationSpectator.inject(SlideInRef), 'close');
 
       // Trigger setupStigRequirements - should show "Global Two-Factor Authentication" requirement
@@ -1192,11 +1198,9 @@ describe('SystemSecurityFormComponent', () => {
       // Click the Configure button
       configureButton.click();
 
-      // Verify navigation was initiated
-      expect(closeSlideInSpy).toHaveBeenCalledWith({ response: false });
-      expect(navigateSpy).toHaveBeenCalledWith(['/system/advanced']);
 
       // Wait for navigation promise to resolve and action to be called
+      expect(closeSlideInSpy).toHaveBeenCalledWith({ response: false });
       await navigationSpectator.fixture.whenStable();
 
       // Verify the Global 2FA form was opened after navigation
