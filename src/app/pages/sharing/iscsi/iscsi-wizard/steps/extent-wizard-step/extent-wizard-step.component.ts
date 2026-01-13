@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, input, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input, OnInit, inject, DestroyRef,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of, switchMap } from 'rxjs';
 import { IscsiExtentType, iscsiExtentUseforMap } from 'app/enums/iscsi.enum';
@@ -21,7 +23,6 @@ import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-extent-wizard-step',
   templateUrl: './extent-wizard-step.component.html',
@@ -42,6 +43,7 @@ export class ExtentWizardStepComponent implements OnInit {
   private iscsiService = inject(IscsiService);
   private filesystemService = inject(FilesystemService);
   private translate = inject(TranslateService);
+  private destroyRef = inject(DestroyRef);
   formatter = inject(IxFormatterService);
 
   readonly form = input.required<IscsiWizardComponent['form']['controls']['extent']>();
@@ -79,7 +81,7 @@ export class ExtentWizardStepComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form().controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
+    this.form().controls.type.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((type) => {
       if (type === IscsiExtentType.Disk) {
         this.form().controls.disk.enable();
         this.form().controls.path.disable();
@@ -94,7 +96,7 @@ export class ExtentWizardStepComponent implements OnInit {
       }
     });
 
-    this.form().controls.disk.valueChanges.pipe(untilDestroyed(this)).subscribe((zvol) => {
+    this.form().controls.disk.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((zvol) => {
       if (zvol === newOption) {
         this.form().controls.dataset.enable();
         this.form().controls.volsize.enable();
@@ -105,7 +107,9 @@ export class ExtentWizardStepComponent implements OnInit {
     });
 
     // Handle snapshot selection - auto-set ro=true and disable checkbox
-    this.form().controls.disk.valueChanges.pipe(untilDestroyed(this)).subscribe((diskValue: string) => {
+    this.form().controls.disk.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((diskValue: string) => {
       if (diskValue?.includes('@')) {
         // Snapshot selected - must be read-only
         this.form().controls.ro.setValue(true);

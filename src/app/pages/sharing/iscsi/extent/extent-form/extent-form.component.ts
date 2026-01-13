@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { sortBy, startsWith } from 'lodash-es';
 import {
@@ -39,7 +41,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-extent-form',
   templateUrl: './extent-form.component.html',
@@ -73,6 +74,7 @@ export class ExtentFormComponent implements OnInit {
   private errorHandler = inject(FormErrorHandlerService);
   private api = inject(ApiService);
   private filesystemService = inject(FilesystemService);
+  private destroyRef = inject(DestroyRef);
   slideInRef = inject<SlideInRef<IscsiExtent | undefined, boolean>>(SlideInRef);
 
   get isNew(): boolean {
@@ -157,7 +159,9 @@ export class ExtentFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe((value: IscsiExtentType) => {
+    this.form.controls.type.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((value: IscsiExtentType) => {
       if (value === IscsiExtentType.Disk) {
         this.form.controls.disk.enable();
         this.form.controls.path.disable();
@@ -171,7 +175,9 @@ export class ExtentFormComponent implements OnInit {
     });
 
     // Handle snapshot selection - auto-set ro=true and disable checkbox
-    this.form.controls.disk.valueChanges.pipe(untilDestroyed(this)).subscribe((diskValue: string) => {
+    this.form.controls.disk.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((diskValue: string) => {
       if (diskValue?.includes('@')) {
         // Snapshot selected - must be read-only
         this.form.controls.ro.setValue(true);
@@ -227,7 +233,7 @@ export class ExtentFormComponent implements OnInit {
       request$ = this.api.call('iscsi.extent.create', [values]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.slideInRef.close({ response: true });
