@@ -162,22 +162,26 @@ export class SnapshotTaskFormComponent implements OnInit {
     ]);
 
     relevantFields$.pipe(
-      debounceTime(300),
+      debounceTime(250),
       switchMap(() => {
         const values = this.form.value;
+        const {
+          begin,
+          end,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          fixate_removal_date,
+          ...restValues
+        } = values;
         const params = {
-          ...values,
+          ...restValues,
           schedule: this.isTimeMode
             ? {
-                begin: values.begin,
-                end: values.end,
+                begin,
+                end,
                 ...crontabToSchedule(this.form.getRawValue().schedule),
               }
             : crontabToSchedule(this.form.getRawValue().schedule),
         };
-        delete params.begin;
-        delete params.end;
-        delete params.fixate_removal_date;
 
         return this.api.call('pool.snapshottask.update_will_change_retention_for', [
           this.editingTask.id,
@@ -191,9 +195,9 @@ export class SnapshotTaskFormComponent implements OnInit {
         const allAffectedSnapshots = Object.values(response).flat();
         this.affectedSnapshots.set(allAffectedSnapshots);
       },
-      error: () => {
-        // Silently handle errors - not critical for form functionality
+      error: (error: unknown) => {
         this.affectedSnapshots.set([]);
+        console.error('Failed to check affected snapshots:', error);
       },
     });
   }
@@ -213,24 +217,22 @@ export class SnapshotTaskFormComponent implements OnInit {
 
   protected onSubmit(): void {
     const values = this.form.value;
+    const {
+      begin, end, fixate_removal_date: fixateRemovalDate, ...restValues
+    } = values;
 
     const params = {
-      ...values,
+      ...restValues,
       schedule: this.isTimeMode
         ? {
-            begin: values.begin,
-            end: values.end,
+            begin,
+            end,
             ...crontabToSchedule(this.form.getRawValue().schedule),
           }
         : crontabToSchedule(this.form.getRawValue().schedule),
+      // Only include fixate_removal_date when updating (not creating)
+      ...(!this.isNew && { fixate_removal_date: fixateRemovalDate }),
     };
-    delete params.begin;
-    delete params.end;
-
-    // Only include fixate_removal_date when updating (not creating)
-    if (this.isNew) {
-      delete params.fixate_removal_date;
-    }
 
     this.isLoading.set(true);
     let request$: Observable<unknown>;

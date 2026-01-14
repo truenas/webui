@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, filter, map, switchMap, take, tap,
+  Observable, filter, switchMap, take, tap,
 } from 'rxjs';
 import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -45,6 +45,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { snapshotTaskListElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 
@@ -82,6 +83,7 @@ export class SnapshotTaskListComponent implements OnInit {
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private taskService = inject(TaskService);
+  private snapshotTaskService = inject(SnapshotTaskService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private slideIn = inject(SlideIn);
@@ -238,7 +240,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   protected doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
-    this.checkTaskHasSnapshots(snapshotTask).pipe(
+    this.snapshotTaskService.checkTaskHasSnapshots(snapshotTask.id).pipe(
       this.loader.withLoader(),
       switchMap((hasSnapshots) => this.confirmDelete(snapshotTask, hasSnapshots)),
       filter((result) => result.confirmed),
@@ -252,15 +254,6 @@ export class SnapshotTaskListComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
       },
     });
-  }
-
-  private checkTaskHasSnapshots(task: PeriodicSnapshotTaskUi): Observable<boolean> {
-    return this.api.call('pool.snapshottask.delete_will_change_retention_for', [task.id]).pipe(
-      map((affectedSnapshots) => {
-        const allSnapshots = Object.values(affectedSnapshots).flat();
-        return allSnapshots.length > 0;
-      }),
-    );
   }
 
   private confirmDelete(

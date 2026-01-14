@@ -34,6 +34,8 @@ describe('SnapshotTaskCardComponent', () => {
   let loader: HarnessLoader;
   let table: IxTableHarness;
 
+  const fiftySecondsAgo = 50000;
+
   const snapshotTasks = [
     {
       id: 1,
@@ -58,7 +60,7 @@ describe('SnapshotTaskCardComponent', () => {
       state: {
         state: 'PENDING',
         datetime: {
-          $date: new Date().getTime() - 50000,
+          $date: new Date().getTime() - fiftySecondsAgo,
         },
       },
       keepfor: '2 WEEK(S)',

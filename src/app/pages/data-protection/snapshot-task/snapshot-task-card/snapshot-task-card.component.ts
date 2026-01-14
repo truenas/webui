@@ -41,6 +41,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { snapshotTaskCardElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.elements';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 import { TaskService } from 'app/services/task.service';
 
 @UntilDestroy()
@@ -76,6 +77,7 @@ export class SnapshotTaskCardComponent implements OnInit {
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private taskService = inject(TaskService);
+  private snapshotTaskService = inject(SnapshotTaskService);
   private loader = inject(LoaderService);
   protected emptyService = inject(EmptyService);
 
@@ -143,7 +145,6 @@ export class SnapshotTaskCardComponent implements OnInit {
   ngOnInit(): void {
     const snapshotTasks$ = this.api.call('pool.snapshottask.query').pipe(
       map((snapshotTasks) => snapshotTasks as PeriodicSnapshotTaskUi[]),
-      untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(snapshotTasks$);
     this.getSnapshotTasks();
@@ -162,7 +163,7 @@ export class SnapshotTaskCardComponent implements OnInit {
   }
 
   protected doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
-    this.checkTaskHasSnapshots(snapshotTask).pipe(
+    this.snapshotTaskService.checkTaskHasSnapshots(snapshotTask.id).pipe(
       this.loader.withLoader(),
       switchMap((hasSnapshots) => this.confirmDelete(snapshotTask, hasSnapshots)),
       filter((result) => result.confirmed),
@@ -173,15 +174,6 @@ export class SnapshotTaskCardComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
       },
     });
-  }
-
-  private checkTaskHasSnapshots(task: PeriodicSnapshotTaskUi): Observable<boolean> {
-    return this.api.call('pool.snapshottask.delete_will_change_retention_for', [task.id]).pipe(
-      map((affectedSnapshots) => {
-        const allSnapshots = Object.values(affectedSnapshots).flat();
-        return allSnapshots.length > 0;
-      }),
-    );
   }
 
   private confirmDelete(
