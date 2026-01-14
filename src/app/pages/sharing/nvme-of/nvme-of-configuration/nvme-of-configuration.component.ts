@@ -28,6 +28,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectService } from 'app/store/services/services.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -64,6 +65,7 @@ export class NvmeOfConfigurationComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
   protected isLoading = signal(false);
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly service = toSignal(this.store$.select(selectService(ServiceName.NvmeOf)));
 
   protected form = this.formBuilder.nonNullable.group({

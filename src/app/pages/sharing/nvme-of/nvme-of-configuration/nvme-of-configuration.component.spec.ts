@@ -20,6 +20,7 @@ import {
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectServices } from 'app/store/services/services.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('NvmeOfConfigurationComponent', () => {
   let spectator: Spectator<NvmeOfConfigurationComponent>;
@@ -47,6 +48,10 @@ describe('NvmeOfConfigurationComponent', () => {
         selectors: [
           {
             selector: selectIsHaLicensed,
+            value: true,
+          },
+          {
+            selector: selectIsEnterprise,
             value: true,
           },
           {
@@ -144,6 +149,19 @@ describe('NvmeOfConfigurationComponent', () => {
     const controls = await form.getDisabledState();
     expect(controls).toMatchObject({
       'Implementation (Experimental)': true,
+    });
+  });
+
+  it('hides Implementation field on non-enterprise systems', async () => {
+    spectator.inject(MockStore).overrideSelector(selectIsEnterprise, false);
+    spectator.inject(MockStore).refreshState();
+    spectator.detectChanges();
+
+    const formValues = await form.getValues();
+    expect(formValues).toEqual({
+      'Base NQN': 'iqn.2005-10.org.freenas:ctl',
+      'Enable Asymmetric Namespace Access (ANA)': true,
+      'Enable Remote Direct Memory Access (RDMA)': true,
     });
   });
 });
