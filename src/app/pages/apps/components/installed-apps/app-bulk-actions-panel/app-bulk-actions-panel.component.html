@@ -3,17 +3,6 @@
     <h3 mat-card-title id="bulk-actions-title">{{ 'Multi-select Mode' | translate }}</h3>
   </mat-card-header>
 
-  <mat-card-content>
-    <div class="selected-apps">
-      <h4>{{ 'Selected Applications' | translate }}</h4>
-      <ul>
-        @for (app of checkedApps(); track app.id) {
-          <li>{{ app.name }}</li>
-        }
-      </ul>
-    </div>
-  </mat-card-content>
-
   <mat-card-actions>
     <button
       *ixRequiresRoles="requiredRoles"

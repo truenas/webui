@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
-  MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
+  MatCard, MatCardActions, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -21,7 +21,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatCard,
     MatCardHeader,
     MatCardTitle,
-    MatCardContent,
     MatCardActions,
     MatButton,
     TranslateModule,

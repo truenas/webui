@@ -33,15 +33,6 @@ describe('AppBulkActionsPanelComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('shows all selected app names', () => {
-      const listItems = spectator.queryAll('.selected-apps li');
-      expect(listItems).toHaveLength(4);
-      expect(listItems[0]).toHaveText('Plex');
-      expect(listItems[1]).toHaveText('Nextcloud');
-      expect(listItems[2]).toHaveText('Minio');
-      expect(listItems[3]).toHaveText('Netdata');
-    });
-
     it('emits bulkStart when Start All Selected is clicked', async () => {
       const startSpy = jest.spyOn(spectator.component.bulkStart, 'emit');
       const startButton = await loader.getHarness(MatButtonHarness.with({ text: 'Start All Selected' }));
