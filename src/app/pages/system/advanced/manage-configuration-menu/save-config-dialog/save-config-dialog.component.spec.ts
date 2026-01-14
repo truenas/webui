@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { DatePipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -43,11 +42,6 @@ describe('SaveConfigDialogComponent', () => {
       }),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
-    ],
-    componentProviders: [
-      mockProvider(DatePipe, {
-        transform: () => '20220524160228',
-      }),
     ],
   });
 
