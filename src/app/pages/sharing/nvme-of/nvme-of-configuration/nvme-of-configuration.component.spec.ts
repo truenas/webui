@@ -169,4 +169,21 @@ describe('NvmeOfConfigurationComponent', () => {
       'Enable Remote Direct Memory Access (RDMA)': true,
     });
   });
+
+  it('does not include kernel in payload when saving on non-enterprise systems', async () => {
+    spectator.inject(MockStore).overrideSelector(selectIsEnterprise, false);
+    spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(true));
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('nvmet.global.update', [{
+      ana: true,
+      basenqn: 'iqn.2005-10.org.freenas:ctl',
+      rdma: true,
+    }]);
+  });
 });

@@ -129,7 +129,8 @@ export class NvmeOfConfigurationComponent implements OnInit {
   protected onSubmit(): void {
     this.isLoading.set(true);
 
-    const payload = this.form.value;
+    const { kernel, ...rest } = this.form.value;
+    const payload = this.isEnterprise() ? { ...rest, kernel } : rest;
 
     this.api.call('nvmet.global.update', [payload]).pipe(
       this.errorHandler.withErrorHandler(),
