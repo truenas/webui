@@ -167,6 +167,13 @@ describe('IscsiWizardComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
+    // Wait for all async operations to complete
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 100);
+    });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
     expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'pool.dataset.create', [{
       name: 'new_pool/test-name',
       type: 'VOLUME',
@@ -217,6 +224,9 @@ describe('IscsiWizardComponent', () => {
   });
 
   it('fibre channel: creates objects when wizard is submitted', async () => {
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
     await form.fillForm({
       Name: 'test-name',
       Device: 'Create New',
@@ -237,6 +247,13 @@ describe('IscsiWizardComponent', () => {
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
+
+    // Wait for all async operations to complete
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 100);
+    });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
 
     expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'pool.dataset.create', [{
       name: 'new_pool/test-name',
