@@ -93,6 +93,14 @@
               [label]="labels.enabled | translate"
             ></ix-checkbox>
 
+            @if (!isNew && retentionCheckError()) {
+              <div class="retention-warning error">
+                <p class="warning-text">
+                  {{ 'Unable to check if changes will affect snapshot retention. The operation may proceed but retention impact cannot be verified.' | translate }}
+                </p>
+              </div>
+            }
+
             @if (!isNew && affectedSnapshots().length > 0) {
               <div class="retention-warning">
                 <p class="warning-text">

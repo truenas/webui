@@ -30,6 +30,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 
@@ -60,6 +61,7 @@ import { TaskService } from 'app/services/task.service';
 export class SnapshotTaskFormComponent implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
+  private snapshotTaskService = inject(SnapshotTaskService);
   private translate = inject(TranslateService);
   private errorHandler = inject(FormErrorHandlerService);
   private taskService = inject(TaskService);
@@ -97,6 +99,7 @@ export class SnapshotTaskFormComponent implements OnInit {
   protected isLoading = signal(false);
   protected editingTask: PeriodicSnapshotTask | undefined;
   protected affectedSnapshots = signal<string[]>([]);
+  protected retentionCheckError = signal(false);
 
   readonly labels = {
     dataset: helptextSnapshotForm.datasetLabel,
@@ -183,20 +186,20 @@ export class SnapshotTaskFormComponent implements OnInit {
             : crontabToSchedule(this.form.getRawValue().schedule),
         };
 
-        return this.api.call('pool.snapshottask.update_will_change_retention_for', [
+        return this.snapshotTaskService.checkUpdateWillChangeRetention(
           this.editingTask.id,
           params as PeriodicSnapshotTaskUpdate,
-        ]);
+        );
       }),
       untilDestroyed(this),
     ).subscribe({
-      next: (response: Record<string, string[]>) => {
-        // Flatten all affected snapshots from all change types
-        const allAffectedSnapshots = Object.values(response).flat();
-        this.affectedSnapshots.set(allAffectedSnapshots);
+      next: (affectedSnapshots: string[]) => {
+        this.affectedSnapshots.set(affectedSnapshots);
+        this.retentionCheckError.set(false);
       },
       error: (error: unknown) => {
         this.affectedSnapshots.set([]);
+        this.retentionCheckError.set(true);
         console.error('Failed to check affected snapshots:', error);
       },
     });
@@ -237,11 +240,13 @@ export class SnapshotTaskFormComponent implements OnInit {
     this.isLoading.set(true);
     let request$: Observable<unknown>;
     if (this.editingTask) {
+      // cspell:ignore snapshottask
       request$ = this.api.call('pool.snapshottask.update', [
         this.editingTask.id,
         params as PeriodicSnapshotTaskUpdate,
       ]);
     } else {
+      // cspell:ignore snapshottask
       request$ = this.api.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
     }
 

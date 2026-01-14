@@ -170,6 +170,9 @@ export class SnapshotTaskCardComponent implements OnInit {
       switchMap((result) => this.deleteTask(snapshotTask.id, result.secondaryCheckbox)),
       untilDestroyed(this),
     ).subscribe({
+      next: () => {
+        this.getSnapshotTasks();
+      },
       error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
       },
