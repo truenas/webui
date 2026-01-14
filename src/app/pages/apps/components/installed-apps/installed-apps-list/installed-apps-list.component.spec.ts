@@ -291,4 +291,28 @@ describe('InstalledAppsListComponent', () => {
     expect(spectator.component.selectedApp).toBeUndefined();
     expect(locationSpy).not.toHaveBeenCalledWith(expect.stringContaining('ix-test-app-2'));
   });
+
+  it('opens details when Enter key is pressed on a row in normal mode', () => {
+    const locationSpy = jest.spyOn(spectator.inject(Location), 'replaceState');
+    const secondRow = spectator.queryAll('ix-app-row')[1];
+
+    spectator.dispatchKeyboardEvent(secondRow, 'keydown', 'Enter');
+
+    expect(locationSpy).toHaveBeenCalledWith('/apps/installed/test-catalog-train/ix-test-app-2');
+  });
+
+  it('toggles checkbox when Enter key is pressed on a row in bulk mode', async () => {
+    const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
+    await selectAll.check();
+
+    const checkboxes = await loader.getAllHarnesses(MatCheckboxHarness);
+    const firstRowCheckbox = checkboxes[1]; // Index 0 is select-all, index 1 is first row
+    expect(await firstRowCheckbox.isChecked()).toBe(true);
+
+    const firstRow = spectator.query('ix-app-row');
+    spectator.dispatchKeyboardEvent(firstRow, 'keydown', 'Enter');
+    spectator.detectChanges();
+
+    expect(await firstRowCheckbox.isChecked()).toBe(false);
+  });
 });
