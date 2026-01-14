@@ -102,7 +102,6 @@ export class SnapshotTaskFormComponent implements OnInit {
   protected editingTask: PeriodicSnapshotTask | undefined;
   protected affectedSnapshots = signal<string[]>([]);
   protected retentionCheckError = signal(false);
-  private isComponentActive = signal(true);
 
   readonly labels = {
     dataset: helptextSnapshotForm.datasetLabel,
@@ -146,11 +145,6 @@ export class SnapshotTaskFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Track component lifecycle to prevent post-destruction updates
-    this.destroyRef.onDestroy(() => {
-      this.isComponentActive.set(false);
-    });
-
     if (this.editingTask) {
       this.setTaskForEdit(this.editingTask);
       this.setupRetentionChangeDetection();
@@ -175,11 +169,6 @@ export class SnapshotTaskFormComponent implements OnInit {
     relevantFields$.pipe(
       debounceTime(250),
       switchMap(() => {
-        // Prevent API calls after component destruction
-        if (!this.isComponentActive()) {
-          return of([]);
-        }
-
         const values = this.form.value;
         const {
           begin,
@@ -207,21 +196,15 @@ export class SnapshotTaskFormComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (affectedSnapshots: string[]) => {
-        // Prevent signal updates after component destruction
-        if (this.isComponentActive()) {
-          this.affectedSnapshots.set(affectedSnapshots);
-          this.retentionCheckError.set(false);
-        }
+        this.affectedSnapshots.set(affectedSnapshots);
+        this.retentionCheckError.set(false);
       },
       error: (error: unknown) => {
-        // Prevent signal updates after component destruction
-        if (this.isComponentActive()) {
-          this.affectedSnapshots.set([]);
-          this.retentionCheckError.set(true);
-          // Log to console only - this is a non-critical background check
-          // that shouldn't create Sentry alerts or show error dialogs to users
-          console.error('[SnapshotTaskForm] Failed to check retention changes:', error);
-        }
+        this.affectedSnapshots.set([]);
+        this.retentionCheckError.set(true);
+        // Log to console only - this is a non-critical background check
+        // that shouldn't create Sentry alerts or show error dialogs to users
+        console.error('[SnapshotTaskForm] Failed to check retention changes:', error);
       },
     });
   }
