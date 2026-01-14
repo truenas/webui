@@ -187,6 +187,14 @@ export class InstalledAppsListComponent implements OnInit {
     this.selectAppForDetails(app.id);
   }
 
+  onRowEnterKey(app: App): void {
+    if (this.hasCheckedApps) {
+      this.onCheckboxChange(app.id);
+    } else {
+      this.viewDetails(app);
+    }
+  }
+
   protected onListFiltered(query: string): void {
     this.installedAppsStore.setSearchQuery(query);
 

@@ -41,6 +41,7 @@
             <mat-checkbox
               color="primary"
               ixTest="select-all-app"
+              [attr.aria-label]="'Select all applications' | translate"
               [checked]="allAppsChecked"
               [indeterminate]="!allAppsChecked && !!selection.selected.length"
               (change)="toggleAppsChecked($event.checked)"
@@ -108,7 +109,7 @@
             (clickStatus)="openStatusDialog(app.name)"
             (selectionChange)="onCheckboxChange(app.id)"
             (click)="viewDetails(app)"
-            (keydown.enter)="viewDetails(app)"
+            (keydown.enter)="onRowEnterKey(app)"
           ></ix-app-row>
         }
       </div>

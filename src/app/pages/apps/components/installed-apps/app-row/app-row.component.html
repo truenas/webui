@@ -2,6 +2,7 @@
   <mat-checkbox
     color="primary"
     [ixTest]="app().name"
+    [attr.aria-label]="('Select' | translate) + ' ' + app().name"
     [checked]="selected()"
     (click)="$event.stopPropagation()"
     (change)="toggleAppChecked()"
@@ -67,6 +68,7 @@
       mat-icon-button
       matTooltipPosition="above"
       [ixTest]="[app().name, 'start']"
+      [attr.aria-label]="'Start' | translate"
       [matTooltip]="'Start' | translate"
       [disabled]="inProgress()"
       (click)="start(); $event.stopPropagation()"
@@ -91,6 +93,7 @@
       mat-icon-button
       matTooltipPosition="above"
       [ixTest]="[app().name, 'stop']"
+      [attr.aria-label]="'Stop' | translate"
       [matTooltip]="'Stop' | translate"
       (click)="stop(); $event.stopPropagation()"
     >
