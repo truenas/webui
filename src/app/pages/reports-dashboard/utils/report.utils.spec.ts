@@ -136,13 +136,13 @@ describe('formatData', () => {
     expect(result.aggregations.mean).toEqual([50]);
   });
 
-  it('reverses legend and data for CPU graphs', () => {
+  it('removes first column and reverses legend and data for CPU graphs', () => {
     const data = {
       name: ReportingGraphName.Cpu,
-      legend: ['time', 'user', 'system'],
+      legend: ['willBeRemoved', 'time', 'user', 'system'],
       data: [
-        [1, 20, 30],
-        [2, 25, 35],
+        [1, 0, 20, 30],
+        [2, 0, 25, 35],
       ],
       aggregations: { min: [10, 15], max: [50, 55], mean: [30, 35] },
     } as ReportingData;

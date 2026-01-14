@@ -23,6 +23,16 @@ export function formatData(data: ReportingData): ReportingData {
       ...row.slice(1).reverse(),
     ]);
 
+    // we receieve an aggregate CPU load from the backend just called 'Cpu' instead
+    // of 'Cpu1' or 'Cpu2'. this doesn't really make sense to graph, since we draw a stacked graph
+    // for CPU usage, and the aggregate would stack underneath the *actual* usages and offset the peaks on the graph.
+    //
+    // so, we remove that data so it doesn't show up.
+    formattedData.legend.pop();
+    if (Array.isArray(formattedData.data)) {
+      formattedData.data.forEach((row) => row.pop());
+    }
+
     if (formattedData.aggregations) {
       formattedData.aggregations.min = [...formattedData.aggregations.min].reverse();
       formattedData.aggregations.max = [...formattedData.aggregations.max].reverse();
