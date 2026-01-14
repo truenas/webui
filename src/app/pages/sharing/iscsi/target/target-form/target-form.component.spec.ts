@@ -236,20 +236,7 @@ describe('TargetFormComponent', () => {
             name: 'name_new',
             alias: 'alias_new',
             mode: IscsiTargetMode.Fc,
-            groups: [
-              {
-                portal: 1,
-                initiator: 4,
-                authmethod: IscsiAuthMethod.ChapMutual,
-                auth: 66,
-              },
-              {
-                portal: 2,
-                initiator: 3,
-                authmethod: IscsiAuthMethod.ChapMutual,
-                auth: 55,
-              },
-            ],
+            groups: [], // Groups are cleared when mode is FC
             auth_networks: ['192.168.10.0/24', '192.168.0.0/24'],
           },
         ],
@@ -334,6 +321,110 @@ describe('TargetFormComponent', () => {
 
       const banner = spectator.query('ix-fc-mpio-info-banner');
       expect(banner).not.toExist();
+    });
+  });
+
+  describe('groups visibility based on mode', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('shows groups section when mode is iSCSI', async () => {
+      await form.fillForm({
+        Mode: 'iSCSI',
+      });
+
+      const groupsList = spectator.query('ix-list[formArrayName="groups"]');
+      expect(groupsList).toExist();
+    });
+
+    it('shows groups section when mode is BOTH', async () => {
+      await form.fillForm({
+        Mode: 'Both',
+      });
+
+      const groupsList = spectator.query('ix-list[formArrayName="groups"]');
+      expect(groupsList).toExist();
+    });
+
+    it('hides groups section when mode is FC', async () => {
+      await form.fillForm({
+        Mode: 'Fibre Channel',
+      });
+
+      const groupsList = spectator.query('ix-list[formArrayName="groups"]');
+      expect(groupsList).not.toExist();
+    });
+  });
+
+  describe('groups in API calls based on mode', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingTarget }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+    });
+
+    it('sends empty groups array when submitting with FC mode', async () => {
+      await form.fillForm({
+        Mode: 'Fibre Channel',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith(
+        'iscsi.target.update',
+        [
+          123,
+          expect.objectContaining({
+            mode: IscsiTargetMode.Fc,
+            groups: [],
+          }),
+        ],
+      );
+    });
+
+    it('sends groups array when submitting with iSCSI mode', async () => {
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith(
+        'iscsi.target.update',
+        [
+          123,
+          expect.objectContaining({
+            mode: IscsiTargetMode.Iscsi,
+            groups: existingTarget.groups,
+          }),
+        ],
+      );
+    });
+
+    it('sends groups array when submitting with BOTH mode', async () => {
+      await form.fillForm({
+        Mode: 'Both',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenLastCalledWith(
+        'iscsi.target.update',
+        [
+          123,
+          expect.objectContaining({
+            mode: IscsiTargetMode.Both,
+            groups: existingTarget.groups,
+          }),
+        ],
+      );
     });
   });
 });

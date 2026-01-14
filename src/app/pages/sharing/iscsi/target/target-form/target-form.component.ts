@@ -102,6 +102,11 @@ export class TargetFormComponent implements OnInit {
     return this.form.value.mode === IscsiTargetMode.Fc || this.form.value.mode === IscsiTargetMode.Both;
   }
 
+  get showGroupsControls(): boolean {
+    const mode = this.form.value.mode;
+    return mode === IscsiTargetMode.Iscsi || mode === IscsiTargetMode.Both;
+  }
+
   get title(): string {
     return this.isNew
       ? this.translate.instant('Add ISCSI Target')
@@ -234,6 +239,11 @@ export class TargetFormComponent implements OnInit {
 
   protected onSubmit(): void {
     const { fcPorts, ...values } = this.form.getRawValue();
+
+    // Clear groups array if mode is FC (groups are not applicable in FC mode)
+    if (values.mode === IscsiTargetMode.Fc) {
+      values.groups = [];
+    }
 
     this.isLoading.set(true);
     let request$: Observable<IscsiTarget>;
