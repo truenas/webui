@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-imports */
+
 import { adviseToSetRemote } from '../utils/advise-to-set-remote';
 import { updateEnvironment, writeToEnvironment } from '../utils/save-environment';
 
