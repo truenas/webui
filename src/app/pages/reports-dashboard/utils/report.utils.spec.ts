@@ -144,7 +144,7 @@ describe('formatData', () => {
         [1, 0, 20, 30],
         [2, 0, 25, 35],
       ],
-      aggregations: { min: [10, 15], max: [50, 55], mean: [30, 35] },
+      aggregations: { min: [10, 15, 0], max: [50, 55, 0], mean: [30, 35, 0] },
     } as ReportingData;
 
     const result = formatData(data);
