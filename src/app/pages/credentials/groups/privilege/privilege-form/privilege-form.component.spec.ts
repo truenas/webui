@@ -1,11 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, flush } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { lastValueFrom, of, throwError } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
@@ -117,18 +116,6 @@ describe('PrivilegeFormComponent', () => {
       mockProvider(SlideInRef, slideInRef),
       mockProvider(UserService, {
         groupQueryDsCache: jest.fn(() => of([])),
-        getGroupByName: jest.fn((groupName: string) => {
-          // Return existing groups, error for non-existent ones
-          const existingGroup = testGroups.find((group) => group.group === groupName);
-          if (existingGroup) {
-            return of(existingGroup);
-          }
-          return of(null);
-        }),
-        getUserByName: jest.fn(() => {
-          // Mock user validation - all users are considered non-existent for testing
-          return of(null);
-        }),
       }),
       provideMockStore({
         selectors: [
@@ -212,7 +199,7 @@ describe('PrivilegeFormComponent', () => {
       });
     });
 
-    it('sends an update payload to websocket and closes modal when save is pressed', fakeAsync(async () => {
+    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Name: 'updated privilege',
@@ -223,8 +210,9 @@ describe('PrivilegeFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      // Flush all pending async operations
-      flush();
+      // Wait for all pending async operations
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('privilege.update', [10, {
         ds_groups: [],
@@ -233,7 +221,7 @@ describe('PrivilegeFormComponent', () => {
         roles: [Role.FullAdmin, Role.ReadonlyAdmin],
         web_shell: false,
       }]);
-    }));
+    });
   });
 
   describe('editing a build-in privilege', () => {
@@ -247,7 +235,7 @@ describe('PrivilegeFormComponent', () => {
       api = spectator.inject(ApiService);
     });
 
-    it('sends an update payload to websocket and closes modal when save is pressed', fakeAsync(async () => {
+    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
 
       expect(await form.getDisabledState()).toEqual({
@@ -265,15 +253,16 @@ describe('PrivilegeFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      // Flush all pending async operations
-      flush();
+      // Wait for all pending async operations
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('privilege.update', [10, {
         ds_groups: [],
         local_groups: [111, 222],
         web_shell: false,
       }]);
-    }));
+    });
   });
 
   describe('group validation', () => {
@@ -283,7 +272,7 @@ describe('PrivilegeFormComponent', () => {
       api = spectator.inject(ApiService);
     });
 
-    it('prevents saving when local group does not exist and shows error', fakeAsync(() => {
+    it('prevents saving when local group does not exist and shows error', async () => {
       // Note: Cannot use IxFormHarness here because this tests an edge case where
       // a group was valid when entered but got deleted before submission.
       // The chips provider would prevent entering invalid groups in normal UI flow.
@@ -297,16 +286,17 @@ describe('PrivilegeFormComponent', () => {
 
       spectator.component.onSubmit();
 
-      flush();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       // Validation error should prevent privilege.create from being called
       const privilegeCreateCalls = (api.call as jest.Mock).mock.calls.filter(
         (call) => call[0] === 'privilege.create',
       );
       expect(privilegeCreateCalls).toHaveLength(0);
-    }));
+    });
 
-    it('prevents saving when DS group does not exist and shows error', fakeAsync(() => {
+    it('prevents saving when DS group does not exist and shows error', async () => {
       // Note: Cannot use IxFormHarness here because this tests an edge case where
       // a group was valid when entered but got deleted before submission.
       // The chips provider would prevent entering invalid groups in normal UI flow.
@@ -320,14 +310,15 @@ describe('PrivilegeFormComponent', () => {
 
       spectator.component.onSubmit();
 
-      flush();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       // Validation error should prevent privilege.create from being called
       const privilegeCreateCalls = (api.call as jest.Mock).mock.calls.filter(
         (call) => call[0] === 'privilege.create',
       );
       expect(privilegeCreateCalls).toHaveLength(0);
-    }));
+    });
   });
 
   describe('group providers', () => {
@@ -385,15 +376,41 @@ describe('PrivilegeFormComponent', () => {
       expect(callArgs[1][1]).toEqual({ limit: 50, order_by: ['group'] });
     });
 
-    it('uses ix-group-chips component for DS groups with automatic validation', () => {
-      const groupChipsComponent = spectator.query('ix-group-chips[formControlName="ds_groups"]');
-      expect(groupChipsComponent).toExist();
+    it('should use UserService.groupQueryDsCache for DS groups', async () => {
+      const provider = spectator.component.dsGroupsProvider;
+      const userService = spectator.inject(UserService);
+
+      jest.spyOn(userService, 'groupQueryDsCache').mockReturnValue(of([
+        { id: 1, group: 'domain-test', gid: 1001 } as Group,
+        { id: 2, group: 'test-domain', gid: 1002 } as Group,
+      ]));
+
+      const result = await lastValueFrom(provider('test'));
+
+      // Should call UserService.groupQueryDsCache with the query
+      expect(userService.groupQueryDsCache).toHaveBeenCalledWith('test', false, 0);
+
+      // Should return group names
+      expect(result).toEqual(['domain-test', 'test-domain']);
     });
 
-    it('dS groups field uses UserService for group queries', () => {
+    it('should limit DS groups results to 50', async () => {
+      const provider = spectator.component.dsGroupsProvider;
       const userService = spectator.inject(UserService);
-      // ix-group-chips component automatically uses UserService.groupQueryDsCache
-      expect(userService).toBeTruthy();
+
+      // Mock more than 50 groups
+      const manyGroups = Array.from({ length: 100 }, (_, i) => ({
+        id: i,
+        group: `group${i}`,
+        gid: 1000 + i,
+      } as Group));
+
+      jest.spyOn(userService, 'groupQueryDsCache').mockReturnValue(of(manyGroups));
+
+      const result = await lastValueFrom(provider('test'));
+
+      // Should limit to 50 results
+      expect(result).toHaveLength(50);
     });
 
     it('should handle empty query for local groups', async () => {
@@ -433,7 +450,7 @@ describe('PrivilegeFormComponent', () => {
   });
 
   describe('directory services authentication button', () => {
-    it('should call directoryservices.status when DS groups are added and DS is enabled', fakeAsync(() => {
+    it('should call directoryservices.status when DS groups are added and DS is enabled', async () => {
       spectator = createComponent({
         providers: [
           mockApi([
@@ -448,14 +465,6 @@ describe('PrivilegeFormComponent', () => {
           ]),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
-            getGroupByName: jest.fn((groupName: string) => {
-              // Return existing groups, error for non-existent ones
-              const existingGroups = ['AD\\Domain Admins'];
-              if (existingGroups.includes(groupName)) {
-                return of({ group: groupName } as Group);
-              }
-              return throwError(() => new Error('Not found'));
-            }),
           }),
           provideMockStore({
             selectors: [
@@ -479,7 +488,8 @@ describe('PrivilegeFormComponent', () => {
       api = spectator.inject(ApiService);
 
       // Wait for ngOnInit to complete
-      flush();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       // Trigger DS groups being added
       // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -487,13 +497,14 @@ describe('PrivilegeFormComponent', () => {
         ds_groups: ['AD\\Domain Admins'],
       });
 
-      flush();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       // Should have checked DS status
       expect(api.call).toHaveBeenCalledWith('directoryservices.status');
-    }));
+    });
 
-    it('should NOT show button when DS groups are added but Directory Services are disabled', fakeAsync(() => {
+    it('should NOT show button when DS groups are added but Directory Services are disabled', async () => {
       spectator = createComponent({
         providers: [
           mockApi([
@@ -507,14 +518,6 @@ describe('PrivilegeFormComponent', () => {
           ]),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
-            getGroupByName: jest.fn((groupName: string) => {
-              // Return existing groups, error for non-existent ones
-              const existingGroups = ['AD\\Domain Admins'];
-              if (existingGroups.includes(groupName)) {
-                return of({ group: groupName } as Group);
-              }
-              return throwError(() => new Error('Not found'));
-            }),
           }),
           provideMockStore({
             selectors: [
@@ -543,17 +546,17 @@ describe('PrivilegeFormComponent', () => {
         ds_groups: ['AD\\Domain Admins'],
       });
 
-      flush();
       spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('directoryservices.status');
 
       // Button should NOT be visible since DS is disabled
       const button = spectator.query('button[ixTest="enable-ds-auth"]');
       expect(button).toBeFalsy();
-    }));
+    });
 
-    it('should NOT show button when ds_auth is already enabled', fakeAsync(() => {
+    it('should NOT show button when ds_auth is already enabled', async () => {
       spectator = createComponent({
         providers: [
           mockApi([
@@ -568,14 +571,6 @@ describe('PrivilegeFormComponent', () => {
           ]),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
-            getGroupByName: jest.fn((groupName: string) => {
-              // Return existing groups, error for non-existent ones
-              const existingGroups = ['AD\\Domain Admins'];
-              if (existingGroups.includes(groupName)) {
-                return of({ group: groupName } as Group);
-              }
-              return throwError(() => new Error('Not found'));
-            }),
           }),
           provideMockStore({
             selectors: [
@@ -599,7 +594,8 @@ describe('PrivilegeFormComponent', () => {
       api = spectator.inject(ApiService);
 
       // Wait for initial config load
-      flush();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       // Trigger DS groups being added
       // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -607,15 +603,15 @@ describe('PrivilegeFormComponent', () => {
         ds_groups: ['AD\\Domain Admins'],
       });
 
-      flush();
       spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       // Should not show button since ds_auth is already enabled
       const button = spectator.query('button[ixTest="enable-ds-auth"]');
       expect(button).toBeFalsy();
-    }));
+    });
 
-    it('should NOT show button in non-enterprise mode', fakeAsync(() => {
+    it('should NOT show button in non-enterprise mode', async () => {
       spectator = createComponent({
         providers: [
           mockApi([
@@ -630,14 +626,6 @@ describe('PrivilegeFormComponent', () => {
           ]),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
-            getGroupByName: jest.fn((groupName: string) => {
-              // Return existing groups, error for non-existent ones
-              const existingGroups = ['AD\\Domain Admins'];
-              if (existingGroups.includes(groupName)) {
-                return of({ group: groupName } as Group);
-              }
-              return throwError(() => new Error('Not found'));
-            }),
           }),
           provideMockStore({
             selectors: [
@@ -664,27 +652,17 @@ describe('PrivilegeFormComponent', () => {
         ds_groups: ['AD\\Domain Admins'],
       });
 
-      flush();
       spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       // Should not show button in non-enterprise mode
       const button = spectator.query('button[ixTest="enable-ds-auth"]');
       expect(button).toBeFalsy();
-    }));
+    });
 
-    it('should show button and enable ds_auth when clicked', fakeAsync(async () => {
+    it('should show button and enable ds_auth when clicked', async () => {
       spectator = createComponent({
         providers: [
-          mockApi([
-            mockCall('group.query', testGroups),
-            mockCall('privilege.roles', [
-              { name: Role.FullAdmin, title: Role.FullAdmin, builtin: false },
-            ] as PrivilegeRole[]),
-            mockCall('directoryservices.status', {
-              type: 'ACTIVEDIRECTORY',
-              status: DirectoryServiceStatus.Healthy,
-            } as DirectoryServicesStatus),
-          ]),
           provideMockStore({
             selectors: [
               {
@@ -701,48 +679,32 @@ describe('PrivilegeFormComponent', () => {
           }),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
-            getGroupByName: jest.fn((groupName: string) => {
-              // Return existing groups, error for non-existent ones
-              const existingGroups = ['AD\\Domain Admins'];
-              if (existingGroups.includes(groupName)) {
-                return of({ group: groupName } as Group);
-              }
-              return throwError(() => new Error('Not found'));
-            }),
           }),
-          mockProvider(SlideInRef, slideInRef),
           mockAuth(),
         ],
       });
 
       api = spectator.inject(ApiService);
-      const localLoader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      // Wait for ngOnInit and directoryservices.status API call to complete
-      flush();
+      // Wait for ngOnInit to complete
       spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
-      // Wait for the directoryservices.status subscription to process
-      flush();
-      spectator.detectChanges();
-
-      // Manually set DS status to Healthy with type (factory mock doesn't include type)
-      // This must be done BEFORE filling the form to trigger button visibility
+      // Manually set DS status to Healthy with type (since factory mock doesn't include type)
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['dsStatus'].set({
         type: 'ACTIVEDIRECTORY',
         status: DirectoryServiceStatus.Healthy,
       } as DirectoryServicesStatus);
 
-      // Use IxFormHarness to properly fill the form
-      const form = await localLoader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Directory Services Groups': ['AD\\Domain Admins'],
+      // Trigger DS groups being added
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({
+        ds_groups: ['AD\\Domain Admins'],
       });
 
-      // Wait for async group validation and button visibility update
-      flush();
       spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       // Button should be visible
       const button = spectator.query('button[ixTest="enable-ds-auth"]');
@@ -750,7 +712,8 @@ describe('PrivilegeFormComponent', () => {
 
       // Click the button
       spectator.click(button);
-      flush();
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       // Should have called the API to enable ds_auth
       expect(api.call).toHaveBeenCalledWith('system.general.update', [{ ds_auth: true }]);
@@ -759,6 +722,6 @@ describe('PrivilegeFormComponent', () => {
       spectator.detectChanges();
       const buttonAfter = spectator.query('button[ixTest="enable-ds-auth"]');
       expect(buttonAfter).toBeFalsy();
-    }));
+    });
   });
 });

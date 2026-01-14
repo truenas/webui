@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -723,7 +722,7 @@ describe('SmbFormComponent', () => {
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
     });
 
-    it('should change purpose to External when path contains IP address/share format', fakeAsync(async () => {
+    it('should change purpose to External when path contains IP address/share format', async () => {
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
       const purposeControl = await loader.getHarness(IxSelectHarness.with({ label: 'Purpose' }));
 
@@ -734,12 +733,14 @@ describe('SmbFormComponent', () => {
       await pathControl.setValue('192.168.0.200\\SHARE');
 
       // Wait for debounced changes to trigger
-      tick(100);
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 100);
+      });
       spectator.detectChanges();
 
       // Purpose should now be External Share
       expect(await purposeControl.getValue()).toBe('External Share');
-    }));
+    });
 
     it('should change purpose to External when path starts with EXTERNAL prefix', async () => {
       const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
@@ -1147,7 +1148,7 @@ describe('SmbFormComponent', () => {
       expect(errorElement?.textContent).toContain('At least one group must be specified');
     });
 
-    it('should show error when non-existent group is entered in watch list', fakeAsync(async () => {
+    it('should show error when non-existent group is entered in watch list', async () => {
       // Mock API to return error for non-existent group
       const userService = spectator.inject(UserService);
       jest.spyOn(userService, 'getGroupByName').mockReturnValue(throwError(() => new Error('Group not found')));
@@ -1170,7 +1171,9 @@ describe('SmbFormComponent', () => {
       auditGroup.controls.watch_list.updateValueAndValidity();
 
       // Wait for async validation and debounce
-      spectator.tick(600);
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 600);
+      });
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
@@ -1181,9 +1184,9 @@ describe('SmbFormComponent', () => {
       // Verify save button is disabled
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
-    }));
+    });
 
-    it('should show error when non-existent group is entered in ignore list', fakeAsync(async () => {
+    it('should show error when non-existent group is entered in ignore list', async () => {
       // Mock API to return error for non-existent group
       const userService = spectator.inject(UserService);
       jest.spyOn(userService, 'getGroupByName').mockReturnValue(throwError(() => new Error('Group not found')));
@@ -1206,7 +1209,9 @@ describe('SmbFormComponent', () => {
       auditGroup.controls.ignore_list.updateValueAndValidity();
 
       // Wait for async validation and debounce
-      spectator.tick(600);
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 600);
+      });
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
@@ -1217,9 +1222,9 @@ describe('SmbFormComponent', () => {
       // Verify save button is disabled
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(true);
-    }));
+    });
 
-    it('should pass validation when all entered groups exist', fakeAsync(async () => {
+    it('should pass validation when all entered groups exist', async () => {
       // Mock API to return success for existing groups
       const userService = spectator.inject(UserService);
       jest.spyOn(userService, 'getGroupByName').mockReturnValue(of({
@@ -1246,7 +1251,9 @@ describe('SmbFormComponent', () => {
       auditGroup.controls.watch_list.updateValueAndValidity();
 
       // Wait for async validation and debounce
-      spectator.tick(600);
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 600);
+      });
       spectator.detectChanges();
       await spectator.fixture.whenStable();
 
@@ -1257,9 +1264,9 @@ describe('SmbFormComponent', () => {
       // Verify save button is enabled
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await saveButton.isDisabled()).toBe(false);
-    }));
+    });
 
-    it('should disable save button during async validation', fakeAsync(async () => {
+    it('should disable save button during async validation', async () => {
       // Mock API with a delayed response to catch the PENDING state
       const userService = spectator.inject(UserService);
       const delayedObservable$ = new Subject<DsUncachedGroup>();
@@ -1283,7 +1290,9 @@ describe('SmbFormComponent', () => {
       auditGroup.controls.watch_list.updateValueAndValidity();
 
       // Wait for debounce
-      spectator.tick(600);
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 600);
+      });
       spectator.detectChanges();
 
       // Verify save button is disabled while validation is pending
@@ -1303,7 +1312,7 @@ describe('SmbFormComponent', () => {
 
       // Verify save button is now enabled
       expect(await saveButton.isDisabled()).toBe(false);
-    }));
+    });
   });
 
   describe('Dataset Naming Schema null value', () => {
