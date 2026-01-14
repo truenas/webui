@@ -509,7 +509,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
             if (task.transport !== TransportMode.Legacy) {
               const exp = task.state?.datetime
                 ? this.translate.instant('last run {date}', {
-                    date: format(new Date(task.state.datetime.$date), this.localeService.dateFormat()),
+                    date: format(new Date(task.state.datetime.$date), this.localeService.dateFormat),
                   })
                 : this.translate.instant('never ran');
               const label = `${task.name} (${exp})`;
