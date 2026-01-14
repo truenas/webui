@@ -56,4 +56,10 @@ export const helptextSnapshotForm = {
  already taken a snapshot of any changes to the dataset.'),
 
   enabledLabel: T('Enabled'),
+
+  fixateRemovalDateLabel: T('Preserve Snapshot Retention'),
+  fixateRemovalDateTooltip: T('Set to keep the original retention period for existing snapshots \
+created by this task. When unset, existing snapshots will use the new retention settings. \
+This is useful when changing the schedule or naming schema to prevent premature deletion \
+of old snapshots.'),
 };

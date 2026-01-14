@@ -12,6 +12,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -35,6 +36,7 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-t
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -43,6 +45,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { snapshotTaskListElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 
@@ -80,11 +83,13 @@ export class SnapshotTaskListComponent implements OnInit {
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
   private taskService = inject(TaskService);
+  private snapshotTaskService = inject(SnapshotTaskService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private slideIn = inject(SlideIn);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
+  private loader = inject(LoaderService);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
   protected readonly searchableElements = snapshotTaskListElements;
@@ -235,16 +240,11 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   protected doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
-      message: this.translate.instant('Delete Periodic Snapshot Task <b>"{value}"</b>?', {
-        value: `${snapshotTask.dataset} - ${snapshotTask.naming_schema}`,
-      }),
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Delete'),
-    }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('pool.snapshottask.delete', [snapshotTask.id])),
+    this.snapshotTaskService.checkTaskHasSnapshots(snapshotTask.id).pipe(
+      this.loader.withLoader(),
+      switchMap((hasSnapshots) => this.confirmDelete(snapshotTask, hasSnapshots)),
+      filter((result) => result.confirmed),
+      switchMap((result) => this.deleteTask(snapshotTask.id, result.secondaryCheckbox)),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -254,5 +254,27 @@ export class SnapshotTaskListComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
       },
     });
+  }
+
+  private confirmDelete(
+    task: PeriodicSnapshotTaskUi,
+    hasSnapshots: boolean,
+  ): Observable<DialogWithSecondaryCheckboxResult> {
+    const confirmOptions: ConfirmOptionsWithSecondaryCheckbox = {
+      title: this.translate.instant('Confirmation'),
+      message: this.translate.instant('Delete Periodic Snapshot Task <b>"{value}"</b>?', {
+        value: `${task.dataset} - ${task.naming_schema}`,
+      }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
+      secondaryCheckbox: hasSnapshots,
+      secondaryCheckboxText: this.translate.instant('Keep snapshots with their original retention period'),
+    };
+
+    return this.dialogService.confirm(confirmOptions) as unknown as Observable<DialogWithSecondaryCheckboxResult>;
+  }
+
+  private deleteTask(taskId: number, fixateRemovalDate: boolean): Observable<boolean> {
+    return this.api.call('pool.snapshottask.delete', [taskId, fixateRemovalDate]);
   }
 }
