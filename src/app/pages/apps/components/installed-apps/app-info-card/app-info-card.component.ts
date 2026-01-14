@@ -127,15 +127,20 @@ export class AppInfoCardComponent {
   });
 
   openPortalLink(app: App, name = 'web_portal'): void {
-    const portalUrl = new URL(app.portals[name]);
+    try {
+      const portalUrl = new URL(app.portals[name]);
 
-    if (portalUrl.hostname === '0.0.0.0') {
-      const hostname = this.window.location.hostname;
-      const isIpv6 = ipRegex.v6().test(hostname);
-      portalUrl.hostname = isIpv6 ? `[${hostname}]` : hostname;
+      if (portalUrl.hostname === '0.0.0.0') {
+        const hostname = this.window.location.hostname.replace(/^\[|\]$/g, '');
+        const isIpv6 = ipRegex.v6().test(hostname);
+        portalUrl.hostname = isIpv6 ? `[${hostname}]` : hostname;
+      }
+
+      this.redirect.openWindow(portalUrl.href);
+    } catch (error: unknown) {
+      console.error('Invalid portal URL:', app.portals[name], error);
+      this.redirect.openWindow(app.portals[name]);
     }
-
-    this.redirect.openWindow(portalUrl.href);
   }
 
   updateButtonPressed(): void {
