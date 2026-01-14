@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of, switchMap, debounceTime, combineLatest, startWith } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -34,7 +36,6 @@ import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-snapshot-task-form',
   templateUrl: './snapshot-task-form.component.html',
@@ -59,6 +60,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SnapshotTaskFormComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private fb = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
   private snapshotTaskService = inject(SnapshotTaskService);
@@ -191,7 +193,7 @@ export class SnapshotTaskFormComponent implements OnInit {
           params as PeriodicSnapshotTaskUpdate,
         );
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (affectedSnapshots: string[]) => {
         this.affectedSnapshots.set(affectedSnapshots);
@@ -250,7 +252,7 @@ export class SnapshotTaskFormComponent implements OnInit {
       request$ = this.api.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('Task created'));

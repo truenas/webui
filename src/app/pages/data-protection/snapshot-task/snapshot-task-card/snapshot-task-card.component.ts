@@ -1,11 +1,13 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, filter, map, switchMap } from 'rxjs';
 import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
@@ -44,7 +46,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 import { TaskService } from 'app/services/task.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-snapshot-task-card',
   templateUrl: './snapshot-task-card.component.html',
@@ -71,6 +72,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SnapshotTaskCardComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   private slideIn = inject(SlideIn);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -150,7 +152,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     this.getSnapshotTasks();
 
     this.api.subscribe('pool.snapshottask.query').pipe(
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.getSnapshotTasks();
@@ -168,7 +170,7 @@ export class SnapshotTaskCardComponent implements OnInit {
       switchMap((hasSnapshots) => this.confirmDelete(snapshotTask, hasSnapshots)),
       filter((result) => result.confirmed),
       switchMap((result) => this.deleteTask(snapshotTask.id, result.secondaryCheckbox)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.getSnapshotTasks();
@@ -204,14 +206,14 @@ export class SnapshotTaskCardComponent implements OnInit {
   protected openForm(row?: PeriodicSnapshotTaskUi): void {
     this.slideIn.open(SnapshotTaskFormComponent, { data: row, wide: true }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
   protected onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
     this.api
       .call('pool.snapshottask.update', [snapshotTask.id, { enabled: !snapshotTask.enabled } as PeriodicSnapshotTaskUi])
-      .pipe(untilDestroyed(this))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: (error: unknown) => {
           this.errorHandler.showErrorModal(error);

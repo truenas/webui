@@ -1,8 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, filter, switchMap, take, tap,
@@ -49,7 +51,6 @@ import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-snapshot-task-list',
   styleUrls: ['./snapshot-task-list.component.scss'],
@@ -79,6 +80,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SnapshotTaskListComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   protected emptyService = inject(EmptyService);
   private dialogService = inject(DialogService);
   private api = inject(ApiService);
@@ -191,22 +193,22 @@ export class SnapshotTaskListComponent implements OnInit {
       tap((tasks) => {
         this.snapshotTasks = tasks as PeriodicSnapshotTaskUi[];
       }),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     );
 
     this.dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(tasks$ as Observable<PeriodicSnapshotTaskUi[]>);
 
     this.getSnapshotTasks();
 
-    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.onListFiltered(this.searchQuery()));
+    tasks$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe(() => this.onListFiltered(this.searchQuery()));
 
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());
     });
 
     this.api.subscribe('pool.snapshottask.query').pipe(
       tap(() => this.getSnapshotTasks()),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
 
@@ -228,14 +230,14 @@ export class SnapshotTaskListComponent implements OnInit {
   protected doAdd(): void {
     this.slideIn.open(SnapshotTaskFormComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getSnapshotTasks());
   }
 
   protected doEdit(row: PeriodicSnapshotTaskUi): void {
     this.slideIn.open(SnapshotTaskFormComponent, { wide: true, data: row }).pipe(
       filter((response) => !!response.response),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.getSnapshotTasks());
   }
 
@@ -245,7 +247,7 @@ export class SnapshotTaskListComponent implements OnInit {
       switchMap((hasSnapshots) => this.confirmDelete(snapshotTask, hasSnapshots)),
       filter((result) => result.confirmed),
       switchMap((result) => this.deleteTask(snapshotTask.id, result.secondaryCheckbox)),
-      untilDestroyed(this),
+      takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.getSnapshotTasks();
