@@ -200,16 +200,20 @@ describe('ExportDisconnectModalComponent', () => {
   });
 
   describe('system dataset warnings', () => {
-    beforeEach(() => {
-      // Set up system dataset on the current pool and select Export option
-      spectator.component.systemConfig = { pool: 'fakePool' } as SystemDatasetConfig;
-      spectator.component.showSysDatasetWarning = true;
-      spectator.component.selectOption(DisconnectOption.Export); // Required for shouldShowSystemDatasetWarning
-      spectator.detectChanges();
+    it('should not show system dataset panel when system dataset is on a different pool', () => {
+      // fakeSystemConfig has pool: 'fakeSystemPool' which differs from fakePool's name
+      expect(spectator.component.showSysDatasetWarning).toBe(false);
+
+      const systemDatasetPanel = spectator.queryAll('.expansion-panel')
+        .find((panel) => panel.textContent.includes('System dataset will be moved off this pool'));
+      expect(systemDatasetPanel).not.toExist();
     });
 
     it('should show system dataset warning when system dataset is on this pool', () => {
+      spectator.component.systemConfig = { pool: 'fakePool' } as SystemDatasetConfig;
+      spectator.component.showSysDatasetWarning = true;
       spectator.component.totalPoolCount = 3; // Multiple pools exist
+      spectator.component.selectOption(DisconnectOption.Export);
       spectator.detectChanges();
 
       // Verify conditions are met
@@ -245,6 +249,8 @@ describe('ExportDisconnectModalComponent', () => {
     });
 
     it('should show system dataset warning for delete operation as well', () => {
+      spectator.component.systemConfig = { pool: 'fakePool' } as SystemDatasetConfig;
+      spectator.component.showSysDatasetWarning = true;
       spectator.component.totalPoolCount = 2;
       spectator.component.selectOption(DisconnectOption.Delete); // Select delete instead of export
       spectator.detectChanges();
