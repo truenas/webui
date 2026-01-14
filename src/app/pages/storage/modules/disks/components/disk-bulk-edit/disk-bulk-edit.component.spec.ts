@@ -79,11 +79,13 @@ describe('DiskBulkEditComponent', () => {
   it('sets disks settings when form is opened', async () => {
     const formValue = await form.getValues();
     const diskIds = spectator.component.diskIds;
+    const diskNames = spectator.component.form.controls.disknames.value;
+
     expect(formValue).toEqual({
-      'Disks to be edited:': ['sda', 'sdc'],
       'HDD Standby': '',
       'Advanced Power Management': '',
     });
+    expect(diskNames).toEqual(['sda', 'sdc']);
     expect(diskIds).toEqual(['{serial}VB76b9dd9d-4e5d8cf2', '{serial}VB5a315293-ea077d3d']);
   });
 
