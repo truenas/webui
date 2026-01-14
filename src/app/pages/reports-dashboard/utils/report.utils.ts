@@ -34,9 +34,28 @@ export function formatData(data: ReportingData): ReportingData {
     }
 
     if (formattedData.aggregations) {
+      // remove the average data from the aggregates too
+      formattedData.aggregations.min.pop();
+      formattedData.aggregations.max.pop();
+      formattedData.aggregations.mean.pop();
+
       formattedData.aggregations.min = [...formattedData.aggregations.min].reverse();
       formattedData.aggregations.max = [...formattedData.aggregations.max].reverse();
       formattedData.aggregations.mean = [...formattedData.aggregations.mean].reverse();
+    }
+  }
+
+  // also, remove the average from the CPU temperature graph
+  if (formattedData.name as ReportingGraphName === ReportingGraphName.CpuTemp) {
+    formattedData.legend.pop();
+    if (Array.isArray(formattedData.data)) {
+      formattedData.data.forEach((row) => row.pop());
+    }
+
+    if (formattedData.aggregations) {
+      formattedData.aggregations.min.pop();
+      formattedData.aggregations.max.pop();
+      formattedData.aggregations.mean.pop();
     }
   }
 
