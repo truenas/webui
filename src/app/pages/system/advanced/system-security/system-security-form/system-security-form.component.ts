@@ -13,6 +13,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatError, MatHint } from '@angular/material/form-field';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { Params } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, finalize, map, of, tap, zip,
@@ -42,6 +43,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -57,9 +59,9 @@ interface StigEnablementRequirements {
   /** the apps service must be completely unconfigured (i.e. no pool set) */
   dockerServiceDisabled: boolean;
   /** the root user's password must be disabled */
-  rootPasswordDisabled: boolean;
+  rootPasswordDisabled: [boolean, User | undefined];
   /** the truenas_admin user's password must be disabled */
-  adminPasswordDisabled: boolean;
+  adminPasswordDisabled: [boolean, User | undefined];
   /**
    * all users must have 2FA required in order to access the truenas webUI.
    * this is not a hard requirement, but all users that don't have 2FA enabled
@@ -83,6 +85,8 @@ interface MissingStigRequirement {
   message: string;
   /** route to navgiate to when clicking the configure button. */
   navigateTo?: string[];
+  /** query parameters to apply on navigation */
+  queryParameters?: Params;
   /** element to highlight when navigating */
   highlightElement?: string;
   /** the action to perform upon navigation */
@@ -222,8 +226,8 @@ export class SystemSecurityFormComponent implements OnInit {
         const truenasAdminUser: User | undefined = userConfig.find((user) => user.username === 'truenas_admin');
         return {
           // if either account is missing, then its password is technically disabled and the requirement is met
-          rootPasswordDisabled: rootUser ? rootUser.password_disabled : true,
-          adminPasswordDisabled: truenasAdminUser ? truenasAdminUser.password_disabled : true,
+          rootPasswordDisabled: [rootUser ? rootUser.password_disabled : true, rootUser],
+          adminPasswordDisabled: [truenasAdminUser ? truenasAdminUser.password_disabled : true, truenasAdminUser],
         };
       }),
     );
@@ -290,16 +294,23 @@ export class SystemSecurityFormComponent implements OnInit {
         });
       }
 
-      if (!enablementRequirements.rootPasswordDisabled || !enablementRequirements.adminPasswordDisabled) {
+      if (!enablementRequirements.rootPasswordDisabled[0]) {
         requirements.push({
-          message: 'The root user and the truenas_admin users must have their passwords disabled.',
-          navigateTo: ['/credentials/users'],
+          message: 'The root user must have their password disabled.',
+          action: this.openUserEditForm.bind(this, enablementRequirements.rootPasswordDisabled[1]),
+        });
+      }
+
+      if (!enablementRequirements.adminPasswordDisabled[0]) {
+        requirements.push({
+          message: 'The truenas_admin user must have their password disabled.',
+          action: this.openUserEditForm.bind(this, enablementRequirements.adminPasswordDisabled[1]),
         });
       }
 
       if (!enablementRequirements.currentUserIs2fa) {
         requirements.push({
-          message: 'The current user must be logged in with 2FA.',
+          message: 'The current user must be logged in with 2FA. If you have configured 2FA in the current session, you will need to log out and then back in.',
           navigateTo: ['/two-factor-auth'],
         });
       }
@@ -600,7 +611,11 @@ export class SystemSecurityFormComponent implements OnInit {
     this.slideInRef.close({ response: false });
 
     if (requirement.navigateTo) {
-      this.navigateAndHighlightService.navigateAndHighlight(requirement.navigateTo, requirement?.highlightElement);
+      this.navigateAndHighlightService.navigateAndHighlight(
+        requirement.navigateTo,
+        requirement?.highlightElement,
+        requirement.queryParameters,
+      );
     } else if (requirement.action) {
       requirement.action();
     }
@@ -621,5 +636,10 @@ export class SystemSecurityFormComponent implements OnInit {
         }
       }, 500);
     }
+  }
+
+  private openUserEditForm(user: User): void {
+    this.slideIn.open(UserFormComponent, { data: user });
+    // TODO: add logic to highlight the `Disable Password` checkbox
   }
 }

@@ -1,6 +1,6 @@
 import { DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { Params, Router } from '@angular/router';
 import { Subscription, timer } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 
@@ -16,8 +16,8 @@ export class NavigateAndHighlightService {
   private prevSubscription: Subscription | null = null;
   private clickOutsideListener: ((event: MouseEvent) => void) | null = null;
 
-  navigateAndHighlight(route: string[], hash?: string): void {
-    this.router.navigate(route, { fragment: hash }).then(() => {
+  navigateAndHighlight(route: string[], hash?: string, urlParameters?: Params): void {
+    this.router.navigate(route, { queryParams: urlParameters, fragment: hash }).then(() => {
       if (!hash) {
         return;
       }

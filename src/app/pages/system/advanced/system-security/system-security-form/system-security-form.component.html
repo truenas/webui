@@ -70,10 +70,11 @@
           </ul>
         </mat-hint>
       }
-      <mat-hint>{{ 'Restart is required after changing these settings.' | translate }}</mat-hint>
       @if (isStigEnabled()) {
         <mat-hint class="stig-info">{{ 'STIG mode is enabled. Password policy fields have minimum required values that cannot be reduced.' | translate }}</mat-hint>
       }
+      <br>
+      <mat-hint>{{ 'Restart is required after changing these settings.' | translate }}</mat-hint>
 
       <ix-input
         formControlName="min_password_age"
