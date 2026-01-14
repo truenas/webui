@@ -10,6 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { TaskState } from 'app/enums/task-state.enum';
+import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { PeriodicSnapshotTaskUi, PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
@@ -189,7 +190,7 @@ describe('SnapshotTaskListComponent', () => {
       buttonColor: 'warn',
       buttonText: 'Delete',
       secondaryCheckbox: false,
-      secondaryCheckboxText: 'Keep snapshots with their original retention period',
+      secondaryCheckboxText: helptextSnapshotForm.keepSnapshotsLabel,
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, false]);

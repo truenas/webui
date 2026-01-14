@@ -14,6 +14,7 @@ import { snapshotTaskEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
+import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -193,9 +194,10 @@ export class SnapshotTaskCardComponent implements OnInit {
       buttonColor: 'warn',
       buttonText: this.translate.instant('Delete'),
       secondaryCheckbox: hasSnapshots,
-      secondaryCheckboxText: this.translate.instant('Keep snapshots with their original retention period'),
+      secondaryCheckboxText: this.translate.instant(helptextSnapshotForm.keepSnapshotsLabel),
     };
 
+    // TypeScript can't discriminate overloads when using extends, explicit cast needed
     return this.dialogService.confirm(confirmOptions) as unknown as Observable<DialogWithSecondaryCheckboxResult>;
   }
 

@@ -62,4 +62,6 @@ export const helptextSnapshotForm = {
 created by this task. When unset, existing snapshots will use the new retention settings. \
 This is useful when changing the schedule or naming schema to prevent premature deletion \
 of old snapshots.'),
+
+  keepSnapshotsLabel: T('Keep snapshots with their original retention period'),
 };

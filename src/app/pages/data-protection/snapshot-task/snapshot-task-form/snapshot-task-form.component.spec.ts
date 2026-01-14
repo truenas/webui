@@ -220,5 +220,57 @@ describe('SnapshotTaskComponent', () => {
         }),
       ]);
     });
+
+    it('shows retention warning when snapshots are affected', async () => {
+      const mockSnapshots = ['snapshot1', 'snapshot2', 'snapshot3'];
+      spectator.inject(ApiService).call.mockReturnValue(of(mockSnapshots));
+
+      await form.fillForm({
+        'Snapshot Lifetime': 5,
+      });
+
+      // Wait for debounce and API call
+      await new Promise((resolve) => {
+        setTimeout(resolve, 300);
+      });
+
+      spectator.detectChanges();
+
+      const warningElement = spectator.query('.retention-warning');
+      expect(warningElement).toBeTruthy();
+      expect(warningElement.textContent).toContain('3');
+      expect(warningElement.textContent).toContain('existing snapshot(s)');
+    });
+
+    it('shows error message when retention check fails', async () => {
+      // Mock console.error to avoid test framework warnings for expected errors
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      const mockError = new Error('API Error');
+      spectator.inject(ApiService).call.mockImplementation(() => {
+        throw mockError;
+      });
+
+      await form.fillForm({
+        'Snapshot Lifetime': 5,
+      });
+
+      // Wait for debounce and API call
+      await new Promise((resolve) => {
+        setTimeout(resolve, 300);
+      });
+
+      spectator.detectChanges();
+
+      const errorElement = spectator.query('.retention-warning.error');
+      expect(errorElement).toBeTruthy();
+      expect(errorElement.textContent).toContain('Unable to check if changes will affect snapshot retention');
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        '[SnapshotTaskForm] Failed to check retention changes:',
+        mockError,
+      );
+
+      consoleErrorSpy.mockRestore();
+    });
   });
 });

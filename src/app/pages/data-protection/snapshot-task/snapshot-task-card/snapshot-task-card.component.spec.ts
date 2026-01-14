@@ -13,6 +13,7 @@ import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
+import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -34,7 +35,7 @@ describe('SnapshotTaskCardComponent', () => {
   let loader: HarnessLoader;
   let table: IxTableHarness;
 
-  const fiftySecondsAgo = 50000;
+  const fiftySecondsAgoMs = 50 * 1000; // 50 seconds in milliseconds
 
   const snapshotTasks = [
     {
@@ -60,7 +61,7 @@ describe('SnapshotTaskCardComponent', () => {
       state: {
         state: 'PENDING',
         datetime: {
-          $date: new Date().getTime() - fiftySecondsAgo,
+          $date: new Date().getTime() - fiftySecondsAgoMs,
         },
       },
       keepfor: '2 WEEK(S)',
@@ -170,7 +171,7 @@ describe('SnapshotTaskCardComponent', () => {
       buttonText: 'Delete',
       buttonColor: 'warn',
       secondaryCheckbox: false, // No snapshots in mock
-      secondaryCheckboxText: 'Keep snapshots with their original retention period',
+      secondaryCheckboxText: helptextSnapshotForm.keepSnapshotsLabel,
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, false]);
