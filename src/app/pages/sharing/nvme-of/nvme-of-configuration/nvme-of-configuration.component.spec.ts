@@ -116,7 +116,9 @@ describe('NvmeOfConfigurationComponent', () => {
 
   it('disables RDMA control if RDMA support is missing from the system', async () => {
     spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(false));
-    spectator.component.ngOnInit();
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
 
     const controls = await form.getDisabledState();
     expect(controls).toMatchObject({
@@ -126,8 +128,9 @@ describe('NvmeOfConfigurationComponent', () => {
 
   it('disables ANA for systems without HA license', async () => {
     spectator.inject(MockStore).overrideSelector(selectIsHaLicensed, false);
-    spectator.inject(MockStore).refreshState();
-    spectator.component.ngOnInit();
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
 
     const controls = await form.getDisabledState();
     expect(controls).toMatchObject({
@@ -143,8 +146,9 @@ describe('NvmeOfConfigurationComponent', () => {
       enable: true,
       pids: [1234],
     } as Service]);
-    spectator.inject(MockStore).refreshState();
-    spectator.component.ngOnInit();
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
 
     const controls = await form.getDisabledState();
     expect(controls).toMatchObject({
@@ -154,8 +158,9 @@ describe('NvmeOfConfigurationComponent', () => {
 
   it('hides Implementation field on non-enterprise systems', async () => {
     spectator.inject(MockStore).overrideSelector(selectIsEnterprise, false);
-    spectator.inject(MockStore).refreshState();
-    spectator.detectChanges();
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
 
     const formValues = await form.getValues();
     expect(formValues).toEqual({
