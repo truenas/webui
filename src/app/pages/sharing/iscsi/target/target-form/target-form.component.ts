@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject,
 } from '@angular/core';
@@ -55,6 +56,7 @@ import { LicenseService } from 'app/services/license.service';
   styleUrls: ['./target-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    NgTemplateOutlet,
     ModalHeaderComponent,
     MatCard,
     MatCardContent,
