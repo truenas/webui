@@ -12,7 +12,6 @@ import {
   isConditionalEnhancement,
   resolveConditionalEnhancement,
 } from 'app/interfaces/smart-alert.interface';
-import { routePlaceholders } from 'app/modules/alerts/constants/route-placeholders.const';
 import { isBootPoolAlert } from 'app/modules/alerts/utils/boot-pool.utils';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
@@ -217,28 +216,17 @@ export const smartAlertRegistry: SmartAlertConfig = {
       contextualHelp: T('Storage pool health is critical for data integrity. Investigate and resolve pool issues immediately to prevent data loss.'),
       detailedHelp: T('Common pool issues include: degraded pools (missing/failed drives), scrub errors, capacity warnings, and replication problems.'),
       documentationUrl: 'https://www.truenas.com/docs/scale/scaletutorials/storage/managepoolsscale/',
-      extractApiParams: (alert: { args: unknown; text: string; formatted: string }) => {
-        // Try to extract pool ID from alert args first
-        if (alert.args && typeof alert.args === 'object' && 'id' in alert.args) {
-          return { poolId: (alert.args as { id: number }).id };
-        }
-
-        // Fallback: extract pool name from message text
-        // Format: "Pool {name} state is OFFLINE" or similar
-        const message = alert.formatted || alert.text;
-        const poolNameMatch = /Pool\s+(\S+)\s+state/i.exec(message);
-        if (poolNameMatch?.[1]) {
-          return { poolId: poolNameMatch[1] };
-        }
-
+      extractApiParams: () => {
+        // VolumeStatus alerts only provide pool name in args.volume, not pool ID
+        // Since we can't synchronously resolve pool name to ID, navigate to storage dashboard instead
         return undefined;
       },
       actions: [
         {
-          label: T('View VDEVs'),
+          label: T('View Storage'),
           type: SmartAlertActionType.Navigate,
           icon: iconMarker('mdi-database'),
-          route: ['/storage', routePlaceholders.poolId, 'vdevs'],
+          route: ['/storage'],
           primary: true,
         },
         {
@@ -1269,18 +1257,16 @@ export const smartAlertRegistry: SmartAlertConfig = {
     VolumeStatus: {
       category: SmartAlertCategory.Storage,
       relatedMenuPath: ['storage'],
-      extractApiParams: (alert: { args: unknown }) => {
-        // Extract pool ID from alert args for dynamic routing to VDEVs page
-        if (alert.args && typeof alert.args === 'object' && 'id' in alert.args) {
-          return { poolId: (alert.args as { id: number }).id };
-        }
+      extractApiParams: () => {
+        // VolumeStatus alerts only provide pool name in args.volume, not pool ID
+        // Since we can't synchronously resolve pool name to ID, navigate to storage dashboard instead
         return undefined;
       },
       actions: [{
-        label: T('View VDEVs'),
+        label: T('View Storage'),
         type: SmartAlertActionType.Navigate,
         icon: iconMarker('dns'),
-        route: ['/storage', routePlaceholders.poolId, 'vdevs'],
+        route: ['/storage'],
         primary: true,
       }],
     },

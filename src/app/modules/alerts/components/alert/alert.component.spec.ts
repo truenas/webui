@@ -155,6 +155,12 @@ describe('AlertComponent', () => {
 
     spectator.component.ngAfterViewInit();
 
+    // Wait for setTimeout to complete
+    await new Promise((resolve) => {
+      setTimeout(resolve, 0);
+    });
+    spectator.detectChanges();
+
     const expandButton = await loader.getHarness(MatButtonHarness.with({ text: 'View More' }));
     expect(expandButton).toExist();
 

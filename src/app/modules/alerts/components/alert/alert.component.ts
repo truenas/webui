@@ -115,6 +115,7 @@ export class AlertComponent implements OnChanges, AfterViewInit {
 
   ngOnChanges(): void {
     this.setStyles();
+    this.checkIfExpandable();
   }
 
   ngAfterViewInit(): void {
@@ -126,7 +127,10 @@ export class AlertComponent implements OnChanges, AfterViewInit {
     if (!alertMessageElement) {
       return;
     }
-    this.isExpandable.set(alertMessageElement.scrollHeight > alertMessageElement.offsetHeight);
+    // Use setTimeout to ensure CSS (line-clamp) has been fully applied before measuring
+    setTimeout(() => {
+      this.isExpandable.set(alertMessageElement.scrollHeight > alertMessageElement.offsetHeight);
+    }, 0);
   }
 
   toggleCollapse(): void {
