@@ -17,6 +17,17 @@ import { ErrorReport, ErrorDetails, traceDetailLabel } from 'app/interfaces/erro
 import { Job } from 'app/interfaces/job.interface';
 import { FailedJobError } from 'app/services/errors/error.classes';
 
+const httpStatusTexts: Record<number, string> = {
+  400: 'Bad Request',
+  401: 'Unauthorized',
+  403: 'Forbidden',
+  404: 'Not Found',
+  409: 'Conflict',
+  500: 'Internal Server Error',
+  502: 'Bad Gateway',
+  503: 'Service Unavailable',
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -290,7 +301,7 @@ export class ErrorParserService {
       case 403:
       case 404: {
         return {
-          title: error.statusText,
+          title: httpStatusTexts[error.status] ?? `HTTP ${error.status}`,
           message: error.message,
         };
       }

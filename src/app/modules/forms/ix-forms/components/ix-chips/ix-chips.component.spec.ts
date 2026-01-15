@@ -1,6 +1,5 @@
 import { HarnessLoader, parallel, TestKey } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync } from '@angular/core/testing';
 import { NgControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 import { MatChipGridHarness } from '@angular/material/chips/testing';
@@ -153,9 +152,10 @@ describe('IxChipsComponent', () => {
   });
 
   describe('ix-chip with autocomplete panel', () => {
-    it('the autocomplete list should be open after focused on the input', fakeAsync(async () => {
+    it('the autocomplete list should be open after focused on the input', async () => {
       spectator.setHostInput('autocompleteProvider', jest.fn(() => of(['sys', 'staff'])));
-      spectator.tick(100);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
       const input = (await matChipList.getInput())!;
       await input.focus();
       const isOpen = await matAutocomplete.isOpen();
@@ -164,15 +164,16 @@ describe('IxChipsComponent', () => {
 
       expect(isOpen).toBeTruthy();
       expect(optionsAutocomplete).toEqual(['sys', 'staff']);
-    }));
+    });
 
     it('it sets value when user selects it from autocomplete,'
-      + ' after autocomplete should be closed', fakeAsync(async () => {
+      + ' after autocomplete should be closed', async () => {
       spectator.setHostInput('autocompleteProvider', jest.fn(() => of(['ssl-cert', 'staff'])));
-      spectator.tick(100);
+      spectator.detectChanges();
       const input = (await matChipList.getInput())!;
       await input.setValue('s');
-      spectator.tick(100);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
       const options = await matAutocomplete.getOptions();
       await options[0].click();
       const chips = await matChipList.getRows();
@@ -181,31 +182,33 @@ describe('IxChipsComponent', () => {
       expect(isOpen).toBeFalsy();
       expect(chips).toHaveLength(1);
       expect(formControl.value).toEqual(['ssl-cert']);
-    }));
+    });
 
-    it('the autocomplete list should be open after creating the chip', fakeAsync(async () => {
+    it('the autocomplete list should be open after creating the chip', async () => {
       spectator.setHostInput('autocompleteProvider', jest.fn(() => of(['ssl-cert', 'staff'])));
-      spectator.tick(100);
+      spectator.detectChanges();
       const input = (await matChipList.getInput())!;
       await input.setValue('ssl-cert');
-      spectator.tick(100);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
       await input.sendSeparatorKey(TestKey.ENTER);
       const isOpen = await matAutocomplete.isOpen();
       const chips = await matChipList.getRows();
 
       expect(chips).toHaveLength(1);
       expect(isOpen).toBeTruthy();
-    }));
+    });
 
-    it('the autocomplete panel should be hidden if list is empty', fakeAsync(async () => {
+    it('the autocomplete panel should be hidden if list is empty', async () => {
       spectator.setHostInput('autocompleteProvider', jest.fn(() => of([])));
-      spectator.tick(100);
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
       const input = (await matChipList.getInput())!;
       await input.focus();
       const isOpen = await matAutocomplete.isOpen();
 
       expect(isOpen).toBeFalsy();
-    }));
+    });
   });
 
   describe('ix-chip with resolveValue', () => {

@@ -15,6 +15,7 @@ const esmPatterns = [
   'delaunator',
   'cheerio',
   'robust-predicates',
+  '@angular',
   '@ngneat',
   '@ngrx',
   '@ngx-translate',
@@ -31,8 +32,11 @@ module.exports = {
   coverageDirectory: 'coverage/webui',
   moduleDirectories: ['node_modules', 'src'],
   cacheDirectory: "<rootDir>/.jest/cache",
+  extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
     ...pathsToModuleNameMapper(compilerOptions.paths || {}),
+    '^@angular/material/([^/]+)/testing$': '<rootDir>/node_modules/@angular/material/fesm2022/$1-testing.mjs',
+    '^@angular/material/([^/]+)$': '<rootDir>/node_modules/@angular/material/fesm2022/$1.mjs',
   },
   testPathIgnorePatterns: [
     '<rootDir>/dist/',
