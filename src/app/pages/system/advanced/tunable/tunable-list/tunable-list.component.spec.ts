@@ -18,8 +18,8 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
-import { TunableListComponent } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.component';
+import { TunableFormComponent } from 'app/pages/system/advanced/tunable/tunable-form/tunable-form.component';
+import { TunableListComponent } from 'app/pages/system/advanced/tunable/tunable-list/tunable-list.component';
 
 describe('TunableListComponent', () => {
   let spectator: Spectator<TunableListComponent>;
@@ -184,7 +184,7 @@ describe('TunableListComponent', () => {
     expect(dialogService.confirm).toHaveBeenCalledWith({
       buttonText: 'Delete',
       message: 'Are you sure you want to delete "kernel.hostname"?',
-      title: 'Delete Sysctl',
+      title: 'Delete Tunable (SYSCTL)',
       buttonColor: 'warn',
     });
 
