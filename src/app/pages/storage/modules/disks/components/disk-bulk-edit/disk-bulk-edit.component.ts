@@ -72,7 +72,9 @@ export class DiskBulkEditComponent {
   readonly helptext = helptextDisks;
   readonly helptextBulkEdit = helptextDisks.bulkEdit;
   readonly hddstandbyOptions$ = of(helptextDisks.standbyOptions);
-  readonly advpowermgmtOptions$ = of(helptextDisks.advancedPowerManagementOptions);
+  readonly advpowermgmtOptions$ = of(
+    helptextDisks.advancedPowerManagementOptions,
+  );
 
   constructor() {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -133,8 +135,10 @@ export class DiskBulkEditComponent {
       { n: req.length },
     );
     this.isLoading = true;
-    this.api.job('core.bulk', ['disk.update', req])
-      .pipe(untilDestroyed(this)).subscribe({
+    this.api
+      .job('core.bulk', ['disk.update', req])
+      .pipe(untilDestroyed(this))
+      .subscribe({
         next: (job) => {
           if (job.state !== JobState.Success) {
             return;

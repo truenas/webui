@@ -9,17 +9,25 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="helptextBulkEdit.title | translate">
         <label class="disk-list-label">
-          {{ 'Disks to be edited:' | translate }}
+          {{ "Disks to be edited:" | translate }}
           <ix-icon
             class="tooltip-icon"
             name="mdi-information-outline"
             [matTooltip]="helptextBulkEdit.disks.tooltip | translate"
           ></ix-icon>
         </label>
-        <div class="disk-list" role="list" [attr.aria-label]="'Disks to be edited' | translate">
+        <div
+          class="disk-list"
+          role="list"
+          [attr.aria-label]="'Disks to be edited' | translate"
+        >
           @for (diskName of form.controls.disknames.value; track diskName) {
             <div class="disk-item" role="listitem">
-              <ix-icon name="ix-hdd" class="disk-icon" [attr.aria-hidden]="true"></ix-icon>
+              <ix-icon
+                name="ix-hdd"
+                class="disk-icon"
+                [attr.aria-hidden]="true"
+              ></ix-icon>
               <span class="disk-name">{{ diskName }}</span>
             </div>
           }
@@ -52,7 +60,7 @@
           ixTest="save"
           [disabled]="isLoading"
         >
-          {{ 'Save' | translate }}
+          {{ "Save" | translate }}
         </button>
       </ix-form-actions>
     </form>

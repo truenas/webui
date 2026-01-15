@@ -10,7 +10,10 @@ import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
-import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
+import {
+  CoreBulkQuery,
+  CoreBulkResponse,
+} from 'app/interfaces/core-bulk.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -20,13 +23,16 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from './disk-bulk-edit.component';
 
-const mockJobSuccessResponse = [{
-  error: null,
-  result: true,
-}, {
-  error: null,
-  result: true,
-}] as CoreBulkResponse[];
+const mockJobSuccessResponse = [
+  {
+    error: null,
+    result: true,
+  },
+  {
+    error: null,
+    result: true,
+  },
+] as CoreBulkResponse[];
 
 describe('DiskBulkEditComponent', () => {
   let spectator: Spectator<DiskBulkEditComponent>;
@@ -55,9 +61,7 @@ describe('DiskBulkEditComponent', () => {
 
   const createComponent = createComponentFactory({
     component: DiskBulkEditComponent,
-    imports: [
-      ReactiveFormsModule,
-    ],
+    imports: [ReactiveFormsModule],
     providers: [
       mockAuth(),
       mockProvider(SlideInRef, slideInRef),
@@ -86,7 +90,10 @@ describe('DiskBulkEditComponent', () => {
       'Advanced Power Management': '',
     });
     expect(diskNames).toEqual(['sda', 'sdc']);
-    expect(diskIds).toEqual(['{serial}VB76b9dd9d-4e5d8cf2', '{serial}VB5a315293-ea077d3d']);
+    expect(diskIds).toEqual([
+      '{serial}VB76b9dd9d-4e5d8cf2',
+      '{serial}VB5a315293-ea077d3d',
+    ]);
   });
 
   it('updates selected disks when form is submitted', async () => {
@@ -97,10 +104,13 @@ describe('DiskBulkEditComponent', () => {
 
     const changeValue = {
       'HDD Standby': '10',
-      'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
+      'Advanced Power Management':
+        'Level 64 - Intermediate power usage with Standby',
     };
     await form.fillForm(changeValue);
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(
+      MatButtonHarness.with({ text: 'Save' }),
+    );
     await saveButton.click();
     const req: CoreBulkQuery = [
       'disk.update',
@@ -133,12 +143,14 @@ describe('DiskBulkEditComponent', () => {
 
     jobSpy.mockImplementation((job) => {
       if (job === 'core.bulk') {
-        return of(fakeSuccessfulJob([
-          // first one did not succeed, but the second one did;
-          // this should pop an error dialog up to the user.
-          { error: 'mock error', result: false },
-          { error: null, result: true },
-        ]));
+        return of(
+          fakeSuccessfulJob([
+            // first one did not succeed, but the second one did;
+            // this should pop an error dialog up to the user.
+            { error: 'mock error', result: false },
+            { error: null, result: true },
+          ]),
+        );
       }
 
       return of(fakeSuccessfulJob(mockJobSuccessResponse));
@@ -151,10 +163,13 @@ describe('DiskBulkEditComponent', () => {
 
     const changeValue = {
       'HDD Standby': '10',
-      'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
+      'Advanced Power Management':
+        'Level 64 - Intermediate power usage with Standby',
     };
     await form.fillForm(changeValue);
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(
+      MatButtonHarness.with({ text: 'Save' }),
+    );
     await saveButton.click();
 
     expect(api.job).toHaveBeenCalledWith('core.bulk', expect.anything());
@@ -175,7 +190,9 @@ describe('DiskBulkEditComponent', () => {
       return of(fakeSuccessfulJob(mockJobSuccessResponse));
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(
+      MatButtonHarness.with({ text: 'Save' }),
+    );
     await saveButton.click();
 
     expect(api.job).toHaveBeenCalledWith('core.bulk', expect.anything());
