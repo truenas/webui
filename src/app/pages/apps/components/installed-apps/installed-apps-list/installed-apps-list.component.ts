@@ -477,27 +477,20 @@ export class InstalledAppsListComponent implements OnInit {
       this.redirectToInstalledApps();
     }
 
+    this.handleBulkResult(job);
+  }
+
+  private handleBulkStartStopResult(job: Job<CoreBulkResponse[]>): void {
+    this.handleBulkResult(job, { showSuccessSnackbar: true });
+  }
+
+  private handleBulkResult(job: Job<CoreBulkResponse[]>, options?: { showSuccessSnackbar?: boolean }): void {
     this.dialogService.closeAllDialogs();
     const errorMessages = this.getErrorMessages(job.result);
 
     if (errorMessages) {
       this.dialogService.error({ title: helptextApps.bulkActions.title, message: errorMessages });
-    }
-
-    this.toggleAppsChecked(false);
-  }
-
-  private handleBulkStartStopResult(job: Job<CoreBulkResponse[]>): void {
-    this.dialogService.closeAllDialogs();
-    const errorMessages = this.getErrorMessages(job.result);
-
-    if (errorMessages) {
-      this.dialogService.error({
-        title: this.translate.instant(helptextApps.bulkActions.title),
-        message: errorMessages,
-      });
-    } else {
-      // Show success snackbar only if no errors (keeps current bulk behavior)
+    } else if (options?.showSuccessSnackbar) {
       this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
     }
 
