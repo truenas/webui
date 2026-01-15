@@ -19,6 +19,7 @@ import {
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
+import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -127,7 +128,9 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       });
 
     this.api.call('auth.sessions').pipe(
-      map((sessionsList) => sessionsList.find((session) => session.current)),
+      map((sessionsList) => sessionsList.find((session) => {
+        return session.current && session.credentials === CredentialType.TwoFactor;
+      })),
     ).subscribe((session) => this.currentSessionIs2fa.set(!!session));
   }
 
