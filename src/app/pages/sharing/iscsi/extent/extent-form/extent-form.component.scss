@@ -10,3 +10,32 @@
     }
   }
 }
+
+.snapshot-info-box {
+  background-color: var(--alt-bg1);
+  border: 1px solid var(--lines);
+  border-left: 4px solid var(--primary);
+  border-radius: 4px;
+  margin-top: 16px;
+  padding: 16px;
+}
+
+.info-header {
+  align-items: center;
+  color: var(--primary);
+  display: flex;
+  font-size: 16px;
+  font-weight: 600;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  ix-icon {
+    font-size: 20px;
+  }
+}
+
+.info-message {
+  color: var(--fg2);
+  line-height: 1.5;
+  margin: 0;
+}

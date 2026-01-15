@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -8,6 +7,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { format } from 'date-fns';
 import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -47,15 +47,11 @@ export interface SaveConfigDialogMessages {
     RequiresRolesDirective,
     TranslateModule,
   ],
-  providers: [
-    DatePipe,
-  ],
 })
 export class SaveConfigDialog {
   private store$ = inject<Store<AppState>>(Store);
   private download = inject(DownloadService);
   private loader = inject(LoaderService);
-  private datePipe = inject(DatePipe);
   private dialogRef = inject<MatDialogRef<SaveConfigDialog>>(MatDialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
@@ -89,7 +85,7 @@ export class SaveConfigDialog {
       this.loader.withLoader(),
       switchMap((systemInfo) => {
         const hostname = systemInfo.hostname.split('.')[0];
-        const date = this.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
+        const date = format(new Date(), 'yyyyMMddHHmmss');
         let fileName = hostname + '-' + systemInfo.version + '-' + date;
         let mimeType: string;
 

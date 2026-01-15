@@ -41,6 +41,8 @@ describe('EditNfsAceComponent', () => {
           { group: 'wheel' },
           { group: 'vip' },
         ]),
+        getUserByName: (username: string) => of({ username } as User),
+        getGroupByName: (groupName: string) => of({ group: groupName }),
       }),
     ],
   });
