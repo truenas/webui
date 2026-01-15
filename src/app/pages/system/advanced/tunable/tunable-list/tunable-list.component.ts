@@ -169,7 +169,7 @@ export class TunableListComponent implements OnInit {
             .pipe(
               tap(() => {
                 this.getTunables();
-                this.snackbar.success(this.translate.instant('Sysctl "{name}" deleted', { name: tunable.var }));
+                this.snackbar.success(this.translate.instant('Tunable "{name}" deleted', { name: tunable.var }));
               }),
               this.errorHandler.withErrorHandler(),
             );

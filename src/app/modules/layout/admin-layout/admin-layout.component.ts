@@ -30,7 +30,6 @@ import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/tru
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
-import { SentryConfigurationService } from 'app/services/errors/sentry-configuration.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -71,7 +70,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private store$ = inject<Store<AppState>>(Store);
   private languageService = inject(LanguageService);
   private sessionTimeoutService = inject(SessionTimeoutService);
-  private sentryService = inject(SentryConfigurationService);
 
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
 
@@ -130,7 +128,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     performance.measure('Login', 'Login Start', 'Admin Init');
     this.sessionTimeoutService.start();
     this.themeService.loadTheme$.next('');
-    this.sentryService.init();
     this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((config) => {
       this.languageService.setLanguage(config.language);
     });
