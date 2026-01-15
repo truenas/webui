@@ -1,11 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { EMPTY, forkJoin, tap } from 'rxjs';
+import { EMPTY, forkJoin } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { waitForConsent$ } from 'app/services/errors/wait-for-sentry-consent';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   advancedConfigUpdated,
@@ -17,7 +15,6 @@ import {
 export class SystemConfigEffects {
   private actions$ = inject(Actions);
   private api = inject(ApiService);
-  private errorHandler = inject(ErrorHandlerService);
   private window = inject<Window>(WINDOW);
 
   loadConfig$ = createEffect(() => this.actions$.pipe(
@@ -38,15 +35,4 @@ export class SystemConfigEffects {
       );
     }),
   ));
-
-  disableSentryIfNeeded$ = createEffect(() => this.actions$.pipe(
-    ofType(systemConfigLoaded),
-    tap(({ generalConfig }) => {
-      if (!generalConfig.usage_collection) {
-        this.errorHandler.disableSentry();
-      }
-
-      waitForConsent$.next(generalConfig.usage_collection);
-    }),
-  ), { dispatch: false });
 }
