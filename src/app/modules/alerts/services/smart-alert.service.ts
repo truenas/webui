@@ -6,7 +6,7 @@ import { distinctUntilChanged, filter, switchMap, tap } from 'rxjs';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { EnhancedAlert, SmartAlertAction, SmartAlertActionType } from 'app/interfaces/smart-alert.interface';
+import { EnhancedAlert, SmartAlertAction, SmartAlertActionType, SmartAlertCategory } from 'app/interfaces/smart-alert.interface';
 import { isRoutePlaceholder, routePlaceholders } from 'app/modules/alerts/constants/route-placeholders.const';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
@@ -52,7 +52,10 @@ export class SmartAlertService {
     );
 
     if (!enhancement) {
-      return alert as Alert & EnhancedAlert;
+      return {
+        ...alert,
+        category: SmartAlertCategory.System,
+      } as Alert & EnhancedAlert;
     }
 
     // Extract fragment for highlighting if available
@@ -118,8 +121,8 @@ export class SmartAlertService {
         }
       }
 
-      // Inject extracted API params for API call actions
-      if (action.type === SmartAlertActionType.ApiCall && extractedApiParams !== undefined && !action.apiParams) {
+      // Inject extracted API params for run task actions
+      if (action.type === SmartAlertActionType.RunTask && extractedApiParams !== undefined && !action.apiParams) {
         enhancedAction = { ...enhancedAction, apiParams: extractedApiParams };
       }
 
@@ -213,11 +216,11 @@ export class SmartAlertService {
           }
           break;
 
-        case SmartAlertActionType.ApiCall:
+        case SmartAlertActionType.RunTask:
           if (action.apiMethod && action.apiParams !== undefined) {
-            this.handleApiCall(action, alert);
+            this.handleRunTask(action, alert);
           } else {
-            console.error('API call action missing required apiMethod or apiParams:', action);
+            console.error('Run task action missing required apiMethod or apiParams:', action);
           }
           break;
 
@@ -233,9 +236,10 @@ export class SmartAlertService {
   }
 
   /**
-   * Handles API call actions with confirmation dialogs and feedback
+   * Handles run task actions for task re-run operations.
+   * Shows confirmation dialog and tracks job progress.
    */
-  private handleApiCall(action: SmartAlertAction, alert: Alert): void {
+  private handleRunTask(action: SmartAlertAction, alert: Alert): void {
     const taskName = this.extractTaskName(alert);
     const confirmationMessage = this.translate.instant('Run «{name}» now?', { name: taskName });
     const relatedRoute = this.getRelatedRouteForAlert(alert);
@@ -343,7 +347,8 @@ export class SmartAlertService {
     const grouped = new Map<string, T[]>();
 
     alerts.forEach((alert) => {
-      const category = alert.category || 'Uncategorized';
+      // All alerts should have a category assigned by enhanceAlert()
+      const category = alert.category || SmartAlertCategory.System;
       if (!grouped.has(category)) {
         grouped.set(category, []);
       }
@@ -358,63 +363,54 @@ export class SmartAlertService {
 
   /**
    * Gets count of alerts by menu path for navigation badges
-   * Counts unique alert types (by key) for both the specific path and all parent paths
+   * Counts all alert instances for both the specific path and all parent paths
    * Example: alert with path ['data-protection', 'cloud-backup']
    * increments counts for both 'data-protection' and 'data-protection.cloud-backup'
    *
-   * Deduplicates alerts by key to show the number of unique issues, not total instances.
-   * For example, if there are 2 instances of the same alert, it counts as 1.
+   * Counts all alert instances to match what users see in the alert panel.
+   * For example, if there are 2 instances of the same alert, it counts as 2.
    */
   getAlertCountsByMenuPath(
     alerts: (Alert & EnhancedAlert)[],
   ): Map<string, { critical: number; warning: number; info: number }> {
     const counts = new Map<string, { critical: number; warning: number; info: number }>();
 
-    // First, deduplicate alerts by key - keep the most recent instance of each
-    const uniqueAlertsByKey = new Map<string, Alert & EnhancedAlert>();
+    // Count all alert instances by path
     alerts
       .filter((alert) => !alert.dismissed && alert.relatedMenuPath)
       .forEach((alert) => {
-        const existing = uniqueAlertsByKey.get(alert.key);
-        if (!existing || (alert.datetime?.$date || 0) > (existing.datetime?.$date || 0)) {
-          uniqueAlertsByKey.set(alert.key, alert);
+        const menuPath = alert.relatedMenuPath;
+        if (!menuPath) return;
+
+        const isCritical = [
+          AlertLevel.Critical,
+          AlertLevel.Alert,
+          AlertLevel.Emergency,
+          AlertLevel.Error,
+        ].includes(alert.level);
+        const isWarning = [AlertLevel.Warning].includes(alert.level);
+        const isInfo = [AlertLevel.Info, AlertLevel.Notice].includes(alert.level);
+
+        // Count for each path segment and all parent paths
+        // Example: ['data-protection', 'cloud-backup'] creates entries for:
+        // - 'data-protection'
+        // - 'data-protection.cloud-backup'
+        for (let i = 1; i <= menuPath.length; i++) {
+          const pathSegments = menuPath.slice(0, i);
+          const path = pathSegments.join('.');
+          const current = counts.get(path) || { critical: 0, warning: 0, info: 0 };
+
+          if (isCritical) {
+            current.critical++;
+          } else if (isWarning) {
+            current.warning++;
+          } else if (isInfo) {
+            current.info++;
+          }
+
+          counts.set(path, current);
         }
       });
-
-    // Now count unique alerts by path
-    uniqueAlertsByKey.forEach((alert) => {
-      const menuPath = alert.relatedMenuPath;
-      if (!menuPath) return;
-
-      const isCritical = [
-        AlertLevel.Critical,
-        AlertLevel.Alert,
-        AlertLevel.Emergency,
-        AlertLevel.Error,
-      ].includes(alert.level);
-      const isWarning = [AlertLevel.Warning].includes(alert.level);
-      const isInfo = [AlertLevel.Info, AlertLevel.Notice].includes(alert.level);
-
-      // Count for each path segment and all parent paths
-      // Example: ['data-protection', 'cloud-backup'] creates entries for:
-      // - 'data-protection'
-      // - 'data-protection.cloud-backup'
-      for (let i = 1; i <= menuPath.length; i++) {
-        const pathSegments = menuPath.slice(0, i);
-        const path = pathSegments.join('.');
-        const current = counts.get(path) || { critical: 0, warning: 0, info: 0 };
-
-        if (isCritical) {
-          current.critical++;
-        } else if (isWarning) {
-          current.warning++;
-        } else if (isInfo) {
-          current.info++;
-        }
-
-        counts.set(path, current);
-      }
-    });
 
     return counts;
   }

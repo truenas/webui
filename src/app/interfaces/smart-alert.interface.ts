@@ -16,7 +16,7 @@ export enum SmartAlertActionType {
   Navigate = 'navigate',
   Modal = 'modal',
   ExternalLink = 'external',
-  ApiCall = 'automated',
+  RunTask = 'run-task',
 }
 
 export interface SmartAlertAction {

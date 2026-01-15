@@ -43,29 +43,30 @@
 .severity-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  padding: 8px 12px 12px;
+  gap: 0;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--lines);
 
   .filter-button {
     align-items: center;
-    background: var(--bg2);
-    border: 1px solid var(--lines);
-    border-radius: 0;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
     color: var(--fg2);
     cursor: pointer;
     display: flex;
     flex: 0 1 auto;
     font-size: 0.8rem;
     font-weight: 500;
-    gap: 4px;
-    padding: 5px 10px;
+    gap: 6px;
+    padding: 8px 12px;
     transition: all 0.2s ease;
     white-space: nowrap;
 
     .count {
       align-items: center;
       background: var(--alt-bg1);
-      border-radius: 0;
+      border-radius: 10px;
       color: var(--fg1);
       display: inline-flex;
       font-size: 0.75rem;
@@ -78,16 +79,16 @@
 
     &:hover {
       background: var(--alt-bg1);
-      border-color: var(--primary);
+      border-bottom-color: var(--primary);
     }
 
     &.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: var(--primary-txt);
+      background: transparent;
+      border-bottom-color: var(--primary);
+      color: var(--primary);
 
       .count {
-        background: var(--alt-bg2);
+        background: var(--primary);
         color: var(--primary-txt);
       }
     }
@@ -199,7 +200,7 @@
     .category-count {
       align-items: center;
       background: var(--primary);
-      border-radius: 0;
+      border-radius: 10px;
       color: var(--primary-txt);
       display: flex;
       font-size: 0.7rem;

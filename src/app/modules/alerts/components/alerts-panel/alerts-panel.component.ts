@@ -258,7 +258,7 @@ export class AlertsPanelComponent implements OnInit {
 
   /**
    * Helper to convert Map entries to array for template iteration
-   * Sorts categories with uncategorized items appearing last
+   * Sorts categories with known categories first
    */
   getCategoryEntries(
     categoryMap: Map<string, AlertWithDuplicates[]> | null,
@@ -271,7 +271,7 @@ export class AlertsPanelComponent implements OnInit {
       const aIsKnown = knownCategories.includes(a[0] as SmartAlertCategory);
       const bIsKnown = knownCategories.includes(b[0] as SmartAlertCategory);
 
-      // Push unknown categories (like 'Uncategorized') to the end
+      // Push unknown categories to the end (defensive - all alerts should have known categories)
       if (!aIsKnown && bIsKnown) return 1;
       if (aIsKnown && !bIsKnown) return -1;
       // Keep other categories in their original order
