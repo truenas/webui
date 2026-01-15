@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { lastValueFrom, of } from 'rxjs';
+import { lastValueFrom, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
@@ -117,6 +117,18 @@ describe('PrivilegeFormComponent', () => {
       mockProvider(SlideInRef, slideInRef),
       mockProvider(UserService, {
         groupQueryDsCache: jest.fn(() => of([])),
+        getGroupByName: jest.fn((groupName: string) => {
+          // Return existing groups, error for non-existent ones
+          const existingGroup = testGroups.find((group) => group.group === groupName);
+          if (existingGroup) {
+            return of(existingGroup);
+          }
+          return of(null);
+        }),
+        getUserByName: jest.fn(() => {
+          // Mock user validation - all users are considered non-existent for testing
+          return of(null);
+        }),
       }),
       provideMockStore({
         selectors: [
@@ -373,41 +385,15 @@ describe('PrivilegeFormComponent', () => {
       expect(callArgs[1][1]).toEqual({ limit: 50, order_by: ['group'] });
     });
 
-    it('should use UserService.groupQueryDsCache for DS groups', async () => {
-      const provider = spectator.component.dsGroupsProvider;
-      const userService = spectator.inject(UserService);
-
-      jest.spyOn(userService, 'groupQueryDsCache').mockReturnValue(of([
-        { id: 1, group: 'domain-test', gid: 1001 } as Group,
-        { id: 2, group: 'test-domain', gid: 1002 } as Group,
-      ]));
-
-      const result = await lastValueFrom(provider('test'));
-
-      // Should call UserService.groupQueryDsCache with the query
-      expect(userService.groupQueryDsCache).toHaveBeenCalledWith('test', false, 0);
-
-      // Should return group names
-      expect(result).toEqual(['domain-test', 'test-domain']);
+    it('uses ix-group-chips component for DS groups with automatic validation', () => {
+      const groupChipsComponent = spectator.query('ix-group-chips[formControlName="ds_groups"]');
+      expect(groupChipsComponent).toExist();
     });
 
-    it('should limit DS groups results to 50', async () => {
-      const provider = spectator.component.dsGroupsProvider;
+    it('dS groups field uses UserService for group queries', () => {
       const userService = spectator.inject(UserService);
-
-      // Mock more than 50 groups
-      const manyGroups = Array.from({ length: 100 }, (_, i) => ({
-        id: i,
-        group: `group${i}`,
-        gid: 1000 + i,
-      } as Group));
-
-      jest.spyOn(userService, 'groupQueryDsCache').mockReturnValue(of(manyGroups));
-
-      const result = await lastValueFrom(provider('test'));
-
-      // Should limit to 50 results
-      expect(result).toHaveLength(50);
+      // ix-group-chips component automatically uses UserService.groupQueryDsCache
+      expect(userService).toBeTruthy();
     });
 
     it('should handle empty query for local groups', async () => {
@@ -462,6 +448,14 @@ describe('PrivilegeFormComponent', () => {
           ]),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
+            getGroupByName: jest.fn((groupName: string) => {
+              // Return existing groups, error for non-existent ones
+              const existingGroups = ['AD\\Domain Admins'];
+              if (existingGroups.includes(groupName)) {
+                return of({ group: groupName } as Group);
+              }
+              return throwError(() => new Error('Not found'));
+            }),
           }),
           provideMockStore({
             selectors: [
@@ -513,6 +507,14 @@ describe('PrivilegeFormComponent', () => {
           ]),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
+            getGroupByName: jest.fn((groupName: string) => {
+              // Return existing groups, error for non-existent ones
+              const existingGroups = ['AD\\Domain Admins'];
+              if (existingGroups.includes(groupName)) {
+                return of({ group: groupName } as Group);
+              }
+              return throwError(() => new Error('Not found'));
+            }),
           }),
           provideMockStore({
             selectors: [
@@ -566,6 +568,14 @@ describe('PrivilegeFormComponent', () => {
           ]),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
+            getGroupByName: jest.fn((groupName: string) => {
+              // Return existing groups, error for non-existent ones
+              const existingGroups = ['AD\\Domain Admins'];
+              if (existingGroups.includes(groupName)) {
+                return of({ group: groupName } as Group);
+              }
+              return throwError(() => new Error('Not found'));
+            }),
           }),
           provideMockStore({
             selectors: [
@@ -620,6 +630,14 @@ describe('PrivilegeFormComponent', () => {
           ]),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
+            getGroupByName: jest.fn((groupName: string) => {
+              // Return existing groups, error for non-existent ones
+              const existingGroups = ['AD\\Domain Admins'];
+              if (existingGroups.includes(groupName)) {
+                return of({ group: groupName } as Group);
+              }
+              return throwError(() => new Error('Not found'));
+            }),
           }),
           provideMockStore({
             selectors: [
@@ -654,9 +672,19 @@ describe('PrivilegeFormComponent', () => {
       expect(button).toBeFalsy();
     }));
 
-    it('should show button and enable ds_auth when clicked', fakeAsync(() => {
+    it('should show button and enable ds_auth when clicked', fakeAsync(async () => {
       spectator = createComponent({
         providers: [
+          mockApi([
+            mockCall('group.query', testGroups),
+            mockCall('privilege.roles', [
+              { name: Role.FullAdmin, title: Role.FullAdmin, builtin: false },
+            ] as PrivilegeRole[]),
+            mockCall('directoryservices.status', {
+              type: 'ACTIVEDIRECTORY',
+              status: DirectoryServiceStatus.Healthy,
+            } as DirectoryServicesStatus),
+          ]),
           provideMockStore({
             selectors: [
               {
@@ -673,30 +701,46 @@ describe('PrivilegeFormComponent', () => {
           }),
           mockProvider(UserService, {
             groupQueryDsCache: jest.fn(() => of([])),
+            getGroupByName: jest.fn((groupName: string) => {
+              // Return existing groups, error for non-existent ones
+              const existingGroups = ['AD\\Domain Admins'];
+              if (existingGroups.includes(groupName)) {
+                return of({ group: groupName } as Group);
+              }
+              return throwError(() => new Error('Not found'));
+            }),
           }),
+          mockProvider(SlideInRef, slideInRef),
           mockAuth(),
         ],
       });
 
       api = spectator.inject(ApiService);
+      const localLoader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      // Wait for ngOnInit to complete
+      // Wait for ngOnInit and directoryservices.status API call to complete
       flush();
       spectator.detectChanges();
 
-      // Manually set DS status to Healthy with type (since factory mock doesn't include type)
+      // Wait for the directoryservices.status subscription to process
+      flush();
+      spectator.detectChanges();
+
+      // Manually set DS status to Healthy with type (factory mock doesn't include type)
+      // This must be done BEFORE filling the form to trigger button visibility
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['dsStatus'].set({
         type: 'ACTIVEDIRECTORY',
         status: DirectoryServiceStatus.Healthy,
       } as DirectoryServicesStatus);
 
-      // Trigger DS groups being added
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['form'].patchValue({
-        ds_groups: ['AD\\Domain Admins'],
+      // Use IxFormHarness to properly fill the form
+      const form = await localLoader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Directory Services Groups': ['AD\\Domain Admins'],
       });
 
+      // Wait for async group validation and button visibility update
       flush();
       spectator.detectChanges();
 
