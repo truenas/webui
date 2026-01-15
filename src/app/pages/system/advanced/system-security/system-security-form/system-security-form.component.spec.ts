@@ -24,6 +24,7 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -917,7 +918,8 @@ describe('SystemSecurityFormComponent', () => {
       expect(errorElement?.textContent).toContain('Global Two-Factor Authentication must be enabled.');
       expect(errorElement?.textContent).toContain('SSH Two-Factor Authentication must be enabled.');
       expect(errorElement?.textContent).toContain('The apps service must be disabled and the pool unset.');
-      expect(errorElement?.textContent).toContain('The root user and the truenas_admin users must have their passwords disabled.');
+      expect(errorElement?.textContent).toContain('The root user must have their password disabled.');
+      expect(errorElement?.textContent).toContain('The truenas_admin user must have their password disabled.');
       expect(errorElement?.textContent).toContain('The current user must be logged in with 2FA.');
 
       // Verify the warning is shown in mat-hint
@@ -1150,11 +1152,13 @@ describe('SystemSecurityFormComponent', () => {
       ],
     });
 
-    it('navigates to Users page when clicking Configure for root/admin password requirement', async () => {
+    it('opens the user edit slidein when clicking the configure button for root/truenas_admin error', async () => {
       const navigationSpectator = createTwoFactorTestComponent();
-      const navHighlight = navigationSpectator.inject(NavigateAndHighlightService);
-      const navigateSpy = jest.spyOn(navHighlight, 'navigateAndHighlight');
-      const closeSlideInSpy = jest.spyOn(navigationSpectator.inject(SlideInRef), 'close');
+      const slideIn = navigationSpectator.inject(SlideIn);
+      const slideInRef = navigationSpectator.inject(SlideInRef);
+
+      const openSpy = jest.spyOn(slideIn, 'open');
+      const closeSlideInSpy = jest.spyOn(slideInRef, 'close');
 
       // Trigger setupStigRequirements - should show root/admin password requirement
       navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
@@ -1163,7 +1167,7 @@ describe('SystemSecurityFormComponent', () => {
 
       // Find the Configure button for the root/admin password requirement
       const errorMessages = navigationSpectator.queryAll('mat-error li');
-      const passwordError = errorMessages.find((el) => el.textContent.includes('root user') && el.textContent.includes('truenas_admin'));
+      const passwordError = errorMessages.find((el) => el.textContent.includes('root user'));
       expect(passwordError).toBeTruthy();
 
       const configureButton = passwordError.querySelector('.link-button') as HTMLElement;
@@ -1173,7 +1177,7 @@ describe('SystemSecurityFormComponent', () => {
       configureButton.click();
 
       expect(closeSlideInSpy).toHaveBeenCalledWith({ response: false });
-      expect(navigateSpy).toHaveBeenCalledWith(['/credentials/users'], undefined);
+      expect(openSpy).toHaveBeenCalledWith(UserFormComponent, { data: { username: 'root', password_disabled: false } as User });
     });
 
     it('navigates to Advanced Settings and opens Global Two-Factor Auth form when clicking Configure', async () => {
@@ -1209,6 +1213,40 @@ describe('SystemSecurityFormComponent', () => {
         { data: { enabled: false, services: { ssh: false } } },
       );
     });
+
+    it('opens Global Two-Factor Auth form when clicking SSH 2FA configure button', async () => {
+      const navigationSpectator = createTwoFactorTestComponent();
+      const slideIn = navigationSpectator.inject(SlideIn);
+      const slideInRef = navigationSpectator.inject(SlideInRef);
+
+      const openSpy = jest.spyOn(slideIn, 'open');
+      const closeSlideInSpy = jest.spyOn(slideInRef, 'close');
+
+      // Trigger setupStigRequirements - should show SSH 2FA requirement
+      navigationSpectator.component.form.patchValue({ enable_gpos_stig: true });
+      navigationSpectator.detectChanges();
+      await navigationSpectator.fixture.whenStable();
+
+      // Find the Configure button for SSH 2FA requirement
+      const errorMessages = navigationSpectator.queryAll('mat-error li');
+      const sshTwoFactorError = errorMessages.find((el) => el.textContent.includes('SSH Two-Factor Authentication'));
+      expect(sshTwoFactorError).toBeTruthy();
+
+      const configureButton = sshTwoFactorError.querySelector('.link-button') as HTMLElement;
+      expect(configureButton).toBeTruthy();
+
+      // Click the Configure button
+      configureButton.click();
+
+      expect(closeSlideInSpy).toHaveBeenCalledWith({ response: false });
+
+      // Verify the Global 2FA form was opened with the correct data
+      expect(openSpy).toHaveBeenCalledWith(
+        GlobalTwoFactorAuthFormComponent,
+        { data: { enabled: false, services: { ssh: false } } },
+      );
+    });
+
 
     it('marks form as pristine before navigating to avoid unsaved changes dialog', async () => {
       const navigationSpectator = createTwoFactorTestComponent();

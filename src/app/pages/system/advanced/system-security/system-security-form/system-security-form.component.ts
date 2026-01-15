@@ -47,6 +47,9 @@ import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-fo
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
+/** time to wait in milliseconds between opening a slidein and highlighting an element on it */
+const slideInAnimationDuration = 600;
+
 /**
  * helper type representing all requirements for enabling STIG mode
  * and their fulfillment status.
@@ -135,7 +138,8 @@ export class SystemSecurityFormComponent implements OnInit {
   private readonly stigValidatorFn = this.stigValidator.bind(this);
 
   form = this.formBuilder.group({
-    enable_fips: [false],
+    // if STIG is enabled, then FIPS mode *must* also be enabled since FIPS is part of STIG
+    enable_fips: [false, this.stigValidatorFn],
     enable_gpos_stig: [false],
     min_password_age: [
       null as number | null,
@@ -367,6 +371,15 @@ export class SystemSecurityFormComponent implements OnInit {
     const value = control.value as unknown;
 
     switch (controlName) {
+      case 'enable_fips':
+        if (!value) return {
+          stigRequiresFips: {
+            message: this.translate.instant(
+              'STIG requires FIPS to be enabled.',
+            ),
+          },
+        };
+        break;
       case 'min_password_age':
         if (value !== null && (value as number) < stigPasswordRequirements.minPasswordAge) {
           return {
@@ -621,25 +634,30 @@ export class SystemSecurityFormComponent implements OnInit {
     }
   }
 
+  /**
+   * after `slideInAnimationDuration` milliseconds, highlight the element with ID `elementName`
+   * @param elementName the element ID to highlight
+   */
+  private delayHighlightElement(elementName: string): void {
+    setTimeout(() => {
+      const htmlElement = this.window.document.getElementById(elementName);
+      if (htmlElement) {
+        this.navigateAndHighlightService.scrollIntoView(htmlElement);
+      }
+    }, slideInAnimationDuration);
+  }
+
   private openGlobalTwoFactorForm(highlight: 'global' | 'ssh'): void {
     const config = this.twoFactorConfig();
     if (config) {
       const elementName = highlight === 'global' ? 'enable-2fa-global' : 'enable-2fa-ssh';
       this.slideIn.open(GlobalTwoFactorAuthFormComponent, { data: config });
-
-      // wait a moment for the slidein animation to complete before highlighting anything
-      // so the blue highlight box won't be off-center.
-      setTimeout(() => {
-        const htmlElement = this.window.document.getElementById(elementName);
-        if (htmlElement) {
-          this.navigateAndHighlightService.scrollIntoView(htmlElement);
-        }
-      }, 500);
+      this.delayHighlightElement(elementName);
     }
   }
 
   private openUserEditForm(user: User): void {
     this.slideIn.open(UserFormComponent, { data: user });
-    // TODO: add logic to highlight the `Disable Password` checkbox
+    this.delayHighlightElement('disablePasswordCheckbox');
   }
 }
