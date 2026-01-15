@@ -34,9 +34,7 @@
     "translations": "yarn extract && yarn extract-ui-search-elements && yarn validate-translations",
     "ui": "cd $(git rev-parse --show-toplevel) && tsx ./scripts/ui/ui.ts",
     "auth-url": "tsx ./scripts/playwright-helpers/generate-token.ts",
-    "validate-translations": "node scripts/validate_translations.js",
-    "check-sentry": "node -e \"const t = process.env.SENTRY_AUTH_TOKEN; console.log(t ? t.slice(-4) : 'SENTRY_AUTH_TOKEN is missing')\"",
-    "sentry:sourcemaps": "SENTRY_ALLOW_FAILURE=\"true\" sentry-cli sourcemaps inject --org ixsystems --project webui-scale ./dist && SENTRY_ALLOW_FAILURE=\"true\" sentry-cli --url https://sentry.ixsystems.com/ sourcemaps upload --org ixsystems --project webui-scale ./dist"
+    "validate-translations": "node scripts/validate_translations.js"
   },
   "repository": {
     "type": "git",
@@ -63,7 +61,7 @@
     "@angular/cdk": "~20.2.14",
     "@angular/cli": "~20.3.12",
     "@angular/common": "~20.3.14",
-    "@angular/compiler": "~20.3.15",
+    "@angular/compiler": "~20.3.16",
     "@angular/compiler-cli": "~20.3.14",
     "@angular/core": "~20.3.14",
     "@angular/forms": "~20.3.14",
@@ -106,9 +104,6 @@
     "@ngx-translate/http-loader": "~8.0.0",
     "@playwright/mcp": "latest",
     "@popperjs/core": "^2.9.3",
-    "@sentry/angular": "~9.2.0",
-    "@sentry/cli": "~2.42.2",
-    "@sentry/utils": "~7.42.0",
     "@shopify/eslint-plugin": "~50.0.0",
     "@smarttools/eslint-plugin-rxjs": "~1.0.22",
     "@stylistic/eslint-plugin": "~2.9.0",

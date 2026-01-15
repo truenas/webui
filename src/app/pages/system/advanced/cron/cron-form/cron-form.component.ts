@@ -9,12 +9,11 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextCron } from 'app/helptext/system/cron-form';
 import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
-import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
-import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -25,7 +24,6 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
@@ -39,7 +37,7 @@ import { UserService } from 'app/services/user.service';
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
-    IxComboboxComponent,
+    IxUserComboboxComponent,
     SchedulerComponent,
     IxCheckboxComponent,
     FormActionsComponent,
@@ -55,7 +53,6 @@ export class CronFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private errorHandler = inject(FormErrorHandlerService);
   private snackbar = inject(SnackbarService);
-  private userService = inject(UserService);
   slideInRef = inject<SlideInRef<Cronjob | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.SystemCronWrite];
@@ -89,8 +86,6 @@ export class CronFormComponent implements OnInit {
     stdout: helptextCron.stdoutTooltip,
     stderr: helptextCron.stderrTooltip,
   };
-
-  readonly userProvider = new UserComboboxProvider(this.userService);
 
   private editingCron: Cronjob | undefined;
 
