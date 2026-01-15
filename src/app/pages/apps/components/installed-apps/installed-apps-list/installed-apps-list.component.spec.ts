@@ -192,7 +192,9 @@ describe('InstalledAppsListComponent', () => {
     await selectAll.check();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStart.emit();
 
-    expect(applicationsService.startApplication).toHaveBeenCalledWith('test-app-2');
+    const apiService = spectator.inject(ApiService);
+    expect(apiService.job).toHaveBeenCalledWith('core.bulk', ['app.start', [['test-app-2']]]);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
   });
 
   it('stops several applications', async () => {
@@ -200,7 +202,9 @@ describe('InstalledAppsListComponent', () => {
     await selectAll.check();
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStop.emit();
 
-    expect(applicationsService.stopApplication).toHaveBeenCalledWith('test-app-1');
+    const apiService = spectator.inject(ApiService);
+    expect(apiService.job).toHaveBeenCalledWith('core.bulk', ['app.stop', [['test-app-1']]]);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
   });
 
   it('updates several applications', async () => {

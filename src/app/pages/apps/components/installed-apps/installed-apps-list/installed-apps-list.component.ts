@@ -358,15 +358,25 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   onBulkStart(): void {
-    this.stoppedCheckedApps.forEach((app) => this.start(app.name));
-    this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
-    this.toggleAppsChecked(false);
+    this.executeBulkStart()
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe((job: Job<CoreBulkResponse[]>) => {
+        this.handleBulkStartStopResult(job);
+      });
   }
 
   onBulkStop(): void {
-    this.activeCheckedApps.forEach((app) => this.stop(app.name));
-    this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
-    this.toggleAppsChecked(false);
+    this.executeBulkStop()
+      .pipe(
+        this.errorHandler.withErrorHandler(),
+        untilDestroyed(this),
+      )
+      .subscribe((job: Job<CoreBulkResponse[]>) => {
+        this.handleBulkStartStopResult(job);
+      });
   }
 
   onBulkUpdate(updateAll = false): void {
@@ -444,6 +454,24 @@ export class InstalledAppsListComponent implements OnInit {
     ).afterClosed();
   }
 
+  private executeBulkStart(): Observable<Job<CoreBulkResponse[]>> {
+    const bulkStartPayload = this.stoppedCheckedApps.map((app) => [app.name]);
+
+    return this.dialogService.jobDialog(
+      this.api.job('core.bulk', ['app.start', bulkStartPayload]),
+      { title: this.translate.instant(helptextApps.apps.starting) },
+    ).afterClosed();
+  }
+
+  private executeBulkStop(): Observable<Job<CoreBulkResponse[]>> {
+    const bulkStopPayload = this.activeCheckedApps.map((app) => [app.name]);
+
+    return this.dialogService.jobDialog(
+      this.api.job('core.bulk', ['app.stop', bulkStopPayload]),
+      { title: this.translate.instant(helptextApps.apps.stopping) },
+    ).afterClosed();
+  }
+
   private handleDeletionResult(job: Job<CoreBulkResponse[]>): void {
     if (!this.dataSource.length) {
       this.redirectToInstalledApps();
@@ -454,6 +482,23 @@ export class InstalledAppsListComponent implements OnInit {
 
     if (errorMessages) {
       this.dialogService.error({ title: helptextApps.bulkActions.title, message: errorMessages });
+    }
+
+    this.toggleAppsChecked(false);
+  }
+
+  private handleBulkStartStopResult(job: Job<CoreBulkResponse[]>): void {
+    this.dialogService.closeAllDialogs();
+    const errorMessages = this.getErrorMessages(job.result);
+
+    if (errorMessages) {
+      this.dialogService.error({
+        title: this.translate.instant(helptextApps.bulkActions.title),
+        message: errorMessages,
+      });
+    } else {
+      // Show success snackbar only if no errors (keeps current bulk behavior)
+      this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
     }
 
     this.toggleAppsChecked(false);
