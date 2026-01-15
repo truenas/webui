@@ -399,7 +399,10 @@ export class InstalledAppsListComponent implements OnInit {
     ));
     this.matDialog.open(AppBulkUpdateComponent, { data: apps })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
       .subscribe(() => {
         this.toggleAppsChecked(false);
       });

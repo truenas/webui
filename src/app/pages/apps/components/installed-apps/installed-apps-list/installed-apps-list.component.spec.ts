@@ -210,6 +210,67 @@ describe('InstalledAppsListComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, { data: apps });
   });
 
+  it('preserves app selections when bulk update dialog is cancelled', async () => {
+    // Mock dialog to return undefined (cancelled)
+    // of(undefined) creates an observable that emits synchronously when subscribed
+    jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
+      afterClosed: () => of(undefined),
+    } as MatDialogRef<unknown>);
+
+    // Select apps using checkbox harness
+    const selectAll = await loader.getHarness(MatCheckboxHarness.with({
+      selector: '[ixTest="select-all-app"]',
+    }));
+    await selectAll.check();
+
+    // Verify apps are selected before dialog interaction
+    const selectedCountBefore = spectator.component.selection.selected.length;
+    expect(spectator.component.hasCheckedApps).toBe(true);
+    expect(selectedCountBefore).toBe(2);
+
+    // Trigger bulk update (opens dialog, which immediately "closes" with undefined in test)
+    // The mocked afterClosed() returns of(undefined), which:
+    // 1. Emits undefined synchronously when subscribed
+    // 2. Gets filtered out by filter(Boolean)
+    // 3. Never calls toggleAppsChecked(false)
+    spectator.component.onBulkUpdate();
+
+    // Verify selections are STILL preserved after dialog "closes" with undefined
+    expect(spectator.component.hasCheckedApps).toBe(true);
+    expect(spectator.component.selection.selected).toHaveLength(selectedCountBefore);
+    expect(spectator.component.selection.selected).toEqual(['ix-test-app-1', 'ix-test-app-2']);
+  });
+
+  it('clears app selections when bulk update dialog is successfully submitted', async () => {
+    // Mock dialog to return true (successful submission)
+    // of(true) creates an observable that emits synchronously when subscribed
+    jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
+      afterClosed: () => of(true),
+    } as MatDialogRef<unknown>);
+
+    // Select apps using checkbox harness
+    const selectAll = await loader.getHarness(MatCheckboxHarness.with({
+      selector: '[ixTest="select-all-app"]',
+    }));
+    await selectAll.check();
+
+    // Verify apps are selected before dialog interaction
+    expect(spectator.component.hasCheckedApps).toBe(true);
+    expect(spectator.component.selection.selected).toHaveLength(2);
+
+    // Trigger bulk update (opens dialog, which immediately "closes" with true in test)
+    // The mocked afterClosed() returns of(true), which:
+    // 1. Emits true synchronously when subscribed
+    // 2. Passes through filter(Boolean)
+    // 3. Calls toggleAppsChecked(false), which clears selections
+    spectator.component.onBulkUpdate();
+
+    // Verify selections are NOW cleared after successful dialog submission
+    expect(spectator.component.hasCheckedApps).toBe(false);
+    expect(spectator.component.selection.selected).toHaveLength(0);
+    expect(spectator.component.selection.selected).toEqual([]);
+  });
+
   it('removes several applications', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
       afterClosed: () => of({ removeVolumes: true, removeImages: true }),

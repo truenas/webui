@@ -174,7 +174,7 @@ export class AppBulkUpdateComponent {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.dialogRef.close();
+        this.dialogRef.close(true);
         this.snackbar.success(
           this.translate.instant('Updating Apps. Please check on the progress in Task Manager.'),
         );
