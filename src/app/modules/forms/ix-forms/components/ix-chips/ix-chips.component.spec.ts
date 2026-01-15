@@ -40,7 +40,6 @@ describe('IxChipsComponent', () => {
         [tooltip]="tooltip"
         [resolveValue]="resolveValue"
         [resolveOptions]="resolveOptions"
-        [readonly]="readonly"
       ></ix-chips>`,
       {
         hostProps: {
@@ -50,7 +49,6 @@ describe('IxChipsComponent', () => {
           required: false,
           resolveValue: false,
           resolveOptions: undefined,
-          readonly: false,
         },
       },
     );
@@ -237,39 +235,6 @@ describe('IxChipsComponent', () => {
       await input.sendSeparatorKey(TestKey.ENTER);
 
       expect(spectator.component.values).toEqual(['Option 1']);
-    });
-  });
-
-  describe('read-only mode', () => {
-    beforeEach(() => {
-      formControl.setValue(['operator', 'staff']);
-      spectator.detectChanges();
-      spectator.setHostInput('readonly', true);
-      spectator.fixture.detectChanges();
-    });
-
-    it('disables the input when in read-only mode', async () => {
-      const input = await matChipList.getInput();
-
-      expect(await input.isDisabled()).toBeTruthy();
-    });
-
-    it('cannot add or remove chips when in read-only mode', async () => {
-      const initialValues = ['operator', 'staff'];
-
-      // case: adding chips
-      const input = (await matChipList.getInput())!;
-      await input.setValue('newvalue');
-      await input.sendSeparatorKey(TestKey.ENTER);
-
-      expect(formControl.value).toEqual(initialValues);
-      expect(spectator.component.values).toEqual(initialValues);
-
-      // case: remove chip
-      spectator.component.onRemove('operator');
-
-      expect(formControl.value).toEqual(initialValues);
-      expect(spectator.component.values).toEqual(initialValues);
     });
   });
 });
