@@ -85,7 +85,9 @@ bootstrapApplication(AppComponent, {
         strictActionImmutability: true,
         strictStateSerializability: true,
         strictActionSerializability: true,
-        strictActionWithinNgZone: true,
+        // Disabled due to Angular 21 zone handling changes causing false positives
+        // with conditionally loaded feature states (debug panel)
+        strictActionWithinNgZone: false,
         strictActionTypeUniqueness: true,
       },
     }),
