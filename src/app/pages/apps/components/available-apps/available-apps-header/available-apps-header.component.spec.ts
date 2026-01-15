@@ -43,6 +43,7 @@ describe('AvailableAppsHeaderComponent', () => {
       ]),
       mockProvider(InstalledAppsStore, {
         installedApps$: of([{}, {}, {}] as App[]),
+        initialize: jest.fn(),
       }),
       mockProvider(AppsFilterStore, {
         isFilterApplied$: of(false),
@@ -66,6 +67,7 @@ describe('AvailableAppsHeaderComponent', () => {
           name: 'qbittorent',
         }] as AvailableApp[]),
         appsCategories$: of(['storage', 'crypto', 'media', 'torrent']),
+        initialize: jest.fn(),
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -128,5 +130,7 @@ describe('AvailableAppsHeaderComponent', () => {
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('catalog.sync');
+    expect(spectator.inject(AppsStore).initialize).toHaveBeenCalled();
+    expect(spectator.inject(InstalledAppsStore).initialize).toHaveBeenCalled();
   });
 });
