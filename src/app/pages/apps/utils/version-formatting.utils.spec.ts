@@ -25,6 +25,10 @@ describe('Version Formatting Utils', () => {
     it('does not modify human version when library version is not a suffix', () => {
       expect(extractAppVersion('32.0.3_2.1.20', '2.1.22')).toBe('32.0.3_2.1.20');
     });
+
+    it('does not extract library version from middle of string', () => {
+      expect(extractAppVersion('1.0_2.1.22_extra', '2.1.22')).toBe('1.0_2.1.22_extra');
+    });
   });
 
   describe('formatVersionLabel', () => {

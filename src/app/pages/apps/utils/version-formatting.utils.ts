@@ -17,8 +17,8 @@ export function extractAppVersion(humanVersion: string | undefined, libraryVersi
   }
 
   // Remove the library version suffix if it's in the format "app_version_library_version"
-  if (humanVersion.includes('_' + libraryVersion)) {
-    return humanVersion.replace('_' + libraryVersion, '');
+  if (humanVersion.endsWith('_' + libraryVersion)) {
+    return humanVersion.slice(0, -(libraryVersion.length + 1));
   }
 
   return humanVersion;
