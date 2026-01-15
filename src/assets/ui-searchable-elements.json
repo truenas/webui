@@ -1271,59 +1271,6 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
-      "Tunable"
-    ],
-    "synonyms": [
-      "Add Tunable",
-      "Add Sysctl"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "tunable",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
-      "Tunable",
-      "Add Tunable"
-    ],
-    "synonyms": [
-      "Add Sysctl",
-      "Create Tunable",
-      "New Tunable",
-      "Kernel Parameters",
-      "Add Kernel Parameters",
-      "Create Kernel Parameters",
-      "New Kernel Parameters",
-      "Create Sysctl",
-      "New Sysctl",
-      "Sysctl"
-    ],
-    "requiredRoles": [
-      "SYSTEM_TUNABLE_WRITE"
-    ],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "add-tunable",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced Settings",
       "Storage"
     ],
     "synonyms": [
