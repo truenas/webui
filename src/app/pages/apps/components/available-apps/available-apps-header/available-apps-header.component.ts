@@ -155,6 +155,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       )
       .subscribe(() => {
         this.applicationsStore.initialize();
+        this.installedAppsStore.initialize();
         this.cdr.markForCheck();
       });
   }

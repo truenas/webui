@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -143,8 +142,9 @@ describe('IscsiWizardComponent', () => {
     jest.spyOn(store$, 'dispatch');
   });
 
-  it('iSCSI: creates objects when wizard is submitted', fakeAsync(async () => {
-    spectator.tick(100);
+  it('iSCSI: creates objects when wizard is submitted', async () => {
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
 
     await form.fillForm({
       Name: 'test-name',
@@ -166,7 +166,13 @@ describe('IscsiWizardComponent', () => {
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
-    tick();
+
+    // Wait for all async operations to complete
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 100);
+    });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
 
     expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'pool.dataset.create', [{
       name: 'new_pool/test-name',
@@ -215,9 +221,12 @@ describe('IscsiWizardComponent', () => {
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
-  }));
+  });
 
   it('fibre channel: creates objects when wizard is submitted', async () => {
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
     await form.fillForm({
       Name: 'test-name',
       Device: 'Create New',
@@ -238,6 +247,13 @@ describe('IscsiWizardComponent', () => {
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
+
+    // Wait for all async operations to complete
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 100);
+    });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
 
     expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'pool.dataset.create', [{
       name: 'new_pool/test-name',
