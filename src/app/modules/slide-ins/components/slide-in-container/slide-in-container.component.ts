@@ -38,14 +38,14 @@ export class SlideInContainerComponent implements AfterViewInit {
   private keydownSubscription?: Subscription;
   private slideInRef?: SlideInRef<unknown, unknown>;
 
-  @HostBinding('class.slide-in-visible') private isVisible = false;
-  @HostBinding('class.slide-in-hidden') private isHidden = true;
-  @HostBinding('style.width') private width = '480px';
-  @HostBinding('style.max-width') private maxWidth = '480px';
+  @HostBinding('class.slide-in-visible') protected isVisible = false;
+  @HostBinding('class.slide-in-hidden') protected isHidden = true;
+  @HostBinding('style.width') protected width = '480px';
+  @HostBinding('style.max-width') protected maxWidth = '480px';
   private isWide = false;
 
   @HostListener('transitionend', ['$event'])
-  private onTransitionEnd(event: TransitionEvent): void {
+  protected onTransitionEnd(event: TransitionEvent): void {
     // Only handle events that originated from this element, not from children
     if (event.target !== event.currentTarget) {
       return;
@@ -131,7 +131,7 @@ export class SlideInContainerComponent implements AfterViewInit {
   }
 
   @HostListener('window:resize')
-  private onResize(): void {
+  protected onResize(): void {
     this.resizeSubject$.next();
   }
 

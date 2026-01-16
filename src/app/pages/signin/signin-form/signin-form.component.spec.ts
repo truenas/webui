@@ -97,6 +97,13 @@ describe('SigninFormComponent', () => {
     const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
     await loginButton.click();
 
+    // Wait for async operations to complete
+    await new Promise<void>((resolve) => {
+      setTimeout(resolve, 50);
+    });
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
     const signinStore = spectator.inject(SigninStore);
     expect(signinStore.setLoadingState).toHaveBeenCalledWith(true);
     expect(spectator.inject(AuthService).login).toHaveBeenCalledWith('root', '12345678');
@@ -122,6 +129,13 @@ describe('SigninFormComponent', () => {
       const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
       await loginButton.click();
 
+      // Wait for async operations to complete
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
       expect(signinStore.setLoadingState).toHaveBeenCalledWith(false);
       expect(signinStore.getLoginErrorMessage).toHaveBeenCalledWith(LoginResult.NoAccess);
       expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('User is lacking permissions to access WebUI.');
@@ -140,6 +154,13 @@ describe('SigninFormComponent', () => {
       });
       const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
       await loginButton.click();
+
+      // Wait for async operations to complete
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       expect(signinStore.setLoadingState).toHaveBeenCalledWith(false);
       expect(signinStore.getLoginErrorMessage).toHaveBeenCalledWith(LoginResult.NoToken);
@@ -162,6 +183,13 @@ describe('SigninFormComponent', () => {
       });
       const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In' }));
       await loginButton.click();
+
+      // Wait for async operations to complete
+      await new Promise<void>((resolve) => {
+        setTimeout(resolve, 50);
+      });
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
 
       expect(spectator.component.form.controls.otp.enabled).toBe(true);
       expect(spectator.component.form.value.password).toBe('');
