@@ -63,13 +63,11 @@
                     <ix-checkbox
                       formControlName="unix_primary_group"
                       [label]="'Unix Primary Group' | translate"
-                      [required]="true"
                       [tooltip]="helptext.unixPrimaryGroupTooltip | translate"
                     ></ix-checkbox>
                     <ix-checkbox
                       formControlName="unix_nss_info"
                       [label]="'Unix NSS Info' | translate"
-                      [required]="true"
                       [tooltip]="helptext.unixNssTooltip | translate"
                     ></ix-checkbox>
                   }
@@ -112,7 +110,6 @@
                       <ix-checkbox
                         formControlName="readonly"
                         [label]="'Readonly' | translate"
-                        [required]="true"
                         [tooltip]="helptext.readonlyTooltip | translate"
                       ></ix-checkbox>
                     }
@@ -132,20 +129,17 @@
                       <ix-checkbox
                         formControlName="user_cn"
                         [label]="'User CN' | translate"
-                        [required]="true"
                         [tooltip]="helptext.userCnTooltip | translate"
                       ></ix-checkbox>
                       <ix-checkbox
                         formControlName="ldap_realm"
                         [label]="'LDAP Realm' | translate"
-                        [required]="true"
                         [tooltip]="helptext.ldapRealmTooltip | translate"
                       ></ix-checkbox>
                     }
                     <ix-checkbox
                       formControlName="validate_certificates"
                       [label]="'Validate Certificates' | translate"
-                      [required]="true"
                       [tooltip]="helptextLdap.validateCertificatesTooltip | translate"
                     ></ix-checkbox>
                   }
@@ -153,7 +147,6 @@
                     <ix-checkbox
                       formControlName="sssd_compat"
                       [label]="'SSSD Compat' | translate"
-                      [required]="true"
                       [tooltip]="helptext.sssdCompatTooltip | translate"
                     ></ix-checkbox>
                   }
