@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject } from '@angular/core';
-import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
+import { AbstractControl, Validators, ReactiveFormsModule, NonNullableFormBuilder, ValidationErrors } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -56,6 +56,8 @@ export class AuthorizedAccessFormComponent implements OnInit {
   private validatorService = inject(IxValidatorsService);
   slideInRef = inject<SlideInRef<IscsiAuthAccess | undefined, boolean>>(SlideInRef);
 
+  private chapValidatorFn = this.chapValidator.bind(this);
+
   get isNew(): boolean {
     return !this.editingAccess;
   }
@@ -85,7 +87,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
       Validators.maxLength(16),
     ]],
     peersecret_confirm: [''],
-    discovery_auth: [IscsiAuthMethod.None],
+    discovery_auth: [IscsiAuthMethod.None, this.chapValidatorFn],
   }, {
     validators: [
       matchOthersFgValidator(
@@ -107,10 +109,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
   });
 
   protected isLoading = signal(false);
-  discoveryAuthOptions$: Observable<Option<IscsiAuthMethod>[]>;
-  protected editingAccess: IscsiAuthAccess | undefined;
-
-  readonly defaultDiscoveryAuthOptions = [
+  discoveryAuthOptions$: Observable<Option<IscsiAuthMethod>[]> = of([
     {
       label: 'NONE',
       value: IscsiAuthMethod.None,
@@ -119,7 +118,13 @@ export class AuthorizedAccessFormComponent implements OnInit {
       label: 'CHAP',
       value: IscsiAuthMethod.Chap,
     },
-  ];
+    {
+      label: 'Mutual CHAP',
+      value: IscsiAuthMethod.ChapMutual,
+    },
+  ]);
+
+  protected editingAccess: IscsiAuthAccess | undefined;
 
   readonly tooltips = {
     tag: helptextIscsi.authaccess.tagTooltip,
@@ -144,29 +149,11 @@ export class AuthorizedAccessFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.discoveryAuthOptions$ = of(this.defaultDiscoveryAuthOptions);
-
     merge(
       this.form.controls.peeruser.valueChanges,
       this.form.controls.peersecret.valueChanges,
     ).pipe(debounceTime(300), untilDestroyed(this)).subscribe(() => {
-      if (this.form.value.peeruser && this.form.value.peersecret) {
-        this.discoveryAuthOptions$ = of([
-          ...this.defaultDiscoveryAuthOptions,
-          {
-            label: 'Mutual CHAP',
-            value: IscsiAuthMethod.ChapMutual,
-          },
-        ]);
-        if (this.form.value.discovery_auth === IscsiAuthMethod.ChapMutual) {
-          this.form.controls.discovery_auth.setValue(IscsiAuthMethod.ChapMutual);
-        }
-      } else {
-        this.discoveryAuthOptions$ = of(this.defaultDiscoveryAuthOptions);
-        if (this.form.value.discovery_auth === IscsiAuthMethod.ChapMutual) {
-          this.form.controls.discovery_auth.setValue(IscsiAuthMethod.None);
-        }
-      }
+      this.form.controls.discovery_auth.updateValueAndValidity();
     });
 
     if (this.editingAccess) {
@@ -212,5 +199,23 @@ export class AuthorizedAccessFormComponent implements OnInit {
         this.errorHandler.handleValidationErrors(error, this.form);
       },
     });
+  }
+
+  private chapValidator(control: AbstractControl): ValidationErrors | null {
+    const hasPeerDefined = this.form?.value.peeruser && this.form?.value.peersecret;
+    const isChapMutual = control.value === IscsiAuthMethod.ChapMutual;
+
+    // users are allowed to set CHAP Mutual *only* when they have a peer user set.
+    // so, if the auth method is chap mutual *and* they don't have a peer defined, then
+    // we need to invalidate the form.
+    if (!hasPeerDefined && isChapMutual) {
+      return {
+        chapMutualError: {
+          message: this.translate.instant('CHAP Mutual auth method requires Peer User and Peer Secret to be defined.'),
+        },
+      };
+    }
+
+    return null;
   }
 }
